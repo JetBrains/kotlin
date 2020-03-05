@@ -58,7 +58,7 @@ class JvmSharedVariablesManager(
     }.apply {
         parent = jvmInternalPackage
         jvmInternalPackage.addChild(this)
-        superTypes.add(irBuiltIns.anyType)
+        superTypes += irBuiltIns.anyType
     }
 
     private abstract class RefProvider {
@@ -96,7 +96,7 @@ class JvmSharedVariablesManager(
         }.apply {
             parent = refNamespaceClass
             refNamespaceClass.addMember(this)
-            superTypes.add(irBuiltIns.anyType)
+            superTypes += irBuiltIns.anyType
             thisReceiver = buildValueParameter {
                 type = IrSimpleTypeImpl(symbol, hasQuestionMark = false, arguments = emptyList(), annotations = emptyList())
                 name = Name.identifier("$this")
@@ -118,7 +118,7 @@ class JvmSharedVariablesManager(
             name = Name.identifier("ObjectRef")
         }.apply {
             val irClass = this
-            typeParameters.add(
+            typeParameters +=
                 IrTypeParameterImpl(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     SHARED_VARIABLE_ORIGIN,
@@ -132,10 +132,9 @@ class JvmSharedVariablesManager(
                     parent = irClass
                     superTypes.add(irBuiltIns.anyNType)
                 }
-            )
             parent = refNamespaceClass
             refNamespaceClass.addMember(this)
-            superTypes.add(irBuiltIns.anyType)
+            superTypes += irBuiltIns.anyType
             thisReceiver = buildValueParameter {
                 type = IrSimpleTypeImpl(
                     symbol,

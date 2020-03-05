@@ -6,8 +6,6 @@ plugins {
 dependencies {
     testRuntime(intellijDep())
 
-    compile(project(":kotlin-native:kotlin-native-library-reader"))
-
     compileOnly(project(":idea:idea-gradle"))
     compileOnly(project(":idea:idea-native"))
 
@@ -42,6 +40,7 @@ dependencies {
         compileOnly(intellijPluginDep("java"))
     }
 
+    testRuntimeOnly(toolsJar())
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":idea:idea-android"))
@@ -68,16 +67,16 @@ dependencies {
     testRuntime(intellijPluginDep("coverage"))
     if (Ide.IJ()) {
         testRuntime(intellijPluginDep("maven"))
+
+        if (Ide.IJ201.orHigher()) {
+            testRuntime(intellijPluginDep("repository-search"))
+        }
     }
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijPluginDep("smali"))
 
     if (Ide.AS36.orHigher()) {
         testRuntime(intellijPluginDep("android-layoutlib"))
-    }
-
-    if (Ide.AS36()) {
-        testRuntime(intellijPluginDep("android-wizardTemplate-plugin"))
     }
 }
 

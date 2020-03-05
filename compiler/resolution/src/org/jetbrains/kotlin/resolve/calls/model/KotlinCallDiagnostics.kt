@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
+import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -138,14 +139,38 @@ class SmartCastDiagnostic(
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
 }
 
-class UnstableSmartCast(
+sealed class UnstableSmartCast(
     val argument: ExpressionKotlinCallArgument,
-    val targetType: UnwrappedType
-) : KotlinCallDiagnostic(MAY_THROW_RUNTIME_ERROR) {
+    val targetType: UnwrappedType,
+    applicability: ResolutionCandidateApplicability,
+) : KotlinCallDiagnostic(applicability) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(argument, this)
+
+    companion object {
+        operator fun invoke(
+            argument: ExpressionKotlinCallArgument,
+            targetType: UnwrappedType,
+            isReceiver: Boolean = false, // for reproducing OI behaviour
+        ): UnstableSmartCast {
+            return UnstableSmartCastResolutionError(argument, targetType)
+        }
+    }
 }
 
-class UnsafeCallError(val receiver: SimpleKotlinCallArgument) : KotlinCallDiagnostic(MAY_THROW_RUNTIME_ERROR) {
+class UnstableSmartCastResolutionError(
+    argument: ExpressionKotlinCallArgument,
+    targetType: UnwrappedType,
+) : UnstableSmartCast(argument, targetType, MAY_THROW_RUNTIME_ERROR)
+
+class UnstableSmartCastDiagnosticError(
+    argument: ExpressionKotlinCallArgument,
+    targetType: UnwrappedType,
+) : UnstableSmartCast(argument, targetType, RESOLVED_WITH_ERROR)
+
+class UnsafeCallError(
+    val receiver: SimpleKotlinCallArgument,
+    val isForImplicitInvoke: Boolean = false
+) : KotlinCallDiagnostic(MAY_THROW_RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallReceiver(receiver, this)
 }
 
@@ -207,5 +232,14 @@ class OnlyInputTypesDiagnostic(val typeVariable: NewTypeVariable) : KotlinCallDi
 class ResolvedToSamWithVarargDiagnostic(val argument: KotlinCallArgument) : KotlinCallDiagnostic(RESOLVED_TO_SAM_WITH_VARARG) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCallArgument(argument, this)
+    }
+}
+
+class NotEnoughInformationForLambdaParameter(
+    val lambdaArgument: LambdaKotlinCallArgument,
+    val parameterIndex: Int
+) : KotlinCallDiagnostic(RESOLVED_WITH_ERROR) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCallArgument(lambdaArgument, this)
     }
 }

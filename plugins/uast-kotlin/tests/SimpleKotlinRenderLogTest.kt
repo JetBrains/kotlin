@@ -1,43 +1,65 @@
 package org.jetbrains.uast.test.kotlin
 
+import org.jetbrains.uast.UFile
 import org.jetbrains.uast.kotlin.KotlinConverter
 import org.junit.Test
 
-class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
-    @Test fun testLocalDeclarations() = doTest("LocalDeclarations")
+class SimpleKotlinRenderLogTest : AbstractKotlinUastTest(), AbstractKotlinRenderLogTest {
 
-    @Test fun testSimple() = doTest("Simple")
+    override fun check(testName: String, file: UFile) = super.check(testName, file)
 
-    @Test fun testWhenIs() = doTest("WhenIs")
+    @Test
+    fun testLocalDeclarations() = doTest("LocalDeclarations")
 
-    @Test fun testDefaultImpls() = doTest("DefaultImpls")
+    @Test
+    fun testSimple() = doTest("Simple")
 
-    @Test fun testBitwise() = doTest("Bitwise")
+    @Test
+    fun testWhenIs() = doTest("WhenIs")
 
-    @Test fun testElvis() = doTest("Elvis")
+    @Test
+    fun testDefaultImpls() = doTest("DefaultImpls")
 
-    @Test fun testPropertyAccessors() = doTest("PropertyAccessors")
+    @Test
+    fun testBitwise() = doTest("Bitwise")
 
-    @Test fun testPropertyInitializer() = doTest("PropertyInitializer")
+    @Test
+    fun testElvis() = doTest("Elvis")
 
-    @Test fun testPropertyInitializerWithoutSetter() = doTest("PropertyInitializerWithoutSetter")
+    @Test
+    fun testPropertyAccessors() = doTest("PropertyAccessors")
 
-    @Test fun testAnnotationParameters() = doTest("AnnotationParameters")
+    @Test
+    fun testPropertyInitializer() = doTest("PropertyInitializer")
 
-    @Test fun testEnumValueMembers() = doTest("EnumValueMembers")
+    @Test
+    fun testPropertyInitializerWithoutSetter() = doTest("PropertyInitializerWithoutSetter")
 
-    @Test fun testStringTemplate() = doTest("StringTemplate")
+    @Test
+    fun testAnnotationParameters() = doTest("AnnotationParameters")
 
-    @Test fun testStringTemplateComplex() = doTest("StringTemplateComplex")
+    @Test
+    fun testEnumValueMembers() = doTest("EnumValueMembers")
+
+    @Test
+    fun testEnumValuesConstructors() = doTest("EnumValuesConstructors")
+
+    @Test
+    fun testStringTemplate() = doTest("StringTemplate")
+
+    @Test
+    fun testStringTemplateComplex() = doTest("StringTemplateComplex")
 
     @Test
     fun testStringTemplateComplexForUInjectionHost() = withForceUInjectionHostValue {
         doTest("StringTemplateComplexForUInjectionHost")
     }
 
-    @Test fun testQualifiedConstructorCall() = doTest("QualifiedConstructorCall")
+    @Test
+    fun testQualifiedConstructorCall() = doTest("QualifiedConstructorCall")
 
-    @Test fun testPropertyDelegate() = doTest("PropertyDelegate")
+    @Test
+    fun testPropertyDelegate() = doTest("PropertyDelegate")
 
     @Test fun testLocalVariableWithAnnotation() = doTest("LocalVariableWithAnnotation")
 

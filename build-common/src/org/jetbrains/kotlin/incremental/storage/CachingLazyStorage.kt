@@ -79,11 +79,10 @@ class CachingLazyStorage<K, V>(
     override fun clean() {
         try {
             storage?.close()
-        } catch (ignored: Throwable) {
+        } finally {
+            PersistentHashMap.deleteFilesStartingWith(storageFile)
+            storage = null
         }
-
-        PersistentHashMap.deleteFilesStartingWith(storageFile)
-        storage = null
     }
 
     @Synchronized

@@ -23,14 +23,10 @@ fun local() {
     <!UNSUPPORTED_FEATURE!>operator<!> fun String.remAssign(x: Int) {}
 }
 
-fun noOverflow() {
-    (-1).mod(5)
-}
-
 fun builtIns(b: Byte, s: Short) {
-    var a = 1 % 2
-    a %= 3
-    1.mod(2)
-    b % s
-    1.0 % 2.0
+    var a = 1 <!UNRESOLVED_REFERENCE!>%<!> 2
+    var d = 5
+    d <!UNRESOLVED_REFERENCE!>%=<!> 3
+    b <!UNRESOLVED_REFERENCE!>%<!> s
+    1.0 <!UNRESOLVED_REFERENCE!>%<!> 2.0
 }

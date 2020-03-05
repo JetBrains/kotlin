@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotations
@@ -94,8 +96,17 @@ class TypeDeserializer(
             KotlinTypeFactory.simpleType(annotations, constructor, arguments, proto.nullable)
         }
 
-        val abbreviatedTypeProto = proto.abbreviatedType(c.typeTable) ?: return simpleType
-        return simpleType.withAbbreviation(simpleType(abbreviatedTypeProto))
+        val computedType = proto.abbreviatedType(c.typeTable)?.let {
+            simpleType.withAbbreviation(simpleType(it))
+        } ?: simpleType
+
+
+        if (proto.hasClassName()) {
+            val classId = c.nameResolver.getClassId(proto.className)
+            return c.components.platformDependentTypeTransformer.transformPlatformType(classId, computedType)
+        }
+
+        return computedType
     }
 
     private fun typeConstructor(proto: ProtoBuf.Type): TypeConstructor {

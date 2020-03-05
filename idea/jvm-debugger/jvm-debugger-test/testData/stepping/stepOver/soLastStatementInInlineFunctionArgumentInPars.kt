@@ -14,4 +14,4 @@ inline fun bar(f: () -> Unit) {
 
 fun nop() {}
 
-// STEP_OVER: 2
+// STEP_OVER: 3

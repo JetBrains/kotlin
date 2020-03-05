@@ -20,9 +20,15 @@ import org.jetbrains.kotlin.ir.symbols.*
 
 interface IrCallableReference : IrMemberAccessExpression
 
-interface IrFunctionReference : IrCallableReference {
-    override val symbol: IrFunctionSymbol
+interface IrFunctionReference : IrCallableReference, IrFunctionAccessExpression {
+    val reflectionTarget: IrFunctionSymbol?
 }
+
+val IrFunctionReference.isWithReflection: Boolean
+    get() = reflectionTarget != null
+
+val IrFunctionReference.isAdapterWithReflection: Boolean
+    get() = reflectionTarget != null && reflectionTarget != symbol
 
 interface IrPropertyReference : IrCallableReference {
     override val symbol: IrPropertySymbol

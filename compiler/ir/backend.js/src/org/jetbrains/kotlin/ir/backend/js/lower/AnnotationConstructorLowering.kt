@@ -5,26 +5,32 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.util.parentAsClass
 
-class AnnotationConstructorLowering(context: CommonBackendContext) : ClassLoweringPass {
+class AnnotationConstructorLowering(context: CommonBackendContext) : DeclarationTransformer {
 
     private val unitType = context.irBuiltIns.unitType
 
-    override fun lower(irClass: IrClass) {
-        if (irClass.kind != ClassKind.ANNOTATION_CLASS) return
+    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        if (declaration !is IrConstructor || !declaration.isPrimary) return null
 
-        val constructor = irClass.declarations.filterIsInstance<IrConstructor>().single()
-        assert(constructor.isPrimary)
+        val irClass = declaration.parentAsClass
+
+        if (irClass.kind != ClassKind.ANNOTATION_CLASS) return null
+
         // put empty body to make sure proper initializer is generated
-        constructor.body = IrBlockBodyImpl(constructor.startOffset, constructor.endOffset).apply {
+        // TODO what about its previous body?
+        declaration.body = IrBlockBodyImpl(declaration.startOffset, declaration.endOffset) {
             statements += IrInstanceInitializerCallImpl(startOffset, endOffset, irClass.symbol, unitType)
         }
+
+        return null
     }
 }

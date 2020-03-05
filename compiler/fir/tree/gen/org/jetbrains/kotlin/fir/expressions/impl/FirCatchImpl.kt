@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirCatchImpl(
+internal class FirCatchImpl(
     override val source: FirSourceElement?,
     override var parameter: FirValueParameter,
-    override var block: FirBlock
+    override var block: FirBlock,
 ) : FirCatch() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         parameter.accept(visitor, data)

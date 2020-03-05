@@ -12,7 +12,7 @@ fun test(a: (Int) -> Int) {
 }
 
 fun test2(a: () -> List<Int>) {
-    test2(fun () = <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>listOf<!>())
+    test2(fun () = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>listOf<!>())
 }
 
 val a: (Int) -> Unit = fun(x) { checkSubtype<Int>(x) }

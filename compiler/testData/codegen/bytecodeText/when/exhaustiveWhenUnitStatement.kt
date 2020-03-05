@@ -1,4 +1,6 @@
 // IGNORE_BACKEND: JVM_IR
+// TODO KT-36840 Don't generate 'throw' clause for statement 'when' in JVM_IR
+
 enum class AccessMode { READ, WRITE, EXECUTE }
 
 fun whenExpr(access: AccessMode) {
@@ -7,11 +9,6 @@ fun whenExpr(access: AccessMode) {
         AccessMode.WRITE -> {}
         AccessMode.EXECUTE -> {}
     }
-}
-
-fun box(): String {
-    whenExpr(AccessMode.EXECUTE)
-    return "OK"
 }
 
 // 1 TABLESWITCH

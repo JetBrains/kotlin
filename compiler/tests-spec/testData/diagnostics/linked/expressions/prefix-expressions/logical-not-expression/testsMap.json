@@ -1,0 +1,14 @@
+{
+  "3": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 2,
+          "description": "No additional restrictions apply for unary minus",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

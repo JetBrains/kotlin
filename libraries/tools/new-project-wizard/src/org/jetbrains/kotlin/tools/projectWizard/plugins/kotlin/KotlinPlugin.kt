@@ -1,8 +1,13 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin
 
+import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.*
+import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
+import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionProviderService
+import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionProviderServiceImpl
+import org.jetbrains.kotlin.tools.projectWizard.core.service.kotlinVersionKind
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
@@ -16,8 +21,15 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import java.nio.file.Path
 
 class KotlinPlugin(context: Context) : Plugin(context) {
-    val version by versionSetting("Kotlin Version", GenerationPhase.FIRST_STEP) {
-        defaultValue = DEFAULT_VERSION
+    val version by property(KotlinVersionProviderServiceImpl.DEFAULT)
+
+    val initKotlinVersions by pipelineTask(GenerationPhase.PREPARE_GENERATION) {
+        title = "Downloading list of Kotlin versions"
+
+        withAction {
+            val version = service<KotlinVersionProviderService>().getKotlinVersion()
+            KotlinPlugin::version.update { version.asSuccess() }
+        }
     }
 
     val projectKind by enumSetting<ProjectKind>("Project Kind", GenerationPhase.FIRST_STEP)
@@ -51,68 +63,56 @@ class KotlinPlugin(context: Context) : Plugin(context) {
         runBefore(BuildSystemPlugin::createModules)
         runAfter(StructurePlugin::createProjectDir)
         withAction {
-            computeM {
-                BuildSystemPlugin::buildFiles.update {
-                    val modules = KotlinPlugin::modules.settingValue
-                    val (buildFiles) = createBuildFiles(modules)
-                    buildFiles.map { it.withIrs(RepositoryIR(DefaultRepository.MAVEN_CENTRAL)) }.asSuccess()
-                }.ensure()
-
-                updateModules { module ->
-                    val needLibrary = when (module) {
-                        is SingleplatformModuleIR -> true
-                        is SourcesetModuleIR -> module.sourcesetType == SourcesetType.main
-                    }
-                    val libraryName = module.type.correspondingStdlibName()
-                    when {
-                        needLibrary && libraryName != null -> module.withIrs(
-                            KotlinLibraryDependencyIR(
-                                libraryName,
-                                KotlinPlugin::version.settingValue,
-                                DependencyType.MAIN
-                            )
-                        )
-                        else -> module
-                    }.asSuccess()
-                }
+            BuildSystemPlugin::buildFiles.update {
+                val modules = KotlinPlugin::modules.settingValue
+                val (buildFiles) = createBuildFiles(modules)
+                buildFiles.map { it.withIrs(RepositoryIR(DefaultRepository.MAVEN_CENTRAL)) }.asSuccess()
             }
+        }
+    }
+
+    val createPluginRepositories by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
+        runBefore(BuildSystemPlugin::createModules)
+        withAction {
+            val pluginRepository = KotlinPlugin::version.propertyValue.kotlinVersionKind.repository ?: return@withAction UNIT_SUCCESS
+            BuildSystemPlugin::pluginRepositoreis.addValues(pluginRepository) andThen
+                    updateBuildFiles { buildFile ->
+                        buildFile.withIrs(RepositoryIR(pluginRepository)).asSuccess()
+                    }
         }
     }
 
     val createSourcesetDirectories by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runAfter(KotlinPlugin::createModules)
         withAction {
-            fun Path.createKotlinAndResourceDirectories() = with(service<FileSystemWizardService>()!!) {
+            fun Path.createKotlinAndResourceDirectories() = with(service<FileSystemWizardService>()) {
                 createDirectory(this@createKotlinAndResourceDirectories / Defaults.KOTLIN_DIR) andThen
                         createDirectory(this@createKotlinAndResourceDirectories / Defaults.RESOURCES_DIR)
             }
 
             forEachModule { moduleIR ->
-                when (moduleIR) {
-                    is SingleplatformModuleIR -> moduleIR.sourcesets.mapSequenceIgnore { sourcesetIR ->
-                        sourcesetIR.path.createKotlinAndResourceDirectories()
-                    }
-                    is SourcesetModuleIR -> {
-                        moduleIR.path.createKotlinAndResourceDirectories()
-                    }
+                moduleIR.sourcesets.mapSequenceIgnore { sourcesetIR ->
+                    sourcesetIR.path.createKotlinAndResourceDirectories()
                 }
             }
         }
     }
 
 
-    private fun TaskRunningContext.createBuildFiles(modules: List<Module>): TaskResult<List<BuildFileIR>> =
-        ModulesToIRsConverter(
-            ModuleConfigurationData(
-                modules,
-                projectPath,
-                StructurePlugin::name.settingValue,
-                KotlinPlugin::version.settingValue,
-                buildSystemType,
-                pomIR(),
-                this
+    private fun WritingContext.createBuildFiles(modules: List<Module>): TaskResult<List<BuildFileIR>> =
+        with(
+            ModulesToIRsConverter(
+                ModuleConfigurationData(
+                    modules,
+                    projectPath,
+                    StructurePlugin::name.settingValue,
+                    KotlinPlugin::version.propertyValue,
+                    buildSystemType,
+                    pomIR(),
+                    this
+                )
             )
-        ).createBuildFiles()
+        ) { createBuildFiles() }
 
 
     companion object {
@@ -123,14 +123,16 @@ class KotlinPlugin(context: Context) : Plugin(context) {
 }
 
 enum class ProjectKind(override val text: String) : DisplayableSettingItem {
-    Singleplatform("Singleplatform JVM project"),
-    Multiplatform("Multiplatform project")
+    Singleplatform("Singleplatform project"),
+    Multiplatform("Multiplatform project"),
+    Android("Android project"),
+    Js("Kotlin/JS project")
 }
 
 fun List<Module>.withAllSubModules(includeSourcesets: Boolean = false): List<Module> = buildList {
     fun handleModule(module: Module) {
         +module
-        if (module.kind == ModuleKind.singleplatform
+        if (module.kind != ModuleKind.multiplatform
             || includeSourcesets && module.kind == ModuleKind.multiplatform
         ) {
             module.subModules.forEach(::handleModule)

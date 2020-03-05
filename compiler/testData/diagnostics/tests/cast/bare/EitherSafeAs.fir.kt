@@ -9,7 +9,7 @@ class C2(val v2: Int)
 
 fun _as_left(e: Either<C1, C2>): Any? {
     val v = e as? Left
-    return <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Left<C1>?>(v)
+    return checkSubtype<Left<C1>?>(v)
 }
 
 fun _as_right(e: Either<C1, C2>): Any? {

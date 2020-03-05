@@ -1,0 +1,13 @@
+package
+
+public fun </*0*/ K> id(/*0*/ it: K): K
+public fun </*0*/ E1> noSmartCast1(/*0*/ arg: E1?, /*1*/ fn: () -> E1): E1
+public fun </*0*/ E2> noSmartCast2(/*0*/ arg: E2?, /*1*/ fn: E2): E2
+public fun </*0*/ E3, /*1*/ F : E3> noSmartCast3(/*0*/ arg: E3?, /*1*/ fn: () -> F): E3
+public fun </*0*/ E4, /*1*/ F : E4> noSmartCast4(/*0*/ arg: E4?, /*1*/ fn: F): E4
+public fun </*0*/ E> smartCast(/*0*/ arg: E?, /*1*/ fn: () -> kotlin.Any?): E
+public fun testNoSmartCast1(/*0*/ s: kotlin.String?): kotlin.Unit
+public fun testNoSmartCast2(/*0*/ s: kotlin.String?): kotlin.Unit
+public fun testNoSmartCast3(/*0*/ s: kotlin.String?): kotlin.Unit
+public fun testNoSmartCast4(/*0*/ s: kotlin.String?): kotlin.Unit
+public fun testSmartCast(/*0*/ s: kotlin.String?): kotlin.Unit

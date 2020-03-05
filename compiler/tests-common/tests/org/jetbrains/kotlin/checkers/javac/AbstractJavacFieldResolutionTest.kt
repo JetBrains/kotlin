@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.checkers.javac
 
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import java.io.File
 
@@ -24,14 +25,13 @@ abstract class AbstractJavacFieldResolutionTest : AbstractDiagnosticsTest() {
 
     private var useJavac = true
 
-    override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
+    override fun setupEnvironment(environment: KotlinCoreEnvironment, testDataFile: File, files: List<TestFile>) {
         if (useJavac) {
             val groupedByModule = files.groupBy(TestFile::module)
             val allKtFiles = groupedByModule.values.flatMap { getKtFiles(it, true) }
             environment.registerJavac(kotlinFiles = allKtFiles)
             environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
         }
-        super.analyzeAndCheck(testDataFile, files)
     }
 
     fun doTestWithoutJavacWrapper(path: String) {

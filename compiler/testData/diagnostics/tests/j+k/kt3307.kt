@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: Bug.java
 
 public interface Bug {

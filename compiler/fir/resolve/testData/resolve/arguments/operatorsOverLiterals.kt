@@ -56,7 +56,7 @@ fun test_5() {
 
 fun test_6() {
     <!INAPPLICABLE_CANDIDATE!>takeByte<!>(run { 127 + 1 })
-    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(1 <!INAPPLICABLE_CANDIDATE!>+<!> run { 1 })
+    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(1 + run { 1 })
     takeByte(run { 1 + 1 })
     1 + 1
     run { 1 }

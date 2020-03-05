@@ -58,6 +58,7 @@ val abstractFirBasedSymbolType = type("fir.symbols", "AbstractFirBasedSymbol")
 val backingFieldSymbolType = type("fir.symbols.impl", "FirBackingFieldSymbol")
 val delegateFieldSymbolType = type("fir.symbols.impl", "FirDelegateFieldSymbol")
 val classSymbolType = type("fir.symbols.impl", "FirClassSymbol")
+val classLikeSymbolType = type("fir.symbols.impl", "FirClassLikeSymbol<*>")
 val typeParameterSymbolType = type("fir.symbols.impl", "FirTypeParameterSymbol")
 
 val firScopeProviderType = type("fir.scopes", "FirScopeProvider")
@@ -67,3 +68,5 @@ val effectDeclarationType = type("fir.contracts.description", "ConeEffectDeclara
 val emptyContractDescriptionType = generatedType("contracts.impl", "FirEmptyContractDescription")
 val firDiagnosticType = generatedType("diagnostics", "FirDiagnostic")
 
+val dslBuilderAnnotationType = generatedType("builder", "FirBuilderDsl")
+val firImplementationDetailType = generatedType("FirImplementationDetail")

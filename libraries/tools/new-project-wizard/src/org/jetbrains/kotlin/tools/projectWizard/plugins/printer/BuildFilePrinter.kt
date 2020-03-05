@@ -8,8 +8,8 @@ abstract class BuildFilePrinter {
     private val builder = StringBuilder()
     protected var currentIndent = 0
 
-    fun nl() {
-        +"\n"
+    fun nl(lineBreaks: Int = 1) {
+        +"\n".repeat(lineBreaks)
     }
 
     fun nlIndented() {
@@ -52,8 +52,8 @@ abstract class BuildFilePrinter {
         suffix()
     }
 
-    open fun <T : BuildSystemIR> List<T>.listNl() {
-        indent()
+    open fun <T : BuildSystemIR> List<T>.listNl(needFirstIndent: Boolean = true) {
+        if (needFirstIndent) indent()
         list(separator = { nl(); indent() }) { it.render(this) }
     }
 

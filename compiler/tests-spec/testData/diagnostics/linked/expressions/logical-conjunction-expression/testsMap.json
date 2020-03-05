@@ -1,0 +1,42 @@
+{
+  "2": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 7,
+          "description": "Both operands of a logical conjunction expression must have a type which is a subtype of kotlin.Boolean",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 7,
+          "description": "Both operands of a logical conjunction expression must have a type which is a subtype of kotlin.Boolean",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2/neg/1.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 1,
+          "description": "Both operands of a logical conjunction expression must have a type which is a subtype of kotlin.Boolean",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 1,
+          "description": "Both operands of a logical conjunction expression must have a type which is a subtype of kotlin.Boolean",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/logical-conjunction-expression/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

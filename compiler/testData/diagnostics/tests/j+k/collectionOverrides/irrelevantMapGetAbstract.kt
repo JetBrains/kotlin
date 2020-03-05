@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: Dict.java
 
 public abstract class Dict<K, V> {

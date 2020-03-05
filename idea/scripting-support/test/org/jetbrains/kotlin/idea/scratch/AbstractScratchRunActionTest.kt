@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
 import org.jetbrains.kotlin.idea.scratch.actions.ScratchCompilationSupport
 import org.jetbrains.kotlin.idea.scratch.output.InlayScratchFileRenderer
-import org.jetbrains.kotlin.idea.scratch.output.getInlays
 import org.jetbrains.kotlin.idea.scratch.ui.KtScratchFileEditorWithPreview
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
@@ -200,7 +199,9 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     }
 
     protected fun getInlays(start: Int = 0, end: Int = myFixture.file.textLength): List<InlayScratchFileRenderer> {
-        val inlineElementsInRange = myFixture.editor.inlayModel.getInlays(start, end)
+        val inlineElementsInRange = myFixture.editor.inlayModel
+            .getAfterLineEndElementsInRange(start, end)
+            .filter { it.renderer is InlayScratchFileRenderer }
         return inlineElementsInRange.map { it.renderer as InlayScratchFileRenderer }
     }
 

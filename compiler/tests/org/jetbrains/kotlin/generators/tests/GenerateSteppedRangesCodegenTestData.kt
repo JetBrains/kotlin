@@ -164,7 +164,9 @@ object GenerateSteppedRangesCodegenTestData {
         fullSubdir.mkdirs()
         PrintWriter(File(fullSubdir, fileName)).use {
             with(it) {
-                println("// IGNORE_BACKEND_FIR: JVM_IR")
+                if (fullSubdirPath.contains("expression") || (fileName != "stepOne.kt" && fileName != "stepOneThenStepOne.kt")) {
+                    println("// IGNORE_BACKEND_FIR: JVM_IR")
+                }
                 println("// $PREAMBLE_MESSAGE")
                 println("// KJS_WITH_FULL_RUNTIME")
                 println("// WITH_RUNTIME")

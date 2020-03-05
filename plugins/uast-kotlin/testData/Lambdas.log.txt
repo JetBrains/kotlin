@@ -37,3 +37,10 @@ UFile (package = )
                 UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                     UIdentifier (Identifier (baz))
                     USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null)
+        UMethod (name = lambdaInPlaceCall)
+            UBlockExpression
+                UWhileExpression
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                        UIdentifier (Identifier ({))
+                        USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null)
+                    UBlockExpression

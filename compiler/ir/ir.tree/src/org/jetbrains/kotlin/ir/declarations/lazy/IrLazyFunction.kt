@@ -23,6 +23,7 @@ class IrLazyFunction(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrSimpleFunctionSymbol,
+    override val descriptor: FunctionDescriptor,
     name: Name,
     visibility: Visibility,
     override val modality: Modality,
@@ -39,32 +40,7 @@ class IrLazyFunction(
     IrLazyFunctionBase(startOffset, endOffset, origin, name, visibility, isInline, isExternal, isExpect, stubGenerator, typeTranslator),
     IrSimpleFunction {
 
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrSimpleFunctionSymbol,
-        stubGenerator: DeclarationStubGenerator,
-        TypeTranslator: TypeTranslator
-    ) : this(
-        startOffset, endOffset, origin, symbol,
-        symbol.descriptor.name,
-        symbol.descriptor.visibility,
-        symbol.descriptor.modality,
-        isInline = symbol.descriptor.isInline,
-        isExternal = symbol.descriptor.isExternal,
-        isTailrec = symbol.descriptor.isTailrec,
-        isSuspend = symbol.descriptor.isSuspend,
-        isExpect = symbol.descriptor.isExpect,
-        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-        isOperator = symbol.descriptor.isOperator,
-        stubGenerator = stubGenerator,
-        typeTranslator = TypeTranslator
-    )
-
-    override val descriptor: FunctionDescriptor = symbol.descriptor
-
-    override val typeParameters: MutableList<IrTypeParameter> by lazy {
+    override var typeParameters: List<IrTypeParameter> by lazyVar {
         typeTranslator.buildWithScope(this) {
             stubGenerator.symbolTable.withScope(descriptor) {
                 val propertyIfAccessor = descriptor.propertyIfAccessor
@@ -82,7 +58,7 @@ class IrLazyFunction(
     }
 
 
-    override val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> by lazy {
+    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar {
         descriptor.overriddenDescriptors.mapTo(arrayListOf()) {
             stubGenerator.generateFunctionStub(it.original).symbol
         }

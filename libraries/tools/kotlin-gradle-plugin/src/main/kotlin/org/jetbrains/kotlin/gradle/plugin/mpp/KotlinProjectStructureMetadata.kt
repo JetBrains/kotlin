@@ -8,7 +8,12 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
+import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
+import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.getPublishedPlatformCompilations
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -21,6 +26,26 @@ data class ModuleDependencyIdentifier(
     val moduleId: String
 )
 
+sealed class SourceSetMetadataLayout(
+    @get:Input
+    val name: String,
+    @get:Internal
+    val archiveExtension: String
+) {
+    object METADATA : SourceSetMetadataLayout("metadata", "jar")
+    object KLIB : SourceSetMetadataLayout("klib", "klib")
+
+    companion object {
+        private val values = listOf(METADATA, KLIB)
+
+        fun byName(name: String): SourceSetMetadataLayout? = values.firstOrNull { it.name == name }
+
+        fun chooseForProducingProject(project: Project) =
+            /** A producing project will now only generate Granular source sets metadata as a KLIB */
+            KLIB
+    }
+}
+
 data class KotlinProjectStructureMetadata(
     @Input
     val sourceSetNamesByVariantName: Map<String, Set<String>>,
@@ -28,11 +53,14 @@ data class KotlinProjectStructureMetadata(
     @Input
     val sourceSetsDependsOnRelation: Map<String, Set<String>>,
 
+    @Nested
+    val sourceSetBinaryLayout: Map<String, SourceSetMetadataLayout>,
+
     @Internal
     val sourceSetModuleDependencies: Map<String, Set<ModuleDependencyIdentifier>>,
 
     @Input
-    val formatVersion: String = FORMAT_VERSION_0_1
+    val formatVersion: String = FORMAT_VERSION_0_2
 ) {
     @Suppress("UNUSED") // Gradle input
     @get:Input
@@ -41,6 +69,7 @@ data class KotlinProjectStructureMetadata(
 
     companion object {
         internal const val FORMAT_VERSION_0_1 = "0.1"
+        internal const val FORMAT_VERSION_0_2 = "0.2"
     }
 }
 
@@ -60,9 +89,26 @@ internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjec
             sourceSet.name to sourceSet.dependsOn.filter { it in sourceSetsWithMetadataCompilations }.map { it.name }.toSet()
         },
         sourceSetModuleDependencies = sourceSetsWithMetadataCompilations.keys.associate { sourceSet ->
-            sourceSet.name to project.configurations.getByName(sourceSet.apiConfigurationName).allDependencies.map {
+            /**
+             * Currently, Kotlin/Native dependencies must include the implementation dependencies, too. These dependencies must also be
+             * published as API dependencies of the metadata module to get into the resolution result, see
+             * [KotlinMetadataTargetConfigurator.exportDependenciesForPublishing].
+             */
+            val isNativeSharedSourceSet = sourceSetsWithMetadataCompilations[sourceSet] is KotlinSharedNativeCompilation
+            val sourceSetExportedDependencies = when {
+                isNativeSharedSourceSet -> sourceSet.getSourceSetHierarchy().flatMap { hierarchySourceSet ->
+                    listOf(KotlinDependencyScope.API_SCOPE, KotlinDependencyScope.IMPLEMENTATION_SCOPE).flatMap { scope ->
+                        project.sourceSetDependencyConfigurationByScope(hierarchySourceSet, scope).allDependencies.toList()
+                    }
+                }.distinct()
+                else -> project.configurations.getByName(sourceSet.apiConfigurationName).allDependencies
+            }
+            sourceSet.name to sourceSetExportedDependencies.map {
                 ModuleDependencyIdentifier(it.group.orEmpty(), it.name)
             }.toSet()
+        },
+        sourceSetBinaryLayout = sourceSetsWithMetadataCompilations.keys.associate { sourceSet ->
+            sourceSet.name to SourceSetMetadataLayout.chooseForProducingProject(project)
         }
     )
 }
@@ -96,6 +142,9 @@ internal fun KotlinProjectStructureMetadata.toXmlDocument(): Document {
                         sourceSetModuleDependencies[sourceSet].orEmpty().forEach { moduleDependency ->
                             textNode("moduleDependency", moduleDependency.groupId + ":" + moduleDependency.moduleId)
                         }
+                        sourceSetBinaryLayout[sourceSet]?.let { binaryLayout ->
+                            textNode("binaryLayout", binaryLayout.name)
+                        }
                     }
                 }
             }
@@ -123,6 +172,7 @@ internal fun parseKotlinSourceSetMetadataFromXml(document: Document): KotlinProj
 
     val sourceSetDependsOnRelation = mutableMapOf<String, Set<String>>()
     val sourceSetModuleDependencies = mutableMapOf<String, Set<ModuleDependencyIdentifier>>()
+    val sourceSetBinaryLayout = mutableMapOf<String, SourceSetMetadataLayout>()
 
     val sourceSetsNode = projectStructureNode.getElementsByTagName("sourceSets").item(0) ?: return null
 
@@ -139,6 +189,11 @@ internal fun parseKotlinSourceSetMetadataFromXml(document: Document): KotlinProj
                     val (groupId, moduleId) = node.textContent.split(":")
                     moduleDependencies.add(ModuleDependencyIdentifier(groupId, moduleId))
                 }
+                "binaryLayout" -> {
+                    SourceSetMetadataLayout.byName(node.textContent)?.let { binaryLayout ->
+                        sourceSetBinaryLayout[sourceSetName] = binaryLayout
+                    }
+                }
             }
         }
 
@@ -149,6 +204,7 @@ internal fun parseKotlinSourceSetMetadataFromXml(document: Document): KotlinProj
     return KotlinProjectStructureMetadata(
         sourceSetsByVariant,
         sourceSetDependsOnRelation,
+        sourceSetBinaryLayout,
         sourceSetModuleDependencies,
         formatVersion
     )

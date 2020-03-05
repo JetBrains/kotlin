@@ -40,6 +40,8 @@ object StandardClassIds {
     val Comparable = "Comparable".baseId()
     val Number = "Number".baseId()
 
+    val Function = "Function".baseId()
+
     fun byName(name: String) = name.baseId()
     fun reflectByName(name: String) = name.reflectId()
 

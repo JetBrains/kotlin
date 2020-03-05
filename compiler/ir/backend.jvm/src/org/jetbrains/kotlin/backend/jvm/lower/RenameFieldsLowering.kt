@@ -48,15 +48,14 @@ private class RenameFieldsLowering(val context: CommonBackendContext) : FileLowe
             if (fields.size < 2) continue
 
             var count = 0
-            // We never rename JvmField properties, since they are public ABI. Therefore we consider the JvmField-annotated property first,
-            // in order to make sure it'll claim its original name.
+            // We never rename fields that are part of public ABI (backing fields of const, lateinit, and JvmField properties).
+            // Therefore we consider such fields first, in order to make sure it'll claim its original name.
             // If there are non-static and static (moved from companion) fields with the same name, we try to make static properties retain
             // their original names first, since this is what the old JVM backend did. However this can easily be changed without any
             // major binary compatibility consequences (modulo access to private members via Java reflection).
             for (field in fields.sortedBy {
                 when {
-                    // TODO: also do not rename const properties
-                    it.isJvmField -> 0
+                    it.isPublicAbi() -> 0
                     it.isStatic -> 1
                     else -> 2
                 }
@@ -65,8 +64,7 @@ private class RenameFieldsLowering(val context: CommonBackendContext) : FileLowe
                 val newName = if (count == 0) oldName else Name.identifier(oldName.asString() + "$$count")
                 count++
 
-                // TODO: check visibility instead of annotation
-                if (field.isJvmField) continue
+                if (field.isPublicAbi()) continue
 
                 newNames[field] = newName
             }
@@ -76,6 +74,14 @@ private class RenameFieldsLowering(val context: CommonBackendContext) : FileLowe
         irFile.transform(renamer, null)
 
         irFile.transform(FieldAccessTransformer(renamer.newSymbols), null)
+    }
+
+    private fun IrField.isPublicAbi(): Boolean {
+        if (!visibility.isPublicAPI) return false
+        val correspondingProperty = correspondingPropertySymbol?.owner
+        return isJvmField ||
+                origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE ||
+                correspondingProperty != null && (correspondingProperty.isLateinit || correspondingProperty.isConst)
     }
 
     private val IrField.isJvmField: Boolean

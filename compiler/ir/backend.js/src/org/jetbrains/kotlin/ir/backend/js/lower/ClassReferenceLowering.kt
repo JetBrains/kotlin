@@ -5,19 +5,14 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.toJsArrayLiteral
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrClassReference
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetClass
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -28,7 +23,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.*
 
-class ClassReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass {
+class ClassReferenceLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val intrinsics = context.intrinsics
 
     private val primitiveClassesObject = context.primitiveClassesObject
@@ -156,9 +151,10 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass
     private fun createSimpleKType(type: IrSimpleType): IrExpression {
         val classifier: IrClassifierSymbol = type.classifier
 
-        if (classifier is IrTypeParameterSymbol && classifier.owner.isReified) {
-            error("Fail")
-        }
+        // TODO: Check why do we have un-substituted reified parameters
+        // if (classifier is IrTypeParameterSymbol && classifier.owner.isReified) {
+        //     error("Fail")
+        // }
 
         val kClassifier = createKClassifier(classifier)
         // TODO: Use static array types
@@ -211,9 +207,11 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass
             Variance.IN_VARIANCE -> JsIrBuilder.buildString(context.irBuiltIns.stringType, "in")
             Variance.OUT_VARIANCE -> JsIrBuilder.buildString(context.irBuiltIns.stringType, "out")
         }
-        if (typeParameter.isReified) {
-            error("Reified parameter")
-        }
+
+        // TODO: Check why do we have non-inlined reified parameters
+        // if (typeParameter.isReified) {
+        //     error("Reified parameter")
+        // }
 
         return buildCall(
             context.intrinsics.createKTypeParameter!!,
@@ -223,8 +221,8 @@ class ClassReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass
         )
     }
 
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        irBody.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
             override fun visitGetClass(expression: IrGetClass) =
                 callGetKClassFromExpression(
                     returnType = expression.type,

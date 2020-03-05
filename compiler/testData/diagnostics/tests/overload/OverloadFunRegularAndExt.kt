@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // check no error when regular function and extension function have same name
 
 package extensionAndRegular

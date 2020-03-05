@@ -39,6 +39,9 @@ class FirIdeProvider(
 
     private val files = mutableMapOf<KtFile, FirFileWithStamp>()
 
+    override val isPhasedFirAllowed: Boolean
+        get() = true
+
     override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>? {
         return cacheProvider.getFirClassifierByFqName(classId) ?: run {
             try {

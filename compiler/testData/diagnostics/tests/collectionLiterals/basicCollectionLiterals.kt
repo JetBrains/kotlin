@@ -20,5 +20,5 @@ fun check() {
     val f: IntArray = [1]
     [f] checkType { _<Array<IntArray>>() }
 
-    [1, ""] checkType { <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Array<Any>>() }
+    [1, ""] checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Array<Any>>() }
 }

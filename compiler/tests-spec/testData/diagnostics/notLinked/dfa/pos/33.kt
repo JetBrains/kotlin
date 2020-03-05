@@ -83,7 +83,6 @@ fun case_5() {
 
 /*
  * TESTCASE NUMBER: 6
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-35668
  */
 fun case_6() {

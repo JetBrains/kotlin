@@ -1,8 +1,10 @@
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
+import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.File
 
-internal data class NodeJsEnv(
+data class NodeJsEnv(
+    val cleanableStore: CleanableStore,
     val nodeDir: File,
     val nodeBinDir: File,
     val nodeExecutable: String,

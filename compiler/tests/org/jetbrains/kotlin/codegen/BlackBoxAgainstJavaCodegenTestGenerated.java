@@ -127,6 +127,24 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
                 runTest("compiler/testData/codegen/boxAgainstJava/annotations/kClassMapping/varargClassParameterOnJavaClass.kt");
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/boxAgainstJava/annotations/typeAnnotations")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TypeAnnotations extends AbstractBlackBoxAgainstJavaCodegenTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInTypeAnnotations() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/annotations/typeAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("implicitReturn.kt")
+            public void testImplicitReturn() throws Exception {
+                runTest("compiler/testData/codegen/boxAgainstJava/annotations/typeAnnotations/implicitReturn.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/callableReference")
@@ -331,11 +349,6 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
             runTest("compiler/testData/codegen/boxAgainstJava/ieee754/explicitEqualsCall.kt");
         }
 
-        @TestMetadata("explicitEqualsCallNull.kt")
-        public void testExplicitEqualsCallNull() throws Exception {
-            runTest("compiler/testData/codegen/boxAgainstJava/ieee754/explicitEqualsCallNull.kt");
-        }
-
         @TestMetadata("float.kt")
         public void testFloat() throws Exception {
             runTest("compiler/testData/codegen/boxAgainstJava/ieee754/float.kt");
@@ -469,6 +482,37 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
         @TestMetadata("rightElvisOperand.kt")
         public void testRightElvisOperand() throws Exception {
             runTest("compiler/testData/codegen/boxAgainstJava/notNullAssertions/rightElvisOperand.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxAgainstJava/oldLanguageVersions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class OldLanguageVersions extends AbstractBlackBoxAgainstJavaCodegenTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInOldLanguageVersions() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/oldLanguageVersions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("compiler/testData/codegen/boxAgainstJava/oldLanguageVersions/ieee754")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Ieee754 extends AbstractBlackBoxAgainstJavaCodegenTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInIeee754() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/oldLanguageVersions/ieee754"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("explicitEqualsCallNull.kt")
+            public void testExplicitEqualsCallNull() throws Exception {
+                runTest("compiler/testData/codegen/boxAgainstJava/oldLanguageVersions/ieee754/explicitEqualsCallNull.kt");
+            }
         }
     }
 
@@ -1016,6 +1060,24 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxAgainstJava/throws")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Throws extends AbstractBlackBoxAgainstJavaCodegenTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInThrows() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/throws"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("delegationAndThrows.kt")
+        public void testDelegationAndThrows() throws Exception {
+            runTest("compiler/testData/codegen/boxAgainstJava/throws/delegationAndThrows.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/typealias")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -1109,6 +1171,11 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
             @TestMetadata("protectedPropertyInPackage.kt")
             public void testProtectedPropertyInPackage() throws Exception {
                 runTest("compiler/testData/codegen/boxAgainstJava/visibility/protectedAndPackage/protectedPropertyInPackage.kt");
+            }
+
+            @TestMetadata("protectedPropertyInPackageFromCrossinline.kt")
+            public void testProtectedPropertyInPackageFromCrossinline() throws Exception {
+                runTest("compiler/testData/codegen/boxAgainstJava/visibility/protectedAndPackage/protectedPropertyInPackageFromCrossinline.kt");
             }
 
             @TestMetadata("protectedStaticClass.kt")

@@ -23,12 +23,13 @@ import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.kotlin.unwrapFakeFileForLightClass
 import org.jetbrains.uast.toUElement
 
-class UastLightIdentifier(lightOwner: PsiNameIdentifierOwner, ktDeclaration: KtNamedDeclaration?) :
+class UastLightIdentifier(lightOwner: PsiNameIdentifierOwner, ktDeclaration: KtDeclaration?) :
     KtLightIdentifier(lightOwner, ktDeclaration) {
     override fun getContainingFile(): PsiFile = unwrapFakeFileForLightClass(super.getContainingFile())
 }
@@ -42,7 +43,8 @@ class KotlinUIdentifier private constructor(
 
     init {
         if (ApplicationManager.getApplication().isUnitTestMode && !acceptableSourcePsi(sourcePsi))
-            throw AssertionError("sourcePsi should be physical leaf element but got $sourcePsi of (${sourcePsi?.javaClass})")
+            throw KotlinExceptionWithAttachments("sourcePsi should be physical leaf element but got $sourcePsi of (${sourcePsi?.javaClass})")
+                .withAttachment("sourcePsi.text", sourcePsi?.text)
     }
 
     private fun acceptableSourcePsi(sourcePsi: PsiElement?): Boolean {

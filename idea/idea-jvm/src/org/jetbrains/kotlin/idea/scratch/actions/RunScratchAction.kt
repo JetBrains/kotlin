@@ -21,7 +21,10 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.keymap.KeymapManager
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.project.DumbService
+import com.intellij.task.ProjectTaskContext
 import com.intellij.task.ProjectTaskManager
+import com.intellij.task.ProjectTaskNotification
+import com.intellij.task.ProjectTaskResult
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.scratch.*
 import org.jetbrains.kotlin.idea.scratch.printDebugMessage
@@ -72,8 +75,8 @@ class RunScratchAction : ScratchAction(
 
             if (!isAutoRun && module != null && isMakeBeforeRun) {
                 val project = scratchFile.project
-                ProjectTaskManager.getInstance(project).build(arrayOf(module)) { result ->
-                    if (result.isAborted || result.errors > 0) {
+                ProjectTaskManager.getInstance(project).build(module).onSuccess { executionResult ->
+                    if (executionResult.isAborted || executionResult.hasErrors()) {
                         executor.errorOccurs("There were compilation errors in module ${module.name}")
                     }
 

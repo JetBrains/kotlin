@@ -210,7 +210,7 @@ abstract class Tag(val name: String) : Element() {
     val children = ArrayList<Element>()
     val attributes = HashMap<String, String>()
 
-    inline protected fun <T : Element> initTag(tag: T, init: T.() -> Unit): T {
+    inline fun <T : Element> initTag(tag: T, init: T.() -> Unit): T {
         tag.init()
         children.add(tag)
         return tag

@@ -57,8 +57,10 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
         val hasExact = subType.isTypeVariableWithExact() || superType.isTypeVariableWithExact()
 
         // we should strip annotation's because we have incorporation operation and they should be not affected
-        val mySubType = if (hasExact) subType.removeExactAnnotation() else subType
-        val mySuperType = if (hasExact) superType.removeExactAnnotation() else superType
+        val mySubType =
+            if (hasExact) extractTypeForProjectedType(subType, out = true) ?: subType.removeExactAnnotation() else subType
+        val mySuperType =
+            if (hasExact) extractTypeForProjectedType(superType, out = false) ?: superType.removeExactAnnotation() else superType
 
         val result = internalAddSubtypeConstraint(mySubType, mySuperType)
         if (!hasExact) return result
@@ -67,6 +69,20 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
 
         if (result == null && result2 == null) return null
         return (result ?: true) && (result2 ?: true)
+    }
+
+    private fun extractTypeForProjectedType(type: KotlinTypeMarker, out: Boolean): KotlinTypeMarker? {
+        val typeMarker = type.asSimpleType()?.asCapturedType() ?: return null
+
+        val projection = typeMarker.typeConstructorProjection()
+        if (projection.isStarProjection()) return null
+
+
+        return when (projection.getVariance()) {
+            TypeVariance.IN -> if (!out) typeMarker.lowerType() ?: projection.getType() else null
+            TypeVariance.OUT -> if (out) projection.getType() else null
+            TypeVariance.INV -> null
+        }
     }
 
     private fun KotlinTypeMarker.isTypeVariableWithExact() =
@@ -146,7 +162,7 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
      *
      * => Foo <: T! -- (Foo!! .. Foo) <: T
      *
-     * Foo? <: T! -- (Foo!! .. Foo?) <: T
+     * Foo? <: T! -- Foo? <: T
      *
      *
      * (Foo..Bar) <: T! --
@@ -173,7 +189,11 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
                 when (subType) {
                     is SimpleTypeMarker ->
                         // Foo <: T! -- (Foo!! .. Foo) <: T
-                        createFlexibleType(subType.makeSimpleTypeDefinitelyNotNullOrNotNull(), subType)
+                        if (subType.isMarkedNullable()) {
+                            subType // prefer nullable type to flexible one: `Foo? <: (T..T?)` => lowerConstraint = `Foo?`
+                        } else {
+                            createFlexibleType(subType, subType.withNullability(true))
+                        }
 
                     is FlexibleTypeMarker ->
                         // (Foo..Bar) <: T! -- (Foo!! .. Bar) <: T
@@ -197,23 +217,24 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
     }
 
     /**
-     * T! <: Foo <=> T <: Foo
+     * T! <: Foo <=> T <: Foo..Foo?
      * T? <: Foo <=> T <: Foo && Nothing? <: Foo
      * T  <: Foo -- leave as is
      */
     private fun simplifyUpperConstraint(typeVariable: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean {
-        @Suppress("NAME_SHADOWING")
-        val typeVariable = typeVariable.lowerBoundIfFlexible()
+        val typeVariableLowerBound = typeVariable.lowerBoundIfFlexible()
+        val simplifiedSuperType = if (typeVariableLowerBound.isDefinitelyNotNullType()) {
+            superType.withNullability(true)
+        } else if (typeVariable.isFlexible() && superType is SimpleTypeMarker) {
+            createFlexibleType(superType, superType.withNullability(true))
+        } else superType
 
-        @Suppress("NAME_SHADOWING")
-        val superType = if (typeVariable.isDefinitelyNotNullType()) superType.withNullability(true) else superType
+        addUpperConstraint(typeVariableLowerBound.typeConstructor(), simplifiedSuperType)
 
-        addUpperConstraint(typeVariable.typeConstructor(), superType)
-
-        if (typeVariable.isMarkedNullable()) {
+        if (typeVariableLowerBound.isMarkedNullable()) {
             // here is important that superType is singleClassifierType
-            return superType.anyBound(this::isMyTypeVariable) ||
-                    isSubtypeOfByTypeChecker(nullableNothingType(), superType)
+            return simplifiedSuperType.anyBound(this::isMyTypeVariable) ||
+                    isSubtypeOfByTypeChecker(nullableNothingType(), simplifiedSuperType)
         }
 
         return true

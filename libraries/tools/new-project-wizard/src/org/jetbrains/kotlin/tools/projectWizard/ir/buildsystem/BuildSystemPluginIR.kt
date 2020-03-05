@@ -43,10 +43,9 @@ data class KotlinBuildSystemPluginIR(
 
     override fun BuildFilePrinter.render() = when (this) {
         is GradlePrinter -> {
-            when {
-                type == Type.android -> call("id") { +"kotlin-android".quotified }
-                dsl == GradlePrinter.GradleDsl.KOTLIN -> call("kotlin") { +type.toString().quotified }
-                else -> call("id") { +"org.jetbrains.kotlin.$type".quotified }
+            when (dsl) {
+                GradlePrinter.GradleDsl.KOTLIN -> call("kotlin") { +type.toString().quotified }
+                GradlePrinter.GradleDsl.GROOVY -> call("id") { +"org.jetbrains.kotlin.$type".quotified }
             }
             version?.let {
                 +" version "
@@ -81,6 +80,6 @@ data class KotlinBuildSystemPluginIR(
 
     @Suppress("EnumEntryName", "unused", "SpellCheckingInspection")
     enum class Type {
-        jvm, multiplatform, android
+        jvm, multiplatform, android, js
     }
 }

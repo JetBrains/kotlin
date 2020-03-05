@@ -14,12 +14,14 @@ import java.io.Serializable
 
 /**
  * The single script diagnostic report
+ * @param code diagnostic identifier
  * @param message diagnostic message
  * @param severity diagnostic severity ({@link ScriptDiagnostic#Severity})
  * @param location optional source location for the diagnostic
  * @param exception optional exception caused the diagnostic
  */
 data class ScriptDiagnostic(
+    val code: Int,
     val message: String,
     val severity: Severity = Severity.ERROR,
     val sourcePath: String? = null,
@@ -76,6 +78,14 @@ data class ScriptDiagnostic(
                 }
             }
         }
+    }
+
+    companion object {
+        private const val serialVersionUID: Long = 0L
+
+        const val unspecifiedInfo = 0
+        const val unspecifiedError = -1
+        const val unspecifiedException = -2
     }
 }
 
@@ -198,24 +208,29 @@ fun makeFailureResult(vararg reports: ScriptDiagnostic): ResultWithDiagnostics.F
  * Makes Failure result with diagnostic [message] with optional [path] and [location]
  */
 fun makeFailureResult(message: String, path: String? = null, location: SourceCode.Location? = null): ResultWithDiagnostics.Failure =
-    ResultWithDiagnostics.Failure(message.asErrorDiagnostics(path, location))
+    ResultWithDiagnostics.Failure(message.asErrorDiagnostics(ScriptDiagnostic.unspecifiedError, path, location))
 
 /**
  * Converts the receiver Throwable to the Failure results wrapper with optional [customMessage], [path] and [location]
  */
 fun Throwable.asDiagnostics(
+    code: Int = ScriptDiagnostic.unspecifiedException,
     customMessage: String? = null,
     path: String? = null,
     location: SourceCode.Location? = null,
     severity: ScriptDiagnostic.Severity = ScriptDiagnostic.Severity.ERROR
 ): ScriptDiagnostic =
-    ScriptDiagnostic(customMessage ?: message ?: "$this", severity, path, location, this)
+    ScriptDiagnostic(code, customMessage ?: message ?: "$this", severity, path, location, this)
 
 /**
  * Converts the receiver String to error diagnostic report with optional [path] and [location]
  */
-fun String.asErrorDiagnostics(path: String? = null, location: SourceCode.Location? = null): ScriptDiagnostic =
-    ScriptDiagnostic(this, ScriptDiagnostic.Severity.ERROR, path, location)
+fun String.asErrorDiagnostics(
+    code: Int = ScriptDiagnostic.unspecifiedError,
+    path: String? = null,
+    location: SourceCode.Location? = null
+): ScriptDiagnostic =
+    ScriptDiagnostic(code, this, ScriptDiagnostic.Severity.ERROR, path, location)
 
 /**
  * Extracts the result value from the receiver wrapper or null if receiver represents a Failure

@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
+import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructorKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
@@ -676,6 +677,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         generator.checkEmptyLoop(loopExit);
 
         v.mark(loopEntry);
+        resetLastLineNumber();
+        markStartLineNumber(generator.getForExpression());
+        v.nop();
+
         generator.checkPreCondition(loopExit);
 
         // Some forms of for-loop can be optimized as post-condition loops.
@@ -1494,10 +1499,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         v.visitLineNumber(lineNumber, label);
     }
 
-    //we should generate additional linenumber info after inline call only if it used as argument
     @Override
-    public void markLineNumberAfterInlineIfNeeded() {
-        if (!shouldMarkLineNumbers) {
+    public void markLineNumberAfterInlineIfNeeded(boolean registerLineNumberAfterwards) {
+        if (!shouldMarkLineNumbers || registerLineNumberAfterwards) {
             //if it used as general argument
             if (myLastLineNumber > -1) {
                 Label label = new Label();
@@ -1505,9 +1509,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 v.visitLineNumber(myLastLineNumber, label);
             }
         } else {
-            //if it used as argument of infix call (in this case lineNumber for simple inlineCall also would be reset)
-            myLastLineNumber = -1;
+            resetLastLineNumber();
         }
+    }
+
+    private void resetLastLineNumber() {
+        myLastLineNumber = -1;
     }
 
     @Override
@@ -1851,10 +1858,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
         if (descriptor instanceof TypeAliasDescriptor) {
             ClassDescriptor classDescriptor = ((TypeAliasDescriptor) descriptor).getClassDescriptor();
-            if (classDescriptor == null) {
-                throw new IllegalStateException("Type alias " + descriptor + " static member reference should be rejected by type checker, " +
-                                                "since there is no class corresponding to this type alias.");
-            }
+            assert classDescriptor != null :
+                    "Type alias " + descriptor + " static member reference should be rejected by type checker, " +
+                    "since there is no class corresponding to this type alias.";
             descriptor = classDescriptor;
         }
 
@@ -1863,8 +1869,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             if (shouldGenerateSingletonAsThisOrOuterFromContext(classDescriptor)) {
                 return generateThisOrOuterFromContext(classDescriptor, false, false);
             }
-            if (isCompanionObject(classDescriptor) && !couldUseDirectAccessToCompanionObject(classDescriptor, context)) {
-                return generateAccessorCallForCompanionObject(classDescriptor);
+            if (isCompanionObject(classDescriptor)) {
+                return generateCompanionObjectInstance(classDescriptor);
             }
             if (isObject(classDescriptor)) {
                 return StackValue.singleton(classDescriptor, typeMapper);
@@ -1874,7 +1880,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
             ClassDescriptor companionObjectDescriptor = classDescriptor.getCompanionObjectDescriptor();
             if (companionObjectDescriptor != null) {
-                return StackValue.singleton(companionObjectDescriptor, typeMapper);
+                return generateCompanionObjectInstance(companionObjectDescriptor);
             }
             return StackValue.none();
         }
@@ -1884,6 +1890,41 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return localOrCaptured;
         }
         throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
+    }
+
+    private StackValue generateCompanionObjectInstance(ClassDescriptor companionObjectDescriptor) {
+        assert isCompanionObject(companionObjectDescriptor) :
+                "Companion object expected: " + companionObjectDescriptor;
+
+        CodegenContext accessorContext = getContextForCompanionObjectAccessorIfRequiredOrNull(companionObjectDescriptor, context);
+        if (accessorContext == null) {
+            return StackValue.singleton(companionObjectDescriptor, typeMapper);
+        }
+
+        // Should use accessor
+        DeclarationDescriptor accessorContextDescriptor = accessorContext.getContextDescriptor();
+        assert accessorContextDescriptor instanceof ClassDescriptor :
+                "Expected to put accessor for companion object " + companionObjectDescriptor +
+                " into a class, but got " + accessorContextDescriptor;
+
+        accessorContext.getOrCreateAccessorForCompanionObject(companionObjectDescriptor);
+
+        Type hostClassType = typeMapper.mapClass((ClassDescriptor) accessorContextDescriptor);
+        Type companionObjectType = typeMapper.mapClass(companionObjectDescriptor);
+
+        // TODO we actually have corresponding accessor descriptor, it might be a better idea to use general method call generation.
+        return StackValue.operation(
+                companionObjectType,
+                companionObjectDescriptor.getDefaultType(),
+                v1 -> {
+                    v1.invokestatic(
+                            hostClassType.getInternalName(),
+                            getCompanionObjectAccessorName(companionObjectDescriptor),
+                            Type.getMethodDescriptor(companionObjectType),
+                            /* itf */ false
+                    );
+                    return null;
+                });
     }
 
     private boolean shouldGenerateSingletonAsThisOrOuterFromContext(ClassDescriptor classDescriptor) {
@@ -2479,6 +2520,23 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return null;
     }
 
+    @Nullable
+    public static CodegenContext getCompanionObjectContextSubclassOf(ClassDescriptor descriptor, CodegenContext context) {
+        for (CodegenContext current = context; current != null; current = current.getParentContext()) {
+            if (!(current instanceof ClassContext)) continue;
+
+            ClassContext classContext = (ClassContext) current;
+            ClassDescriptor companionObject = classContext.getContextDescriptor().getCompanionObjectDescriptor();
+            if (companionObject == null) continue;
+
+            if (DescriptorUtils.isSubclass(companionObject, descriptor)) {
+                return classContext.getCompanionObjectContext();
+            }
+        }
+
+        return null;
+    }
+
     @NotNull
     Callable resolveToCallable(@NotNull FunctionDescriptor fd, boolean superCall, @NotNull ResolvedCall resolvedCall) {
         IntrinsicMethod intrinsic = state.getIntrinsics().getIntrinsic(fd);
@@ -2713,10 +2771,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             Pair<TypeParameterMarker, ReificationArgument> typeParameterAndReificationArgument =
                     extractReificationArgument(typeSystem, type);
             if (typeParameterAndReificationArgument == null) {
-                KotlinType approximatedType = CapturedTypeApproximationKt.approximateCapturedTypes(entry.getValue()).getUpper();
-                // type is not generic
+                KotlinType approximatedType = approximateCapturedType(type);
                 JvmSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE);
-                Type asmType = typeMapper.mapTypeParameter(approximatedType, signatureWriter);
+                Type asmType = typeMapper.mapTypeArgument(approximatedType, signatureWriter);
 
                 mappings.addParameterMappingToType(
                         key.getName().getIdentifier(), approximatedType, asmType, signatureWriter.toString(), isReified
@@ -2730,6 +2787,22 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         return getOrCreateCallGenerator(descriptor, resolvedCall.getCall().getCallElement(), mappings, false);
+    }
+
+    @NotNull
+    private KotlinType approximateCapturedType(@NotNull KotlinType type) {
+        if (state.getLanguageVersionSettings().supportsFeature(LanguageFeature.NewInference)) {
+            TypeApproximator approximator = new TypeApproximator(state.getModule().getBuiltIns());
+
+            KotlinType approximatedType =
+                    CapturedTypeConstructorKt.isCaptured(type) ?
+                    (KotlinType) approximator.approximateToSuperType(
+                            type, TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation.INSTANCE
+                    ) : null;
+            return approximatedType != null ? approximatedType : type;
+        } else {
+            return CapturedTypeApproximationKt.approximateCapturedTypes(type).getUpper();
+        }
     }
 
     @NotNull
@@ -2799,11 +2872,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             else if (isPossiblyUninitializedSingleton(receiverDescriptor) && isInsideSingleton(receiverDescriptor)) {
                 return generateThisOrOuterFromContext(receiverDescriptor, false, false);
             }
-            else if (couldUseDirectAccessToCompanionObject(receiverDescriptor, context)) {
-                return StackValue.singleton(receiverDescriptor, typeMapper);
-            }
             else {
-                return generateAccessorCallForCompanionObject(receiverDescriptor);
+                return generateCompanionObjectInstance(receiverDescriptor);
             }
         }
         else if (receiverDescriptor instanceof ScriptDescriptor) {
@@ -2814,36 +2884,57 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
     }
 
-    @NotNull
-    private StackValue generateAccessorCallForCompanionObject(@NotNull ClassDescriptor companionObjectDescriptor) {
-        DeclarationDescriptor hostClassDescriptor = companionObjectDescriptor.getContainingDeclaration();
-        assert hostClassDescriptor instanceof ClassDescriptor :
-                "Containing declaration of the companion object " + companionObjectDescriptor +
-                ": expected a class, actual: " + hostClassDescriptor;
+    private CodegenContext getContextForCompanionObjectAccessorIfRequiredOrNull(
+            @NotNull ClassDescriptor companionObjectDescriptor,
+            @NotNull CodegenContext contextBeforeInline
+    ) {
+        if (isDebuggerContext(contextBeforeInline)) {
+            return null;
+        }
 
-        CodegenContext hostClassContext = context.findParentContextWithDescriptor(hostClassDescriptor);
-        assert hostClassContext != null :
-                "Host class context for " + hostClassDescriptor + " not found in context hierarchy for " + context;
+        if (!state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField)) {
+            return null;
+        }
 
-        hostClassContext.markCompanionObjectDescriptorWithAccessorRequired(companionObjectDescriptor);
+        int accessFlag = AsmUtil.getVisibilityAccessFlag(companionObjectDescriptor);
 
-        Type hostClassType = typeMapper.mapClass((ClassifierDescriptor) hostClassDescriptor);
-        Type companionObjectType = typeMapper.mapClass(companionObjectDescriptor);
+        CodegenContext context = contextBeforeInline.getFirstCrossInlineOrNonInlineContext();
+        boolean isInlineMethodContext = context.isInlineMethodContext();
+        DeclarationDescriptor contextDescriptor = context.getContextDescriptor();
 
-        // TODO given that we actually have corresponding AccessorForCompanionObjectInstanceFieldDescriptor,
-        // it might be a better idea to use general method call generation
-        return StackValue.operation(
-                companionObjectType,
-                companionObjectDescriptor.getDefaultType(),
-                v -> {
-                    v.invokestatic(
-                            hostClassType.getInternalName(),
-                            getCompanionObjectAccessorName(companionObjectDescriptor),
-                            Type.getMethodDescriptor(companionObjectType),
-                            /* itf */ false
-                    );
-                    return null;
-                });
+        ClassDescriptor containingClassOfCompanionObject = DescriptorUtils.getContainingClass(companionObjectDescriptor);
+
+        if ((accessFlag & ACC_PRIVATE) != 0) {
+            // Private companion object
+            if (!isInlineMethodContext && contextDescriptor.getContainingDeclaration() == containingClassOfCompanionObject) {
+                return null;
+            }
+            return context.findParentContextWithDescriptor(containingClassOfCompanionObject);
+        } else if ((accessFlag & ACC_PROTECTED) != 0) {
+            // Protected companion object
+            if (!isInlineMethodContext && canAccessProtectedMembers(contextDescriptor, containingClassOfCompanionObject)) {
+                return null;
+            }
+            CodegenContext accessorContext = getParentContextSubclassOf(containingClassOfCompanionObject, context);
+            if (accessorContext == null) {
+                accessorContext = getCompanionObjectContextSubclassOf(containingClassOfCompanionObject, context);
+            }
+            assert accessorContext != null :
+                    "Class context for accessor to a protected companion object " + companionObjectDescriptor + " not found:\n" +
+                    JvmCodegenUtil.dumpContextHierarchy(context);
+            return accessorContext;
+        } else {
+            // Non-protected && non-private companion object
+            return null;
+        }
+    }
+
+    private static boolean canAccessProtectedMembers(DeclarationDescriptor contextDescriptor, ClassDescriptor classDescriptor) {
+        DeclarationDescriptor containingDeclaration = contextDescriptor.getContainingDeclaration();
+        return containingDeclaration == classDescriptor ||
+               JvmCodegenUtil.isInSamePackage(contextDescriptor, classDescriptor) ||
+               containingDeclaration instanceof ClassDescriptor &&
+               DescriptorUtils.isSubclass((ClassDescriptor) containingDeclaration, classDescriptor);
     }
 
     @NotNull
@@ -3687,13 +3778,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @Nullable
     private static KotlinType getLeftOperandType(@Nullable PrimitiveNumericComparisonInfo numericComparisonInfo) {
         if (numericComparisonInfo == null) return null;
-        return numericComparisonInfo.getLeftType();
+        return numericComparisonInfo.getLeftPrimitiveType();
     }
 
     @Nullable
     private static KotlinType getRightOperandType(@Nullable PrimitiveNumericComparisonInfo numericComparisonInfo) {
         if (numericComparisonInfo == null) return null;
-        return numericComparisonInfo.getRightType();
+        return numericComparisonInfo.getRightPrimitiveType();
     }
 
     /*tries to use IEEE 754 arithmetic*/
@@ -3975,7 +4066,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         boolean properIeee754Comparisons = shouldUseProperIeee754Comparisons();
 
         if (properIeee754Comparisons && left754Type != null && right754Type != null) {
-            type = comparisonOperandType(leftType, rightType);
+            type = comparisonOperandType(left754Type.type, right754Type.type);
+            //type = comparisonOperandType(leftType, rightType);
             leftValue = gen(left);
             rightValue = gen(right);
         }
@@ -4495,10 +4587,16 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         // We can use the $$delegatedProperties array as in non-inline functions and upon inlining, detect elements at what indices
         // of that array are used in the inline function body, load the corresponding initializing bytecode from <clinit> of the
         // container class (where the PropertyReferenceNImpl instance is created), copy and adapt it at the call site
-        //noinspection ConstantConditions
-        StackValue value = context.getFunctionDescriptor().isInline()
-                           ? generatePropertyReference(variable.getDelegate(), variableDescriptor, variableDescriptor, null)
-                           : PropertyCodegen.getDelegatedPropertyMetadata(variableDescriptor, bindingContext);
+        StackValue value;
+        if (PropertyCodegen.isDelegatedPropertyWithOptimizedMetadata(variableDescriptor, bindingContext)) {
+            value = PropertyCodegen.getOptimizedDelegatedPropertyMetadataValue();
+        } else if (context.getFunctionDescriptor().isInline()) {
+            //noinspection ConstantConditions
+            value = generatePropertyReference(variable.getDelegate(), variableDescriptor, variableDescriptor, null);
+        }
+        else {
+            value = PropertyCodegen.getDelegatedPropertyMetadata(variableDescriptor, bindingContext);
+        }
         value.put(K_PROPERTY_TYPE, null, v);
         metadataVar.storeSelector(K_PROPERTY_TYPE, null, v);
     }

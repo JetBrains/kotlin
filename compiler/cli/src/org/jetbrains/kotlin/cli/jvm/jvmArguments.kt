@@ -138,12 +138,12 @@ fun KotlinCoreEnvironment.registerJavacIfNeeded(
     return true
 }
 
-
 fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerArguments) {
 
     put(JVMConfigurationKeys.PARAMETERS_METADATA, arguments.javaParameters)
 
-    put(JVMConfigurationKeys.IR, arguments.useIR)
+    put(JVMConfigurationKeys.IR, arguments.useIR && !arguments.noUseIR)
+    put(JVMConfigurationKeys.IS_IR_WITH_STABLE_ABI, arguments.isIrWithStableAbi)
     put(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, arguments.noCallAssertions)
     put(JVMConfigurationKeys.DISABLE_RECEIVER_ASSERTIONS, arguments.noReceiverAssertions)
     put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, arguments.noParamAssertions)
@@ -152,6 +152,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
         arguments.noExceptionOnExplicitEqualsForBoxedNull
     )
     put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, arguments.noOptimize)
+    put(JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS, arguments.emitJvmTypeAnnotations)
 
     if (!JVMConstructorCallNormalizationMode.isSupportedValue(arguments.constructorCallNormalizationMode)) {
         getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
@@ -197,4 +198,12 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.USE_SINGLE_MODULE, arguments.singleModule)
 
     arguments.declarationsOutputPath?.let { put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, it) }
+}
+
+fun CompilerConfiguration.configureKlibPaths(arguments: K2JVMCompilerArguments) {
+    assert(arguments.useIR || arguments.klibLibraries == null) { "Klib libraries can only be used with IR backend" }
+    arguments.klibLibraries?.split(File.pathSeparator.toRegex())
+        ?.toTypedArray()
+        ?.filterNot { it.isEmpty() }
+        ?.let { put(JVMConfigurationKeys.KLIB_PATHS, it) }
 }

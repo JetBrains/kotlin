@@ -12,15 +12,15 @@ fun case1(): Int =
         null.castTo<Int?, Int>()
 
 fun box(): String {
-    failTypeCast { case1(); return "failTypeCast 9" }
+    failNPE { case1(); return "Fail" }
     return "OK"
 }
 
-inline fun failTypeCast(s: () -> Unit) {
+inline fun failNPE(s: () -> Unit) {
     try {
         s()
     }
-    catch (e: TypeCastException) {
-
+    catch (e: NullPointerException) {
+        // OK
     }
 }

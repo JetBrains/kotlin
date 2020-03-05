@@ -8,26 +8,36 @@ import com.intellij.ui.SimpleTextAttributes
 import com.intellij.util.ui.StatusText
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.KotlinIcons
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
+import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.moduleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 import org.jetbrains.kotlin.tools.projectWizard.templates.settings
+import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.Component
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ErrorAwareComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingsList
 import java.awt.*
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class TemplatesComponent(valuesReadingContext: ValuesReadingContext) : DynamicComponent(valuesReadingContext) {
+class TemplatesComponent(
+    ideContext: IdeContext,
+    uiEditorUsagesStats: UiEditorUsageStats
+) : DynamicComponent(ideContext), ErrorAwareComponent {
     private val chooseTemplateComponent: ChooseTemplateComponent =
-        ChooseTemplateComponent(valuesReadingContext) { template ->
-            sourceset?.template = template
+        ChooseTemplateComponent(ideContext) { template ->
+            uiEditorUsagesStats.moduleTemplatesSet++
+            module?.template = template
             switchState(template)
-        }
+        }.asSubComponent()
 
-    private val templateSettingsComponent = TemplateSettingsComponent(valuesReadingContext) {
+    private val templateSettingsComponent = TemplateSettingsComponent(ideContext) {
         if (MessagesEx.showOkCancelDialog(
                 component,
                 "Do you want to remove selected template from module",
@@ -37,17 +47,22 @@ class TemplatesComponent(valuesReadingContext: ValuesReadingContext) : DynamicCo
                 null
             ) == Messages.OK
         ) {
+            uiEditorUsagesStats.moduleTemplatesRemoved++
+            module?.template = null
             switchState(null)
         }
-    }
+    }.asSubComponent()
+
+    override fun findComponentWithError(error: ValidationResult.ValidationError): SettingComponent<*, *>? =
+        templateSettingsComponent.findComponentWithError(error)
 
     private fun switchState(selectedTemplate: Template?) {
         panel.removeAll()
         when (selectedTemplate) {
             null -> panel.add(chooseTemplateComponent.component, BorderLayout.CENTER)
             else -> {
-                if (sourceset != null) {
-                    templateSettingsComponent.setTemplate(sourceset!!, selectedTemplate)
+                if (module != null) {
+                    templateSettingsComponent.setTemplate(module!!, selectedTemplate)
                 }
                 panel.add(templateSettingsComponent.component, BorderLayout.CENTER)
             }
@@ -61,7 +76,7 @@ class TemplatesComponent(valuesReadingContext: ValuesReadingContext) : DynamicCo
 
     override val component: JComponent = panel
 
-    var sourceset: Sourceset? = null
+    var module: Module? = null
         set(value) {
             field = value
             switchState(value?.template)
@@ -70,9 +85,9 @@ class TemplatesComponent(valuesReadingContext: ValuesReadingContext) : DynamicCo
 }
 
 class ChooseTemplateComponent(
-    private val valuesReadingContext: ValuesReadingContext,
+    ideContext: IdeContext,
     private val onTemplateChosen: (Template) -> Unit
-) : DynamicComponent(valuesReadingContext) {
+) : DynamicComponent(ideContext) {
     private enum class State(val text: String) {
         MODULE_SELECTED_AND_TEMPLATES_AVAILABLE("You can configure a template for selected module"),
         MODULE_SELECTED_AND_NO_TEMPLATES_AVAILABLE("No templates available for selected module"),
@@ -91,11 +106,11 @@ class ChooseTemplateComponent(
     }
 
     private val allTemplates
-        get() = with(valuesReadingContext) {
+        get() = read {
             TemplatesPlugin::templates.propertyValue
         }
 
-    var selectedModule: Sourceset? = null
+    var selectedModule: Module? = null
         set(value) {
             field = value
             onStateUpdated()
@@ -107,8 +122,7 @@ class ChooseTemplateComponent(
 
     private val availableTemplates
         get() = allTemplates.values.filter { template ->
-            selectedModule!!.containingModuleType in template.moduleTypes
-                    && selectedModule!!.sourcesetType in template.sourcesetTypes
+            selectedModule!!.configurator.moduleType in template.moduleTypes
                     && template.isApplicableTo(selectedModule!!)
         }
 
@@ -204,7 +218,7 @@ class TemplateDescriptionComponent(
     }
 
     private val title = panel {
-        nonDefaultBackgroundColor?.let {  background = it }
+        nonDefaultBackgroundColor?.let { background = it }
         add(titleLabel, BorderLayout.CENTER)
         removeButton?.let { add(it, BorderLayout.EAST) }
     }
@@ -213,7 +227,7 @@ class TemplateDescriptionComponent(
 
     override val component: JComponent by lazy(LazyThreadSafetyMode.NONE) {
         panel {
-            nonDefaultBackgroundColor?.let {  background = it }
+            nonDefaultBackgroundColor?.let { background = it }
             add(title, BorderLayout.NORTH)
             add(descriptionLabel, BorderLayout.CENTER)
         }
@@ -234,23 +248,27 @@ class TemplateDescriptionComponent(
 }
 
 private class TemplateSettingsComponent(
-    valuesReadingContext: ValuesReadingContext,
+    ideContext: IdeContext,
     removeTemplate: () -> Unit
-) : DynamicComponent(valuesReadingContext) {
+) : DynamicComponent(ideContext), ErrorAwareComponent {
     private val templateDescriptionComponent = TemplateDescriptionComponent(
         needRemoveButton = true,
-        nonDefaultBackgroundColor =  UIUtil.getEditorPaneBackground(),
+        nonDefaultBackgroundColor = UIUtil.getEditorPaneBackground(),
         onRemoveButtonClicked = removeTemplate
     ).apply {
         component.bordered(needTopEmptyBorder = false, needBottomEmptyBorder = false)
     }
 
-    private val settings = SettingsList(emptyList(), valuesReadingContext).apply {
+    private val settings = SettingsList(emptyList(), ideContext).apply {
         component.bordered()
     }
 
-    fun setTemplate(sourceset: Sourceset, selectedTemplate: Template) {
-        settings.setSettings(selectedTemplate.settings(sourceset))
+    override fun findComponentWithError(error: ValidationResult.ValidationError): SettingComponent<*, *>? =
+        settings.findComponentWithError(error)
+
+
+    fun setTemplate(module: Module, selectedTemplate: Template) {
+        settings.setSettings(selectedTemplate.settings(module))
         templateDescriptionComponent.updateSelectedTemplate(selectedTemplate)
     }
 

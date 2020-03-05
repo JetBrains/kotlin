@@ -27,6 +27,15 @@ import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import java.util.*
 
 class IntersectionTypeConstructor(typesToIntersect: Collection<KotlinType>) : TypeConstructor {
+    private var alternative: KotlinType? = null
+
+    private constructor(
+        typesToIntersect: Collection<KotlinType>,
+        alternative: KotlinType?,
+    ) : this(typesToIntersect) {
+        this.alternative = alternative
+    }
+
     init {
         assert(!typesToIntersect.isEmpty()) { "Attempt to create an empty intersection" }
     }
@@ -75,7 +84,13 @@ class IntersectionTypeConstructor(typesToIntersect: Collection<KotlinType>) : Ty
 
     @TypeRefinement
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) =
-        IntersectionTypeConstructor(intersectedTypes.map { it.refine(kotlinTypeRefiner) })
+        transformComponents { it.refine(kotlinTypeRefiner) } ?: this
+
+    fun setAlternative(alternative: KotlinType?): IntersectionTypeConstructor {
+        return IntersectionTypeConstructor(intersectedTypes, alternative)
+    }
+
+    fun getAlternativeType(): KotlinType? = alternative
 }
 
 inline fun IntersectionTypeConstructor.transformComponents(
@@ -94,5 +109,9 @@ inline fun IntersectionTypeConstructor.transformComponents(
 
     if (!changed) return null
 
-    return IntersectionTypeConstructor(newSupertypes)
+    val updatedAlternative = getAlternativeType()?.let { alternative ->
+        if (predicate(alternative)) transform(alternative) else alternative
+    }
+
+    return IntersectionTypeConstructor(newSupertypes).setAlternative(updatedAlternative)
 }

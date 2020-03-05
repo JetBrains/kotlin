@@ -21,6 +21,3 @@ tasks.withType<JavaCompile> {
     sourceCompatibility = "1.6"
     targetCompatibility = "1.6"
 }
-
-if (project.hasProperty("teamcity"))
-tasks["compileJava"].dependsOn(":prepare:build.version:writeCompilerVersion")

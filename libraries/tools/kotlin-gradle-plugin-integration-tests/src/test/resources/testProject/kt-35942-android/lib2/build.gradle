@@ -1,0 +1,17 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 29
+    }
+}
+
+dependencies {
+    api project(':lib1')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7"
+}

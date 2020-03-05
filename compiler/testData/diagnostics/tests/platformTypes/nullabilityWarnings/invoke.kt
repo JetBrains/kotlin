@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // FILE: J.java
 
 import org.jetbrains.annotations.*;
@@ -19,6 +18,6 @@ public class J {
 
 fun test() {
     J.staticNN()
-    J<!NI;UNSAFE_CALL!>.<!><!OI;UNSAFE_IMPLICIT_INVOKE_CALL!>staticN<!>()
+    J.<!UNSAFE_IMPLICIT_INVOKE_CALL!>staticN<!>()
     J.staticJ()
 }

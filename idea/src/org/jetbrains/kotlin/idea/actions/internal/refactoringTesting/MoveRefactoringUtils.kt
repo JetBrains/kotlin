@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.actions.internal.refactoringTesting
 
-import com.intellij.ide.plugins.PluginManager
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.extensions.PluginId
@@ -24,7 +24,7 @@ internal fun gitReset(project: Project, projectRoot: VirtualFile) {
     fun Class<*>.loadMethodOrThrow(name: String, vararg arguments: Class<*>) =
         getMethodOrNull(name, *arguments) ?: error("${this.name}::$name not loaded")
 
-    val loader = PluginManager.getPlugin(PluginId.getId("Git4Idea"))?.pluginClassLoader ?: error("Git plugin is not found")
+    val loader = PluginManagerCore.getPlugin(PluginId.getId("Git4Idea"))?.pluginClassLoader ?: error("Git plugin is not found")
 
     val gitCls = loader.loadClassOrThrow("git4idea.commands.Git")
     val gitLineHandlerCls = loader.loadClassOrThrow("git4idea.commands.GitLineHandler")

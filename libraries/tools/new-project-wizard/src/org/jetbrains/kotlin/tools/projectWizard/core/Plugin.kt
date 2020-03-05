@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.tools.projectWizard.core
 
 import org.jetbrains.kotlin.tools.projectWizard.SettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.enumSettingImpl
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
@@ -20,6 +21,7 @@ typealias PluginsCreator = (Context) -> List<Plugin>
 abstract class Plugin(override val context: Context) : EntityBase(),
     SettingsOwner,
     ContextOwner,
+    EntitiesOwnerDescriptor,
     EntitiesOwner<Plugin> {
     override val descriptor get() = this
     override val id: String get() = path
@@ -153,14 +155,13 @@ abstract class Plugin(override val context: Context) : EntityBase(),
     ): ReadOnlyProperty<Any, PluginSetting<Path, PathSettingType>> =
         super.pathSetting(title, neededAtPhase, init) as ReadOnlyProperty<Any, PluginSetting<Path, PathSettingType>>
 
+    @Suppress("UNCHECKED_CAST")
     inline fun <reified E> enumSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         crossinline init: DropDownSettingType.Builder<E>.() -> Unit = {}
-    ) where E : Enum<E>, E : DisplayableSettingItem = dropDownSetting<E>(title, neededAtPhase, enumParser()) {
-        values = enumValues<E>().asList()
-        init()
-    }
+    ): ReadOnlyProperty<Any, PluginSetting<E, DropDownSettingType<E>>> where E : Enum<E>, E : DisplayableSettingItem =
+        enumSettingImpl(title, neededAtPhase, init) as ReadOnlyProperty<Any, PluginSetting<E, DropDownSettingType<E>>>
 }
 
 val PluginReference.withParentPlugins

@@ -11,5 +11,6 @@ kotlin {
     target {
         browser {
         }
+        produceExecutable()
     }
 }

@@ -1,4 +1,5 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !WITH_NEW_INFERENCE
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
@@ -159,7 +160,7 @@ fun case_2(value_1: Number) {
 // TESTCASE NUMBER: 3
 fun case_3(value_1: String?, value_2: String?) {
     value_1.case_3_1()
-    println(<!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>length)
+    println(<!OI;DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>length)
     value_2.case_3_2()
     println(value_2)
 }
@@ -167,7 +168,7 @@ fun case_3(value_1: String?, value_2: String?) {
 // TESTCASE NUMBER: 4
 fun case_4(value_1: String?, value_2: String?) {
     value_1.case_4_1()
-    println(<!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>length)
+    println(<!OI;DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>length)
     value_2.case_4_2()
     println(value_2)
 }
@@ -190,7 +191,7 @@ fun case_6(value_1: Number) {
 
 // TESTCASE NUMBER: 7
 fun case_7(value_1: String?, value_2: String?) {
-    if (value_1.case_7_1()) println(<!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>length)
+    if (value_1.case_7_1()) println(<!OI;DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>length)
     if (value_2.case_7_2()) println(value_2)
     if (!(value_2.case_7_3() == null)) println(value_2)
     if (value_2.case_7_3() == null) println(value_2)
@@ -198,7 +199,7 @@ fun case_7(value_1: String?, value_2: String?) {
 
 // TESTCASE NUMBER: 8
 fun case_8(value_1: String?, value_2: String?) {
-    when { value_1.case_8_1() -> println(<!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>length) }
+    when { value_1.case_8_1() -> println(<!OI;DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>length) }
     when { value_2.case_8_2() -> println(value_2) }
     when { !(value_2.case_8_3() == null) -> println(value_2) }
     when { value_2.case_8_3() == null -> println(value_2) }

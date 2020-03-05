@@ -110,8 +110,6 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
         KotlinFUSLogger.log(FUSEventGroups.NPWizards, this.javaClass.simpleName)
     }
 
-    private fun RepositoryDescription.toKotlinRepositorySnippet() = "maven { setUrl(\"$url\") }"
-
     protected abstract fun getOldSyntaxPluginDefinition(): String
     protected abstract fun getPluginDefinition(): String
 
@@ -184,7 +182,16 @@ abstract class AbstractKotlinDslGradleKotlinJSFrameworkSupportProvider(
     ) {
         super.addSupport(projectId, module, rootModel, modifiableModelsProvider, buildScriptData)
 
-        buildScriptData.addOther("kotlin.target.$jsSubTargetName { }")
+        buildScriptData.addOther(
+            """
+                kotlin {
+                    target {
+                        $jsSubTargetName { }
+                        produceExecutable()
+                    }
+                }
+            """.trimIndent()
+        )
         val artifactId = MAVEN_JS_STDLIB_ID.removePrefix("kotlin-")
         buildScriptData.addDependencyNotation(composeDependency(buildScriptData, artifactId))
     }

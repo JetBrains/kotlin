@@ -48,17 +48,17 @@ try { name?.let { if (flag) { s.add(it) } else { s.remove(it) } return true } re
             return true
         }
 ---------------------
-                                                            <v3>: *          NEW: magic[VALUE_CONSUMER](it|<v2>) -> <v3>
-                                                            <v7>: *          NEW: magic[VALUE_CONSUMER](it|<v6>) -> <v7>
 flag                                                        <v0>: Boolean    NEW: r(flag) -> <v0>
-s                                                           <v1>: *          NEW: r(s) -> <v1>
-it                                                          <v2>: *          NEW: r(it) -> <v2>
-add(it)                                                     <v4>: *          NEW: call(add(it), <ERROR FUNCTION>|<v1>) -> <v4>
+s                                                           <v2>: *          NEW: r(s) -> <v2>
+add                                                         !<v3>: *
+it                                                          <v1>: *          NEW: r(it) -> <v1>
+add(it)                                                     <v4>: *          NEW: magic[UNRESOLVED_CALL](add(it)|<v1>, !<v3>, <v2>) -> <v4>
 s.add(it)                                                   <v4>: *          COPY
 { s.add(it) }                                               <v4>: *          COPY
-s                                                           <v5>: *          NEW: r(s) -> <v5>
-it                                                          <v6>: *          NEW: r(it) -> <v6>
-remove(it)                                                  <v8>: *          NEW: call(remove(it), <ERROR FUNCTION>|<v5>) -> <v8>
+s                                                           <v6>: *          NEW: r(s) -> <v6>
+remove                                                      !<v7>: *
+it                                                          <v5>: *          NEW: r(it) -> <v5>
+remove(it)                                                  <v8>: *          NEW: magic[UNRESOLVED_CALL](remove(it)|<v5>, !<v7>, <v6>) -> <v8>
 s.remove(it)                                                <v8>: *          COPY
 { s.remove(it) }                                            <v8>: *          COPY
 if (flag) { s.add(it) } else { s.remove(it) }               <v9>: *          NEW: merge(if (flag) { s.add(it) } else { s.remove(it) }|<v4>, <v8>) -> <v9>

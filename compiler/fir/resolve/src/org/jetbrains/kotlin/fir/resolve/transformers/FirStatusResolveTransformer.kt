@@ -92,6 +92,10 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationSta
         return transformDeclaration(property, data)
     }
 
+    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: FirDeclarationStatus?): CompositeTransformResult<FirDeclaration> {
+        return transformDeclaration(enumEntry, data)
+    }
+
     override fun transformValueParameter(
         valueParameter: FirValueParameter,
         data: FirDeclarationStatus?
@@ -133,7 +137,6 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationSta
 
         private fun FirDeclaration.resolveModality(containingClass: FirRegularClass?): Modality {
             return when (this) {
-                is FirEnumEntry -> Modality.FINAL
                 is FirRegularClass -> if (classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
                 is FirCallableMemberDeclaration<*> -> {
                     when {

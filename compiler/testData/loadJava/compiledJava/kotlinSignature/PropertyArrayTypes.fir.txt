@@ -1,5 +1,5 @@
 public open class PropertyArrayTypes<T> : R|kotlin/Any| {
-    public open field arrayOfArrays: R|ft<kotlin/Array<ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<ft<kotlin/String, kotlin/String?>!>?>!>, kotlin/Array<out ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<ft<kotlin/String, kotlin/String?>!>?>!>?>!|
+    public open field arrayOfArrays: R|ft<kotlin/Array<ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>?>!>, kotlin/Array<out ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>?>!>?>!|
 
     public open field array: R|ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>?>!|
 

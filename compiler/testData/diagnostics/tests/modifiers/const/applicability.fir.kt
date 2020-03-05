@@ -82,7 +82,6 @@ const val nonConstInitializer9 = 1.0/0.0 - 1/0
 const val nonConstInitializer10 = 0/0
 const val nonConstInitializer11 = 1 % 0
 const val nonConstInitializer12 = 0 % 0
-const val nonConstInitializer13 = 0.mod(0)
 const val nonConstInitializer14 = 0.rem(0)
 const val nonConstInitializer15 = 0.div(0)
 
@@ -99,7 +98,6 @@ const val constInitializer10 = 1.0 % 0
 const val constInitializer11 = 0.0 % 0
 const val constInitializer12 = (-1.0) % 0
 const val constInitializer13 = 1.0.rem(0)
-const val constInitializer14 = 1.0.mod(0)
 const val constInitializer15 = 1.0.div(0)
 
 // ------------------

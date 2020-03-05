@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 inline fun test(s: () -> Int): Int =
         try {
             val i = s()

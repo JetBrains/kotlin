@@ -99,6 +99,7 @@ public class KotlinHighlightingColors {
     public static final TextAttributesKey DEBUG_INFO = createTextAttributesKey("KOTLIN_DEBUG_INFO");
     public static final TextAttributesKey RESOLVED_TO_ERROR = createTextAttributesKey("KOTLIN_RESOLVED_TO_ERROR");
     public static final TextAttributesKey NAMED_ARGUMENT = createTextAttributesKey("KOTLIN_NAMED_ARGUMENT");
+    public static final TextAttributesKey ANNOTATION_ATTRIBUTE_NAME_ATTRIBUTES = createTextAttributesKey("KOTLIN_ANNOTATION_ATTRIBUTE_NAME_ATTRIBUTES", JavaHighlightingColors.ANNOTATION_ATTRIBUTE_NAME_ATTRIBUTES);
 
     private KotlinHighlightingColors() {
     }

@@ -19,7 +19,7 @@ class C {
     fun p() : Resource? = null
 
     fun bar() {
-        foo(p()) {
+        <!INAPPLICABLE_CANDIDATE!>foo<!>(p()) {
 
         }
     }

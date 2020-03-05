@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun runNoInline(f: () -> Unit) = f()
 
 fun box(): String {

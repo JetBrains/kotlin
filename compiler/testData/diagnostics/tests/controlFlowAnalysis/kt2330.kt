@@ -47,7 +47,7 @@ class R {
 fun test() {
     val <!UNUSED_VARIABLE!>o<!> = object {
         fun run() {
-            <!UNRESOLVED_REFERENCE!>p<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> = 43
+            <!UNRESOLVED_REFERENCE!>p<!>.<!DEBUG_INFO_MISSING_UNRESOLVED, VARIABLE_EXPECTED!>x<!> = 43
         }
     }
 }

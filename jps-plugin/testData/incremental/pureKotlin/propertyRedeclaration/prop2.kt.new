@@ -1,7 +1,4 @@
 package test
 
-fun dummy() {
-
-}
-
-val property = 1
+val prop1 = 1
+val prop2 = 2

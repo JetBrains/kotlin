@@ -1,30 +1,36 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui
 
+import TemplateTag
 import com.intellij.icons.AllIcons
+import com.intellij.ide.plugins.newui.TagComponent
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.ui.JBColor
-import com.intellij.ui.JBSplitter
-import com.intellij.ui.PopupHandler
-import com.intellij.ui.ToolbarDecorator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.util.ThrowableComputable
+import com.intellij.ui.*
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
-import com.intellij.util.ui.JBUI
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.UiConstants.GAP_BORDER_SIZE
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.tools.projectWizard.core.Failure
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.SimpleTargetConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.TargetConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.UiConstants.GAP_BORDER_SIZE
 import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import javax.swing.*
+import javax.swing.BorderFactory
+import javax.swing.Icon
+import javax.swing.JComponent
+import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
@@ -57,6 +63,14 @@ internal fun hyperlinkLabel(
 
 internal fun String.asHtml() = "<html><body>$this</body></html>"
 
+fun Failure.asHtml() = when (errors.size) {
+    0 -> ""
+    1 -> errors.single().message
+    else -> {
+        val errorsList = errors.joinToString(separator = "") { "<li>${it.message}</li>" }
+        "<ul>$errorsList</ul>".asHtml()
+    }
+}
 
 val DisplayableSettingItem.htmlText
     get() = (text + greyText?.let { " <i>($greyText)</i>" }.orEmpty()).asHtml()
@@ -83,20 +97,37 @@ val ModuleType.icon: Icon
 
 val Module.icon: Icon
     get() = when (kind) {
-        ModuleKind.target -> configurator.moduleType.icon
+        ModuleKind.target -> (configurator as TargetConfigurator).moduleType.icon
         ModuleKind.multiplatform -> AllIcons.Nodes.Module
-        ModuleKind.singleplatform -> AllIcons.Nodes.Module
+        ModuleKind.singleplatformJs -> KotlinIcons.JS
+        ModuleKind.singleplatformJvm -> AllIcons.Nodes.Module
+    }
+
+val ProjectKind.icon: Icon
+    get() = when (this) {
+        ProjectKind.Singleplatform -> KotlinIcons.SMALL_LOGO
+        ProjectKind.Multiplatform -> KotlinIcons.MPP
+        ProjectKind.Android -> KotlinIcons.SMALL_LOGO
+        ProjectKind.Js -> KotlinIcons.JS
     }
 
 
 val ModuleSubType.icon: Icon
     get() = moduleType.icon
 
+val ModuleKind.icon: Icon
+    get() = when (this) {
+        ModuleKind.multiplatform -> KotlinIcons.MPP
+        ModuleKind.singleplatformJs -> KotlinIcons.JS
+        ModuleKind.singleplatformJvm -> AllIcons.Nodes.Module
+        ModuleKind.target -> AllIcons.Nodes.Module
+    }
+
 val ModuleConfigurator.icon: Icon
     get() = when (this) {
         is SimpleTargetConfigurator -> moduleSubType.icon
         is TargetConfigurator -> moduleType.icon
-        else -> AllIcons.Nodes.Module
+        else -> moduleKind.icon
     }
 
 fun ToolbarDecorator.createPanelWithPopupHandler(popupTarget: JComponent) = createPanel().apply toolbarApply@{
@@ -136,26 +167,23 @@ fun <C : JComponent> C.bordered(
     )
 }
 
-// Copied from com.intellij.ide.projectWizard.ProjectSettingsStep.addField
-fun JPanel.addFieldWithLabel(label: String, field: JComponent) {
-    val jLabel = JBLabel(label)
-    jLabel.labelFor = field
-    jLabel.verticalAlignment = SwingConstants.TOP
-    add(
-        jLabel,
-        GridBagConstraints(
-            0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-            GridBagConstraints.VERTICAL, JBUI.insets(5, 0, 5, 0), 4, 0
-        )
-    )
-    add(
-        field,
-        GridBagConstraints(
-            1, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-            GridBagConstraints.HORIZONTAL, JBUI.insetsBottom(5), 0, 0
-        )
-    )
+class TemplateTagUIComponent(tag: TemplateTag) : TagComponent(tag.text) {
+    override fun isInClickableArea(pt: Point?) = false
+
+    init {
+        RelativeFont.TINY.install(this)
+        tag.tooltip?.let { toolTipText = it }
+    }
 }
+
+fun <T> runWithProgressBar(title: String, action: () -> T): T =
+    ProgressManager.getInstance().runProcessWithProgressSynchronously(
+        ThrowableComputable<T, Exception> { action() },
+        title,
+        true,
+        null
+    )
+
 
 object UiConstants {
     const val GAP_BORDER_SIZE = 5

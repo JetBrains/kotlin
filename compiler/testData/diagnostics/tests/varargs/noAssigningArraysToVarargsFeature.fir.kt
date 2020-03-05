@@ -45,5 +45,5 @@ fun foo(vararg i: Int) {}
 
 @Ann(s = "value")
 fun dep1() {
-    foo(i = 1)
+    <!INAPPLICABLE_CANDIDATE!>foo<!>(i = 1)
 }

@@ -90,5 +90,8 @@ class NonRedundantInitializers {
     val myFloat: Float = -0.0f
 }
 
+// There is 1 PUTSTATIC for the companion object instance.
+
 // 0 PUTFIELD RedundantInitializersToDefault
 // 2 PUTFIELD NonRedundantInitializers
+// 1 PUTSTATIC

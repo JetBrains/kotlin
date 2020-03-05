@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirImportImpl(
+internal class FirImportImpl(
     override val source: FirSourceElement?,
     override val importedFqName: FqName?,
     override val isAllUnder: Boolean,
-    override val aliasName: Name?
+    override val aliasName: Name?,
 ) : FirImport() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 

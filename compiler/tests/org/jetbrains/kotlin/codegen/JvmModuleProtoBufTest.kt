@@ -99,10 +99,10 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
     fun testExperimental() {
         doTest(
             "/moduleProtoBuf/experimental", extraOptions = listOf(
-                "-Xuse-experimental=kotlin.Experimental",
+                "-Xopt-in=kotlin.RequiresOptIn",
                 "-Xexperimental=org.foo.A",
                 "-Xexperimental=org.foo.B.C",
-                "-Xuse-experimental=org.foo.D"
+                "-Xopt-in=org.foo.D"
             )
         )
     }

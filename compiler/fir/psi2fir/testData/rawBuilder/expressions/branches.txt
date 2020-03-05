@@ -1,7 +1,7 @@
 FILE: branches.kt
     public? final? fun foo(a: Int, b: Int): <implicit> {
         ^foo when () {
-            >(a#, b#) ->  {
+            CMP(>, a#.compareTo#(b#)) ->  {
                 a#
             }
             else ->  {
@@ -12,7 +12,7 @@ FILE: branches.kt
     }
     public? final? fun bar(a: Double, b: Double): Double {
         when () {
-            >(a#, b#) ->  {
+            CMP(>, a#.compareTo#(b#)) ->  {
                 println#(a#)
                 ^bar a#
             }
@@ -25,7 +25,7 @@ FILE: branches.kt
     }
     public? final? fun baz(a: Long, b: Long): Long {
         when () {
-            >(a#, b#) ->  {
+            CMP(>, a#.compareTo#(b#)) ->  {
                 println#(a#)
                 ^baz a#
             }

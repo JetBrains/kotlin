@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.debugger.evaluate.compilation
 
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.getCallLabelForLambdaArgument
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.expressions.BasicExpressionTypingVisitor
 import org.jetbrains.kotlin.types.expressions.createFunctionType
 
 class CodeFragmentParameterInfo(
@@ -307,8 +305,8 @@ class CodeFragmentParameterAnalyzer(
                 }
             }
             is ValueDescriptor -> {
-                val parent = PsiTreeUtil.skipParentsOfType(expression, KtParenthesizedExpression::class.java)
-                val isLValue = BasicExpressionTypingVisitor.isLValue(expression, parent)
+                val unwrappedExpression = KtPsiUtil.deparenthesize(expression)
+                val isLValue = unwrappedExpression?.let { isAssignmentLValue(it) } ?: false
 
                 parameters.getOrPut(target) {
                     val type = target.type
@@ -320,6 +318,11 @@ class CodeFragmentParameterAnalyzer(
             }
             else -> null
         }
+    }
+
+    private fun isAssignmentLValue(expression: PsiElement): Boolean {
+        val assignmentExpression = (expression.parent as? KtBinaryExpression)?.takeIf { KtPsiUtil.isAssignment(it) } ?: return false
+        return assignmentExpression.left == expression
     }
 
     private fun isContainingPrimaryConstructorParameter(target: PropertyDescriptor): Boolean {

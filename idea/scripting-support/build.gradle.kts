@@ -34,6 +34,7 @@ dependencies {
         testRuntime(intellijPluginDep("java"))
     }
 
+    testRuntimeOnly(toolsJar())
     testRuntime(project(":kotlin-reflect"))
 
     testCompileOnly(intellijDep())

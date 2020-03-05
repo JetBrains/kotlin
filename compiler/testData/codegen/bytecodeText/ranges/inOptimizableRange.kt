@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JVM_IR
+// TODO KT-36829 Optimize 'in' expressions in JVM_IR
 fun Byte.inByte(left: Byte, right: Byte) = this in left..right
 
 fun Short.inInt(left: Int, right: Int) = this in left .. right

@@ -213,6 +213,7 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
     }
 
     override fun buildMultiPlatformPart(): String {
+        //language=Gradle
         return """
             def ktor_version = '1.1.3'
             def logback_version = '1.2.3'
@@ -222,6 +223,7 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
                 js {
                     browser {
                     }
+                    produceExecutable()
                 }
                 sourceSets {
                     $commonSourceName {
@@ -264,7 +266,7 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
 
             jvmJar {
                 dependsOn(jsBrowserProductionWebpack)
-                from(new File(jsBrowserProductionWebpack.entry.name, jsBrowserProductionWebpack.outputPath))
+                from(jsBrowserProductionWebpack.outputFile)
             }
             
             task run(type: JavaExec, dependsOn: [jvmJar]) {

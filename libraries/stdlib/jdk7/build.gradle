@@ -1,15 +1,10 @@
 description = 'Kotlin Standard Library JDK 7 extension'
 
 apply plugin: 'kotlin'
-apply plugin: 'pill-configurable'
 
 configureJvm6Project(project)
 configurePublishing(project)
 ext.javaHome = JDK_17
-
-pill {
-    importAsLibrary = true
-}
 
 sourceSets {
     main {
@@ -46,6 +41,7 @@ configurations {
 dependencies {
     compile project(':kotlin-stdlib')
     testCompile project(':kotlin-test:kotlin-test-junit')
+    testCompile project(':kotlin-coroutines-experimental-compat')
 }
 
 jar {

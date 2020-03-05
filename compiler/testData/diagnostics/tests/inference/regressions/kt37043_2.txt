@@ -1,0 +1,10 @@
+package
+
+public fun </*0*/ E> elvis(/*0*/ first: E?, /*1*/ second: E): E
+public fun </*0*/ T> first(/*0*/ x: kotlin.Array<out T>): T
+public fun main(): kotlin.Unit
+public inline fun </*0*/ reified M> materializeArray(): kotlin.Array<M>
+public fun notNullableNumbers(): kotlin.Array<kotlin.Number>
+public fun notNullableNumbersNullableArray(): kotlin.Array<kotlin.Number>?
+public fun nullableNumbers(): kotlin.Array<kotlin.Number?>
+public fun nullableNumbersNullableArray(): kotlin.Array<kotlin.Number?>?

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
@@ -22,13 +21,13 @@ import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 class IrLazyField(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrFieldSymbol,
+    override val descriptor: PropertyDescriptor,
     override val name: Name,
     override val visibility: Visibility,
     override val isFinal: Boolean,
@@ -40,38 +39,17 @@ class IrLazyField(
 ) : IrLazyDeclarationBase(startOffset, endOffset, origin, stubGenerator, typeTranslator),
     IrField {
 
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrFieldSymbol,
-        stubGenerator: DeclarationStubGenerator,
-        typeTranslator: TypeTranslator
-    ) : this(
-        startOffset, endOffset, origin, symbol,
-        symbol.descriptor.name,
-        symbol.descriptor.visibility,
-        isFinal = !symbol.descriptor.isVar,
-        isExternal = symbol.descriptor.isEffectivelyExternal(),
-        isStatic = symbol.descriptor.dispatchReceiverParameter == null,
-        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-        stubGenerator = stubGenerator,
-        typeTranslator = typeTranslator
-    )
-
     init {
         symbol.bind(this)
     }
 
-    override val annotations: MutableList<IrConstructorCall> by lazy {
+    override var annotations: List<IrConstructorCall> by lazyVar {
         descriptor.backingField?.annotations
             ?.mapNotNullTo(mutableListOf(), typeTranslator.constantValueGenerator::generateAnnotationConstructorCall)
             ?: mutableListOf()
     }
 
-    override val descriptor: PropertyDescriptor = symbol.descriptor
-
-    override val overriddenSymbols: MutableList<IrFieldSymbol> by lazy {
+    override var overriddenSymbols: List<IrFieldSymbol> by lazyVar {
         symbol.descriptor.overriddenDescriptors.map {
             stubGenerator.generateFieldStub(it.original).symbol
         }.toMutableList()

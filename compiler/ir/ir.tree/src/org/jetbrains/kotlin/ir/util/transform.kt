@@ -63,3 +63,18 @@ fun IrDeclarationContainer.transformDeclarationsFlat(transformation: (IrDeclarat
         transformed
     }
 }
+
+/**
+ * Similar to `map`. Return the same List instance if no element instances have changed.
+ */
+internal inline fun <reified T : IrElement> List<T>.mapOptimized(transformation: (T) -> IrElement): List<T> {
+    var result: ArrayList<T>? = null
+    for ((i, item) in withIndex()) {
+        val transformed = transformation(item) as T
+        if (transformed !== item && result == null) {
+            result = ArrayList(this)
+        }
+        result?.set(i, transformed)
+    }
+    return result ?: this
+}

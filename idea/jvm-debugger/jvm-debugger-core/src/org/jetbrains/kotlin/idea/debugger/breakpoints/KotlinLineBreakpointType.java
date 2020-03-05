@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.*;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.idea.debugger.breakpoints.BreakpointTypeUtilsKt.isBreakpointApplicable;
@@ -108,7 +109,14 @@ public class KotlinLineBreakpointType extends JavaLineBreakpointType implements 
     @Nullable
     private static KtFunction getLambdaByOrdinal(SourcePosition position, Integer ordinal) {
         if (ordinal != null && ordinal >= 0) {
-            List<KtFunction> lambdas = BreakpointTypeUtilsKt.getLambdasAtLineIfAny(position);
+            List<KtFunction> lambdas = ReadAction.compute(() -> {
+                PsiElement targetElement = position.getElementAt();
+                if (targetElement == null || !targetElement.isValid()) {
+                    return Collections.emptyList();
+                }
+                return BreakpointTypeUtilsKt.getLambdasAtLineIfAny(position);
+            });
+
             if (lambdas.size() > ordinal) {
                 return lambdas.get(ordinal);
             }

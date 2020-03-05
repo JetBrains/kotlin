@@ -168,15 +168,15 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
         val worker = object : DebuggerCommandImpl() {
             override fun action() {
                 try {
-                    val frame = hopelessAware {
+                    val frameProxy = hopelessAware {
                         if (ApplicationManager.getApplication().isUnitTestMode) {
-                            contextElement?.getCopyableUserData(DEBUG_CONTEXT_FOR_TESTS)?.frameProxy?.stackFrame
+                            contextElement?.getCopyableUserData(DEBUG_CONTEXT_FOR_TESTS)?.frameProxy
                         } else {
-                            debuggerContext.frameProxy?.stackFrame
+                            debuggerContext.frameProxy
                         }
                     }
 
-                    frameInfo = FrameInfo.from(debuggerContext.project, frame)
+                    frameInfo = FrameInfo.from(debuggerContext.project, frameProxy)
                 } catch (ignored: AbsentInformationException) {
                     // Debug info unavailable
                 } catch (ignored: InvalidStackFrameException) {

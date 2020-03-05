@@ -12,5 +12,5 @@ fun acceptA(a: A) {
 
 fun main(i: I<*>) {
     i.foo() checkType { <!UNRESOLVED_REFERENCE!>_<!><A?>() }
-    acceptA(i.foo()) // i.foo() should be nullable but isn't
+    <!INAPPLICABLE_CANDIDATE!>acceptA<!>(i.foo()) // i.foo() should be nullable but isn't
 }

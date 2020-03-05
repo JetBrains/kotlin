@@ -8,10 +8,10 @@ public open class A {
     public/*package*/ open fun foo(/*0*/ x: kotlin.collections.(Mutable)Iterable<kotlin.Any!>!): kotlin.Unit
     public/*package*/ open fun foo(/*0*/ x: kotlin.collections.(Mutable)Iterator<kotlin.Any!>!): kotlin.Unit
     public/*package*/ open fun foo(/*0*/ x: kotlin.collections.(Mutable)List<kotlin.Any!>!): kotlin.Unit
-    public/*package*/ open fun foo(/*0*/ x: kotlin.collections.(Mutable)List<kotlin.collections.(Mutable)List<kotlin.Any!>!>!): kotlin.Unit
     public/*package*/ open fun foo(/*0*/ x: kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.Any!, kotlin.Any!>!): kotlin.Unit
     public/*package*/ open fun foo(/*0*/ x: kotlin.collections.(Mutable)Map<kotlin.Any!, kotlin.Any!>!): kotlin.Unit
     public/*package*/ open fun foo(/*0*/ x: kotlin.collections.(Mutable)Set<kotlin.Any!>!): kotlin.Unit
+    public/*package*/ open fun foo1(/*0*/ x: kotlin.collections.(Mutable)List<kotlin.collections.(Mutable)List<kotlin.Any!>!>!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

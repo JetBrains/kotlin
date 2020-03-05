@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,6 +26,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
 
     public void testAllFilesPresentInSlicer() throws Exception {
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/slicer"), Pattern.compile("^(.+)\\.kt$"), null);
+    }
+
+    @TestMetadata("inflow/abstractFun.kt")
+    public void testInflow_AbstractFun() throws Exception {
+        runTest("idea/testData/slicer/inflow/abstractFun.kt");
     }
 
     @TestMetadata("inflow/anonymousFunBodyExpression.kt")
@@ -223,6 +228,26 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
         runTest("idea/testData/slicer/inflow/nullsAndNotNulls.kt");
     }
 
+    @TestMetadata("inflow/openFun.kt")
+    public void testInflow_OpenFun() throws Exception {
+        runTest("idea/testData/slicer/inflow/openFun.kt");
+    }
+
+    @TestMetadata("inflow/openFunInvokeOnParameter.kt")
+    public void testInflow_OpenFunInvokeOnParameter() throws Exception {
+        runTest("idea/testData/slicer/inflow/openFunInvokeOnParameter.kt");
+    }
+
+    @TestMetadata("inflow/overrideFun.kt")
+    public void testInflow_OverrideFun() throws Exception {
+        runTest("idea/testData/slicer/inflow/overrideFun.kt");
+    }
+
+    @TestMetadata("inflow/overrideProperty.kt")
+    public void testInflow_OverrideProperty() throws Exception {
+        runTest("idea/testData/slicer/inflow/overrideProperty.kt");
+    }
+
     @TestMetadata("inflow/overridingFunctionResult.kt")
     public void testInflow_OverridingFunctionResult() throws Exception {
         runTest("idea/testData/slicer/inflow/overridingFunctionResult.kt");
@@ -251,6 +276,11 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
     @TestMetadata("inflow/primaryConstructorParameterWithDefault.kt")
     public void testInflow_PrimaryConstructorParameterWithDefault() throws Exception {
         runTest("idea/testData/slicer/inflow/primaryConstructorParameterWithDefault.kt");
+    }
+
+    @TestMetadata("inflow/propertyInInterface.kt")
+    public void testInflow_PropertyInInterface() throws Exception {
+        runTest("idea/testData/slicer/inflow/propertyInInterface.kt");
     }
 
     @TestMetadata("inflow/qualifiedAssignmentsForQualifiedRef.kt")

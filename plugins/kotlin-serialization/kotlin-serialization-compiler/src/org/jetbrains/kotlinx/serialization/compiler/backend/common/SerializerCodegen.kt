@@ -148,9 +148,6 @@ abstract class SerializerCodegen(
                     isReturnTypeOk(property)
         }
 
-    protected fun ClassDescriptor.getFuncDesc(funcName: String): Sequence<FunctionDescriptor> =
-        unsubstitutedMemberScope.getDescriptorsFiltered { it == Name.identifier(funcName) }.asSequence().filterIsInstance<FunctionDescriptor>()
-
     companion object {
         fun getSyntheticLoadMember(serializerDescriptor: ClassDescriptor): FunctionDescriptor? = getMemberToGenerate(
             serializerDescriptor, SerialEntityNames.LOAD,

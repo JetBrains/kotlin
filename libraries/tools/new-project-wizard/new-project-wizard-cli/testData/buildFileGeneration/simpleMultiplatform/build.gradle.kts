@@ -8,7 +8,11 @@ repositories {
     mavenCentral()
 }
 kotlin {
-    jvm()
+    jvm {
+        compilations.all {
+            kotlinOptions.jvmTarget = "9"
+        }
+    }
     js("a") {
         browser {
 
@@ -20,12 +24,20 @@ kotlin {
                 implementation(kotlin("stdlib-jdk8"))
             }
         }
-        val jvmTest by getting
+        val jvmTest by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
+            }
+        }
         val aMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-js"))
             }
         }
-        val aTest by getting
+        val aTest by getting {
+            dependencies {
+                implementation(kotlin("test-js"))
+            }
+        }
     }
 }

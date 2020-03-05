@@ -47,7 +47,7 @@ interface BaseExpressionCodegen {
         functionReferenceReceiver: StackValue?
     )
 
-    fun markLineNumberAfterInlineIfNeeded()
+    fun markLineNumberAfterInlineIfNeeded(registerLineNumberAfterwards: Boolean)
 
     fun consumeReifiedOperationMarker(typeParameter: TypeParameterMarker)
 

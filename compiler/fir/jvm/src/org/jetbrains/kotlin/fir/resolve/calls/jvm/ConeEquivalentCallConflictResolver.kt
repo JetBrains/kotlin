@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.resolve.calls.jvm
 
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractConeCallConflictResolver
-import org.jetbrains.kotlin.fir.resolve.calls.InferenceComponents
+import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
@@ -22,7 +22,8 @@ class ConeEquivalentCallConflictResolver(
 ) : AbstractConeCallConflictResolver(specificityComparator, inferenceComponents) {
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
-        discriminateGenerics: Boolean
+        discriminateGenerics: Boolean,
+        discriminateAbstracts: Boolean
     ): Set<Candidate> {
         return filterOutEquivalentCalls(candidates)
     }

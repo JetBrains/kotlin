@@ -68,6 +68,9 @@ object Renderers {
     }
 
     @JvmField
+    val EMPTY = Renderer<Any> { "" }
+
+    @JvmField
     val STRING = Renderer<String> { it }
 
     @JvmField

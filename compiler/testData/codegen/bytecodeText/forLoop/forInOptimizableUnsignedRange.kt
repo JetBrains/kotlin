@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JVM_IR
+// TODO KT-36773 Use counter loop when generating 'for' loop over an unsigned range in JVM_IR
 
 fun testUIntRangeLiteral(a: UInt, b: UInt): Int {
     var s = 0

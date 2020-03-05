@@ -1,7 +1,7 @@
 import org.junit.Test
 
-class MyKotlinTest {
+class <lineMarker descr="Run Test" settings=":cleanTest :test --tests \"MyKotlinTest\"">MyKotlinTest</lineMarker> {
     @Test
-    fun testA() {
+    fun <lineMarker descr="Run Test" settings=":cleanTest :test --tests \"MyKotlinTest.testA\"">testA</lineMarker>() {
     }
 }

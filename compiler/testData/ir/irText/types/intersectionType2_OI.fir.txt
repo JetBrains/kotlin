@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/intersectionType2_OI.kt
   CLASS INTERFACE name:A modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A<T of <root>.A>
     TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any?]
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -73,7 +73,7 @@ FILE fqName:<root> fileName:/intersectionType2_OI.kt
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<T of <root>.run>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun run <T> (fn: kotlin.Function0<T of <root>.run>): T of <root>.run declared in <root>'
-        CALL 'public abstract fun invoke (): T of <root>.run [operator] declared in kotlin.Function0' type=T of <root>.run origin=null
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=T of <root>.run origin=INVOKE
           $this: GET_VAR 'fn: kotlin.Function0<T of <root>.run> declared in <root>.run' type=kotlin.Function0<T of <root>.run> origin=null
   FUN name:foo visibility:public modality:FINAL <> () returnType:<root>.Foo
     BLOCK_BODY
@@ -95,4 +95,5 @@ FILE fqName:<root> fileName:/intersectionType2_OI.kt
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
                       then: GET_VAR 'val nn: <root>.C [val] declared in <root>.foo.<anonymous>' type=<root>.C origin=null
-                GET_VAR 'val c: <root>.Foo [val] declared in <root>.foo.<anonymous>' type=<root>.Foo origin=null
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): <root>.Foo declared in <root>.foo'
+                  GET_VAR 'val c: <root>.Foo [val] declared in <root>.foo.<anonymous>' type=<root>.Foo origin=null

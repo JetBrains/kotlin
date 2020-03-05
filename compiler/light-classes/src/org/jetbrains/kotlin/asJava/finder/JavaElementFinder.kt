@@ -21,12 +21,12 @@ import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Condition
 import com.intellij.psi.*
+import com.intellij.psi.impl.compiled.ClsClassImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
-import org.jetbrains.kotlin.asJava.classes.FakeLightClassForFileOfPackage
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
@@ -58,7 +58,9 @@ class JavaElementFinder(
         answer.addAll(kotlinAsJavaSupport.getFacadeClasses(qualifiedName, scope))
         answer.addAll(kotlinAsJavaSupport.getKotlinInternalClasses(qualifiedName, scope))
 
-        return answer.sortByClasspathPreferringNonFakeFiles(scope).toTypedArray()
+        sortByPreferenceToSourceFile(answer, scope)
+
+        return answer.toTypedArray()
     }
 
     // Finds explicitly declared classes and objects, not package classes
@@ -141,14 +143,21 @@ class JavaElementFinder(
             answer.add(aClass)
         }
 
-        return answer.sortByClasspathPreferringNonFakeFiles(scope).toTypedArray()
+        sortByPreferenceToSourceFile(answer, scope)
+
+        return answer.toTypedArray()
     }
 
-    override fun getPackageFiles(psiPackage: PsiPackage, scope: GlobalSearchScope): Array<PsiFile> {
-        val packageFQN = FqName(psiPackage.qualifiedName)
-        // TODO: this does not take into account JvmPackageName annotation
-        return kotlinAsJavaSupport.findFilesForPackage(packageFQN, scope).toTypedArray()
+    private fun sortByPreferenceToSourceFile(list: SmartList<PsiClass>, searchScope: GlobalSearchScope) {
+        if (list.size < 2) return
+        // NOTE: this comparator might violate the contract depending on the scope passed
+        ContainerUtil.quickSort(list, byClasspathComparator(searchScope))
+        list.sortBy { it !is ClsClassImpl }
     }
+
+    // TODO: this does not take into account JvmPackageName annotation
+    override fun getPackageFiles(psiPackage: PsiPackage, scope: GlobalSearchScope): Array<PsiFile> =
+        kotlinAsJavaSupport.findFilesForPackage(FqName(psiPackage.qualifiedName), scope).toTypedArray()
 
     override fun getPackageFilesFilter(psiPackage: PsiPackage, scope: GlobalSearchScope): Condition<PsiFile>? {
         return Condition { input ->
@@ -183,16 +192,6 @@ class JavaElementFinder(
                     else -> searchScope.compare(f2, f1)
                 }
             }
-        }
-
-        private fun List<PsiClass>.sortByClasspathPreferringNonFakeFiles(searchScope: GlobalSearchScope): List<PsiClass> {
-            val result = this.toMutableList()
-            // NOTE: this comparator might violate the contract depending on the scope passed
-            ContainerUtil.quickSort(result, byClasspathComparator(searchScope))
-            result.sortBy {
-                it is FakeLightClassForFileOfPackage
-            }
-            return result
         }
     }
 }

@@ -35,8 +35,8 @@ dependencies {
 
     testCompile(project(":idea:idea-native")) { isTransitive = false }
     testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
-    testRuntime(project(":kotlin-native:kotlin-native-library-reader")) { isTransitive = false }
-    testRuntime(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
+    testRuntime(project(":native:frontend.native")) { isTransitive = false }
+    testRuntime(project(":native:kotlin-native-utils")) { isTransitive = false }
 
     testCompile(intellijDep())
     testCompile(intellijPluginDep("properties"))
@@ -66,6 +66,10 @@ dependencies {
 
     Ide.IJ {
         testRuntime(intellijPluginDep("maven"))
+
+        if (Ide.IJ201.orHigher()) {
+            testRuntime(intellijPluginDep("repository-search"))
+        }
     }
 
     testRuntime(intellijPluginDep("testng"))
@@ -73,20 +77,11 @@ dependencies {
     if (Ide.AS36.orHigher()) {
         testRuntime(intellijPluginDep("android-layoutlib"))
     }
-
-    if (Ide.AS36()) {
-        testRuntime(intellijPluginDep("android-wizardTemplate-plugin"))
-    }
 }
 
 sourceSets {
-    if (Ide.IJ183()) {
-        "main" { projectDefault() }
-        "test" { projectDefault() }
-    } else {
-        "main" { }
-        "test" { }
-    }
+    "main" { }
+    "test" { }
 }
 
 projectTest(parallel = true) {

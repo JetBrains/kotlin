@@ -95,6 +95,7 @@ object CallingConventions {
     const val encodeEnum = "encodeEnum"
     const val decodeEnum = "decodeEnum"
     const val decodeElementIndex = "decodeElementIndex"
+    const val decodeSequentially = "decodeSequentially"
     const val elementPostfix = "Element"
     const val shouldEncodeDefault = "shouldEncodeElementDefault"
 

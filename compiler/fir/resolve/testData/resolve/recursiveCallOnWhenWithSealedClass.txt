@@ -1,6 +1,6 @@
 FILE: recursiveCallOnWhenWithSealedClass.kt
     public sealed class Maybe<T> : R|kotlin/Any| {
-        public constructor<T>(): R|Maybe<T>| {
+        private constructor<T>(): R|Maybe<T>| {
             super<R|kotlin/Any|>()
         }
 
@@ -29,11 +29,11 @@ FILE: recursiveCallOnWhenWithSealedClass.kt
 
         public final fun unwrap(): R|T| {
             ^unwrap when (this@R|/Maybe|) {
-                ($subj$ is R|Maybe.Nope|) ->  {
+                ($subj$ is R|Maybe.Nope<T>|) ->  {
                     throw R|java/lang/Exception.Exception|(String())
                 }
-                ($subj$ is R|Maybe.Yeah|) ->  {
-                    this@R|/Maybe|.R|/Maybe.Yeah.meat|
+                ($subj$ is R|Maybe.Yeah<T>|) ->  {
+                    this@R|/Maybe|.R|FakeOverride</Maybe.Yeah.meat: R|T|>|
                 }
             }
 

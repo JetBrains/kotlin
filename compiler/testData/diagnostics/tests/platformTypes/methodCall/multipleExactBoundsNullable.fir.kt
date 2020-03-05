@@ -28,11 +28,11 @@ interface WithFoo {
 
 fun <M2: WithFoo> foo(delegateResolver: ResolverForProject<M2?>): ResolverForProject<M2?> {
     val descriptorByModule = MyMap<M2, String>()
-    val result = <!INAPPLICABLE_CANDIDATE!>ResolverForProjectImpl<!>(descriptorByModule, delegateResolver)
-    result.<!UNRESOLVED_REFERENCE!>exposeM<!>.<!UNRESOLVED_REFERENCE!>foo<!>() // M is not M2?
-    result.<!UNRESOLVED_REFERENCE!>exposeM<!>?.<!UNRESOLVED_REFERENCE!>foo<!>() // no warning, M is not M2, hense M is M2!
+    val result = ResolverForProjectImpl(descriptorByModule, delegateResolver)
+    result.exposeM.foo() // M is not M2?
+    result.exposeM?.foo() // no warning, M is not M2, hense M is M2!
 
-    return <!INAPPLICABLE_CANDIDATE!>ResolverForProjectImpl<!>(descriptorByModule, delegateResolver) // another bound check
+    return ResolverForProjectImpl(descriptorByModule, delegateResolver) // another bound check
 }
 
 // MyMap<M2, String> :< Map<M, String> => M = M2!

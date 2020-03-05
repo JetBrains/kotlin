@@ -1,10 +1,7 @@
-compiler/testData/cli/jvm/progressive/dataClassOverridingCopy.kt:5:1: error: function 'copy' generated for the data class has default values for parameters, and conflicts with member of supertype 'WithCopy'
-data class Test(val str: String): WithCopy<String>
-^
-compiler/testData/cli/jvm/progressive/nonConstValueAsVarargInAnnotation.kt:5:15: error: an annotation argument must be a compile-time constant
-@Anno(value = nonConstArray)
-              ^
-compiler/testData/cli/jvm/progressive/valReassignmentViaBackingField.kt:3:9: error: reassignment of read-only property via backing field
-        field++
-        ^
+compiler/testData/cli/jvm/progressive/tailrecOnVirtualMember.kt:2:5: error: tailrec is not allowed on open members
+    tailrec open fun foo(x: Int) {}
+    ^
+compiler/testData/cli/jvm/progressive/typeParametersInAnonymousObjects.kt:2:19: error: type parameters are not allowed for objects
+    val x = object<T> { }
+                  ^
 COMPILATION_ERROR

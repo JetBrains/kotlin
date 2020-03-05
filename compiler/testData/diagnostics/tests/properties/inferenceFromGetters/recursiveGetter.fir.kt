@@ -10,8 +10,8 @@ class A {
     val a get() = b
     val b get() = a
 
-    val z1 get() = <!UNRESOLVED_REFERENCE!>id<!>(z1)
-    val z2 get() = <!UNRESOLVED_REFERENCE!>l<!>(z2)
+    val z1 get() = <!INAPPLICABLE_CANDIDATE!>id<!>(z1)
+    val z2 get() = <!INAPPLICABLE_CANDIDATE!>l<!>(z2)
 
     val u get() = field
 }

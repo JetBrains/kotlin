@@ -7,7 +7,7 @@ fun foo() {
         break
 
     }
-    x.<!UNRESOLVED_REFERENCE!>length<!> // 'x' is unsoundly smartcasted here
+    x.length // 'x' is unsoundly smartcasted here
 }
 
 fun bar() {
@@ -17,5 +17,5 @@ fun bar() {
         break
 
     }
-    x.<!UNRESOLVED_REFERENCE!>size<!> // 'x' is unsoundly smartcasted here
+    x.size // 'x' is unsoundly smartcasted here
 }

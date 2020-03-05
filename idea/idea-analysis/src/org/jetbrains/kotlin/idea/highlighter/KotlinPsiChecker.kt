@@ -17,42 +17,38 @@
 package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.codeInsight.daemon.impl.HighlightRangeExtension
-import com.intellij.codeInsight.intention.EmptyIntentionAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.lang.annotation.Annotation
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.colors.CodeInsightColors
-import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.MultiRangeReference
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.containers.MultiMap
-import com.intellij.xml.util.XmlStringUtil
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.fir.FirResolution
 import org.jetbrains.kotlin.idea.fir.firResolveState
 import org.jetbrains.kotlin.idea.fir.getOrBuildFirWithDiagnostics
-import org.jetbrains.kotlin.idea.inspections.KotlinUniversalQuickFix
 import org.jetbrains.kotlin.idea.quickfix.QuickFixes
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.lang.reflect.*
 import java.util.*
 
@@ -244,6 +240,9 @@ private class ElementAnnotator(
         val diagnostic = diagnostics.first()
         val factory = diagnostic.factory
 
+        // hack till the root cause #KT-21246 is fixed
+        if (isIrCompileClassDiagnosticForModulesWithEnabledIR(diagnostic)) return
+
         assert(diagnostics.all { it.psiElement == element && it.factory == factory })
 
         val ranges = diagnostic.textRanges
@@ -319,28 +318,15 @@ private class ElementAnnotator(
             MultiMap<Diagnostic, IntentionAction>()
         }
 
-        for (range in data.ranges) {
-            for (diagnostic in diagnostics) {
-                val annotation = data.create(diagnostic, range, holder)
-                val fixes = fixesMap[diagnostic]
+        data.processDiagnostics(holder, diagnostics, fixesMap)
+    }
 
-                fixes.forEach {
-                    when (it) {
-                        is KotlinUniversalQuickFix -> annotation.registerUniversalFix(it, null, null)
-                        is IntentionAction -> annotation.registerFix(it)
-                    }
-                }
-
-                if (diagnostic.severity == Severity.WARNING) {
-                    annotation.problemGroup = KotlinSuppressableWarningProblemGroup(diagnostic.factory)
-
-                    if (fixes.isEmpty()) {
-                        // if there are no quick fixes we need to register an EmptyIntentionAction to enable 'suppress' actions
-                        annotation.registerFix(EmptyIntentionAction(diagnostic.factory.name))
-                    }
-                }
-            }
-        }
+    private fun isIrCompileClassDiagnosticForModulesWithEnabledIR(diagnostic: Diagnostic): Boolean {
+        if (diagnostic.factory != Errors.IR_COMPILED_CLASS) return false
+        val module = element.module ?: return false
+        val moduleFacetSettings = KotlinFacetSettingsProvider.getInstance(element.project)?.getSettings(module) ?: return false
+        return moduleFacetSettings.isCompilerSettingPresent(K2JVMCompilerArguments::useIR)
+                || moduleFacetSettings.isCompilerSettingPresent(K2JVMCompilerArguments::allowJvmIrDependencies)
     }
 
     companion object {
@@ -348,62 +334,3 @@ private class ElementAnnotator(
     }
 }
 
-private class AnnotationPresentationInfo(
-    val ranges: List<TextRange>,
-    val nonDefaultMessage: String? = null,
-    val highlightType: ProblemHighlightType? = null,
-    val textAttributes: TextAttributesKey? = null
-) {
-
-    fun create(diagnostic: Diagnostic, range: TextRange, holder: AnnotationHolder): Annotation {
-        val defaultMessage = nonDefaultMessage ?: getDefaultMessage(diagnostic)
-
-        val annotation = when (diagnostic.severity) {
-            Severity.ERROR -> holder.createErrorAnnotation(range, defaultMessage)
-            Severity.WARNING -> {
-                if (highlightType == ProblemHighlightType.WEAK_WARNING) {
-                    holder.createWeakWarningAnnotation(range, defaultMessage)
-                } else {
-                    holder.createWarningAnnotation(range, defaultMessage)
-                }
-            }
-            Severity.INFO -> holder.createInfoAnnotation(range, defaultMessage)
-        }
-
-        annotation.tooltip = getMessage(diagnostic)
-
-        if (highlightType != null) {
-            annotation.highlightType = highlightType
-        }
-
-        if (textAttributes != null) {
-            annotation.textAttributes = textAttributes
-        }
-
-        return annotation
-    }
-
-    private fun getMessage(diagnostic: Diagnostic): String {
-        var message = IdeErrorMessages.render(diagnostic)
-        if (ApplicationManager.getApplication().isInternal || ApplicationManager.getApplication().isUnitTestMode) {
-            val factoryName = diagnostic.factory.name
-            message = if (message.startsWith("<html>")) {
-                "<html>[$factoryName] ${message.substring("<html>".length)}"
-            } else {
-                "[$factoryName] $message"
-            }
-        }
-        if (!message.startsWith("<html>")) {
-            message = "<html><body>${XmlStringUtil.escapeString(message)}</body></html>"
-        }
-        return message
-    }
-
-    private fun getDefaultMessage(diagnostic: Diagnostic): String {
-        val message = DefaultErrorMessages.render(diagnostic)
-        if (ApplicationManager.getApplication().isInternal || ApplicationManager.getApplication().isUnitTestMode) {
-            return "[${diagnostic.factory.name}] $message"
-        }
-        return message
-    }
-}

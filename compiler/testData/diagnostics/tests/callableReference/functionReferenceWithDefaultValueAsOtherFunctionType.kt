@@ -13,6 +13,6 @@ fun bar2(body: (String, Int) -> String): String {
 }
 
 fun test() {
-    bar1(<!NI;UNSUPPORTED_FEATURE, OI;TYPE_MISMATCH!>::foo<!>)
+    bar1(<!OI;TYPE_MISMATCH!>::foo<!>)
     bar2(::foo)
 }

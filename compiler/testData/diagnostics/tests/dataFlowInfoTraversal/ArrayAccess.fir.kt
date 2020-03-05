@@ -4,10 +4,10 @@ fun foo() {
     val x: Int? = null
     val a = Array<Int>(3, {0})
 
-    if (x != null) bar(a[x]) else bar(a[x])
+    if (x != null) bar(a[x]) else bar(<!INAPPLICABLE_CANDIDATE!>a[x]<!>)
     bar(a[if (x == null) 0 else x])
-    bar(a[x])
+    bar(<!INAPPLICABLE_CANDIDATE!>a[x]<!>)
     
-    "123"[x];
+    <!INAPPLICABLE_CANDIDATE!>"123"[x]<!>;
     if (x != null) "123"[x];
 }

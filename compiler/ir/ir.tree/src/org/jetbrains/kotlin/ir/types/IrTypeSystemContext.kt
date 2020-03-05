@@ -310,6 +310,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun TypeConstructorMarker.isInlineClass(): Boolean =
         (this as? IrClassSymbol)?.owner?.isInline == true
 
+    override fun TypeConstructorMarker.isInnerClass(): Boolean =
+        (this as? IrClassSymbol)?.owner?.isInner == true
+
     override fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker =
         (this as IrTypeParameterSymbol).owner.superTypes.firstOrNull {
             val irClass = it.classOrNull?.owner ?: return@firstOrNull false

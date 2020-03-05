@@ -2,16 +2,19 @@ package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle
 
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.FreeIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
+import org.jetbrains.kotlin.tools.projectWizard.settings.JavaPackage
 
 interface AndroidIR : GradleIR
 
 //TODO parematrize
-data class AndroidConfigIR(val artifactId: String) : AndroidIR, FreeIR {
+data class AndroidConfigIR(val javaPackage: JavaPackage?) : AndroidIR, FreeIR {
     override fun GradlePrinter.renderGradle() {
         sectionCall("android", needIndent = true) {
             call("compileSdkVersion") { +"29" }; nlIndented() // TODO dehardcode
             sectionCall("defaultConfig", needIndent = true) {
-                assignmentOrCall("applicationId") { +artifactId.quotified }; nlIndented()
+                if (javaPackage != null) {
+                    assignmentOrCall("applicationId") { +javaPackage.asCodePackage().quotified }; nlIndented()
+                }
                 call("minSdkVersion") { +"24" }; nlIndented()  // TODO dehardcode
                 call("targetSdkVersion") { +"29" }; nlIndented() // TODO dehardcode
                 assignmentOrCall("versionCode") { +"1" }; nlIndented()
@@ -24,7 +27,12 @@ data class AndroidConfigIR(val artifactId: String) : AndroidIR, FreeIR {
                     GradlePrinter.GradleDsl.GROOVY -> "release".quotified
                 }
                 sectionCall(sectionIdentifier, needIndent = true) {
-                    assignmentOrCall("isMinifyEnabled") { +"false" }
+                    val minifyCallName = when (dsl) {
+                        GradlePrinter.GradleDsl.KOTLIN -> "isMinifyEnabled"
+                        GradlePrinter.GradleDsl.GROOVY -> "minifyEnabled"
+                    }
+
+                    assignmentOrCall(minifyCallName) { +"false" }
                 }
             }
         }

@@ -20,6 +20,7 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
@@ -45,10 +46,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder.Target.READ_ONLY_PROPERTY
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
-import org.jetbrains.kotlin.psi.psiUtil.getStartOffsetIn
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
@@ -198,8 +196,9 @@ class ConvertFunctionToPropertyIntention :
     override fun startInWriteAction(): Boolean = false
 
     override fun isApplicableTo(element: KtNamedFunction, caretOffset: Int): Boolean {
+        val funKeyword = element.funKeyword ?: return false
         val identifier = element.nameIdentifier ?: return false
-        if (!identifier.textRange.containsOffset(caretOffset)) return false
+        if (!TextRange(funKeyword.startOffset, identifier.endOffset).containsOffset(caretOffset)) return false
 
         if (element.valueParameters.isNotEmpty() || element.isLocal) return false
 

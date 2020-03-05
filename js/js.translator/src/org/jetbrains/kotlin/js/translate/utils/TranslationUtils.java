@@ -545,6 +545,21 @@ public final class TranslationUtils {
             }
         }
 
+        // SAM conversion
+        if ((FunctionTypesKt.isFunctionTypeOrSubtype(from) || FunctionTypesKt.isSuspendFunctionTypeOrSubtype(from))) {
+            ClassifierDescriptor d = to.getConstructor().getDeclarationDescriptor();
+            if (d instanceof ClassDescriptor && ((ClassDescriptor)d).isFun()) {
+                JsName constructorName = context.getInlineableInnerNameForDescriptor(d.getOriginal());
+                if (to.isMarkedNullable()) {
+                    JsConditional c = TranslationUtils.notNullConditional(value, new JsNullLiteral(), context);
+                    c.setThenExpression(new JsNew(new JsNameRef(constructorName), Collections.singletonList(c.getThenExpression())));
+                    value = c;
+                } else {
+                    value = new JsNew(new JsNameRef(constructorName), Collections.singletonList(value));
+                }
+            }
+        }
+
         MetadataProperties.setType(value, to);
         return value;
     }

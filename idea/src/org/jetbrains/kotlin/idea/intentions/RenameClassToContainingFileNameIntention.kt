@@ -22,6 +22,7 @@ class RenameClassToContainingFileNameIntention : SelfTargetingRangeIntention<KtC
         if (!element.isTopLevel()) return null
         val fileName = FileUtil.getNameWithoutExtension(element.containingKtFile.name)
         if (fileName == element.name
+            || fileName.isEmpty()
             || fileName[0].isLowerCase()
             || !Name.isValidIdentifier(fileName)
             || Name.identifier(fileName).render() != fileName

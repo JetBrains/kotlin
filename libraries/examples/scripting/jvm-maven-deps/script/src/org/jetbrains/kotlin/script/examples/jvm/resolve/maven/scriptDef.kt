@@ -55,6 +55,7 @@ fun configureMavenDepsOnAnnotations(context: ScriptConfigurationRefinementContex
     fun report(severity: ScriptDependenciesResolver.ReportSeverity, message: String, position: ScriptContents.Position?) {
         diagnostics.add(
             ScriptDiagnostic(
+                ScriptDiagnostic.unspecifiedError,
                 message,
                 mapLegacyDiagnosticSeverity(severity),
                 context.script.locationId,

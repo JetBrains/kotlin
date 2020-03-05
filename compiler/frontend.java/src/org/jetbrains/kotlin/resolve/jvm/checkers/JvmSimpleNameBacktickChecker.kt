@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.IdentifierChecker
 
 object JvmSimpleNameBacktickChecker : IdentifierChecker {
     // See The Java Virtual Machine Specification, section 4.7.9.1 https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.9.1
-    private val CHARS = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
+    val INVALID_CHARS = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
 
     override fun checkIdentifier(simpleNameExpression: KtSimpleNameExpression, diagnosticHolder: DiagnosticSink) {
         reportIfNeeded(simpleNameExpression.getReferencedName(), { simpleNameExpression.getIdentifier() }, diagnosticHolder)
@@ -55,16 +55,13 @@ object JvmSimpleNameBacktickChecker : IdentifierChecker {
         val text = KtPsiUtil.unquoteIdentifier(name)
         if (text.isEmpty()) {
             diagnosticHolder.report(Errors.INVALID_CHARACTERS.on(reportOn() ?: return, "should not be empty"))
-        } else if (text.any { it in CHARS }) {
+        } else if (text.any { it in INVALID_CHARS }) {
             diagnosticHolder.report(
                 Errors.INVALID_CHARACTERS.on(
                     reportOn() ?: return,
-                    "contains illegal characters: ${CHARS.intersect(text.toSet()).joinToString(
-                        ""
-                    )}"
+                    "contains illegal characters: ${INVALID_CHARS.intersect(text.toSet()).joinToString("")}"
                 )
             )
         }
     }
 }
-

@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/nonLocalDisabled.kt
+-Xno-inline
+-d
+$TEMP_DIR$
+-Xuse-ir

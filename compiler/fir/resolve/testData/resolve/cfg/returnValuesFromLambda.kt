@@ -1,3 +1,4 @@
+// !DUMP_CFG
 interface A
 
 class B : A

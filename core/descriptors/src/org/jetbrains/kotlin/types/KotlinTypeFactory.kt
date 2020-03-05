@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.getRefinedMemberScopeIfPossible
 import org.jetbrains.kotlin.descriptors.impl.getRefinedUnsubstitutedMemberScopeIfPossible
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.getKotlinTypeRefiner
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -224,6 +225,31 @@ private class SimpleTypeImpl(
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): SimpleType {
         return refinedTypeFactory(kotlinTypeRefiner) ?: this
     }
+}
+
+// Note: a hack to support class descriptor overwriting in case of K/N forward declaration replacement and other such cases
+class SupposititiousSimpleType(private val realType: SimpleType, val overwrittenClass: ClassId) : SimpleType() {
+
+    private fun maybeWrap(newType: SimpleType): SupposititiousSimpleType {
+        return if (newType === realType) this
+        else SupposititiousSimpleType(newType, overwrittenClass)
+    }
+
+    override fun replaceAnnotations(newAnnotations: Annotations): SimpleType =
+            maybeWrap(realType.replaceAnnotations(newAnnotations))
+
+    override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType =
+            maybeWrap(realType.makeNullableAsSpecified(newNullability))
+
+    @TypeRefinement
+    override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): SimpleType =
+            maybeWrap(realType.refine(kotlinTypeRefiner))
+
+    override val constructor: TypeConstructor = realType.constructor
+    override val arguments: List<TypeProjection> = realType.arguments
+    override val isMarkedNullable: Boolean = realType.isMarkedNullable
+    override val memberScope: MemberScope = realType.memberScope
+    override val annotations: Annotations = realType.annotations
 }
 
 abstract class DelegatingSimpleTypeImpl(override val delegate: SimpleType) : DelegatingSimpleType() {

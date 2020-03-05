@@ -104,11 +104,6 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 runTest("js/js.translator/testData/box/callableReference/function/classMemberAndNonExtensionCompatibility.kt");
             }
 
-            @TestMetadata("classMemberDirectCache.kt")
-            public void testClassMemberDirectCache() throws Exception {
-                runTest("js/js.translator/testData/box/callableReference/function/classMemberDirectCache.kt");
-            }
-
             @TestMetadata("classMemberOverridden.kt")
             public void testClassMemberOverridden() throws Exception {
                 runTest("js/js.translator/testData/box/callableReference/function/classMemberOverridden.kt");
@@ -2146,6 +2141,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             @TestMetadata("manglingClashWithFunctionsWithoutParameters.kt")
             public void testManglingClashWithFunctionsWithoutParameters() throws Exception {
                 runTest("js/js.translator/testData/box/expression/function/manglingClashWithFunctionsWithoutParameters.kt");
+            }
+
+            @TestMetadata("manglingImportedFromObjectWithNI.kt")
+            public void testManglingImportedFromObjectWithNI() throws Exception {
+                runTest("js/js.translator/testData/box/expression/function/manglingImportedFromObjectWithNI.kt");
             }
 
             @TestMetadata("manglingStability.kt")
@@ -4659,6 +4659,24 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
     }
 
+    @TestMetadata("js/js.translator/testData/box/intrinsics")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Intrinsics extends AbstractBoxJsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInIntrinsics() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/intrinsics"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+        }
+
+        @TestMetadata("typeof.kt")
+        public void testTypeof() throws Exception {
+            runTest("js/js.translator/testData/box/intrinsics/typeof.kt");
+        }
+    }
+
     @TestMetadata("js/js.translator/testData/box/java")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -4956,6 +4974,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("externalFunction.kt")
         public void testExternalFunction() throws Exception {
             runTest("js/js.translator/testData/box/jsModule/externalFunction.kt");
+        }
+
+        @TestMetadata("externalFunctionNameClash.kt")
+        public void testExternalFunctionNameClash() throws Exception {
+            runTest("js/js.translator/testData/box/jsModule/externalFunctionNameClash.kt");
         }
 
         @TestMetadata("externalFunctionPlain.kt")
@@ -6839,6 +6862,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("tmpInsidePrimaryConstructor.kt")
         public void testTmpInsidePrimaryConstructor() throws Exception {
             runTest("js/js.translator/testData/box/regression/tmpInsidePrimaryConstructor.kt");
+        }
+
+        @TestMetadata("wrappers.kt")
+        public void testWrappers() throws Exception {
+            runTest("js/js.translator/testData/box/regression/wrappers.kt");
         }
 
         @TestMetadata("js/js.translator/testData/box/regression/stdlibTestSnippets")

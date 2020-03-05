@@ -5,8 +5,8 @@ annotation class C
 enum class D
 
 fun main() {
-    ::A
+    <!UNRESOLVED_REFERENCE!>::A<!>
     ::B
     ::C   // KT-3465
-    ::D
+    <!UNRESOLVED_REFERENCE!>::D<!>
 }

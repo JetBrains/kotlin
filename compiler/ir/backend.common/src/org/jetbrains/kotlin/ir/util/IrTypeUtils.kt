@@ -52,6 +52,9 @@ fun IrType.isInterface() = classOrNull?.owner?.kind == ClassKind.INTERFACE
 
 fun IrType.isFunctionOrKFunction() = isFunction() || isKFunction()
 
+fun IrType.isSuspendFunctionOrKFunction() = isSuspendFunction() || isKSuspendFunction()
+
+
 @Deprecated(
     "Use org.jetbrains.kotlin.ir.types.isNullable instead.",
     ReplaceWith("this.isNullable()", "org.jetbrains.kotlin.ir.types.isNullable")

@@ -4,25 +4,28 @@
 // WITH_REFLECT
 
 import kotlin.reflect.jvm.*
-import kotlin.test.assertEquals
+import kotlin.test.*
 
 class K(var value: Long)
 
 fun box(): String {
     val p = K::value
 
-    assert(p.javaField != null) { "Fail p field" }
+    assertNotNull(p.javaField, "Fail p field")
 
     val getter = p.javaGetter!!
     val setter = p.javaSetter!!
 
-    assertEquals(getter, K::class.java.getMethod("getValue"))
-    assertEquals(setter, K::class.java.getMethod("setValue", Long::class.java))
+    assertEquals(K::class.java.getMethod("getValue"), getter)
+    assertEquals(K::class.java.getMethod("setValue", Long::class.java), setter)
+
+    assertNull(p.getter.javaConstructor)
+    assertNull(p.setter.javaConstructor)
 
     val k = K(42L)
-    assert(getter.invoke(k) == 42L) { "Fail k getter" }
+    assertEquals(42L, getter.invoke(k), "Fail k getter")
     setter.invoke(k, -239L)
-    assert(getter.invoke(k) == -239L) { "Fail k setter" }
+    assertEquals(-239L, getter.invoke(k), "Fail k setter")
 
     return "OK"
 }

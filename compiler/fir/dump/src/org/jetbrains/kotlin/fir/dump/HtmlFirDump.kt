@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.backend.left
+import org.jetbrains.kotlin.fir.backend.right
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnostic
@@ -22,9 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.FirAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.FirInapplicableCandidateError
@@ -698,10 +698,10 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         generate(variableAssignment.rValue)
     }
 
-    private fun FlowContent.generate(projection: ConeKotlinTypeProjection) {
+    private fun FlowContent.generate(projection: ConeTypeProjection) {
         when (projection) {
             is ConeStarProjection -> +"*"
-            is ConeTypedProjection -> {
+            is ConeKotlinTypeProjection -> {
                 when (projection.kind) {
                     ProjectionKind.IN -> keyword("in ")
                     ProjectionKind.OUT -> keyword("out ")
@@ -849,6 +849,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(memberDeclaration: FirMemberDeclaration) {
         when (memberDeclaration) {
+            is FirEnumEntry -> generate(memberDeclaration)
             is FirRegularClass -> generate(memberDeclaration)
             is FirSimpleFunction -> generate(memberDeclaration)
             is FirProperty -> if (memberDeclaration.isLocal) generate(memberDeclaration as FirVariable<*>) else generate(memberDeclaration)
@@ -1002,7 +1003,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-    private fun FlowContent.describeVerbose(symbol: FirCallableSymbol<*>, fir: FirMemberFunction<*>) {
+    private fun FlowContent.describeVerbose(symbol: FirCallableSymbol<*>, fir: FirFunction<*>) {
         describeTypeParameters(fir)
 
         fir.receiverTypeRef?.let {
@@ -1411,11 +1412,10 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(resolvedQualifier: FirResolvedQualifier) {
         resolved {
-            val symbolProvider = session.firSymbolProvider
-            val classId = resolvedQualifier.classId
-            if (classId != null) {
-                symbolRef(symbolProvider.getClassLikeSymbolByFqName(classId)) {
-                    fqn(classId.relativeClassName)
+            val symbol = resolvedQualifier.symbol
+            if (symbol != null) {
+                symbolRef(symbol) {
+                    fqn(resolvedQualifier.classId?.relativeClassName ?: FqName("<???>"))
                 }
             } else {
                 fqn(resolvedQualifier.packageFqName)
@@ -1475,9 +1475,27 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 is FirOperatorCall -> generate(expression)
                 is FirBinaryLogicExpression -> generate(expression)
                 is FirCheckNotNullCall -> generate(expression)
+                is FirVarargArgumentsExpression -> generate(expression)
+                is FirResolvedReifiedParameterReference -> generate(expression)
+                is FirComparisonExpression -> generate(expression)
                 else -> inlineUnsupported(expression)
             }
         }
+    }
+
+    private fun FlowContent.generate(comparisonExpression: FirComparisonExpression) {
+        generate(comparisonExpression.left)
+        +" ${comparisonExpression.operation.operator} "
+        generate(comparisonExpression.right)
+    }
+
+    private fun FlowContent.generate(resolvedReifiedParameterReference: FirResolvedReifiedParameterReference) {
+        val typeParameter = resolvedReifiedParameterReference.symbol.fir
+        +typeParameter.name.identifier
+    }
+
+    private fun FlowContent.generate(varargArgumentExpression: FirVarargArgumentsExpression) {
+        generateList(varargArgumentExpression.arguments, separator = ",") { generate(it) }
     }
 
     private fun FlowContent.generate(binaryLogicExpression: FirBinaryLogicExpression) {
@@ -1676,6 +1694,12 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 ws
                 simpleName(alias)
             }
+        }
+    }
+
+    private fun FlowContent.generate(enumEntry: FirEnumEntry) {
+        iline {
+            simpleName(enumEntry.name)
         }
     }
 

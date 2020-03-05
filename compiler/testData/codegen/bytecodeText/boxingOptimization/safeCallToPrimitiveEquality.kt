@@ -1,4 +1,6 @@
 // IGNORE_BACKEND: JVM_IR
+// TODO KT-36646 Don't box primitive values in equality comparison with nullable primitive values in JVM_IR
+
 fun Long.id() = this
 
 fun String.drop2() = if (length >= 2) subSequence(2, length) else null

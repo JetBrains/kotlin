@@ -12,7 +12,7 @@ fun testEmpty(ss: List<String>) {
 fun main(args: Array<String>) {
     if (box() == "OK") {
         System.out.println("Hello")
-        println("Hello")
+        // println("Hello")
         throw E("Hello")
     }
 }

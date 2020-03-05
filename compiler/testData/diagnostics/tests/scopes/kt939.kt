@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package kt939
 
 //KT-939 CommonSupertypes erases scopes associated to types

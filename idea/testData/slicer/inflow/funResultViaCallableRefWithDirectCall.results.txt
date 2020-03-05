@@ -4,3 +4,4 @@
 4 			fun <bold>bar(n: Int) = n</bold>
 4 				fun bar(n: Int) = <bold>n</bold>
 4 					fun bar(<bold>n: Int</bold>) = n
+5 						val x = (::bar)(<bold>1</bold>)

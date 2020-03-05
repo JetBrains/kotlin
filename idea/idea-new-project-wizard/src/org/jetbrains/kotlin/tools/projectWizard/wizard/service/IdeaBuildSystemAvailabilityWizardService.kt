@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.wizard.service
 
-import com.intellij.ide.plugins.PluginManager
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId
 import org.jetbrains.kotlin.tools.projectWizard.core.service.BuildSystemAvailabilityWizardService
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
@@ -19,5 +19,5 @@ class IdeaBuildSystemAvailabilityWizardService : BuildSystemAvailabilityWizardSe
     }
 
     private fun isPluginEnabled(id: String) =
-        PluginManager.getPlugin(PluginId.getId(id))?.isEnabled == true
+        PluginManagerCore.getPlugin(PluginId.getId(id))?.isEnabled == true
 }

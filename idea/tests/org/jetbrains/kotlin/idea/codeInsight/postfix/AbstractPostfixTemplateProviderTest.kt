@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.postfix
 
-import com.intellij.codeInsight.template.impl.TemplateManagerImpl
+import org.jetbrains.kotlin.idea.liveTemplates.setTemplateTestingCompat
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -30,7 +30,7 @@ abstract class AbstractPostfixTemplateProviderTest : KotlinLightCodeInsightFixtu
         myFixture.configureByFile(fileName)
         val template = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// TEMPLATE:")
         if (template != null) {
-            TemplateManagerImpl.setTemplateTesting(project, testRootDisposable)
+            setTemplateTestingCompat(project, testRootDisposable)
             myFixture.type(template.replace("\\t", "\t"))
         } else {
             myFixture.type('\t')

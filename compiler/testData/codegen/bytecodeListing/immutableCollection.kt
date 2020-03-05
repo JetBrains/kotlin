@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 interface ImmutableCollection<out E> : Collection<E> {
     fun add(element: @UnsafeVariance E): ImmutableCollection<E>
     fun addAll(elements: Collection<@UnsafeVariance E>): ImmutableCollection<E>
@@ -9,19 +10,19 @@ class ImmutableCollectionmpl<E> : ImmutableCollection<E> {
         get() = throw UnsupportedOperationException()
 
     override fun contains(element: E): Boolean {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw UnsupportedOperationException("not implemented")
     }
 
     override fun containsAll(elements: Collection<E>): Boolean {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw UnsupportedOperationException("not implemented")
     }
 
     override fun isEmpty(): Boolean {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw UnsupportedOperationException("not implemented")
     }
 
     override fun iterator(): Iterator<E> {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        throw UnsupportedOperationException("not implemented")
     }
 
     override fun add(element: E): ImmutableCollection<E> = this

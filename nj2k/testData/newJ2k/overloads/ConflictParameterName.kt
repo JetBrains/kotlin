@@ -8,7 +8,6 @@ class Test {
 
     private val isD: Boolean
         private get() = true
-
     private val e = E()
 
     class E {

@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirImplicitThisReference(
-    override val boundSymbol: AbstractFirBasedSymbol<*>?
+internal class FirImplicitThisReference(
+    override val boundSymbol: AbstractFirBasedSymbol<*>?,
 ) : FirThisReference() {
-    override val source: FirSourceElement? = null
+    override val source: FirSourceElement? get() = null
     override val labelName: String? get() = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
@@ -27,5 +27,5 @@ class FirImplicitThisReference(
         return this
     }
 
-    override fun replaceBoundSymbol(newBoundSymbol: AbstractFirBasedSymbol<*>) {}
+    override fun replaceBoundSymbol(newBoundSymbol: AbstractFirBasedSymbol<*>?) {}
 }

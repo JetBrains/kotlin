@@ -1,0 +1,26 @@
+{
+  "4": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 2,
+          "description": "check unsafe prefix decrement expression call for an assignable expression",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "5": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 2,
+          "description": "check as the result of dec is assigned to A, the return type of inc must be a subtype of A.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

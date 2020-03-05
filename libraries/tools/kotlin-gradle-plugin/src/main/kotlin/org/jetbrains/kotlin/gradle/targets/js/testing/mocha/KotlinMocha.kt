@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 import java.io.File
 
-class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestFramework {
+class KotlinMocha(override val compilation: KotlinJsCompilation) :
+    KotlinJsTestFramework {
     private val project: Project = compilation.target.project
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val versions = nodeJs.versions
@@ -89,7 +90,11 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             add(adapter.canonicalPath)
             addAll(cliArgs.toList())
             addAll(cliArg("--reporter", "kotlin-test-js-runner/mocha-kotlin-reporter.js"))
-            addAll(cliArg("--timeout", timeout))
+            if (debug) {
+                add(NO_TIMEOUT_ARG)
+            } else {
+                addAll(cliArg(TIMEOUT_ARG, timeout))
+            }
         }
 
         return TCServiceMessagesTestExecutionSpec(
@@ -135,3 +140,6 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         private const val DEFAULT_TIMEOUT = "2s"
     }
 }
+
+private const val TIMEOUT_ARG = "--timeout"
+private const val NO_TIMEOUT_ARG = "--no-timeout"

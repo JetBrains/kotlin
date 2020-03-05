@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // KT-385 type inference does not work properly`
 // KT-109 Good code is red: type arguments are not inferred
 // KT-441 Exception in type inference when multiple overloads accepting an integer literal are accessible

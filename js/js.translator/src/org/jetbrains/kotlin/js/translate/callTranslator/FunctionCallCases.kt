@@ -257,8 +257,14 @@ object SuperCallCase : FunctionCallCase() {
 }
 
 object DynamicInvokeAndBracketAccessCallCase : FunctionCallCase() {
-    fun canApply(callInfo: FunctionCallInfo): Boolean =
-            callInfo.resolvedCall.call.callType != Call.CallType.DEFAULT && callInfo.callableDescriptor.isDynamic()
+    fun canApply(callInfo: FunctionCallInfo): Boolean {
+        if (!callInfo.callableDescriptor.isDynamic())
+            return false
+        val callType = callInfo.resolvedCall.call.callType
+        return callType == Call.CallType.ARRAY_GET_METHOD
+                || callType == Call.CallType.ARRAY_SET_METHOD
+                || callType == Call.CallType.INVOKE
+    }
 
     override fun FunctionCallInfo.dispatchReceiver(): JsExpression {
         val arguments = argumentsInfo.translateArguments

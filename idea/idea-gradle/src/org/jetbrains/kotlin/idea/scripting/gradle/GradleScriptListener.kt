@@ -37,6 +37,6 @@ open class GradleScriptListener(project: Project) : ScriptChangeListener(project
     override fun isApplicable(vFile: VirtualFile): Boolean {
         if (!isGradleKotlinScript(vFile)) return false
 
-        return isInAffectedGradleProjectFiles(project, vFile)
+        return isInAffectedGradleProjectFiles(project, vFile.path)
     }
 }

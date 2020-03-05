@@ -656,4 +656,27 @@ public class IrWriteSignatureTestGenerated extends AbstractIrWriteSignatureTest 
             runTest("compiler/testData/writeSignature/parameterlessMain/simple.kt");
         }
     }
+
+    @TestMetadata("compiler/testData/writeSignature/suspendMain")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SuspendMain extends AbstractIrWriteSignatureTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSuspendMain() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeSignature/suspendMain"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("parameterlessSuspendMain.kt")
+        public void testParameterlessSuspendMain() throws Exception {
+            runTest("compiler/testData/writeSignature/suspendMain/parameterlessSuspendMain.kt");
+        }
+
+        @TestMetadata("suspendMain.kt")
+        public void testSuspendMain() throws Exception {
+            runTest("compiler/testData/writeSignature/suspendMain/suspendMain.kt");
+        }
+    }
 }

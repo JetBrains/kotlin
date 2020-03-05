@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/kt28006.kt
           CONST String type=kotlin.String value="\uD83E"
           CONST String type=kotlin.String value="\uDD17"
           CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
-            $this: CALL 'public final fun <get-testConst2> (): kotlin.String declared in <root>' type=kotlin.String origin=null
+            $this: CALL 'public final fun <get-testConst2> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testConst3> visibility:public modality:FINAL <> () returnType:kotlin.String
       correspondingProperty: PROPERTY name:testConst3 visibility:public modality:FINAL [const,val]
       BLOCK_BODY
@@ -53,9 +53,9 @@ FILE fqName:<root> fileName:/kt28006.kt
       EXPRESSION_BODY
         STRING_CONCATENATION type=kotlin.String
           CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
-            $this: CALL 'public final fun <get-testConst2> (): kotlin.String declared in <root>' type=kotlin.String origin=null
+            $this: CALL 'public final fun <get-testConst2> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
           CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
-            $this: CALL 'public final fun <get-testConst2> (): kotlin.String declared in <root>' type=kotlin.String origin=null
+            $this: CALL 'public final fun <get-testConst2> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testConst4> visibility:public modality:FINAL <> () returnType:kotlin.String
       correspondingProperty: PROPERTY name:testConst4 visibility:public modality:FINAL [const,val]
       BLOCK_BODY

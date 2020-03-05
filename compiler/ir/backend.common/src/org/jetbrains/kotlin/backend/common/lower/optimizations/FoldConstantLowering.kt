@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.backend.common.lower.optimizations
 
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -39,7 +39,7 @@ val foldConstantLoweringPhase = makeIrFilePhase(
 class FoldConstantLowering(
     private val context: CommonBackendContext,
     // In K/JS Float and Double are the same so Float constant should be fold similar to Double
-    private val floatSpecial: Boolean = false) : IrElementTransformerVoid(), FileLoweringPass {
+    private val floatSpecial: Boolean = false) : IrElementTransformerVoid(), BodyLoweringPass {
     /**
      * ID of an binary operator / method.
      *
@@ -95,32 +95,26 @@ class FoldConstantLowering(
         }
     }
 
-    private fun fromFloatConstSafe(call: IrCall, v: Any): IrExpression {
-        if (!floatSpecial) return call.run {
-            IrConstImpl.float(startOffset, endOffset, type, v as Float)
+    private fun fromFloatConstSafe(startOffset: Int, endOffset: Int, type: IrType, v: Any?): IrConst<*> =
+        when {
+            !floatSpecial -> IrConstImpl.float(startOffset, endOffset, type, (v as Number).toFloat())
+            v is Float -> IrConstImpl.float(startOffset, endOffset, type, v)
+            v is Double -> IrConstImpl.double(startOffset, endOffset, type, v)
+            else -> error("Unexpected constant type")
         }
 
-        return call.run {
-            when (v) {
-                is Float -> IrConstImpl.float(startOffset, endOffset, type, v)
-                is Double -> IrConstImpl.double(startOffset, endOffset, type, v)
-                else -> error("Unexpected constant type")
-            }
-        }
-    }
-
-    private fun buildIrConstant(call: IrCall, v: Any): IrExpression {
-        val constType = call.type.makeNotNull()
+    private fun buildIrConstant(startOffset: Int, endOffset: Int, type: IrType, v: Any?): IrConst<*> {
+        val constType = type.makeNotNull()
         return when {
-            constType.isInt() -> IrConstImpl.int(call.startOffset, call.endOffset, constType, v as Int)
-            constType.isChar() -> IrConstImpl.char(call.startOffset, call.endOffset, constType, v as Char)
-            constType.isBoolean() -> IrConstImpl.boolean(call.startOffset, call.endOffset, constType, v as Boolean)
-            constType.isByte() -> IrConstImpl.byte(call.startOffset, call.endOffset, constType, v as Byte)
-            constType.isShort() -> IrConstImpl.short(call.startOffset, call.endOffset, constType, v as Short)
-            constType.isLong() -> IrConstImpl.long(call.startOffset, call.endOffset, constType, v as Long)
-            constType.isDouble() -> IrConstImpl.double(call.startOffset, call.endOffset, constType, v as Double)
-            constType.isFloat() -> fromFloatConstSafe(call, v)
-            constType.isString() -> IrConstImpl.string(call.startOffset, call.endOffset, constType, v as String)
+            constType.isInt() -> IrConstImpl.int(startOffset, endOffset, constType, (v as Number).toInt())
+            constType.isChar() -> IrConstImpl.char(startOffset, endOffset, constType, v as Char)
+            constType.isBoolean() -> IrConstImpl.boolean(startOffset, endOffset, constType, v as Boolean)
+            constType.isByte() -> IrConstImpl.byte(startOffset, endOffset, constType, (v as Number).toByte())
+            constType.isShort() -> IrConstImpl.short(startOffset, endOffset, constType, (v as Number).toShort())
+            constType.isLong() -> IrConstImpl.long(startOffset, endOffset, constType, (v as Number).toLong())
+            constType.isDouble() -> IrConstImpl.double(startOffset, endOffset, constType, (v as Number).toDouble())
+            constType.isFloat() -> fromFloatConstSafe(startOffset, endOffset, type, v)
+            constType.isString() -> IrConstImpl.string(startOffset, endOffset, constType, v as String)
             else -> throw IllegalArgumentException("Unexpected IrCall return type")
         }
     }
@@ -141,7 +135,7 @@ class FoldConstantLowering(
             ) ?: return call
         }
 
-        return buildIrConstant(call, evaluated)
+        return buildIrConstant(call.startOffset, call.endOffset, call.type, evaluated)
     }
 
     private fun coerceToDouble(irConst: IrConst<*>): IrConst<*> {
@@ -182,7 +176,7 @@ class FoldConstantLowering(
             return call
         }
 
-        return buildIrConstant(call, evaluated)
+        return buildIrConstant(call.startOffset, call.endOffset, call.type, evaluated)
     }
 
     private fun tryFoldingBuiltinBinaryOps(call: IrCall): IrExpression {
@@ -201,7 +195,7 @@ class FoldConstantLowering(
             return call
         }
 
-        return buildIrConstant(call, evaluated)
+        return buildIrConstant(call.startOffset, call.endOffset, call.type, evaluated)
     }
 
     // Unsigned constants are represented through signed constants with a different IrType.
@@ -243,10 +237,10 @@ class FoldConstantLowering(
     }
 
     @ExperimentalUnsignedTypes
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
-                expression.transformChildrenVoid(this)
+                expression.transformChildrenVoid()
 
                 return when {
                     expression.extensionReceiver != null -> expression
@@ -258,7 +252,7 @@ class FoldConstantLowering(
             }
 
             override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
-                expression.transformChildrenVoid(this)
+                expression.transformChildrenVoid()
                 val folded = mutableListOf<IrExpression>()
                 for (next in expression.arguments) {
                     val last = folded.lastOrNull()
@@ -275,6 +269,15 @@ class FoldConstantLowering(
                 }
                 return folded.singleOrNull() as? IrConst<*>
                     ?: IrStringConcatenationImpl(expression.startOffset, expression.endOffset, expression.type, folded)
+            }
+
+            override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
+                expression.transformChildrenVoid()
+                val argument = expression.argument
+                return if (argument is IrConst<*> && expression.operator == IrTypeOperator.IMPLICIT_INTEGER_COERCION)
+                    buildIrConstant(expression.startOffset, expression.endOffset, expression.type, argument.value)
+                else
+                    expression
             }
         })
     }

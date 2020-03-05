@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun <T> test1(i: Int, j: T) {}
 
 fun test2(i: Int = 0, j: String = "") {}

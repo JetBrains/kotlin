@@ -7,14 +7,10 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
-import java.io.File
 
 abstract class AbstractFirDiagnosticsWithStdlibTest : AbstractFirDiagnosticsTest() {
-    override fun getConfigurationKind(): ConfigurationKind {
-        return ConfigurationKind.ALL
-    }
 
-    override fun getTestJdkKind(file: File): TestJdkKind {
-        return TestJdkKind.FULL_JDK
+    override fun extractConfigurationKind(files: List<TestFile>): ConfigurationKind {
+        return ConfigurationKind.ALL
     }
 }

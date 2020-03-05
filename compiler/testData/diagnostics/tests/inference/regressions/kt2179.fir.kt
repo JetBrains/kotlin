@@ -28,7 +28,7 @@ fun test() {
 fun <T> arrayList(vararg values: T) : ArrayList<T> = values.toCollection(ArrayList<T>(values.size))
 
 fun <T, R> Collection<T>.map(transform : (T) -> R) : List<R> {
-    return <!INAPPLICABLE_CANDIDATE!>mapTo<!>(java.util.<!UNRESOLVED_REFERENCE!>ArrayList<!><R>(this.size), transform)
+    return mapTo(java.util.ArrayList<R>(this.size), transform)
 }
 
 fun <T, R, C: MutableCollection<in R>> Collection<T>.mapTo(result: C, transform : (T) -> R) : C {

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class C<T>(val x: T, val y: String) {
     constructor(x: T): this(x, "")
 }

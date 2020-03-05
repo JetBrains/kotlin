@@ -82,7 +82,7 @@ class ToRawStringLiteralIntention : SelfTargetingOffsetIndependentIntention<KtSt
     }
 
     private fun hasTrailingSpaces(text: String): Boolean {
-        var afterSpace = true
+        var afterSpace = false
         for (c in text) {
             if ((c == '\n' || c == '\r') && afterSpace) return true
             afterSpace = c == ' ' || c == '\t'

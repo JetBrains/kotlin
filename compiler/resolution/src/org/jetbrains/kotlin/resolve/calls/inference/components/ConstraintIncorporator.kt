@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.resolve.calls.components.CreateFreshVariablesSubstitutor.shouldBeFlexible
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 // todo problem: intersection types in constrains: A <: Number, B <: Inv<A & Any> =>? B <: Inv<out Number & Any>
@@ -26,7 +28,11 @@ class ConstraintIncorporator(
 
         fun getConstraintsForVariable(typeVariable: TypeVariableMarker): Collection<Constraint>
 
-        fun addNewIncorporatedConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker)
+        fun addNewIncorporatedConstraint(
+            lowerType: KotlinTypeMarker,
+            upperType: KotlinTypeMarker,
+            shouldTryUseDifferentFlexibilityForUpperType: Boolean
+        )
 
         fun addNewIncorporatedConstraint(typeVariable: TypeVariableMarker, type: KotlinTypeMarker, constraintContext: ConstraintContext)
     }
@@ -48,11 +54,14 @@ class ConstraintIncorporator(
         typeVariable: TypeVariableMarker,
         constraint: Constraint
     ) {
+        val shouldBeTypeVariableFlexible =
+            typeVariable is TypeVariableFromCallableDescriptor && typeVariable.originalTypeParameter.shouldBeFlexible()
+
         // \alpha <: constraint.type
         if (constraint.kind != ConstraintKind.LOWER) {
             getConstraintsForVariable(typeVariable).forEach {
                 if (it.kind != ConstraintKind.UPPER) {
-                    addNewIncorporatedConstraint(it.type, constraint.type)
+                    addNewIncorporatedConstraint(it.type, constraint.type, shouldBeTypeVariableFlexible)
                 }
             }
         }
@@ -61,7 +70,7 @@ class ConstraintIncorporator(
         if (constraint.kind != ConstraintKind.UPPER) {
             getConstraintsForVariable(typeVariable).forEach {
                 if (it.kind != ConstraintKind.LOWER) {
-                    addNewIncorporatedConstraint(constraint.type, it.type)
+                    addNewIncorporatedConstraint(constraint.type, it.type, shouldBeTypeVariableFlexible)
                 }
             }
         }
@@ -172,8 +181,7 @@ class ConstraintIncorporator(
 
         val kind = if (isSubtype) ConstraintKind.LOWER else ConstraintKind.UPPER
 
-        val inputTypePosition = if (baseConstraint.position.from is OnlyInputTypeConstraintPosition)
-            baseConstraint.position else null
+        val inputTypePosition = baseConstraint.position.from.safeAs<OnlyInputTypeConstraintPosition>()
 
         val isNullabilityConstraint = isUsefulForNullabilityConstraint && newConstraint.isNullableNothing()
         val constraintContext = ConstraintContext(kind, derivedFrom, inputTypePosition, isNullabilityConstraint)
@@ -195,6 +203,8 @@ class ConstraintIncorporator(
         otherConstraint: KotlinTypeMarker,
         kind: ConstraintKind
     ): Boolean {
+        if (trivialConstraintTypeInferenceOracle.isSuitableResultedType(newConstraint)) return false
+
         val otherConstraintCanAddNullabilityToNewOne =
             !newConstraint.isNullableType() && otherConstraint.isNullableType() && kind == ConstraintKind.LOWER
         val newConstraintCanAddNullabilityToOtherOne =
@@ -223,9 +233,9 @@ private fun TypeSystemInferenceExtensionContext.getNestedArguments(type: KotlinT
     val stack = ArrayDeque<TypeArgumentMarker>()
 
     when (type) {
-        is FlexibleType -> {
-            stack.push(createTypeArgument(type.lowerBound, TypeVariance.INV))
-            stack.push(createTypeArgument(type.upperBound, TypeVariance.INV))
+        is FlexibleTypeMarker -> {
+            stack.push(createTypeArgument(type.lowerBound(), TypeVariance.INV))
+            stack.push(createTypeArgument(type.upperBound(), TypeVariance.INV))
         }
         else -> stack.push(createTypeArgument(type, TypeVariance.INV))
     }
@@ -245,9 +255,9 @@ private fun TypeSystemInferenceExtensionContext.getNestedArguments(type: KotlinT
         result.add(typeProjection)
 
         when (val projectedType = typeProjection.getType()) {
-            is FlexibleType -> {
-                addArgumentsToStack(projectedType.lowerBound)
-                addArgumentsToStack(projectedType.upperBound)
+            is FlexibleTypeMarker -> {
+                addArgumentsToStack(projectedType.lowerBound())
+                addArgumentsToStack(projectedType.upperBound())
             }
             else -> addArgumentsToStack(projectedType)
         }

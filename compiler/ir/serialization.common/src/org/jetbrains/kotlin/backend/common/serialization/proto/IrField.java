@@ -68,50 +68,12 @@ public final class IrField extends
           }
           case 16: {
             bitField0_ |= 0x00000002;
-            initializer_ = input.readInt32();
+            nameType_ = input.readInt64();
             break;
           }
           case 24: {
             bitField0_ |= 0x00000004;
-            name_ = input.readInt32();
-            break;
-          }
-          case 34: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.Visibility.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000008) == 0x00000008)) {
-              subBuilder = visibility_.toBuilder();
-            }
-            visibility_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.Visibility.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(visibility_);
-              visibility_ = subBuilder.buildPartial();
-            }
-            bitField0_ |= 0x00000008;
-            break;
-          }
-          case 40: {
-            bitField0_ |= 0x00000010;
-            isFinal_ = input.readBool();
-            break;
-          }
-          case 48: {
-            bitField0_ |= 0x00000020;
-            isExternal_ = input.readBool();
-            break;
-          }
-          case 56: {
-            bitField0_ |= 0x00000040;
-            isStatic_ = input.readBool();
-            break;
-          }
-          case 64: {
-            bitField0_ |= 0x00000080;
-            type_ = input.readInt32();
-            break;
-          }
-          case 72: {
-            bitField0_ |= 0x00000100;
-            isFakeOverride_ = input.readBool();
+            initializer_ = input.readInt32();
             break;
           }
         }
@@ -163,136 +125,40 @@ public final class IrField extends
     return base_;
   }
 
-  public static final int INITIALIZER_FIELD_NUMBER = 2;
-  private int initializer_;
+  public static final int NAME_TYPE_FIELD_NUMBER = 2;
+  private long nameType_;
   /**
-   * <code>optional int32 initializer = 2;</code>
+   * <code>required int64 name_type = 2;</code>
    */
-  public boolean hasInitializer() {
+  public boolean hasNameType() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>optional int32 initializer = 2;</code>
+   * <code>required int64 name_type = 2;</code>
+   */
+  public long getNameType() {
+    return nameType_;
+  }
+
+  public static final int INITIALIZER_FIELD_NUMBER = 3;
+  private int initializer_;
+  /**
+   * <code>optional int32 initializer = 3;</code>
+   */
+  public boolean hasInitializer() {
+    return ((bitField0_ & 0x00000004) == 0x00000004);
+  }
+  /**
+   * <code>optional int32 initializer = 3;</code>
    */
   public int getInitializer() {
     return initializer_;
   }
 
-  public static final int NAME_FIELD_NUMBER = 3;
-  private int name_;
-  /**
-   * <code>required int32 name = 3;</code>
-   */
-  public boolean hasName() {
-    return ((bitField0_ & 0x00000004) == 0x00000004);
-  }
-  /**
-   * <code>required int32 name = 3;</code>
-   */
-  public int getName() {
-    return name_;
-  }
-
-  public static final int VISIBILITY_FIELD_NUMBER = 4;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility_;
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 4;</code>
-   */
-  public boolean hasVisibility() {
-    return ((bitField0_ & 0x00000008) == 0x00000008);
-  }
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 4;</code>
-   */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.Visibility getVisibility() {
-    return visibility_;
-  }
-
-  public static final int IS_FINAL_FIELD_NUMBER = 5;
-  private boolean isFinal_;
-  /**
-   * <code>required bool is_final = 5;</code>
-   */
-  public boolean hasIsFinal() {
-    return ((bitField0_ & 0x00000010) == 0x00000010);
-  }
-  /**
-   * <code>required bool is_final = 5;</code>
-   */
-  public boolean getIsFinal() {
-    return isFinal_;
-  }
-
-  public static final int IS_EXTERNAL_FIELD_NUMBER = 6;
-  private boolean isExternal_;
-  /**
-   * <code>required bool is_external = 6;</code>
-   */
-  public boolean hasIsExternal() {
-    return ((bitField0_ & 0x00000020) == 0x00000020);
-  }
-  /**
-   * <code>required bool is_external = 6;</code>
-   */
-  public boolean getIsExternal() {
-    return isExternal_;
-  }
-
-  public static final int IS_STATIC_FIELD_NUMBER = 7;
-  private boolean isStatic_;
-  /**
-   * <code>required bool is_static = 7;</code>
-   */
-  public boolean hasIsStatic() {
-    return ((bitField0_ & 0x00000040) == 0x00000040);
-  }
-  /**
-   * <code>required bool is_static = 7;</code>
-   */
-  public boolean getIsStatic() {
-    return isStatic_;
-  }
-
-  public static final int TYPE_FIELD_NUMBER = 8;
-  private int type_;
-  /**
-   * <code>required int32 type = 8;</code>
-   */
-  public boolean hasType() {
-    return ((bitField0_ & 0x00000080) == 0x00000080);
-  }
-  /**
-   * <code>required int32 type = 8;</code>
-   */
-  public int getType() {
-    return type_;
-  }
-
-  public static final int IS_FAKE_OVERRIDE_FIELD_NUMBER = 9;
-  private boolean isFakeOverride_;
-  /**
-   * <code>required bool is_fake_override = 9;</code>
-   */
-  public boolean hasIsFakeOverride() {
-    return ((bitField0_ & 0x00000100) == 0x00000100);
-  }
-  /**
-   * <code>required bool is_fake_override = 9;</code>
-   */
-  public boolean getIsFakeOverride() {
-    return isFakeOverride_;
-  }
-
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
+    nameType_ = 0L;
     initializer_ = 0;
-    name_ = 0;
-    visibility_ = org.jetbrains.kotlin.backend.common.serialization.proto.Visibility.getDefaultInstance();
-    isFinal_ = false;
-    isExternal_ = false;
-    isStatic_ = false;
-    type_ = 0;
-    isFakeOverride_ = false;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -304,39 +170,11 @@ public final class IrField extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!hasName()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasVisibility()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasIsFinal()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasIsExternal()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasIsStatic()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasType()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasIsFakeOverride()) {
+    if (!hasNameType()) {
       memoizedIsInitialized = 0;
       return false;
     }
     if (!getBase().isInitialized()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!getVisibility().isInitialized()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -351,28 +189,10 @@ public final class IrField extends
       output.writeMessage(1, base_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeInt32(2, initializer_);
+      output.writeInt64(2, nameType_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
-      output.writeInt32(3, name_);
-    }
-    if (((bitField0_ & 0x00000008) == 0x00000008)) {
-      output.writeMessage(4, visibility_);
-    }
-    if (((bitField0_ & 0x00000010) == 0x00000010)) {
-      output.writeBool(5, isFinal_);
-    }
-    if (((bitField0_ & 0x00000020) == 0x00000020)) {
-      output.writeBool(6, isExternal_);
-    }
-    if (((bitField0_ & 0x00000040) == 0x00000040)) {
-      output.writeBool(7, isStatic_);
-    }
-    if (((bitField0_ & 0x00000080) == 0x00000080)) {
-      output.writeInt32(8, type_);
-    }
-    if (((bitField0_ & 0x00000100) == 0x00000100)) {
-      output.writeBool(9, isFakeOverride_);
+      output.writeInt32(3, initializer_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -389,35 +209,11 @@ public final class IrField extends
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(2, initializer_);
+        .computeInt64Size(2, nameType_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(3, name_);
-    }
-    if (((bitField0_ & 0x00000008) == 0x00000008)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(4, visibility_);
-    }
-    if (((bitField0_ & 0x00000010) == 0x00000010)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(5, isFinal_);
-    }
-    if (((bitField0_ & 0x00000020) == 0x00000020)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(6, isExternal_);
-    }
-    if (((bitField0_ & 0x00000040) == 0x00000040)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(7, isStatic_);
-    }
-    if (((bitField0_ & 0x00000080) == 0x00000080)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(8, type_);
-    }
-    if (((bitField0_ & 0x00000100) == 0x00000100)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(9, isFakeOverride_);
+        .computeInt32Size(3, initializer_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -515,22 +311,10 @@ public final class IrField extends
       super.clear();
       base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000001);
-      initializer_ = 0;
+      nameType_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000002);
-      name_ = 0;
+      initializer_ = 0;
       bitField0_ = (bitField0_ & ~0x00000004);
-      visibility_ = org.jetbrains.kotlin.backend.common.serialization.proto.Visibility.getDefaultInstance();
-      bitField0_ = (bitField0_ & ~0x00000008);
-      isFinal_ = false;
-      bitField0_ = (bitField0_ & ~0x00000010);
-      isExternal_ = false;
-      bitField0_ = (bitField0_ & ~0x00000020);
-      isStatic_ = false;
-      bitField0_ = (bitField0_ & ~0x00000040);
-      type_ = 0;
-      bitField0_ = (bitField0_ & ~0x00000080);
-      isFakeOverride_ = false;
-      bitField0_ = (bitField0_ & ~0x00000100);
       return this;
     }
 
@@ -561,35 +345,11 @@ public final class IrField extends
       if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
         to_bitField0_ |= 0x00000002;
       }
-      result.initializer_ = initializer_;
+      result.nameType_ = nameType_;
       if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
         to_bitField0_ |= 0x00000004;
       }
-      result.name_ = name_;
-      if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-        to_bitField0_ |= 0x00000008;
-      }
-      result.visibility_ = visibility_;
-      if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
-        to_bitField0_ |= 0x00000010;
-      }
-      result.isFinal_ = isFinal_;
-      if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
-        to_bitField0_ |= 0x00000020;
-      }
-      result.isExternal_ = isExternal_;
-      if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
-        to_bitField0_ |= 0x00000040;
-      }
-      result.isStatic_ = isStatic_;
-      if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
-        to_bitField0_ |= 0x00000080;
-      }
-      result.type_ = type_;
-      if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
-        to_bitField0_ |= 0x00000100;
-      }
-      result.isFakeOverride_ = isFakeOverride_;
+      result.initializer_ = initializer_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -599,29 +359,11 @@ public final class IrField extends
       if (other.hasBase()) {
         mergeBase(other.getBase());
       }
+      if (other.hasNameType()) {
+        setNameType(other.getNameType());
+      }
       if (other.hasInitializer()) {
         setInitializer(other.getInitializer());
-      }
-      if (other.hasName()) {
-        setName(other.getName());
-      }
-      if (other.hasVisibility()) {
-        mergeVisibility(other.getVisibility());
-      }
-      if (other.hasIsFinal()) {
-        setIsFinal(other.getIsFinal());
-      }
-      if (other.hasIsExternal()) {
-        setIsExternal(other.getIsExternal());
-      }
-      if (other.hasIsStatic()) {
-        setIsStatic(other.getIsStatic());
-      }
-      if (other.hasType()) {
-        setType(other.getType());
-      }
-      if (other.hasIsFakeOverride()) {
-        setIsFakeOverride(other.getIsFakeOverride());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -633,39 +375,11 @@ public final class IrField extends
         
         return false;
       }
-      if (!hasName()) {
-        
-        return false;
-      }
-      if (!hasVisibility()) {
-        
-        return false;
-      }
-      if (!hasIsFinal()) {
-        
-        return false;
-      }
-      if (!hasIsExternal()) {
-        
-        return false;
-      }
-      if (!hasIsStatic()) {
-        
-        return false;
-      }
-      if (!hasType()) {
-        
-        return false;
-      }
-      if (!hasIsFakeOverride()) {
+      if (!hasNameType()) {
         
         return false;
       }
       if (!getBase().isInitialized()) {
-        
-        return false;
-      }
-      if (!getVisibility().isInitialized()) {
         
         return false;
       }
@@ -751,286 +465,66 @@ public final class IrField extends
       return this;
     }
 
-    private int initializer_ ;
+    private long nameType_ ;
     /**
-     * <code>optional int32 initializer = 2;</code>
+     * <code>required int64 name_type = 2;</code>
      */
-    public boolean hasInitializer() {
+    public boolean hasNameType() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional int32 initializer = 2;</code>
+     * <code>required int64 name_type = 2;</code>
+     */
+    public long getNameType() {
+      return nameType_;
+    }
+    /**
+     * <code>required int64 name_type = 2;</code>
+     */
+    public Builder setNameType(long value) {
+      bitField0_ |= 0x00000002;
+      nameType_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>required int64 name_type = 2;</code>
+     */
+    public Builder clearNameType() {
+      bitField0_ = (bitField0_ & ~0x00000002);
+      nameType_ = 0L;
+      
+      return this;
+    }
+
+    private int initializer_ ;
+    /**
+     * <code>optional int32 initializer = 3;</code>
+     */
+    public boolean hasInitializer() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional int32 initializer = 3;</code>
      */
     public int getInitializer() {
       return initializer_;
     }
     /**
-     * <code>optional int32 initializer = 2;</code>
+     * <code>optional int32 initializer = 3;</code>
      */
     public Builder setInitializer(int value) {
-      bitField0_ |= 0x00000002;
+      bitField0_ |= 0x00000004;
       initializer_ = value;
       
       return this;
     }
     /**
-     * <code>optional int32 initializer = 2;</code>
+     * <code>optional int32 initializer = 3;</code>
      */
     public Builder clearInitializer() {
-      bitField0_ = (bitField0_ & ~0x00000002);
-      initializer_ = 0;
-      
-      return this;
-    }
-
-    private int name_ ;
-    /**
-     * <code>required int32 name = 3;</code>
-     */
-    public boolean hasName() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>required int32 name = 3;</code>
-     */
-    public int getName() {
-      return name_;
-    }
-    /**
-     * <code>required int32 name = 3;</code>
-     */
-    public Builder setName(int value) {
-      bitField0_ |= 0x00000004;
-      name_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required int32 name = 3;</code>
-     */
-    public Builder clearName() {
       bitField0_ = (bitField0_ & ~0x00000004);
-      name_ = 0;
-      
-      return this;
-    }
-
-    private org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility_ = org.jetbrains.kotlin.backend.common.serialization.proto.Visibility.getDefaultInstance();
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 4;</code>
-     */
-    public boolean hasVisibility() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 4;</code>
-     */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.Visibility getVisibility() {
-      return visibility_;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 4;</code>
-     */
-    public Builder setVisibility(org.jetbrains.kotlin.backend.common.serialization.proto.Visibility value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      visibility_ = value;
-
-      bitField0_ |= 0x00000008;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 4;</code>
-     */
-    public Builder setVisibility(
-        org.jetbrains.kotlin.backend.common.serialization.proto.Visibility.Builder builderForValue) {
-      visibility_ = builderForValue.build();
-
-      bitField0_ |= 0x00000008;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 4;</code>
-     */
-    public Builder mergeVisibility(org.jetbrains.kotlin.backend.common.serialization.proto.Visibility value) {
-      if (((bitField0_ & 0x00000008) == 0x00000008) &&
-          visibility_ != org.jetbrains.kotlin.backend.common.serialization.proto.Visibility.getDefaultInstance()) {
-        visibility_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.Visibility.newBuilder(visibility_).mergeFrom(value).buildPartial();
-      } else {
-        visibility_ = value;
-      }
-
-      bitField0_ |= 0x00000008;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 4;</code>
-     */
-    public Builder clearVisibility() {
-      visibility_ = org.jetbrains.kotlin.backend.common.serialization.proto.Visibility.getDefaultInstance();
-
-      bitField0_ = (bitField0_ & ~0x00000008);
-      return this;
-    }
-
-    private boolean isFinal_ ;
-    /**
-     * <code>required bool is_final = 5;</code>
-     */
-    public boolean hasIsFinal() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
-    }
-    /**
-     * <code>required bool is_final = 5;</code>
-     */
-    public boolean getIsFinal() {
-      return isFinal_;
-    }
-    /**
-     * <code>required bool is_final = 5;</code>
-     */
-    public Builder setIsFinal(boolean value) {
-      bitField0_ |= 0x00000010;
-      isFinal_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required bool is_final = 5;</code>
-     */
-    public Builder clearIsFinal() {
-      bitField0_ = (bitField0_ & ~0x00000010);
-      isFinal_ = false;
-      
-      return this;
-    }
-
-    private boolean isExternal_ ;
-    /**
-     * <code>required bool is_external = 6;</code>
-     */
-    public boolean hasIsExternal() {
-      return ((bitField0_ & 0x00000020) == 0x00000020);
-    }
-    /**
-     * <code>required bool is_external = 6;</code>
-     */
-    public boolean getIsExternal() {
-      return isExternal_;
-    }
-    /**
-     * <code>required bool is_external = 6;</code>
-     */
-    public Builder setIsExternal(boolean value) {
-      bitField0_ |= 0x00000020;
-      isExternal_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required bool is_external = 6;</code>
-     */
-    public Builder clearIsExternal() {
-      bitField0_ = (bitField0_ & ~0x00000020);
-      isExternal_ = false;
-      
-      return this;
-    }
-
-    private boolean isStatic_ ;
-    /**
-     * <code>required bool is_static = 7;</code>
-     */
-    public boolean hasIsStatic() {
-      return ((bitField0_ & 0x00000040) == 0x00000040);
-    }
-    /**
-     * <code>required bool is_static = 7;</code>
-     */
-    public boolean getIsStatic() {
-      return isStatic_;
-    }
-    /**
-     * <code>required bool is_static = 7;</code>
-     */
-    public Builder setIsStatic(boolean value) {
-      bitField0_ |= 0x00000040;
-      isStatic_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required bool is_static = 7;</code>
-     */
-    public Builder clearIsStatic() {
-      bitField0_ = (bitField0_ & ~0x00000040);
-      isStatic_ = false;
-      
-      return this;
-    }
-
-    private int type_ ;
-    /**
-     * <code>required int32 type = 8;</code>
-     */
-    public boolean hasType() {
-      return ((bitField0_ & 0x00000080) == 0x00000080);
-    }
-    /**
-     * <code>required int32 type = 8;</code>
-     */
-    public int getType() {
-      return type_;
-    }
-    /**
-     * <code>required int32 type = 8;</code>
-     */
-    public Builder setType(int value) {
-      bitField0_ |= 0x00000080;
-      type_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required int32 type = 8;</code>
-     */
-    public Builder clearType() {
-      bitField0_ = (bitField0_ & ~0x00000080);
-      type_ = 0;
-      
-      return this;
-    }
-
-    private boolean isFakeOverride_ ;
-    /**
-     * <code>required bool is_fake_override = 9;</code>
-     */
-    public boolean hasIsFakeOverride() {
-      return ((bitField0_ & 0x00000100) == 0x00000100);
-    }
-    /**
-     * <code>required bool is_fake_override = 9;</code>
-     */
-    public boolean getIsFakeOverride() {
-      return isFakeOverride_;
-    }
-    /**
-     * <code>required bool is_fake_override = 9;</code>
-     */
-    public Builder setIsFakeOverride(boolean value) {
-      bitField0_ |= 0x00000100;
-      isFakeOverride_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required bool is_fake_override = 9;</code>
-     */
-    public Builder clearIsFakeOverride() {
-      bitField0_ = (bitField0_ & ~0x00000100);
-      isFakeOverride_ = false;
+      initializer_ = 0;
       
       return this;
     }

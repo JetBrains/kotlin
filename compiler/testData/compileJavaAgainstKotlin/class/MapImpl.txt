@@ -1,0 +1,20 @@
+package test
+
+public final class EmptyMap</*0*/ V> : kotlin.collections.Map<kotlin.String, V> {
+    public constructor EmptyMap</*0*/ V>()
+    public open val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.String, V>>
+    public open val keys: kotlin.collections.MutableSet<kotlin.String>
+    public open val size: kotlin.Int
+    public open val values: kotlin.collections.MutableCollection<V>
+    public open fun containsKey(/*0*/ kotlin.String): kotlin.Boolean
+    public open fun containsValue(/*0*/ V): kotlin.Boolean
+    public open /*fake_override*/ fun forEach(/*0*/ java.util.function.BiConsumer<in kotlin.String, in V>): kotlin.Unit
+    public open fun get(/*0*/ kotlin.String): V?
+    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.PlatformDependent public open /*fake_override*/ fun getOrDefault(/*0*/ kotlin.String, /*1*/ V): V
+    public open fun isEmpty(): kotlin.Boolean
+    public final operator fun set(/*0*/ kotlin.String, /*1*/ V): V?
+}
+
+public/*package*/ open class MapImpl {
+    public/*package*/ constructor MapImpl()
+}

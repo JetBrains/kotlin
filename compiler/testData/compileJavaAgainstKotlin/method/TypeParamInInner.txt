@@ -1,0 +1,18 @@
+package test
+
+public fun </*0*/ T> outer(/*0*/ T): T
+
+public/*package*/ open class TypeParamInInner {
+    public/*package*/ constructor TypeParamInInner()
+    public/*package*/ open fun check(): kotlin.Unit
+}
+
+public final class outerClass</*0*/ T> {
+    public constructor outerClass</*0*/ T>(/*0*/ T)
+    public final val t: T
+
+    public final inner class innerClass /*captured type parameters: /*0*/ T*/ {
+        public constructor innerClass()
+        public final fun getT(): T
+    }
+}

@@ -45,18 +45,17 @@ class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQual
         val callExpression = element.callExpression ?: return false
         val calleeName = (callExpression.calleeExpression as? KtSimpleNameExpression)?.getReferencedNameAsName()
         if (calleeName !in operatorNames) return false
+        if (callExpression.typeArgumentList != null) return false
+        val arguments = callExpression.valueArguments
+        if (arguments.isEmpty()) return false
+        if (arguments.any { it.isNamed() || it.isSpread }) return false
+
         val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
         val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return false
         if (!resolvedCall.isReallySuccess()) return false
 
         val target = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return false
         if (!target.isValidOperator() || target.name !in operatorNames) return false
-
-        if (callExpression.typeArgumentList != null) return false
-
-        val arguments = callExpression.valueArguments
-        if (arguments.isEmpty()) return false
-        if (arguments.any { it.isNamed() }) return false
 
         if (!element.isReceiverExpressionWithValue()) return false
 

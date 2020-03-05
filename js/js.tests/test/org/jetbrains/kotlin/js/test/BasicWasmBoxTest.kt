@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.wasmPhases
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -112,6 +113,7 @@ abstract class BasicWasmBoxTest(
         val compilerResult = compileWasm(
             project = config.project,
             files = filesToCompile,
+            analyzer = AnalyzerWithCompilerReport(config.configuration),
             configuration = config.configuration,
             phaseConfig = phaseConfig,
             // TODO: Bypass the resolver fow wasm.

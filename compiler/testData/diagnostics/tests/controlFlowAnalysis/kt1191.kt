@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-1191 Wrong detection of unused parameters
 package kt1191
 

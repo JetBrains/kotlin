@@ -1,7 +1,7 @@
 public final class Foo$Bar : java/lang/Object {
     final Foo this$0
 
-    public void <init>(Foo $outer)
+    public void <init>(Foo this$0)
 }
 
 public final class Foo : java/lang/Object {

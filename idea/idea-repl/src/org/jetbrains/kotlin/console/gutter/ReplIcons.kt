@@ -23,12 +23,12 @@ import javax.swing.Icon
 data class IconWithTooltip(val icon: Icon, val tooltip: String?)
 
 object ReplIcons {
-    val BUILD_WARNING_INDICATOR: IconWithTooltip = IconWithTooltip(AllIcons.Ide.Warning_notifications, null)
+    val BUILD_WARNING_INDICATOR: IconWithTooltip = IconWithTooltip(AllIcons.General.Warning, null)
     val HISTORY_INDICATOR: IconWithTooltip = IconWithTooltip(AllIcons.Vcs.History, "History of executed commands")
     val EDITOR_INDICATOR: IconWithTooltip = IconWithTooltip(KotlinIcons.LAUNCH, "Write your commands here")
     val EDITOR_READLINE_INDICATOR: IconWithTooltip = IconWithTooltip(AllIcons.General.Balloon, "Waiting for input...")
     val COMMAND_MARKER: IconWithTooltip = IconWithTooltip(AllIcons.RunConfigurations.TestState.Run, "Executed command")
-    val READLINE_MARKER: IconWithTooltip = IconWithTooltip(AllIcons.Icons.Ide.SpeedSearchPrompt, "Input line")
+    val READLINE_MARKER: IconWithTooltip = IconWithTooltip(AllIcons.Debugger.PromptInput, "Input line")
 
     // command result icons
     val SYSTEM_HELP: IconWithTooltip = IconWithTooltip(AllIcons.Actions.Help, "System help")

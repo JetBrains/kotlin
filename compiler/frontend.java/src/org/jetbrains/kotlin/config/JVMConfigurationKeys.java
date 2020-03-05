@@ -110,4 +110,13 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> ENABLE_JVM_DEFAULT =
             CompilerConfigurationKey.create("Allow to use '@JvmDefault'");
+
+    public static final CompilerConfigurationKey<Boolean> EMIT_JVM_TYPE_ANNOTATIONS =
+            CompilerConfigurationKey.create("Emit JVM type annotations in bytecode");
+
+    public static final CompilerConfigurationKey<List<String>> KLIB_PATHS =
+            CompilerConfigurationKey.create("Paths to .klib libraries");
+
+    public static final CompilerConfigurationKey<Boolean> IS_IR_WITH_STABLE_ABI =
+            CompilerConfigurationKey.create("Is IR with stable ABI");
 }

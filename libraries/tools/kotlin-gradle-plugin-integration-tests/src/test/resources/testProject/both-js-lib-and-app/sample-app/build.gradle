@@ -1,0 +1,35 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin-multiplatform'
+
+repositories {
+    mavenLocal()
+    jcenter()
+    // NB: Build of this module depends on 'sample-lib' publication. You need to add the local
+    // repository where 'sample-lib' artifacts are published.
+}
+
+kotlin {
+    js('nodeJs')
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation 'com.example:sample-lib:1.0'
+            }
+        }
+        nodeJsMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
+            }
+        }
+    }
+}

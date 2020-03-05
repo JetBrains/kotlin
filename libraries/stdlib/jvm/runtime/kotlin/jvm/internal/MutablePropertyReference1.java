@@ -10,7 +10,7 @@ import kotlin.reflect.KCallable;
 import kotlin.reflect.KMutableProperty1;
 import kotlin.reflect.KProperty1;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "rawtypes", "unused", "NullableProblems"})
 public abstract class MutablePropertyReference1 extends MutablePropertyReference implements KMutableProperty1 {
     public MutablePropertyReference1() {
     }

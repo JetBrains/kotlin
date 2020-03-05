@@ -11,6 +11,7 @@ dependencies {
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(projectTests(":generators:test-generator"))
     testRuntime(project(":kotlin-reflect"))
+    testRuntimeOnly(toolsJar())
     testRuntime(intellijDep())
     Platform[192].orHigher {
         testRuntimeOnly(intellijPluginDep("java"))

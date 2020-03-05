@@ -8,7 +8,11 @@ repositories {
     mavenCentral()
 }
 kotlin {
-    jvm()
+    jvm {
+        compilations.all {
+            kotlinOptions.jvmTarget = '1.8'
+        }
+    }
     sourceSets {
         jvmMain {
             dependencies {
@@ -16,7 +20,9 @@ kotlin {
             }
         }
         jvmTest {
-
+            dependencies {
+                implementation kotlin('test-junit')
+            }
         }
     }
 }

@@ -71,6 +71,18 @@ class CollectionTest {
         assertEquals(listOf("value1", "value2"), l3)
     }
 
+    @Test fun setOfNotNull() {
+        val l1: Set<Int> = setOfNotNull(null)
+        assertTrue(l1.isEmpty())
+
+        val s: String? = "value"
+        val l2: Set<String> = setOfNotNull(s)
+        assertEquals(s, l2.single())
+
+        val l3: Set<String> = setOfNotNull("value1", null, "value2")
+        assertEquals(setOf("value1", "value2"), l3)
+    }
+
     @Test fun filterIntoSet() {
         val data = listOf("foo", "bar")
         val foo = data.filterTo(hashSetOf<String>()) { it.startsWith("f") }
@@ -342,6 +354,38 @@ class CollectionTest {
         }
 
         expect(null, { arrayListOf<Int>().reduceRightOrNull { a, b -> a + b } })
+    }
+
+    @Test
+    fun scan() {
+        for (size in 0 until 4) {
+            val expected = listOf("", "0", "01", "012", "0123").take(size + 1)
+            assertEquals(expected, List(size) { it }.scan("") { acc, e -> acc + e })
+        }
+    }
+
+    @Test
+    fun scanIndexed() {
+        for (size in 0 until 4) {
+            val expected = listOf("+", "+[0: a]", "+[0: a][1: b]", "+[0: a][1: b][2: c]", "+[0: a][1: b][2: c][3: d]").take(size + 1)
+            assertEquals(expected, List(size) { 'a' + it }.scanIndexed("+") { index, acc, e -> "$acc[$index: $e]" })
+        }
+    }
+
+    @Test
+    fun scanReduce() {
+        for (size in 0 until 4) {
+            val expected = listOf(0, 1, 3, 6).take(size)
+            assertEquals(expected, List(size) { it }.scanReduce { acc, e -> acc + e })
+        }
+    }
+
+    @Test
+    fun scanReduceIndexed() {
+        for (size in 0 until 4) {
+            val expected = listOf(0, 1, 6, 27).take(size)
+            assertEquals(expected, List(size) { it }.scanReduceIndexed { index, acc, e -> index * (acc + e) })
+        }
     }
 
     @Test fun groupBy() {
@@ -661,6 +705,31 @@ class CollectionTest {
         }
 
         assertFailsWith<NoSuchElementException> { emptyList<Any>().random() }
+    }
+
+    @Test fun randomOrNull() {
+        val list = List(100) { it }
+        val set = list.toSet()
+        listOf(list, set).forEach { collection: Collection<Int> ->
+            val tosses = List(10) { collection.randomOrNull() }
+            assertTrue(tosses.distinct().size > 1, "Should be some distinct elements in $tosses")
+
+            val seed = Random.nextInt()
+            val random1 = Random(seed)
+            val random2 = Random(seed)
+
+            val tosses1 = List(10) { collection.randomOrNull(random1) }
+            val tosses2 = List(10) { collection.randomOrNull(random2) }
+
+            assertEquals(tosses1, tosses2)
+        }
+
+        listOf("x").let { singletonList ->
+            val tosses = List(10) { singletonList.randomOrNull() }
+            assertEquals(singletonList, tosses.distinct())
+        }
+
+        assertNull(emptyList<Any>().randomOrNull())
     }
 
     @Test fun subscript() {

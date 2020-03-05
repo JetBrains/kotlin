@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.buildUseSiteMemberScope
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -46,6 +45,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
 import java.io.IOException
+import kotlin.reflect.jvm.javaField
 
 abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
     private lateinit var javaFilesDir: File
@@ -65,6 +65,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
 
     override fun tearDown() {
         FileUtil.delete(javaFilesDir)
+        this::environment.javaField!![this] = null
         super.tearDown()
     }
 
@@ -101,7 +102,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
         val content = javaLines.joinToString(separator = "\n")
         if (InTextDirectivesUtils.isDirectiveDefined(content, "SKIP_IN_FIR_TEST")) return
 
-        val srcFiles = TestFiles.createTestFiles<Void, File>(
+        val srcFiles = TestFiles.createTestFiles(
             javaFile.name, FileUtil.loadFile(javaFile, true),
             object : TestFiles.TestFileFactoryNoModules<File>() {
                 override fun create(fileName: String, text: String, directives: Map<String, String>): File {
@@ -196,7 +197,6 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
                                         renderer.newLine()
                                         renderedDeclarations += enhanced
                                     }
-                                    ProcessorAction.NEXT
                                 }
                                 is FirJavaMethod -> enhancementScope.processFunctionsByName(declaration.name) { symbol ->
                                     val enhanced = symbol.fir
@@ -205,7 +205,6 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
                                         renderer.newLine()
                                         renderedDeclarations += enhanced
                                     }
-                                    ProcessorAction.NEXT
                                 }
                                 is FirJavaField -> enhancementScope.processPropertiesByName(declaration.name) { symbol ->
                                     val enhanced = symbol.fir
@@ -214,7 +213,6 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
                                         renderer.newLine()
                                         renderedDeclarations += enhanced
                                     }
-                                    ProcessorAction.NEXT
                                 }
                                 else -> {
                                     declaration.accept(renderer, null)

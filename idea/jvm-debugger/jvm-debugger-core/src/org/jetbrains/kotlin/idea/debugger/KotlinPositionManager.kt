@@ -123,7 +123,8 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
         if (psiFile !is KtFile) throw NoDataException.INSTANCE
 
-        val sourceLineNumber = location.safeSourceLineNumber()
+        // Zero-based line-number for Document.getLineStartOffset()
+        val sourceLineNumber = location.safeLineNumber() - 1
         if (sourceLineNumber < 0) {
             throw NoDataException.INSTANCE
         }
@@ -136,11 +137,6 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         val elementInDeclaration = getElementForDeclarationLine(location, psiFile, sourceLineNumber)
         if (elementInDeclaration != null) {
             return SourcePosition.createFromElement(elementInDeclaration)
-        }
-
-        if (sourceLineNumber > psiFile.getLineCount() && myDebugProcess.isDexDebug()) {
-            val (line, ktFile) = ktLocationInfo(location, true, myDebugProcess.project, false, psiFile)
-            return SourcePosition.createFromLine(ktFile ?: psiFile, line - 1)
         }
 
         val sameLineLocations = location.safeMethod()?.safeAllLineLocations()?.filter {

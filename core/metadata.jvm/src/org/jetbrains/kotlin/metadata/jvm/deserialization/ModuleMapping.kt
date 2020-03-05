@@ -33,12 +33,19 @@ class ModuleMapping private constructor(
 
         const val STRICT_METADATA_VERSION_SEMANTICS_FLAG = 1 shl 0
 
+        fun readVersionNumber(stream: DataInputStream): IntArray? =
+            try {
+                IntArray(stream.readInt()) { stream.readInt() }
+            } catch (e: IOException) {
+                null
+            }
+
         fun loadModuleMapping(
             bytes: ByteArray?,
             debugName: String,
             skipMetadataVersionCheck: Boolean,
             isJvmPackageNameSupported: Boolean,
-            reportIncompatibleVersionError: (JvmMetadataVersion) -> Unit
+            reportIncompatibleVersionError: (JvmMetadataVersion) -> Unit,
         ): ModuleMapping {
             if (bytes == null) {
                 return EMPTY
@@ -46,12 +53,7 @@ class ModuleMapping private constructor(
 
             val stream = DataInputStream(ByteArrayInputStream(bytes))
 
-            val versionNumber = try {
-                IntArray(stream.readInt()) { stream.readInt() }
-            } catch (e: IOException) {
-                return CORRUPTED
-            }
-
+            val versionNumber = readVersionNumber(stream) ?: return CORRUPTED
             val preVersion = JvmMetadataVersion(*versionNumber)
             if (!skipMetadataVersionCheck && !preVersion.isCompatible()) {
                 reportIncompatibleVersionError(preVersion)

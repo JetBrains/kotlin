@@ -10,5 +10,6 @@ FILE fqName:<root> fileName:/extensionLambda.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.Int
               $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
               BLOCK_BODY
-                CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
-                  $this: GET_VAR '<this>: kotlin.String declared in special.<anonymous>' type=kotlin.String origin=null
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.test1'
+                  CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: kotlin.String declared in <root>.test1.<anonymous>' type=kotlin.String origin=null

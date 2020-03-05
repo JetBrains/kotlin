@@ -36,6 +36,7 @@ class JvmPackagePartSource(
     nameResolver: NameResolver,
     override val incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>? = null,
     override val isPreReleaseInvisible: Boolean = false,
+    override val isInvisibleIrDependency: Boolean = false,
     val knownJvmBinaryClass: KotlinJvmBinaryClass? = null
 ) : DeserializedContainerSource {
     constructor(
@@ -43,7 +44,8 @@ class JvmPackagePartSource(
         packageProto: ProtoBuf.Package,
         nameResolver: NameResolver,
         incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>? = null,
-        isPreReleaseInvisible: Boolean = false
+        isPreReleaseInvisible: Boolean = false,
+        isInvisibleIrDependency: Boolean = false
     ) : this(
         JvmClassName.byClassId(kotlinClass.classId),
         kotlinClass.classHeader.multifileClassName?.let {
@@ -53,6 +55,7 @@ class JvmPackagePartSource(
         nameResolver,
         incompatibility,
         isPreReleaseInvisible,
+        isInvisibleIrDependency,
         kotlinClass
     )
 

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.tree.generator.context.type
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 
 object FieldSets {
-    val calleeReference = field("calleeReference", reference)
+    val calleeReference = field("calleeReference", reference, withReplace = true)
 
     val receivers = fieldSet(
         field("explicitReceiver", expression, nullable = true).withTransform(),
@@ -29,7 +29,7 @@ object FieldSets {
     )
 
     val typeArguments =
-        fieldList("typeArguments", typeProjection)
+        fieldList("typeArguments", typeProjection, withReplace = true)
 
     val arguments =
         fieldList("arguments", expression)

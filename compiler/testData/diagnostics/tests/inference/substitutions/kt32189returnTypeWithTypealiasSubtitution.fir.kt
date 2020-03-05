@@ -16,9 +16,9 @@ fun buildB() {
     val a2 = applyRestrictions2()
     val a3 = applyRestrictions3("foo")
 
-    B.Builder().<!UNRESOLVED_REFERENCE!>a1<!>()
-    B.Builder().<!UNRESOLVED_REFERENCE!>a2<!>()
-    B.Builder().<!UNRESOLVED_REFERENCE!>a3<!>()
+    B.Builder().a1()
+    B.Builder().a2()
+    B.Builder().a3()
 }
 
 // additional example from #KT-34820

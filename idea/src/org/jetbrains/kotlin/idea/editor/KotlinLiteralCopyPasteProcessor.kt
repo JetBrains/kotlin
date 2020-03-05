@@ -243,8 +243,8 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
             while (to < inputString.length) {
                 val c = inputString[to]
                 if (c == '\\') {
-                    to += 1
-                    if (to < inputString.length) to += 1
+                    to += 1.toInt()
+                    if (to < inputString.length) to += 1.toInt()
                     continue
                 } else if (c == '$') {
                     if (inputString.substring(to).guessIsTemplateEntryStart()) {

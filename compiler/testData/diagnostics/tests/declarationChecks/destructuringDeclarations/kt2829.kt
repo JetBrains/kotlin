@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package test
 
 fun a(s: String) { // <- ERROR

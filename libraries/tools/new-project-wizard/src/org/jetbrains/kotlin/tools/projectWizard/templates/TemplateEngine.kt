@@ -6,7 +6,7 @@ import org.apache.velocity.runtime.RuntimeConstants
 import org.apache.velocity.runtime.RuntimeServices
 import org.apache.velocity.runtime.log.LogChute
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskResult
-import org.jetbrains.kotlin.tools.projectWizard.core.TaskRunningContext
+import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.div
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileFormattingService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
@@ -16,12 +16,12 @@ import java.io.StringWriter
 interface TemplateEngine {
     fun renderTemplate(template: FileTemplateDescriptor, data: Map<String, Any?>): String
 
-    fun TaskRunningContext.writeTemplate(template: FileTemplate): TaskResult<Unit> {
-        val formatter = service<FileFormattingService>()!!
+    fun WritingContext.writeTemplate(template: FileTemplate): TaskResult<Unit> {
+        val formatter = service<FileFormattingService>()
         val text = renderTemplate(template.descriptor, template.data).let { text ->
             formatter.formatFile(text, template.descriptor.relativePath.fileName.toString())
         }
-        return service<FileSystemWizardService>()!!.createFile(template.rootPath / template.descriptor.relativePath, text)
+        return service<FileSystemWizardService>().createFile(template.rootPath / template.descriptor.relativePath, text)
     }
 }
 

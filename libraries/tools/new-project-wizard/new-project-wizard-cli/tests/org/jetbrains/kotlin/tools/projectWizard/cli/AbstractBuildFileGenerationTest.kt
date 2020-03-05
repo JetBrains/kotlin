@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.cli
 
+import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.tools.projectWizard.core.ExceptionError
 import org.jetbrains.kotlin.tools.projectWizard.core.div
 import org.jetbrains.kotlin.tools.projectWizard.core.onFailure
 import org.jetbrains.kotlin.tools.projectWizard.core.service.Services
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
+import org.jetbrains.kotlin.tools.projectWizard.plugins.Plugins
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.MavenPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GroovyDslPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.KotlinDslPlugin
@@ -18,27 +20,24 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
-abstract class AbstractBuildFileGenerationTest : AbstractPluginBasedTest() {
+abstract class AbstractBuildFileGenerationTest : UsefulTestCase() {
     fun doTest(directoryPath: String) {
         val directory = Paths.get(directoryPath)
-        val testData = init(directory)
-        if (KotlinDslPlugin::class in testData.pluginClasses) {
-            doTest(directory, testData, BuildSystem.GRADLE_KOTLIN_DSL)
-        }
-        if (GroovyDslPlugin::class in testData.pluginClasses) {
-            doTest(directory, testData, BuildSystem.GRADLE_GROOVY_DSL)
-        }
-        if (MavenPlugin::class in testData.pluginClasses) {
-            doTest(directory, testData, BuildSystem.MAVEN)
+        val expectedDirectory = expectedDirectory(directory)
+
+        for (buildSystem in BuildSystem.values()) {
+            if (Files.exists(expectedDirectory / buildSystem.buildFileName)) {
+                doTest(directory, buildSystem)
+            }
         }
     }
 
-    private fun doTest(directory: Path, testData: WizardTestData, buildSystem: BuildSystem) {
+    private fun doTest(directory: Path, buildSystem: BuildSystem) {
         val yaml = directory.resolve("settings.yaml").toFile().readText() + "\n" +
                 defaultStructure + "\n" +
                 buildSystem.yaml
         val tempDir = Files.createTempDirectory(null)
-        val wizard = YamlWizard(yaml, tempDir.toString(), testData.createPlugins, isUnitTestMode = true)
+        val wizard = YamlWizard(yaml, tempDir.toString(), Plugins.allPlugins, isUnitTestMode = true)
         val result = wizard.apply(Services.IDEA_INDEPENDENT_SERVICES, GenerationPhase.ALL)
         result.onFailure { errors ->
             errors.forEach { error ->
@@ -49,7 +48,7 @@ abstract class AbstractBuildFileGenerationTest : AbstractPluginBasedTest() {
             fail(errors.joinToString("\n"))
         }
 
-        val expectedDirectory = (directory / EXPECTED_DIRECTORY_NAME).takeIf { Files.exists(it) } ?: directory
+        val expectedDirectory = expectedDirectory(directory)
 
         compareFiles(
             expectedDirectory.allBuildFiles(buildSystem), expectedDirectory,
@@ -83,6 +82,9 @@ abstract class AbstractBuildFileGenerationTest : AbstractPluginBasedTest() {
                             type: Maven""".trimIndent()
         )
     }
+
+    private fun expectedDirectory(directory: Path): Path =
+        (directory / EXPECTED_DIRECTORY_NAME).takeIf { Files.exists(it) } ?: directory
 
     companion object {
         private const val EXPECTED_DIRECTORY_NAME = "expected"

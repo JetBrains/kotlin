@@ -18,6 +18,7 @@ dependencies {
     compile(project(":compiler:serialization"))
     compile(project(":compiler:plugin-api"))
     compile(project(":js:js.translator"))
+    compile(project(":native:frontend.native"))
     compile(commonDep("org.fusesource.jansi", "jansi"))
     compile(commonDep("org.jline", "jline"))
     compile(project(":compiler:fir:psi2fir"))
@@ -29,7 +30,7 @@ dependencies {
     compile(project(":kotlin-util-io"))
     compile(project(":compiler:ir.serialization.common"))
 
-    compile(toolsJar())
+    compileOnly(toolsJar())
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 

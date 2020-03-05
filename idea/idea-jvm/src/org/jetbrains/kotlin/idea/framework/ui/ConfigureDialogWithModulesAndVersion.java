@@ -172,7 +172,7 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
     }
 
     @NotNull
-    protected static Collection<String> loadVersions(String minimumVersion) throws Exception {
+        public static Collection<String> loadVersions(String minimumVersion) throws Exception {
         List<String> versions = Lists.newArrayList();
 
         String bundledRuntimeVersion = KotlinRuntimeLibraryUtilKt.bundledRuntimeVersion();

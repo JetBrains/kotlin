@@ -700,7 +700,7 @@ class ResolveElementCache(
             trace,
             targetPlatform,
             statementFilter,
-            targetPlatform.findAnalyzerServices,
+            targetPlatform.findAnalyzerServices(file.project),
             file.languageVersionSettings,
             IdeaModuleStructureOracle()
         ).get()

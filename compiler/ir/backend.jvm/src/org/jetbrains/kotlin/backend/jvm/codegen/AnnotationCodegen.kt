@@ -23,28 +23,34 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.TypeAnnotationCollector
+import org.jetbrains.kotlin.codegen.TypePathInfo
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.JvmTarget.JVM_1_6
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.types.isMarkedNullable
-import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.synthetic.isVisibleOutside
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor
-import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
+import org.jetbrains.kotlin.types.isNullabilityFlexible
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.org.objectweb.asm.*
 import java.lang.annotation.RetentionPolicy
 
-class AnnotationCodegen(
+abstract class AnnotationCodegen(
     private val innerClassConsumer: InnerClassConsumer,
-    context: JvmBackendContext,
-    private val visitAnnotation: (descriptor: String, visible: Boolean) -> AnnotationVisitor
+    private val context: JvmBackendContext
 ) {
     private val typeMapper = context.typeMapper
     private val methodSignatureMapper = context.methodSignatureMapper
@@ -52,7 +58,7 @@ class AnnotationCodegen(
     /**
      * @param returnType can be null if not applicable (e.g. [annotated] is a class)
      */
-    fun genAnnotations(annotated: IrAnnotationContainer?, returnType: Type?) {
+    fun genAnnotations(annotated: IrAnnotationContainer?, returnType: Type?, typeForTypeAnnotations: IrType?) {
         if (annotated == null) return
 
         val annotationDescriptorsAlreadyPresent = mutableSetOf<String>()
@@ -84,13 +90,25 @@ class AnnotationCodegen(
                 }
             }
 
-            genAnnotation(annotation)?.let { descriptor ->
+            genAnnotation(annotation, null, false)?.let { descriptor ->
                 annotationDescriptorsAlreadyPresent.add(descriptor)
             }
         }
 
         generateAdditionalAnnotations(annotated, returnType, annotationDescriptorsAlreadyPresent)
+        generateTypeAnnotations(annotated, typeForTypeAnnotations)
     }
+
+    abstract fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor
+
+    open fun visitTypeAnnotation(
+        descr: String?,
+        path: TypePath?,
+        visible: Boolean,
+    ): AnnotationVisitor {
+        throw RuntimeException("Not implemented")
+    }
+
 
     private fun generateAdditionalAnnotations(
         annotated: IrAnnotationContainer,
@@ -134,6 +152,11 @@ class AnnotationCodegen(
             return
         }
 
+        // A flexible type whose lower bound in not-null and upper bound is nullable, should not be annotated
+        if (type.toKotlinType().isNullabilityFlexible()) {
+            return
+        }
+
         val annotationClass = if (type.isNullable()) Nullable::class.java else NotNull::class.java
 
         generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent, annotationClass)
@@ -152,7 +175,7 @@ class AnnotationCodegen(
         visitor.visitEnd()
     }
 
-    private fun genAnnotation(annotation: IrConstructorCall): String? {
+    private fun genAnnotation(annotation: IrConstructorCall, path: TypePath?, isTypeAnnotation: Boolean): String? {
         val annotationClass = annotation.annotationClass
         val retentionPolicy = getRetentionPolicy(annotationClass)
         if (retentionPolicy == RetentionPolicy.SOURCE) return null
@@ -167,7 +190,9 @@ class AnnotationCodegen(
         innerClassConsumer.addInnerClassInfoFromAnnotation(annotationClass)
 
         val asmTypeDescriptor = typeMapper.mapType(annotation.type).descriptor
-        val annotationVisitor = visitAnnotation(asmTypeDescriptor, retentionPolicy == RetentionPolicy.RUNTIME)
+        val annotationVisitor =
+            if (!isTypeAnnotation) visitAnnotation(asmTypeDescriptor, retentionPolicy == RetentionPolicy.RUNTIME) else
+                visitTypeAnnotation(asmTypeDescriptor, path, retentionPolicy == RetentionPolicy.RUNTIME)
 
         genAnnotationArguments(annotation, annotationVisitor)
         annotationVisitor.visitEnd()
@@ -281,6 +306,40 @@ class AnnotationCodegen(
 
         val IrConstructorCall.annotationClass get() = symbol.owner.parentAsClass
     }
+
+    private fun generateTypeAnnotations(
+        annotated: IrAnnotationContainer,
+        type: IrType?
+    ) {
+        if ((annotated as? IrDeclaration)?.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
+            type == null || context.state.target === JVM_1_6 ||
+            !context.state.configuration.getBoolean(JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS)
+        ) {
+            return
+        }
+        val infos: Iterable<TypePathInfo<IrConstructorCall>> =
+            IrTypeAnnotationCollector(context.typeMapper.typeSystem).collectTypeAnnotations(type)
+        for (info in infos) {
+            for (annotation in info.annotations) {
+                genAnnotation(annotation, info.path, true)
+            }
+        }
+    }
+
+    private class IrTypeAnnotationCollector(context: TypeSystemCommonBackendContext) : TypeAnnotationCollector<IrConstructorCall>(context) {
+
+        override fun KotlinTypeMarker.extractAnnotations(): List<IrConstructorCall> {
+            require(this is IrType)
+            return annotations.filter {
+                //We only generate annotations which have the TYPE_USE Java target.
+                // Those are type annotations which were compiled with JVM target bytecode version 1.8 or greater
+                (it.annotationClass.origin != IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
+                        it.annotationClass.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) ||
+                        isCompiledToJvm8OrHigher(it.annotationClass.descriptor)
+            }
+        }
+    }
+
 }
 
 interface InnerClassConsumer {

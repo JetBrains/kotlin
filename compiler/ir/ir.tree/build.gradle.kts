@@ -14,4 +14,3 @@ sourceSets {
     "main" { projectDefault() }
     "test" {}
 }
-

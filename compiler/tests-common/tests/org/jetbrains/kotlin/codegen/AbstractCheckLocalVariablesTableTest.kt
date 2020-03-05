@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.codegen
 
+import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.text.StringUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.org.objectweb.asm.*
+import org.junit.ComparisonFailure
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
@@ -33,43 +35,85 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
         compile(files)
 
         try {
-            val classAndMethod = parseClassAndMethodSignature(wholeFile)
+            val filteredLines = filterTestFileForTargetBackend(wholeFile)
+            val classAndMethod = parseClassAndMethodSignature(filteredLines)
             val split = classAndMethod.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             assert(split.size == 2) { "Exactly one dot is expected: $classAndMethod" }
             val classFileRegex = StringUtil.escapeToRegexp(split[0] + ".class").replace("\\*", ".+")
             val methodName = split[1]
 
             val outputFiles = (classFileFactory as OutputFileCollection).asList()
-            val outputFile = outputFiles.first { file -> file.relativePath.matches(classFileRegex.toRegex()) }
-
-            val pathsString = outputFiles.joinToString { it.relativePath }
-            assertNotNull("Couldn't find class file for pattern $classFileRegex in: $pathsString", outputFile)
+            val outputFile = outputFiles.firstOrNull { file -> file.relativePath.matches(classFileRegex.toRegex()) }
+            checkNotNull(outputFile) {
+                val pathsString = outputFiles.joinToString { it.relativePath }
+                "Couldn't find class file for pattern $classFileRegex in: $pathsString"
+            }
 
             val classReader = ClassReader(outputFile.asByteArray())
             val actualLocalVariables = readLocalVariable(classReader, methodName)
             checkLocalVariableTypes(classReader, methodName, actualLocalVariables)
 
-            doCompare(wholeFile, files.single().content, actualLocalVariables)
+            doCompare(filteredLines, actualLocalVariables)
         } catch (e: Throwable) {
             printReport(wholeFile)
             throw e
         }
     }
 
-    protected open fun doCompare(
-        testFile: File,
-        text: String,
-        actualLocalVariables: List<LocalVariable>
-    ) {
-        KotlinTestUtils.assertEqualsToFile(
-            testFile,
-            text.substringBefore("// VARIABLE : ") + getActualVariablesAsString(
-                actualLocalVariables
-            )
-        )
+    // TODO: Refactor test infrastructure to share filtering with AbstractBytecodeTextTest
+    private fun filterTestFileForTargetBackend(testFile: File): List<String> {
+        val filteredLines = mutableListOf<String>()
+        var currentBackend = TargetBackend.ANY
+        for (line in testFile.readLines()) {
+            if (line.contains(JVM_TEMPLATES)) {
+                currentBackend = TargetBackend.JVM
+            } else if (line.contains(JVM_IR_TEMPLATES)) {
+                currentBackend = TargetBackend.JVM_IR
+            } else if (currentBackend == TargetBackend.ANY || currentBackend == backend) {
+                filteredLines.add(line)
+            }
+        }
+        return filteredLines
     }
 
-    protected class LocalVariable internal constructor(
+    private fun doCompare(
+        testFileLines: List<String>,
+        actualLocalVariables: List<LocalVariable>
+    ) {
+        val actual = getActualVariablesAsString(actualLocalVariables)
+        val expected = getExpectedVariablesAsString(testFileLines)
+        if (!Comparing.equal(expected, actual)) {
+            throw ComparisonFailure(
+                "Variables differ from expected",
+                expected,
+                actual
+            )
+        }
+    }
+
+    private fun getActualVariablesAsString(list: List<LocalVariable>) = if (backend.isIR) {
+        // Ignore local index.
+        list.map { it.toString().replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*") }
+            .sorted()
+            .joinToString("\n")
+    } else {
+        list.joinToString("\n")
+    }
+
+    private fun getExpectedVariablesAsString(testFileLines: List<String>): String {
+        val variableLines = testFileLines.asSequence().filter { line -> line.startsWith("// VARIABLE ") }
+        return if (backend.isIR) {
+            // Ignore local index.
+            variableLines
+                .map { it.replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*") }
+                .sorted()
+                .joinToString("\n")
+        } else {
+            variableLines.joinToString("\n")
+        }
+    }
+
+    private class LocalVariable internal constructor(
         val name: String,
         val type: String,
         val index: Int,
@@ -82,8 +126,8 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
         }
     }
 
-    private fun parseClassAndMethodSignature(testFile: File): String {
-        for (line in testFile.readLines()) {
+    private fun parseClassAndMethodSignature(testFileLines: List<String>): String {
+        for (line in testFileLines) {
             val methodMatcher = methodPattern.matcher(line)
             if (methodMatcher.matches()) {
                 return methodMatcher.group(1)
@@ -95,7 +139,9 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
 
     companion object {
 
-        private fun getActualVariablesAsString(list: List<LocalVariable>) = list.joinToString("\n")
+        private const val JVM_TEMPLATES = "// JVM_TEMPLATES"
+
+        private const val JVM_IR_TEMPLATES = "// JVM_IR_TEMPLATES"
 
         private val methodPattern = Pattern.compile("^// METHOD : *(.*)")
 
@@ -104,6 +150,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
             class Visitor : ClassVisitor(Opcodes.API_VERSION) {
                 var readVariables: MutableList<LocalVariable> = ArrayList()
                 var methodFound = false
+                var methodsFound = mutableListOf<String>()
 
                 override fun visitMethod(
                     access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?
@@ -128,6 +175,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
                             }
                         }
                     } else {
+                        methodsFound.add(name + desc)
                         super.visitMethod(access, name, desc, signature, exceptions)
                     }
                 }
@@ -135,7 +183,10 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
 
             val visitor = Visitor()
             cr.accept(visitor, ClassReader.SKIP_FRAMES)
-            TestCase.assertTrue("method not found: $methodName", visitor.methodFound)
+            TestCase.assertTrue(
+                "Method not found: $methodName. Methods found were: ${visitor.methodsFound.joinToString()}",
+                visitor.methodFound
+            )
             return visitor.readVariables
         }
 

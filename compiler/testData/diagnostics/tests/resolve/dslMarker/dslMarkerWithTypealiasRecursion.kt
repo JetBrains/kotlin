@@ -18,7 +18,7 @@ fun Foo.zbar(<!OI;UNUSED_PARAMETER!>body<!>: <!RECURSIVE_TYPEALIAS_EXPANSION!>ZB
 fun test() {
     Foo().foo {
         zbar {
-            <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo<!> {}
+            <!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo<!> {}
         }
     }
 }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 
 open class YarnPlugin : Plugin<Project> {
     override fun apply(project: Project): Unit = project.run {
@@ -17,9 +18,15 @@ open class YarnPlugin : Plugin<Project> {
 
         val nodeJs = NodeJsRootPlugin.apply(this)
 
-        this.extensions.create(YarnRootExtension.YARN, YarnRootExtension::class.java, this)
+        val yarnRootExtension = this.extensions.create(YarnRootExtension.YARN, YarnRootExtension::class.java, this)
+
         tasks.create(YarnSetupTask.NAME, YarnSetupTask::class.java) {
             it.dependsOn(nodeJs.nodeJsSetupTask)
+        }
+
+        tasks.register("yarn" + CleanDataTask.NAME_SUFFIX, CleanDataTask::class.java) {
+            it.cleanableStoreProvider = provider { yarnRootExtension.requireConfigured().cleanableStore }
+            it.description = "Clean unused local yarn version"
         }
     }
 

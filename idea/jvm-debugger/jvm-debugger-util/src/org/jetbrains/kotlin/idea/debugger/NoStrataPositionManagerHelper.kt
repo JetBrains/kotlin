@@ -63,52 +63,6 @@ fun readBytecodeInfo(
     return KotlinDebuggerCaches.getOrReadDebugInfoFromBytecode(project, jvmName, file)
 }
 
-fun ktLocationInfo(
-    location: Location, isDexDebug: Boolean, project: Project,
-    preferInlined: Boolean = false, locationFile: KtFile? = null
-): Pair<Int, KtFile?> {
-    if (isDexDebug && (locationFile == null || location.lineNumber() > locationFile.getLineCount())) {
-        if (!preferInlined) {
-            val thisFunLine = runReadAction { getLastLineNumberForLocation(location, project) }
-            if (thisFunLine != null && thisFunLine != location.lineNumber()) {
-                return thisFunLine to locationFile
-            }
-        }
-
-        val inlinePosition = runReadAction { getOriginalPositionOfInlinedLine(location, project) }
-        if (inlinePosition != null) {
-            val (file, line) = inlinePosition
-            return line + 1 to file
-        }
-    }
-
-    return location.lineNumber() to locationFile
-}
-
-/**
- * Only the first line number is stored for instruction in dex. It can be obtained through location.lineNumber().
- * This method allows to get last stored linenumber for instruction.
- */
-fun getLastLineNumberForLocation(
-    location: Location,
-    project: Project,
-    searchScope: GlobalSearchScope = GlobalSearchScope.allScope(project)
-): Int? {
-    val lineNumber = location.lineNumber()
-    val fqName = FqName(location.declaringType().name())
-    val fileName = location.sourceName()
-
-    val method = location.method() ?: return null
-    val name = method.name() ?: return null
-    val signature = method.signature() ?: return null
-
-    val debugInfo =
-        findAndReadClassFile(fqName, fileName, project, searchScope, { isInlineFunctionLineNumber(it, lineNumber, project) }) ?: return null
-
-    val lineMapping = debugInfo.lineTableMapping[BytecodeMethodKey(name, signature)] ?: return null
-    return lineMapping.values.firstOrNull { it.contains(lineNumber) }?.last()
-}
-
 fun createWeakBytecodeDebugInfoStorage(): ConcurrentMap<BinaryCacheKey, BytecodeDebugInfo?> {
     return ConcurrentFactoryMap.createWeakMap<BinaryCacheKey, BytecodeDebugInfo?> { key ->
         val bytes = readClassFileImpl(key.project, key.jvmName, key.file) ?: return@createWeakMap null
@@ -243,34 +197,6 @@ private fun readLineNumberTableMapping(bytes: ByteArray): Map<BytecodeMethodKey,
     }, ClassReader.SKIP_FRAMES and ClassReader.SKIP_CODE)
 
     return lineNumberMapping
-}
-
-internal fun getOriginalPositionOfInlinedLine(location: Location, project: Project): Pair<KtFile, Int>? {
-    val lineNumber = location.lineNumber()
-    val fqName = FqName(location.declaringType().name())
-    val fileName = location.sourceName()
-    val searchScope = GlobalSearchScope.allScope(project)
-
-    val debugInfo =
-        findAndReadClassFile(fqName, fileName, project, searchScope) { isInlineFunctionLineNumber(it, lineNumber, project) } ?: return null
-    val smapData = debugInfo.smapData ?: return null
-
-    return mapStacktraceLineToSource(smapData, lineNumber, project, SourceLineKind.EXECUTED_LINE, searchScope)
-}
-
-private fun findAndReadClassFile(
-    fqName: FqName, fileName: String, project: Project, searchScope: GlobalSearchScope,
-    fileFilter: (VirtualFile) -> Boolean
-): BytecodeDebugInfo? {
-    val internalName = fqName.asString().replace('.', '/')
-    val jvmClassName = JvmClassName.byInternalName(internalName)
-
-    val file = DebuggerUtils.findSourceFileForClassIncludeLibrarySources(project, searchScope, jvmClassName, fileName) ?: return null
-
-    val virtualFile = file.virtualFile ?: return null
-    if (!fileFilter(virtualFile)) return null
-
-    return readBytecodeInfo(project, jvmClassName, virtualFile)
 }
 
 fun getLocationsOfInlinedLine(type: ReferenceType, position: SourcePosition, sourceSearchScope: GlobalSearchScope): List<Location> {

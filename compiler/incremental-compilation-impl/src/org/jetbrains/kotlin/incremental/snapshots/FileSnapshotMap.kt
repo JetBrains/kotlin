@@ -24,7 +24,7 @@ import java.util.*
 
 class FileSnapshotMap(storageFile: File) : BasicStringMap<FileSnapshot>(storageFile, PathStringDescriptor, FileSnapshotExternalizer) {
     override fun dumpValue(value: FileSnapshot): String =
-            value.toString()
+        value.toString()
 
     fun compareAndUpdate(newFiles: Iterable<File>): ChangedFiles.Known {
         val snapshotProvider = SimpleFileSnapshotProviderImpl()

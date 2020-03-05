@@ -34,6 +34,7 @@ interface ConstraintSystemOperation {
     fun registerVariable(variable: TypeVariableMarker)
     fun markPostponedVariable(variable: TypeVariableMarker)
     fun unmarkPostponedVariable(variable: TypeVariableMarker)
+    fun removePostponedVariables()
 
     fun addSubtypeConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition)
     fun addEqualityConstraint(a: KotlinTypeMarker, b: KotlinTypeMarker, position: ConstraintPosition)
@@ -68,11 +69,17 @@ fun ConstraintSystemBuilder.addSubtypeConstraintIfCompatible(
     }
 
 
-fun PostponedArgumentsAnalyzer.Context.addSubsystemFromArgument(argument: KotlinCallArgument?) {
-    when (argument) {
-        is SubKotlinCallArgument -> addOtherSystem(argument.callResult.constraintSystem)
+fun PostponedArgumentsAnalyzer.Context.addSubsystemFromArgument(argument: KotlinCallArgument?): Boolean {
+    return when (argument) {
+        is SubKotlinCallArgument -> {
+            addOtherSystem(argument.callResult.constraintSystem)
+            true
+        }
+
         is CallableReferenceKotlinCallArgument -> {
             addSubsystemFromArgument(argument.lhsResult.safeAs<LHSResult.Expression>()?.lshCallArgument)
         }
+
+        else -> false
     }
 }

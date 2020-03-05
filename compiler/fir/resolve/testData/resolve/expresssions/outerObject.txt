@@ -15,11 +15,11 @@ FILE: outerObject.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final val y: R|kotlin/Int| = R|/Outer.x|
+            public final val y: R|kotlin/Int| = this@R|/Outer|.R|/Outer.x|
                 public get(): R|kotlin/Int|
 
             public final fun test(): R|kotlin/Unit| {
-                this@R|/Outer.Nested|.R|/Outer.foo|()
+                (this@R|/Outer|, this@R|/Outer.Nested|).R|/Outer.foo|()
             }
 
         }

@@ -6,14 +6,14 @@ import kotlin.contracts.*
 
 inline fun <T> myRun(block: () -> T): T {
     contract {
-        <!INAPPLICABLE_CANDIDATE!>callsInPlace<!>(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
     return block()
 }
 
 inline fun <T, R> T.myLet(block: (T) -> R): R {
     contract {
-        <!INAPPLICABLE_CANDIDATE!>callsInPlace<!>(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
     return block(this)
 }

@@ -135,7 +135,7 @@ private fun KotlinCallArgument.isArrayAssignedAsNamedArgumentInFunction(
     return this.isArrayOrArrayLiteral()
 }
 
-private fun KotlinCallArgument.isArrayOrArrayLiteral(): Boolean {
+fun KotlinCallArgument.isArrayOrArrayLiteral(): Boolean {
     if (this is CollectionLiteralKotlinCallArgument) return true
     if (this !is SimpleKotlinCallArgument) return false
 

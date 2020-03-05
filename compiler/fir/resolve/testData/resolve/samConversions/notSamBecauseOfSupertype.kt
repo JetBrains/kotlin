@@ -20,10 +20,10 @@ fun foo(m: MyRunnable) {}
 fun main() {
     JavaUsage.<!INAPPLICABLE_CANDIDATE!>foo<!> {
             x ->
-        x > 1
+        x <!UNRESOLVED_REFERENCE!>><!> 1
     }
 
-    JavaUsage.<!INAPPLICABLE_CANDIDATE!>foo<!>({ <!UNRESOLVED_REFERENCE!>it<!> > 1 })
+    JavaUsage.<!INAPPLICABLE_CANDIDATE!>foo<!>({ <!UNRESOLVED_REFERENCE!>it<!> <!UNRESOLVED_REFERENCE!>><!> 1 })
 
     val x = { x: Int -> x > 1 }
 

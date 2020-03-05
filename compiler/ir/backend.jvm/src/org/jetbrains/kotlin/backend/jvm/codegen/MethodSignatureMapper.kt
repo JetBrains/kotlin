@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.getJvmNameFromAnnotation
 import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
+import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
@@ -75,7 +76,15 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         val property = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
         if (property != null && function.name.isSpecial) {
             val propertyName = property.name.asString()
-            if (property.parent.let { it is IrClass && it.isAnnotationClass }) return propertyName
+            val propertyParent = property.parentAsClass
+            if (propertyParent.isAnnotationClass)
+                return propertyName
+
+            // The enum property getters <get-name> and <get-ordinal> have special names which also
+            // apply to their fake overrides. Unfortunately, getJvmMethodNameIfSpecial does not handle
+            // fake overrides, so we need a special case here.
+            if ((propertyParent.isEnumClass || propertyParent.isEnumEntry) && (propertyName == "name" || propertyName == "ordinal"))
+                return propertyName
 
             val accessorName = if (function.isPropertyGetter) JvmAbi.getterName(propertyName) else JvmAbi.setterName(propertyName)
             return mangleMemberNameIfRequired(accessorName, function)
@@ -214,6 +223,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         for (parameter in function.valueParameters) {
             val kind = when (parameter.origin) {
                 JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> JvmMethodParameterKind.OUTER
+                JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER -> JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL
                 else -> JvmMethodParameterKind.VALUE
             }
             val type = if (forceSingleValueParameterBoxing(function.descriptor)) parameter.type.makeNullable() else parameter.type
@@ -283,18 +293,18 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             if (valueArgumentsCount > 0) (getValueArgument(0) as? IrConst<*>)?.value as? Boolean ?: true else null
         }
 
-    fun mapToCallableMethod(caller: IrFunction, expression: IrFunctionAccessExpression): IrCallableMethod {
-        val callee = expression.symbol.owner.getOrCreateSuspendFunctionViewIfNeeded(context)
-        val calleeParent = callee.parent
-        if (calleeParent !is IrClass) {
-            // Non-class parent is only possible for intrinsics created in IrBuiltIns, such as dataClassArrayMemberHashCode. In that case,
-            // we still need to return some IrCallableMethod with some owner instance, but that owner will be ignored at the call site.
-            // Here we return a fake type, but this needs to be refactored so that we never call mapToCallableMethod on intrinsics.
-            // TODO: get rid of fake owner here
-            return IrCallableMethod(FAKE_OWNER_TYPE, Opcodes.INVOKESTATIC, mapSignatureSkipGeneric(callee), false)
+    private fun IrFunctionAccessExpression.computeCalleeParent(): IrClass {
+        if (this is IrCall) {
+            superQualifierSymbol?.let { return it.owner }
         }
+        return dispatchReceiver?.type?.classOrNull?.owner
+            ?: symbol.owner.parentAsClass // Static call or type parameter
+    }
 
-        val owner = typeMapper.mapClass(calleeParent)
+    fun mapToCallableMethod(caller: IrFunction, expression: IrFunctionAccessExpression): IrCallableMethod {
+        val callee = expression.symbol.owner
+        val calleeParent = expression.computeCalleeParent()
+        val owner = typeMapper.mapOwner(calleeParent)
 
         if (callee !is IrSimpleFunction) {
             check(callee is IrConstructor) { "Function must be a simple function or a constructor: ${callee.render()}" }
@@ -324,6 +334,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         // Do not remap special builtin methods when called from a bridge. The bridges are there to provide the
         // remapped name or signature and forward to the actually declared method.
         if (caller.origin == IrDeclarationOrigin.BRIDGE || caller.origin == IrDeclarationOrigin.BRIDGE_SPECIAL) return null
+        // Do not remap calls to static replacements of inline class methods, since they have completely different signatures.
+        if (callee.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT) return null
         val overriddenSpecialBuiltinFunction = callee.descriptor.original.getOverriddenBuiltinReflectingJvmDescriptor()
         if (overriddenSpecialBuiltinFunction != null && !superCall) {
             return mapSignatureSkipGeneric(context.referenceFunction(overriddenSpecialBuiltinFunction.original).owner)
@@ -350,9 +362,5 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
                 ?: error("Fake override should have at least one overridden descriptor: ${current.render()}")
         }
         return current
-    }
-
-    companion object {
-        val FAKE_OWNER_TYPE = Type.getObjectType("kotlin/internal/ir/Intrinsic")
     }
 }

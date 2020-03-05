@@ -160,6 +160,7 @@ public abstract interface annotation class kotlin/ReplaceWith : java/lang/annota
 
 public abstract interface annotation class kotlin/RequiresOptIn : java/lang/annotation/Annotation {
 	public abstract fun level ()Lkotlin/RequiresOptIn$Level;
+	public abstract fun message ()Ljava/lang/String;
 }
 
 public final class kotlin/RequiresOptIn$Level : java/lang/Enum {
@@ -661,6 +662,38 @@ public abstract class kotlin/collections/AbstractSet : kotlin/collections/Abstra
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun iterator ()Ljava/util/Iterator;
+}
+
+public final class kotlin/collections/ArrayDeque : kotlin/collections/AbstractMutableList {
+	public fun <init> ()V
+	public fun <init> (I)V
+	public fun <init> (Ljava/util/Collection;)V
+	public fun add (ILjava/lang/Object;)V
+	public fun add (Ljava/lang/Object;)Z
+	public fun addAll (ILjava/util/Collection;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public final fun addFirst (Ljava/lang/Object;)V
+	public final fun addLast (Ljava/lang/Object;)V
+	public fun clear ()V
+	public fun contains (Ljava/lang/Object;)Z
+	public final fun first ()Ljava/lang/Object;
+	public final fun firstOrNull ()Ljava/lang/Object;
+	public fun get (I)Ljava/lang/Object;
+	public fun getSize ()I
+	public fun indexOf (Ljava/lang/Object;)I
+	public fun isEmpty ()Z
+	public final fun last ()Ljava/lang/Object;
+	public fun lastIndexOf (Ljava/lang/Object;)I
+	public final fun lastOrNull ()Ljava/lang/Object;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun removeAt (I)Ljava/lang/Object;
+	public final fun removeFirst ()Ljava/lang/Object;
+	public final fun removeFirstOrNull ()Ljava/lang/Object;
+	public final fun removeLast ()Ljava/lang/Object;
+	public final fun removeLastOrNull ()Ljava/lang/Object;
+	public fun retainAll (Ljava/util/Collection;)Z
+	public fun set (ILjava/lang/Object;)Ljava/lang/Object;
 }
 
 public final class kotlin/collections/ArraysKt {
@@ -1429,6 +1462,15 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun random ([Ljava/lang/Object;Lkotlin/random/Random;)Ljava/lang/Object;
 	public static final fun random ([SLkotlin/random/Random;)S
 	public static final fun random ([ZLkotlin/random/Random;)Z
+	public static final fun randomOrNull ([BLkotlin/random/Random;)Ljava/lang/Byte;
+	public static final fun randomOrNull ([CLkotlin/random/Random;)Ljava/lang/Character;
+	public static final fun randomOrNull ([DLkotlin/random/Random;)Ljava/lang/Double;
+	public static final fun randomOrNull ([FLkotlin/random/Random;)Ljava/lang/Float;
+	public static final fun randomOrNull ([ILkotlin/random/Random;)Ljava/lang/Integer;
+	public static final fun randomOrNull ([JLkotlin/random/Random;)Ljava/lang/Long;
+	public static final fun randomOrNull ([Ljava/lang/Object;Lkotlin/random/Random;)Ljava/lang/Object;
+	public static final fun randomOrNull ([SLkotlin/random/Random;)Ljava/lang/Short;
+	public static final fun randomOrNull ([ZLkotlin/random/Random;)Ljava/lang/Boolean;
 	public static final fun reduce ([BLkotlin/jvm/functions/Function2;)B
 	public static final fun reduce ([CLkotlin/jvm/functions/Function2;)C
 	public static final fun reduce ([DLkotlin/jvm/functions/Function2;)D
@@ -1511,6 +1553,10 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun reversedArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 	public static final fun reversedArray ([S)[S
 	public static final fun reversedArray ([Z)[Z
+	public static final fun scan ([Ljava/lang/Object;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+	public static final fun scanIndexed ([Ljava/lang/Object;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
+	public static final fun scanReduce ([Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+	public static final fun scanReduceIndexed ([Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
 	public static final fun single ([B)B
 	public static final fun single ([BLkotlin/jvm/functions/Function1;)B
 	public static final fun single ([C)C
@@ -2078,6 +2124,7 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun plus (Ljava/util/Collection;Lkotlin/sequences/Sequence;)Ljava/util/List;
 	public static final fun plus (Ljava/util/Collection;[Ljava/lang/Object;)Ljava/util/List;
 	public static final fun random (Ljava/util/Collection;Lkotlin/random/Random;)Ljava/lang/Object;
+	public static final fun randomOrNull (Ljava/util/Collection;Lkotlin/random/Random;)Ljava/lang/Object;
 	public static final fun reduce (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public static final fun reduceIndexed (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function3;)Ljava/lang/Object;
 	public static final fun reduceOrNull (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
@@ -2089,6 +2136,10 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun removeAll (Ljava/util/Collection;Lkotlin/sequences/Sequence;)Z
 	public static final fun removeAll (Ljava/util/Collection;[Ljava/lang/Object;)Z
 	public static final fun removeAll (Ljava/util/List;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun removeFirst (Ljava/util/List;)Ljava/lang/Object;
+	public static final fun removeFirstOrNull (Ljava/util/List;)Ljava/lang/Object;
+	public static final fun removeLast (Ljava/util/List;)Ljava/lang/Object;
+	public static final fun removeLastOrNull (Ljava/util/List;)Ljava/lang/Object;
 	public static final fun requireNoNulls (Ljava/lang/Iterable;)Ljava/lang/Iterable;
 	public static final fun requireNoNulls (Ljava/util/List;)Ljava/util/List;
 	public static final fun retainAll (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z
@@ -2098,6 +2149,10 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun retainAll (Ljava/util/List;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun reverse (Ljava/util/List;)V
 	public static final fun reversed (Ljava/lang/Iterable;)Ljava/util/List;
+	public static final fun scan (Ljava/lang/Iterable;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+	public static final fun scanIndexed (Ljava/lang/Iterable;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
+	public static final fun scanReduce (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+	public static final fun scanReduceIndexed (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
 	public static final fun shuffle (Ljava/util/List;Lkotlin/random/Random;)V
 	public static final fun shuffled (Ljava/lang/Iterable;)Ljava/util/List;
 	public static final fun shuffled (Ljava/lang/Iterable;Ljava/util/Random;)Ljava/util/List;
@@ -2314,6 +2369,8 @@ public final class kotlin/collections/SetsKt {
 	public static final fun plus (Ljava/util/Set;[Ljava/lang/Object;)Ljava/util/Set;
 	public static final fun setOf (Ljava/lang/Object;)Ljava/util/Set;
 	public static final fun setOf ([Ljava/lang/Object;)Ljava/util/Set;
+	public static final fun setOfNotNull (Ljava/lang/Object;)Ljava/util/Set;
+	public static final fun setOfNotNull ([Ljava/lang/Object;)Ljava/util/Set;
 	public static final fun sortedSetOf (Ljava/util/Comparator;[Ljava/lang/Object;)Ljava/util/TreeSet;
 	public static final fun sortedSetOf ([Ljava/lang/Object;)Ljava/util/TreeSet;
 }
@@ -2324,30 +2381,6 @@ public abstract class kotlin/collections/ShortIterator : java/util/Iterator, kot
 	public final fun next ()Ljava/lang/Short;
 	public abstract fun nextShort ()S
 	public fun remove ()V
-}
-
-public final class kotlin/collections/UArraysKt {
-	public static final field INSTANCE Lkotlin/collections/UArraysKt;
-	public static final fun contentEquals-ctEhBpI ([I[I)Z
-	public static final fun contentEquals-kdPth3s ([B[B)Z
-	public static final fun contentEquals-mazbYpA ([S[S)Z
-	public static final fun contentEquals-us8wMrg ([J[J)Z
-	public static final fun contentHashCode--ajY-9A ([I)I
-	public static final fun contentHashCode-GBYM_sE ([B)I
-	public static final fun contentHashCode-QwZRm1k ([J)I
-	public static final fun contentHashCode-rL5Bavg ([S)I
-	public static final fun contentToString--ajY-9A ([I)Ljava/lang/String;
-	public static final fun contentToString-GBYM_sE ([B)Ljava/lang/String;
-	public static final fun contentToString-QwZRm1k ([J)Ljava/lang/String;
-	public static final fun contentToString-rL5Bavg ([S)Ljava/lang/String;
-	public static final fun random-2D5oskM ([ILkotlin/random/Random;)I
-	public static final fun random-JzugnMA ([JLkotlin/random/Random;)J
-	public static final fun random-oSF2wD8 ([BLkotlin/random/Random;)B
-	public static final fun random-s5X_as8 ([SLkotlin/random/Random;)S
-	public static final fun toTypedArray--ajY-9A ([I)[Lkotlin/UInt;
-	public static final fun toTypedArray-GBYM_sE ([B)[Lkotlin/UByte;
-	public static final fun toTypedArray-QwZRm1k ([J)[Lkotlin/ULong;
-	public static final fun toTypedArray-rL5Bavg ([S)[Lkotlin/UShort;
 }
 
 public abstract class kotlin/collections/UByteIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
@@ -2478,6 +2511,10 @@ public final class kotlin/collections/unsigned/UArraysKt {
 	public static final fun random-JzugnMA ([JLkotlin/random/Random;)J
 	public static final fun random-oSF2wD8 ([BLkotlin/random/Random;)B
 	public static final fun random-s5X_as8 ([SLkotlin/random/Random;)S
+	public static final fun randomOrNull-2D5oskM ([ILkotlin/random/Random;)Lkotlin/UInt;
+	public static final fun randomOrNull-JzugnMA ([JLkotlin/random/Random;)Lkotlin/ULong;
+	public static final fun randomOrNull-oSF2wD8 ([BLkotlin/random/Random;)Lkotlin/UByte;
+	public static final fun randomOrNull-s5X_as8 ([SLkotlin/random/Random;)Lkotlin/UShort;
 	public static final fun reversed--ajY-9A ([I)Ljava/util/List;
 	public static final fun reversed-GBYM_sE ([B)Ljava/util/List;
 	public static final fun reversed-QwZRm1k ([J)Ljava/util/List;
@@ -2568,14 +2605,30 @@ public final class kotlin/comparisons/ComparisonsKt {
 	public static final fun compareBy ([Lkotlin/jvm/functions/Function1;)Ljava/util/Comparator;
 	public static final fun compareValues (Ljava/lang/Comparable;Ljava/lang/Comparable;)I
 	public static final fun compareValuesBy (Ljava/lang/Object;Ljava/lang/Object;[Lkotlin/jvm/functions/Function1;)I
+	public static final fun maxOf (B[B)B
+	public static final fun maxOf (D[D)D
+	public static final fun maxOf (F[F)F
+	public static final fun maxOf (I[I)I
+	public static final fun maxOf (J[J)J
 	public static final fun maxOf (Ljava/lang/Comparable;Ljava/lang/Comparable;)Ljava/lang/Comparable;
 	public static final fun maxOf (Ljava/lang/Comparable;Ljava/lang/Comparable;Ljava/lang/Comparable;)Ljava/lang/Comparable;
+	public static final fun maxOf (Ljava/lang/Comparable;[Ljava/lang/Comparable;)Ljava/lang/Comparable;
 	public static final fun maxOf (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Comparator;)Ljava/lang/Object;
 	public static final fun maxOf (Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Comparator;)Ljava/lang/Object;
+	public static final fun maxOf (Ljava/lang/Object;[Ljava/lang/Object;Ljava/util/Comparator;)Ljava/lang/Object;
+	public static final fun maxOf (S[S)S
+	public static final fun minOf (B[B)B
+	public static final fun minOf (D[D)D
+	public static final fun minOf (F[F)F
+	public static final fun minOf (I[I)I
+	public static final fun minOf (J[J)J
 	public static final fun minOf (Ljava/lang/Comparable;Ljava/lang/Comparable;)Ljava/lang/Comparable;
 	public static final fun minOf (Ljava/lang/Comparable;Ljava/lang/Comparable;Ljava/lang/Comparable;)Ljava/lang/Comparable;
+	public static final fun minOf (Ljava/lang/Comparable;[Ljava/lang/Comparable;)Ljava/lang/Comparable;
 	public static final fun minOf (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Comparator;)Ljava/lang/Object;
 	public static final fun minOf (Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Comparator;)Ljava/lang/Object;
+	public static final fun minOf (Ljava/lang/Object;[Ljava/lang/Object;Ljava/util/Comparator;)Ljava/lang/Object;
+	public static final fun minOf (S[S)S
 	public static final fun naturalOrder ()Ljava/util/Comparator;
 	public static final fun nullsFirst (Ljava/util/Comparator;)Ljava/util/Comparator;
 	public static final fun nullsLast (Ljava/util/Comparator;)Ljava/util/Comparator;
@@ -2589,11 +2642,19 @@ public final class kotlin/comparisons/UComparisonsKt {
 	public static final fun maxOf-5PvTz6A (SS)S
 	public static final fun maxOf-J1ME1BU (II)I
 	public static final fun maxOf-Kr8caGY (BB)B
+	public static final fun maxOf-Md2H83M (I[I)I
+	public static final fun maxOf-R03FKyM (J[J)J
+	public static final fun maxOf-Wr6uiD8 (B[B)B
 	public static final fun maxOf-eb3DHEI (JJ)J
+	public static final fun maxOf-t1qELG4 (S[S)S
 	public static final fun minOf-5PvTz6A (SS)S
 	public static final fun minOf-J1ME1BU (II)I
 	public static final fun minOf-Kr8caGY (BB)B
+	public static final fun minOf-Md2H83M (I[I)I
+	public static final fun minOf-R03FKyM (J[J)J
+	public static final fun minOf-Wr6uiD8 (B[B)B
 	public static final fun minOf-eb3DHEI (JJ)J
+	public static final fun minOf-t1qELG4 (S[S)S
 }
 
 public final class kotlin/concurrent/ThreadsKt {
@@ -2656,6 +2717,10 @@ public abstract class kotlin/coroutines/AbstractCoroutineContextElement : kotlin
 	public fun plus (Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
 }
 
+public abstract class kotlin/coroutines/AbstractCoroutineContextKey : kotlin/coroutines/CoroutineContext$Key {
+	public fun <init> (Lkotlin/coroutines/CoroutineContext$Key;Lkotlin/jvm/functions/Function1;)V
+}
+
 public abstract interface class kotlin/coroutines/Continuation {
 	public abstract fun getContext ()Lkotlin/coroutines/CoroutineContext;
 	public abstract fun resumeWith (Ljava/lang/Object;)V
@@ -2715,6 +2780,11 @@ public final class kotlin/coroutines/CoroutineContext$Element$DefaultImpls {
 public abstract interface class kotlin/coroutines/CoroutineContext$Key {
 }
 
+public final class kotlin/coroutines/CoroutineContextImplKt {
+	public static final fun getPolymorphicElement (Lkotlin/coroutines/CoroutineContext$Element;Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext$Element;
+	public static final fun minusPolymorphicKey (Lkotlin/coroutines/CoroutineContext$Element;Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext;
+}
+
 public final class kotlin/coroutines/EmptyCoroutineContext : java/io/Serializable, kotlin/coroutines/CoroutineContext {
 	public static final field INSTANCE Lkotlin/coroutines/EmptyCoroutineContext;
 	public fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
@@ -2729,7 +2799,6 @@ public abstract interface annotation class kotlin/coroutines/RestrictsSuspension
 }
 
 public final class kotlin/coroutines/SafeContinuation : kotlin/coroutines/Continuation, kotlin/coroutines/jvm/internal/CoroutineStackFrame {
-	public static final field Companion Lkotlin/coroutines/SafeContinuation$Companion;
 	public fun <init> (Lkotlin/coroutines/Continuation;)V
 	public fun getCallerFrame ()Lkotlin/coroutines/jvm/internal/CoroutineStackFrame;
 	public fun getContext ()Lkotlin/coroutines/CoroutineContext;
@@ -2737,141 +2806,6 @@ public final class kotlin/coroutines/SafeContinuation : kotlin/coroutines/Contin
 	public fun getStackTraceElement ()Ljava/lang/StackTraceElement;
 	public fun resumeWith (Ljava/lang/Object;)V
 	public fun toString ()Ljava/lang/String;
-}
-
-public abstract class kotlin/coroutines/experimental/AbstractCoroutineContextElement : kotlin/coroutines/experimental/CoroutineContext$Element {
-	public fun <init> (Lkotlin/coroutines/experimental/CoroutineContext$Key;)V
-	public fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
-	public fun get (Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext$Element;
-	public fun getKey ()Lkotlin/coroutines/experimental/CoroutineContext$Key;
-	public fun minusKey (Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext;
-	public fun plus (Lkotlin/coroutines/experimental/CoroutineContext;)Lkotlin/coroutines/experimental/CoroutineContext;
-}
-
-public abstract interface class kotlin/coroutines/experimental/Continuation {
-	public abstract fun getContext ()Lkotlin/coroutines/experimental/CoroutineContext;
-	public abstract fun resume (Ljava/lang/Object;)V
-	public abstract fun resumeWithException (Ljava/lang/Throwable;)V
-}
-
-public abstract interface class kotlin/coroutines/experimental/ContinuationInterceptor : kotlin/coroutines/experimental/CoroutineContext$Element {
-	public static final field Key Lkotlin/coroutines/experimental/ContinuationInterceptor$Key;
-	public abstract fun interceptContinuation (Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
-}
-
-public final class kotlin/coroutines/experimental/ContinuationInterceptor$DefaultImpls {
-	public static fun fold (Lkotlin/coroutines/experimental/ContinuationInterceptor;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
-	public static fun get (Lkotlin/coroutines/experimental/ContinuationInterceptor;Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext$Element;
-	public static fun minusKey (Lkotlin/coroutines/experimental/ContinuationInterceptor;Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext;
-	public static fun plus (Lkotlin/coroutines/experimental/ContinuationInterceptor;Lkotlin/coroutines/experimental/CoroutineContext;)Lkotlin/coroutines/experimental/CoroutineContext;
-}
-
-public final class kotlin/coroutines/experimental/ContinuationInterceptor$Key : kotlin/coroutines/experimental/CoroutineContext$Key {
-}
-
-public abstract interface class kotlin/coroutines/experimental/CoroutineContext {
-	public abstract fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
-	public abstract fun get (Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext$Element;
-	public abstract fun minusKey (Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext;
-	public abstract fun plus (Lkotlin/coroutines/experimental/CoroutineContext;)Lkotlin/coroutines/experimental/CoroutineContext;
-}
-
-public final class kotlin/coroutines/experimental/CoroutineContext$DefaultImpls {
-	public static fun plus (Lkotlin/coroutines/experimental/CoroutineContext;Lkotlin/coroutines/experimental/CoroutineContext;)Lkotlin/coroutines/experimental/CoroutineContext;
-}
-
-public abstract interface class kotlin/coroutines/experimental/CoroutineContext$Element : kotlin/coroutines/experimental/CoroutineContext {
-	public abstract fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
-	public abstract fun get (Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext$Element;
-	public abstract fun getKey ()Lkotlin/coroutines/experimental/CoroutineContext$Key;
-	public abstract fun minusKey (Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext;
-}
-
-public final class kotlin/coroutines/experimental/CoroutineContext$Element$DefaultImpls {
-	public static fun fold (Lkotlin/coroutines/experimental/CoroutineContext$Element;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
-	public static fun get (Lkotlin/coroutines/experimental/CoroutineContext$Element;Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext$Element;
-	public static fun minusKey (Lkotlin/coroutines/experimental/CoroutineContext$Element;Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext;
-	public static fun plus (Lkotlin/coroutines/experimental/CoroutineContext$Element;Lkotlin/coroutines/experimental/CoroutineContext;)Lkotlin/coroutines/experimental/CoroutineContext;
-}
-
-public abstract interface class kotlin/coroutines/experimental/CoroutineContext$Key {
-}
-
-public final class kotlin/coroutines/experimental/CoroutinesKt {
-	public static final fun createCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
-	public static final fun createCoroutine (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
-	public static final fun startCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/experimental/Continuation;)V
-	public static final fun startCoroutine (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)V
-	public static final fun suspendCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;
-}
-
-public final class kotlin/coroutines/experimental/EmptyCoroutineContext : kotlin/coroutines/experimental/CoroutineContext {
-	public static final field INSTANCE Lkotlin/coroutines/experimental/EmptyCoroutineContext;
-	public fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
-	public fun get (Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext$Element;
-	public fun hashCode ()I
-	public fun minusKey (Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext;
-	public fun plus (Lkotlin/coroutines/experimental/CoroutineContext;)Lkotlin/coroutines/experimental/CoroutineContext;
-	public fun toString ()Ljava/lang/String;
-}
-
-public abstract interface annotation class kotlin/coroutines/experimental/RestrictsSuspension : java/lang/annotation/Annotation {
-}
-
-public final class kotlin/coroutines/experimental/SafeContinuation : kotlin/coroutines/experimental/Continuation {
-	public static final field Companion Lkotlin/coroutines/experimental/SafeContinuation$Companion;
-	public fun <init> (Lkotlin/coroutines/experimental/Continuation;)V
-	public fun getContext ()Lkotlin/coroutines/experimental/CoroutineContext;
-	public final fun getResult ()Ljava/lang/Object;
-	public fun resume (Ljava/lang/Object;)V
-	public fun resumeWithException (Ljava/lang/Throwable;)V
-}
-
-public final class kotlin/coroutines/experimental/SafeContinuation$Companion {
-}
-
-public abstract class kotlin/coroutines/experimental/SequenceBuilder {
-	public abstract fun yield (Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;
-	public final fun yieldAll (Ljava/lang/Iterable;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;
-	public abstract fun yieldAll (Ljava/util/Iterator;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;
-	public final fun yieldAll (Lkotlin/sequences/Sequence;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;
-}
-
-public final class kotlin/coroutines/experimental/SequenceBuilderKt {
-	public static final fun buildIterator (Lkotlin/jvm/functions/Function2;)Ljava/util/Iterator;
-	public static final fun buildSequence (Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
-}
-
-public final class kotlin/coroutines/experimental/intrinsics/IntrinsicsKt {
-	public static final fun createCoroutineUnchecked (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
-	public static final fun createCoroutineUnchecked (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
-	public static final fun getCOROUTINE_SUSPENDED ()Ljava/lang/Object;
-}
-
-public abstract class kotlin/coroutines/experimental/jvm/internal/CoroutineImpl : kotlin/jvm/internal/Lambda, kotlin/coroutines/experimental/Continuation {
-	protected field completion Lkotlin/coroutines/experimental/Continuation;
-	protected field label I
-	public fun <init> (ILkotlin/coroutines/experimental/Continuation;)V
-	public fun create (Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
-	public fun create (Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
-	protected abstract fun doResume (Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;
-	public fun getContext ()Lkotlin/coroutines/experimental/CoroutineContext;
-	public final fun getFacade ()Lkotlin/coroutines/experimental/Continuation;
-	public fun resume (Ljava/lang/Object;)V
-	public fun resumeWithException (Ljava/lang/Throwable;)V
-}
-
-public final class kotlin/coroutines/experimental/jvm/internal/CoroutineIntrinsics {
-	public static final fun normalizeContinuation (Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
-}
-
-public final class kotlin/coroutines/experimental/migration/CoroutinesMigrationKt {
-	public static final fun toContinuation (Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/Continuation;
-	public static final fun toContinuationInterceptor (Lkotlin/coroutines/experimental/ContinuationInterceptor;)Lkotlin/coroutines/ContinuationInterceptor;
-	public static final fun toCoroutineContext (Lkotlin/coroutines/experimental/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
-	public static final fun toExperimentalContinuation (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/experimental/Continuation;
-	public static final fun toExperimentalContinuationInterceptor (Lkotlin/coroutines/ContinuationInterceptor;)Lkotlin/coroutines/experimental/ContinuationInterceptor;
-	public static final fun toExperimentalCoroutineContext (Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/experimental/CoroutineContext;
 }
 
 public final class kotlin/coroutines/intrinsics/CoroutineSingletons : java/lang/Enum {
@@ -3952,11 +3886,15 @@ public abstract class kotlin/properties/ObservableProperty : kotlin/properties/R
 	public fun setValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
 }
 
+public abstract interface class kotlin/properties/PropertyDelegateProvider {
+	public abstract fun provideDelegate (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
+}
+
 public abstract interface class kotlin/properties/ReadOnlyProperty {
 	public abstract fun getValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
 }
 
-public abstract interface class kotlin/properties/ReadWriteProperty {
+public abstract interface class kotlin/properties/ReadWriteProperty : kotlin/properties/ReadOnlyProperty {
 	public abstract fun getValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
 	public abstract fun setValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
 }
@@ -4235,6 +4173,9 @@ public final class kotlin/ranges/RangesKt {
 	public static final fun random (Lkotlin/ranges/CharRange;Lkotlin/random/Random;)C
 	public static final fun random (Lkotlin/ranges/IntRange;Lkotlin/random/Random;)I
 	public static final fun random (Lkotlin/ranges/LongRange;Lkotlin/random/Random;)J
+	public static final fun randomOrNull (Lkotlin/ranges/CharRange;Lkotlin/random/Random;)Ljava/lang/Character;
+	public static final fun randomOrNull (Lkotlin/ranges/IntRange;Lkotlin/random/Random;)Ljava/lang/Integer;
+	public static final fun randomOrNull (Lkotlin/ranges/LongRange;Lkotlin/random/Random;)Ljava/lang/Long;
 	public static final fun rangeTo (DD)Lkotlin/ranges/ClosedFloatingPointRange;
 	public static final fun rangeTo (FF)Lkotlin/ranges/ClosedFloatingPointRange;
 	public static final fun rangeTo (Ljava/lang/Comparable;Ljava/lang/Comparable;)Lkotlin/ranges/ClosedRange;
@@ -4367,6 +4308,8 @@ public final class kotlin/ranges/URangesKt {
 	public static final fun downTo-eb3DHEI (JJ)Lkotlin/ranges/ULongProgression;
 	public static final fun random (Lkotlin/ranges/UIntRange;Lkotlin/random/Random;)I
 	public static final fun random (Lkotlin/ranges/ULongRange;Lkotlin/random/Random;)J
+	public static final fun randomOrNull (Lkotlin/ranges/UIntRange;Lkotlin/random/Random;)Lkotlin/UInt;
+	public static final fun randomOrNull (Lkotlin/ranges/ULongRange;Lkotlin/random/Random;)Lkotlin/ULong;
 	public static final fun reversed (Lkotlin/ranges/UIntProgression;)Lkotlin/ranges/UIntProgression;
 	public static final fun reversed (Lkotlin/ranges/ULongProgression;)Lkotlin/ranges/ULongProgression;
 	public static final fun step (Lkotlin/ranges/UIntProgression;I)Lkotlin/ranges/UIntProgression;
@@ -4700,6 +4643,10 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun reduceIndexed (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function3;)Ljava/lang/Object;
 	public static final fun reduceOrNull (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public static final fun requireNoNulls (Lkotlin/sequences/Sequence;)Lkotlin/sequences/Sequence;
+	public static final fun scan (Lkotlin/sequences/Sequence;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
+	public static final fun scanIndexed (Lkotlin/sequences/Sequence;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Lkotlin/sequences/Sequence;
+	public static final fun scanReduce (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
+	public static final fun scanReduceIndexed (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function3;)Lkotlin/sequences/Sequence;
 	public static final fun sequence (Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
 	public static final fun sequenceOf ([Ljava/lang/Object;)Lkotlin/sequences/Sequence;
 	public static final fun single (Lkotlin/sequences/Sequence;)Ljava/lang/Object;
@@ -5089,6 +5036,7 @@ public final class kotlin/text/StringsKt {
 	public static final fun prependIndent (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 	public static synthetic fun prependIndent$default (Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Ljava/lang/String;
 	public static final fun random (Ljava/lang/CharSequence;Lkotlin/random/Random;)C
+	public static final fun randomOrNull (Ljava/lang/CharSequence;Lkotlin/random/Random;)Ljava/lang/Character;
 	public static final fun reduce (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function2;)C
 	public static final fun reduceIndexed (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function3;)C
 	public static final fun reduceOrNull (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function2;)Ljava/lang/Character;
@@ -5141,6 +5089,10 @@ public final class kotlin/text/StringsKt {
 	public static final fun replaceRange (Ljava/lang/CharSequence;IILjava/lang/CharSequence;)Ljava/lang/CharSequence;
 	public static final fun replaceRange (Ljava/lang/CharSequence;Lkotlin/ranges/IntRange;Ljava/lang/CharSequence;)Ljava/lang/CharSequence;
 	public static final fun reversed (Ljava/lang/CharSequence;)Ljava/lang/CharSequence;
+	public static final fun scan (Ljava/lang/CharSequence;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+	public static final fun scanIndexed (Ljava/lang/CharSequence;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
+	public static final fun scanReduce (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+	public static final fun scanReduceIndexed (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
 	public static final fun single (Ljava/lang/CharSequence;)C
 	public static final fun single (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)C
 	public static final fun singleOrNull (Ljava/lang/CharSequence;)Ljava/lang/Character;
@@ -5318,31 +5270,18 @@ public final class kotlin/text/UStringsKt {
 	public static final fun toUShortOrNull (Ljava/lang/String;I)Lkotlin/UShort;
 }
 
-public abstract class kotlin/time/AbstractDoubleClock : kotlin/time/Clock {
+public abstract class kotlin/time/AbstractDoubleTimeSource : kotlin/time/TimeSource {
 	public fun <init> (Ljava/util/concurrent/TimeUnit;)V
 	protected final fun getUnit ()Ljava/util/concurrent/TimeUnit;
-	public fun markNow ()Lkotlin/time/ClockMark;
+	public fun markNow ()Lkotlin/time/TimeMark;
 	protected abstract fun read ()D
 }
 
-public abstract class kotlin/time/AbstractLongClock : kotlin/time/Clock {
+public abstract class kotlin/time/AbstractLongTimeSource : kotlin/time/TimeSource {
 	public fun <init> (Ljava/util/concurrent/TimeUnit;)V
 	protected final fun getUnit ()Ljava/util/concurrent/TimeUnit;
-	public fun markNow ()Lkotlin/time/ClockMark;
+	public fun markNow ()Lkotlin/time/TimeMark;
 	protected abstract fun read ()J
-}
-
-public abstract interface class kotlin/time/Clock {
-	public abstract fun markNow ()Lkotlin/time/ClockMark;
-}
-
-public abstract class kotlin/time/ClockMark {
-	public fun <init> ()V
-	public abstract fun elapsedNow ()D
-	public final fun hasNotPassedNow ()Z
-	public final fun hasPassedNow ()Z
-	public fun minus-LRDsOJo (D)Lkotlin/time/ClockMark;
-	public fun plus-LRDsOJo (D)Lkotlin/time/ClockMark;
 }
 
 public final class kotlin/time/Duration : java/lang/Comparable {
@@ -5431,19 +5370,37 @@ public abstract interface annotation class kotlin/time/ExperimentalTime : java/l
 
 public final class kotlin/time/MeasureTimeKt {
 	public static final fun measureTime (Lkotlin/jvm/functions/Function0;)D
-	public static final fun measureTime (Lkotlin/time/Clock;Lkotlin/jvm/functions/Function0;)D
+	public static final fun measureTime (Lkotlin/time/TimeSource;Lkotlin/jvm/functions/Function0;)D
 	public static final fun measureTimedValue (Lkotlin/jvm/functions/Function0;)Lkotlin/time/TimedValue;
-	public static final fun measureTimedValue (Lkotlin/time/Clock;Lkotlin/jvm/functions/Function0;)Lkotlin/time/TimedValue;
+	public static final fun measureTimedValue (Lkotlin/time/TimeSource;Lkotlin/jvm/functions/Function0;)Lkotlin/time/TimedValue;
 }
 
-public final class kotlin/time/MonoClock : kotlin/time/AbstractLongClock, kotlin/time/Clock {
-	public static final field INSTANCE Lkotlin/time/MonoClock;
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class kotlin/time/TestClock : kotlin/time/AbstractLongClock {
+public final class kotlin/time/TestTimeSource : kotlin/time/AbstractLongTimeSource {
 	public fun <init> ()V
 	public final fun plusAssign-LRDsOJo (D)V
+}
+
+public abstract class kotlin/time/TimeMark {
+	public fun <init> ()V
+	public abstract fun elapsedNow ()D
+	public final fun hasNotPassedNow ()Z
+	public final fun hasPassedNow ()Z
+	public fun minus-LRDsOJo (D)Lkotlin/time/TimeMark;
+	public fun plus-LRDsOJo (D)Lkotlin/time/TimeMark;
+}
+
+public abstract interface class kotlin/time/TimeSource {
+	public static final field Companion Lkotlin/time/TimeSource$Companion;
+	public abstract fun markNow ()Lkotlin/time/TimeMark;
+}
+
+public final class kotlin/time/TimeSource$Companion {
+}
+
+public final class kotlin/time/TimeSource$Monotonic : kotlin/time/TimeSource {
+	public static final field INSTANCE Lkotlin/time/TimeSource$Monotonic;
+	public fun markNow ()Lkotlin/time/TimeMark;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlin/time/TimedValue {

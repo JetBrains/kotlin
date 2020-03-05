@@ -28,7 +28,7 @@ class KotlinGradleCoroutineDebugProjectResolver : AbstractProjectResolverExtensi
         val lines = arrayOf(
             "gradle.taskGraph.beforeTask { Task task ->",
             "  if (task instanceof Test) {",
-            "    def kotlinxCoroutinesDebugJar = task.classpath.find { it.name.contains(\"kotlinx-coroutines-debug\") }",
+            "    def kotlinxCoroutinesDebugJar = task.classpath.find { it.name.startsWith(\"kotlinx-coroutines-debug\") }",
             "    if (kotlinxCoroutinesDebugJar)",
             "        task.jvmArgs (\"-javaagent:\${kotlinxCoroutinesDebugJar?.absolutePath}\", \"-ea\")",
             "  }",
@@ -38,5 +38,6 @@ class KotlinGradleCoroutineDebugProjectResolver : AbstractProjectResolverExtensi
         initScriptConsumer.consume(script)
     }
 
+    // supposed to be the same as [CoroutineProjectConnectionListener.kt].coroutineDebuggerEnabled
     private fun coroutineDebuggerEnabled() = Registry.`is`("kotlin.debugger.coroutines")
 }

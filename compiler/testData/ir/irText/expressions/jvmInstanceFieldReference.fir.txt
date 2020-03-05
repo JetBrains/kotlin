@@ -15,13 +15,13 @@ FILE fqName:<root> fileName:/Derived.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun getValue (): kotlin.Int declared in <root>.Derived'
           GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public' type=kotlin.Int origin=GET_PROPERTY
-            receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived' type=<root>.Derived origin=null
+            receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.getValue' type=<root>.Derived origin=null
     FUN name:setValue visibility:public modality:FINAL <> ($this:<root>.Derived, value:kotlin.Int) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived
       VALUE_PARAMETER name:value index:0 type:kotlin.Int
       BLOCK_BODY
         SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
-          receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived' type=<root>.Derived origin=null
+          receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.setValue' type=<root>.Derived origin=null
           value: GET_VAR 'value: kotlin.Int declared in <root>.Derived.setValue' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:

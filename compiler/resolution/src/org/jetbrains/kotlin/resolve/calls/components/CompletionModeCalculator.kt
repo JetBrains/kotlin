@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtom
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.*
@@ -29,6 +30,8 @@ class CompletionModeCalculator {
         ): ConstraintSystemCompletionMode = with(candidate) {
             val csCompleterContext = getSystem().asConstraintSystemCompleterContext()
 
+            if (candidate.isErrorCandidate()) return ConstraintSystemCompletionMode.FULL
+
             // Presence of expected type means that we are trying to complete outermost call => completion mode should be full
             if (expectedType != null) return ConstraintSystemCompletionMode.FULL
 
@@ -39,14 +42,17 @@ class CompletionModeCalculator {
             if (csBuilder.isProperType(returnType)) return ConstraintSystemCompletionMode.FULL
 
             // For nested call with variables in return type check possibility of full completion
-            return CalculatorForNestedCall(returnType, csCompleterContext, trivialConstraintTypeInferenceOracle).computeCompletionMode()
+            return CalculatorForNestedCall(
+                candidate, returnType, csCompleterContext, trivialConstraintTypeInferenceOracle
+            ).computeCompletionMode()
         }
     }
 
     private class CalculatorForNestedCall(
+        private val candidate: KotlinResolutionCandidate,
         private val returnType: UnwrappedType?,
         private val csCompleterContext: CsCompleterContext,
-        private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
+        private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
     ) {
         private enum class FixationDirection {
             TO_SUBTYPE, EQUALITY
@@ -56,6 +62,10 @@ class CompletionModeCalculator {
             newLinkedHashMapWithExpectedSize(csCompleterContext.notFixedTypeVariables.size)
         private val variablesWithQueuedConstraints = mutableSetOf<TypeVariableMarker>()
         private val typesToProcess: Queue<KotlinTypeMarker> = ArrayDeque()
+
+        private val postponedAtoms: List<PostponedResolvedAtom> by lazy {
+            KotlinConstraintSystemCompleter.getOrderedNotAnalyzedPostponedArguments(listOf(candidate.resolvedCall))
+        }
 
         fun computeCompletionMode(): ConstraintSystemCompletionMode = with(csCompleterContext) {
             // Add fixation directions for variables based on effective variance in type
@@ -73,18 +83,15 @@ class CompletionModeCalculator {
             while (typesToProcess.isNotEmpty()) {
                 val type = typesToProcess.poll() ?: break
 
-                fixationDirectionForTopLevel(type)?.let { directionForVariable ->
+                if (!type.contains { it.typeConstructor() in notFixedTypeVariables })
+                    continue
+
+                val fixationDirectionsFromType = mutableSetOf<FixationDirectionForVariable>()
+                collectRequiredDirectionsForVariables(type, TypeVariance.OUT, fixationDirectionsFromType)
+
+                for (directionForVariable in fixationDirectionsFromType) {
                     updateDirection(directionForVariable)
                     enqueueTypesFromConstraints(directionForVariable.variable)
-                }
-
-                // find all variables in type and make requirements for them
-                type.contains { typePart ->
-                    for (directionForVariable in directionsForVariablesInTypeArguments(typePart)) {
-                        updateDirection(directionForVariable)
-                        enqueueTypesFromConstraints(directionForVariable.variable)
-                    }
-                    false
                 }
             }
         }
@@ -120,42 +127,62 @@ class CompletionModeCalculator {
 
         private data class FixationDirectionForVariable(val variable: VariableWithConstraints, val direction: FixationDirection)
 
-        private fun CsCompleterContext.fixationDirectionForTopLevel(type: KotlinTypeMarker): FixationDirectionForVariable? {
-            return notFixedTypeVariables[type.typeConstructor()]?.let {
-                FixationDirectionForVariable(it, FixationDirection.TO_SUBTYPE)
+        private fun CsCompleterContext.collectRequiredDirectionsForVariables(
+            type: KotlinTypeMarker, outerVariance: TypeVariance,
+            fixationDirectionsCollector: MutableSet<FixationDirectionForVariable>
+        ) {
+            val typeArgumentsCount = type.argumentsCount()
+            if (typeArgumentsCount > 0) {
+                for (position in 0 until typeArgumentsCount) {
+                    val argument = type.getArgument(position)
+                    val parameter = type.typeConstructor().getParameter(position)
+
+                    if (argument.isStarProjection())
+                        continue
+
+                    collectRequiredDirectionsForVariables(
+                        argument.getType(),
+                        compositeVariance(outerVariance, argument, parameter),
+                        fixationDirectionsCollector
+                    )
+                }
+            } else {
+                processTypeWithoutParameters(type, outerVariance, fixationDirectionsCollector)
             }
         }
 
-        private fun CsCompleterContext.directionsForVariablesInTypeArguments(type: KotlinTypeMarker): List<FixationDirectionForVariable> {
-            assert(type.argumentsCount() == type.typeConstructor().parametersCount()) {
-                "Arguments and parameters count don't match for type $type. " +
-                        "Arguments: ${type.argumentsCount()}, parameters: ${type.typeConstructor().parametersCount()}"
+        private fun CsCompleterContext.compositeVariance(
+            outerVariance: TypeVariance,
+            argument: TypeArgumentMarker,
+            parameter: TypeParameterMarker
+        ): TypeVariance {
+            val effectiveArgumentVariance = AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())
+                ?: TypeVariance.INV // conflicting variance
+            return when (outerVariance) {
+                TypeVariance.INV -> TypeVariance.INV
+                TypeVariance.OUT -> effectiveArgumentVariance
+                TypeVariance.IN -> effectiveArgumentVariance.reversed()
             }
+        }
 
-            val directionsForVariables = mutableListOf<FixationDirectionForVariable>()
+        private fun TypeVariance.reversed(): TypeVariance = when (this) {
+            TypeVariance.IN -> TypeVariance.OUT
+            TypeVariance.OUT -> TypeVariance.IN
+            TypeVariance.INV -> TypeVariance.INV
+        }
 
-            for (position in 0 until type.argumentsCount()) {
-                val argument = type.getArgument(position)
-                if (!argument.getType().mayBeTypeVariable())
-                    continue
-
-                val variableWithConstraints = notFixedTypeVariables[argument.getType().typeConstructor()] ?: continue
-
-                val parameter = type.typeConstructor().getParameter(position)
-                val effectiveVariance = AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())
-                    ?: TypeVariance.INV
-
-                val direction = when (effectiveVariance) {
-                    TypeVariance.IN -> FixationDirection.EQUALITY // Assuming that variables in contravariant positions are fixed to subtype
-                    TypeVariance.OUT -> FixationDirection.TO_SUBTYPE
-                    TypeVariance.INV -> FixationDirection.EQUALITY
-                }
-
-                val requirement = FixationDirectionForVariable(variableWithConstraints, direction)
-                directionsForVariables.add(requirement)
+        private fun CsCompleterContext.processTypeWithoutParameters(
+            type: KotlinTypeMarker, compositeVariance: TypeVariance,
+            newRequirementsCollector: MutableSet<FixationDirectionForVariable>
+        ) {
+            val variableWithConstraints = notFixedTypeVariables[type.typeConstructor()] ?: return
+            val direction = when (compositeVariance) {
+                TypeVariance.IN -> FixationDirection.EQUALITY // Assuming that variables in contravariant positions are fixed to subtype
+                TypeVariance.OUT -> FixationDirection.TO_SUBTYPE
+                TypeVariance.INV -> FixationDirection.EQUALITY
             }
-
-            return directionsForVariables
+            val requirement = FixationDirectionForVariable(variableWithConstraints, direction)
+            newRequirementsCollector.add(requirement)
         }
 
         private fun CsCompleterContext.hasProperConstraint(
@@ -163,19 +190,48 @@ class CompletionModeCalculator {
             direction: FixationDirection
         ): Boolean {
             val constraints = variableWithConstraints.constraints
+            val variable = variableWithConstraints.typeVariable
 
-            // todo check correctness for @Exact
-            return constraints.isNotEmpty() && constraints.any { constraint ->
-                constraint.hasRequiredKind(direction)
-                        && !constraint.type.typeConstructor().isIntegerLiteralTypeConstructor()
-                        && isProperType(constraint.type)
-                        && trivialConstraintTypeInferenceOracle.isSuitableResultedType(constraint.type)
+            // ILT constraint tracking is necessary to prevent incorrect full completion from Nothing constraint
+            // Consider ILT <: T; Nothing <: T for T requiring lower constraint
+            // Nothing would trigger full completion, but resulting type would be Int
+            // Possible restrictions on integer constant from outer calls would be ignored
+
+            var iltConstraintPresent = false
+            var properConstraintPresent = false
+            var nonNothingProperConstraintPresent = false
+
+            for (constraint in constraints) {
+                if (!constraint.hasRequiredKind(direction) || !isProperType(constraint.type))
+                    continue
+
+                if (constraint.type.typeConstructor().isIntegerLiteralTypeConstructor()) {
+                    iltConstraintPresent = true
+                } else if (trivialConstraintTypeInferenceOracle.isSuitableResultedType(constraint.type)) {
+                    properConstraintPresent = true
+                    nonNothingProperConstraintPresent = true
+                } else if (!isLowerConstraintForPartiallyAnalyzedVariable(constraint, variable)) {
+                    properConstraintPresent = true
+                }
             }
+
+            if (!properConstraintPresent) return false
+
+            return !iltConstraintPresent || nonNothingProperConstraintPresent
         }
 
         private fun Constraint.hasRequiredKind(direction: FixationDirection) = when (direction) {
             FixationDirection.TO_SUBTYPE -> kind.isLower() || kind.isEqual()
             FixationDirection.EQUALITY -> kind.isEqual()
+        }
+
+        private fun CsCompleterContext.isLowerConstraintForPartiallyAnalyzedVariable(
+            constraint: Constraint,
+            variable: TypeVariableMarker
+        ): Boolean {
+            return constraint.kind.isLower() && postponedAtoms.any { atom ->
+                atom.expectedType?.contains { type -> variable.defaultType() == type } ?: false
+            }
         }
     }
 }

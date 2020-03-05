@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.references.impl
 
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -16,10 +17,10 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-open class FirSimpleNamedReference(
+open class FirSimpleNamedReference @FirImplementationDetail constructor(
     override val source: FirSourceElement?,
     override val name: Name,
-    override val candidateSymbol: AbstractFirBasedSymbol<*>?
+    override val candidateSymbol: AbstractFirBasedSymbol<*>?,
 ) : FirNamedReference() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 

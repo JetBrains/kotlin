@@ -12,7 +12,7 @@ operator fun Long?.inc() = this?.let { it + 1 }
 fun bar(arg: Long?): Long {
     var i = arg
     if (i++ == 5L) {
-        return i<!INAPPLICABLE_CANDIDATE!>--<!> + i
+        return i<!INAPPLICABLE_CANDIDATE!>--<!> <!INAPPLICABLE_CANDIDATE!>+<!> i
     }
     if (i++ == 7L) {
         return i++ <!INAPPLICABLE_CANDIDATE!>+<!> i

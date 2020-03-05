@@ -1,0 +1,8 @@
+import java.util.HashMap as HashMap1
+
+/**
+ * [HashMap1] is used
+ */
+fun x() {
+    val list = HashMap1<String, String>()
+}

@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 public fun invokeCoroutineBuilder() {
     return buildCoroutine {
     }

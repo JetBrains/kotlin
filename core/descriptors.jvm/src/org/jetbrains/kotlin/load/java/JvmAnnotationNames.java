@@ -39,6 +39,8 @@ public final class JvmAnnotationNames {
     public static final int METADATA_PRE_RELEASE_FLAG = 1 << 1;
     public static final int METADATA_SCRIPT_FLAG = 1 << 2;
     public static final int METADATA_STRICT_VERSION_SEMANTICS_FLAG = 1 << 3;
+    public static final int METADATA_JVM_IR_FLAG = 1 << 4;
+    public static final int METADATA_JVM_IR_STABLE_ABI_FLAG = 1 << 5;
 
     public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
 

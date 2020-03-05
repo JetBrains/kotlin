@@ -22,10 +22,10 @@ fun test(b: B, c: C, d: D, e: E) {
     eatAString(d)
     eatAString(e)
 
-    <!INAPPLICABLE_CANDIDATE!>eatAStringN<!>(b)
-    <!INAPPLICABLE_CANDIDATE!>eatAStringN<!>(c)
-    <!INAPPLICABLE_CANDIDATE!>eatAStringN<!>(d)
-    <!INAPPLICABLE_CANDIDATE!>eatAStringN<!>(e)
+    eatAStringN(b)
+    eatAStringN(c)
+    eatAStringN(d)
+    eatAStringN(e)
 }
 
 // FILE: 3.kt

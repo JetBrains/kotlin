@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.compiler.configuration;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.Configurable;
@@ -35,8 +34,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.PluginStartupComponent;
-import org.jetbrains.kotlin.idea.configuration.ProjectUtilsKt;
+import org.jetbrains.kotlin.idea.PluginStartupService;
 import org.jetbrains.kotlin.idea.facet.DescriptionListCellRenderer;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
 import org.jetbrains.kotlin.idea.project.NewInferenceForIDEAnalysisComponent;
@@ -55,7 +53,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform;
 import javax.swing.*;
 import java.util.*;
 
-public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Configurable.NoScroll{
+public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
     private static final Map<String, String> moduleKindDescriptions = new LinkedHashMap<>();
     private static final Map<String, String> soruceMapSourceEmbeddingDescriptions = new LinkedHashMap<>();
     private static final List<LanguageFeature.State> languageFeatureStates = Arrays.asList(
@@ -349,7 +347,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         ArraysKt.mapNotNullTo(
                 LanguageVersion.values(),
                 permittedAPIVersions,
-                version -> isLessOrEqual(version, upperBound) ? new VersionView.Specific(version) : null
+                version -> isLessOrEqual(version, upperBound) && !version.isUnsupported() ? new VersionView.Specific(version) : null
         );
         apiVersionComboBox.setModel(
                 new DefaultComboBoxModel(permittedAPIVersions.toArray())
@@ -368,13 +366,12 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void fillLanguageAndAPIVersionList() {
         languageVersionComboBox.addItem(VersionView.LatestStable.INSTANCE);
         apiVersionComboBox.addItem(VersionView.LatestStable.INSTANCE);
 
         for (LanguageVersion version : LanguageVersion.values()) {
-            if (!version.isStable() && !ApplicationManager.getApplication().isInternal()) {
+            if (version.isUnsupported() || !version.isStable() && !ApplicationManager.getApplication().isInternal()) {
                 continue;
             }
 
@@ -560,7 +557,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
             boolean oldEnableDaemon = compilerWorkspaceSettings.getEnableDaemon();
             compilerWorkspaceSettings.setEnableDaemon(keepAliveCheckBox.isSelected());
             if (keepAliveCheckBox.isSelected() != oldEnableDaemon) {
-                PluginStartupComponent.getInstance().resetAliveFlag();
+                PluginStartupService.getInstance().resetAliveFlag();
             }
         }
 

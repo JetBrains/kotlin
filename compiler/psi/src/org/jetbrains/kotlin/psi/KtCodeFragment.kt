@@ -177,7 +177,7 @@ abstract class KtCodeFragment(
 
     fun getOriginalContext(): KtElement? {
         val contextElement = getContext() as? KtElement
-        val contextFile = contextElement?.containingKtFile
+        val contextFile = contextElement?.containingFile as? KtFile
         if (contextFile is KtCodeFragment) {
             return contextFile.getOriginalContext()
         }

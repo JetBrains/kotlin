@@ -55,30 +55,22 @@ public final class IrPropertyReference extends
           }
           case 8: {
             bitField0_ |= 0x00000001;
-            field_ = input.readInt32();
+            field_ = input.readInt64();
             break;
           }
           case 16: {
             bitField0_ |= 0x00000002;
-            getter_ = input.readInt32();
+            getter_ = input.readInt64();
             break;
           }
           case 24: {
             bitField0_ |= 0x00000004;
-            setter_ = input.readInt32();
+            setter_ = input.readInt64();
             break;
           }
-          case 34: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000008) == 0x00000008)) {
-              subBuilder = origin_.toBuilder();
-            }
-            origin_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(origin_);
-              origin_ = subBuilder.buildPartial();
-            }
+          case 32: {
             bitField0_ |= 0x00000008;
+            originName_ = input.readInt32();
             break;
           }
           case 42: {
@@ -96,7 +88,7 @@ public final class IrPropertyReference extends
           }
           case 48: {
             bitField0_ |= 0x00000020;
-            symbol_ = input.readInt32();
+            symbol_ = input.readInt64();
             break;
           }
         }
@@ -134,63 +126,63 @@ public final class IrPropertyReference extends
 
   private int bitField0_;
   public static final int FIELD_FIELD_NUMBER = 1;
-  private int field_;
+  private long field_;
   /**
-   * <code>optional int32 field = 1;</code>
+   * <code>optional int64 field = 1;</code>
    */
   public boolean hasField() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>optional int32 field = 1;</code>
+   * <code>optional int64 field = 1;</code>
    */
-  public int getField() {
+  public long getField() {
     return field_;
   }
 
   public static final int GETTER_FIELD_NUMBER = 2;
-  private int getter_;
+  private long getter_;
   /**
-   * <code>optional int32 getter = 2;</code>
+   * <code>optional int64 getter = 2;</code>
    */
   public boolean hasGetter() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>optional int32 getter = 2;</code>
+   * <code>optional int64 getter = 2;</code>
    */
-  public int getGetter() {
+  public long getGetter() {
     return getter_;
   }
 
   public static final int SETTER_FIELD_NUMBER = 3;
-  private int setter_;
+  private long setter_;
   /**
-   * <code>optional int32 setter = 3;</code>
+   * <code>optional int64 setter = 3;</code>
    */
   public boolean hasSetter() {
     return ((bitField0_ & 0x00000004) == 0x00000004);
   }
   /**
-   * <code>optional int32 setter = 3;</code>
+   * <code>optional int64 setter = 3;</code>
    */
-  public int getSetter() {
+  public long getSetter() {
     return setter_;
   }
 
-  public static final int ORIGIN_FIELD_NUMBER = 4;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin_;
+  public static final int ORIGIN_NAME_FIELD_NUMBER = 4;
+  private int originName_;
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 4;</code>
+   * <code>optional int32 origin_name = 4;</code>
    */
-  public boolean hasOrigin() {
+  public boolean hasOriginName() {
     return ((bitField0_ & 0x00000008) == 0x00000008);
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 4;</code>
+   * <code>optional int32 origin_name = 4;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin getOrigin() {
-    return origin_;
+  public int getOriginName() {
+    return originName_;
   }
 
   public static final int MEMBER_ACCESS_FIELD_NUMBER = 5;
@@ -209,27 +201,27 @@ public final class IrPropertyReference extends
   }
 
   public static final int SYMBOL_FIELD_NUMBER = 6;
-  private int symbol_;
+  private long symbol_;
   /**
-   * <code>required int32 symbol = 6;</code>
+   * <code>required int64 symbol = 6;</code>
    */
   public boolean hasSymbol() {
     return ((bitField0_ & 0x00000020) == 0x00000020);
   }
   /**
-   * <code>required int32 symbol = 6;</code>
+   * <code>required int64 symbol = 6;</code>
    */
-  public int getSymbol() {
+  public long getSymbol() {
     return symbol_;
   }
 
   private void initFields() {
-    field_ = 0;
-    getter_ = 0;
-    setter_ = 0;
-    origin_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.getDefaultInstance();
+    field_ = 0L;
+    getter_ = 0L;
+    setter_ = 0L;
+    originName_ = 0;
     memberAccess_ = org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.getDefaultInstance();
-    symbol_ = 0;
+    symbol_ = 0L;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -245,12 +237,6 @@ public final class IrPropertyReference extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (hasOrigin()) {
-      if (!getOrigin().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-    }
     if (!getMemberAccess().isInitialized()) {
       memoizedIsInitialized = 0;
       return false;
@@ -263,22 +249,22 @@ public final class IrPropertyReference extends
                       throws java.io.IOException {
     getSerializedSize();
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeInt32(1, field_);
+      output.writeInt64(1, field_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeInt32(2, getter_);
+      output.writeInt64(2, getter_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
-      output.writeInt32(3, setter_);
+      output.writeInt64(3, setter_);
     }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
-      output.writeMessage(4, origin_);
+      output.writeInt32(4, originName_);
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
       output.writeMessage(5, memberAccess_);
     }
     if (((bitField0_ & 0x00000020) == 0x00000020)) {
-      output.writeInt32(6, symbol_);
+      output.writeInt64(6, symbol_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -291,19 +277,19 @@ public final class IrPropertyReference extends
     size = 0;
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(1, field_);
+        .computeInt64Size(1, field_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(2, getter_);
+        .computeInt64Size(2, getter_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(3, setter_);
+        .computeInt64Size(3, setter_);
     }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(4, origin_);
+        .computeInt32Size(4, originName_);
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -311,7 +297,7 @@ public final class IrPropertyReference extends
     }
     if (((bitField0_ & 0x00000020) == 0x00000020)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(6, symbol_);
+        .computeInt64Size(6, symbol_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -407,17 +393,17 @@ public final class IrPropertyReference extends
 
     public Builder clear() {
       super.clear();
-      field_ = 0;
+      field_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000001);
-      getter_ = 0;
+      getter_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000002);
-      setter_ = 0;
+      setter_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000004);
-      origin_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.getDefaultInstance();
+      originName_ = 0;
       bitField0_ = (bitField0_ & ~0x00000008);
       memberAccess_ = org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000010);
-      symbol_ = 0;
+      symbol_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000020);
       return this;
     }
@@ -457,7 +443,7 @@ public final class IrPropertyReference extends
       if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
         to_bitField0_ |= 0x00000008;
       }
-      result.origin_ = origin_;
+      result.originName_ = originName_;
       if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
         to_bitField0_ |= 0x00000010;
       }
@@ -481,8 +467,8 @@ public final class IrPropertyReference extends
       if (other.hasSetter()) {
         setSetter(other.getSetter());
       }
-      if (other.hasOrigin()) {
-        mergeOrigin(other.getOrigin());
+      if (other.hasOriginName()) {
+        setOriginName(other.getOriginName());
       }
       if (other.hasMemberAccess()) {
         mergeMemberAccess(other.getMemberAccess());
@@ -503,12 +489,6 @@ public final class IrPropertyReference extends
       if (!hasSymbol()) {
         
         return false;
-      }
-      if (hasOrigin()) {
-        if (!getOrigin().isInitialized()) {
-          
-          return false;
-        }
       }
       if (!getMemberAccess().isInitialized()) {
         
@@ -536,159 +516,131 @@ public final class IrPropertyReference extends
     }
     private int bitField0_;
 
-    private int field_ ;
+    private long field_ ;
     /**
-     * <code>optional int32 field = 1;</code>
+     * <code>optional int64 field = 1;</code>
      */
     public boolean hasField() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 field = 1;</code>
+     * <code>optional int64 field = 1;</code>
      */
-    public int getField() {
+    public long getField() {
       return field_;
     }
     /**
-     * <code>optional int32 field = 1;</code>
+     * <code>optional int64 field = 1;</code>
      */
-    public Builder setField(int value) {
+    public Builder setField(long value) {
       bitField0_ |= 0x00000001;
       field_ = value;
       
       return this;
     }
     /**
-     * <code>optional int32 field = 1;</code>
+     * <code>optional int64 field = 1;</code>
      */
     public Builder clearField() {
       bitField0_ = (bitField0_ & ~0x00000001);
-      field_ = 0;
+      field_ = 0L;
       
       return this;
     }
 
-    private int getter_ ;
+    private long getter_ ;
     /**
-     * <code>optional int32 getter = 2;</code>
+     * <code>optional int64 getter = 2;</code>
      */
     public boolean hasGetter() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional int32 getter = 2;</code>
+     * <code>optional int64 getter = 2;</code>
      */
-    public int getGetter() {
+    public long getGetter() {
       return getter_;
     }
     /**
-     * <code>optional int32 getter = 2;</code>
+     * <code>optional int64 getter = 2;</code>
      */
-    public Builder setGetter(int value) {
+    public Builder setGetter(long value) {
       bitField0_ |= 0x00000002;
       getter_ = value;
       
       return this;
     }
     /**
-     * <code>optional int32 getter = 2;</code>
+     * <code>optional int64 getter = 2;</code>
      */
     public Builder clearGetter() {
       bitField0_ = (bitField0_ & ~0x00000002);
-      getter_ = 0;
+      getter_ = 0L;
       
       return this;
     }
 
-    private int setter_ ;
+    private long setter_ ;
     /**
-     * <code>optional int32 setter = 3;</code>
+     * <code>optional int64 setter = 3;</code>
      */
     public boolean hasSetter() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>optional int32 setter = 3;</code>
+     * <code>optional int64 setter = 3;</code>
      */
-    public int getSetter() {
+    public long getSetter() {
       return setter_;
     }
     /**
-     * <code>optional int32 setter = 3;</code>
+     * <code>optional int64 setter = 3;</code>
      */
-    public Builder setSetter(int value) {
+    public Builder setSetter(long value) {
       bitField0_ |= 0x00000004;
       setter_ = value;
       
       return this;
     }
     /**
-     * <code>optional int32 setter = 3;</code>
+     * <code>optional int64 setter = 3;</code>
      */
     public Builder clearSetter() {
       bitField0_ = (bitField0_ & ~0x00000004);
-      setter_ = 0;
+      setter_ = 0L;
       
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.getDefaultInstance();
+    private int originName_ ;
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 4;</code>
+     * <code>optional int32 origin_name = 4;</code>
      */
-    public boolean hasOrigin() {
+    public boolean hasOriginName() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 4;</code>
+     * <code>optional int32 origin_name = 4;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin getOrigin() {
-      return origin_;
+    public int getOriginName() {
+      return originName_;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 4;</code>
+     * <code>optional int32 origin_name = 4;</code>
      */
-    public Builder setOrigin(org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      origin_ = value;
-
+    public Builder setOriginName(int value) {
       bitField0_ |= 0x00000008;
+      originName_ = value;
+      
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 4;</code>
+     * <code>optional int32 origin_name = 4;</code>
      */
-    public Builder setOrigin(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.Builder builderForValue) {
-      origin_ = builderForValue.build();
-
-      bitField0_ |= 0x00000008;
-      return this;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 4;</code>
-     */
-    public Builder mergeOrigin(org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin value) {
-      if (((bitField0_ & 0x00000008) == 0x00000008) &&
-          origin_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.getDefaultInstance()) {
-        origin_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.newBuilder(origin_).mergeFrom(value).buildPartial();
-      } else {
-        origin_ = value;
-      }
-
-      bitField0_ |= 0x00000008;
-      return this;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 4;</code>
-     */
-    public Builder clearOrigin() {
-      origin_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.getDefaultInstance();
-
+    public Builder clearOriginName() {
       bitField0_ = (bitField0_ & ~0x00000008);
+      originName_ = 0;
+      
       return this;
     }
 
@@ -752,34 +704,34 @@ public final class IrPropertyReference extends
       return this;
     }
 
-    private int symbol_ ;
+    private long symbol_ ;
     /**
-     * <code>required int32 symbol = 6;</code>
+     * <code>required int64 symbol = 6;</code>
      */
     public boolean hasSymbol() {
       return ((bitField0_ & 0x00000020) == 0x00000020);
     }
     /**
-     * <code>required int32 symbol = 6;</code>
+     * <code>required int64 symbol = 6;</code>
      */
-    public int getSymbol() {
+    public long getSymbol() {
       return symbol_;
     }
     /**
-     * <code>required int32 symbol = 6;</code>
+     * <code>required int64 symbol = 6;</code>
      */
-    public Builder setSymbol(int value) {
+    public Builder setSymbol(long value) {
       bitField0_ |= 0x00000020;
       symbol_ = value;
       
       return this;
     }
     /**
-     * <code>required int32 symbol = 6;</code>
+     * <code>required int64 symbol = 6;</code>
      */
     public Builder clearSymbol() {
       bitField0_ = (bitField0_ & ~0x00000020);
-      symbol_ = 0;
+      symbol_ = 0L;
       
       return this;
     }

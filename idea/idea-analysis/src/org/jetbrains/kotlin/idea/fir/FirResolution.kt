@@ -12,7 +12,7 @@ object FirResolution {
     private const val optionName = "kotlin.use.fir.resolution"
 
     private val initialEnabledValue: Boolean by lazy {
-        Registry.`is`(optionName, /* defaultValue = */ false)
+        Registry.`is`(optionName, /* defaultValue = */ true)
     }
 
     private var changedEnabledValue: Boolean? = null

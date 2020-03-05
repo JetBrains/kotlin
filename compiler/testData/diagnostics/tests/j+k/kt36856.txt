@@ -1,0 +1,19 @@
+package
+
+public fun main(/*0*/ foo1: Foo<kotlin.Boolean>, /*1*/ foo2: Foo<kotlin.String>): kotlin.Unit
+
+public final class Foo</*0*/ T> {
+    public constructor Foo</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Test {
+    public constructor Test()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open fun </*0*/ T : kotlin.Any!> with(/*0*/ matcher: Foo<T!>!): T!
+    public open fun with(/*0*/ matcher: Foo<kotlin.Boolean!>!): kotlin.Boolean
+}

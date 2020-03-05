@@ -49,7 +49,7 @@ fun <T> bar(a: Any): T = a as T
 fun <T> foo() {
     foo<Color.RED>()
     foo<RedAlias>()
-    bar<Color.RED>(Color.RED)
+    <!INAPPLICABLE_CANDIDATE!>bar<!><Color.RED>(Color.RED)
 }
 
 fun Array<Color.RED>.foo(entries: Array<Color.RED>): Array<Color.RED> = null!!

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.scripts.captureOut
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
 import org.junit.Assert
 import java.io.File
 import java.net.URLClassLoader
@@ -59,7 +59,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             return code to outputs
         }
         finally {
-            KtUsefulTestCase.resetApplicationToNull(application)
+            resetApplicationToNull(application)
         }
     }
 

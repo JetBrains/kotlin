@@ -6,51 +6,61 @@
 package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import com.intellij.util.io.systemIndependentPath
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScriptInitializer
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
-import org.jetbrains.plugins.gradle.GradleManager
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
-import java.io.File
 
 private val sections = arrayListOf("buildscript", "plugins", "initscript", "pluginManagement")
 
 fun isGradleKotlinScript(virtualFile: VirtualFile) = virtualFile.name.endsWith(".gradle.kts")
 
-fun isInAffectedGradleProjectFiles(project: Project, file: VirtualFile): Boolean {
-    val affectedFiles = getAffectedGradleProjectFiles(project)
-    return isInAffectedGradleProjectFiles(affectedFiles, file)
+fun isInAffectedGradleProjectFiles(project: Project, filePath: String): Boolean {
+    if (filePath.endsWith("/gradle.properties")) return true
+    if (filePath.endsWith("/gradle-wrapper.properties")) return true
+
+    if (filePath.endsWith(".gradle") || filePath.endsWith(".gradle.kts")) {
+        if (ApplicationManager.getApplication().isUnitTestModeWithoutAffectedGradleProjectFilesCheck) {
+            return true
+        }
+
+        return filePath.substringBeforeLast("/") in getGradleProjectsRoots(project)
+    }
+
+    return false
 }
 
-fun isInAffectedGradleProjectFiles(files: List<File>, file: VirtualFile): Boolean {
-    // todo: avoid isUnitTestMode usage
-    if (ApplicationManager.getApplication().isUnitTestMode) return true
+private var cachedGradleProjectsRoots: Set<String>? = null
 
-    return files.any { it.toPath().systemIndependentPath == file.path }
+private fun getGradleProjectsRoots(project: Project): Set<String> {
+    if (cachedGradleProjectsRoots == null) {
+        cachedGradleProjectsRoots = computeGradleProjectRoots(project)
+    }
+    return cachedGradleProjectsRoots ?: emptySet()
 }
 
-fun getAffectedGradleProjectFiles(project: Project): List<File> {
+fun saveGradleProjectRootsAfterImport(roots: Set<String>) {
+    cachedGradleProjectsRoots = roots
+}
+
+private fun computeGradleProjectRoots(project: Project): Set<String> {
     val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
-    if (gradleSettings.getLinkedProjectsSettings().isEmpty()) return emptyList()
+    if (gradleSettings.getLinkedProjectsSettings().isEmpty()) return setOf()
 
     val projectSettings = gradleSettings.getLinkedProjectsSettings().filterIsInstance<GradleProjectSettings>().firstOrNull()
-        ?: return emptyList()
+        ?: return setOf()
 
-    return ExternalSystemApiUtil.getAllManagers().filterIsInstance<GradleManager>().firstOrNull()
-        ?.getAffectedExternalProjectFiles(projectSettings.externalProjectPath, project) ?: emptyList()
+    return projectSettings.modules.takeIf { it.isNotEmpty() } ?: setOf(projectSettings.externalProjectPath)
 }
 
 fun getGradleScriptInputsStamp(

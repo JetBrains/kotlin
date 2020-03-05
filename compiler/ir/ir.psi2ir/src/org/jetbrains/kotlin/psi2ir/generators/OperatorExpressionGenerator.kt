@@ -326,8 +326,8 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             eqeqSymbol,
             context.irBuiltIns.booleanType,
             irOperator,
-            expression.left!!.generateAsPrimitiveNumericComparisonOperand(comparisonInfo?.leftType, comparisonType),
-            expression.right!!.generateAsPrimitiveNumericComparisonOperand(comparisonInfo?.rightType, comparisonType)
+            expression.left!!.generateAsPrimitiveNumericComparisonOperand(comparisonInfo?.leftPrimitiveType, comparisonType),
+            expression.right!!.generateAsPrimitiveNumericComparisonOperand(comparisonInfo?.rightPrimitiveType, comparisonType)
         )
 
         return when (irOperator) {
@@ -363,8 +363,8 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
                 eqeqSymbol,
                 context.irBuiltIns.booleanType,
                 irOperator,
-                arg1.promoteToPrimitiveNumericType(comparisonInfo.leftType, comparisonType),
-                arg2.promoteToPrimitiveNumericType(comparisonInfo.rightType, comparisonType)
+                arg1.promoteToPrimitiveNumericType(comparisonInfo.leftPrimitiveType, comparisonType),
+                arg2.promoteToPrimitiveNumericType(comparisonInfo.rightPrimitiveType, comparisonType)
             )
         } else {
             primitiveOp2(
@@ -456,8 +456,8 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
                 getComparisonOperatorSymbol(origin, kotlinTypeToIrType(comparisonType) ?: error("$comparisonType expected to be primitive")),
                 context.irBuiltIns.booleanType,
                 origin,
-                ktLeft.generateAsPrimitiveNumericComparisonOperand(comparisonInfo.leftType, comparisonInfo.comparisonType),
-                ktRight.generateAsPrimitiveNumericComparisonOperand(comparisonInfo.rightType, comparisonInfo.comparisonType)
+                ktLeft.generateAsPrimitiveNumericComparisonOperand(comparisonInfo.leftPrimitiveType, comparisonInfo.comparisonType),
+                ktRight.generateAsPrimitiveNumericComparisonOperand(comparisonInfo.rightPrimitiveType, comparisonInfo.comparisonType)
             )
         } else {
             val resolvedCall = getResolvedCall(ktExpression)

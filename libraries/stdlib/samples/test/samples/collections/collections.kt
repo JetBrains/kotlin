@@ -335,6 +335,18 @@ class Collections {
         }
 
         @Sample
+        fun setOfNotNull() {
+            val empty = setOfNotNull<Any>(null)
+            assertPrints(empty, "[]")
+
+            val singleton = setOfNotNull(42)
+            assertPrints(singleton, "[42]")
+
+            val set = setOfNotNull(1, null, 2, null, 3)
+            assertPrints(set, "[1, 2, 3]")
+        }
+
+        @Sample
         fun emptyLinkedHashSet() {
             val set: LinkedHashSet<Int> = linkedSetOf<Int>()
 
@@ -696,6 +708,24 @@ class Collections {
             assertPrints(strings.reduceRightOrNull { string, acc -> acc + string }, "dcba")
 
             assertPrints(emptyList<String>().reduceRightOrNull { _, _ -> "" }, "null")
+        }
+
+        @Sample
+        fun scan() {
+            val strings = listOf("a", "b", "c", "d")
+            assertPrints(strings.scan("s") { acc, string -> acc + string }, "[s, sa, sab, sabc, sabcd]")
+            assertPrints(strings.scanIndexed("s") { index, acc, string -> acc + string + index }, "[s, sa0, sa0b1, sa0b1c2, sa0b1c2d3]")
+
+            assertPrints(emptyList<String>().scan("s") { _, _ -> "X" }, "[s]")
+        }
+
+        @Sample
+        fun scanReduce() {
+            val strings = listOf("a", "b", "c", "d")
+            assertPrints(strings.scanReduce { acc, string -> acc + string }, "[a, ab, abc, abcd]")
+            assertPrints(strings.scanReduceIndexed { index, acc, string -> acc + string + index }, "[a, ab1, ab1c2, ab1c2d3]")
+
+            assertPrints(emptyList<String>().scanReduce { _, _ -> "X" }, "[]")
         }
     }
 

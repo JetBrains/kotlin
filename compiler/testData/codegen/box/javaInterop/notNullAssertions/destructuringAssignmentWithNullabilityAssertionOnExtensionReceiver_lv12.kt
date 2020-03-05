@@ -15,7 +15,7 @@ private operator fun J.component2() = 2
 fun use(x: Any) {}
 
 fun box(): String {
-    assertFailsWith<IllegalArgumentException> {
+    assertFailsWith<NullPointerException> {
         val (a, b) = J.j()
     }
     if (!component1Evaluated) return "component1 should be evaluated"

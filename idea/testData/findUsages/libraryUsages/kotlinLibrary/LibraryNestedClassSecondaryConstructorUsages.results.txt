@@ -1,4 +1,7 @@
 [LibraryNestedClassSecondaryConstructorUsages.0.kt] New instance creation 16 val a: A.T = A.T()
 [LibraryNestedClassSecondaryConstructorUsages.0.kt] Supertype 13 class Y(): A.T()
+[LibraryNestedClassSecondaryConstructorUsages.1.java] New instance creation 14 A.T a = new A.T();
+[LibraryNestedClassSecondaryConstructorUsages.1.java] Unclassified usage 10 super();
+[LibraryNestedClassSecondaryConstructorUsages.1.java] Unclassified usage 6 public J() {
 [library.kt] New instance creation 64 val tt = A.T()
 [library.kt] Supertype 40 class VV(): A.T()

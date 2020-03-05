@@ -11,6 +11,7 @@ enum class TargetBackend(
 ) {
     ANY(false),
     JVM(false),
+    JVM_OLD(false, JVM),
     JVM_IR(true, JVM),
     JS(false),
     JS_IR(true, JS),

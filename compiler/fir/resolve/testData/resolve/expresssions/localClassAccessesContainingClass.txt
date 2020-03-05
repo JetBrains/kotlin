@@ -1,0 +1,24 @@
+FILE: localClassAccessesContainingClass.kt
+    public final class Outer : R|kotlin/Any| {
+        public constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            local final class Local : R|kotlin/Any| {
+                public constructor(): R|Outer.Local| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final fun bar(): R|kotlin/Unit| {
+                    lval x: R|kotlin/String| = this@R|/Outer|.R|/Outer.y|
+                }
+
+            }
+
+        }
+
+        public final val y: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+    }

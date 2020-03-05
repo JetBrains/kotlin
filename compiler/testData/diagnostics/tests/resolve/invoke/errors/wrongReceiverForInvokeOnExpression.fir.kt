@@ -6,8 +6,8 @@ fun test1() {
 }
 
 fun test2(f: String.(Int) -> Unit) {
-    11.(<!UNRESOLVED_REFERENCE!>f<!>)(1)
-    11.(<!UNRESOLVED_REFERENCE!>f<!>)()
+    11.(<!INAPPLICABLE_CANDIDATE!>f<!>)(1)
+    11.(<!INAPPLICABLE_CANDIDATE!>f<!>)()
 }
 
 fun test3() {

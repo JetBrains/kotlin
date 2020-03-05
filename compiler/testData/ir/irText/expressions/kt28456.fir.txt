@@ -20,9 +20,9 @@ FILE fqName:<root> fileName:/kt28456.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:get visibility:public modality:FINAL <> ($receiver:<root>.A, xs:kotlin.IntArray) returnType:kotlin.Int [operator]
     $receiver: VALUE_PARAMETER name:<this> type:<root>.A
-    VALUE_PARAMETER name:xs index:0 type:kotlin.IntArray
+    VALUE_PARAMETER name:xs index:0 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun get (xs: kotlin.IntArray): kotlin.Int [operator] declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun get (vararg xs: kotlin.Int): kotlin.Int [operator] declared in <root>'
         CONST Int type=kotlin.Int value=0
   FUN name:set visibility:public modality:FINAL <> ($receiver:<root>.A, i:kotlin.Int, j:kotlin.Int, v:kotlin.Int) returnType:kotlin.Unit [operator]
     $receiver: VALUE_PARAMETER name:<this> type:<root>.A
@@ -44,9 +44,11 @@ FILE fqName:<root> fileName:/kt28456.kt
       RETURN type=kotlin.Nothing from='public final fun testPostfixIncrement (a: <root>.A): kotlin.Int declared in <root>'
         BLOCK type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
-            ERROR_CALL 'Cannot bind 2 arguments to get call with 1 parameters' type=kotlin.Int
-              CONST Int type=kotlin.Int value=1
-              CONST Int type=kotlin.Int value=2
+            CALL 'public final fun get (vararg xs: kotlin.Int): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=null
+              $receiver: GET_VAR 'a: <root>.A declared in <root>.testPostfixIncrement' type=<root>.A origin=null
+              xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                CONST Int type=kotlin.Int value=1
+                CONST Int type=kotlin.Int value=2
           CALL 'public final fun set (i: kotlin.Int, j: kotlin.Int, v: kotlin.Int): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=null
             $receiver: GET_VAR 'a: <root>.A declared in <root>.testPostfixIncrement' type=<root>.A origin=null
             i: CONST Int type=kotlin.Int value=1

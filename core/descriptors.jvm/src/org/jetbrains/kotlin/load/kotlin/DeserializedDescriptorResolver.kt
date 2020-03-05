@@ -52,7 +52,9 @@ class DeserializedDescriptorResolver {
         val (nameResolver, classProto) = parseProto(kotlinClass) {
             JvmProtoBufUtil.readClassDataFrom(data, strings)
         } ?: return null
-        val source = KotlinJvmBinarySourceElement(kotlinClass, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible)
+        val source = KotlinJvmBinarySourceElement(
+            kotlinClass, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible, kotlinClass.isInvisibleJvmIrDependency
+        )
         return ClassData(nameResolver, classProto, kotlinClass.classHeader.metadataVersion, source)
     }
 
@@ -63,7 +65,8 @@ class DeserializedDescriptorResolver {
             JvmProtoBufUtil.readPackageDataFrom(data, strings)
         } ?: return null
         val source = JvmPackagePartSource(
-            kotlinClass, packageProto, nameResolver, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible
+            kotlinClass, packageProto, nameResolver, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible,
+            kotlinClass.isInvisibleJvmIrDependency
         )
         return DeserializedPackageMemberScope(
             descriptor, packageProto, nameResolver, kotlinClass.classHeader.metadataVersion, source, components
@@ -93,6 +96,9 @@ class DeserializedDescriptorResolver {
     private val KotlinJvmBinaryClass.isCompiledWith13M1: Boolean
         get() = !components.configuration.skipMetadataVersionCheck &&
                 classHeader.isPreRelease && classHeader.metadataVersion == KOTLIN_1_3_M1_METADATA_VERSION
+
+    private val KotlinJvmBinaryClass.isInvisibleJvmIrDependency: Boolean
+        get() = components.configuration.reportErrorsOnIrDependencies && classHeader.isUnstableJvmIrBinary
 
     private fun readData(kotlinClass: KotlinJvmBinaryClass, expectedKinds: Set<KotlinClassHeader.Kind>): Array<String>? {
         val header = kotlinClass.classHeader

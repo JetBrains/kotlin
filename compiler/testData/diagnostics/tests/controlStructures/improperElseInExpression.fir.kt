@@ -9,22 +9,22 @@ fun example() {
     val e = if (true) {} else false
     val f = if (true) true else {}
 
-    <!UNRESOLVED_REFERENCE!>{
+    {
         if (true) true
-    }()<!>;
+    }();
 
-    <!UNRESOLVED_REFERENCE!>{
+    {
         if (true) true else false
-    }()<!>;
+    }();
 
-    <!UNRESOLVED_REFERENCE!>{
+    {
         if (true) {} else false
-    }()<!>;
+    }();
 
 
-    <!UNRESOLVED_REFERENCE!>{
+    {
         if (true) true else {}
-    }()<!>
+    }()
 
     fun t(): Boolean {
         return if (true) true

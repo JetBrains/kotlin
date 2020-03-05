@@ -2,6 +2,7 @@ Usage: kotlinc-jvm <options> <source files>
 where advanced options include:
   -Xadd-modules=<module[,]>  Root modules to resolve in addition to the initial modules,
                              or all modules on the module path if <module> is ALL-MODULE-PATH
+  -Xallow-jvm-ir-dependencies When not using the IR backend, do not report errors on those classes in dependencies, which were compiled by the IR backend
   -Xallow-no-source-files    Allow no source files
   -Xassertions={always-enable|always-disable|jvm|legacy}
                              Assert calls behaviour
@@ -18,10 +19,12 @@ where advanced options include:
                              'enable' since language version 1.3
   -Xdump-declarations-to=<path> Path to JSON file to dump Java to Kotlin declaration mappings
   -Xdisable-standard-script  Disable standard kotlin script support
-  -Xexpression               Evaluate the given string as a Kotlin script
+  -Xemit-jvm-type-annotations Emit JVM type annotations in bytecode
   -Xfriend-paths=<path>      Paths to output directories for friend modules (whose internals should be visible)
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
   -Xir-check-local-names     Check that names of local classes and anonymous objects are the same in the IR backend as in the old backend
+  -Xir-binary-with-stable-abi When using the IR backend, produce binaries which can be read by non-IR backend.
+                             The author is responsible for verifying that the resulting binaries do indeed have the correct ABI
   -Xmodule-path=<path>       Paths where to find Java 9+ modules
   -Xjava-package-prefix      Package prefix for Java files
   -Xjava-source-roots=<path> Paths to directories with Java source files
@@ -42,12 +45,14 @@ where advanced options include:
                                                            in the interface (annotating an existing method can break binary compatibility)
                              -Xjvm-default=compatibility   Allow usages of @JvmDefault; generate a compatibility accessor
                                                            in the 'DefaultImpls' class in addition to the interface method
+  -Xklib=<path>              Paths to cross-platform libraries in .klib format
   -Xno-call-assertions       Don't generate not-null assertions for arguments of platform types
   -Xno-exception-on-explicit-equals-for-boxed-null
                              Do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type
   -Xno-optimize              Disable optimizations
   -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
   -Xno-receiver-assertions   Don't generate not-null assertion for extension receiver arguments of platform types
+  -Xno-use-ir                Do not use the IR backend. Useful for a custom-built compiler where IR backend is enabled by default
   -Xsanitize-parentheses     Transform '(' and ')' in method names to some other character sequence.
                              This mode can BREAK BINARY COMPATIBILITY and is only supposed to be used to workaround
                              problems with parentheses in identifiers on certain platforms

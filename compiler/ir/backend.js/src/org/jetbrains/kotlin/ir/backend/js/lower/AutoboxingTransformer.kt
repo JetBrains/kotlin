@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
@@ -18,12 +18,19 @@ import org.jetbrains.kotlin.ir.util.*
 
 // Copied and adapted from Kotlin/Native
 
-class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsageTransformer(context.irBuiltIns), FileLoweringPass {
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid()
+class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsageTransformer(context.irBuiltIns), BodyLoweringPass {
+
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        // TODO workaround for callable references
+        // Prevents from revisiting local
+        if (container.parent is IrFunction) return
+
+        val replacement = container.transform(this, null) as IrDeclaration
+
+        if (container !== replacement) error("Declaration has changed: ${container}")
 
         // TODO: Track & insert parents for temporary variables
-        irFile.patchDeclarationParents()
+        irBody.patchDeclarationParents(container as? IrDeclarationParent ?: container.parent)
     }
 
     private tailrec fun IrExpression.isGetUnit(): Boolean =

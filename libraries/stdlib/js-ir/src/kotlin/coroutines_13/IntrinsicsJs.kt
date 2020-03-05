@@ -27,9 +27,7 @@ import kotlin.internal.InlineOnly
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
     completion: Continuation<T>
 ): Any? {
-    val a = this.asDynamic()
-    return if (jsTypeOf(a) == "function") a(completion, false)
-    else a.invoke(completion)
+    return this.asDynamic()(completion)
 }
 
 /**
@@ -50,9 +48,7 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
     receiver: R,
     completion: Continuation<T>
 ): Any?  {
-    val a = this.asDynamic()
-    return if(jsTypeOf(a) == "function") a(receiver, completion, false)
-    else a.invoke_P1(receiver, completion)
+    return this.asDynamic()(receiver, completion)
 }
 
 
@@ -76,19 +72,8 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
 public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
     completion: Continuation<T>
 ): Continuation<Unit> =
-    // Kotlin/JS suspend lambdas have an extra parameter `suspended`
-    if (this.asDynamic().length == 2) {
-        // When `suspended` is true the continuation is created, but not executed
-        this.asDynamic()(completion, true)
-    } else {
-        createCoroutineFromSuspendFunction(completion) {
-            val a = this.asDynamic()
-            if (jsTypeOf(a) == "function") {
-                a(completion)
-            } else {
-                a.invoke(completion)
-            }
-        }
+    createCoroutineFromSuspendFunction(completion) {
+        this.asDynamic()(completion)
     }
 
 /**
@@ -112,19 +97,8 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
     receiver: R,
     completion: Continuation<T>
 ): Continuation<Unit> =
-    // Kotlin/JS suspend lambdas have an extra parameter `suspended`
-    if (this.asDynamic().length == 3) {
-        // When `suspended` is true the continuation is created, but not executed
-        this.asDynamic()(receiver, completion, true)
-    } else {
-        createCoroutineFromSuspendFunction(completion) {
-            val a = this.asDynamic()
-            if (jsTypeOf(a) == "function") {
-                a(receiver, completion)
-            } else {
-                a.invoke_P1(receiver, completion)
-            }
-        }
+    createCoroutineFromSuspendFunction(completion) {
+        this.asDynamic()(receiver, completion)
     }
 
 /**

@@ -55,7 +55,7 @@ object CommonParser {
         )
 
     fun parseLinkedSpecTest(testFilePath: String, testFiles: TestFiles): LinkedSpecTest {
-        val parsedTestFile = parseTestInfo(testFilePath, testFiles, SpecTestLinkedType.LINKED)
+        val parsedTestFile = tryParseTestInfo(testFilePath, testFiles, SpecTestLinkedType.LINKED)
         val testInfoElements = parsedTestFile.testInfoElements
         val placeMatcher = testInfoElements[LinkedSpecTestFileInfoElementType.PLACE]!!.additionalMatcher!!
         val relevantPlacesMatcher = testInfoElements[LinkedSpecTestFileInfoElementType.RELEVANT_PLACES]?.additionalMatcher
@@ -86,7 +86,7 @@ object CommonParser {
     }
 
     private fun parseNotLinkedSpecTest(testFilePath: String, testFiles: TestFiles): NotLinkedSpecTest {
-        val parsedTestFile = parseTestInfo(testFilePath, testFiles, SpecTestLinkedType.NOT_LINKED)
+        val parsedTestFile = tryParseTestInfo(testFilePath, testFiles, SpecTestLinkedType.NOT_LINKED)
         val testInfoElements = parsedTestFile.testInfoElements
         val sectionsMatcher = testInfoElements[NotLinkedSpecTestFileInfoElementType.SECTIONS]!!.additionalMatcher!!
 

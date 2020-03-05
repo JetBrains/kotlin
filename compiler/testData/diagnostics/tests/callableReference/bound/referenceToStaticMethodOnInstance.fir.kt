@@ -9,6 +9,6 @@ public class A {
 enum class E { EN }
 
 fun test() {
-    A()::test
-    E.EN::valueOf
+    <!UNRESOLVED_REFERENCE!>A()::test<!>
+    <!UNRESOLVED_REFERENCE!>E.EN::valueOf<!>
 }

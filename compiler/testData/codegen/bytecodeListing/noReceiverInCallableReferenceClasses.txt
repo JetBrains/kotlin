@@ -27,7 +27,7 @@ synthetic final class NoReceiverInCallableReferenceClassesKt$A_foo$1 {
     public final method getOwner(): kotlin.reflect.KDeclarationContainer
     public final method getSignature(): java.lang.String
     public final method invoke(@org.jetbrains.annotations.NotNull p0: A): void
-    public synthetic method invoke(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -46,7 +46,7 @@ synthetic final class NoReceiverInCallableReferenceClassesKt$aFoo$1 {
     public final method getName(): java.lang.String
     public final method getOwner(): kotlin.reflect.KDeclarationContainer
     public final method getSignature(): java.lang.String
-    public synthetic method invoke(): java.lang.Object
+    public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
 }
 

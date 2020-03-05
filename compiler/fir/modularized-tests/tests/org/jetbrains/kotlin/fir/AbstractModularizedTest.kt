@@ -5,7 +5,13 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
+import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.w3c.dom.Node
@@ -68,6 +74,17 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
     override fun tearDown() {
         super.tearDown()
         AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true
+    }
+
+    fun createDefaultConfiguration(moduleData: ModuleData): CompilerConfiguration {
+        val configuration = KotlinTestUtils.newConfiguration()
+        configuration.addJavaSourceRoots(moduleData.javaSourceRoots)
+        configuration.addJvmClasspathRoots(moduleData.classpath)
+
+        configuration.addAll(
+            CLIConfigurationKeys.CONTENT_ROOTS,
+            moduleData.sources.filter { it.extension == "kt" }.map { KotlinSourceRoot(it.absolutePath, false) })
+        return configuration
     }
 
     private fun loadModule(file: File): ModuleData {

@@ -11,3 +11,11 @@ sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
+
+runtimeJar()
+
+sourcesJar()
+
+javadocJar()
+
+apply(from = "$rootDir/gradle/kotlinPluginPublication.gradle.kts")

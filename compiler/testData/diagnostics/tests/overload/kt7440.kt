@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
 // KT-7440 Cannot complete type inference if two extension functions for interface hierarchy
 

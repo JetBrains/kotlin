@@ -15,7 +15,7 @@ class ExperimentalIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     fun testJvmExperimentalModule() {
         val lib = compileLibrary(
             "lib", additionalOptions = listOf(
-                "-Xuse-experimental=kotlin.Experimental",
+                "-Xopt-in=kotlin.RequiresOptIn",
                 "-Xexperimental=lib.ExperimentalAPI"
             ),
             checkKotlinOutput = { output -> assertTrue(output, output.trimEnd().endsWith("OK")) }
@@ -26,7 +26,7 @@ class ExperimentalIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     fun testJsExperimentalModule() {
         val lib = compileJsLibrary(
             "lib", additionalOptions = listOf(
-                "-Xuse-experimental=kotlin.Experimental",
+                "-Xopt-in=kotlin.RequiresOptIn",
                 "-Xexperimental=lib.ExperimentalAPI"
             ),
             checkKotlinOutput = { output -> assertTrue(output, output.trimEnd().endsWith("OK")) }

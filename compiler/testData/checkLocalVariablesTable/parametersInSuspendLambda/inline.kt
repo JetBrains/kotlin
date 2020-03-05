@@ -6,6 +6,8 @@ suspend inline fun foo(a: A, block: suspend (A) -> String): String = block(a)
 
 suspend fun test() = foo(A("O", "K")) { (x_param, y_param) -> x_param + y_param }
 
+// TODO: Fix this after other issues in inlining suspend lambdas are resolved.
+
 // METHOD : InlineKt.test(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 // VARIABLE : NAME=x_param TYPE=Ljava/lang/String; INDEX=6
 // VARIABLE : NAME=y_param TYPE=Ljava/lang/String; INDEX=7

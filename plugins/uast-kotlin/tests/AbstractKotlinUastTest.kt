@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
 import org.jetbrains.uast.UastLanguagePlugin
 import org.jetbrains.uast.evaluation.UEvaluatorExtension
 import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
@@ -38,9 +38,6 @@ import org.jetbrains.uast.test.env.kotlin.AbstractUastTest
 import java.io.File
 
 abstract class AbstractKotlinUastTest : AbstractUastTest() {
-    protected companion object {
-        val TEST_KOTLIN_MODEL_DIR = File("plugins/uast-kotlin/testData")
-    }
 
     private lateinit var compilerConfiguration: CompilerConfiguration
     private var kotlinCoreEnvironment: KotlinCoreEnvironment? = null
@@ -58,7 +55,7 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
 
         val environment = kotlinCoreEnvironment!!
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                project, environment.getSourceFiles(), trace, compilerConfiguration, environment::createPackagePartProvider
+            project, environment.getSourceFiles(), trace, compilerConfiguration, environment::createPackagePartProvider
         )
 
         val vfs = VirtualFileManager.getInstance().getFileSystem(URLUtil.FILE_PROTOCOL)
@@ -94,13 +91,14 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
     private fun initializeKotlinEnvironment() {
         val area = Extensions.getRootArea()
         area.getExtensionPoint(UastLanguagePlugin.extensionPointName)
-                .registerExtension(KotlinUastLanguagePlugin())
+            .registerExtension(KotlinUastLanguagePlugin())
         area.getExtensionPoint(UEvaluatorExtension.EXTENSION_POINT_NAME)
-                .registerExtension(KotlinEvaluatorExtension())
+            .registerExtension(KotlinEvaluatorExtension())
 
         project.registerService(
             KotlinUastResolveProviderService::class.java,
-            CliKotlinUastResolveProviderService::class.java)
+            CliKotlinUastResolveProviderService::class.java
+        )
     }
 
     override fun createEnvironment(source: File): AbstractCoreEnvironment {
@@ -115,7 +113,8 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
         this.kotlinCoreEnvironment = kotlinCoreEnvironment
 
         AnalysisHandlerExtension.registerExtension(
-                kotlinCoreEnvironment.project, UastAnalysisHandlerExtension())
+            kotlinCoreEnvironment.project, UastAnalysisHandlerExtension()
+        )
 
         return KotlinCoreEnvironmentWrapper(kotlinCoreEnvironment, parentDisposable, appWasNull)
     }
@@ -140,9 +139,11 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
         }
     }
 
-    private class KotlinCoreEnvironmentWrapper(val environment: KotlinCoreEnvironment,
-                                               val parentDisposable: Disposable,
-                                               val appWasNull: Boolean) : AbstractCoreEnvironment() {
+    private class KotlinCoreEnvironmentWrapper(
+        val environment: KotlinCoreEnvironment,
+        val parentDisposable: Disposable,
+        val appWasNull: Boolean
+    ) : AbstractCoreEnvironment() {
         override fun addJavaSourceRoot(root: File) {
             TODO("not implemented")
         }
@@ -157,8 +158,10 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
         override fun dispose() {
             Disposer.dispose(parentDisposable)
             if (appWasNull) {
-                KtUsefulTestCase.resetApplicationToNull()
+                resetApplicationToNull()
             }
         }
     }
 }
+
+val TEST_KOTLIN_MODEL_DIR = File("plugins/uast-kotlin/testData")

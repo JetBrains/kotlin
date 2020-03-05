@@ -30,23 +30,8 @@ tailrec fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor {
 }
 
 fun DeclarationDescriptor.findTopLevelDescriptor(): DeclarationDescriptor {
-    return if (this.containingDeclaration is org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor) this.propertyIfAccessor
+    return if (this.containingDeclaration is PackageFragmentDescriptor) this.propertyIfAccessor
     else this.containingDeclaration!!.findTopLevelDescriptor()
-}
-
-/**
- * TODO: this method is actually a part of resolve and probably duplicates another one
- */
-internal fun <T : CallableMemberDescriptor> T.resolveFakeOverrideMaybeAbstract(): Set<T> {
-    if (this.kind.isReal) {
-        return setOf(this)
-    } else {
-        val overridden = OverridingUtil.getOverriddenDeclarations(this)
-        val filtered = OverridingUtil.filterOutOverridden(overridden)
-        // TODO: is it correct to take first?
-        @Suppress("UNCHECKED_CAST")
-        return filtered as Set<T>
-    }
 }
 
 // This is Native specific. Try to eliminate.

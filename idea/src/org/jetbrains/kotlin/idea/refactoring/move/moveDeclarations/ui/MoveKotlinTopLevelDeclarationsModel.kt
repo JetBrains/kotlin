@@ -7,26 +7,23 @@ package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui
 
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.psi.*
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.MoveDestination
 import com.intellij.refactoring.PackageWrapper
-import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.moveClassesOrPackages.AutocreatingSingleSourceRootMoveDestination
 import com.intellij.refactoring.move.moveClassesOrPackages.MultipleRootsMoveDestination
-import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.core.getPackage
+import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.getOrCreateDirectory
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.idea.refactoring.move.updatePackageDirective
-import org.jetbrains.kotlin.idea.util.application.executeCommand
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -51,29 +48,24 @@ internal class MoveKotlinTopLevelDeclarationsModel(
     val moveCallback: MoveCallback?
 ) : Model<BaseRefactoringProcessor> {
 
-    private inline fun <T, K> List<T>.mapToSingleOrNull(transform: (T) -> K?): K? =
+    private inline fun <T, K> Set<T>.mapToSingleOrNull(transform: (T) -> K?): K? =
         mapTo(mutableSetOf(), transform).singleOrNull()
 
-    private val sourceDirectory by lazy {
+    private fun checkedGetSourceDirectory() =
         sourceFiles.mapToSingleOrNull { it.parent } ?: throw ConfigurationException("Can't determine sources directory")
-    }
 
-    private val sourceFiles = elementsToMove.map { it.containingKtFile }.distinct()
+    private val sourceFiles: Set<KtFile> = elementsToMove.mapTo(mutableSetOf()) { it.containingKtFile }
 
-    private data class TargetDirAndDestination(val targetDir: VirtualFile?, val destination: MoveDestination)
+    private val singleSourceFileMode = sourceFiles.size == 1
 
-    private fun selectPackageBasedTargetDirAndDestination(): TargetDirAndDestination {
+    private fun selectPackageBasedDestination(): MoveDestination {
 
         val targetPackageWrapper = PackageWrapper(PsiManager.getInstance(project), targetPackage)
 
         return if (selectedPsiDirectory == null)
-            TargetDirAndDestination(null, MultipleRootsMoveDestination(targetPackageWrapper))
-        else {
-            TargetDirAndDestination(
-                selectedPsiDirectory.virtualFile,
-                AutocreatingSingleSourceRootMoveDestination(targetPackageWrapper, selectedPsiDirectory.virtualFile)
-            )
-        }
+            MultipleRootsMoveDestination(targetPackageWrapper)
+        else
+            AutocreatingSingleSourceRootMoveDestination(targetPackageWrapper, selectedPsiDirectory.virtualFile)
     }
 
     private fun checkTargetFileName(fileName: String) {
@@ -82,7 +74,7 @@ internal class MoveKotlinTopLevelDeclarationsModel(
         }
     }
 
-    private fun getFilesExistingInTargetDir(
+    private fun getFilesExistingInTargetDirectory(
         targetFileName: String?,
         targetDirectory: PsiDirectory
     ): Set<PsiFile> {
@@ -93,41 +85,43 @@ internal class MoveKotlinTopLevelDeclarationsModel(
         }
     }
 
+    private fun tryMoveToPackageForExistingDirectory(targetFileName: String?, targetDirectory: PsiDirectory): KotlinMoveTarget? {
+
+        val filesExistingInTargetDir = getFilesExistingInTargetDirectory(targetFileName, targetDirectory)
+
+        if (filesExistingInTargetDir.isEmpty()) return null
+
+        if (singleSourceFileMode) {
+            val singeTargetFile = filesExistingInTargetDir.single() as? KtFile
+            if (singeTargetFile != null) {
+                return KotlinMoveTargetForExistingElement(singeTargetFile)
+            }
+        } else {
+            val filePathsToReport = filesExistingInTargetDir.joinToString(
+                separator = "\n",
+                prefix = "Cannot perform refactoring since the following files already exist:\n\n"
+            ) { it.virtualFile.path }
+            throw ConfigurationException(filePathsToReport)
+        }
+
+        return null
+    }
+
     private fun selectMoveTargetToPackage(): KotlinMoveTarget {
         require(sourceFiles.isNotEmpty())
 
-        val (targetDir, moveDestination) = selectPackageBasedTargetDirAndDestination()
-        val targetDirectory = moveDestination.getTargetIfExists(sourceDirectory)
-            ?: throw ConfigurationException("Can't get target directory for selected package")
-
-        val destination = sourceFiles
-            .mapToSingleOrNull { moveDestination.getTargetIfExists(it) }
-            ?: throw ConfigurationException("Can't get target for all source elements")
-
-        val singleSourceFileMode = sourceFiles.size == 1
+        val moveDestination = selectPackageBasedDestination()
+        val targetDirectory: PsiDirectory? = moveDestination.getTargetIfExists(checkedGetSourceDirectory())
 
         val targetFileName = if (singleSourceFileMode) fileNameInPackage.also(::checkTargetFileName) else null
-        val filesExistingInTargetDir = getFilesExistingInTargetDir(targetFileName, targetDirectory)
 
-        if (filesExistingInTargetDir.isNotEmpty()) {
-            if (singleSourceFileMode) {
-                val singeTargetFile = filesExistingInTargetDir.single() as? KtFile
-                if (singeTargetFile != null) {
-                    return KotlinMoveTargetForExistingElement(singeTargetFile)
-                }
-            } else {
-                val filePathsToReport = filesExistingInTargetDir.joinToString(
-                    separator = "\n",
-                    prefix = "Cannot perform refactoring since the following files already exist:\n\n"
-                ) { it.virtualFile.path }
-                throw ConfigurationException(filePathsToReport)
-            }
+        if (targetDirectory != null) {
+            tryMoveToPackageForExistingDirectory(targetFileName, targetDirectory)?.let { return it }
         }
 
         return KotlinMoveTargetForDeferredFile(
             FqName(targetPackage),
-            destination,
-            targetDir
+            targetDirectory
         ) {
             val deferredFileName = if (singleSourceFileMode) fileNameInPackage else it.name
             val deferredFileDirectory = moveDestination.getTargetDirectory(it)
@@ -137,51 +131,49 @@ internal class MoveKotlinTopLevelDeclarationsModel(
 
     private fun selectMoveTargetToFile(): KotlinMoveTarget {
 
-        try {
-            Paths.get(targetFilePath)
+        val targetFile = try {
+            Paths.get(targetFilePath).toFile()
         } catch (e: InvalidPathException) {
             throw ConfigurationException("Invalid target path $targetFilePath")
         }
 
-        val targetFile = File(targetFilePath)
         checkTargetFileName(targetFile.name)
 
         val jetFile = targetFile.toPsiFile(project) as? KtFile
         if (jetFile != null) {
-            if (sourceFiles.size == 1 && sourceFiles.contains(jetFile)) {
+            if (sourceFiles.singleOrNull() == jetFile) {
                 throw ConfigurationException("Can't move to the original file")
             }
             return KotlinMoveTargetForExistingElement(jetFile)
         }
 
-        val targetDirPath = targetFile.toPath().parent
+        val targetDirectoryPath = targetFile.toPath().parent
             ?: throw ConfigurationException("Incorrect target path. Directory is not specified.")
 
         val projectBasePath = project.basePath
             ?: throw ConfigurationException("Can't move for current project")
 
-        if (!targetDirPath.startsWith(projectBasePath)) {
-            throw ConfigurationException("Incorrect target path. Directory $targetDirPath does not belong to current project.")
+        if (!targetDirectoryPath.startsWith(projectBasePath)) {
+            throw ConfigurationException("Incorrect target path. Directory $targetDirectoryPath does not belong to current project.")
         }
 
-        val absoluteTargetDirPath = targetDirPath.toString()
-        val psiDirectory: PsiDirectory
-        try {
-            psiDirectory = getOrCreateDirectory(absoluteTargetDirPath, project)
-        } catch (e: IncorrectOperationException) {
-            throw ConfigurationException("Failed to create parent directory: $absoluteTargetDirPath")
-        }
+        val psiDirectory = targetDirectoryPath.toFile().toPsiDirectory(project)
 
         val targetPackageFqName = sourceFiles.singleOrNull()?.packageFqName
-            ?: JavaDirectoryService.getInstance().getPackage(psiDirectory)?.let { FqName(it.qualifiedName) }
-            ?: throw ConfigurationException("Could not find package corresponding to $absoluteTargetDirPath")
+            ?: psiDirectory?.getPackage()?.let { FqName(it.qualifiedName) }
+            ?: throw ConfigurationException("Could not find package corresponding to $targetDirectoryPath")
 
+        val targetDirectoryPathString = targetDirectoryPath.toString()
         val finalTargetPackageFqName = targetPackageFqName.asString()
+
         return KotlinMoveTargetForDeferredFile(
             targetPackageFqName,
             psiDirectory,
             targetFile = null
-        ) { getOrCreateKotlinFile(targetFile.name, psiDirectory, finalTargetPackageFqName) }
+        ) {
+            val actualPsiDirectory = psiDirectory ?: getOrCreateDirectory(targetDirectoryPathString, project)
+            getOrCreateKotlinFile(targetFile.name, actualPsiDirectory, finalTargetPackageFqName)
+        }
     }
 
     private fun selectMoveTarget() =
@@ -191,7 +183,7 @@ internal class MoveKotlinTopLevelDeclarationsModel(
 
         if (elementsToMove.isEmpty()) throw ConfigurationException("At least one member must be selected")
         if (sourceFiles.isEmpty()) throw ConfigurationException("None elements were selected")
-        if (sourceFiles.size == 1 && fileNameInPackage.isBlank()) throw ConfigurationException("File name may not be empty")
+        if (singleSourceFileMode && fileNameInPackage.isBlank()) throw ConfigurationException("File name may not be empty")
 
         if (isMoveToPackage) {
             if (targetPackage.isNotEmpty() && !PsiNameHelper.getInstance(project).isQualifiedName(targetPackage)) {
@@ -225,19 +217,15 @@ internal class MoveKotlinTopLevelDeclarationsModel(
         val targetFileName = if (sourceFiles.size > 1) null else fileNameInPackage
         if (targetFileName != null) checkTargetFileName(targetFileName)
 
-        val moveDestination = selectPackageBasedTargetDirAndDestination().destination
-        val targetDir = moveDestination.getTargetIfExists(sourceDirectory) ?: return null
+        val moveDestination = selectPackageBasedDestination()
+        val targetDirectory = moveDestination.getTargetIfExists(checkedGetSourceDirectory()) ?: return null
 
-        val filesExistingInTargetDir = getFilesExistingInTargetDir(targetFileName, targetDir)
+        val filesExistingInTargetDir = getFilesExistingInTargetDirectory(targetFileName, targetDirectory)
 
         val moveAsFile = filesExistingInTargetDir.isEmpty() ||
                 filesExistingInTargetDir.singleOrNull()?.let { sourceFiles.contains(it) } == true
 
         if (!moveAsFile) return null
-
-        val targetDirectory = project.executeCommand(RefactoringBundle.message("move.title"), null) {
-            runWriteAction<PsiDirectory> { moveDestination.getTargetDirectory(sourceDirectory) }
-        }
 
         sourceFiles.forEach { it.updatePackageDirective = isUpdatePackageDirective }
 
@@ -255,7 +243,7 @@ internal class MoveKotlinTopLevelDeclarationsModel(
         else
             KotlinAwareMoveFilesOrDirectoriesProcessor(
                 project,
-                sourceFiles,
+                sourceFiles.toList(),
                 targetDirectory,
                 isSearchReferences,
                 searchInComments = isSearchInComments,

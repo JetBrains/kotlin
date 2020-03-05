@@ -77,13 +77,13 @@ fun test() {
             this@a.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield<!>(1)
             this@a.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield2<!>(1)
 
-            <!NI;NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE!>with(this) {
-                <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield<!>("")
-                this@with.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield<!>("")
+            with(this) {
+                <!OI;ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield<!>("")
+                this@with.<!NI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE, OI;ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield<!>("")
 
-                <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield2<!>("")
-                this@with.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield2<!>("")
-            }<!>
+                <!OI;ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield2<!>("")
+                this@with.<!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield2<!>("")
+            }
         }
     }
 

@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirResolvedImportImpl(
+internal class FirResolvedImportImpl(
     override var delegate: FirImport,
     override val packageFqName: FqName,
-    override val relativeClassName: FqName?
+    override val relativeClassName: FqName?,
 ) : FirResolvedImport() {
     override val source: FirSourceElement? get() = delegate.source
     override val importedFqName: FqName? get() = delegate.importedFqName

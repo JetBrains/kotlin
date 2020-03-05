@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin
 
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.StdlibType
+
 @Suppress("EnumEntryName")
 enum class ModuleType(val projectTypeName: String) {
     jvm("Kotlin/JVM"),
@@ -27,10 +29,10 @@ enum class ModuleSubType(val moduleType: ModuleType) {
     common(ModuleType.common)
 }
 
-fun ModuleType.correspondingStdlibName() = when (this) {
-    ModuleType.jvm -> "stdlib-jdk8"
-    ModuleType.js -> "stdlib-js"
+fun ModuleType.correspondingStdlib(): StdlibType? = when (this) {
+    ModuleType.jvm -> StdlibType.StdlibJdk8
+    ModuleType.js -> StdlibType.StdlibJs
     ModuleType.native -> null
-    ModuleType.common -> "stdlib-common"
+    ModuleType.common -> StdlibType.StdlibCommon
 }
 

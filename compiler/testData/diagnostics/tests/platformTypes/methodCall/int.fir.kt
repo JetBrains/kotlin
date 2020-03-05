@@ -12,5 +12,5 @@ import p.*
 
 fun test() {
     J()._int(1)
-    J()._int(null)
+    J().<!INAPPLICABLE_CANDIDATE!>_int<!>(null)
 }

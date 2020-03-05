@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.FirTargetElement
@@ -23,26 +22,28 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirFunction<F : FirFunction<F>> : FirCallableDeclaration<F>, FirControlFlowGraphOwner, FirTargetElement, FirAnnotationContainer, FirTypeParametersOwner, FirStatement {
+interface FirFunction<F : FirFunction<F>> : FirCallableDeclaration<F>, FirTargetElement, FirAnnotationContainer, FirTypeParametersOwner, FirStatement {
     override val source: FirSourceElement?
     override val session: FirSession
     override val resolvePhase: FirResolvePhase
     override val annotations: List<FirAnnotationCall>
     override val returnTypeRef: FirTypeRef
     override val receiverTypeRef: FirTypeRef?
-    override val controlFlowGraphReference: FirControlFlowGraphReference
     override val typeParameters: List<FirTypeParameter>
+    val controlFlowGraphReference: FirControlFlowGraphReference
     override val symbol: FirFunctionSymbol<F>
     val valueParameters: List<FirValueParameter>
     val body: FirBlock?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFunction(this, data)
 
+    fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
+
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFunction<F>
 
     override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirFunction<F>
 
-    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirFunction<F>
+    fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirFunction<F>
 
     fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunction<F>
 }

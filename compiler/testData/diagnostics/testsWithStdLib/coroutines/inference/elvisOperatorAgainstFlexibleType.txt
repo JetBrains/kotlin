@@ -1,0 +1,15 @@
+package
+
+public fun </*0*/ T, /*1*/ R> myEmptyMap(): kotlin.collections.Map<T, R>
+@kotlin.Suppress(names = {"INVISIBLE_REFERENCE"}) public fun </*0*/ S> select1(/*0*/ x: S, /*1*/ y: S): S
+public fun test(/*0*/ properties: kotlin.collections.Map<kotlin.String, kotlin.String>, /*1*/ nullableProperties: kotlin.collections.Map<kotlin.String, kotlin.String>?): kotlin.Unit
+
+public open class Foo {
+    public constructor Foo()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun </*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!> create(/*0*/ m: (kotlin.collections.MutableMap<out K!, out V!>..kotlin.collections.Map<out K!, V!>?)): kotlin.Unit
+}

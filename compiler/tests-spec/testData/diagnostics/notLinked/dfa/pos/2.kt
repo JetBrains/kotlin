@@ -76,7 +76,7 @@ fun case_3(b: Boolean) {
     val y = if (b) x else null
 
     if (false || false || false || false || y !== null) {
-        val z = <!DEBUG_INFO_EXPRESSION_TYPE("case_3.<anonymous>.<no name provided>?")!><!UNSAFE_CALL!>y<!>()<!>
+        val z = <!DEBUG_INFO_EXPRESSION_TYPE("case_3.<anonymous>.<no name provided>?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>y<!>()<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.<anonymous>.<no name provided>?)?")!>y<!><!UNSAFE_CALL!>.<!>equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.<anonymous>.<no name provided>?)?")!>y<!>.propT
         <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_3.<anonymous>.<no name provided>?)?")!>y<!><!UNSAFE_CALL!>.<!>propAny
@@ -283,7 +283,7 @@ fun case_11(b: Boolean) {
     val y = if (b) x else null
 
     if (y === null && true) else {
-        val z = <!DEBUG_INFO_EXPRESSION_TYPE("case_11.<anonymous>.<no name provided>?")!><!UNSAFE_CALL!>y<!>()<!>
+        val z = <!DEBUG_INFO_EXPRESSION_TYPE("case_11.<anonymous>.<no name provided>?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>y<!>()<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.<anonymous>.<no name provided>?)?")!>y<!><!UNSAFE_CALL!>.<!>equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.<anonymous>.<no name provided>?)?")!>y<!>.propT
         <!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_11.<anonymous>.<no name provided>?)?")!>y<!><!UNSAFE_CALL!>.<!>propAny

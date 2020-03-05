@@ -137,7 +137,7 @@ public final class MyActivity {
 
     @Bind(id = lib.R.id.textView)
     @java.lang.Deprecated()
-    public static void a$annotations() {
+    public static void getA$annotations() {
     }
 
     public final int getA() {
@@ -146,7 +146,7 @@ public final class MyActivity {
 
     @Bind(id = lib.R.id.textView)
     @java.lang.Deprecated()
-    public static void b$annotations() {
+    public static void getB$annotations() {
     }
 
     public final int getB() {
@@ -155,7 +155,7 @@ public final class MyActivity {
 
     @Bind(id = app.R.layout.mainActivity)
     @java.lang.Deprecated()
-    public static void c$annotations() {
+    public static void getC$annotations() {
     }
 
     public final int getC() {
@@ -164,7 +164,7 @@ public final class MyActivity {
 
     @Bind(id = app.R.layout.mainActivity)
     @java.lang.Deprecated()
-    public static void d$annotations() {
+    public static void getD$annotations() {
     }
 
     public final int getD() {
@@ -174,7 +174,7 @@ public final class MyActivity {
     @Anno(a1 = app.B.a1, a2 = app.B.a2, a3 = app.B.a3, a4 = app.B.a4, a5 = app.B.a5, a6 = app.B.a6, a7 = app.B.a7, a8 = app.B.a8, a9 = "A")
     @Bind(id = app.R2.layout.mainActivity)
     @java.lang.Deprecated()
-    public static void e$annotations() {
+    public static void getE$annotations() {
     }
 
     public final int getE() {
@@ -183,7 +183,7 @@ public final class MyActivity {
 
     @Bind(id = app.B.id.textView)
     @java.lang.Deprecated()
-    public static void f$annotations() {
+    public static void getF$annotations() {
     }
 
     public final int getF() {

@@ -1,13 +1,14 @@
-// !USE_EXPERIMENTAL: kotlin.Experimental
+// FIR_IDENTICAL
+// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 // FILE: api.kt
 
 package api
 
-@Experimental(Experimental.Level.WARNING)
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 annotation class ExperimentalAPI
 
 @ExperimentalAPI
-@Experimental(Experimental.Level.WARNING)
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 annotation class VeryExperimentalAPI
 
 @ExperimentalAPI
@@ -19,7 +20,7 @@ fun g() {}
 
 // FILE: usage.kt
 
-@file:UseExperimental(ExperimentalAPI::class, VeryExperimentalAPI::class)
+@file:OptIn(ExperimentalAPI::class, VeryExperimentalAPI::class)
 package usage
 
 import api.*

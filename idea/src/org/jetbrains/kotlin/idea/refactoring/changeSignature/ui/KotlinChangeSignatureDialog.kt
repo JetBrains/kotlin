@@ -236,7 +236,6 @@ class KotlinChangeSignatureDialog(
                     components.add(component)
                     panel.add(component)
                     add(panel)
-                    IJSwingUtilities.adjustComponentsOnMac(label, component)
                     column++
                 }
             }
@@ -332,7 +331,7 @@ class KotlinChangeSignatureDialog(
 
     override fun validateAndCommitData(): String? {
         if (myMethod.canChangeReturnType() == MethodDescriptor.ReadWriteOption.ReadWrite &&
-            myReturnTypeCodeFragment.getTypeInfo(isCovariant = true, forPreview = false).type == null
+            myReturnTypeCodeFragment.getTypeInfo(isCovariant = true, forPreview = false, reanalyse = true).type == null
         ) {
             if (Messages.showOkCancelDialog(
                     myProject,
@@ -346,7 +345,7 @@ class KotlinChangeSignatureDialog(
         }
 
         for (item in parametersTableModel.items) {
-            if (item.typeCodeFragment.getTypeInfo(isCovariant = true, forPreview = false).type == null) {
+            if (item.typeCodeFragment.getTypeInfo(isCovariant = true, forPreview = false, reanalyse = true).type == null) {
                 val paramText = if (item.parameter != parametersTableModel.receiver) "parameter '${item.parameter.name}'" else "receiver"
                 if (Messages.showOkCancelDialog(
                         myProject,
@@ -455,10 +454,19 @@ class KotlinChangeSignatureDialog(
             return KotlinChangeSignatureProcessor(project, changeInfo, commandName)
         }
 
-        fun PsiCodeFragment?.getTypeInfo(isCovariant: Boolean, forPreview: Boolean): KotlinTypeInfo {
+
+        private fun KtTypeCodeFragment.createCopy() =
+            KtPsiFactory(this).createTypeCodeFragment(text, this)
+
+        fun PsiCodeFragment?.getTypeInfo(isCovariant: Boolean, forPreview: Boolean, reanalyse: Boolean = false): KotlinTypeInfo {
             if (this !is KtTypeCodeFragment) return KotlinTypeInfo(isCovariant)
 
-            val typeRef = getContentElement()
+            /*
+            As we do not update our caches on every KtTypeCodeFragment change
+            Caches are old and we cannot resolve type for old KtTypeCodeFragment
+             */
+            val codeFragment = if (reanalyse) createCopy() else this
+            val typeRef = codeFragment.getContentElement()
             val type = typeRef?.analyze(BodyResolveMode.PARTIAL)?.get(BindingContext.TYPE, typeRef)
             return when {
                 type != null && !type.isError -> KotlinTypeInfo(isCovariant, type, if (forPreview) typeRef.text else null)

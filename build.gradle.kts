@@ -1,14 +1,13 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.plugins.ide.idea.model.IdeaModel
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import proguard.gradle.ProGuardTask
 
 buildscript {
-    extra["defaultSnapshotVersion"] = "1.3-SNAPSHOT"
+
     val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
-    kotlinBootstrapFrom(BootstrapOption.BintrayBootstrap("1.3.70-dev-1806", cacheRedirectorEnabled))
+    kotlinBootstrapFrom(BootstrapOption.BintrayBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
 
     repositories {
         bootstrapKotlinRepo?.let(::maven)
@@ -28,6 +27,7 @@ buildscript {
     dependencies {
         bootstrapCompilerClasspath(kotlin("compiler-embeddable", bootstrapKotlinVersion))
 
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.15")
         classpath("com.gradle.publish:plugin-publish-plugin:0.9.7")
         classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
         classpath("net.sf.proguard:proguard-gradle:6.1.0")
@@ -70,7 +70,7 @@ val defaultSnapshotVersion: String by extra
 val buildNumber by extra(findProperty("build.number")?.toString() ?: defaultSnapshotVersion)
 val kotlinVersion by extra(findProperty("deployVersion")?.toString() ?: buildNumber)
 
-val kotlinLanguageVersion by extra("1.3")
+val kotlinLanguageVersion by extra("1.4")
 
 allprojects {
     group = "org.jetbrains.kotlin"
@@ -148,6 +148,8 @@ rootProject.apply {
     from(rootProject.file("gradle/report.gradle.kts"))
     from(rootProject.file("gradle/javaInstrumentation.gradle.kts"))
     from(rootProject.file("gradle/jps.gradle.kts"))
+    from(rootProject.file("gradle/checkArtifacts.gradle.kts"))
+    from(rootProject.file("gradle/checkCacheability.gradle.kts"))
 }
 
 IdeVersionConfigurator.setCurrentIde(project)
@@ -172,13 +174,14 @@ extra["versions.org.springframework"] = "4.2.0.RELEASE"
 extra["versions.jflex"] = "1.7.0"
 extra["versions.markdown"] = "0.1.25"
 extra["versions.trove4j"] = "1.0.20181211"
-extra["versions.completion-ranking-kotlin"] = "0.0.2"
+extra["versions.completion-ranking-kotlin"] = "0.1.2"
+extra["versions.r8"] = "1.5.70"
 
 // NOTE: please, also change KTOR_NAME in pathUtil.kt and all versions in corresponding jar names in daemon tests.
 extra["versions.ktor-network"] = "1.0.1"
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.3.70-dev-13747"
+    extra["versions.kotlin-native"] = "1.4-dev-14579"
 }
 
 val intellijUltimateEnabled by extra(project.kotlinBuildProperties.intellijUltimateEnabled)
@@ -196,11 +199,11 @@ extra["IntellijCoreDependencies"] =
         "jdom",
         "jna",
         "log4j",
-        "picocontainer",
+        if (Platform[201].orHigher()) null else "picocontainer",
         "snappy-in-java",
         "streamex",
         "trove4j"
-    )
+    ).filterNotNull()
 
 
 extra["compilerModules"] = arrayOf(
@@ -232,12 +235,14 @@ extra["compilerModules"] = arrayOf(
     ":compiler:cli",
     ":compiler:cli-js",
     ":compiler:incremental-compilation-impl",
+    ":compiler:compiler.version",
     ":js:js.ast",
     ":js:js.serializer",
     ":js:js.parser",
     ":js:js.frontend",
     ":js:js.translator",
     ":js:js.dce",
+    ":native:frontend.native",
     ":compiler",
     ":kotlin-build-common",
     ":core:metadata",
@@ -273,7 +278,8 @@ val coreLibProjects = listOfNotNull(
     ":kotlin-test:kotlin-test-junit5",
     ":kotlin-test:kotlin-test-testng",
     ":kotlin-test:kotlin-test-js".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
-    ":kotlin-reflect"
+    ":kotlin-reflect",
+    ":kotlin-coroutines-experimental-compat"
 )
 
 val gradlePluginProjects = listOf(
@@ -337,6 +343,7 @@ allprojects {
         maven("https://dl.bintray.com/kotlin/ktor")
         maven("https://kotlin.bintray.com/kotlin-dependencies")
         maven("https://jetbrains.bintray.com/intellij-third-party-dependencies")
+        maven("https://dl.google.com/dl/android/maven2")
         bootstrapKotlinRepo?.let(::maven)
         internalKotlinRepo?.let(::maven)
     }
@@ -374,6 +381,22 @@ allprojects {
 
     tasks.withType<Jar> {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+
+    tasks.withType<AbstractArchiveTask> {
+        isPreserveFileTimestamps = false
+        isReproducibleFileOrder = true
+    }
+
+    tasks.withType<Test> {
+        outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KT-37089") { true }
+    }
+
+    normalization {
+        runtimeClasspath {
+            ignore("META-INF/MANIFEST.MF")
+            ignore("META-INF/compiler.version")
+        }
     }
 
     tasks {
@@ -426,17 +449,12 @@ allprojects {
 }
 
 gradle.taskGraph.whenReady {
-    if (isTeamcityBuild) {
-        logger.warn("CI build profile is active (IC is off, proguard is on). Use -Pteamcity=false to reproduce local build")
-        for (task in allTasks) {
-            when (task) {
-                is AbstractKotlinCompile<*> -> task.incremental = false
-                is JavaCompile -> task.options.isIncremental = false
-            }
-        }
-    } else {
-        logger.warn("Local build profile is active (IC is on, proguard is off). Use -Pteamcity=true to reproduce TC build")
-    }
+    fun Boolean.toOnOff(): String = if (this) "on" else "off"
+    val profile = if (isTeamcityBuild) "CI" else "Local"
+
+    logger.warn("$profile build profile is active (proguard is ${kotlinBuildProperties.proguard.toOnOff()}" +
+                            ", jar compression is ${kotlinBuildProperties.jarCompression.toOnOff()})." +
+                            " Use -Pteamcity=<true|false> to reproduce CI/local build")
 
     allTasks.filterIsInstance<org.gradle.jvm.tasks.Jar>().forEach { task ->
         task.entryCompression = if (kotlinBuildProperties.jarCompression)
@@ -508,7 +526,8 @@ tasks {
             ":compiler:test",
             ":compiler:container:test",
             ":compiler:tests-java8:test",
-            ":compiler:tests-spec:remoteRunTests"
+            ":compiler:tests-spec:remoteRunTests",
+            ":compiler:tests-against-klib:test"
         )
         dependsOn(":plugins:jvm-abi-gen:test")
     }
@@ -526,7 +545,8 @@ tasks {
     }
 
     register("wasmCompilerTest") {
-        dependsOn(":js:js.tests:wasmTest")
+//  TODO: fix once
+//        dependsOn(":js:js.tests:wasmTest")
     }
 
     register("firCompilerTest") {
@@ -535,7 +555,17 @@ tasks {
         dependsOn(":compiler:fir:fir2ir:test")
         dependsOn(":compiler:fir:lightTree:test")
     }
-    
+
+    register("firAllTest") {
+        dependsOn(
+            ":compiler:fir:psi2fir:test",
+            ":compiler:fir:lightTree:test",
+            ":compiler:fir:resolve:test",
+            ":compiler:fir:fir2ir:test",
+            ":idea:firTest"
+        )
+    }
+
     register("compilerFrontendVisualizerTest") {
         dependsOn("compiler:visualizer:test")
     }
@@ -605,8 +635,7 @@ tasks {
     register("konan-tests") {
         dependsOn("dist")
         dependsOn(
-            ":kotlin-native:kotlin-native-library-reader:test",
-            ":kotlin-native:commonizer:test"
+            ":native:kotlin-klib-commonizer:test"
         )
     }
 
@@ -645,6 +674,13 @@ tasks {
             "idea-plugin-main-tests",
             "idea-plugin-additional-tests",
             "idea-new-project-wizard-tests"
+        )
+    }
+
+    register("idea-plugin-performance-tests") {
+        dependsOn("dist")
+        dependsOn(
+            ":idea:performanceTests:performanceTest"
         )
     }
 

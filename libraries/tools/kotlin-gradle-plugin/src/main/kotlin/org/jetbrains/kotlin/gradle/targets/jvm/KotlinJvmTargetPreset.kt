@@ -18,7 +18,7 @@ class KotlinJvmTargetPreset(
     project,
     kotlinPluginVersion
 ) {
-    override fun instantiateTarget(): KotlinJvmTarget {
+    override fun instantiateTarget(name: String): KotlinJvmTarget {
         return project.objects.newInstance(KotlinJvmTarget::class.java, project)
     }
 

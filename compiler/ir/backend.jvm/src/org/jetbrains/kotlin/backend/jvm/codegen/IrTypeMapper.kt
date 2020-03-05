@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
@@ -16,17 +17,11 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.isSuspendFunction
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.computeExpandedTypeForInlineClass
 import org.jetbrains.kotlin.load.kotlin.mapBuiltInType
@@ -52,11 +47,20 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
         }
 
     fun classInternalName(irClass: IrClass): String {
+        fun report(): Nothing {
+            error(
+                "Local class should have its name computed in InventNamesForLocalClasses: ${irClass.fqNameWhenAvailable}\n" +
+                        "Ensure that any lowering that transforms elements with local class info (classes, function references) " +
+                        "invokes `copyAttributes` on the transformed element."
+            )
+        }
+
         context.getLocalClassType(irClass)?.internalName?.let { return it }
 
         context.classNameOverride[irClass]?.let { return it.internalName }
 
         val className = SpecialNames.safeIdentifier(irClass.name).identifier
+
         val internalName = when (val parent = irClass.parent) {
             is IrPackageFragment -> {
                 val fqName = parent.fqName
@@ -66,11 +70,13 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
             is IrClass -> {
                 classInternalName(parent) + "$" + className
             }
-            else -> error(
-                "Local class should have its name computed in InventNamesForLocalClasses: ${irClass.fqNameWhenAvailable}\n" +
-                        "Ensure that any lowering that transforms elements with local class info (classes, function references) " +
-                        "invokes `copyAttributes` on the transformed element."
-            )
+            is IrFunction -> {
+                if (parent.isSuspend && parent.parentAsClass.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
+                    val interfaceClass = parent.parentAsClass.parent as IrClass
+                    classInternalName(interfaceClass) + "$" + parent.name.asString()
+                } else report()
+            }
+            else -> report()
         }
         return JvmCodegenUtil.sanitizeNameIfNeeded(internalName, context.state.languageVersionSettings)
     }

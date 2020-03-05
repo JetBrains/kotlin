@@ -21,5 +21,7 @@ interface FirContractDescriptionOwner : FirElement {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitContractDescriptionOwner(this, data)
 
+    fun replaceContractDescription(newContractDescription: FirContractDescription)
+
     fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirContractDescriptionOwner
 }

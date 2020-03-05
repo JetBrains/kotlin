@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.impl.carriers.ValueParameterCarrier
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
@@ -41,8 +42,9 @@ class IrValueParameterImpl(
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean
 ) :
-    IrDeclarationBase(startOffset, endOffset, origin),
-    IrValueParameter {
+    IrDeclarationBase<ValueParameterCarrier>(startOffset, endOffset, origin),
+    IrValueParameter,
+    ValueParameterCarrier {
 
     constructor(
         startOffset: Int,
@@ -79,7 +81,18 @@ class IrValueParameterImpl(
         symbol.bind(this)
     }
 
-    override var defaultValue: IrExpressionBody? = null
+    override var defaultValueField: IrExpressionBody? = null
+
+    override var defaultValue: IrExpressionBody?
+        get() = getCarrier().defaultValueField
+        set(v) {
+            if (defaultValue !== v) {
+                if (v is IrBodyBase<*>) {
+                    v.container = this
+                }
+                setCarrier().defaultValueField = v
+            }
+        }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitValueParameter(this, data)

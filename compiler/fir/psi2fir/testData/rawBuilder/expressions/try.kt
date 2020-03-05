@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 fun some() {
     try {
         throw KotlinNullPointerException()

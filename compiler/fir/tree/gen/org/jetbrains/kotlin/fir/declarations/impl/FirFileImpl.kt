@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -21,17 +20,16 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirFileImpl(
+internal class FirFileImpl(
     override val source: FirSourceElement?,
+    override val annotations: MutableList<FirAnnotationCall>,
     override val session: FirSession,
+    override var resolvePhase: FirResolvePhase,
+    override val imports: MutableList<FirImport>,
+    override val declarations: MutableList<FirDeclaration>,
     override val name: String,
-    override val packageFqName: FqName
-) : FirFile(), FirAbstractAnnotatedElement {
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override val imports: MutableList<FirImport> = mutableListOf()
-    override val declarations: MutableList<FirDeclaration> = mutableListOf()
-
+    override val packageFqName: FqName,
+) : FirFile() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         imports.forEach { it.accept(visitor, data) }

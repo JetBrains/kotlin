@@ -1,0 +1,4 @@
+package
+
+public val kotlin.Int.plusAssign: (kotlin.Int) -> kotlin.Unit
+public fun main(): kotlin.Unit

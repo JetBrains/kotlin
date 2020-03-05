@@ -40,9 +40,19 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/psi2fir/testData/rawBuilder/declarations"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("annotation.kt")
+        public void testAnnotation() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/annotation.kt");
+        }
+
         @TestMetadata("complexTypes.kt")
         public void testComplexTypes() throws Exception {
             runTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/complexTypes.kt");
+        }
+
+        @TestMetadata("constructorInObject.kt")
+        public void testConstructorInObject() throws Exception {
+            runTest("compiler/fir/psi2fir/testData/rawBuilder/declarations/constructorInObject.kt");
         }
 
         @TestMetadata("derivedClass.kt")

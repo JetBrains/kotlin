@@ -71,6 +71,10 @@ class KotlinClassHeader(
                 DELEGATING
         } else null
 
+    val isUnstableJvmIrBinary: Boolean
+        get() = (extraInt and JvmAnnotationNames.METADATA_JVM_IR_FLAG) != 0 &&
+                (extraInt and JvmAnnotationNames.METADATA_JVM_IR_STABLE_ABI_FLAG == 0)
+
     val isPreRelease: Boolean
         get() = (extraInt and JvmAnnotationNames.METADATA_PRE_RELEASE_FLAG) != 0
 

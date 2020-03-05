@@ -103,16 +103,16 @@ class RedundantNopsCleanupMethodTransformer : MethodTransformer() {
 
 
 internal fun getRequiredNopInRange(firstInclusive: AbstractInsnNode, lastExclusive: AbstractInsnNode?): AbstractInsnNode? {
-    var lastNop: AbstractInsnNode? = null
+    var firstNop: AbstractInsnNode? = null
     var current: AbstractInsnNode? = firstInclusive
     while (current != null && current != lastExclusive) {
         if (current.isMeaningful && current.opcode != Opcodes.NOP) {
             return null
-        } else if (current.opcode == Opcodes.NOP) {
-            lastNop = current
+        } else if (current.opcode == Opcodes.NOP && firstNop == null) {
+            firstNop = current
         }
         current = current.next
     }
 
-    return lastNop
+    return firstNop
 }

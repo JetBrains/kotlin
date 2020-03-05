@@ -7,4 +7,5 @@ FILE fqName:<root> fileName:/jdkClassSyntheticProperty.kt
         RETURN type=kotlin.Nothing from='public final fun <get-test> (): kotlin.Array<out java.lang.reflect.Field?>? declared in <root>'
           CALL 'public open fun getDeclaredFields (): kotlin.Array<out java.lang.reflect.Field?>? declared in java.lang.Class' type=kotlin.Array<out java.lang.reflect.Field?>? origin=GET_PROPERTY
             <1>: kotlin.Any?
-            $this: GET_VAR '<this>: java.lang.Class<*> declared in <root>.<get-test>' type=java.lang.Class<*> origin=null
+            $this: TYPE_OP type=java.lang.Class<T of java.lang.Class> origin=IMPLICIT_CAST typeOperand=java.lang.Class<T of java.lang.Class>
+              GET_VAR '<this>: java.lang.Class<*> declared in <root>.<get-test>' type=java.lang.Class<*> origin=null

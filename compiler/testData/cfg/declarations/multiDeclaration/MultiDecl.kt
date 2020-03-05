@@ -1,8 +1,8 @@
 package n
 
 class C {
-    fun component1() = 1
-    fun component2() = 2
+    operator fun component1() = 1
+    operator fun component2() = 2
 }
 
 fun test(c: C) {

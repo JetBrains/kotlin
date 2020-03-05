@@ -4,7 +4,7 @@ package
 package api {
     @api.ExperimentalAPI public fun function(): kotlin.String
 
-    @kotlin.Experimental(level = Level.ERROR) public final annotation class ExperimentalAPI : kotlin.Annotation {
+    @kotlin.RequiresOptIn(level = Level.ERROR) public final annotation class ExperimentalAPI : kotlin.Annotation {
         public constructor ExperimentalAPI()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

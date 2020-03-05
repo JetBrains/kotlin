@@ -23,7 +23,7 @@ import com.intellij.psi.impl.compiled.*
 import com.intellij.psi.util.MethodSignatureUtil
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 
-class ScriptDependencySourceNavigationPolicyForJavaClasses : ClsCustomNavigationPolicyEx() {
+class ScriptDependencySourceNavigationPolicyForJavaClasses : ClsCustomNavigationPolicy {
     override fun getNavigationElement(clsClass: ClsClassImpl): PsiClass? {
         val containingClass = clsClass.containingClass as? ClsClassImpl
         if (containingClass != null) {
@@ -31,13 +31,13 @@ class ScriptDependencySourceNavigationPolicyForJavaClasses : ClsCustomNavigation
         }
 
         val clsFileImpl = clsClass.containingFile as? ClsFileImpl ?: return null
-        return getFileNavigationElement(clsFileImpl)?.classes?.singleOrNull()
+        return (getNavigationElement(clsFileImpl) as? PsiClassOwner)?.classes?.singleOrNull()
     }
 
     override fun getNavigationElement(clsMethod: ClsMethodImpl): PsiElement? {
         val clsClass = getNavigationElement(clsMethod.containingClass as ClsClassImpl) ?: return null
         return clsClass.findMethodsByName(clsMethod.name, false)
-                .firstOrNull { MethodSignatureUtil.areParametersErasureEqual(it, clsMethod) }
+            .firstOrNull { MethodSignatureUtil.areParametersErasureEqual(it, clsMethod) }
     }
 
     override fun getNavigationElement(clsField: ClsFieldImpl): PsiElement? {
@@ -45,7 +45,7 @@ class ScriptDependencySourceNavigationPolicyForJavaClasses : ClsCustomNavigation
         return srcClass.findFieldByName(clsField.name, false)
     }
 
-    override fun getFileNavigationElement(file: ClsFileImpl): PsiClassOwner? {
+    override fun getNavigationElement(file: ClsFileImpl): PsiElement? {
         val virtualFile = file.virtualFile
         val project = file.project
 

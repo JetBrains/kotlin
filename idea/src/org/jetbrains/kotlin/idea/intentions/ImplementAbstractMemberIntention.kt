@@ -129,9 +129,9 @@ abstract class ImplementAbstractMemberIntentionBase :
 
     private fun implementInClass(member: KtNamedDeclaration, targetClasses: List<PsiElement>) {
         val project = member.project
-        project.executeCommand(CodeInsightBundle.message("intention.implement.abstract.method.command.name")) {
+        project.executeCommand<Unit>(CodeInsightBundle.message("intention.implement.abstract.method.command.name")) {
             if (!FileModificationService.getInstance().preparePsiElementsForWrite(targetClasses)) return@executeCommand
-            runWriteAction {
+            runWriteAction<Unit> {
                 for (targetClass in targetClasses) {
                     try {
                         val descriptor = OpenFileDescriptor(project, targetClass.containingFile.virtualFile)

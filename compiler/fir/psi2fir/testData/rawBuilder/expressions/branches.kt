@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 fun foo(a: Int, b: Int) = if (a > b) a else b
 
 fun bar(a: Double, b: Double): Double {

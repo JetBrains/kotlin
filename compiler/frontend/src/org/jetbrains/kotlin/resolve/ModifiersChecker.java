@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve;
 
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -270,6 +271,7 @@ public class ModifiersChecker {
                     missingSupertypesResolver
             );
             for (DeclarationChecker checker : declarationCheckers) {
+                ProgressManager.checkCanceled();
                 checker.check(declaration, descriptor, context);
             }
             OperatorModifierChecker.INSTANCE.check(declaration, descriptor, trace, languageVersionSettings);

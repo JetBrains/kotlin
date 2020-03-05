@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirTargetElement
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.scopes.addImportingScopes
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -26,7 +25,8 @@ open class FirBodyResolveTransformer(
     session: FirSession,
     phase: FirResolvePhase,
     override var implicitTypeOnly: Boolean,
-    scopeSession: ScopeSession
+    scopeSession: ScopeSession,
+    val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve()
 ) : FirAbstractBodyResolveTransformer(phase) {
     private var packageFqName = FqName.ROOT
 
@@ -37,8 +37,10 @@ open class FirBodyResolveTransformer(
     private val controlFlowStatementsTransformer = FirControlFlowStatementsResolveTransformer(this)
 
     override fun transformFile(file: FirFile, data: ResolutionMode): CompositeTransformResult<FirFile> {
-        packageFqName = file.packageFqName
+        components.cleanContextForAnonymousFunction()
+        @UseExperimental(PrivateForInline::class)
         components.file = file
+        packageFqName = file.packageFqName
         return withScopeCleanup(components.topLevelScopes) {
             components.topLevelScopes.addImportingScopes(file, session, components.scopeSession)
             super.transformFile(file, data)
@@ -105,6 +107,13 @@ open class FirBodyResolveTransformer(
         return expressionsTransformer.transformThisReceiverExpression(thisReceiverExpression, data)
     }
 
+    override fun transformComparisonExpression(
+        comparisonExpression: FirComparisonExpression,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
+        return expressionsTransformer.transformComparisonExpression(comparisonExpression, data)
+    }
+
     override fun transformOperatorCall(operatorCall: FirOperatorCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         return expressionsTransformer.transformOperatorCall(operatorCall, data)
     }
@@ -142,7 +151,7 @@ open class FirBodyResolveTransformer(
         wrappedDelegateExpression: FirWrappedDelegateExpression,
         data: ResolutionMode
     ): CompositeTransformResult<FirStatement> {
-        return expressionsTransformer.transformWrappedDelegateExpression(wrappedDelegateExpression, data)
+        return declarationsTransformer.transformWrappedDelegateExpression(wrappedDelegateExpression, data)
     }
 
     override fun <T> transformConstExpression(constExpression: FirConstExpression<T>, data: ResolutionMode): CompositeTransformResult<FirStatement> {
@@ -173,7 +182,7 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformDeclarationStatus(declarationStatus, data)
     }
 
-    override fun transformProperty(property: FirProperty, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+    override fun transformProperty(property: FirProperty, data: ResolutionMode): CompositeTransformResult<FirProperty> {
         return declarationsTransformer.transformProperty(property, data)
     }
 
@@ -185,7 +194,7 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformAnonymousObject(anonymousObject, data)
     }
 
-    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: ResolutionMode): CompositeTransformResult<FirSimpleFunction> {
         return declarationsTransformer.transformSimpleFunction(simpleFunction, data)
     }
 

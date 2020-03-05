@@ -59,9 +59,27 @@ class NaNPropagationTest {
     }
 
     @Test
+    fun minOfVararg() {
+        propagateOf3(
+            { a, b, c -> minOf(a, *doubleArrayOf(b, c)) },
+            { a, b, c -> minOf(a, *floatArrayOf(b, c)) },
+            "minOf(a, vararg other)"
+        )
+    }
+
+    @Test
     fun maxOf() {
         propagateOf2(::maxOf, ::maxOf, "maxOf")
         propagateOf3(::maxOf, ::maxOf, "maxOf")
+    }
+
+    @Test
+    fun maxOfVararg() {
+        propagateOf3(
+            { a, b, c -> maxOf(a, *doubleArrayOf(b, c)) },
+            { a, b, c -> maxOf(a, *floatArrayOf(b, c)) },
+            "maxOf(a, vararg other)"
+        )
     }
 
     @Test

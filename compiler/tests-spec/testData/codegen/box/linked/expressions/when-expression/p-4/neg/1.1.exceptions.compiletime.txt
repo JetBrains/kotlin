@@ -1,0 +1,1 @@
+java.lang.IllegalStateException: NO_ELSE_IN_WHEN: 'when' expression must be exhaustive, add necessary 'Val_1', 'Val_2' branches or 'else' branch instead (4,17) in /KotlinClass.kt

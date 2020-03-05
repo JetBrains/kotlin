@@ -15,7 +15,7 @@ interface GradleIR : BuildSystemIR {
 
 data class RawGradleIR(
     val renderer: GradlePrinter.() -> Unit
-) : GradleIR {
+) : GradleIR, FreeIR {
     override fun GradlePrinter.renderGradle() = renderer()
 }
 

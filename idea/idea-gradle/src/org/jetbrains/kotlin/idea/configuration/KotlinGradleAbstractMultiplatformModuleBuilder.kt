@@ -10,10 +10,8 @@ import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
 import com.intellij.openapi.externalSystem.model.project.ModuleData
-import com.intellij.openapi.externalSystem.service.project.wizard.ExternalModuleSettingsStep
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.KotlinIcons
@@ -23,11 +21,13 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.TargetSupportException
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder
-import org.jetbrains.plugins.gradle.service.settings.GradleProjectSettingsControl
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import com.intellij.openapi.externalSystem.model.project.ProjectData
+import com.intellij.openapi.externalSystem.service.project.wizard.ExternalModuleSettingsStep
+import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
 import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
+import org.jetbrains.plugins.gradle.service.settings.GradleProjectSettingsControl
 import javax.swing.Icon
 
 abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
@@ -37,6 +37,20 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
     val mppDirName = "app"
 
     override fun getNodeIcon(): Icon = KotlinIcons.MPP
+
+	/*
+    This overriding is a temporary workaround of a problem with how we use GradleModuleBuilder().
+    IDEA implies that we will create new GradleModuleBuilder every time we call Kotlin New Project Wizard.
+    But we create it once for every kind of GradleModuleBuilder-based New Project Wizard and the just reuse it.
+    How the problem looks for a user: KT-34229
+    Ticket that should properly fix it: KT-34591
+     */
+    override fun cleanup() {
+        super.cleanup()
+        this.name = null
+        this.contentEntryPath = null
+        this.moduleFilePath = null
+    }
 
     override fun createWizardSteps(wizardContext: WizardContext, modulesProvider: ModulesProvider): Array<ModuleWizardStep> {
         super.createWizardSteps(wizardContext, modulesProvider)  // initializes GradleModuleBuilder.myWizardContext

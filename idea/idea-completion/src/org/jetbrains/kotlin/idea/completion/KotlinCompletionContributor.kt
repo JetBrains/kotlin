@@ -281,11 +281,7 @@ class KotlinCompletionContributor : CompletionContributor() {
                 CompletionType.CLASS_NAME -> CompletionTypeStats.BASIC //there is no class name anymore actually
                 CompletionType.SMART -> CompletionTypeStats.SMART
             },
-            fileType = when {
-                name.endsWith(".kt") -> FileTypeStats.KT
-                name.endsWith(".gradle.kts") -> FileTypeStats.GRADLEKTS
-                else -> FileTypeStats.KTS
-            },
+            fileType = FileTypeStats.parseFromFileName(name),
             invocationCount = parameters.invocationCount
         )
         val position = parameters.position

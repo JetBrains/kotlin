@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun f() {
     var foo = 1
     try {

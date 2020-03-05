@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 class KotlinJvmBinarySourceElement(
     val binaryClass: KotlinJvmBinaryClass,
     override val incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>? = null,
-    override val isPreReleaseInvisible: Boolean = false
+    override val isPreReleaseInvisible: Boolean = false,
+    override val isInvisibleIrDependency: Boolean = false
 ) : DeserializedContainerSource {
     override val presentableString: String
         get() = "Class '${binaryClass.classId.asSingleFqName().asString()}'"

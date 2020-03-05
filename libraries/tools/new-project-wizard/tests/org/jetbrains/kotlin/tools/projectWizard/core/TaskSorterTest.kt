@@ -15,7 +15,7 @@ class TaskSorterTest {
                     before = emptyList(),
                     after = emptyList(),
                     phase = GenerationPhase.FIRST_STEP,
-                    checker = Checker.ALWAYS_AVAILABLE,
+                    isAvailable = ALWAYS_AVAILABLE_CHECKER,
                     title = null
                 )
             }

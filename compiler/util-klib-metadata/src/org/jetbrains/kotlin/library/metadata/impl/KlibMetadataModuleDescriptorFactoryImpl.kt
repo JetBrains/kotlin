@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentP
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentTypeTransformer
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -35,7 +37,8 @@ private val ModuleDescriptorImpl.isStdlibModule
 class KlibMetadataModuleDescriptorFactoryImpl(
     override val descriptorFactory: KlibModuleDescriptorFactory,
     override val packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory,
-    override val flexibleTypeDeserializer: FlexibleTypeDeserializer
+    override val flexibleTypeDeserializer: FlexibleTypeDeserializer,
+    override val platformDependentTypeTransformer: PlatformDependentTypeTransformer
 ) : KlibMetadataModuleDescriptorFactory {
 
     override fun createDescriptorOptionalBuiltIns(
@@ -149,7 +152,9 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             emptyList(),
             notFoundClasses,
             ContractDeserializerImpl(configuration, storageManager),
-            extensionRegistryLite = KlibMetadataSerializerProtocol.extensionRegistry
+            extensionRegistryLite = KlibMetadataSerializerProtocol.extensionRegistry,
+            samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList()),
+            platformDependentTypeTransformer = platformDependentTypeTransformer
         )
 
         fragmentsToInitialize.forEach {

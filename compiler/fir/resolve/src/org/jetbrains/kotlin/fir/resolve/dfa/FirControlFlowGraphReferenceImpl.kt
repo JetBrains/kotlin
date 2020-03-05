@@ -20,3 +20,6 @@ class FirControlFlowGraphReferenceImpl(val controlFlowGraph: ControlFlowGraph) :
         return this
     }
 }
+
+val FirControlFlowGraphReference.controlFlowGraph: ControlFlowGraph?
+    get() = (this as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph

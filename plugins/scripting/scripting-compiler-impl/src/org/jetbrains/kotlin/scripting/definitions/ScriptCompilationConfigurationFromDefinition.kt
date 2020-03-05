@@ -49,7 +49,9 @@ class ScriptCompilationConfigurationFromDefinition(
                         }.orEmpty()
                     )
 
-                    val reports = resolveResult.reports.map { ScriptDiagnostic(it.message, mapLegacyDiagnosticSeverity(it.severity)) }
+                    val reports = resolveResult.reports.map {
+                        ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, it.message, mapLegacyDiagnosticSeverity(it.severity))
+                    }
                     val resolvedDeps = (resolveResult as? DependenciesResolver.ResolveResult.Success)?.dependencies
 
                     if (resolvedDeps == null) ResultWithDiagnostics.Failure(reports)

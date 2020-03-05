@@ -28,6 +28,11 @@ public class DiagnosticsWithExplicitApiGenerated extends AbstractDiagnosticsWith
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithExplicitApi"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @TestMetadata("annotations.kt")
+    public void testAnnotations() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithExplicitApi/annotations.kt");
+    }
+
     @TestMetadata("classes.kt")
     public void testClasses() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithExplicitApi/classes.kt");

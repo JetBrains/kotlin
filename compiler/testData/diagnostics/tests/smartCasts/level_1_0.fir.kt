@@ -24,7 +24,7 @@ fun foo(arg: Int?) {
 fun kt6840_1(s: String?) {
     val hash = s?.hashCode()
     if (hash != null) {
-        s.<!INAPPLICABLE_CANDIDATE!>length<!>
+        s.length
     }
 }
 

@@ -75,7 +75,7 @@ object Snapshots : TemplateGroupBase() {
         includeDefault()
         include(CharSequences)
     } builder {
-        doc { "Returns a [HashSet] of all ${f.element.pluralize()}." }
+        doc { "Returns a new [HashSet] of all ${f.element.pluralize()}." }
         returns("HashSet<T>")
         body { "return toCollection(HashSet<T>(mapCapacity(collectionSizeOrDefault(12))))" }
         body(Sequences) { "return toCollection(HashSet<T>())" }
@@ -89,7 +89,7 @@ object Snapshots : TemplateGroupBase() {
         platforms(Platform.JVM)
     } builder {
         typeParam("T : Comparable<T>")
-        doc { "Returns a [SortedSet][java.util.SortedSet] of all ${f.element.pluralize()}." }
+        doc { "Returns a new [SortedSet][java.util.SortedSet] of all ${f.element.pluralize()}." }
         returns("java.util.SortedSet<T>")
         body { "return toCollection(java.util.TreeSet<T>())" }
     }
@@ -100,7 +100,7 @@ object Snapshots : TemplateGroupBase() {
     } builder {
         doc {
             """
-                Returns a [SortedSet][java.util.SortedSet] of all ${f.element.pluralize()}.
+                Returns a new [SortedSet][java.util.SortedSet] of all ${f.element.pluralize()}.
 
                 Elements in the set returned are sorted according to the given [comparator].
             """
@@ -113,7 +113,7 @@ object Snapshots : TemplateGroupBase() {
         includeDefault()
         include(Collections, CharSequences)
     } builder {
-        doc { "Returns a [MutableList] filled with all ${f.element.pluralize()} of this ${f.collection}." }
+        doc { "Returns a new [MutableList] filled with all ${f.element.pluralize()} of this ${f.collection}." }
         returns("MutableList<T>")
         body { "return toCollection(ArrayList<T>())" }
         body(Iterables) {

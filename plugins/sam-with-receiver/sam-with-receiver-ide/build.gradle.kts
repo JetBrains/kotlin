@@ -15,14 +15,13 @@ dependencies {
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":idea:idea-core"))
 
-    Ide.IJ183 {
-        compileOnly(project(":idea:idea-android"))
-    }
-
     compileOnly(project(":idea"))
     compileOnly(project(":idea:idea-jvm"))
 
-    compileOnly(intellijDep()) { includeJars("platform-api", "openapi", "extensions", "util") }
+    Platform[193].orLower {
+        compileOnly(intellijDep()) { includeJars("openapi") }
+    }
+    compileOnly(intellijDep()) { includeJars("platform-api", "extensions", "util") }
     compileOnly(intellijDep("gradle"))
 }
 

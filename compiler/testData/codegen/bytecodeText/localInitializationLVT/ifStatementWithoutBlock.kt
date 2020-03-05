@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 import kotlin.random.Random
 
 fun test(): Char {

@@ -28,6 +28,11 @@ data class File constructor(internal val javaPath: Path) {
         get() = javaPath.toAbsolutePath().toString()
     val absoluteFile: File
         get() = File(absolutePath)
+    val canonicalPath: String
+        get() = javaPath.toFile().canonicalPath
+    val canonicalFile: File
+        get() = File(canonicalPath)
+
     val name: String
         get() = javaPath.fileName.toString().removeSuffixIfPresent("/") // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8153248
     val extension: String
@@ -44,9 +49,9 @@ data class File constructor(internal val javaPath: Path) {
     val isFile
         get() = Files.isRegularFile(javaPath)
     val isAbsolute
-        get() = javaPath.isAbsolute()
+        get() = javaPath.isAbsolute
     val listFiles: List<File>
-        get() = Files.newDirectoryStream(javaPath).use { stream -> stream.map { File(it) } }
+        get() = Files.newDirectoryStream(javaPath).use { stream -> stream.map(::File) }
     val listFilesOrEmpty: List<File>
         get() = if (exists) listFiles else emptyList()
 

@@ -6,6 +6,7 @@
 package test.text
 
 import test.collections.assertArrayNotSameButEquals
+import test.platformNull
 import java.util.*
 import kotlin.test.*
 
@@ -41,9 +42,14 @@ class StringJVMTest {
         assertEquals("1,234,567.890", "%,.3f".format(Locale.ENGLISH, 1234567.890))
         assertEquals("1.234.567,890", "%,.3f".format(Locale.GERMAN,  1234567.890))
         assertEquals("1 234 567,890", "%,.3f".format(Locale("fr"),   1234567.890))
+        assertEquals("1,234,567.890", "%,.3f".format(null,           1234567.890))
+        assertEquals("1,234,567.890", "%,.3f".format(platformNull<Locale>(), 1234567.890))
+
         assertEquals("1,234,567.890", String.format(Locale.ENGLISH, "%,.3f", 1234567.890))
         assertEquals("1.234.567,890", String.format(Locale.GERMAN,  "%,.3f", 1234567.890))
         assertEquals("1 234 567,890", String.format(Locale("fr"),   "%,.3f", 1234567.890))
+        assertEquals("1,234,567.890", String.format(null,           "%,.3f", 1234567.890))
+        assertEquals("1,234,567.890", String.format(platformNull<Locale>(), "%,.3f", 1234567.890))
     }
 
     @Test fun toByteArrayEncodings() {
@@ -97,5 +103,20 @@ class StringJVMTest {
         // Case mapping where title case is different than uppercase.
         assertEquals("ǳǳǳ", "Ǳǳǳ".decapitalize(Locale.US))
         assertEquals("ǳǳǳ", "ǲǳǳ".decapitalize(Locale.US))
+    }
+
+    @Test
+    fun stringToBoolean() {
+        assertFalse(platformNull<String>().toBoolean())
+    }
+
+    @Test
+    fun stringEquals() {
+        assertFalse(platformNull<String>().equals("sample", ignoreCase = false))
+        assertFalse(platformNull<String>().equals("sample", ignoreCase = true))
+        assertFalse("sample".equals(platformNull<String>(), ignoreCase = false))
+        assertFalse("sample".equals(platformNull(), ignoreCase = true))
+        assertTrue(platformNull<String>().equals(platformNull(), ignoreCase = true))
+        assertTrue(platformNull<String>().equals(platformNull<String>(), ignoreCase = false))
     }
 }

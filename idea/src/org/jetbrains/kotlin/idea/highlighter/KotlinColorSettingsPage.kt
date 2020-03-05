@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
+import com.intellij.ide.highlighter.JavaHighlightingColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.fileTypes.SyntaxHighlighter
 import com.intellij.openapi.options.OptionsBundle
@@ -44,7 +45,7 @@ class KotlinColorSettingsPage : ColorSettingsPage, RainbowColorSettingsPage {
  * Doc comment here for `SomeClass`
  * @see <KDOC_LINK>Iterator#next()</KDOC_LINK>
  */
-<ANNOTATION>@Deprecated</ANNOTATION>("Deprecated class")
+<ANNOTATION>@Deprecated</ANNOTATION>(<ANNOTATION_ATTRIBUTE_NAME_ATTRIBUTES>message</ANNOTATION_ATTRIBUTE_NAME_ATTRIBUTES> = "Deprecated class")
 <BUILTIN_ANNOTATION>private</BUILTIN_ANNOTATION> class <CLASS>MyClass</CLASS><<BUILTIN_ANNOTATION>out</BUILTIN_ANNOTATION> <TYPE_PARAMETER>T</TYPE_PARAMETER> : <TRAIT>Iterable</TRAIT><<TYPE_PARAMETER>T</TYPE_PARAMETER>>>(var <PARAMETER><MUTABLE_VARIABLE><INSTANCE_PROPERTY>prop1</INSTANCE_PROPERTY></MUTABLE_VARIABLE></PARAMETER> : Int) {
     fun <FUNCTION_DECLARATION>foo</FUNCTION_DECLARATION>(<PARAMETER>nullable</PARAMETER> : String<QUEST>?</QUEST>, <PARAMETER>r</PARAMETER> : <TRAIT>Runnable</TRAIT>, <PARAMETER>f</PARAMETER> : () -> Int, <PARAMETER>fl</PARAMETER> : <TRAIT>FunctionLike</TRAIT>, dyn: <KEYWORD>dynamic</KEYWORD>) {
         <PACKAGE_FUNCTION_CALL>println</PACKAGE_FUNCTION_CALL>("length\nis ${"$"}{<PARAMETER>nullable</PARAMETER><SAFE_ACCESS>?.</SAFE_ACCESS><INSTANCE_PROPERTY>length</INSTANCE_PROPERTY>} <STRING_ESCAPE><INVALID_STRING_ESCAPE>\e</INVALID_STRING_ESCAPE></STRING_ESCAPE>")
@@ -161,6 +162,7 @@ var <PACKAGE_PROPERTY_CUSTOM_PROPERTY_DECLARATION><MUTABLE_VARIABLE>globalCounte
             OptionsBundle.message("options.java.attribute.descriptor.abstract.class") to KotlinHighlightingColors.ABSTRACT_CLASS,
             OptionsBundle.message("options.java.attribute.descriptor.interface") to KotlinHighlightingColors.TRAIT,
             KotlinBundle.message("options.kotlin.attribute.descriptor.annotation") to KotlinHighlightingColors.ANNOTATION,
+            KotlinBundle.message("options.kotlin.attribute.descriptor.annotation.attribute.name") to KotlinHighlightingColors.ANNOTATION_ATTRIBUTE_NAME_ATTRIBUTES,
             KotlinBundle.message("options.kotlin.attribute.descriptor.object") to KotlinHighlightingColors.OBJECT,
             KotlinBundle.message("options.kotlin.attribute.descriptor.enumEntry") to KotlinHighlightingColors.ENUM_ENTRY,
             KotlinBundle.message("options.kotlin.attribute.descriptor.typeAlias") to KotlinHighlightingColors.TYPE_ALIAS,

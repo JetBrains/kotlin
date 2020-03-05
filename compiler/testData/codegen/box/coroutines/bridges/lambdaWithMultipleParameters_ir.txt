@@ -1,16 +1,16 @@
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class LambdaWithMultipleParametersKt$box$1$1 {
-    private field a: java.lang.String
-    private field b: long
-    private field c: long
-    private field d: long
-    private field e: long
-    private field f: long
-    private field label: int
+    synthetic @org.jetbrains.annotations.NotNull field a: java.lang.String
+    synthetic field b: long
+    synthetic field c: long
+    synthetic field d: long
+    synthetic field e: long
+    synthetic field f: long
+    field label: int
     inner class LambdaWithMultipleParametersKt$box$1
     inner class LambdaWithMultipleParametersKt$box$1$1
-    public method <init>(p0: kotlin.coroutines.Continuation): void
+    method <init>(p0: kotlin.coroutines.Continuation): void
     public final method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object, p6: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
@@ -18,22 +18,14 @@ final class LambdaWithMultipleParametersKt$box$1$1 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class LambdaWithMultipleParametersKt$box$1 {
-    private field $res: kotlin.jvm.internal.Ref$ObjectRef
+    synthetic final @org.jetbrains.annotations.NotNull field $res: kotlin.jvm.internal.Ref$ObjectRef
     field L$0: java.lang.Object
-    private field label: int
+    field label: int
     inner class LambdaWithMultipleParametersKt$box$1
     inner class LambdaWithMultipleParametersKt$box$1$1
-    public method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef, p1: kotlin.coroutines.Continuation): void
+    method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef, p1: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public final method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
-}
-
-@kotlin.Metadata
-final class LambdaWithMultipleParametersKt$call$1 {
-    field label: int
-    @org.jetbrains.annotations.NotNull field result: java.lang.Object
-    public method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 

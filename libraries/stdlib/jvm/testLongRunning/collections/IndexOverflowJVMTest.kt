@@ -140,6 +140,17 @@ class IndexOverflowJVMTest {
 
 
     @Test
+    fun scanIndexedOverflow() {
+        assertIndexOverflow { maxIndexSequence.scanIndexed("") { index, _, s -> checkIndexPositive(index); s }.forEach { } }
+    }
+
+    @Test
+    fun scanReduceIndexedOverflow() {
+        assertIndexOverflow { maxIndexSequence.scanReduceIndexed { index, _, s -> checkIndexPositive(index); s }.forEach { } }
+    }
+
+
+    @Test
     fun dropTwiceMaxValue() {
 
         val halfMax = (1 shl 30) + 1

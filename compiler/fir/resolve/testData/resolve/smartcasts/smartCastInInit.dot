@@ -1,0 +1,55 @@
+digraph smartCastInInit_kt {
+    graph [splines=ortho nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function foo" style="filled" fillcolor=red];
+        1 [label="Exit function foo" style="filled" fillcolor=red];
+    }
+
+    0 -> {1};
+
+    subgraph cluster_1 {
+        color=red
+        2 [label="Enter function s" style="filled" fillcolor=red];
+        3 [label="Function call: R|kotlin/TODO|()"];
+        4 [label="Stub" style="filled" fillcolor=gray];
+        5 [label="Jump: ^s R|kotlin/TODO|()" style="filled" fillcolor=gray];
+        6 [label="Stub" style="filled" fillcolor=gray];
+        7 [label="Exit function s" style="filled" fillcolor=red];
+    }
+
+    2 -> {3};
+    3 -> {7};
+    3 -> {4} [style=dotted];
+    4 -> {5} [style=dotted];
+    5 -> {7 6} [style=dotted];
+    6 -> {7} [style=dotted];
+
+    subgraph cluster_2 {
+        color=red
+        8 [label="Enter function <init>" style="filled" fillcolor=red];
+        9 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+
+    8 -> {9};
+
+    subgraph cluster_3 {
+        color=red
+        10 [label="Enter function getter" style="filled" fillcolor=red];
+        11 [label="Exit function getter" style="filled" fillcolor=red];
+    }
+
+    10 -> {11};
+
+    subgraph cluster_4 {
+        color=red
+        12 [label="Enter property" style="filled" fillcolor=red];
+        13 [label="Exit property" style="filled" fillcolor=red];
+    }
+
+    12 -> {13};
+
+}

@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.idea.core.util
 
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import kotlin.math.abs
 
 fun PsiFile.getLineStartOffset(line: Int): Int? {
     return getLineStartOffset(line, skipWhitespace = true)
@@ -57,3 +59,7 @@ fun PsiElement.getLineCount(): Int {
 }
 
 fun PsiElement.isMultiLine(): Boolean = getLineCount() > 1
+
+fun Document.getLineCountInRange(textRange: TextRange): Int = abs(getLineNumber(textRange.startOffset) - getLineNumber(textRange.endOffset))
+
+fun Document.containsLineBreakInRange(textRange: TextRange): Boolean = getLineCountInRange(textRange) != 0

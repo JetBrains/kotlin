@@ -22,7 +22,6 @@ import com.sun.jdi.ObjectReference
 import org.jetbrains.eval4j.ObjectValue
 import org.jetbrains.eval4j.Value
 import org.jetbrains.eval4j.jdi.asValue
-import org.jetbrains.kotlin.codegen.CodegenTestCase.TestFile
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferences
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.idea.debugger.test.util.SteppingInstruction
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findLinesWithPrefixesRemoved
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes
+import org.jetbrains.kotlin.test.KotlinBaseTest
 import java.io.File
 import javax.swing.tree.TreeNode
 
@@ -254,7 +254,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
         return this.toString()
     }
 
-    private fun loadExpressions(testFile: TestFile): List<CodeFragment> {
+    private fun loadExpressions(testFile: KotlinBaseTest.TestFile): List<CodeFragment> {
         val directives = findLinesWithPrefixesRemoved(testFile.content, "// EXPRESSION: ")
         val expected = findLinesWithPrefixesRemoved(testFile.content, "// RESULT: ")
         assert(directives.size == expected.size) { "Sizes of test directives are different" }
@@ -276,7 +276,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDescriptorTestCaseWi
         return codeFragments
     }
 
-    private fun loadDebugLabels(testFile: TestFile): List<DebugLabel> {
+    private fun loadDebugLabels(testFile: KotlinBaseTest.TestFile): List<DebugLabel> {
         return findLinesWithPrefixesRemoved(testFile.content, "// DEBUG_LABEL: ")
             .map { text ->
                 val labelParts = text.split("=")

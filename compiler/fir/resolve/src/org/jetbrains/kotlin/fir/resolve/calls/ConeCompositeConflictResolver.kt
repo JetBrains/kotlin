@@ -8,13 +8,17 @@ package org.jetbrains.kotlin.fir.resolve.calls
 class ConeCompositeConflictResolver(
     private vararg val conflictResolvers: AbstractConeCallConflictResolver
 ) : ConeCallConflictResolver() {
-    override fun chooseMaximallySpecificCandidates(candidates: Set<Candidate>, discriminateGenerics: Boolean): Set<Candidate> {
+    override fun chooseMaximallySpecificCandidates(
+        candidates: Set<Candidate>,
+        discriminateGenerics: Boolean,
+        discriminateAbstracts: Boolean
+    ): Set<Candidate> {
         if (candidates.size <= 1) return candidates
         var currentCandidates = candidates
         var index = 0
         while (currentCandidates.size > 1 && index < conflictResolvers.size) {
             val conflictResolver = conflictResolvers[index++]
-            currentCandidates = conflictResolver.chooseMaximallySpecificCandidates(candidates, discriminateGenerics)
+            currentCandidates = conflictResolver.chooseMaximallySpecificCandidates(candidates, discriminateGenerics, discriminateAbstracts)
         }
         return currentCandidates
     }

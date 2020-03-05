@@ -24,10 +24,12 @@ import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.TestsCompiletimeError
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
+import org.jetbrains.kotlin.cli.js.messageCollectorLogger
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -42,11 +44,14 @@ import org.jetbrains.kotlin.fir.createSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
+import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
+import org.jetbrains.kotlin.util.DummyLogger
 import java.io.File
 
 object GenerationUtils {
@@ -127,7 +132,8 @@ object GenerationUtils {
             }
         }
         val (moduleFragment, symbolTable, sourceManager) =
-            Fir2IrConverter.createModuleFragment(session, firFiles, configuration.languageVersionSettings)
+            Fir2IrConverter.createModuleFragment(session, firFiles, configuration.languageVersionSettings, signaturer = IdSignatureDescriptor(
+                JvmManglerDesc()))
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
         val codegenFactory = JvmIrCodegenFactory(configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))
@@ -153,8 +159,17 @@ object GenerationUtils {
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
         trace: BindingTrace
     ): GenerationState {
+        val logger = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)?.let { messageCollectorLogger(it) }
+            ?: DummyLogger
+        val resolvedKlibs = configuration.get(JVMConfigurationKeys.KLIB_PATHS)?.let { klibPaths ->
+            jvmResolveLibraries(klibPaths, logger)
+        }
+
         val analysisResult =
-            JvmResolveUtil.analyzeAndCheckForErrors(project, files, configuration, packagePartProvider, trace)
+            JvmResolveUtil.analyzeAndCheckForErrors(
+                project, files, configuration, packagePartProvider, trace,
+                klibList = resolvedKlibs?.getFullList() ?: emptyList()
+            )
         analysisResult.throwIfError()
 
         /* Currently Kapt3 only works with the old JVM backend, so disable IR for everything except actual bytecode generation. */

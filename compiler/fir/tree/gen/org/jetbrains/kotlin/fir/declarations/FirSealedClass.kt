@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -22,19 +21,20 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirSealedClass : FirPureAbstractElement(), FirRegularClass {
+abstract class FirSealedClass : FirRegularClass() {
     abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
-    abstract override val name: Name
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val typeParameters: List<FirTypeParameter>
     abstract override val status: FirDeclarationStatus
     abstract override val classKind: ClassKind
     abstract override val declarations: List<FirDeclaration>
     abstract override val scopeProvider: FirScopeProvider
+    abstract override val name: Name
     abstract override val symbol: FirRegularClassSymbol
     abstract override val companionObject: FirRegularClass?
+    abstract override val hasLazyNestedClassifiers: Boolean
     abstract override val superTypeRefs: List<FirTypeRef>
     abstract val inheritors: List<ClassId>
 

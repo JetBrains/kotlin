@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isFileClass
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
@@ -51,13 +52,13 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 Key(
                     kotlinJvmInternalUnsafe,
                     null,
-                    "access\$monitorEnter\$0",
+                    "access\$monitorEnter",
                     listOf(KotlinBuiltIns.FQ_NAMES.any.toSafe())
                 ) to MonitorInstruction.MONITOR_ENTER,
                 Key(
                     kotlinJvmInternalUnsafe,
                     null,
-                    "access\$monitorExit\$1",
+                    "access\$monitorExit",
                     listOf(KotlinBuiltIns.FQ_NAMES.any.toSafe())
                 ) to MonitorInstruction.MONITOR_EXIT,
                 Key(
@@ -78,12 +79,29 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                     "clone",
                     emptyList()
                 ) to Clone,
+                Key(
+                    KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
+                    null,
+                    "enumValues",
+                    listOf()
+                ) to EnumValues,
+                Key(
+                    KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
+                    null,
+                    "enumValueOf",
+                    listOf(KotlinBuiltIns.FQ_NAMES.string.toSafe())
+                ) to EnumValueOf,
+                Key(
+                    KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
+                    KotlinBuiltIns.FQ_NAMES.string.toSafe(),
+                    "plus",
+                    listOf(KotlinBuiltIns.FQ_NAMES.any.toSafe())
+                ) to StringPlus,
                 irBuiltIns.eqeqSymbol.toKey()!! to Equals(KtTokens.EQEQ),
                 irBuiltIns.eqeqeqSymbol.toKey()!! to Equals(KtTokens.EQEQEQ),
                 irBuiltIns.ieee754equalsFunByOperandType[irBuiltIns.floatClass]!!.toKey()!! to Ieee754Equals(Type.FLOAT_TYPE),
                 irBuiltIns.ieee754equalsFunByOperandType[irBuiltIns.doubleClass]!!.toKey()!! to Ieee754Equals(Type.DOUBLE_TYPE),
                 irBuiltIns.booleanNotSymbol.toKey()!! to Not,
-                irBuiltIns.enumValueOfSymbol.toKey()!! to IrEnumValueOf,
                 irBuiltIns.noWhenBranchMatchedExceptionSymbol.toKey()!! to IrNoWhenBranchMatchedException,
                 irBuiltIns.illegalArgumentExceptionSymbol.toKey()!! to IrIllegalArgumentException,
                 irBuiltIns.andandSymbol.toKey()!! to AndAnd,
@@ -198,7 +216,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
         private fun IrFunctionSymbol.toKey(): Key? {
             val parent = owner.parent
             val ownerFqName = when {
-                parent is IrClass && parent.origin == IrDeclarationOrigin.FILE_CLASS ->
+                parent is IrClass && parent.isFileClass ->
                     (parent.parent as IrPackageFragment).fqName
                 parent is IrClass -> parent.fqNameWhenAvailable ?: return null
                 parent is IrPackageFragment -> parent.fqName

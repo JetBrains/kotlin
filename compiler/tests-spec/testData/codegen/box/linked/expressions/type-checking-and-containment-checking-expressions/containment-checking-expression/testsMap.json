@@ -1,0 +1,84 @@
+{
+  "4": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": " A in B is exactly the same as B.contains(A);",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": " A in B is exactly the same as B.contains(A);",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "1": {
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": " A in B is exactly the same as B.contains(A);",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-4/pos/1.2.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": " A in B is exactly the same as B.contains(A);",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-4/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": " A in B is exactly the same as B.contains(A);",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-2/pos/1.2.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": " A in B is exactly the same as B.contains(A);",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/containment-checking-expression/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "2": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": " A in B is exactly the same as B.contains(A);",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": " A in B is exactly the same as B.contains(A);",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "5": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "The contains function must have a return type kotlin.Boolean, otherwise it is a compile-time error.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

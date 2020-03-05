@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinBrowserJsIr
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
@@ -42,6 +43,14 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
+
+    private val irBrowser: KotlinBrowserJsIr?
+        get() = target.irTarget?.browser
+
+    override fun produceExecutable() {
+        super.produceExecutable()
+        irBrowser?.produceExecutable()
+    }
 
     override fun configureDefaultTestFramework(testTask: KotlinJsTest) {
         testTask.useKarma {
@@ -94,7 +103,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             ) {
                 it.dependsOn(
                     nodeJs.npmInstallTask,
-                    target.project.tasks.getByName(compilation.processResourcesTaskName)
+                    target.project.tasks.named(compilation.processResourcesTaskName)
                 )
 
                 it.configureOptimization(kind)
@@ -153,17 +162,19 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         val baseDist = project.buildDir.resolve(basePluginConvention!!.distsDirName)
         distribution.directory = distribution.directory ?: baseDist
 
-        val distributionTask = project.registerTask<Copy>(
+        val processResourcesTask = target.project.tasks.named(compilation.processResourcesTaskName)
+
+        val distributeResourcesTask = project.registerTask<Copy>(
             disambiguateCamelCased(
-                DISTRIBUTION_TASK_NAME
+                DISTRIBUTE_RESOURCES_TASK_NAME
             )
         ) {
-            it.from(compilation.output.resourcesDir)
+            it.from(processResourcesTask)
             it.into(distribution.directory ?: baseDist)
         }
 
         val assembleTask = project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
-        assembleTask.dependsOn(distributionTask)
+        assembleTask.dependsOn(distributeResourcesTask)
 
         buildVariants.all { buildVariant ->
             val kind = buildVariant.kind
@@ -176,8 +187,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             ) {
                 it.dependsOn(
                     nodeJs.npmInstallTask,
-                    target.project.tasks.getByName(compilation.processResourcesTaskName),
-                    distributionTask
+                    processResourcesTask,
+                    distributeResourcesTask
                 )
 
                 it.configureOptimization(kind)
@@ -208,8 +219,14 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
             if (kind == BuildVariantKind.PRODUCTION) {
                 assembleTask.dependsOn(webpackTask)
-                project.registerTask<Task>(disambiguateCamelCased(WEBPACK_TASK_NAME)) {
+                val webpackCommonTask = project.registerTask<Task>(
+                    disambiguateCamelCased(WEBPACK_TASK_NAME)
+                ) {
                     it.dependsOn(webpackTask)
+                }
+                project.registerTask<Task>(disambiguateCamelCased(DISTRIBUTION_TASK_NAME)) {
+                    it.dependsOn(webpackCommonTask)
+                    it.dependsOn(distributeResourcesTask)
                 }
             }
         }
@@ -287,6 +304,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         const val DEVELOPMENT = "development"
 
         private const val WEBPACK_TASK_NAME = "webpack"
+        private const val DISTRIBUTE_RESOURCES_TASK_NAME = "distributeResources"
         private const val DISTRIBUTION_TASK_NAME = "distribution"
     }
 }

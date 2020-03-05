@@ -17,74 +17,20 @@ public interface IrFieldOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase();
 
   /**
-   * <code>optional int32 initializer = 2;</code>
+   * <code>required int64 name_type = 2;</code>
+   */
+  boolean hasNameType();
+  /**
+   * <code>required int64 name_type = 2;</code>
+   */
+  long getNameType();
+
+  /**
+   * <code>optional int32 initializer = 3;</code>
    */
   boolean hasInitializer();
   /**
-   * <code>optional int32 initializer = 2;</code>
+   * <code>optional int32 initializer = 3;</code>
    */
   int getInitializer();
-
-  /**
-   * <code>required int32 name = 3;</code>
-   */
-  boolean hasName();
-  /**
-   * <code>required int32 name = 3;</code>
-   */
-  int getName();
-
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 4;</code>
-   */
-  boolean hasVisibility();
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 4;</code>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.Visibility getVisibility();
-
-  /**
-   * <code>required bool is_final = 5;</code>
-   */
-  boolean hasIsFinal();
-  /**
-   * <code>required bool is_final = 5;</code>
-   */
-  boolean getIsFinal();
-
-  /**
-   * <code>required bool is_external = 6;</code>
-   */
-  boolean hasIsExternal();
-  /**
-   * <code>required bool is_external = 6;</code>
-   */
-  boolean getIsExternal();
-
-  /**
-   * <code>required bool is_static = 7;</code>
-   */
-  boolean hasIsStatic();
-  /**
-   * <code>required bool is_static = 7;</code>
-   */
-  boolean getIsStatic();
-
-  /**
-   * <code>required int32 type = 8;</code>
-   */
-  boolean hasType();
-  /**
-   * <code>required int32 type = 8;</code>
-   */
-  int getType();
-
-  /**
-   * <code>required bool is_fake_override = 9;</code>
-   */
-  boolean hasIsFakeOverride();
-  /**
-   * <code>required bool is_fake_override = 9;</code>
-   */
-  boolean getIsFakeOverride();
 }

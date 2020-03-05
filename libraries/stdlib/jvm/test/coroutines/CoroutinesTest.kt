@@ -1,15 +1,12 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
-@file:Suppress("ObsoleteExperimentalCoroutines")
 
 package test.coroutines
 
 import java.util.concurrent.Semaphore
 import kotlin.coroutines.*
-import kotlin.coroutines.experimental.startCoroutine
 import kotlin.test.*
 
 /**

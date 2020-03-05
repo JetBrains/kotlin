@@ -50,8 +50,8 @@ a || false                                                                      
 == anonymous_0 ==
 {1}
 ---------------------
-1   <v0>: Int   NEW: r(1) -> <v0>
-1   <v0>: Int   COPY
+1   <v0>: {<: Any}   NEW: r(1) -> <v0>
+1   <v0>: {<: Any}   COPY
 =====================
 == foo ==
 fun foo(a : Boolean, b : Int) : Unit {}

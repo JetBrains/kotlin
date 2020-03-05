@@ -1,17 +1,32 @@
 package org.jetbrains.kotlin.tools.projectWizard.projectTemplates
 
+import TemplateTag
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidSinglePlatformModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.defaultTarget
+import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
-import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.MultiplatformLibrary.withTemplate
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.templates.*
+
+private fun Module.createTag(): TemplateTag? = when (configurator) {
+    is MppModuleConfigurator -> TemplateTag.MPP
+    is AndroidModuleConfigurator -> TemplateTag.ANDROID
+    is JSConfigurator -> TemplateTag.JS
+    is ModuleConfiguratorWithModuleType -> when (configurator.moduleType) {
+        ModuleType.jvm -> TemplateTag.JVM
+        ModuleType.js -> TemplateTag.JS
+        ModuleType.native -> TemplateTag.NATIVE
+        ModuleType.common -> null
+        null -> null
+    }
+    else -> null
+}
 
 sealed class ProjectTemplate : DisplayableSettingItem {
     abstract val title: String
@@ -19,6 +34,16 @@ sealed class ProjectTemplate : DisplayableSettingItem {
     abstract val htmlDescription: String
     abstract val suggestedProjectName: String
     abstract val projectKind: ProjectKind
+    val tags: List<TemplateTag>
+        get() = setsPluginSettings
+            .firstOrNull { it.setting == KotlinPlugin::modules.reference }
+            ?.value
+            ?.safeAs<List<Module>>()
+            ?.withAllSubModules(includeSourcesets = true)
+            ?.mapNotNull(Module::createTag)
+            ?.distinct()
+            ?.sortedBy(TemplateTag::priority)
+            .orEmpty()
 
     private val setsDefaultValues: List<SettingWithValue<*, *>>
         get() = listOf(KotlinPlugin::projectKind.reference withValue projectKind)
@@ -34,7 +59,7 @@ sealed class ProjectTemplate : DisplayableSettingItem {
         }
 
 
-    fun <T : Template> Sourceset.withTemplate(
+    fun <T : Template> Module.withTemplate(
         template: T,
         createSettings: TemplateSettingsBuilder<T>.() -> Unit = {}
     ) = apply {
@@ -53,15 +78,17 @@ sealed class ProjectTemplate : DisplayableSettingItem {
             JvmConsoleApplication,
             JvmServerJsClient,
             MultiplatformLibrary,
-            AndroidApplication
+            AndroidApplication,
+            NativeConsoleApplication,
+            JsBrowserApplication
         )
     }
 }
 
 class TemplateSettingsBuilder<Q : Template>(
-    val sourceset: Sourceset,
+    val module: Module,
     val template: Q
-) : TemplateEnvironment by SourcesetBasedTemplateEnvironment(template, sourceset) {
+) : TemplateEnvironment by ModuleBasedTemplateEnvironment(template, module) {
     private val settings = mutableListOf<SettingWithValue<*, *>>()
     val setsSettings: List<SettingWithValue<*, *>>
         get() = settings
@@ -85,8 +112,6 @@ private fun ModuleType.createDefaultSourcesets() =
     SourcesetType.values().map { sourcesetType ->
         Sourceset(
             sourcesetType,
-            this,
-            template = null,
             dependencies = emptyList()
         )
     }
@@ -96,10 +121,11 @@ private fun ModuleType.createDefaultTarget(
 ) = MultiplatformTargetModule(name, defaultTarget, createDefaultSourcesets())
 
 object CustomSingleplatformProjectTemplate : ProjectTemplate() {
-    override val title = "Empty JVM Project"
+    override val title = "Empty Kotlin/JVM Project"
     override val htmlDescription = title
     override val suggestedProjectName = "myKotlinJvmProject"
     override val projectKind = ProjectKind.Singleplatform
+
     override val setsPluginSettings: List<SettingWithValue<*, *>>
         get() = listOf(
             KotlinPlugin::modules withValue listOf(
@@ -109,8 +135,8 @@ object CustomSingleplatformProjectTemplate : ProjectTemplate() {
 }
 
 object CustomMultiplatformProjectTemplate : ProjectTemplate() {
-    override val title = "Empty MultiPlatform Project"
-    override val htmlDescription = title
+    override val title = "Empty Kotlin Multiplatform Project"
+    override val htmlDescription = "Multiplatform Gradle project without predefined targets"
     override val suggestedProjectName = "myKotlinMultiplatformProject"
     override val projectKind = ProjectKind.Multiplatform
 
@@ -123,7 +149,7 @@ object CustomMultiplatformProjectTemplate : ProjectTemplate() {
 }
 
 object JvmConsoleApplication : ProjectTemplate() {
-    override val title = "Kotlin Console JVM Application"
+    override val title = "Kotlin/JVM Console Application"
     override val htmlDescription = title
     override val suggestedProjectName = "myConsoleApplication"
     override val projectKind = ProjectKind.Singleplatform
@@ -135,14 +161,14 @@ object JvmConsoleApplication : ProjectTemplate() {
                     "consoleApp",
                     ModuleType.jvm.createDefaultSourcesets()
                 ).apply {
-                    mainSourceset?.withTemplate(ConsoleJvmApplicationTemplate())
+                    withTemplate(ConsoleJvmApplicationTemplate())
                 }
             )
         )
 }
 
 object MultiplatformLibrary : ProjectTemplate() {
-    override val title = "Multiplatform Library"
+    override val title = "Kotlin Multiplatform Library"
     @Language("HTML")
     override val htmlDescription = """
         Multiplatform Gradle project allowing reuse of the same Kotlin code between all three main platforms 
@@ -157,24 +183,9 @@ object MultiplatformLibrary : ProjectTemplate() {
                 MultiplatformModule(
                     "library",
                     listOf(
-                        ModuleType.common.createDefaultTarget().apply {
-                            testSourceset?.withTemplate(KotlinTestTemplate()) {
-                                template.framework withValue KotlinTestFramework.COMMON
-                                template.generateDummyTest withValue false
-                            }
-                        },
-                        ModuleType.jvm.createDefaultTarget().apply {
-                            testSourceset?.withTemplate(KotlinTestTemplate()) {
-                                template.framework withValue KotlinTestFramework.JUNIT4
-                                template.generateDummyTest withValue false
-                            }
-                        },
-                        ModuleType.js.createDefaultTarget().apply {
-                            testSourceset?.withTemplate(KotlinTestTemplate()) {
-                                template.framework withValue KotlinTestFramework.JS
-                                template.generateDummyTest withValue false
-                            }
-                        },
+                        ModuleType.common.createDefaultTarget(),
+                        ModuleType.jvm.createDefaultTarget(),
+                        ModuleType.js.createDefaultTarget(),
                         ModuleType.native.createDefaultTarget()
                     )
                 )
@@ -183,9 +194,9 @@ object MultiplatformLibrary : ProjectTemplate() {
 }
 
 object JvmServerJsClient : ProjectTemplate() {
-    override val title: String = "JS client and JVM server"
+    override val title: String = "Web Application with Kotlin/JS Client and Kotlin/JVM Server"
     override val htmlDescription: String =
-        "Multiplatform Gradle project allowing reuse of the same Kotlin code between JS Client and JVM Server"
+        "Multiplatform Gradle project with client module running on Kotlin/JS and server module on Kotlin/JVM"
     override val suggestedProjectName: String = "myFullStackApplication"
     override val projectKind: ProjectKind = ProjectKind.Multiplatform
     override val setsPluginSettings: List<SettingWithValue<*, *>> = listOf(
@@ -194,12 +205,12 @@ object JvmServerJsClient : ProjectTemplate() {
                 "application",
                 listOf(
                     ModuleType.jvm.createDefaultTarget().apply {
-                        mainSourceset?.withTemplate(KtorServerTemplate()) {
+                        withTemplate(KtorServerTemplate()) {
                             template.serverEngine withValue KtorServerEngine.Netty
                         }
                     },
                     ModuleType.js.createDefaultTarget().apply {
-                        mainSourceset?.withTemplate(SimpleJsClientTemplate())
+                        withTemplate(SimpleJsClientTemplate())
                     }
                 )
             )
@@ -214,6 +225,29 @@ object AndroidApplication : ProjectTemplate() {
        Simple <b>Android</b> application with single activity 
         """.trimIndent()
     override val suggestedProjectName = "myAndroidApplication"
+    override val projectKind = ProjectKind.Android
+
+    override val setsPluginSettings: List<SettingWithValue<*, *>>
+        get() = listOf(
+            KotlinPlugin::modules withValue listOf(
+                Module(
+                    "app",
+                    ModuleKind.singleplatformJvm,
+                    AndroidSinglePlatformModuleConfigurator,
+                    template = null,
+                    sourcesets = SourcesetType.ALL.map { type ->
+                        Sourceset(type, dependencies = emptyList())
+                    },
+                    subModules = emptyList()
+                )
+            )
+        )
+}
+
+object NativeConsoleApplication : ProjectTemplate() {
+    override val title = "Kotlin/Native Console Application"
+    override val htmlDescription = title
+    override val suggestedProjectName = "myNativeConsoleApp"
     override val projectKind = ProjectKind.Multiplatform
 
     override val setsPluginSettings: List<SettingWithValue<*, *>>
@@ -221,10 +255,36 @@ object AndroidApplication : ProjectTemplate() {
             KotlinPlugin::modules withValue listOf(
                 Module(
                     "app",
-                    ModuleKind.singleplatform,
-                    AndroidSinglePlatformModuleConfigurator,
-                    SourcesetType.ALL.map { type ->
-                        Sourceset(type, ModuleType.jvm, template = null, dependencies = emptyList())
+                    ModuleKind.multiplatform,
+                    MppModuleConfigurator,
+                    template = null,
+                    sourcesets = emptyList(),
+                    subModules = listOf(
+                        ModuleType.native.createDefaultTarget("native").apply {
+                            withTemplate(NativeConsoleApplicationTemplate())
+                        }
+                    )
+                )
+            )
+        )
+}
+
+object JsBrowserApplication : ProjectTemplate() {
+    override val title = "Kotlin/JS Frontend Application"
+    override val htmlDescription = "Gradle project for a Kotlin/JS frontend web application"
+    override val suggestedProjectName = "myKotlinJsApplication"
+    override val projectKind = ProjectKind.Js
+
+    override val setsPluginSettings: List<SettingWithValue<*, *>>
+        get() = listOf(
+            KotlinPlugin::modules withValue listOf(
+                Module(
+                    "frontend",
+                    ModuleKind.singleplatformJs,
+                    JsSingleplatformModuleConfigurator,
+                    template = SimpleJsClientTemplate(),
+                    sourcesets = SourcesetType.ALL.map { type ->
+                        Sourceset(type, dependencies = emptyList())
                     },
                     subModules = emptyList()
                 )

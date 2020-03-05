@@ -19,7 +19,7 @@ public final class Test {
     public static final class A {
 
         @java.lang.Deprecated()
-        public static void test$annotations() {
+        public static void getTest$annotations() {
         }
 
         @org.jetbrains.annotations.NotNull()

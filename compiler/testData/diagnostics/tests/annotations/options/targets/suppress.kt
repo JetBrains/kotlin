@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @file:Suppress("abc")
 
 fun foo(): Int {

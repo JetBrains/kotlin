@@ -79,6 +79,7 @@ interface KotlinLanguageSettings : Serializable {
     val experimentalAnnotationsInUse: Set<String>
     val compilerPluginArguments: Array<String>
     val compilerPluginClasspath: Set<File>
+    val freeCompilerArgs: Array<String>
 }
 
 interface KotlinCompilationOutput : Serializable {

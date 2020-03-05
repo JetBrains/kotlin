@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.lower.optimizations
 
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -15,13 +15,11 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.FqName
 
-class PropertyAccessorInlineLowering(private val context: CommonBackendContext) : FileLoweringPass {
+class PropertyAccessorInlineLowering(private val context: CommonBackendContext) : BodyLoweringPass {
 
     private val IrProperty.isSafeToInline: Boolean get() = isTopLevel || (modality === Modality.FINAL || visibility == Visibilities.PRIVATE) || (parent as IrClass).modality === Modality.FINAL
 
@@ -128,7 +126,7 @@ class PropertyAccessorInlineLowering(private val context: CommonBackendContext) 
         }
     }
 
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(AccessorInliner())
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        irBody.transformChildrenVoid(AccessorInliner())
     }
 }

@@ -2,16 +2,24 @@ package org.jetbrains.kotlin.tools.projectWizard.templates
 
 import org.jetbrains.kotlin.tools.projectWizard.Identificator
 import org.jetbrains.kotlin.tools.projectWizard.SettingsOwner
+import org.jetbrains.kotlin.tools.projectWizard.WizardRunConfiguration
+import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.*
+import org.jetbrains.kotlin.tools.projectWizard.core.context.SettingsWritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
+import org.jetbrains.kotlin.tools.projectWizard.enumSettingImpl
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.MultiplatformModuleIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
+import org.jetbrains.kotlin.tools.projectWizard.plugins.RunConfigurationsPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.InterceptionPoint
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.TemplateInterceptor
@@ -24,25 +32,25 @@ interface TemplateEnvironment {
 
 class IdBasedTemplateEnvironment(
     private val template: Template,
-    private val sourcesetId: Identificator
+    private val moduleId: Identificator
 ) : TemplateEnvironment {
     override val <V : Any, T : SettingType<V>> TemplateSetting<V, T>.reference
-        get() = IdBasedTemplateSettingReference(template, sourcesetId, this)
+        get() = IdBasedTemplateSettingReference(template, moduleId, this)
 }
 
-class SourcesetBasedTemplateEnvironment<Q : Template>(
+class ModuleBasedTemplateEnvironment<Q : Template>(
     val template: Q,
-    private val sourceset: Sourceset
+    private val module: Module
 ) : TemplateEnvironment {
     override val <V : Any, T : SettingType<V>> TemplateSetting<V, T>.reference
-        get() = SourcesetBasedTemplateSettingReference(template, sourceset, this)
+        get() = ModuleBasedTemplateSettingReference(template, module, this)
 }
 
 fun <T> withSettingsOf(
-    sourceset: Sourceset,
-    template: Template = sourceset.template!!,
+    module: Module,
+    template: Template = module.template!!,
     function: TemplateEnvironment.() -> T
-): T = function(SourcesetBasedTemplateEnvironment(template, sourceset))
+): T = function(ModuleBasedTemplateEnvironment(template, module))
 
 fun <T> withSettingsOf(
     identificator: Identificator,
@@ -51,7 +59,7 @@ fun <T> withSettingsOf(
 ): T = function(IdBasedTemplateEnvironment(template, identificator))
 
 
-abstract class Template : SettingsOwner {
+abstract class Template : SettingsOwner, EntitiesOwnerDescriptor {
     final override fun <V : Any, T : SettingType<V>> settingDelegate(
         create: (path: String) -> SettingBuilder<V, T>
     ): ReadOnlyProperty<Any, TemplateSetting<V, T>> = cached { name ->
@@ -61,56 +69,68 @@ abstract class Template : SettingsOwner {
     abstract val title: String
     abstract val htmlDescription: String
     abstract val moduleTypes: Set<ModuleType>
-    abstract val sourcesetTypes: Set<SourcesetType>
 
-    open fun isApplicableTo(sourceset: Sourceset): Boolean = true
+    open fun isApplicableTo(module: Module): Boolean = true
 
     open val settings: List<TemplateSetting<*, *>> = emptyList()
     open val interceptionPoints: List<InterceptionPoint<Any>> = emptyList()
 
-    open fun TaskRunningContext.getRequiredLibraries(sourceset: SourcesetIR): List<DependencyIR> = emptyList()
+    fun SettingsWritingContext.initDefaultValuesFor(module: Module) {
+        withSettingsOf(module) {
+            settings.forEach { setting ->
+                val defaultValue = setting.savedOrDefaultValue ?: return@forEach
+                setting.reference.setValue(defaultValue)
+            }
+        }
+    }
+
+    open fun WritingContext.getRequiredLibraries(module: ModuleIR): List<DependencyIR> = emptyList()
 
     //TODO: use setting reading context
-    open fun TaskRunningContext.getIrsToAddToBuildFile(
-        sourceset: SourcesetIR
+    open fun WritingContext.getIrsToAddToBuildFile(
+        module: ModuleIR
     ): List<BuildSystemIR> = emptyList()
 
     open fun updateTargetIr(
-        sourceset: SourcesetIR,
+        module: ModuleIR,
         targetConfigurationIR: TargetConfigurationIR
     ): TargetConfigurationIR = targetConfigurationIR
 
-    open fun TaskRunningContext.getFileTemplates(sourceset: SourcesetIR): List<FileTemplateDescriptor> = emptyList()
+    open fun WritingContext.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = emptyList()
 
-    open fun createInterceptors(sourceset: SourcesetIR): List<TemplateInterceptor> = emptyList()
+    open fun createInterceptors(module: ModuleIR): List<TemplateInterceptor> = emptyList()
 
-    fun TaskRunningContext.applyToSourceset(
-        sourceset: SourcesetIR
+    open fun ReadingContext.createRunConfigurations(module: ModuleIR): List<WizardRunConfiguration> = emptyList()
+
+    fun WritingContext.applyToSourceset(
+        module: ModuleIR
     ): TaskResult<TemplateApplicationResult> {
-        val librariesToAdd = getRequiredLibraries(sourceset)
-        val irsToAddToBuildFile = getIrsToAddToBuildFile(sourceset)
+        val librariesToAdd = getRequiredLibraries(module)
+        val irsToAddToBuildFile = getIrsToAddToBuildFile(module)
 
-        val targetsUpdater = when (sourceset) {
-            is SourcesetModuleIR -> { target: TargetConfigurationIR ->
-                if (target.name == sourceset.targetName) updateTargetIr(sourceset, target)
+        val targetsUpdater = when (module) {
+            is MultiplatformModuleIR -> { target: TargetConfigurationIR ->
+                if (target.targetName == module.name) updateTargetIr(module, target)
                 else target
             }
             else -> idFunction()
         }
 
+        RunConfigurationsPlugin::configurations.addValues(createRunConfigurations(module))
+
         val result = TemplateApplicationResult(librariesToAdd, irsToAddToBuildFile, targetsUpdater)
         return result.asSuccess()
     }
 
-    fun TaskRunningContext.settingsAsMap(sourceset: Sourceset): Map<String, Any> =
-        withSettingsOf(sourceset) {
+    fun WritingContext.settingsAsMap(module: Module): Map<String, Any> =
+        withSettingsOf(module) {
             settings.associate { setting ->
                 setting.path to setting.reference.settingValue
             }
         } + createDefaultSettings()
 
 
-    private fun TaskRunningContext.createDefaultSettings() = mapOf(
+    private fun WritingContext.createDefaultSettings() = mapOf(
         "projectName" to StructurePlugin::name.settingValue.capitalize()
     )
 
@@ -205,14 +225,13 @@ abstract class Template : SettingsOwner {
             init
         ) as ReadOnlyProperty<Any, TemplateSetting<Path, PathSettingType>>
 
+    @Suppress("UNCHECKED_CAST")
     inline fun <reified E> enumSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         crossinline init: DropDownSettingType.Builder<E>.() -> Unit = {}
-    ) where E : Enum<E>, E : DisplayableSettingItem = dropDownSetting<E>(title, neededAtPhase, enumParser()) {
-        values = enumValues<E>().asList()
-        init()
-    }
+    ): ReadOnlyProperty<Any, TemplateSetting<E, DropDownSettingType<E>>> where E : Enum<E>, E : DisplayableSettingItem =
+        enumSettingImpl(title, neededAtPhase, init) as ReadOnlyProperty<Any, TemplateSetting<E, DropDownSettingType<E>>>
 
     companion object {
         fun parser(sourcesetIdentificator: Identificator): Parser<Template> = mapParser { map, path ->
@@ -232,18 +251,17 @@ abstract class Template : SettingsOwner {
     }
 }
 
-fun Template.settings(sourceset: Sourceset) = withSettingsOf(sourceset) {
+fun Template.settings(module: Module) = withSettingsOf(module) {
     settings.map { it.reference }
 }
 
-fun TaskRunningContext.applyTemplateToSourceset(
+fun WritingContext.applyTemplateToModule(
     template: Template?,
-    sourceset: SourcesetIR,
-    templateEngine: TemplateEngine
+    module: ModuleIR
 ): TaskResult<TemplateApplicationResult> = when (template) {
     null -> TemplateApplicationResult.EMPTY.asSuccess()
     else -> with(template) {
-        applyToSourceset(sourceset)
+        applyToSourceset(module)
     }
 }
 

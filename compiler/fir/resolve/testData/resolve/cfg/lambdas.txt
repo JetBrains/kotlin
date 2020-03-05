@@ -6,7 +6,7 @@ FILE: lambdas.kt
         when () {
             (R|<local>/x| is R|kotlin/Int|) ->  {
                 R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
-                    R|<local>/x|.R|kotlin/Int.inc|()
+                    ^ R|<local>/x|.R|kotlin/Int.inc|()
                 }
                 )
             }
@@ -17,7 +17,7 @@ FILE: lambdas.kt
         when () {
             (R|<local>/x| is R|kotlin/Int|) ->  {
                 lval lambda: R|() -> kotlin/Int| = fun <anonymous>(): R|kotlin/Int| {
-                    R|<local>/x|.R|kotlin/Int.inc|()
+                    ^ R|<local>/x|.R|kotlin/Int.inc|()
                 }
 
             }

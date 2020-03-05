@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder.flags
 
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
@@ -51,6 +52,7 @@ val EXTERNAL_PROPERTY = createBooleanFlagToModifier(Flags.IS_EXTERNAL_PROPERTY, 
 val EXTERNAL_CLASS = createBooleanFlagToModifier(Flags.IS_EXTERNAL_CLASS, KtTokens.EXTERNAL_KEYWORD)
 val INLINE = createBooleanFlagToModifier(Flags.IS_INLINE, KtTokens.INLINE_KEYWORD)
 val INLINE_CLASS = createBooleanFlagToModifier(Flags.IS_INLINE_CLASS, KtTokens.INLINE_KEYWORD)
+val FUN_INTERFACE = createBooleanFlagToModifier(Flags.IS_FUN_INTERFACE, KtTokens.FUN_KEYWORD)
 val TAILREC = createBooleanFlagToModifier(Flags.IS_TAILREC, KtTokens.TAILREC_KEYWORD)
 val SUSPEND = createBooleanFlagToModifier(Flags.IS_SUSPEND, KtTokens.SUSPEND_KEYWORD)
 

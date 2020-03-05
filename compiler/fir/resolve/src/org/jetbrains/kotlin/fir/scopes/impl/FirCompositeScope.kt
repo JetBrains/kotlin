@@ -5,60 +5,31 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.scopes.FirIterableScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 
 class FirCompositeScope(
-    val scopes: MutableList<FirScope>,
+    private val scopeList: MutableList<FirScope>,
     private val reversedPriority: Boolean = false
-) : FirScope() {
-    override fun processClassifiersByName(
-        name: Name,
-        processor: (FirClassifierSymbol<*>) -> ProcessorAction
-    ): ProcessorAction {
-        val scopes = if (reversedPriority) scopes.asReversed() else scopes
-        for (scope in scopes) {
-            if (!scope.processClassifiersByName(name, processor)) {
-                return STOP
-            }
+) : FirIterableScope() {
+    override val scopes get() = if (reversedPriority) scopeList.asReversed() else scopeList
+
+    fun addImportingScopes(file: FirFile, session: FirSession, scopeSession: ScopeSession) {
+        scopeList += createImportingScopes(file, session, scopeSession)
+    }
+
+    fun addScope(scope: FirScope) {
+        scopeList += scope
+    }
+
+    fun dropLastScopes(number: Int) {
+        repeat(number) {
+            scopeList.removeAt(scopeList.size - 1)
         }
-        return NEXT
-    }
-
-    private inline fun <T> processComposite(
-        process: FirScope.(Name, (T) -> ProcessorAction) -> ProcessorAction,
-        name: Name,
-        noinline processor: (T) -> ProcessorAction
-    ): ProcessorAction {
-        val unique = mutableSetOf<T>()
-        val scopes = if (reversedPriority) scopes.asReversed() else scopes
-        for (scope in scopes) {
-            if (!scope.process(name) {
-                    if (unique.add(it)) {
-                        processor(it)
-                    } else {
-                        NEXT
-                    }
-                }
-            ) {
-                return STOP
-            }
-        }
-        return NEXT
-    }
-
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
-        return processComposite(FirScope::processFunctionsByName, name, processor)
-    }
-
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
-        return processComposite(FirScope::processPropertiesByName, name, processor)
     }
 
 }

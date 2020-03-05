@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 fun test() {
     var x = 0
     val x1 = x++

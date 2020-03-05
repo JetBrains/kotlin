@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.conversion.copy
 
 import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -53,6 +54,7 @@ abstract class AbstractJavaToKotlinCopyPasteConversionTest : AbstractJ2kCopyPast
         ConvertJavaCopyPasteProcessor.conversionPerformed = false
 
         myFixture.performEditorAction(IdeActions.ACTION_PASTE)
+        UIUtil.dispatchAllInvocationEvents()
 
         assertEquals(
             noConversionExpected, !ConvertJavaCopyPasteProcessor.conversionPerformed,

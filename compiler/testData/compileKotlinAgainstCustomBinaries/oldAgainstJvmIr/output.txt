@@ -1,0 +1,8 @@
+error: classes compiled by a new Kotlin compiler backend were found in dependencies. Remove them from the classpath or use '-Xallow-jvm-ir-dependencies' to suppress errors
+compiler/testData/compileKotlinAgainstCustomBinaries/oldAgainstJvmIr/source.kt:4:5: error: class 'lib.AKt' is compiled by a new Kotlin compiler backend and cannot be loaded by the old compiler
+    get { Box("OK").value }
+    ^
+compiler/testData/compileKotlinAgainstCustomBinaries/oldAgainstJvmIr/source.kt:4:11: error: class 'lib.Box' is compiled by a new Kotlin compiler backend and cannot be loaded by the old compiler
+    get { Box("OK").value }
+          ^
+COMPILATION_ERROR

@@ -28,7 +28,6 @@ import com.intellij.refactoring.listeners.RefactoringElementAdapter
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import org.jdom.Element
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
-import org.jetbrains.kotlin.idea.run.JavaRunConfigurationExtensionManagerUtil
 import org.jetbrains.kotlin.idea.run.KotlinRunConfiguration
 import org.jetbrains.kotlin.idea.run.script.standalone.KotlinStandaloneScriptRunConfigurationProducer.Companion.pathFromPsiElement
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil.isProjectSourceFile
@@ -113,13 +112,13 @@ class KotlinStandaloneScriptRunConfiguration(
             ExecutionBundle.message("run.configuration.configuration.tab.title"),
             KotlinStandaloneScriptRunConfigurationEditor(project)
         )
-        JavaRunConfigurationExtensionManagerUtil.getInstance().appendEditors(this, group)
+        JavaRunConfigurationExtensionManager.instance.appendEditors(this, group)
         return group
     }
 
     override fun writeExternal(element: Element) {
         super.writeExternal(element)
-        JavaRunConfigurationExtensionManagerUtil.getInstance().writeExternal(this, element)
+        JavaRunConfigurationExtensionManager.instance.writeExternal(this, element)
         DefaultJDOMExternalizer.writeExternal(this, element)
         EnvironmentVariablesComponent.writeExternal(element, getEnvs())
         PathMacroManager.getInstance(project).collapsePathsRecursively(element)
@@ -128,7 +127,7 @@ class KotlinStandaloneScriptRunConfiguration(
     override fun readExternal(element: Element) {
         PathMacroManager.getInstance(project).expandPaths(element)
         super.readExternal(element)
-        JavaRunConfigurationExtensionManagerUtil.getInstance().readExternal(this, element)
+        JavaRunConfigurationExtensionManager.instance.readExternal(this, element)
         DefaultJDOMExternalizer.readExternal(this, element)
         EnvironmentVariablesComponent.readExternal(element, getEnvs())
     }

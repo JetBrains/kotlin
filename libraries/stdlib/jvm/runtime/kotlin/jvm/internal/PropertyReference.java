@@ -9,6 +9,7 @@ import kotlin.SinceKotlin;
 import kotlin.reflect.KCallable;
 import kotlin.reflect.KProperty;
 
+@SuppressWarnings("rawtypes")
 public abstract class PropertyReference extends CallableReference implements KProperty {
     public PropertyReference() {
         super();

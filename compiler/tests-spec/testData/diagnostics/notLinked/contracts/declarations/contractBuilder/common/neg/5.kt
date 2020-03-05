@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_EXPRESSION
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !WITH_NEW_INFERENCE
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
@@ -40,7 +41,7 @@ fun case_4(): Boolean? {
 
 // TESTCASE NUMBER: 5
 fun case_5(): Boolean? {
-    contract { returns(null) implies <!ERROR_IN_CONTRACT_DESCRIPTION, TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>listOf(0)<!> }
+    contract { returns(null) implies <!ERROR_IN_CONTRACT_DESCRIPTION, NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>listOf(0)<!> }
     return null
 }
 

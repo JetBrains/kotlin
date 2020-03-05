@@ -113,15 +113,14 @@ fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterDescript
         fakeTypeArguments.add(TypeProjectionImpl(typeProjection.projectionKind, DONT_CARE))
     }
 
-    val receiverTypeConstructor = if (receiverType.constructor is IntersectionTypeConstructor) {
-        val superTypesWithFakeArguments = receiverType.constructor.supertypes.map { supertype ->
+    val oldReceiverTypeConstructor = receiverType.constructor
+    val receiverTypeConstructor = if (oldReceiverTypeConstructor is IntersectionTypeConstructor) {
+        oldReceiverTypeConstructor.transformComponents { supertype ->
             val fakeArguments = supertype.arguments.map { TypeProjectionImpl(it.projectionKind, DONT_CARE) }
             supertype.replace(fakeArguments)
-        }
-
-        IntersectionTypeConstructor(superTypesWithFakeArguments)
+        } ?: oldReceiverTypeConstructor
     } else {
-        receiverType.constructor
+        oldReceiverTypeConstructor
     }
 
     return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(

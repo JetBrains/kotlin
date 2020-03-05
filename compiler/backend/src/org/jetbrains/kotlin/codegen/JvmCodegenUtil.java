@@ -31,14 +31,17 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.KtCodeFragment;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtFunction;
+import org.jetbrains.kotlin.psi.KtSuperTypeListEntry;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.resolve.jvm.checkers.PolymorphicSignatureCallChecker;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement;
@@ -53,8 +56,9 @@ import static org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt.SUS
 import static org.jetbrains.kotlin.descriptors.ClassKind.ANNOTATION_CLASS;
 import static org.jetbrains.kotlin.descriptors.ClassKind.INTERFACE;
 import static org.jetbrains.kotlin.descriptors.Modality.FINAL;
-import static org.jetbrains.kotlin.resolve.BindingContext.DELEGATED_PROPERTY_CALL;
+import static org.jetbrains.kotlin.resolve.BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
+import static org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.NO_EXPLICIT_RECEIVER;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmFieldAnnotation;
 
@@ -149,29 +153,6 @@ public class JvmCodegenUtil {
 
     public static boolean isConstOrHasJvmFieldAnnotation(@NotNull PropertyDescriptor propertyDescriptor) {
         return propertyDescriptor.isConst() || hasJvmFieldAnnotation(propertyDescriptor);
-    }
-
-    public static boolean couldUseDirectAccessToCompanionObject(
-            @NotNull ClassDescriptor companionObjectDescriptor,
-            @NotNull MethodContext contextBeforeInline
-    ) {
-        if (!Visibilities.isPrivate(companionObjectDescriptor.getVisibility())) {
-            // Non-private companion object can be directly accessed anywhere it's allowed by the front-end.
-            return true;
-        }
-
-        if (isDebuggerContext(contextBeforeInline)) {
-            return true;
-        }
-
-        CodegenContext context = contextBeforeInline.getFirstCrossInlineOrNonInlineContext();
-        if (context.isInlineMethodContext()) {
-            // Inline method can be called from a nested class.
-            return false;
-        }
-
-        // Private companion object is directly accessible only from the corresponding class
-        return context.getContextDescriptor().getContainingDeclaration() == companionObjectDescriptor.getContainingDeclaration();
     }
 
     public static String getCompanionObjectAccessorName(@NotNull ClassDescriptor companionObjectDescriptor) {
@@ -319,10 +300,16 @@ public class JvmCodegenUtil {
     ) {
         VariableAccessorDescriptor getter = descriptor.getGetter();
         if (getter != null) {
-            Call call = bindingContext.get(DELEGATED_PROPERTY_CALL, getter);
+            ResolvedCall<FunctionDescriptor> call = bindingContext.get(DELEGATED_PROPERTY_RESOLVED_CALL, getter);
             if (call != null) {
-                assert call.getExplicitReceiver() != null : "No explicit receiver for call:" + call;
-                return ((ReceiverValue) call.getExplicitReceiver()).getType();
+                assert call.getExplicitReceiverKind() != NO_EXPLICIT_RECEIVER : "No explicit receiver for call:" + call;
+                ReceiverValue extensionReceiver = call.getExtensionReceiver();
+                if (extensionReceiver != null) return extensionReceiver.getType();
+
+                ReceiverValue dispatchReceiver = call.getDispatchReceiver();
+                if (dispatchReceiver != null) return dispatchReceiver.getType();
+
+                return null;
             }
         }
         return null;
@@ -391,7 +378,7 @@ public class JvmCodegenUtil {
     }
 
     public static boolean isPolymorphicSignature(@NotNull FunctionDescriptor descriptor) {
-        return descriptor.getAnnotations().hasAnnotation(new FqName("java.lang.invoke.MethodHandle.PolymorphicSignature"));
+        return descriptor.getAnnotations().hasAnnotation(PolymorphicSignatureCallChecker.polymorphicSignatureFqName);
     }
 
     @NotNull
@@ -421,5 +408,24 @@ public class JvmCodegenUtil {
         } else {
             return ((DeserializedClassDescriptor) descriptor).getMetadataVersion().isAtLeast(1, 1, 16);
         }
+    }
+
+    public static boolean isInSamePackage(DeclarationDescriptor descriptor1, DeclarationDescriptor descriptor2) {
+        PackageFragmentDescriptor package1 = DescriptorUtils.getParentOfType(descriptor1, PackageFragmentDescriptor.class, false);
+        PackageFragmentDescriptor package2 = DescriptorUtils.getParentOfType(descriptor2, PackageFragmentDescriptor.class, false);
+
+        return package1 != null && package2 != null &&
+               package1.getFqName().equals(package2.getFqName());
+    }
+
+    // Used mainly for debugging purposes.
+    @SuppressWarnings("unused")
+    public static String dumpContextHierarchy(CodegenContext context) {
+        StringBuilder result = new StringBuilder();
+        int i = 0;
+        for (CodegenContext current = context; current != null; current = current.getParentContext(), ++i) {
+            result.append(i).append(": ").append(current).append('\n');
+        }
+        return result.toString();
     }
 }

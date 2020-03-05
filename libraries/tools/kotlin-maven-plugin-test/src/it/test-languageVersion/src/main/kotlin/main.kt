@@ -1,7 +1,7 @@
-sealed class Base
-
-class Derived : Base()
-
-fun useApiFrom11() {
-    mapOf<Any, Any>().toMutableMap()
+fun breakInWhenFrom14() {
+    while (true) {
+        when {
+            true -> break
+        }
+    }
 }

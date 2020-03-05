@@ -423,4 +423,10 @@ public class RangeTest {
         assertFailsWith<NoSuchElementException> { LongRange.EMPTY.random() }
         assertFailsWith<NoSuchElementException> { CharRange.EMPTY.random() }
     }
+
+    @Test fun randomOrNullInEmptyRange() {
+        assertNull(IntRange.EMPTY.randomOrNull())
+        assertNull(LongRange.EMPTY.randomOrNull())
+        assertNull(CharRange.EMPTY.randomOrNull())
+    }
 }

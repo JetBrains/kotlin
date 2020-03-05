@@ -52,7 +52,9 @@ fun buildConfiguration(environment: KotlinCoreEnvironment, moduleName: String): 
     return runtimeConfiguration
 }
 
-val environment = KotlinCoreEnvironment.createForTests(Disposable { }, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+@Suppress("RedundantSamConstructor")
+private val environment =
+    KotlinCoreEnvironment.createForProduction(Disposable { }, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
 
 fun createPsiFile(fileName: String): KtFile {
     val psiManager = PsiManager.getInstance(environment.project)
@@ -71,6 +73,7 @@ fun buildKLib(
     allDependencies: KotlinLibraryResolveResult,
     commonSources: List<String>
 ) {
+    val configuration = buildConfiguration(environment, moduleName)
     generateKLib(
         project = environment.project,
         files = sources.map { source ->
@@ -80,7 +83,8 @@ fun buildKLib(
             }
             file
         },
-        configuration = buildConfiguration(environment, moduleName),
+        analyzer = AnalyzerWithCompilerReport(configuration),
+        configuration = configuration,
         allDependencies = allDependencies,
         friendDependencies = emptyList(),
         outputKlibPath = outputPath,

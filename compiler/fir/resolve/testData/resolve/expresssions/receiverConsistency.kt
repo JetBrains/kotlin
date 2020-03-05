@@ -6,7 +6,7 @@ class C {
 
     class Nested {
         fun test() {
-            err()
+            <!UNRESOLVED_REFERENCE!>err<!>()
         }
     }
 }

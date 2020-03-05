@@ -33,6 +33,9 @@ fun IrTypeMapper.mapSupertype(irType: IrType, sw: JvmSignatureWriter): Type =
 fun IrTypeMapper.mapClass(irClass: IrClass): Type =
     mapType(irClass.defaultType, TypeMappingMode.CLASS_DECLARATION)
 
+fun IrTypeMapper.mapOwner(irClass: IrClass): Type =
+    mapType(irClass.defaultType, TypeMappingMode.GENERIC_ARGUMENT)
+
 fun IrTypeMapper.mapTypeAsDeclaration(irType: IrType): Type =
     mapType(irType, TypeMappingMode.CLASS_DECLARATION)
 

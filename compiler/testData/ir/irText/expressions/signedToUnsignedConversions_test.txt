@@ -122,6 +122,3 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
           TYPE_OP type=kotlin.UByte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UByte
             CALL 'public final fun <get-EXPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
           CONST Byte type=kotlin.UByte value=42
-      CALL 'public final fun takeLong (l: kotlin.Long): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        l: TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
-          CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY

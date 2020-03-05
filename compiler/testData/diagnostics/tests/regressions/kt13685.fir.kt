@@ -3,5 +3,5 @@
 
 fun foo() {
     val text: List<Any> = null!!
-    text.<!UNRESOLVED_REFERENCE!>map<!> <!UNRESOLVED_REFERENCE!>Any<!><!SYNTAX!>?<!>::toString
+    text.<!UNRESOLVED_REFERENCE!>map<!> <!UNRESOLVED_REFERENCE!>Any<!><!UNRESOLVED_REFERENCE!><!SYNTAX!>?<!>::toString<!>
 }

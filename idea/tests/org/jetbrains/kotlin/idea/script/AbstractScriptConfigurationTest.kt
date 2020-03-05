@@ -183,8 +183,6 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         val newModuleDir = runWriteAction { VfsUtil.createDirectoryIfMissing(project.baseDir, name) }
         val newModule = createModuleAt(name, project, JavaModuleType.getModuleType(), newModuleDir.path)
 
-        // Return type was changed, but it's not used. BUNCH: 183
-        @Suppress("MissingRecentApi")
         PsiTestUtil.addSourceContentToRoots(newModule, newModuleDir)
         return newModule
     }

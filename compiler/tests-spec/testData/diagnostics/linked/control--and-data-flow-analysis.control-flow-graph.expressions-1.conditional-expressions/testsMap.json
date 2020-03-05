@@ -1,0 +1,24 @@
+{
+  "1": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 2,
+          "description": "* HELPERS:",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 3,
+          "description": "* HELPERS: checkType",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

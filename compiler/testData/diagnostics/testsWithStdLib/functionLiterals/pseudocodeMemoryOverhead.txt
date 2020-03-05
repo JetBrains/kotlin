@@ -25,9 +25,9 @@ public final class BigInteger {
     public final fun divide(/*0*/ o: BigInteger): BigInteger
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final fun mod(/*0*/ o: BigInteger): BigInteger
     public final fun multiply(/*0*/ o: BigInteger): BigInteger
     public final fun or(/*0*/ o: BigInteger): BigInteger
+    public final fun rem(/*0*/ o: BigInteger): BigInteger
     public final fun subtract(/*0*/ o: BigInteger): BigInteger
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     public final fun xor(/*0*/ o: BigInteger): BigInteger

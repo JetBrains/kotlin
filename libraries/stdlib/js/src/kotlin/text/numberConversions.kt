@@ -7,9 +7,10 @@ package kotlin.text
 
 
 /**
- * Returns `true` if the contents of this string is equal to the word "true", ignoring case, and `false` otherwise.
+ * Returns `true` if this string is not `null` and its content is equal to the word "true", ignoring case, and `false` otherwise.
  */
-public actual fun String.toBoolean(): Boolean = toLowerCase() == "true"
+@SinceKotlin("1.4")
+public actual fun String?.toBoolean(): Boolean = this != null && this.toLowerCase() == "true"
 
 /**
  * Parses the string as a signed [Byte] number and returns the result.

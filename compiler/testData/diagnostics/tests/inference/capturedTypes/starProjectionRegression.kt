@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // See KT-14453
 val <T : Any> KClass1<T>.primaryConstructor: KFunction1<T>? get() = null!!
 

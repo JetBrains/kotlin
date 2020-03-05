@@ -323,7 +323,7 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
 }
 
 abstract class AbstractKotlinKaptContextTest : AbstractKotlinKapt3Test() {
-    override fun doTest(filePath: String?) {
+    override fun doTest(filePath: String) {
         kaptFlags.add(KaptFlag.CORRECT_ERROR_TYPES)
         kaptFlags.add(KaptFlag.STRICT)
         kaptFlags.add(KaptFlag.MAP_DIAGNOSTIC_LOCATIONS)

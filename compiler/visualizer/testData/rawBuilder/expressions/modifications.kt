@@ -1,4 +1,5 @@
 // FIR_IGNORE
+// WITH_RUNTIME
 fun simple() {
 //      Int Int
 //      │   │

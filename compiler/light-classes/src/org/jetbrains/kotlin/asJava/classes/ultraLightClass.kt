@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
+import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.*
 import com.intellij.psi.impl.InheritanceImplUtil
 import com.intellij.psi.impl.PsiClassImplUtil
@@ -184,7 +186,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                     membersBuilder.generateUniqueFieldName(companion.name.orEmpty(), usedNames),
                     this,
                     support,
-                    setOf(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC)
+                    setOf(PsiModifier.STATIC, PsiModifier.FINAL, companion.simpleVisibility())
                 )
             )
 
@@ -475,4 +477,12 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     override fun isDeprecated(): Boolean = _deprecated
 
     override fun copy(): KtLightClassImpl = KtUltraLightClass(classOrObject.copy() as KtClassOrObject, support)
+
+    override fun getTextRange(): TextRange? {
+        if (Registry.`is`("kotlin.ultra.light.classes.empty.text.range", true)) {
+            return null
+        }
+
+        return super.getTextRange()
+    }
 }

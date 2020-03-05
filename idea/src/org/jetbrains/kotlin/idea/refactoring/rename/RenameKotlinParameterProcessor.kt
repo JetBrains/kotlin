@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
+import com.intellij.psi.search.SearchScope
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
+import org.jetbrains.kotlin.idea.search.or
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
@@ -37,6 +40,18 @@ class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
         checkOriginalUsagesRetargeting(declaration, newName, result, collisions)
         checkNewNameUsagesRetargeting(declaration, newName, collisions)
         result += collisions
+    }
+
+    override fun findReferences(
+        element: PsiElement,
+        searchScope: SearchScope,
+        searchInCommentsAndStrings: Boolean
+    ): MutableCollection<PsiReference> {
+        if (element !is KtParameter) return super.findReferences(element, searchScope, searchInCommentsAndStrings)
+        val ownerFunction = element.ownerFunction
+            ?: return super.findReferences(element, searchScope, searchInCommentsAndStrings)
+        val newScope = searchScope or ownerFunction.useScope
+        return super.findReferences(element, newScope, searchInCommentsAndStrings)
     }
 
     override fun renameElement(element: PsiElement, newName: String, usages: Array<UsageInfo>, listener: RefactoringElementListener?) {

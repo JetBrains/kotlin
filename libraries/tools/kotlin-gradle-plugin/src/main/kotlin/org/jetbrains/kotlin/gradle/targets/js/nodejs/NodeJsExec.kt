@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
-import org.gradle.api.tasks.AbstractExecTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.utils.newFileProperty
 
 open class NodeJsExec : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), RequiresNpmDependencies {
     @get:Internal
@@ -24,13 +25,17 @@ open class NodeJsExec : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), Re
 
     init {
         onlyIf {
-            compilation.compileKotlinTask.outputFile
-                .exists()
+            inputFileProperty.asFile.map {
+                it.exists()
+            }.get()
         }
     }
 
     @Input
     var sourceMapStackTraces = true
+
+    @InputFile
+    val inputFileProperty: RegularFileProperty = project.newFileProperty()
 
     @get:Internal
     override val nodeModulesRequired: Boolean
@@ -72,14 +77,15 @@ open class NodeJsExec : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), Re
             return project.registerTask(name) {
                 it.nodeJs = nodeJs
                 it.compilation = compilation
-                it.executable = nodeJs.environment.nodeExecutable
+                it.executable = nodeJs.requireConfigured().nodeExecutable
                 it.dependsOn(nodeJs.npmInstallTask)
 
                 val compileKotlinTask = compilation.compileKotlinTask
                 it.dependsOn(nodeJs.npmInstallTask, compileKotlinTask)
-                it.args(compileKotlinTask.outputFile)
 
                 it.configuration()
+
+                it.args(it.inputFileProperty.asFile.get())
             }
         }
     }

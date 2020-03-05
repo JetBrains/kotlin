@@ -35,8 +35,8 @@ public interface SerializationErrors {
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {
-            Errors.Initializer.initializeFactoryNames(SerializationErrors.class);
+            Errors.Initializer
+                    .initializeFactoryNamesAndDefaultErrorMessages(SerializationErrors.class, SerializationPluginErrorsRendering.INSTANCE);
         }
     };
-
 }

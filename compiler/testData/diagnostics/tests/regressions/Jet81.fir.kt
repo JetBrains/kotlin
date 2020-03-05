@@ -7,7 +7,7 @@ class Test {
     val a = y;
   }
 
-  val z = y.<!UNRESOLVED_REFERENCE!>a<!>;
+  val z = y.a;
 
 }
 
@@ -24,6 +24,6 @@ class Test2 {
     val y = 1
   }
 
-  val b = a.x
+  val b = a.<!UNRESOLVED_REFERENCE!>x<!>
   val c = a.y
 }

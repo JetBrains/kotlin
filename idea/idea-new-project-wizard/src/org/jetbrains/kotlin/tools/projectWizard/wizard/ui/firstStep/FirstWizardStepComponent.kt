@@ -1,18 +1,27 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import TemplateTag
+import com.intellij.ide.plugins.newui.VerticalLayout
+import com.intellij.ui.JBColor
+import com.intellij.util.ui.JBUI
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.ProjectTemplate
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
+import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeWizard
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import java.awt.BorderLayout
+import javax.swing.Box
+import javax.swing.BoxLayout
 import javax.swing.JComponent
+import java.awt.Component as AwtComponent
 
-class FirstWizardStepComponent(wizard: IdeWizard) : WizardStepComponent(wizard.valuesReadingContext) {
-    private val buildSystemSubStep = BuildSystemSubStep(wizard.valuesReadingContext).asSubComponent()
-    private val templatesSubStep = TemplatesSubStep(wizard.valuesReadingContext).asSubComponent()
+class FirstWizardStepComponent(wizard: IdeWizard) : WizardStepComponent(wizard.ideContext) {
+    private val buildSystemSubStep = BuildSystemSubStep(wizard.ideContext).asSubComponent()
+    private val templatesSubStep = TemplatesSubStep(wizard.ideContext).asSubComponent()
 
     override val component: JComponent = panel {
         add(templatesSubStep.component, BorderLayout.CENTER)
@@ -20,20 +29,17 @@ class FirstWizardStepComponent(wizard: IdeWizard) : WizardStepComponent(wizard.v
     }
 }
 
-class BuildSystemSubStep(valuesReadingContext: ValuesReadingContext) :
-    SubStep(valuesReadingContext) {
-    private val buildSystemSetting = BuildSystemTypeSettingComponent(valuesReadingContext).asSubComponent()
+class BuildSystemSubStep(ideContext: IdeContext) : SubStep(ideContext) {
+    private val buildSystemSetting = BuildSystemTypeSettingComponent(ideContext).asSubComponent()
 
     override fun buildContent(): JComponent = panel {
-        bordered(needBottomEmptyBorder = false)
         add(buildSystemSetting.component, BorderLayout.CENTER)
     }
 }
 
-class TemplatesSubStep(valuesReadingContext: ValuesReadingContext) :
-    SubStep(valuesReadingContext) {
+class TemplatesSubStep(ideContext: IdeContext) : SubStep(ideContext) {
     private val projectTemplateSettingComponent =
-        ProjectTemplateSettingComponent(valuesReadingContext) { projectTemplate ->
+        ProjectTemplateSettingComponent(ideContext) { projectTemplate ->
             templateDescriptionComponent.setTemplate(projectTemplate)
         }.asSubComponent()
 
@@ -50,10 +56,29 @@ class TemplatesSubStep(valuesReadingContext: ValuesReadingContext) :
     }
 
     private fun applySelectedTemplate() {
-        projectTemplateSettingComponent.value?.setsValues?.forEach { (setting, value) ->
-            // TODO do not use settingContext directly
-            context.settingContext[setting] = value
+        modify {
+            projectTemplateSettingComponent.value?.setsValues?.forEach { (setting, value) ->
+                setting.setValue(value)
+            }
+            allModules().forEach { module ->
+                module.apply { initDefaultValuesForSettings() }
+            }
         }
+    }
+
+    private fun allModules(): List<Module> {
+        val modules = mutableListOf<Module>()
+
+        fun addModule(module: Module) {
+            modules += module
+            module.subModules.forEach(::addModule)
+        }
+
+        read {
+            KotlinPlugin::modules.reference.notRequiredSettingValue
+        }?.forEach(::addModule)
+
+        return modules
     }
 
     override fun onValueUpdated(reference: SettingReference<*, *>?) {
@@ -65,14 +90,31 @@ class TemplatesSubStep(valuesReadingContext: ValuesReadingContext) :
 }
 
 class TemplateDescriptionComponent : Component() {
+    private val tagsPanel = panel {
+        layout = BoxLayout(this, BoxLayout.X_AXIS)
+        alignmentX = AwtComponent.LEFT_ALIGNMENT
+        alignmentY = AwtComponent.TOP_ALIGNMENT
+        border = JBUI.Borders.emptyBottom(6)
+    }
     private val descriptionPanel = DescriptionPanel()
 
     fun setTemplate(template: ProjectTemplate) {
+        addTagsToPanel(template.tags)
         descriptionPanel.updateText(template.htmlDescription)
+    }
+
+    private fun addTagsToPanel(tags: List<TemplateTag>) {
+        tagsPanel.removeAll()
+        for (tag in tags) {
+            tagsPanel.add(TemplateTagUIComponent(tag))
+            tagsPanel.add(Box.createHorizontalStrut(6))
+        }
+        tagsPanel.updateUI()
     }
 
     override val component: JComponent = panel {
         bordered()
+        add(tagsPanel, BorderLayout.NORTH)
         add(descriptionPanel, BorderLayout.CENTER)
     }
 }

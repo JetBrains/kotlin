@@ -111,7 +111,7 @@ fun <T : Any, R : Any> TaskResult<T>.map(f: (T) -> R): TaskResult<R> = when (thi
     is Success<T> -> Success(f(value))
 }
 
-fun <T : Any> TaskResult<T>.mapFailure(f: (List<Error>) -> List<Error>): TaskResult<T> = when (this) {
+fun <T : Any> TaskResult<T>.mapFailure(f: (List<Error>) -> Error): TaskResult<T> = when (this) {
     is Failure -> Failure(f(errors))
     is Success<T> -> this
 }

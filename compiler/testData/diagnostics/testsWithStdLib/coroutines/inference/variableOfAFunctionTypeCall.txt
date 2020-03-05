@@ -1,7 +1,7 @@
 package
 
 public fun </*0*/ K> filter(/*0*/ e: K, /*1*/ predicate: (K) -> kotlin.Boolean): ProducerScope<kotlin.Int>
-@kotlin.UseExperimental(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ E> produce(/*0*/ @kotlin.BuilderInference block: ProducerScope<E>.() -> kotlin.Unit): ProducerScope<E>
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ E> produce(/*0*/ @kotlin.BuilderInference block: ProducerScope<E>.() -> kotlin.Unit): ProducerScope<E>
 
 public interface ProducerScope</*0*/ E> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

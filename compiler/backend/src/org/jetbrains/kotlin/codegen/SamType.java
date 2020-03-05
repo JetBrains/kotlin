@@ -20,11 +20,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.state.TypeMapperUtilsKt;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
-import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils;
+import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils;
+import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImplKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
@@ -46,7 +47,7 @@ public class SamType {
         return create(TypeMapperUtilsKt.removeExternalProjections(originalTypeToUse));
     }
     public static SamType create(@NotNull KotlinType originalType) {
-        if (!SingleAbstractMethodUtils.isSamType(originalType)) return null;
+        if (!JavaSingleAbstractMethodUtils.isSamType(originalType)) return null;
         return new SamType(originalType);
     }
 
@@ -62,21 +63,22 @@ public class SamType {
     }
 
     @NotNull
-    public JavaClassDescriptor getJavaClassDescriptor() {
+    public ClassDescriptor getClassDescriptor() {
         ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
-        assert classifier instanceof JavaClassDescriptor : "Sam interface not a Java class: " + classifier;
-        return (JavaClassDescriptor) classifier;
+        assert classifier instanceof ClassDescriptor : "Sam/Fun interface not a class descriptor: " + classifier;
+        return (ClassDescriptor) classifier;
     }
 
     @NotNull
     public KotlinType getKotlinFunctionType() {
+        ClassDescriptor descriptor = getClassDescriptor();
         //noinspection ConstantConditions
-        return getJavaClassDescriptor().getDefaultFunctionTypeForSamInterface();
+        return descriptor.getDefaultFunctionTypeForSamInterface();
     }
 
     @NotNull
     public SimpleFunctionDescriptor getOriginalAbstractMethod() {
-        return (SimpleFunctionDescriptor) SingleAbstractMethodUtils.getAbstractMembers(getJavaClassDescriptor()).get(0);
+        return (SimpleFunctionDescriptor) SamConversionResolverImplKt.getAbstractMembers(getClassDescriptor()).get(0);
     }
 
     @Override

@@ -47,6 +47,7 @@ import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.configuration.ExperimentalFeatures
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.idea.formatter.commitAndUnblockDocument
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
@@ -129,7 +130,7 @@ class JavaToKotlinAction : AnAction() {
                         project,
                         ConverterSettings.defaultSettings,
                         IdeaJavaToKotlinServices
-                    ) else J2kConverterExtension.extension().createJavaToKotlinConverter(
+                    ) else J2kConverterExtension.extension(useNewJ2k = ExperimentalFeatures.NewJ2k.isEnabled).createJavaToKotlinConverter(
                         project,
                         module,
                         ConverterSettings.defaultSettings,
@@ -138,7 +139,7 @@ class JavaToKotlinAction : AnAction() {
                 converterResult = converter.filesToKotlin(
                     javaFiles,
                     if (forceUsingOldJ2k) J2kPostProcessor(formatCode = true)
-                    else J2kConverterExtension.extension().createPostProcessor(formatCode = true),
+                    else J2kConverterExtension.extension(useNewJ2k = ExperimentalFeatures.NewJ2k.isEnabled).createPostProcessor(formatCode = true),
                     progress = ProgressManager.getInstance().progressIndicator!!
                 )
             }
@@ -153,7 +154,7 @@ class JavaToKotlinAction : AnAction() {
 
                 logJ2kConversionStatistics(
                     ConversionType.FILES,
-                    J2kConverterExtension.isNewJ2k,
+                    ExperimentalFeatures.NewJ2k.isEnabled,
                     conversionTime,
                     linesCount,
                     javaFiles.size
@@ -232,7 +233,7 @@ class JavaToKotlinAction : AnAction() {
                 .showInCenterOf(statusBar.component)
         }
 
-        if (!J2kConverterExtension.extension().doCheckBeforeConversion(project, module)) return
+        if (!J2kConverterExtension.extension(useNewJ2k = ExperimentalFeatures.NewJ2k.isEnabled).doCheckBeforeConversion(project, module)) return
 
         val firstSyntaxError = javaFiles.asSequence().map { PsiTreeUtil.findChildOfType(it, PsiErrorElement::class.java) }.firstOrNull()
 

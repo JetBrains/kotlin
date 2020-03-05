@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface Maybe<T>
 class Some<T>(val value: T) : Maybe<T>
 class None<T> : Maybe<T>

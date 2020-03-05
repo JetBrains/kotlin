@@ -35,10 +35,10 @@ FILE fqName:<root> fileName:/objectReferenceInClosureInSuperConstructorCall.kt
     CONSTRUCTOR visibility:private <> () returnType:<root>.Test [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (lambda: kotlin.Function0<kotlin.Any>) [primary] declared in <root>.Base'
-          lambda: FUN_EXPR type=kotlin.Function0<<root>.Test> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.Test
+          lambda: FUN_EXPR type=kotlin.Function0<kotlin.Any> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): <root>.Test declared in <root>.Test.<init>'
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any declared in <root>.Test.<init>'
                   GET_OBJECT 'CLASS OBJECT name:Test modality:FINAL visibility:public superTypes:[<root>.Base]' type=<root>.Test
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Test modality:FINAL visibility:public superTypes:[<root>.Base]'
     PROPERTY FAKE_OVERRIDE name:lambda visibility:public modality:FINAL [fake_override,val]

@@ -1,7 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !WITH_NEW_INFERENCE
 // FILE: annotation.kt
-// NI_EXPECTED_FILE
 
 package kotlin
 
@@ -29,8 +28,8 @@ val memberWithoutAnn = <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_
     add(42)
 }
 
-val extension = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
-    <!NI;NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE!>extensionAdd("foo")<!>
+val extension = <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    extensionAdd("foo")
 }
 
 val safeExtension = build {

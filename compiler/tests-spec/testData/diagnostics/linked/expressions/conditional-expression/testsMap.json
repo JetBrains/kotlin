@@ -1,0 +1,24 @@
+{
+  "6": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 2,
+          "description": "The type of the condition expression must be a subtype of kotlin.Boolean",
+          "unexpectedBehaviour": true
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 4,
+          "description": "The type of the condition expression must be a subtype of kotlin.Boolean",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

@@ -48,7 +48,7 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
         loadScriptingPlugin(configuration)
     }
 
-    override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>) {
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         if (files.size > 1) {
             throw UnsupportedOperationException("Multiple files are not yet supported in this test")
         }

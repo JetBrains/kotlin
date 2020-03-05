@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //FILE: Foo.java
 public class Foo<T extends CharSequence> {
 }

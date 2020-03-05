@@ -1,7 +1,7 @@
 // !WITH_NEW_INFERENCE
 
 fun <A, B> Either<A, B>.recover(f: (A) -> B): Either<A, B> = when (this) {
-    is Either.Left -> <!INAPPLICABLE_CANDIDATE!>f<!>(this.a).<!INAPPLICABLE_CANDIDATE!>right<!>()
+    is Either.Left -> f(this.a).right()
     is Either.Right -> this
 }
 

@@ -8,5 +8,5 @@ operator fun RemAndRemAssign.remAssign(x: Int) {}
 
 fun test() {
     var c = RemAndRemAssign
-    <!ASSIGN_OPERATOR_AMBIGUITY!>c %= 1<!>
+    <!ASSIGN_OPERATOR_AMBIGUITY, ASSIGN_OPERATOR_AMBIGUITY, ASSIGN_OPERATOR_AMBIGUITY!>c %= 1<!>
 }

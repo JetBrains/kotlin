@@ -18,3 +18,7 @@ abstract class AbstractIncrementalJsKlibCompilerRunnerTest : AbstractIncremental
     override val buildLogFinder: BuildLogFinder
         get() = super.buildLogFinder.copy(isJsIrEnabled = true)
 }
+
+abstract class AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest : AbstractIncrementalJsKlibCompilerRunnerTest() {
+    override val scopeExpansionMode = CompileScopeExpansionMode.ALWAYS
+}

@@ -48,6 +48,7 @@ private val KOTLIN_SCRIPT_RUNTIME = "kotlin-script-runtime"
 private val KOTLIN_SCRIPT_COMMON = "kotlin-scripting-common"
 private val KOTLIN_SCRIPT_JVM = "kotlin-scripting-jvm"
 private val KOTLIN_REFLECT = "kotlin-reflect"
+internal const val KOTLIN_KLIB_COMMONIZER_EMBEDDABLE = "kotlin-klib-commonizer-embeddable"
 
 internal fun findKotlinJvmCompilerClasspath(project: Project): List<File> =
     findKotlinModuleJar(project, K2JVM_COMPILER_CLASS, KOTLIN_COMPILER_EMBEDDABLE).let {

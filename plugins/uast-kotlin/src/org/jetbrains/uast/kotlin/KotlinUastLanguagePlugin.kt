@@ -21,6 +21,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiEnumConstant
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.annotations.TestOnly
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -195,8 +197,11 @@ internal object KotlinConverter {
         else -> element
     }
 
-    private val identifiersTokens =
-        setOf(KtTokens.IDENTIFIER, KtTokens.CONSTRUCTOR_KEYWORD, KtTokens.THIS_KEYWORD, KtTokens.SUPER_KEYWORD, KtTokens.OBJECT_KEYWORD)
+    private val identifiersTokens = setOf(
+        KtTokens.IDENTIFIER, KtTokens.CONSTRUCTOR_KEYWORD, KtTokens.OBJECT_KEYWORD,
+        KtTokens.THIS_KEYWORD, KtTokens.SUPER_KEYWORD,
+        KtTokens.GET_KEYWORD, KtTokens.SET_KEYWORD
+    )
 
     internal fun convertPsiElement(element: PsiElement?,
                                    givenParent: UElement?,
@@ -299,7 +304,7 @@ internal object KotlinConverter {
         }
     }
 
-    var forceUInjectionHost = Registry.`is`("kotlin.uast.force.uinjectionhost", false)
+    var forceUInjectionHost = Registry.`is`("kotlin.uast.force.uinjectionhost", true)
         @TestOnly
         set(value) {
             field = value
@@ -449,7 +454,7 @@ internal object KotlinConverter {
 
     private fun convertEnumEntry(original: KtEnumEntry, givenParent: UElement?): UElement? {
         return LightClassUtil.getLightClassBackingField(original)?.let { psiField ->
-            if (psiField is KtLightFieldImpl.KtLightEnumConstant) {
+            if (psiField is KtLightField && psiField is PsiEnumConstant) {
                 KotlinUEnumConstant(psiField, psiField.kotlinOrigin, givenParent)
             } else {
                 null
@@ -488,8 +493,11 @@ internal object KotlinConverter {
                     }
                     else -> el<UClass> { KotlinUClass.create(original, givenParent) }
                 }
-                is KtLightFieldImpl.KtLightEnumConstant -> el<UEnumConstant>(buildKtOpt(original.kotlinOrigin, ::KotlinUEnumConstant))
-                is KtLightField -> el<UField>(buildKtOpt(original.kotlinOrigin, ::KotlinUField))
+                is KtLightField ->
+                    if (original is PsiEnumConstant)
+                        el<UEnumConstant>(buildKtOpt(original.kotlinOrigin, ::KotlinUEnumConstant))
+                    else
+                        el<UField>(buildKtOpt(original.kotlinOrigin, ::KotlinUField))
                 is KtLightParameter -> el<UParameter>(buildKtOpt(original.kotlinOrigin, ::KotlinUParameter))
                 is UastKotlinPsiParameter -> el<UParameter>(buildKt(original.ktParameter, ::KotlinUParameter))
                 is UastKotlinPsiVariable -> el<UVariable>(buildKt(original.ktElement, ::KotlinUVariable))
@@ -517,8 +525,12 @@ internal object KotlinConverter {
                             val lightMethod = LightClassUtil.getLightClassMethod(original)
                             if (lightMethod != null)
                                 convertDeclaration(lightMethod, givenParent, expectedTypes)
-                            else
-                                KotlinUMethodWithFakeLightDelegate(original, givenParent)
+                            else {
+                                val ktLightClass = original.containingClassOrObject?.toLightClass()
+                                    ?: original.containingKtFile.findFacadeClass()
+                                    ?: return null
+                                KotlinUMethodWithFakeLightDelegate(original, ktLightClass, givenParent)
+                            }
                         }
                     }
 

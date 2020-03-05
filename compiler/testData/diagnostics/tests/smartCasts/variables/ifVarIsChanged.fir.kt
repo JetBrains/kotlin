@@ -6,6 +6,6 @@ public fun foo() {
     var s: Any = "not null"
     if (s is String) {
         s = 42
-        bar(s)
+        <!INAPPLICABLE_CANDIDATE!>bar<!>(s)
     }
 }

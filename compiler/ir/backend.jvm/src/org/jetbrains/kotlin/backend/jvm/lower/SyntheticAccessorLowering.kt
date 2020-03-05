@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -15,7 +16,8 @@ import org.jetbrains.kotlin.backend.jvm.intrinsics.receiverAndArgs
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.isLambda
-import org.jetbrains.kotlin.backend.jvm.ir.shouldBeHidden
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.hasMangledParameters
+import org.jetbrains.kotlin.codegen.syntheticAccessorToSuperSuffix
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -36,16 +38,37 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.synthetic.isVisibleOutside
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
-    private val pendingTransformations = mutableListOf<Function0<Unit>>()
-    private val inlineLambdaToCallSite = mutableMapOf<IrFunction, IrDeclaration?>()
+    data class LambdaCallSite(val scope: IrDeclaration, val crossinline: Boolean)
+
+    private val pendingAccessorsToAdd = mutableListOf<IrFunction>()
+    private val inlineLambdaToCallSite = mutableMapOf<IrFunction, LambdaCallSite>()
 
     override fun lower(irFile: IrFile) {
-        inlineLambdaToCallSite.putAll(IrInlineReferenceLocator.scan(context, irFile).lambdaToCallSite)
+        irFile.accept(object : IrInlineReferenceLocator(context) {
+            override fun visitInlineLambda(
+                argument: IrFunctionReference,
+                callee: IrFunction,
+                parameter: IrValueParameter,
+                scope: IrDeclaration
+            ) {
+                inlineLambdaToCallSite[argument.symbol.owner] = LambdaCallSite(scope, parameter.isCrossinline)
+            }
+        }, null)
+
         irFile.transformChildrenVoid(this)
-        pendingTransformations.forEach { it() }
+
+        for (accessor in pendingAccessorsToAdd) {
+            assert(accessor.fileOrNull == irFile || accessor.isAllowedToBeAddedToForeignFile()) {
+                "SyntheticAccessorLowering should not attempt to modify other files!\n" +
+                        "While lowering this file: ${irFile.render()}\n" +
+                        "Trying to add this accessor: ${accessor.render()}"
+            }
+            (accessor.parent as IrDeclarationContainer).declarations.add(accessor)
+        }
     }
 
     private val functionMap = mutableMapOf<IrFunctionSymbol, IrFunctionSymbol>()
@@ -57,20 +80,26 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             return super.visitFunctionAccess(expression)
         }
 
+        val callee = expression.symbol.owner
         val withSuper = (expression as? IrCall)?.superQualifierSymbol != null
         val thisSymbol = (expression as? IrCall)?.dispatchReceiver?.type?.classifierOrNull as? IrClassSymbol
-        if (expression.symbol.isAccessible(withSuper, thisSymbol)) {
-            return super.visitFunctionAccess(expression)
-        }
-        return super.visitExpression(
-            modifyFunctionAccessExpression(expression, functionMap.getOrPut(expression.symbol) {
-                when (val symbol = expression.symbol) {
-                    is IrConstructorSymbol -> symbol.owner.makeConstructorAccessor().symbol
-                    is IrSimpleFunctionSymbol -> symbol.owner.makeSimpleFunctionAccessor(expression as IrCall).symbol
-                    else -> error("Unknown subclass of IrFunctionSymbol")
+
+        val accessor = when {
+            callee is IrConstructor && callee.isOrShouldBeHidden ->
+                handleHiddenConstructor(callee).symbol
+
+            !expression.symbol.isAccessible(withSuper, thisSymbol) ->
+                functionMap.getOrPut(expression.symbol) {
+                    when (val symbol = expression.symbol) {
+                        is IrConstructorSymbol -> symbol.owner.makeConstructorAccessor().also(pendingAccessorsToAdd::add).symbol
+                        is IrSimpleFunctionSymbol -> symbol.owner.makeSimpleFunctionAccessor(expression as IrCall).symbol
+                        else -> error("Unknown subclass of IrFunctionSymbol")
+                    }
                 }
-            })
-        )
+
+            else -> return super.visitFunctionAccess(expression)
+        }
+        return super.visitExpression(modifyFunctionAccessExpression(expression, accessor))
     }
 
     override fun visitGetField(expression: IrGetField) = super.visitExpression(
@@ -90,25 +119,24 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     )
 
     override fun visitConstructor(declaration: IrConstructor): IrStatement {
-        handleHiddenConstructor(declaration)
-        return super.visitConstructor(declaration)
-    }
+        if (declaration.isOrShouldBeHidden) {
+            pendingAccessorsToAdd.add(handleHiddenConstructor(declaration))
+            declaration.visibility = Visibilities.PRIVATE
+        }
 
-    override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-        handleHiddenConstructor(expression.symbol.owner)
-        return super.visitConstructorCall(expression)
+        return super.visitConstructor(declaration)
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
         val function = expression.symbol.owner
 
-        if (!expression.origin.isLambda && function is IrConstructor) {
-            handleHiddenConstructor(function)?.let { accessor ->
+        if (!expression.origin.isLambda && function is IrConstructor && function.isOrShouldBeHidden) {
+            handleHiddenConstructor(function).let { accessor ->
                 expression.transformChildrenVoid()
                 return IrFunctionReferenceImpl(
                     expression.startOffset, expression.endOffset, expression.type,
-                    accessor, accessor.owner.typeParameters.size,
-                    accessor.owner.valueParameters.size, expression.origin
+                    accessor.symbol, accessor.typeParameters.size,
+                    accessor.valueParameters.size, accessor.symbol, expression.origin
                 )
             }
         }
@@ -116,28 +144,28 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         return super.visitFunctionReference(expression)
     }
 
-    private fun handleHiddenConstructor(declaration: IrConstructor): IrConstructorSymbol? {
-        functionMap[declaration.symbol]?.let { return it as IrConstructorSymbol }
+    private val IrConstructor.isOrShouldBeHidden: Boolean
+        get() = this in context.hiddenConstructors || (
+                !Visibilities.isPrivate(visibility) && !constructedClass.isInline && hasMangledParameters &&
+                        origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
+                        origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
 
-        if (!declaration.shouldBeHidden)
-            return null
-
-        declaration.visibility = Visibilities.PRIVATE
-
-        return declaration.makeConstructorAccessor().also { accessor ->
-            functionMap[declaration.symbol] = accessor.symbol
-
-            // There's a special case in the JVM backend for serializing the metadata of hidden
-            // constructors - we serialize the descriptor of the original constructor, but the
-            // signature of the bridge. We implement this special case in the JVM IR backend by
-            // attaching the metadata directly to the bridge. We also have to move all annotations
-            // to the bridge method. Parameter annotations are already moved by the copyTo method.
-            accessor.metadata = declaration.metadata
-            declaration.safeAs<IrConstructorImpl>()?.metadata = null
-            accessor.annotations += declaration.annotations
-            declaration.annotations.clear()
-            declaration.valueParameters.forEach { it.annotations.clear() }
-        }.symbol
+    private fun handleHiddenConstructor(declaration: IrConstructor): IrConstructorImpl {
+        require(declaration.isOrShouldBeHidden, declaration::render)
+        return context.hiddenConstructors.getOrPut(declaration) {
+            declaration.makeConstructorAccessor().also { accessor ->
+                // There's a special case in the JVM backend for serializing the metadata of hidden
+                // constructors - we serialize the descriptor of the original constructor, but the
+                // signature of the accessor. We implement this special case in the JVM IR backend by
+                // attaching the metadata directly to the accessor. We also have to move all annotations
+                // to the accessor. Parameter annotations are already moved by the copyTo method.
+                accessor.metadata = declaration.metadata
+                declaration.safeAs<IrConstructorImpl>()?.metadata = null
+                accessor.annotations += declaration.annotations
+                declaration.annotations = emptyList()
+                declaration.valueParameters.forEach { it.annotations = emptyList() }
+            }
+        }
     }
 
     // In case of Java `protected static`, access could be done from a public inline function in the same package,
@@ -145,7 +173,11 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     private fun IrDeclarationWithVisibility.accessorParent(parent: IrDeclarationParent = this.parent) =
         if (visibility == JavaVisibilities.PROTECTED_STATIC_VISIBILITY) {
             val classes = allScopes.map { it.irElement }.filterIsInstance<IrClass>()
-            classes.lastOrNull { parent is IrClass && it.isSubclassOf(parent) } ?: classes.last()
+            val companions = classes.mapNotNull { it.companionObject() }.filterIsInstance<IrClass>()
+            val objectsInScope =
+                classes.flatMap { it.declarations.filter(IrDeclaration::isAnonymousObject).filterIsInstance<IrClass>() }
+            val candidates = objectsInScope + companions + classes
+            candidates.lastOrNull { parent is IrClass && it.isSubclassOf(parent) } ?: classes.last()
         } else parent
 
     private fun IrConstructor.makeConstructorAccessor(): IrConstructorImpl {
@@ -155,17 +187,17 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = source.name
             visibility = Visibilities.PUBLIC
-
         }.also { accessor ->
             accessor.parent = source.parent
-            pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
 
             accessor.copyTypeParametersFrom(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
             accessor.copyValueParametersToStatic(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
             accessor.addValueParameter(
-                "marker", context.ir.symbols.defaultConstructorMarker.defaultType, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+                "constructor_marker".synthesizedString,
+                context.ir.symbols.defaultConstructorMarker.defaultType,
+                JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
             )
 
             accessor.body = IrExpressionBodyImpl(
@@ -232,7 +264,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             isSuspend = source.isSuspend // synthetic accessors of suspend functions are handled in codegen
         }.also { accessor ->
             accessor.parent = parent
-            pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
+            pendingAccessorsToAdd.add(accessor)
 
             accessor.copyTypeParametersFrom(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
             accessor.copyValueParametersToStatic(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR, dispatchReceiverType)
@@ -264,7 +296,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             returnType = fieldSymbol.owner.type
         }.also { accessor ->
             accessor.parent = fieldSymbol.owner.accessorParent()
-            pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
+            pendingAccessorsToAdd.add(accessor)
 
             if (!fieldSymbol.owner.isStatic) {
                 accessor.addValueParameter(
@@ -300,7 +332,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             returnType = context.irBuiltIns.unitType
         }.also { accessor ->
             accessor.parent = fieldSymbol.owner.accessorParent()
-            pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
+            pendingAccessorsToAdd.add(accessor)
 
             if (!fieldSymbol.owner.isStatic) {
                 accessor.addValueParameter(
@@ -308,7 +340,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
                 )
             }
 
-            accessor.addValueParameter("value", fieldSymbol.owner.type, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
+            accessor.addValueParameter("<set-?>", fieldSymbol.owner.type, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
 
             accessor.body = createAccessorBodyForSetter(fieldSymbol.owner, accessor)
         }.symbol
@@ -448,17 +480,19 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     private fun IrFunction.accessorName(superQualifier: IrClassSymbol?): Name {
         val jvmName = context.methodSignatureMapper.mapFunctionName(this)
         val suffix = when {
+            // Accessors for top level functions never need a suffix.
+            isTopLevel -> ""
+
             // The only function accessors placed on interfaces are for private functions and JvmDefault implementations.
             // The two cannot clash.
-            parentAsClass.isJvmInterface && Visibilities.isPrivate(visibility) -> ""
-            parentAsClass.isJvmInterface && hasJvmDefault() -> "\$jd"
+            parentAsClass.isJvmInterface -> if (!Visibilities.isPrivate(visibility) && hasJvmDefault()) "\$jd" else ""
 
             // Accessor for _s_uper-qualified call
-            superQualifier != null -> "\$s" + superQualifier.descriptor.name.asString().hashCode()
+            superQualifier != null -> "\$s" + superQualifier.descriptor.syntheticAccessorToSuperSuffix()
 
             // Access to static members that need an accessor must be because they are inherited,
             // hence accessed on a _s_upertype.
-            isStatic -> "\$s" + hashForAccessorDisambiguation()
+            isStatic -> "\$s" + parentAsClass.descriptor.syntheticAccessorToSuperSuffix()
 
             else -> ""
         }
@@ -476,23 +510,15 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     }
 
     private fun IrField.fieldAccessorSuffix(): String {
-        // The only static field accessors are those for fields moved from companion objects, hence a
-        // _c_ompanion _p_roperty suffix. However, companion objects for interfaces keep their fields
-        // (as interfaces cannot own fields), hence are simple _p_roperty accessors, like everything else.
-        val companionSuffix = if (isStatic && !parentAsClass.isCompanion) "cp" else "p"
+        // Special _c_ompanion _p_roperty suffix for accessing companion backing field moved to outer
+        if (origin == JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD && !parentAsClass.isCompanion) {
+            return "cp"
+        }
 
         // Static accesses that need an accessor must be due to being inherited, hence accessed on a
         // _s_upertype
-        val staticSuffix = if (isStatic) "\$s"+ hashForAccessorDisambiguation() else ""
-        return companionSuffix + staticSuffix
+        return "p" + if (isStatic) "\$s" + parentAsClass.descriptor.syntheticAccessorToSuperSuffix() else ""
     }
-
-    private fun IrDeclaration.hashForAccessorDisambiguation() =
-        if (parentAsClass.name.isSpecial) {
-            context.getLocalClassType(parentAsClass)?.className.hashCode() ?: parentAsClass.name.hashCode()
-        } else {
-            parentAsClass.name.identifier.hashCode()
-        }
 
     private val Visibility.isPrivate
         get() = Visibilities.isPrivate(this)
@@ -502,16 +528,18 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
                 this == JavaVisibilities.PROTECTED_AND_PACKAGE ||
                 this == JavaVisibilities.PROTECTED_STATIC_VISIBILITY
 
-    private fun IrDeclaration.getAccessContext(withSuper: Boolean): IrDeclarationContainer? = when {
+    private fun IrDeclaration.getAccessContext(allowSamePackage: Boolean): IrDeclarationContainer? = when {
         this is IrDeclarationContainer -> this
-        // For inline lambdas, we can navigate to the only call site directly.
-        this in inlineLambdaToCallSite -> inlineLambdaToCallSite[this]?.getAccessContext(withSuper)
+        // For inline lambdas, we can navigate to the only call site directly. Crossinline lambdas might be inlined
+        // into other classes in the same package, so private/super require accessors anyway.
+        this in inlineLambdaToCallSite ->
+            inlineLambdaToCallSite[this]!!.takeIf { allowSamePackage || !it.crossinline }?.scope?.getAccessContext(allowSamePackage)
         // Accesses from inline functions can actually be anywhere; even private inline functions can be
         // inlined into a different class, e.g. a callable reference. For protected inline functions
         // calling methods on `super` we also need an accessor to satisfy INVOKESPECIAL constraints.
         // TODO scan nested classes for calls to private inline functions?
         this is IrFunction && isInline -> null
-        else -> (parent as? IrDeclaration)?.getAccessContext(withSuper)
+        else -> (parent as? IrDeclaration)?.getAccessContext(allowSamePackage)
     }
 
     private fun IrSymbol.isAccessible(withSuper: Boolean, thisObjReference: IrClassSymbol?): Boolean {
@@ -540,17 +568,26 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
         // If local variables are accessible by Kotlin rules, they also are by Java rules.
         val symbolDeclarationContainer = (declaration.parent as? IrDeclarationContainer) as? IrElement ?: return true
-        val contextDeclarationContainer = (currentScope!!.irElement as IrDeclaration).getAccessContext(withSuper) ?: return false
+        val contextDeclarationContainer =
+            (currentScope!!.irElement as IrDeclaration).getAccessContext(declaration.visibility.isProtected && !withSuper) ?: return false
 
         val samePackage = declaration.getPackageFragment()?.fqName == contextDeclarationContainer.getPackageFragment()?.fqName
         val fromSubclassOfReceiversClass = contextDeclarationContainer is IrClass && symbolDeclarationContainer is IrClass &&
                 ((thisObjReference == null || contextDeclarationContainer.symbol.isSubtypeOfClass(thisObjReference)) &&
                         (contextDeclarationContainer.isSubclassOf(symbolDeclarationContainer)))
         return when {
+            // private suspend functions are generated as synthetic package private
+            declaration is IrFunction && declaration.isSuspend && declaration.visibility.isPrivate && samePackage -> true
             declaration.visibility.isPrivate && symbolDeclarationContainer != contextDeclarationContainer -> false
             declaration.visibility.isProtected && !samePackage && !fromSubclassOfReceiversClass -> false
             withSuper && !fromSubclassOfReceiversClass -> false
             else -> true
         }
     }
+
+    // monitorEnter/monitorExit are the only functions which are accessed "illegally" (see kotlin/util/Synchronized.kt).
+    // Since they are intrinsified in the codegen, SyntheticAccessorLowering should not crash on attempt to add accessors for them.
+    private fun IrFunction.isAllowedToBeAddedToForeignFile(): Boolean =
+        (name.asString() == "access\$monitorEnter" || name.asString() == "access\$monitorExit") &&
+                context.irIntrinsics.getIntrinsic(symbol) != null
 }

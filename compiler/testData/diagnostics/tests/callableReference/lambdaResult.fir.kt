@@ -36,7 +36,7 @@ fun main(x: Inv<Int>) {
     }
 
     foo1 {
-        if (x.hashCode() == 0) return@foo1 <!UNRESOLVED_REFERENCE!>::bar<!>
+        if (x.hashCode() == 0) return@foo1 ::bar
 
         ::bar
     }

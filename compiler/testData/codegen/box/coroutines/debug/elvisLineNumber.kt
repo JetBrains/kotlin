@@ -3,7 +3,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // FULL_JDK
-
+package test
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

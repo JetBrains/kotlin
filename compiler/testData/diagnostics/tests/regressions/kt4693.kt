@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 enum class MyEnum {
     K;
     

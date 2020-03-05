@@ -216,7 +216,7 @@ class KotlinCoreEnvironment private constructor(
         )
 
         val (initialRoots, javaModules) =
-                classpathRootsResolver.convertClasspathRoots(configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS))
+            classpathRootsResolver.convertClasspathRoots(configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS))
         this.initialRoots.addAll(initialRoots)
 
         if (!configuration.getBoolean(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK) && messageCollector != null) {
@@ -228,7 +228,7 @@ class KotlinCoreEnvironment private constructor(
         }
 
         val (roots, singleJavaFileRoots) =
-                initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
+            initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
 
         // REPL and kapt2 update classpath dynamically
         rootsIndex = JvmDependenciesDynamicCompoundIndex().apply {
@@ -421,6 +421,7 @@ class KotlinCoreEnvironment private constructor(
         fun createForProduction(
             parentDisposable: Disposable, configuration: CompilerConfiguration, configFiles: EnvironmentConfigFiles
         ): KotlinCoreEnvironment {
+            setupIdeaStandaloneExecution()
             val appEnv = getOrCreateApplicationEnvironmentForProduction(parentDisposable, configuration)
             val projectEnv = ProjectEnvironment(parentDisposable, appEnv)
             val environment = KotlinCoreEnvironment(projectEnv, configuration, configFiles)
@@ -528,7 +529,7 @@ class KotlinCoreEnvironment private constructor(
                     false
                 }
 
-            val pluginRoot =
+            val pluginRoot: File =
                 configuration.get(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT)?.let(::File)
                     ?: PathUtil.getResourcePathForClass(this::class.java).takeIf { it.hasConfigFile(configFilePath) }
                     // hack for load extensions when compiler run directly from project directory (e.g. in tests)
@@ -538,7 +539,7 @@ class KotlinCoreEnvironment private constructor(
                                 "(cp:\n  ${(Thread.currentThread().contextClassLoader as? UrlClassLoader)?.urls?.joinToString("\n  ") { it.file }})"
                     )
 
-            CoreApplicationEnvironment.registerExtensionPointAndExtensions(pluginRoot, configFilePath, Extensions.getRootArea())
+            registerExtensionPointAndExtensionsEx(pluginRoot, configFilePath, Extensions.getRootArea())
         }
 
         private fun workaroundIbmJdkStaxReportCdataEventIssue() {
@@ -715,4 +716,3 @@ class KotlinCoreEnvironment private constructor(
         }
     }
 }
-

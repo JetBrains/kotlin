@@ -14,7 +14,7 @@ import kotlin.script.experimental.api.ScriptDiagnostic
 fun makeResolveFailureResult(message: String) = makeResolveFailureResult(listOf(message))
 
 fun makeResolveFailureResult(messages: Iterable<String>) =
-    ResultWithDiagnostics.Failure(messages.map { ScriptDiagnostic(it, ScriptDiagnostic.Severity.WARNING) })
+    ResultWithDiagnostics.Failure(messages.map { ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, it, ScriptDiagnostic.Severity.WARNING) })
 
 fun RepositoryCoordinates.toRepositoryUrlOrNull(): URL? =
     try {

@@ -6,16 +6,15 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -59,24 +58,32 @@ class IntegerLiteralTypeApproximationTransformer(
         val scope = declaredMemberScope((symbolProvider.getClassLikeSymbolByFqName(receiverClassId) as FirRegularClassSymbol).fir)
         var resultSymbol: FirFunctionSymbol<*>? = null
         scope.processFunctionsByName(operator.name) { symbol ->
+            if (resultSymbol != null) {
+                return@processFunctionsByName
+            }
             if (operator.kind.unary) {
                 resultSymbol = symbol
-                return@processFunctionsByName ProcessorAction.STOP
+                return@processFunctionsByName
             }
             val function = symbol.fir
             val valueParameterType = function.valueParameters.first().returnTypeRef.coneTypeUnsafe<ConeClassLikeType>()
             if (AbstractTypeChecker.isSubtypeOf(inferenceContext, argumentType!!, valueParameterType)) {
                 resultSymbol = symbol
-                return@processFunctionsByName ProcessorAction.STOP
+                return@processFunctionsByName
             }
-            ProcessorAction.NEXT
         }
         // TODO: Maybe resultType = data?
         //   check black box tests
         // e.g. Byte doesn't have `and` in member scope. It's an extension
         if (resultSymbol == null) return functionCall.compose()
         functionCall.resultType = data?.let { functionCall.resultType.resolvedTypeFromPrototype(it) } ?: resultSymbol.fir.returnTypeRef
-        return functionCall.transformCalleeReference(StoreCalleeReference, FirResolvedNamedReferenceImpl(null, operator.name, resultSymbol!!)).compose()
+        return functionCall.transformCalleeReference(
+            StoreCalleeReference,
+            buildResolvedNamedReference {
+                name = operator.name
+                resolvedSymbol = resultSymbol!!
+            }
+        ).compose()
     }
 
     override fun transformOperatorCall(operatorCall: FirOperatorCall, data: ConeKotlinType?): CompositeTransformResult<FirStatement> {
@@ -189,17 +196,19 @@ class IntegerOperatorsTypeUpdater(val approximator: IntegerLiteralTypeApproximat
     }
 }
 
+@UseExperimental(FirImplementationDetail::class)
 private fun FirFunctionCall.toOperatorCall(): FirIntegerOperatorCall {
     if (this is FirIntegerOperatorCall) return this
-    return FirIntegerOperatorCall(source).also {
-        it.typeRef = typeRef
-        it.annotations += annotations
-        it.safe = safe
-        it.typeArguments += typeArguments
-        it.explicitReceiver = explicitReceiver
-        it.dispatchReceiver = dispatchReceiver
-        it.extensionReceiver = extensionReceiver
-        it.arguments += arguments
-        it.calleeReference = calleeReference
-    }
+    return FirIntegerOperatorCall(
+        source,
+        typeRef,
+        annotations.toMutableList(),
+        safe,
+        typeArguments.toMutableList(),
+        explicitReceiver,
+        dispatchReceiver,
+        extensionReceiver,
+        arguments.toMutableList(),
+        calleeReference,
+    )
 }

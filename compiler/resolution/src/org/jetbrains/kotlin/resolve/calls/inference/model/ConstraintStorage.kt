@@ -69,7 +69,8 @@ class Constraint(
     val position: IncorporationConstraintPosition,
     val typeHashCode: Int = type.hashCode(),
     val derivedFrom: Set<TypeVariableMarker>,
-    val isNullabilityConstraint: Boolean
+    val isNullabilityConstraint: Boolean,
+    val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

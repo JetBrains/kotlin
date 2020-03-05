@@ -83,7 +83,10 @@ open class TypeApproximatorConfiguration {
         override val typeVariable: (TypeVariableTypeConstructorMarker) -> Boolean get() = { true }
     }
 
-    object IncorporationConfiguration : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FOR_INCORPORATION)
+    object IncorporationConfiguration : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FOR_INCORPORATION) {
+        override val definitelyNotNullTypeInInvariantPosition: Boolean get() = false
+    }
+
     object SubtypeCapturedTypesApproximation : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FOR_SUBTYPING)
     object CapturedAndIntegerLiteralsTypesApproximation : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FROM_EXPRESSION) {
         override val integerLiteralType: Boolean get() = true
@@ -112,7 +115,8 @@ class TypeApproximator(builtIns: KotlinBuiltIns) : AbstractTypeApproximator(Clas
         if (!languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return baseType.unwrap()
 
         val configuration = if (local) TypeApproximatorConfiguration.LocalDeclaration else TypeApproximatorConfiguration.PublicDeclaration
-        return approximateToSuperType(baseType.unwrap(), configuration) ?: baseType.unwrap()
+        val preparedType = if (local) baseType.unwrap() else substituteAlternativesInPublicType(baseType)
+        return approximateToSuperType(preparedType, configuration) ?: preparedType
     }
 
     // null means that this input type is the result, i.e. input type not contains not-allowed kind of types
@@ -485,12 +489,14 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
 
             val argumentType = newArguments[index]?.getType() ?: argument.getType()
 
+            val capturedType = argumentType.lowerBoundIfFlexible().asCapturedType()
             val capturedStarProjectionOrNull =
-                argumentType.lowerBoundIfFlexible().asCapturedType()?.typeConstructorProjection()?.takeIf { it.isStarProjection() }
+                capturedType?.typeConstructorProjection()?.takeIf { it.isStarProjection() }
 
             if (capturedStarProjectionOrNull != null &&
                 (effectiveVariance == TypeVariance.OUT || effectiveVariance == TypeVariance.INV) &&
-                toSuper
+                toSuper &&
+                capturedType.typeParameter() == parameter
             ) {
                 newArguments[index] = capturedStarProjectionOrNull
                 continue@loop

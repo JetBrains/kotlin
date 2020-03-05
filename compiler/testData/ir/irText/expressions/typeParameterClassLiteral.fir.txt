@@ -11,11 +11,13 @@ FILE fqName:<root> fileName:/typeParameterClassLiteral.kt
       RETURN type=kotlin.Nothing from='public final fun classRefExtFun <T> (): kotlin.reflect.KClass<T of <root>.classRefExtFun> [inline] declared in <root>'
         CLASS_REFERENCE 'TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<T of <root>.classRefExtFun>
   PROPERTY name:classRefExtVal visibility:public modality:FINAL [val]
-    FUN name:<get-classRefExtVal> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KClass<T of <uninitialized parent>>
+    FUN name:<get-classRefExtVal> visibility:public modality:FINAL <T> ($receiver:T of <root>.<get-classRefExtVal>) returnType:kotlin.reflect.KClass<T of <root>.<get-classRefExtVal>>
       correspondingProperty: PROPERTY name:classRefExtVal visibility:public modality:FINAL [val]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any]
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.<get-classRefExtVal>
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-classRefExtVal> (): kotlin.reflect.KClass<T of <uninitialized parent>> declared in <root>'
-          CLASS_REFERENCE 'TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<T of <uninitialized parent>>
+        RETURN type=kotlin.Nothing from='public final fun <get-classRefExtVal> <T> (): kotlin.reflect.KClass<T of <root>.<get-classRefExtVal>> declared in <root>'
+          CLASS_REFERENCE 'TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<T of <root>.<get-classRefExtVal>>
   CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host
     CONSTRUCTOR visibility:public <> () returnType:<root>.Host [primary]
@@ -36,12 +38,14 @@ FILE fqName:<root> fileName:/typeParameterClassLiteral.kt
         RETURN type=kotlin.Nothing from='public final fun classRefGenericMemberExtFun <TF> (): kotlin.reflect.KClass<TF of <root>.Host.classRefGenericMemberExtFun> [inline] declared in <root>.Host'
           CLASS_REFERENCE 'TYPE_PARAMETER name:TF index:0 variance: superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<TF of <root>.Host.classRefGenericMemberExtFun>
     PROPERTY name:classRefGenericMemberExtVal visibility:public modality:FINAL [val]
-      FUN name:<get-classRefGenericMemberExtVal> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.reflect.KClass<TV of <uninitialized parent>>
+      FUN name:<get-classRefGenericMemberExtVal> visibility:public modality:FINAL <TV> ($this:<root>.Host, $receiver:TV of <root>.Host.<get-classRefGenericMemberExtVal>) returnType:kotlin.reflect.KClass<TV of <root>.Host.<get-classRefGenericMemberExtVal>>
         correspondingProperty: PROPERTY name:classRefGenericMemberExtVal visibility:public modality:FINAL [val]
+        TYPE_PARAMETER name:TV index:0 variance: superTypes:[kotlin.Any]
         $this: VALUE_PARAMETER name:<this> type:<root>.Host
+        $receiver: VALUE_PARAMETER name:<this> type:TV of <root>.Host.<get-classRefGenericMemberExtVal>
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-classRefGenericMemberExtVal> (): kotlin.reflect.KClass<TV of <uninitialized parent>> declared in <root>.Host'
-            CLASS_REFERENCE 'TYPE_PARAMETER name:TV index:0 variance: superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<TV of <uninitialized parent>>
+          RETURN type=kotlin.Nothing from='public final fun <get-classRefGenericMemberExtVal> <TV> (): kotlin.reflect.KClass<TV of <root>.Host.<get-classRefGenericMemberExtVal>> declared in <root>.Host'
+            CLASS_REFERENCE 'TYPE_PARAMETER name:TV index:0 variance: superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<TV of <root>.Host.<get-classRefGenericMemberExtVal>>
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations
 
+import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.module.impl.scopes.JdkScope
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.idea.caches.project.getModuleInfoByVirtualFile
 import org.jetbrains.kotlin.idea.caches.project.implementedModules
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.util.hasJavaResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -459,9 +461,9 @@ class MoveConflictChecker(
                         val target = ref.resolve() ?: return@forEach
                         if (isToBeMoved(target)) return@forEach
 
-                        val targetDescriptor = when (target) {
-                            is KtDeclaration -> target.unsafeResolveToDescriptor()
-                            is PsiMember -> target.getJavaMemberDescriptor()
+                        val targetDescriptor = when {
+                            target is KtDeclaration -> target.unsafeResolveToDescriptor()
+                            target is PsiMember && target.hasJavaResolutionFacade() -> target.getJavaMemberDescriptor()
                             else -> null
                         } as? DeclarationDescriptorWithVisibility ?: return@forEach
 

@@ -105,7 +105,7 @@ class BasicCompletionSession(
         if (OPERATOR_NAME.isApplicable())
             return OPERATOR_NAME
 
-        if (NamedArgumentCompletion.isOnlyNamedArgumentExpected(nameExpression)) {
+        if (NamedArgumentCompletion.isOnlyNamedArgumentExpected(nameExpression, resolutionFacade)) {
             return NAMED_ARGUMENTS_ONLY
         }
 
@@ -189,7 +189,9 @@ class BasicCompletionSession(
                 completeDeclarationNameFromUnresolvedOrOverride(declaration)
 
                 if (declaration is KtProperty) {
-                    completeParameterOrVarNameAndType(declaration.modifierList?.hasModifier(KtTokens.LATEINIT_KEYWORD) == true)
+                    // we want to insert type only if the property is lateinit,
+                    // because lateinit var cannot have its type deduced from initializer
+                    completeParameterOrVarNameAndType(withType = declaration.hasModifier(KtTokens.LATEINIT_KEYWORD))
                 }
 
                 // no auto-popup on typing after "val", "var" and "fun" because it's likely the name of the declaration which is being typed by user

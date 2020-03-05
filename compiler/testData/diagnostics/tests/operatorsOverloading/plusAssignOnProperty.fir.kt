@@ -15,5 +15,5 @@ fun test() {
     val c = C()
     c.c += ""
     var c1 = C1()
-    <!ASSIGN_OPERATOR_AMBIGUITY!>c1.c += ""<!>
+    <!ASSIGN_OPERATOR_AMBIGUITY, ASSIGN_OPERATOR_AMBIGUITY, ASSIGN_OPERATOR_AMBIGUITY!>c1.c += ""<!>
 }

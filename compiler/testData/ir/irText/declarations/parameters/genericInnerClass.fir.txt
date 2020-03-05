@@ -1,20 +1,20 @@
 FILE fqName:<root> fileName:/genericInnerClass.kt
   CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer<T1 of <root>.Outer>
     TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> () returnType:<root>.Outer<T1 of <root>.Outer> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]'
     CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
-      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner<T2 of <root>.Outer.Inner>
       TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?]
       CONSTRUCTOR visibility:public <> () returnType:<root>.Outer.Inner<T2 of <root>.Outer.Inner> [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'
-      FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Outer.Inner, x1:T1 of <root>.Outer, x2:T2 of <root>.Outer.Inner) returnType:kotlin.Unit
-        $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner
+      FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Outer.Inner<T2 of <root>.Outer.Inner>, x1:T1 of <root>.Outer, x2:T2 of <root>.Outer.Inner) returnType:kotlin.Unit
+        $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner<T2 of <root>.Outer.Inner>
         VALUE_PARAMETER name:x1 index:0 type:T1 of <root>.Outer
         VALUE_PARAMETER name:x2 index:1 type:T2 of <root>.Outer.Inner
         BLOCK_BODY

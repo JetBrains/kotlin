@@ -10,9 +10,7 @@ import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
@@ -112,12 +110,18 @@ fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
 
     val element = element
 
-    if (candidateTarget is KtImportAlias && element is KtSimpleNameExpression && element.getReferencedName() == candidateTarget.name) {
+    if (candidateTarget is KtImportAlias &&
+        (element is KtSimpleNameExpression && element.getReferencedName() == candidateTarget.name ||
+                this is KDocReference && this.canonicalText == candidateTarget.name)) {
         val importDirective = candidateTarget.importDirective ?: return false
         val importedFqName = importDirective.importedFqName ?: return false
         val importedDescriptors = importDirective.containingKtFile.resolveImportReference(importedFqName)
         val importableTargets = unwrappedTargets.mapNotNull {
-            if (it is KtConstructor<*>) it.containingClassOrObject else it
+            when {
+                it is KtConstructor<*> -> it.containingClassOrObject
+                it is PsiMethod && it.isConstructor -> it.containingClass
+                else -> it
+            }
         }
 
         val project = element.project
@@ -281,7 +285,16 @@ fun KtExpression.readWriteAccessWithFullExpression(useResolveForReadWrite: Boole
 }
 
 fun KtReference.canBeResolvedViaImport(target: DeclarationDescriptor, bindingContext: BindingContext): Boolean {
-    if (this is KDocReference) return element.getQualifiedName().size == 1
+    if (this is KDocReference) {
+        val qualifier = element.getQualifier() ?: return true
+        return if (target.isExtension) {
+            val elementHasFunctionDescriptor = element.resolveMainReferenceToDescriptors().any { it is FunctionDescriptor }
+            val qualifierHasClassDescriptor = qualifier.resolveMainReferenceToDescriptors().any { it is ClassDescriptor }
+            elementHasFunctionDescriptor && qualifierHasClassDescriptor
+        } else {
+            false
+        }
+    }
     return element.canBeResolvedViaImport(target, bindingContext)
 }
 

@@ -1,0 +1,1 @@
+fun a(i: Int<caret>) = Unit

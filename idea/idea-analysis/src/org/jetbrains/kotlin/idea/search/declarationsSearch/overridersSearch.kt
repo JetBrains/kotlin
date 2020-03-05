@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightMethod
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.search.allScope
@@ -206,7 +207,9 @@ fun findDeepestSuperMethodsNoWrapping(method: PsiElement): List<PsiElement> {
         is PsiMethod -> element.findDeepestSuperMethods().toList()
         is KtCallableDeclaration -> {
             val descriptor = element.resolveToDescriptorIfAny() as? CallableMemberDescriptor ?: return emptyList()
-            descriptor.getDeepestSuperDeclarations(false).mapNotNull { it.source.getPsi() }
+            descriptor.getDeepestSuperDeclarations(false).mapNotNull {
+                it.source.getPsi() ?: DescriptorToSourceUtilsIde.getAnyDeclaration(element.project, it)
+            }
         }
         else -> emptyList()
     }

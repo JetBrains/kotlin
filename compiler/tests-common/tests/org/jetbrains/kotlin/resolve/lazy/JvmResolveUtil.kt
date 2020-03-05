@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.container.ComponentProvider
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
@@ -62,7 +63,8 @@ object JvmResolveUtil {
         files: Collection<KtFile>,
         configuration: CompilerConfiguration,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-        trace: BindingTrace = CliBindingTrace()
+        trace: BindingTrace = CliBindingTrace(),
+        klibList: List<KotlinLibrary> = emptyList()
     ): AnalysisResult {
         for (file in files) {
             try {
@@ -72,7 +74,7 @@ object JvmResolveUtil {
             }
         }
 
-        return analyze(project, files, configuration, packagePartProvider, trace).apply {
+        return analyze(project, files, configuration, packagePartProvider, trace, klibList).apply {
             try {
                 AnalyzingUtils.throwExceptionOnErrors(bindingContext)
             } catch (e: Exception) {
@@ -102,10 +104,12 @@ object JvmResolveUtil {
         files: Collection<KtFile>,
         configuration: CompilerConfiguration,
         packagePartProviderFactory: (GlobalSearchScope) -> PackagePartProvider,
-        trace: BindingTrace = CliBindingTrace()
+        trace: BindingTrace = CliBindingTrace(),
+        klibList: List<KotlinLibrary> = emptyList()
     ): AnalysisResult {
         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-            project, files, trace, configuration, packagePartProviderFactory
+            project, files, trace, configuration, packagePartProviderFactory,
+            klibList = klibList
         )
     }
 }

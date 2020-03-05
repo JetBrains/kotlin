@@ -22,7 +22,10 @@ import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.openapi.compiler.CompilerManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.task.ProjectTaskContext
 import com.intellij.task.ProjectTaskManager
+import com.intellij.task.ProjectTaskNotification
+import com.intellij.task.ProjectTaskResult
 
 class ConsoleCompilerHelper(
     private val project: Project,
@@ -39,9 +42,9 @@ class ConsoleCompilerHelper(
 
     fun compileModule() {
         if (ExecutionManager.getInstance(project).contentManager.removeRunContent(executor, contentDescriptor)) {
-            ProjectTaskManager.getInstance(project).build(arrayOf(module)) { result ->
+            ProjectTaskManager.getInstance(project).build(module).onSuccess { executionResult ->
                 if (!module.isDisposed) {
-                    KotlinConsoleKeeper.getInstance(project).run(module, previousCompilationFailed = result.errors > 0)
+                    KotlinConsoleKeeper.getInstance(project).run(module, previousCompilationFailed = executionResult.hasErrors())
                 }
             }
         }

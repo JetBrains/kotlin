@@ -43,6 +43,11 @@ public class IrInlineSuspendTestsGenerated extends AbstractIrInlineSuspendTests 
         runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/crossinlineSuspendLambdaInsideCrossinlineSuspendLambda.kt", "kotlin.coroutines");
     }
 
+    @TestMetadata("doubleRegenerationWithNonSuspendingLambda.kt")
+    public void testDoubleRegenerationWithNonSuspendingLambda_1_3() throws Exception {
+        runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/doubleRegenerationWithNonSuspendingLambda.kt", "kotlin.coroutines");
+    }
+
     @TestMetadata("inlineOrdinaryOfCrossinlineSuspend.kt")
     public void testInlineOrdinaryOfCrossinlineSuspend_1_3() throws Exception {
         runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/inlineOrdinaryOfCrossinlineSuspend.kt", "kotlin.coroutines");
@@ -111,6 +116,11 @@ public class IrInlineSuspendTestsGenerated extends AbstractIrInlineSuspendTests 
     @TestMetadata("returnValue.kt")
     public void testReturnValue_1_3() throws Exception {
         runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/returnValue.kt", "kotlin.coroutines");
+    }
+
+    @TestMetadata("tryCatchReceiver.kt")
+    public void testTryCatchReceiver_1_3() throws Exception {
+        runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/tryCatchReceiver.kt", "kotlin.coroutines");
     }
 
     @TestMetadata("tryCatchStackTransform.kt")

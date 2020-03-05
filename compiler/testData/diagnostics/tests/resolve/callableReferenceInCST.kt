@@ -28,7 +28,7 @@ fun testElvis(x: Any?) {
 }
 
 fun testExclExcl() {
-    val y = :: <!UNRESOLVED_REFERENCE!>unresolved<!><!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
+    val y = :: <!UNRESOLVED_REFERENCE!>unresolved<!><!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
 }
 
 fun testTry() {

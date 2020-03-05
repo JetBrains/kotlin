@@ -11,25 +11,23 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.scopes.FirIterableScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class FirSupertypeResolverTransformer : FirTransformer<Nothing?>() {
+class FirSupertypeResolverTransformer(
+    private val scopeSession: ScopeSession
+) : FirTransformer<Nothing?>() {
     private val supertypeComputationSession = SupertypeComputationSession()
-    private val scopeSession = ScopeSession()
+
     private val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession)
 
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
@@ -266,7 +264,10 @@ private class FirSupertypeResolverVisitor(
     }
 }
 
-private fun createErrorTypeRef(fir: FirElement, message: String) = FirErrorTypeRefImpl(fir.source, FirSimpleDiagnostic(message))
+private fun createErrorTypeRef(fir: FirElement, message: String) = buildErrorTypeRef {
+    source = fir.source
+    diagnostic = FirSimpleDiagnostic(message)
+}
 
 private class SupertypeComputationSession {
     private val fileScopesMap = hashMapOf<FirFile, FirImmutableCompositeScope>()
@@ -312,15 +313,18 @@ private class SupertypeComputationSession {
         }
 
         supertypeStatusMap[classLikeDeclaration] = SupertypeComputationStatus.Computed(resolvedTypesRefs)
+        newClassifiersForBreakingLoops.add(classLikeDeclaration)
     }
 
+    private val newClassifiersForBreakingLoops = mutableListOf<FirClassLikeDeclaration<*>>()
+    private val breakLoopsDfsVisited = hashSetOf<FirClassLikeDeclaration<*>>()
+
     fun breakLoops(session: FirSession) {
-        val visited = hashSetOf<FirClassLikeDeclaration<*>>()
         val inProcess = hashSetOf<FirClassLikeDeclaration<*>>()
 
         fun dfs(classLikeDeclaration: FirClassLikeDeclaration<*>) {
+            if (classLikeDeclaration in breakLoopsDfsVisited) return
             val supertypeComputationStatus = supertypeStatusMap[classLikeDeclaration] ?: return
-            if (classLikeDeclaration in visited) return
             if (classLikeDeclaration in inProcess) return
 
             inProcess.add(classLikeDeclaration)
@@ -353,12 +357,13 @@ private class SupertypeComputationSession {
             }
 
             inProcess.remove(classLikeDeclaration)
-            visited.add(classLikeDeclaration)
+            breakLoopsDfsVisited.add(classLikeDeclaration)
         }
 
-        for (classifier in supertypeStatusMap.keys) {
+        for (classifier in newClassifiersForBreakingLoops) {
             dfs(classifier)
         }
+        newClassifiersForBreakingLoops.clear()
     }
 }
 
@@ -377,50 +382,8 @@ sealed class SupertypeComputationStatus {
 private typealias ImmutableList<E> = javaslang.collection.List<E>
 
 private class FirImmutableCompositeScope(
-    private val scopes: ImmutableList<FirScope>
-) : FirScope() {
-
+    override val scopes: ImmutableList<FirScope>
+) : FirIterableScope() {
     fun childScope(newScope: FirScope?) = newScope?.let { FirImmutableCompositeScope(scopes.push(newScope)) } ?: this
     fun childScope(newScopes: Collection<FirScope>) = FirImmutableCompositeScope(scopes.pushAll(newScopes))
-
-    override fun processClassifiersByName(
-        name: Name,
-        processor: (FirClassifierSymbol<*>) -> ProcessorAction
-    ): ProcessorAction {
-        for (scope in scopes) {
-            if (!scope.processClassifiersByName(name, processor)) {
-                return ProcessorAction.STOP
-            }
-        }
-        return ProcessorAction.NEXT
-    }
-
-    private inline fun <T> processComposite(
-        process: FirScope.(Name, (T) -> ProcessorAction) -> ProcessorAction,
-        name: Name,
-        noinline processor: (T) -> ProcessorAction
-    ): ProcessorAction {
-        val unique = mutableSetOf<T>()
-        for (scope in scopes) {
-            if (!scope.process(name) {
-                    if (unique.add(it)) {
-                        processor(it)
-                    } else {
-                        ProcessorAction.NEXT
-                    }
-                }
-            ) {
-                return ProcessorAction.STOP
-            }
-        }
-        return ProcessorAction.NEXT
-    }
-
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
-        return processComposite(FirScope::processFunctionsByName, name, processor)
-    }
-
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
-        return processComposite(FirScope::processPropertiesByName, name, processor)
-    }
 }

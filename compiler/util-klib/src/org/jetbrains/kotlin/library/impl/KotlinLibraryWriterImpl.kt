@@ -11,14 +11,18 @@ import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.saveToFile
 import org.jetbrains.kotlin.library.*
 
+const val KLIB_DEFAULT_COMPONENT_NAME = "default"
+
 open class KotlinLibraryLayoutForWriter(
-    override val libDir: File
+    override val libDir: File,
+    override val component: String = KLIB_DEFAULT_COMPONENT_NAME
 ) : KotlinLibraryLayout, MetadataKotlinLibraryLayout, IrKotlinLibraryLayout
 
 open class BaseWriterImpl(
     val libraryLayout: KotlinLibraryLayoutForWriter,
     moduleName: String,
     override val versions: KotlinLibraryVersioning,
+    builtInsPlatform: BuiltInsPlatform,
     val nopack: Boolean = false
 ) : BaseWriter {
 
@@ -34,6 +38,8 @@ open class BaseWriterImpl(
         // TODO: <name>:<hash> will go somewhere around here.
         manifestProperties.setProperty(KLIB_PROPERTY_UNIQUE_NAME, moduleName)
         manifestProperties.writeKonanLibraryVersioning(versions)
+        if (builtInsPlatform != BuiltInsPlatform.COMMON)
+            manifestProperties.setProperty(KLIB_PROPERTY_BUILTINS_PLATFORM, builtInsPlatform.name)
     }
 
     override fun addLinkDependencies(libraries: List<KotlinLibrary>) {
@@ -75,11 +81,12 @@ class KoltinLibraryWriterImpl(
     libDir: File,
     moduleName: String,
     versions: KotlinLibraryVersioning,
+    builtInsPlatform: BuiltInsPlatform,
     nopack: Boolean = false,
 
     val layout: KotlinLibraryLayoutForWriter = KotlinLibraryLayoutForWriter(libDir),
 
-    val base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, nopack),
+    val base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nopack),
     metadata: MetadataWriter = MetadataWriterImpl(layout),
     ir: IrWriter = IrMonoliticWriterImpl(layout)
 //    ir: IrWriter = IrPerFileWriterImpl(layout)
@@ -95,10 +102,11 @@ fun buildKoltinLibrary(
     moduleName: String,
     nopack: Boolean,
     manifestProperties: Properties?,
-    dataFlowGraph: ByteArray?
+    dataFlowGraph: ByteArray?,
+    builtInsPlatform: BuiltInsPlatform
 ): KotlinLibraryLayout {
 
-    val library = KoltinLibraryWriterImpl(File(output), moduleName, versions, nopack)
+    val library = KoltinLibraryWriterImpl(File(output), moduleName, versions, builtInsPlatform, nopack)
 
     library.addMetadata(metadata)
 
@@ -112,4 +120,8 @@ fun buildKoltinLibrary(
 
     library.commit()
     return library.layout
+}
+
+enum class BuiltInsPlatform {
+    JVM, JS, NATIVE, COMMON
 }

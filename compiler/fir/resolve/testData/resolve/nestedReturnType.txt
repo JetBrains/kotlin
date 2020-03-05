@@ -12,7 +12,7 @@ FILE: nestedReturnType.kt
         }
 
         public final fun foo(): R|Some.Nested| {
-            ^foo this@R|/Some|.R|/Some.Nested.Nested|()
+            ^foo R|/Some.Nested.Nested|()
         }
 
     }

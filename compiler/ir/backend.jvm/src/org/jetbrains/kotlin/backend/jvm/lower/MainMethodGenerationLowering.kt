@@ -16,53 +16,78 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.irBlockBody
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.isFileClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
 internal val mainMethodGenerationPhase = makeIrFilePhase(
     ::MainMethodGenerationLowering,
     name = "MainMethodGeneration",
-    description = "Identify parameterless main methods and generate bridge main-methods",
+    description = "Generate main bridges to parameterless mains, and wrappers for suspend mains.",
     prerequisite = setOf(jvmOverloadsAnnotationPhase)
 )
 
-internal class MainMethodGenerationLowering(val context: JvmBackendContext) : ClassLoweringPass {
+private class MainMethodGenerationLowering(private val context: JvmBackendContext) : ClassLoweringPass {
 
+    /**
+     * This pass finds extended main methods and introduces a regular
+     * `public static void main(String[] args)` entry point, as appropriate:
+     *   - invocation via [kotlin.coroutines.jvm.internal.runSuspend] suspend main methods.
+     *   - a simple delegating wrapper for parameterless main methods
+     *
+     * There are three cases that must be handled, in order of precedence:
+     *
+     * 1. `suspend fun main(args: Array<String>) { .. }` for which we generate
+     *    ```
+     *    fun main(args: Array<String>) {
+     *      runSuspend { main(args) }
+     *    }
+     *    ```
+     *
+     * 2. `suspend fun main() { .. }` for which we generate
+     *    ```
+     *    fun main(args: Array<String>) {
+     *      runSuspend { main() }
+     *    }
+     *    ```
+     *
+     * 3. `fun main() { .. }` for which we generate
+     *    ```
+     *    fun main(args: Array<String>) {
+     *      main()
+     *    }
+     *    ```
+     */
     override fun lower(irClass: IrClass) {
         if (!context.configuration.languageVersionSettings.supportsFeature(LanguageFeature.ExtendedMainConvention)) return
-        if (irClass.origin != IrDeclarationOrigin.FILE_CLASS) return
+        if (!irClass.isFileClass) return
 
-        val parameterlessMain = irClass.functions.find { it.isParameterlessMainMethod() } ?: return
-
-        if (irClass.functions.any { it.isMainMethod() }) return
-
-        generateMainMethod(irClass, parameterlessMain)
-    }
-
-    private fun generateMainMethod(irClass: IrClass, parameterlessMain: IrSimpleFunction) {
-        irClass.addFunction {
-            name = Name.identifier("main")
-            visibility = Visibilities.PUBLIC
-            returnType = context.irBuiltIns.unitType
-            modality = Modality.FINAL
-            origin = JvmLoweredDeclarationOrigin.GENERATED_MAIN_FOR_PARAMETERLESS_MAIN_METHOD
-        }.apply {
-            addValueParameter {
-                name = Name.identifier("args")
-                type = context.irBuiltIns.arrayClass.typeWith(context.irBuiltIns.stringType)
+        irClass.functions.find { it.isMainMethod() }?.let { mainMethod ->
+            if (mainMethod.isSuspend) {
+                irClass.generateMainMethod { args ->
+                    +irRunSuspend(mainMethod, args)
+                }
             }
-            body = context.createIrBuilder(this.symbol).irBlockBody {
-                +irReturn(this.irCall(parameterlessMain))
+            return
+        }
+
+        irClass.functions.find { it.isParameterlessMainMethod() }?.let { parameterlessMainMethod ->
+            irClass.generateMainMethod {
+                if (parameterlessMainMethod.isSuspend) {
+                    +irRunSuspend(parameterlessMainMethod, null)
+                } else {
+                    +irCall(parameterlessMainMethod)
+                }
             }
         }
     }
@@ -73,7 +98,6 @@ internal class MainMethodGenerationLowering(val context: JvmBackendContext) : Cl
                 valueParameters.isEmpty() &&
                 returnType.isUnit() &&
                 name.asString() == "main"
-
 
     private fun IrSimpleFunction.isMainMethod(): Boolean {
         if (getJvmNameFromAnnotation() ?: name.asString() != "main") return false
@@ -90,4 +114,35 @@ internal class MainMethodGenerationLowering(val context: JvmBackendContext) : Cl
             else -> false
         }
     }
+
+    private fun IrClass.generateMainMethod(makeBody: IrBlockBodyBuilder.(IrValueParameter) -> Unit) =
+        addFunction {
+            name = Name.identifier("main")
+            visibility = Visibilities.PUBLIC
+            returnType = context.irBuiltIns.unitType
+            modality = Modality.FINAL
+            this.origin = JvmLoweredDeclarationOrigin.GENERATED_EXTENDED_MAIN
+        }.apply {
+            val args = addValueParameter {
+                name = Name.identifier("args")
+                type = context.irBuiltIns.arrayClass.typeWith(context.irBuiltIns.stringType)
+            }
+            body = context.createIrBuilder(symbol).irBlockBody { makeBody(args) }
+        }
+
+    private fun IrBuilderWithScope.irRunSuspend(target: IrSimpleFunction, args: IrValueParameter?) =
+        irCall(this@MainMethodGenerationLowering.context.ir.symbols.runSuspendFunction).apply {
+            val reference = IrFunctionReferenceImpl(
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET,
+                this@MainMethodGenerationLowering.context.ir.symbols.suspendFunctionN(0).typeWith(context.irBuiltIns.anyNType),
+                target.symbol,
+                typeArgumentsCount = 0,
+                reflectionTarget = null
+            )
+            if (args != null) {
+                reference.putValueArgument(0, irGet(args))
+            }
+            putValueArgument(0, reference)
+        }
 }

@@ -1,0 +1,25 @@
+package
+
+public fun aFlow(): Flow<kotlin.Unit>
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> channelFlow(/*0*/ @kotlin.BuilderInference block: suspend ProducerScope<T>.() -> kotlin.Unit): Flow<T>
+public suspend fun ProducerScope<*>.awaitClose(/*0*/ block: () -> kotlin.Unit = ...): kotlin.Unit
+
+public interface Flow</*0*/ out T> {
+    public abstract suspend fun collect(/*0*/ collector: FlowCollector<T>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface FlowCollector</*0*/ in T> {
+    public abstract suspend fun emit(/*0*/ value: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface ProducerScope</*0*/ in E> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

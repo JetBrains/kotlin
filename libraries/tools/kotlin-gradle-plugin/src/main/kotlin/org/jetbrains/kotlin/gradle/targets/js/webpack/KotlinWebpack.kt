@@ -75,6 +75,12 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     @Input
     var saveEvaluatedConfigFile: Boolean = true
 
+    @Nested
+    val output: KotlinWebpackOutput = KotlinWebpackOutput(
+        library = baseConventions?.archivesBaseName,
+        libraryTarget = KotlinWebpackOutput.Target.UMD
+    )
+
     @get:Internal
     @Deprecated("use destinationDirectory instead", ReplaceWith("destinationDirectory"))
     val outputPath: File
@@ -129,6 +135,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
             mode = mode,
             entry = entry,
             reportEvaluatedConfigFile = if (saveEvaluatedConfigFile) evaluatedConfigFile else null,
+            output = output,
             outputPath = destinationDirectory,
             outputFileName = outputFileName,
             configDirectory = configDirectory,

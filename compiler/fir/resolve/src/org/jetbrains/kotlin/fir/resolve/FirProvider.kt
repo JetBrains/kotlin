@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirProvider : FirSymbolProvider() {
+
+    open val isPhasedFirAllowed: Boolean get() = false
+
     abstract fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>?
 
     abstract override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>?

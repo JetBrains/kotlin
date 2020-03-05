@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping.isMappedIntrinsicCompanionObject
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -26,7 +28,6 @@ import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.impl.*
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -34,19 +35,21 @@ import org.jetbrains.kotlin.name.Name
 import java.util.*
 
 class JvmDeclarationFactory(
-    private val methodSignatureMapper: MethodSignatureMapper
+    private val methodSignatureMapper: MethodSignatureMapper,
+    private val languageVersionSettings: LanguageVersionSettings
 ) : DeclarationFactory {
     private val singletonFieldDeclarations = HashMap<IrSymbolOwner, IrField>()
     private val interfaceCompanionFieldDeclarations = HashMap<IrSymbolOwner, IrField>()
     private val outerThisDeclarations = HashMap<IrClass, IrField>()
     private val innerClassConstructors = HashMap<IrConstructor, IrConstructor>()
+    private val originalInnerClassPrimaryConstructorByClass = HashMap<IrClass, IrConstructor>()
     private val staticBackingFields = HashMap<IrProperty, IrField>()
 
     private val defaultImplsMethods = HashMap<IrSimpleFunction, IrSimpleFunction>()
     private val defaultImplsClasses = HashMap<IrClass, IrClass>()
     private val defaultImplsRedirections = HashMap<IrSimpleFunction, IrSimpleFunction>()
 
-    override fun getFieldForEnumEntry(enumEntry: IrEnumEntry, entryType: IrType): IrField =
+    override fun getFieldForEnumEntry(enumEntry: IrEnumEntry): IrField =
         singletonFieldDeclarations.getOrPut(enumEntry) {
             buildField {
                 setSourceRange(enumEntry)
@@ -75,11 +78,22 @@ class JvmDeclarationFactory(
         }
 
     override fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: IrConstructor): IrConstructor {
-        assert((innerClassConstructor.parent as IrClass).isInner) { "Class is not inner: ${(innerClassConstructor.parent as IrClass).dump()}" }
+        val innerClass = innerClassConstructor.parent as IrClass
+        assert(innerClass.isInner) { "Class is not inner: ${(innerClassConstructor.parent as IrClass).dump()}" }
 
         return innerClassConstructors.getOrPut(innerClassConstructor) {
             createInnerClassConstructorWithOuterThisParameter(innerClassConstructor)
+        }.also {
+            if (innerClassConstructor.isPrimary) {
+                originalInnerClassPrimaryConstructorByClass[innerClass] = innerClassConstructor
+            }
         }
+    }
+
+    override fun getInnerClassOriginalPrimaryConstructorOrNull(innerClass: IrClass): IrConstructor? {
+        assert(innerClass.isInner) { "Class is not inner: $innerClass" }
+
+        return originalInnerClassPrimaryConstructorByClass[innerClass]
     }
 
     private fun createInnerClassConstructorWithOuterThisParameter(oldConstructor: IrConstructor): IrConstructor {
@@ -98,7 +112,7 @@ class JvmDeclarationFactory(
             isExpect = oldConstructor.isExpect
         ).apply {
             newDescriptor.bind(this)
-            annotations.addAll(oldConstructor.annotations.map { it.deepCopyWithSymbols(this) })
+            annotations = oldConstructor.annotations.map { it.deepCopyWithSymbols(this) }
             parent = oldConstructor.parent
             returnType = oldConstructor.returnType
             copyTypeParametersFrom(oldConstructor)
@@ -118,9 +132,7 @@ class JvmDeclarationFactory(
                 outerThisDescriptor.bind(it)
                 it.parent = this
             }
-            valueParameters.add(outerThisValueParameter)
-
-            oldConstructor.valueParameters.mapTo(valueParameters) { it.copyTo(this, index = it.index + 1) }
+            valueParameters = listOf(outerThisValueParameter) + oldConstructor.valueParameters.map { it.copyTo(this, index = it.index + 1) }
             metadata = oldConstructor.metadata
         }
     }
@@ -128,12 +140,21 @@ class JvmDeclarationFactory(
     override fun getFieldForObjectInstance(singleton: IrClass): IrField =
         singletonFieldDeclarations.getOrPut(singleton) {
             val isNotMappedCompanion = singleton.isCompanion && !isMappedIntrinsicCompanionObject(singleton.descriptor)
+            val useProperVisibilityForCompanion =
+                languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField)
+                        && singleton.isCompanion
+                        && !singleton.parentAsClass.isInterface
             buildField {
                 name = if (isNotMappedCompanion) singleton.name else Name.identifier(JvmAbi.INSTANCE_FIELD)
                 type = singleton.defaultType
                 origin = IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE
                 isFinal = true
                 isStatic = true
+                visibility = when {
+                    !useProperVisibilityForCompanion -> Visibilities.PUBLIC
+                    singleton.visibility == Visibilities.PROTECTED -> JavaVisibilities.PROTECTED_STATIC_VISIBILITY
+                    else -> singleton.visibility
+                }
             }.apply {
                 parent = if (isNotMappedCompanion) singleton.parent else singleton
             }
@@ -181,7 +202,7 @@ class JvmDeclarationFactory(
                 initializer = oldField.initializer
                     ?.replaceThisByStaticReference(this@JvmDeclarationFactory, oldParent, oldParent.thisReceiver!!)
                     ?.patchDeclarationParents(this) as IrExpressionBody?
-                (this as IrFieldImpl).metadata = oldField.metadata
+                origin = if (irProperty.parentAsClass.isCompanion) JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD else origin
             }
         }
     }
@@ -210,8 +231,16 @@ class JvmDeclarationFactory(
                     else -> JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE
                 },
                 // Old backend doesn't generate ACC_FINAL on DefaultImpls methods.
-                modality = Modality.OPEN
-            ).also { it.copyAttributes(interfaceFun) }
+                modality = Modality.OPEN,
+
+                // Interface functions are always public, with one exception: clone in Cloneable, which is protected. However, Cloneable
+                // has no DefaultImpls, so this merely replicates the incorrect behavior of the old backend. We should rather not generate
+                // a bridge to clone when interface inherits from Cloneable at all. Below, we force everything, including those bridges,
+                // to be public so that we won't try to generate synthetic accessor for them.
+                visibility = Visibilities.PUBLIC,
+
+                typeParametersFromContext = parent.typeParameters
+            )
         }
     }
 
@@ -231,7 +260,8 @@ class JvmDeclarationFactory(
                 isData = false,
                 isExternal = false,
                 isInline = false,
-                isExpect = false
+                isExpect = false,
+                isFun = false
             ).apply {
                 descriptor.bind(this)
                 parent = interfaceClass
@@ -259,9 +289,9 @@ class JvmDeclarationFactory(
                 ).apply {
                     descriptor.bind(this)
                     parent = irClass
-                    overriddenSymbols.addAll(fakeOverride.overriddenSymbols)
+                    overriddenSymbols = fakeOverride.overriddenSymbols
                     copyParameterDeclarationsFrom(fakeOverride)
-                    annotations.addAll(fakeOverride.annotations)
+                    annotations = fakeOverride.annotations
                     fakeOverride.correspondingPropertySymbol?.owner?.let { fakeOverrideProperty ->
                         // NB: property is only generated for the sake of the type mapper.
                         // If both setter and getter are present, original property will be duplicated.

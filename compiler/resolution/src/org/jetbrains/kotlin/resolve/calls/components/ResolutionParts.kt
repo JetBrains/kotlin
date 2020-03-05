@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
+import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
@@ -21,11 +23,12 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.InfixCallNoInfixModifier
 import org.jetbrains.kotlin.resolve.calls.tower.InvokeConventionCallNoOperatorModifier
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
+import org.jetbrains.kotlin.resolve.sam.getFunctionTypeForPossibleSamType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal object CheckInstantiationOfAbstractClass : ResolutionPart() {
@@ -151,7 +154,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
             if (knownTypeArgument != null) {
                 csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
-                    knownTypeArgument.unwrap(),
+                    getTypePreservingFlexibilityWrtTypeVariable(knownTypeArgument.unwrap(), freshVariable),
                     KnownTypeParameterConstraintPosition(knownTypeArgument)
                 )
                 continue
@@ -162,7 +165,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
             if (typeArgument is SimpleTypeArgument) {
                 csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
-                    typeArgument.type,
+                    getTypePreservingFlexibilityWrtTypeVariable(typeArgument.type, freshVariable),
                     ExplicitTypeParameterConstraintPosition(typeArgument)
                 )
             } else {
@@ -172,6 +175,19 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
             }
         }
     }
+
+    fun TypeParameterDescriptor.shouldBeFlexible(): Boolean {
+        return upperBounds.any {
+            it.isFlexible() || ((it.constructor.declarationDescriptor as? TypeParameterDescriptor)?.run { shouldBeFlexible() } ?: false)
+        }
+    }
+
+    private fun getTypePreservingFlexibilityWrtTypeVariable(
+        type: KotlinType,
+        typeVariable: TypeVariableFromCallableDescriptor
+    ) = if (typeVariable.originalTypeParameter.shouldBeFlexible()) {
+        KotlinTypeFactory.flexibleType(type.makeNotNullable().lowerIfFlexible(), type.makeNullable().upperIfFlexible())
+    } else type
 
     fun createToFreshVariableSubstitutorAndAddInitialConstraints(
         candidateDescriptor: CallableDescriptor,
@@ -272,10 +288,67 @@ internal object CheckExplicitReceiverKindConsistency : ResolutionPart() {
 private fun KotlinResolutionCandidate.resolveKotlinArgument(
     argument: KotlinCallArgument,
     candidateParameter: ParameterDescriptor?,
-    isReceiver: Boolean
+    receiverInfo: ReceiverInfo
 ) {
     val expectedType = candidateParameter?.let { prepareExpectedType(argument, candidateParameter) }
-    addResolvedKtPrimitive(resolveKtPrimitive(csBuilder, argument, expectedType, this, isReceiver))
+    val convertedArgument = if (expectedType != null && shouldRunConversionForConstants(expectedType)) {
+        val convertedConstant = resolutionCallbacks.convertSignedConstantToUnsigned(argument)
+        if (convertedConstant != null) {
+            resolvedCall.registerArgumentWithConstantConversion(argument, convertedConstant)
+        }
+
+        convertedConstant
+    } else null
+
+    addResolvedKtPrimitive(
+        resolveKtPrimitive(
+            csBuilder,
+            argument,
+            expectedType,
+            this,
+            receiverInfo,
+            convertedArgument?.unknownIntegerType?.unwrap()
+        )
+    )
+}
+
+private fun KotlinResolutionCandidate.shouldRunConversionForConstants(expectedType: UnwrappedType): Boolean {
+    if (UnsignedTypes.isUnsignedType(expectedType)) return true
+    if (csBuilder.isTypeVariable(expectedType)) {
+        val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[expectedType.constructor] ?: return false
+        return variableWithConstraints.constraints.any {
+            it.kind == ConstraintKind.EQUALITY &&
+                    it.position.from is ExplicitTypeParameterConstraintPosition &&
+                    UnsignedTypes.isUnsignedType(it.type as UnwrappedType)
+
+        }
+    }
+
+    return false
+}
+
+internal enum class ImplicitInvokeCheckStatus {
+    NO_INVOKE, INVOKE_ON_NOT_NULL_VARIABLE, UNSAFE_INVOKE_REPORTED
+}
+
+private fun KotlinResolutionCandidate.checkUnsafeImplicitInvokeAfterSafeCall(argument: SimpleKotlinCallArgument): ImplicitInvokeCheckStatus {
+    val variableForInvoke = variableCandidateIfInvoke ?: return ImplicitInvokeCheckStatus.NO_INVOKE
+
+    val receiverArgument = with(variableForInvoke.resolvedCall) {
+        when (explicitReceiverKind) {
+            DISPATCH_RECEIVER -> dispatchReceiverArgument
+            EXTENSION_RECEIVER,
+            BOTH_RECEIVERS -> extensionReceiverArgument
+            NO_EXPLICIT_RECEIVER -> return ImplicitInvokeCheckStatus.INVOKE_ON_NOT_NULL_VARIABLE
+        }
+    } ?: error("Receiver kind does not match receiver argument")
+
+    if (receiverArgument.isSafeCall && receiverArgument.receiver.stableType.isNullable()) {
+        addDiagnostic(UnsafeCallError(argument, isForImplicitInvoke = true))
+        return ImplicitInvokeCheckStatus.UNSAFE_INVOKE_REPORTED
+    }
+
+    return ImplicitInvokeCheckStatus.INVOKE_ON_NOT_NULL_VARIABLE
 }
 
 private fun KotlinResolutionCandidate.prepareExpectedType(
@@ -299,7 +372,10 @@ private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
                 !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitVarargAsArrayAfterSamArgument)
 
     if (generatingAdditionalSamCandidateIsEnabled) return null
-    if (!callComponents.samConversionTransformer.shouldRunSamConversionForFunction(resolvedCall.candidateDescriptor)) return null
+    val samConversionOracle = callComponents.samConversionOracle
+    if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionForKotlinFunctions)) {
+        if (!samConversionOracle.shouldRunSamConversionForFunction(resolvedCall.candidateDescriptor)) return null
+    }
 
     val argumentIsFunctional = when (argument) {
         is SimpleKotlinCallArgument -> argument.receiver.stableType.isFunctionType
@@ -309,11 +385,13 @@ private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
     if (!argumentIsFunctional) return null
 
     val originalExpectedType = argument.getExpectedType(candidateParameter.original, callComponents.languageVersionSettings)
+
     val convertedTypeByOriginal =
-        callComponents.samConversionTransformer.getFunctionTypeForPossibleSamType(originalExpectedType) ?: return null
+        callComponents.samConversionResolver.getFunctionTypeForPossibleSamType(originalExpectedType, samConversionOracle) ?: return null
 
     val candidateExpectedType = argument.getExpectedType(candidateParameter, callComponents.languageVersionSettings)
-    val convertedTypeByCandidate = callComponents.samConversionTransformer.getFunctionTypeForPossibleSamType(candidateExpectedType)
+    val convertedTypeByCandidate =
+        callComponents.samConversionResolver.getFunctionTypeForPossibleSamType(candidateExpectedType, samConversionOracle)
 
     assert(candidateExpectedType.constructor == originalExpectedType.constructor && convertedTypeByCandidate != null) {
         "If original type is SAM type, then candidate should have same type constructor and corresponding function type\n" +
@@ -323,27 +401,51 @@ private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
 
     resolvedCall.registerArgumentWithSamConversion(argument, SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!))
 
+    val samDescriptor = originalExpectedType.constructor.declarationDescriptor
+    if (samDescriptor is ClassDescriptor) {
+        callComponents.lookupTracker.record(scopeTower.location, samDescriptor, SAM_LOOKUP_NAME)
+    }
+
     return convertedTypeByCandidate
 }
 
 internal object CheckReceivers : ResolutionPart() {
     private fun KotlinResolutionCandidate.checkReceiver(
         receiverArgument: SimpleKotlinCallArgument?,
-        receiverParameter: ReceiverParameterDescriptor?
+        receiverParameter: ReceiverParameterDescriptor?,
+        shouldCheckImplicitInvoke: Boolean,
     ) {
         if ((receiverArgument == null) != (receiverParameter == null)) {
             error("Inconsistency receiver state for call $kotlinCall and candidate descriptor: $candidateDescriptor")
         }
         if (receiverArgument == null || receiverParameter == null) return
 
-        resolveKotlinArgument(receiverArgument, receiverParameter, isReceiver = true)
+        val implicitInvokeState = if (shouldCheckImplicitInvoke) {
+            checkUnsafeImplicitInvokeAfterSafeCall(receiverArgument)
+        } else ImplicitInvokeCheckStatus.NO_INVOKE
+
+        val receiverInfo = ReceiverInfo(
+            isReceiver = true,
+            shouldReportUnsafeCall = implicitInvokeState != ImplicitInvokeCheckStatus.UNSAFE_INVOKE_REPORTED,
+            reportUnsafeCallAsUnsafeImplicitInvoke = implicitInvokeState == ImplicitInvokeCheckStatus.INVOKE_ON_NOT_NULL_VARIABLE
+        )
+
+        resolveKotlinArgument(receiverArgument, receiverParameter, receiverInfo)
     }
 
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
         if (workIndex == 0) {
-            checkReceiver(resolvedCall.dispatchReceiverArgument, candidateDescriptor.dispatchReceiverParameter)
+            checkReceiver(
+                resolvedCall.dispatchReceiverArgument,
+                candidateDescriptor.dispatchReceiverParameter,
+                shouldCheckImplicitInvoke = true,
+            )
         } else {
-            checkReceiver(resolvedCall.extensionReceiverArgument, candidateDescriptor.extensionReceiverParameter)
+            checkReceiver(
+                resolvedCall.extensionReceiverArgument,
+                candidateDescriptor.extensionReceiverParameter,
+                shouldCheckImplicitInvoke = false, // reproduce old inference behaviour
+            )
         }
     }
 
@@ -353,7 +455,7 @@ internal object CheckReceivers : ResolutionPart() {
 internal object CheckArgumentsInParenthesis : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
         val argument = kotlinCall.argumentsInParenthesis[workIndex]
-        resolveKotlinArgument(argument, resolvedCall.argumentToCandidateParameter[argument], isReceiver = false)
+        resolveKotlinArgument(argument, resolvedCall.argumentToCandidateParameter[argument], ReceiverInfo.notReceiver)
     }
 
     override fun KotlinResolutionCandidate.workCount() = kotlinCall.argumentsInParenthesis.size
@@ -363,7 +465,7 @@ internal object CheckExternalArgument : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
         val argument = kotlinCall.externalArgument ?: return
 
-        resolveKotlinArgument(argument, resolvedCall.argumentToCandidateParameter[argument], isReceiver = false)
+        resolveKotlinArgument(argument, resolvedCall.argumentToCandidateParameter[argument], ReceiverInfo.notReceiver)
     }
 }
 
@@ -426,14 +528,14 @@ internal object ErrorDescriptorResolutionPart : ResolutionPart() {
         resolvedCall.argumentToCandidateParameter = emptyMap()
 
         kotlinCall.explicitReceiver?.safeAs<SimpleKotlinCallArgument>()?.let {
-            resolveKotlinArgument(it, null, isReceiver = true)
+            resolveKotlinArgument(it, null, ReceiverInfo.notReceiver)
         }
         for (argument in kotlinCall.argumentsInParenthesis) {
-            resolveKotlinArgument(argument, null, isReceiver = true)
+            resolveKotlinArgument(argument, null, ReceiverInfo.notReceiver)
         }
 
         kotlinCall.externalArgument?.let {
-            resolveKotlinArgument(it, null, isReceiver = true)
+            resolveKotlinArgument(it, null, ReceiverInfo.notReceiver)
         }
     }
 }

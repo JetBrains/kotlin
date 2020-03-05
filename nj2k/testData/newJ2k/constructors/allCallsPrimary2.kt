@@ -11,7 +11,6 @@ internal class C(val myArg1: Int) {
         myArg2 = arg2
         myArg3 = 0
     }
-
 }
 
 object User {

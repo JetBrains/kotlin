@@ -17,6 +17,7 @@ import com.intellij.openapi.roots.libraries.Library
 import com.intellij.util.PathUtil
 import org.jdom.Element
 import org.jdom.Text
+import org.jetbrains.concurrency.AsyncPromise
 import org.jetbrains.idea.maven.importing.MavenImporter
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter
 import org.jetbrains.idea.maven.model.MavenPlugin
@@ -129,7 +130,8 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         val toBeDownloaded = artifacts.filter { it.libraryName in libraryNames }
 
         if (toBeDownloaded.isNotEmpty()) {
-            scheduleArtifactsDownloading(MavenProjectsManager.getInstance(module.project), listOf(mavenProject), toBeDownloaded)
+            MavenProjectsManager.getInstance(module.project)
+                .scheduleArtifactsDownloading(listOf(mavenProject), toBeDownloaded, true, false, AsyncPromise())
         }
     }
 

@@ -1,14 +1,17 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting
 
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.Setting
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingType
+import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.Displayable
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
 
-abstract class SettingComponent<V : Any, T: SettingType<V>>(
+abstract class SettingComponent<V : Any, T : SettingType<V>>(
     val reference: SettingReference<V, T>,
-    private val valuesReadingContext: ValuesReadingContext
-) : DynamicComponent(valuesReadingContext), Displayable {
+    ideContext: IdeContext
+) : DynamicComponent(ideContext), Displayable, FocusableComponent {
     var value: V?
         get() = reference.value
         set(value) {
@@ -16,9 +19,7 @@ abstract class SettingComponent<V : Any, T: SettingType<V>>(
         }
 
     val setting: Setting<V, T>
-        get() = with(valuesReadingContext.context) {
-            with(reference) { getSetting() }
-        }
+        get() = read { reference.setting }
 
     abstract val validationIndicator: ValidationIndicator?
 
@@ -28,14 +29,14 @@ abstract class SettingComponent<V : Any, T: SettingType<V>>(
     }
 
     override fun onValueUpdated(reference: SettingReference<*, *>?) {
-        component.isVisible = setting.isActive(valuesReadingContext)
+        component.isVisible = read { setting.isActive(this) }
         updateValidationState()
     }
 
     private fun updateValidationState() {
         val value = value
-        if (validationIndicator != null && value != null) {
-            validationIndicator!!.validationState = setting.validator.validate(valuesReadingContext, value)
+        if (validationIndicator != null && value != null) read {
+            validationIndicator!!.updateValidationState(setting.validator.validate(this, value))
         }
     }
 }

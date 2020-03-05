@@ -109,5 +109,5 @@ fun foo(x: SpecializedMap) {
     x.remove(null)
 
     x.<!AMBIGUITY!>put<!>(4, 5.0)
-    x.<!AMBIGUITY!>put<!>(4, null)
+    x.put(4, null)
 }

@@ -50,7 +50,8 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
     override fun isImportedWithDefault(importPath: ImportPath, contextFile: KtFile): Boolean {
         val languageVersionSettings = contextFile.getResolutionFacade().frontendService<LanguageVersionSettings>()
         val platform = TargetPlatformDetector.getPlatform(contextFile)
-        val allDefaultImports = platform.findAnalyzerServices.getDefaultImports(languageVersionSettings, includeLowPriorityImports = true)
+        val analyzerServices = platform.findAnalyzerServices(contextFile.project)
+        val allDefaultImports = analyzerServices.getDefaultImports(languageVersionSettings, includeLowPriorityImports = true)
 
         val scriptExtraImports = contextFile.takeIf { it.isScript() }?.let { ktFile ->
             val scriptDependencies = ScriptDependenciesProvider.getInstance(ktFile.project)
@@ -58,12 +59,13 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
             scriptDependencies?.defaultImports?.map { ImportPath.fromString(it) }
         }.orEmpty()
 
-        return importPath.isImported(allDefaultImports + scriptExtraImports, platform.findAnalyzerServices.excludedImports)
+        return importPath.isImported(allDefaultImports + scriptExtraImports, analyzerServices.excludedImports)
     }
 
     override fun isImportedWithLowPriorityDefaultImport(importPath: ImportPath, contextFile: KtFile): Boolean {
         val platform = TargetPlatformDetector.getPlatform(contextFile)
-        return importPath.isImported(platform.findAnalyzerServices.defaultLowPriorityImports, platform.findAnalyzerServices.excludedImports)
+        val analyzerServices = platform.findAnalyzerServices(contextFile.project)
+        return importPath.isImported(analyzerServices.defaultLowPriorityImports, analyzerServices.excludedImports)
     }
 
     override fun mayImportOnShortenReferences(descriptor: DeclarationDescriptor): Boolean {

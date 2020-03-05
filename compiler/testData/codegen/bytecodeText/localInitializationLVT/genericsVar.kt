@@ -1,4 +1,3 @@
-
 inline fun <reified T> foo(default: T): T {
     var t: T
     run {
@@ -12,6 +11,6 @@ fun test() {
 }
 
 // two in foo and two in test
-
-// 2 ASTORE 2
-// 1 LOCALVARIABLE t\$iv Lkotlin/jvm/internal/Ref\$ObjectRef; L3 L.* 2
+// 4 ASTORE 2
+// 1 LOCALVARIABLE t Ljava/lang/Object;
+// 1 LOCALVARIABLE t\$iv Ljava/lang/Object;

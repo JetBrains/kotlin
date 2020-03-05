@@ -34,6 +34,11 @@ public class IrNonLocalReturnsTestGenerated extends AbstractIrNonLocalReturnsTes
         runTest("compiler/testData/codegen/boxInline/nonLocalReturns/explicitLocalReturn.kt");
     }
 
+    @TestMetadata("fromInterfaceDefaultGetter.kt")
+    public void testFromInterfaceDefaultGetter() throws Exception {
+        runTest("compiler/testData/codegen/boxInline/nonLocalReturns/fromInterfaceDefaultGetter.kt");
+    }
+
     @TestMetadata("justReturnInLambda.kt")
     public void testJustReturnInLambda() throws Exception {
         runTest("compiler/testData/codegen/boxInline/nonLocalReturns/justReturnInLambda.kt");

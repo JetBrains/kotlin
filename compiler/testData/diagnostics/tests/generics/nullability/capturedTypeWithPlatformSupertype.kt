@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: First.java
 
 public class First<T extends Sample> {

@@ -344,7 +344,12 @@ class JavaToJKTreeBuilder constructor(
                         THIS_KEYWORD -> JKThisExpression(JKLabelEmpty(), JKNoType)
                         else -> throwCanNotConvertError("unknown keyword in callee position")
                     }
-                    JKDelegationConstructorCall(symbol as JKMethodSymbol, callee, arguments.toJK())
+                    val calleeSymbol = when {
+                        symbol is JKMethodSymbol -> symbol
+                        target is KtLightMethod -> KtClassImplicitConstructorSymbol(target, typeFactory)
+                        else -> throwCanNotConvertError("Expected constructor call, found ${target?.javaClass?.name}")
+                    }
+                    JKDelegationConstructorCall(calleeSymbol, callee, arguments.toJK())
                 }
 
                 target is KtLightMethod -> {

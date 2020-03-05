@@ -33,6 +33,7 @@ class VariableFixationFinder(
     interface Context : TypeSystemInferenceExtensionContext {
         val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
         val postponedTypeVariables: List<TypeVariableMarker>
+        fun isReified(variable: TypeVariableMarker): Boolean
     }
 
     data class VariableForFixation(
@@ -49,13 +50,14 @@ class VariableFixationFinder(
         topLevelType: KotlinTypeMarker
     ): VariableForFixation? = c.findTypeVariableForFixation(allTypeVariables, postponedKtPrimitives, completionMode, topLevelType)
 
-    private enum class TypeVariableFixationReadiness {
+    enum class TypeVariableFixationReadiness {
         FORBIDDEN,
         WITHOUT_PROPER_ARGUMENT_CONSTRAINT, // proper constraint from arguments -- not from upper bound for type parameters
         WITH_COMPLEX_DEPENDENCY, // if type variable T has constraint with non fixed type variable inside (non-top-level): T <: Foo<S>
         WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS, // proper trivial constraint from arguments, Nothing <: T
         RELATED_TO_ANY_OUTPUT_TYPE,
         READY_FOR_FIXATION,
+        READY_FOR_FIXATION_REIFIED,
     }
 
     private fun Context.getTypeVariableReadiness(
@@ -68,7 +70,20 @@ class VariableFixationFinder(
         hasDependencyToOtherTypeVariables(variable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
         variableHasTrivialOrNonProperConstraints(variable) -> TypeVariableFixationReadiness.WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS
         dependencyProvider.isVariableRelatedToAnyOutputType(variable) -> TypeVariableFixationReadiness.RELATED_TO_ANY_OUTPUT_TYPE
+        isReified(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_REIFIED
         else -> TypeVariableFixationReadiness.READY_FOR_FIXATION
+    }
+
+    fun isTypeVariableHasProperConstraint(context: Context, typeVariable: TypeConstructorMarker): Boolean {
+        return with(context) {
+            val dependencyProvider = TypeVariableDependencyInformationProvider(
+                notFixedTypeVariables, emptyList(), topLevelType = null, context
+            )
+            when (getTypeVariableReadiness(typeVariable, dependencyProvider)) {
+                TypeVariableFixationReadiness.FORBIDDEN, TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT -> false
+                else -> true
+            }
+        }
     }
 
     private fun Context.findTypeVariableForFixation(
@@ -116,9 +131,13 @@ class VariableFixationFinder(
         notFixedTypeVariables[variable]?.constraints?.any { isProperArgumentConstraint(it) } ?: false
 
     private fun Context.isProperArgumentConstraint(c: Constraint) =
-        isProperType(c.type) && c.position.initialConstraint.position !is DeclaredUpperBoundConstraintPosition
+        isProperType(c.type)
+                && c.position.initialConstraint.position !is DeclaredUpperBoundConstraintPosition
+                && !c.isNullabilityConstraint
 
     private fun Context.isProperType(type: KotlinTypeMarker): Boolean =
         !type.contains { notFixedTypeVariables.containsKey(it.typeConstructor()) }
 
+    private fun Context.isReified(variable: TypeConstructorMarker): Boolean =
+        notFixedTypeVariables[variable]?.typeVariable?.let { isReified(it) } ?: false
 }

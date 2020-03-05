@@ -67,6 +67,9 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.scripting.idea.listener"
                         interface="org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener"
                         area="IDEA_PROJECT"/>
+
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.additionalExtractableAnalyser"
+                        interface="org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AdditionalExtractableAnalyser"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
@@ -91,6 +94,9 @@
 
         <scriptDefinitionContributor id="ConsoleScriptDefinitionContributor"
                                      implementation="org.jetbrains.kotlin.console.ConsoleScriptDefinitionContributor"/>
+
+        <scriptDefinitionsProvider id="MainKtsScriptDefinitionSource"
+                                   implementation="org.jetbrains.kotlin.idea.script.MainKtsScriptDefinitionSource"/>
 
         <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.JvmPlatformKindResolution"/>
         <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.JsPlatformKindResolution"/>
@@ -120,12 +126,26 @@
                      description="Use IDEA project import mechanics to load Kotlin Gradle scripts configuration"
                      defaultValue="false"
                      restartRequired="false"/>
-        <fileEditorProvider implementation="org.jetbrains.kotlin.idea.scratch.ui.KtScratchFileEditorProvider"/>
-
-        <registryKey key="kotlin.experimental.project.wizard"
-                     description="Use experimental project wizard for creating new Kotlin projects"
+        <registryKey key="kotlin.formatter.allowTrailingCommaInAnyProject"
+                     description="Allow a trailing comma regardless of plugin version"
                      defaultValue="false"
                      restartRequired="false"/>
+        <registryKey key="kotlin.formatter.allowTrailingCommaOnCallSite"
+                     description="Allow a trailing comma on call-site"
+                     defaultValue="false"
+                     restartRequired="false"/>
+
+        <registryKey key="kotlin.experimental.new.j2k"
+                     description="Enable new Java to Kotlin converter"
+                     defaultValue="true"
+                     restartRequired="false"/>
+        <registryKey key="kotlin.experimental.project.wizard"
+                     description="Enable new Kotlin project wizard"
+                     defaultValue="false"
+                     restartRequired="false"/>
+
+        <fileEditorProvider implementation="org.jetbrains.kotlin.idea.scratch.ui.KtScratchFileEditorProvider"/>
+
         <moduleBuilder builderClass="org.jetbrains.kotlin.tools.projectWizard.wizard.NewProjectWizardModuleBuilder"/>
     </extensions>
 </idea-plugin>

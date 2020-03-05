@@ -21,10 +21,10 @@ abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompila
     protected open fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<T>): String? =
         target.targetName
 
-    abstract protected fun instantiateTarget(): R
+    abstract protected fun instantiateTarget(name: String): R
 
     override fun createTarget(name: String): R {
-        val result = instantiateTarget().apply {
+        val result = instantiateTarget(name).apply {
             targetName = name
             disambiguationClassifier = provideTargetDisambiguationClassifier(this@apply)
             preset = this@KotlinOnlyTargetPreset

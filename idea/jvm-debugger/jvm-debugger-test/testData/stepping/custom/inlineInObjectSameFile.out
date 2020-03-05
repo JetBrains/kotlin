@@ -1,0 +1,10 @@
+LineBreakpoint created at inlineInObjectSameFile.kt:6
+LineBreakpoint created at inlineInObjectSameFile.kt:12
+Run Java
+Connected to the target VM
+inlineInObjectSameFile.kt:6
+inlineInObjectSameFile.kt:12
+Disconnected from the target VM
+
+Process finished with exit code 0
+

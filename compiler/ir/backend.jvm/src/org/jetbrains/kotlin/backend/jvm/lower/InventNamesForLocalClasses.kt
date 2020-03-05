@@ -17,13 +17,16 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
 
 val inventNamesForLocalClassesPhase = makeIrFilePhase<JvmBackendContext>(
     { context -> InventNamesForLocalClasses(context) },
     name = "InventNamesForLocalClasses",
-    description = "Invent names for local classes and anonymous objects"
+    description = "Invent names for local classes and anonymous objects",
+    // MainMethodGeneration introduces lambdas, needing names for their local classes.
+    prerequisite = setOf(mainMethodGenerationPhase)
 )
 
 class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileLoweringPass {
@@ -102,17 +105,12 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
             val simpleName = declaration.name.asString()
 
             val internalName = when {
-                declaration.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA -> {
+                declaration is IrFunction && !NameUtils.hasName(declaration.name) -> {
+                    // Replace "unnamed" function names with indices.
                     inventName(null, data).also { name ->
-                        // We save the name of the lambda to reuse it in the reference to it (produced by the closure conversion) later.
-                        localFunctionNames[(declaration as IrFunction).symbol] = name
+                        // We save the name of the function to reuse it in the reference to it (produced by the closure conversion) later.
+                        localFunctionNames[declaration.symbol] = name
                     }
-                }
-                declaration is IrFunction && declaration.parent !is IrClass -> {
-                    // In the old backend, only names of non-local functions are stored in names of anonymous classes. All other names
-                    // are replaced with indices. For example, a local class `L` in a top-level function `f` will have the name `...$f$L`,
-                    // but inside a local function `g` (which is in `f`) it will have the name `...$f$1$L` (_not_ `...$f$g$L`).
-                    inventName(null, data)
                 }
                 enclosingName != null -> "$enclosingName$$simpleName"
                 else -> simpleName

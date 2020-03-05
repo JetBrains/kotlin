@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirDependenciesSymbolProviderImpl
-import org.jetbrains.kotlin.fir.resolve.impl.FirLibrarySymbolProviderImpl
+import org.jetbrains.kotlin.fir.resolve.impl.FirBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
-import org.jetbrains.kotlin.fir.scopes.impl.FirMemberScopeProvider
+import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
@@ -95,7 +95,6 @@ class FirLibrarySession private constructor(
             FirSymbolProvider::class,
             FirCompositeSymbolProvider(
                 listOf(
-                    FirLibrarySymbolProviderImpl(this, kotlinScopeProvider),
                     KotlinDeserializedJvmSymbolsProvider(
                         this, sessionProvider.project,
                         packagePartProvider,
@@ -104,12 +103,13 @@ class FirLibrarySession private constructor(
                         javaClassFinder,
                         kotlinScopeProvider
                     ),
+                    FirBuiltinSymbolProvider(this, kotlinScopeProvider),
                     javaSymbolProvider,
                     FirDependenciesSymbolProviderImpl(this)
                 )
             ) as FirSymbolProvider
         )
-        registerComponent(FirMemberScopeProvider::class, FirMemberScopeProvider())
+        registerComponent(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider())
 
         registerComponent(
             FirCorrespondingSupertypesCache::class,

@@ -450,6 +450,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             runTest("compiler/testData/psi/InterfaceWithEnumKeyword.kt");
         }
 
+        @TestMetadata("kotlinFunInterface_ERR.kt")
+        public void testKotlinFunInterface_ERR() throws Exception {
+            runTest("compiler/testData/psi/kotlinFunInterface_ERR.kt");
+        }
+
         @TestMetadata("Labels.kt")
         public void testLabels() throws Exception {
             runTest("compiler/testData/psi/Labels.kt");
@@ -713,6 +718,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         @TestMetadata("UnsignedLiteral.kt")
         public void testUnsignedLiteral() throws Exception {
             runTest("compiler/testData/psi/UnsignedLiteral.kt");
+        }
+
+        @TestMetadata("validKotlinFunInterface.kt")
+        public void testValidKotlinFunInterface() throws Exception {
+            runTest("compiler/testData/psi/validKotlinFunInterface.kt");
         }
 
         @TestMetadata("When.kt")

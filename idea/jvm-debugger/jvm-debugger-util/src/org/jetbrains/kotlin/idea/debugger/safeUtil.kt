@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
+import com.intellij.debugger.engine.DebugProcess.JAVA_STRATUM
 import com.intellij.debugger.engine.evaluation.AbsentInformationEvaluateException
 import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.jdi.StackFrameProxy
@@ -12,6 +13,7 @@ import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.debugger.jdi.LocalVariableProxyImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.sun.jdi.*
+import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
 
 fun StackFrameProxyImpl.safeVisibleVariables(): List<LocalVariableProxyImpl> {
     return wrapAbsentInformationException { visibleVariables() } ?: emptyList()
@@ -19,6 +21,10 @@ fun StackFrameProxyImpl.safeVisibleVariables(): List<LocalVariableProxyImpl> {
 
 fun StackFrameProxyImpl.safeVisibleVariableByName(name: String): LocalVariableProxyImpl? {
     return wrapAbsentInformationException { visibleVariableByName(name) }
+}
+
+fun StackFrame.safeVisibleVariables(): List<LocalVariable> {
+    return wrapAbsentInformationException { visibleVariables() } ?: emptyList()
 }
 
 fun Method.safeAllLineLocations(): List<Location> {
@@ -54,27 +60,42 @@ fun Method.safeArguments(): List<LocalVariable>? {
 }
 
 fun StackFrameProxy.safeLocation(): Location? {
-    return try {
-        this.location()
-    } catch (e: EvaluateException) {
-        null
-    }
+    return wrapEvaluateException { this.location() }
+}
+
+fun StackFrameProxy.safeStackFrame(): StackFrame? {
+    return wrapEvaluateException { this.stackFrame }
 }
 
 fun Location.safeSourceName(): String? {
-    return wrapAbsentInformationException { this.sourceName() }
+    return wrapIllegalArgumentException { wrapAbsentInformationException { this.sourceName() } }
 }
 
 fun Location.safeSourceName(stratum: String): String? {
-    return wrapAbsentInformationException { this.sourceName(stratum) }
+    return wrapIllegalArgumentException { wrapAbsentInformationException { this.sourceName(stratum) } }
 }
 
 fun Location.safeLineNumber(): Int {
-    return DebuggerUtilsEx.getLineNumber(this, false)
+    return wrapIllegalArgumentException { DebuggerUtilsEx.getLineNumber(this, false) } ?: -1
 }
 
-fun Location.safeSourceLineNumber(): Int {
-    return DebuggerUtilsEx.getLineNumber(this, true)
+fun Location.safeLineNumber(stratum: String): Int {
+    return try {
+        lineNumber(stratum)
+    } catch (e: InternalError) {
+        -1
+    } catch (e: IllegalArgumentException) {
+        -1
+    }
+}
+
+fun Location.safeKotlinPreferredLineNumber(): Int {
+    val kotlinLineNumber = safeLineNumber(KOTLIN_STRATA_NAME)
+    if (kotlinLineNumber > 0) {
+        return kotlinLineNumber
+    }
+
+    return safeLineNumber(JAVA_STRATUM)
 }
 
 fun Location.safeMethod(): Method? {
@@ -87,6 +108,22 @@ fun LocalVariableProxyImpl.safeType(): Type? {
 
 fun Field.safeType(): Type? {
     return wrapClassNotLoadedException { type() }
+}
+
+private inline fun <T> wrapEvaluateException(block: () -> T): T? {
+    return try {
+        block()
+    } catch (e: EvaluateException) {
+        null
+    }
+}
+
+private inline fun <T> wrapIllegalArgumentException(block: () -> T): T? {
+    return try {
+        block()
+    } catch (e: IllegalArgumentException) {
+        null
+    }
 }
 
 private inline fun <T> wrapAbsentInformationException(block: () -> T): T? {

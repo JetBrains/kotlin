@@ -20,8 +20,7 @@ public final class ParametersDisorderKt {
         })
     }
     public static final fun objectLiteral() : void {
-        anonymous object : Parent(b = 1, a = "foo")
-
+        anonymous object : Parent(b = 1, a = "foo") { }
     }
 }
 

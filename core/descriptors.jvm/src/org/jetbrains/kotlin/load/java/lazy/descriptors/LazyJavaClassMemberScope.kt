@@ -447,11 +447,13 @@ class LazyJavaClassMemberScope(
         val propertiesFromSupertypes = getPropertiesFromSupertypes(name)
         if (propertiesFromSupertypes.isEmpty()) return
 
+        val handledProperties = SmartSet.create<PropertyDescriptor>()
+
         val propertiesOverridesFromSuperTypes = SmartSet.create<PropertyDescriptor>()
 
-        addPropertyOverrideByMethod(propertiesFromSupertypes, result) { searchMethodsByNameWithoutBuiltinMagic(it) }
+        addPropertyOverrideByMethod(propertiesFromSupertypes, result, handledProperties) { searchMethodsByNameWithoutBuiltinMagic(it) }
 
-        addPropertyOverrideByMethod(propertiesFromSupertypes, propertiesOverridesFromSuperTypes) {
+        addPropertyOverrideByMethod(propertiesFromSupertypes - handledProperties, propertiesOverridesFromSuperTypes, null) {
             searchMethodsInSupertypesWithoutBuiltinMagic(it)
         }
 
@@ -470,12 +472,14 @@ class LazyJavaClassMemberScope(
     private fun addPropertyOverrideByMethod(
         propertiesFromSupertypes: Set<PropertyDescriptor>,
         result: MutableCollection<PropertyDescriptor>,
+        handledProperties: MutableSet<PropertyDescriptor>?,
         functions: (Name) -> Collection<SimpleFunctionDescriptor>
     ) {
         for (property in propertiesFromSupertypes) {
             val newProperty = createPropertyDescriptorByMethods(property, functions)
             if (newProperty != null) {
                 result.add(newProperty)
+                handledProperties?.add(property)
                 break
             }
         }

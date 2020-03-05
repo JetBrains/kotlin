@@ -16,13 +16,12 @@ fun box() {
 }
 
 // 0 IFNULL
-// 0 checkNotNull
+// 0 IFNONULL
+// 0 throwNpe
 // 0 ATHROW
 
 // JVM_TEMPLATES:
-// 1 IFNONNULL
-// 1 throwNpe
+// 1 checkNotNull \(Ljava/lang/Object;\)V
 
 // JVM_IR_TEMPLATES:
-// 0 IFNONULL
-// 0 throwNpe
+// 0 checkNotNull \(Ljava/lang/Object;\)V

@@ -12,7 +12,7 @@ class C2(val v2: Int)
 
 fun _is_l(e: Either<C1, C2>): Any {
     if (e is Left) {
-        return e.value.<!UNRESOLVED_REFERENCE!>v1<!>
+        return e.value.v1
     }
     return e
 }

@@ -8,6 +8,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.util.PairProcessor
 import com.intellij.util.ref.DebugReflectionUtil
 import junit.framework.TestCase
+import junit.framework.TestCase.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.psi.KtElement
@@ -26,9 +27,9 @@ import org.junit.Assert
 import java.io.File
 import java.util.*
 
-abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLogTestBase {
+interface AbstractKotlinRenderLogTest : RenderLogTestBase {
     override fun getTestFile(testName: String, ext: String) =
-            File(File(TEST_KOTLIN_MODEL_DIR, testName).canonicalPath + '.' + ext)
+        File(File(TEST_KOTLIN_MODEL_DIR, testName).canonicalPath + '.' + ext)
 
     override fun check(testName: String, file: UFile) {
         check(testName, file, true)

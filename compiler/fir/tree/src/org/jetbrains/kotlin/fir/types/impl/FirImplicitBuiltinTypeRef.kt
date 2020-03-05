@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
+import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.ClassId
 sealed class FirImplicitBuiltinTypeRef(
     override val source: FirSourceElement?,
     val id: ClassId,
-    typeArguments: Array<out ConeKotlinTypeProjection> = emptyArray(),
+    typeArguments: Array<out ConeTypeProjection> = emptyArray(),
     isNullable: Boolean = false
 ) : FirResolvedTypeRef() {
     override val annotations: List<FirAnnotationCall>
@@ -63,6 +63,10 @@ class FirImplicitBooleanTypeRef(
     source: FirSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Boolean)
 
+class FirImplicitIntTypeRef(
+    source: FirSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Int)
+
 class FirImplicitNothingTypeRef(
     source: FirSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Nothing)
@@ -77,5 +81,5 @@ class FirImplicitStringTypeRef(
 
 class FirImplicitKPropertyTypeRef(
     source: FirSourceElement?,
-    typeArgument: ConeKotlinTypeProjection
+    typeArgument: ConeTypeProjection
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.KProperty, arrayOf(typeArgument))

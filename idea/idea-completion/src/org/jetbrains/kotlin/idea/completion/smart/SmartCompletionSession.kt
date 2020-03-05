@@ -63,7 +63,7 @@ class SmartCompletionSession(
         get() = smartCompletion?.expectedInfos ?: emptyList()
 
     override fun doComplete() {
-        if (nameExpression != null && NamedArgumentCompletion.isOnlyNamedArgumentExpected(nameExpression)) {
+        if (nameExpression != null && NamedArgumentCompletion.isOnlyNamedArgumentExpected(nameExpression, resolutionFacade)) {
             NamedArgumentCompletion.complete(collector, expectedInfos, callTypeAndReceiver.callType)
             return
         }

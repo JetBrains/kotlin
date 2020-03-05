@@ -34,6 +34,8 @@ import com.intellij.util.containers.MultiMap;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.AsyncPromise;
+import org.jetbrains.concurrency.Promise;
 import org.jetbrains.kotlin.config.KotlinFacetSettings;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
 import org.jetbrains.kotlin.platform.TargetPlatformKt;
@@ -76,15 +78,15 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
                                                                            "}\n";
 
     @Override
-    public void run(@NotNull Project project,
+    public Promise<Result> run(@NotNull Project project,
             @NotNull ProjectTaskContext context,
-            @Nullable ProjectTaskNotification callback,
-            @NotNull Collection<? extends ProjectTask> tasks) {
+            @NotNull ProjectTask ... tasks) {
+        AsyncPromise<Result> resultPromise = new AsyncPromise<>();
         MultiMap<String, String> buildTasksMap = MultiMap.createLinkedSet();
         MultiMap<String, String> cleanTasksMap = MultiMap.createLinkedSet();
         MultiMap<String, String> initScripts = MultiMap.createLinkedSet();
 
-        Map<Class<? extends ProjectTask>, List<ProjectTask>> taskMap = JpsProjectTaskRunner.groupBy(tasks);
+        Map<Class<? extends ProjectTask>, List<ProjectTask>> taskMap = JpsProjectTaskRunner.groupBy(Arrays.asList(tasks));
 
         List<Module> modules = addModulesBuildTasks(taskMap.get(ModuleBuildTask.class), buildTasksMap, initScripts);
         // TODO there should be 'gradle' way to build files instead of related modules entirely
@@ -95,7 +97,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
         AtomicInteger successCounter = new AtomicInteger();
         AtomicInteger errorCounter = new AtomicInteger();
 
-        TaskCallback taskCallback = callback == null ? null : new TaskCallback() {
+        TaskCallback taskCallback = new TaskCallback() {
             @Override
             public void onSuccess() {
                 handle(true);
@@ -120,7 +122,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
                             CompilerUtil.refreshOutputRoots(affectedRoots);
                         }
                     }
-                    callback.finished(new ProjectTaskResult(false, errors, 0));
+                    resultPromise.setResult(errors > 0 ? TaskRunnerResults.FAILURE : TaskRunnerResults.SUCCESS);
                 }
             }
         };
@@ -168,6 +170,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
             ExternalSystemUtil.runTask(settings, DefaultRunExecutor.EXECUTOR_ID, project, GradleConstants.SYSTEM_ID,
                                        taskCallback, ProgressExecutionMode.IN_BACKGROUND_ASYNC, false, userData);
         }
+        return resultPromise;
     }
 
     @Override

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.search.usagesSearch.operators
 
+import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.progress.util.ProgressWrapper
 import com.intellij.psi.*
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaOrKotlinMemberDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.util.hasJavaResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinRequestResultProcessor
@@ -201,9 +203,10 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
     }
 
     protected open fun resolveTargetToDescriptor(): FunctionDescriptor? {
-        return when (targetDeclaration) {
-            is KtDeclaration -> targetDeclaration.resolveToDescriptorIfAny(BodyResolveMode.FULL)
-            is PsiMember -> targetDeclaration.getJavaOrKotlinMemberDescriptor()
+        return when {
+            targetDeclaration is KtDeclaration -> targetDeclaration.resolveToDescriptorIfAny(BodyResolveMode.FULL)
+            targetDeclaration is PsiMember && targetDeclaration.hasJavaResolutionFacade() ->
+                targetDeclaration.getJavaOrKotlinMemberDescriptor()
             else -> null
         } as? FunctionDescriptor
     }

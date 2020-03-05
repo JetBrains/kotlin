@@ -72,6 +72,7 @@ open class SerializationResolveExtension : SyntheticResolveExtension {
     override fun addSyntheticSupertypes(thisDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) {
         KSerializerDescriptorResolver.addSerialInfoSuperType(thisDescriptor, supertypes)
         KSerializerDescriptorResolver.addSerializerSupertypes(thisDescriptor, supertypes)
+        KSerializerDescriptorResolver.addSerializerFactorySuperType(thisDescriptor, supertypes)
     }
 
     override fun generateSyntheticSecondaryConstructors(

@@ -6,21 +6,16 @@
 package org.jetbrains.kotlin.fir.lightTree.fir.modifier
 
 import com.intellij.lang.LighterASTNode
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.REIFICATION_MODIFIER
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.VARIANCE_MODIFIER
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.types.Variance
 
 class TypeParameterModifier(
-    override val source: FirSourceElement? = null,
     private val varianceModifiers: MutableList<VarianceModifier> = mutableListOf(),
     private var reificationModifier: ReificationModifier? = null
-) : FirAbstractAnnotatedElement {
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+) {
+    val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 
     fun addModifier(modifier: LighterASTNode) {
         val tokenType = modifier.tokenType
@@ -41,11 +36,5 @@ class TypeParameterModifier(
 
     fun hasReified(): Boolean {
         return reificationModifier == ReificationModifier.REIFIED
-    }
-
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAbstractAnnotatedElement {
-        return this
     }
 }

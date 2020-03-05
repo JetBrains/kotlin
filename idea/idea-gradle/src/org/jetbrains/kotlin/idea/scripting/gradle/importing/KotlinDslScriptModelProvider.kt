@@ -21,9 +21,13 @@ class KotlinDslScriptModelProvider : ProjectImportModelProvider {
     ) {
         buildModel.projects.forEach {
             if (it.parent == null) {
-                val model = controller.findModel(it, kotlinDslScriptModelClass)
-                if (model != null) {
-                    consumer.consumeProjectModel(it, model, kotlinDslScriptModelClass)
+                try {
+                    val model = controller.findModel(it, kotlinDslScriptModelClass)
+                    if (model != null) {
+                        consumer.consumeProjectModel(it, model, kotlinDslScriptModelClass)
+                    }
+                } catch (e: Throwable) {
+                    consumer.consumeProjectModel(it, BrokenKotlinDslScriptsModel(e), kotlinDslScriptModelClass)
                 }
             }
         }

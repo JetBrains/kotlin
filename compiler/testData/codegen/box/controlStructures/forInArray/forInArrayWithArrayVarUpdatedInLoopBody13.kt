@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 
 // See https://youtrack.jetbrains.com/issue/KT-21354

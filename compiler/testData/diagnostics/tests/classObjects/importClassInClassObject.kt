@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package f
 
 import f.A.Companion.B

@@ -5,14 +5,17 @@ import org.jetbrains.org.objectweb.asm.*
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.util.*
 import java.util.jar.JarFile
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
+private val CONSTANT_TIME_FOR_ZIP_ENTRIES = GregorianCalendar(1980, 1, 1, 0, 0, 0).timeInMillis
+
 /**
  * Removes @kotlin.Metadata annotations from compiled Kotlin classes
  */
-fun stripMetadata(logger: Logger, classNamePattern: String, inFile: File, outFile: File) {
+fun stripMetadata(logger: Logger, classNamePattern: String, inFile: File, outFile: File, preserveFileTimestamps: Boolean = true) {
     val classRegex = classNamePattern.toRegex()
 
     assert(inFile.exists()) { "Input file not found at $inFile" }
@@ -49,6 +52,9 @@ fun stripMetadata(logger: Logger, classNamePattern: String, inFile: File, outFil
                 }
 
                 val newEntry = ZipEntry(entry.name)
+                if (!preserveFileTimestamps) {
+                    newEntry.time = CONSTANT_TIME_FOR_ZIP_ENTRIES
+                }
                 outJar.putNextEntry(newEntry)
                 outJar.write(outBytes)
                 outJar.closeEntry()

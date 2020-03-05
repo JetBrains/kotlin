@@ -30,6 +30,10 @@ kotlin {
                 implementation(kotlin("stdlib-js"))
             }
         }
-        val browserTest by getting
+        val browserTest by getting {
+            dependencies {
+                implementation(kotlin("test-js"))
+            }
+        }
     }
 }

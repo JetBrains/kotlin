@@ -22,13 +22,13 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
 import org.jetbrains.kotlin.idea.configuration.getModulesWithKotlinFiles
 import org.jetbrains.kotlin.idea.configuration.notifyOutdatedBundledCompilerIfNecessary
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.notifyKotlinStyleUpdateIfNeeded
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
+import org.jetbrains.kotlin.idea.util.runReadActionInSmartMode
 import java.util.concurrent.atomic.AtomicInteger
 
 class KotlinConfigurationCheckerComponent(val project: Project) : ProjectComponent {
@@ -56,10 +56,14 @@ class KotlinConfigurationCheckerComponent(val project: Project) : ProjectCompone
 
     fun performProjectPostOpenActions() {
         ApplicationManager.getApplication().executeOnPooledThread {
-            DumbService.getInstance(project).waitForSmartMode()
-
-            for (module in getModulesWithKotlinFiles(project)) {
-                module.getAndCacheLanguageLevelByDependencies()
+            val modulesWithKotlinFiles = project.runReadActionInSmartMode {
+                getModulesWithKotlinFiles(project)
+            }
+            for (module in modulesWithKotlinFiles) {
+                runReadAction {
+                    if (project.isDisposed) return@runReadAction
+                    module.getAndCacheLanguageLevelByDependencies()
+                }
             }
         }
     }

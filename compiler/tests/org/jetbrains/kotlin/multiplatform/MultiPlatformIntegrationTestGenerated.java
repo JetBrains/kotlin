@@ -53,6 +53,11 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
         runTest("compiler/testData/multiplatform/explicitActualOnOverrideOfAbstractMethod/");
     }
 
+    @TestMetadata("funInterfaces")
+    public void testFunInterfaces() throws Exception {
+        runTest("compiler/testData/multiplatform/funInterfaces/");
+    }
+
     @TestMetadata("genericDeclarations")
     public void testGenericDeclarations() throws Exception {
         runTest("compiler/testData/multiplatform/genericDeclarations/");
@@ -406,6 +411,19 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
 
         public void testAllFilesPresentInExplicitActualOnOverrideOfAbstractMethod() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/explicitActualOnOverrideOfAbstractMethod"), Pattern.compile("^([^\\.]+)$"), null, true);
+        }
+    }
+
+    @TestMetadata("compiler/testData/multiplatform/funInterfaces")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FunInterfaces extends AbstractMultiPlatformIntegrationTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFunInterfaces() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/funInterfaces"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 

@@ -22,7 +22,7 @@ class LiftAssignmentOutOfTryFix(element: KtTryExpression) : KotlinQuickFixAction
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
-        BranchedFoldingUtils.foldToAssignment(element)
+        BranchedFoldingUtils.tryFoldToAssignment(element)
     }
 
     companion object : KotlinSingleIntentionActionFactory() {

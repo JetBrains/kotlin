@@ -2,7 +2,7 @@
 // KT-5362 Compiler crashes on access to extension method from nested class
 class Outer {
     class Nested{
-        fun foo(s: String) = s.extension()
+        fun foo(s: String) = s.<!UNRESOLVED_REFERENCE!>extension<!>()
     }
 
     private fun String.extension(): String = this
@@ -12,7 +12,7 @@ class Outer {
 fun Activity.toast() = Unit
 class Activity(){
     class Fragment{
-        fun call() = toast()
+        fun call() = <!INAPPLICABLE_CANDIDATE!>toast<!>()
     }
 }
 

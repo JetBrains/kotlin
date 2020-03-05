@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.builders.declarations
 
 import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.types.IrType
 
 class IrFieldBuilder : IrDeclarationBuilder() {
@@ -15,6 +16,7 @@ class IrFieldBuilder : IrDeclarationBuilder() {
     var isFinal: Boolean = false
     var isExternal: Boolean = false
     var isStatic: Boolean = false
+    var metadata: MetadataSource.Property? = null
 
     fun updateFrom(from: IrField) {
         super.updateFrom(from)
@@ -23,5 +25,6 @@ class IrFieldBuilder : IrDeclarationBuilder() {
         isFinal = from.isFinal
         isExternal = from.isExternal
         isStatic = from.isStatic
+        metadata = from.metadata
     }
 }

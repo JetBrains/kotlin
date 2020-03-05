@@ -8,13 +8,13 @@ public interface IrCallOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required int32 symbol = 1;</code>
+   * <code>required int64 symbol = 1;</code>
    */
   boolean hasSymbol();
   /**
-   * <code>required int32 symbol = 1;</code>
+   * <code>required int64 symbol = 1;</code>
    */
-  int getSymbol();
+  long getSymbol();
 
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon member_access = 2;</code>
@@ -26,20 +26,20 @@ public interface IrCallOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon getMemberAccess();
 
   /**
-   * <code>optional int32 super = 3;</code>
+   * <code>optional int64 super = 3;</code>
    */
   boolean hasSuper();
   /**
-   * <code>optional int32 super = 3;</code>
+   * <code>optional int64 super = 3;</code>
    */
-  int getSuper();
+  long getSuper();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 4;</code>
+   * <code>optional int32 origin_name = 4;</code>
    */
-  boolean hasOrigin();
+  boolean hasOriginName();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 4;</code>
+   * <code>optional int32 origin_name = 4;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin getOrigin();
+  int getOriginName();
 }

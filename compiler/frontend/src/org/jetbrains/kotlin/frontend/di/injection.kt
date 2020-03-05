@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.types.checker.NewKotlinTypeCheckerImpl
 import org.jetbrains.kotlin.types.expressions.DeclarationScopeProviderForLocalClassifierAnalyzer
 import org.jetbrains.kotlin.types.expressions.LocalClassDescriptorHolder
 import org.jetbrains.kotlin.types.expressions.LocalLazyDeclarationResolver
+import org.jetbrains.kotlin.util.ProgressManagerBasedCancellationChecker
 
 fun StorageComponentContainer.configureModule(
     moduleContext: ModuleContext,
@@ -97,6 +98,7 @@ private fun StorageComponentContainer.configurePlatformIndependentComponents() {
     useImpl<CompilerDeserializationConfiguration>()
 
     useImpl<ClassicTypeSystemContextForCS>()
+    useInstance(ProgressManagerBasedCancellationChecker)
 }
 
 /**

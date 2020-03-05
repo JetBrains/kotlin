@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.utils.ifEmpty
 
 data class RepositoryDescription(val id: String, val name: String, val url: String, val bintrayUrl: String?, val isSnapshot: Boolean)
 
-const val LAST_SNAPSHOT_VERSION = "1.3-SNAPSHOT"
+const val LAST_SNAPSHOT_VERSION = "1.4-SNAPSHOT"
 
 val SNAPSHOT_REPOSITORY = RepositoryDescription(
     "sonatype.oss.snapshots",
@@ -97,7 +97,13 @@ fun DependencyScope.toGradleCompileScope(isAndroidModule: Boolean) = when (this)
 
 fun RepositoryDescription.toGroovyRepositorySnippet() = "maven { url '$url' }"
 
-fun RepositoryDescription.toKotlinRepositorySnippet() = "maven { setUrl(\"$url\") }"
+/**
+ * This syntax has been released in kotlin-dsl-0.11.1 release and in Gradle 4.2-RC1 release.
+ *
+ * We already require Gradle distribution of higher version (see `checkGradleCompatibility` function),
+ * so it is safe to use this syntax everywhere.
+ */
+fun RepositoryDescription.toKotlinRepositorySnippet() = "maven(\"$url\")"
 
 fun getRepositoryForVersion(version: String): RepositoryDescription? = when {
     isSnapshot(version) -> SNAPSHOT_REPOSITORY

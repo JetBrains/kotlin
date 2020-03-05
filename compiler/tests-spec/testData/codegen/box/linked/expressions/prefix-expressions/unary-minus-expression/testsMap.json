@@ -1,0 +1,27 @@
+{
+  "2": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "exactly the same as A.unaryMinus() where unaryMinus is a valid operator function available in the current scope.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "1": {
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "exactly the same as A.unaryMinus() where unaryMinus is a valid operator function available in the current scope.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-minus-expression/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

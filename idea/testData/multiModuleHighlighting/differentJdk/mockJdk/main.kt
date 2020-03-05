@@ -50,5 +50,5 @@ fun buildList(): List<String> = null!!
 fun myFile(): File = null!!
 
 fun mainJdk6(x: List<String>) {
-    x.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: stream">stream</error>().<error descr="[DEBUG] Resolved to error element">filter</error> { <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: it">it</error>.<error descr="[DEBUG] Resolved to error element">length</error> <error descr="[DEBUG] Resolved to error element">></error> 0 }
+    x.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: stream">stream</error>().<error descr="[DEBUG] Reference is not resolved to anything, but is not marked unresolved">filter</error> { <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: it">it</error>.<error descr="[DEBUG] Reference is not resolved to anything, but is not marked unresolved">length</error> <error descr="[DEBUG] Reference is not resolved to anything, but is not marked unresolved">></error> 0 }
 }

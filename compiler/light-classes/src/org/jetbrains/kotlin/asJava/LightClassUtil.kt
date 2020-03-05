@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.utils.checkWithAttachment
 
 object LightClassUtil {
 
@@ -154,9 +155,12 @@ object LightClassUtil {
         if (parent is KtFile) {
             // top-level declaration
             return findFileFacade(parent)
-        }
-        else if (parent is KtClassBody) {
-            assert(parent.parent is KtClassOrObject) { "Bad parent: ${parent.parent?.javaClass}" }
+        } else if (parent is KtClassBody) {
+            checkWithAttachment(parent.parent is KtClassOrObject, {
+                "Bad parent: ${parent.parent?.javaClass}"
+            }) {
+                it.withAttachment("parent", parent.text)
+            }
             return (parent.parent as KtClassOrObject).toLightClass()
         }
 
@@ -169,7 +173,6 @@ object LightClassUtil {
         val classesWithMatchingFqName = JavaElementFinder.getInstance(project).findClasses(fqName.asString(), GlobalSearchScope.allScope(project))
         return classesWithMatchingFqName.singleOrNull() ?:
                classesWithMatchingFqName.find {
-                   // NOTE: for multipart facades this works via FakeLightClassForFileOfPackage
                    it.containingFile?.virtualFile == ktFile.virtualFile
                }
     }

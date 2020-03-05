@@ -15,7 +15,7 @@ public class J {
 
 fun test() {
     val n = J.staticN
-    foo(n)
+    <!INAPPLICABLE_CANDIDATE!>foo<!>(n)
     J.staticNN = n
     if (n != null) {
         foo(n)

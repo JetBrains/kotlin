@@ -44,6 +44,12 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     }
 
     @Test
+    @TestMetadata("for.kt")
+    public void testFor() throws Exception {
+        runTest("compiler/testData/debug/stepping/for.kt");
+    }
+
+    @Test
     @TestMetadata("functionInAnotherFile.kt")
     public void testFunctionInAnotherFile() throws Exception {
         runTest("compiler/testData/debug/stepping/functionInAnotherFile.kt");

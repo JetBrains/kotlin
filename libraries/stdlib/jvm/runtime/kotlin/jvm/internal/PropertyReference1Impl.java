@@ -7,6 +7,7 @@ package kotlin.jvm.internal;
 
 import kotlin.reflect.KDeclarationContainer;
 
+@SuppressWarnings("NullableProblems")
 public class PropertyReference1Impl extends PropertyReference1 {
     private final KDeclarationContainer owner;
     private final String name;

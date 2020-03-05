@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: MyFunc.java
 public interface MyFunc<K, V> {
     V apply(K String);

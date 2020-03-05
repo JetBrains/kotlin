@@ -151,3 +151,8 @@ class UsedInObjectSuper(val bar456: String) {
         object : Base1(bar456) {}
     }
 }
+
+// NO
+class Foo(<caret>var baz: String) {
+    var bar = ::baz
+}

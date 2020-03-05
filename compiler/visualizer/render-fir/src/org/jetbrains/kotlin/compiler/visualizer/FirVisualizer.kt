@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -303,7 +301,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         private fun visitArguments(arguments: List<FirExpression>, data: StringBuilder) {
             arguments.joinTo(data, ", ", "(", ")") {
                 if (it is FirResolvedQualifier) {
-                    val lookupTag = (it.typeRef as FirResolvedTypeRefImpl).coneTypeSafe<ConeClassLikeType>()?.lookupTag
+                    val lookupTag = (it.typeRef as FirResolvedTypeRef).coneTypeSafe<ConeClassLikeType>()?.lookupTag
                     val type = lookupTag?.let {
                         (symbolProvider.getSymbolByLookupTag(it)?.fir as? FirClass)?.superTypeRefs?.first()?.render()
                     }
@@ -398,6 +396,12 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             data.append("operator call ${operatorCall.operation}")
         }
 
+        override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression, data: StringBuilder) {
+            data.append("CMP(${comparisonExpression.operation.operator}, ")
+            comparisonExpression.compareToCall.accept(this, data)
+            data.append(")")
+        }
+
         override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: StringBuilder) {
             //skip rendering for as/as?/is/!is
         }
@@ -431,8 +435,8 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: StringBuilder) {
-            resolvedQualifier.classId?.let {
-                val fir = symbolProvider.getClassLikeSymbolByFqName(it)?.fir
+            resolvedQualifier.symbol?.let {
+                val fir = it.fir
                 if (fir is FirClass) {
                     data.append(fir.classKind.name.toLowerCase()).append(" ")
                     data.append((fir as? FirRegularClass)?.name ?: Name.special("<anonymous>"))

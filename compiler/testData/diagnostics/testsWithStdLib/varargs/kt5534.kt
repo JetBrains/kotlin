@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun test() {
     val p: Array<String> = arrayOf("a")
     foo(*p)

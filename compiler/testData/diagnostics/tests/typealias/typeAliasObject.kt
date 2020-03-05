@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 object AnObject {
     val ok = "OK"
     fun foo() = "OK"

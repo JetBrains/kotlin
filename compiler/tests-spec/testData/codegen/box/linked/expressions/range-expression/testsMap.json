@@ -1,0 +1,27 @@
+{
+  "2": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "A..B is exactly the same as A.rangeTo(B)",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "1": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "A..B is exactly the same as A.rangeTo(B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/range-expression/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

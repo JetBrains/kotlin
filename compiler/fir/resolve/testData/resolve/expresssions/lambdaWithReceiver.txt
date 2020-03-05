@@ -35,7 +35,7 @@ FILE: lambdaWithReceiver.kt
         R|/complexLambda|(<L> = complexLambda@fun R|kotlin/Int|.<anonymous>(it: R|kotlin/String|): R|kotlin/Unit| {
             this@R|special/anonymous|.R|kotlin/Int.inc|()
             this@R|special/anonymous|.R|kotlin/Int.inc|()
-            R|<local>/it|.R|kotlin/String.length|
+            ^ R|<local>/it|.R|kotlin/String.length|
         }
         )
     }

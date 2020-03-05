@@ -41,7 +41,7 @@ public class AndroidJpsBuildTestCase extends BaseKotlinJpsBuildTestCase {
     }
 
     @Override
-    protected void runTest() throws Throwable {
+    protected void runTest() {
         doTest();
     }
 

@@ -91,6 +91,7 @@ interface IrStatementOrigin {
     object OBJECT_LITERAL : IrStatementOriginImpl("OBJECT_LITERAL")
 
     object INITIALIZE_PROPERTY_FROM_PARAMETER : IrStatementOriginImpl("INITIALIZE_PROPERTY_FROM_PARAMETER")
+    object INITIALIZE_FIELD : IrStatementOriginImpl("INITIALIZE_FIELD")
 
     object PROPERTY_REFERENCE_FOR_DELEGATE : IrStatementOriginImpl("PROPERTY_REFERENCE_FOR_DELEGATE")
 

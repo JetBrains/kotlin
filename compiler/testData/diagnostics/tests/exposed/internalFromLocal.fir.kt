@@ -3,8 +3,8 @@ interface Your
 class My {
     internal val x = object : Your {}
 
-    internal fun foo() = <!UNRESOLVED_REFERENCE!>{
+    internal fun foo() = {
         class Local
         Local()
-    }()<!>
+    }()
 }

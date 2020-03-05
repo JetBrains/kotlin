@@ -44,6 +44,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -281,7 +282,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
             @NotNull List<ExtractFunctionParameterTablePanel.ParameterInfo> newParameterInfos,
             @Nullable KotlinType returnType
     ) {
-        Map<Parameter, Parameter> oldToNewParameters = ContainerUtil.newLinkedHashMap();
+        Map<Parameter, Parameter> oldToNewParameters = new LinkedHashMap<>();
         for (ExtractFunctionParameterTablePanel.ParameterInfo parameterInfo : newParameterInfos) {
             oldToNewParameters.put(parameterInfo.getOriginalParameter(), parameterInfo.toParameter());
         }

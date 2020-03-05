@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.ide.plugins.PluginManager
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType
@@ -19,7 +19,8 @@ const val NATIVE_DEBUG_ID = "com.intellij.nativeDebug"
 
 fun suggestNativeDebug(projectPath: String) {
     if (!PlatformUtils.isIdeaUltimate() ||
-        PluginManager.isPluginInstalled(PluginId.getId(NATIVE_DEBUG_ID))) {
+        PluginManagerCore.isPluginInstalled(PluginId.getId(NATIVE_DEBUG_ID))
+    ) {
         return
     }
 
@@ -27,7 +28,7 @@ fun suggestNativeDebug(projectPath: String) {
 
     PluginsAdvertiser.NOTIFICATION_GROUP.createNotification(
         PluginsAdvertiser.DISPLAY_ID,
-        "Native Debug plugin allows debug from Idea",
+        "Native Debug provides debugger for Kotlin/Native",
         NotificationType.INFORMATION, null
     ).addAction(object : NotificationAction("Install") {
         override fun actionPerformed(e: AnActionEvent, notification: Notification) {

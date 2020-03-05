@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.SmartList;
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.PackageDescriptorUtilKt;
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.ArrayList;
@@ -44,6 +46,8 @@ import java.util.Collection;
 import java.util.List;
 
 public class PackageCodegenImpl implements PackageCodegen {
+    private static final Logger LOG = Logger.getInstance(PackageCodegenImpl.class);
+
     private final GenerationState state;
     private final Collection<KtFile> files;
     private final PackageFragmentDescriptor packageFragment;
@@ -147,10 +151,13 @@ public class PackageCodegenImpl implements PackageCodegen {
         for (KtFile file : files) {
             PackageFragmentDescriptor fragment =
                     PackageDescriptorUtilKt.findPackageFragmentForFile(state.getModule(), file);
-            assert fragment != null : "package fragment is null for " + file + "\n" + file.getText();
-
-            assert expectedPackageFqName.equals(fragment.getFqName()) :
-                    "expected package fq name: " + expectedPackageFqName + ", actual: " + fragment.getFqName();
+            if (fragment == null) {
+                LOG.error(new KotlinExceptionWithAttachments(
+                        "package fragment is not found for module:" + state.getModule() + " file:" + file)
+                        .withAttachment("file.kt", file.getText()));
+            } else if (!expectedPackageFqName.equals(fragment.getFqName())) {
+                LOG.error("expected package fq name: " + expectedPackageFqName + ", actual: " + fragment.getFqName());
+            }
 
             if (!fragments.contains(fragment)) {
                 fragments.add(fragment);

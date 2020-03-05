@@ -1,3 +1,3 @@
 package test
 
-val property = 1
+val prop1 = 1

@@ -1,3 +1,4 @@
+// !DUMP_CFG
 inline fun run(block: () -> Unit) {
     block()
 }

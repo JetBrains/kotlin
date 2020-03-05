@@ -1,0 +1,26 @@
+{
+  "4": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-220",
+          "casesNumber": 5,
+          "description": "The type of non-null assertion e!! expression is the non-nullable variant of the type of e.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "3": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-220",
+          "casesNumber": 5,
+          "description": "If the type of e is non-nullable, not-null assertion expression e!! has no effect.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

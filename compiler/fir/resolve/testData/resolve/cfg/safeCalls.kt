@@ -1,3 +1,4 @@
+// !DUMP_CFG
 interface A {
     fun foo(): A
     fun bar(): A

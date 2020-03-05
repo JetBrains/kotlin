@@ -1,0 +1,82 @@
+{
+  "4": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": " it is possible to  replace the else condition with an always-true condition (Boolean)",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": " it is possible to  replace the else condition with an always-true condition (Boolean)",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": " it is possible to  replace the else condition with an always-true condition (sealed class)",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "it is possible to  replace the else condition with an always-true condition (Enum)",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": " it is possible to  replace the else condition with an always-true condition (Boolean)",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": " it is possible to  replace the else condition with an always-true condition (Boolean)",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": " it is possible to  replace the else condition with an always-true condition (sealed class)",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "it is possible to  replace the else condition with an always-true condition (Enum)",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "5": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "The else condition is a special condition which evaluates to true if none of the branches above it evaluated to true.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "The else condition must also be in the last when entry of when expression, otherwise it is a compile-time error.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

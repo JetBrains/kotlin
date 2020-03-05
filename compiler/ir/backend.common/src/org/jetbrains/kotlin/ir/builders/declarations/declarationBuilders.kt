@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.ir.builders.declarations
 
-import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.*
@@ -26,7 +25,8 @@ fun IrClassBuilder.buildClass(): IrClass {
         startOffset, endOffset, origin,
         IrClassSymbolImpl(wrappedDescriptor),
         name, kind, visibility, modality,
-        isCompanion = isCompanion, isInner = isInner, isData = isData, isExternal = isExternal, isInline = isInline, isExpect = isExpect
+        isCompanion = isCompanion, isInner = isInner, isData = isData, isExternal = isExternal,
+        isInline = isInline, isExpect = isExpect, isFun = isFun
     ).also {
         wrappedDescriptor.bind(it)
     }
@@ -47,6 +47,7 @@ fun IrFieldBuilder.buildField(): IrField {
         name, type, visibility, isFinal, isExternal, isStatic,
         origin == IrDeclarationOrigin.FAKE_OVERRIDE
     ).also {
+        it.metadata = metadata
         wrappedDescriptor.bind(it)
     }
 }
@@ -63,12 +64,15 @@ inline fun IrDeclarationContainer.addField(builder: IrFieldBuilder.() -> Unit) =
         declarations.add(field)
     }
 
-fun IrClass.addField(fieldName: String, fieldType: IrType, fieldVisibility: Visibility = Visibilities.PRIVATE): IrField =
+fun IrClass.addField(fieldName: Name, fieldType: IrType, fieldVisibility: Visibility = Visibilities.PRIVATE): IrField =
     addField {
-        name = Name.identifier(fieldName)
+        name = fieldName
         type = fieldType
         visibility = fieldVisibility
     }
+
+fun IrClass.addField(fieldName: String, fieldType: IrType, fieldVisibility: Visibility = Visibilities.PRIVATE): IrField =
+    addField(Name.identifier(fieldName), fieldType, fieldVisibility)
 
 fun IrPropertyBuilder.buildProperty(): IrProperty {
     val wrappedDescriptor = WrappedPropertyDescriptor()
@@ -101,6 +105,7 @@ inline fun IrProperty.addGetter(builder: IrFunctionBuilder.() -> Unit = {}): IrS
         builder()
         buildFun().also { getter ->
             this@addGetter.getter = getter
+            getter.correspondingPropertySymbol = this@addGetter.symbol
             getter.parent = this@addGetter.parent
         }
     }
@@ -175,6 +180,7 @@ fun IrDeclarationContainer.addFunction(
     name: String,
     returnType: IrType,
     modality: Modality = Modality.FINAL,
+    visibility: Visibility = Visibilities.PUBLIC,
     isStatic: Boolean = false,
     isSuspend: Boolean = false,
     origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
@@ -183,6 +189,7 @@ fun IrDeclarationContainer.addFunction(
         this.name = Name.identifier(name)
         this.returnType = returnType
         this.modality = modality
+        this.visibility = visibility
         this.isSuspend = isSuspend
         this.origin = origin
     }.apply {
@@ -230,7 +237,7 @@ inline fun IrFunction.addValueParameter(builder: IrValueParameterBuilder.() -> U
             index = valueParameters.size
         }
         build().also { valueParameter ->
-            valueParameters.add(valueParameter)
+            valueParameters += valueParameter
             valueParameter.parent = this@addValueParameter
         }
     }
@@ -289,7 +296,7 @@ inline fun IrTypeParametersContainer.addTypeParameter(builder: IrTypeParameterBu
             index = typeParameters.size
         }
         build().also { typeParameter ->
-            typeParameters.add(typeParameter)
+            typeParameters += typeParameter
             typeParameter.parent = this@addTypeParameter
         }
     }

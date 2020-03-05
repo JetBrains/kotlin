@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirBackingFieldReferenceImpl(
+internal class FirBackingFieldReferenceImpl(
     override val source: FirSourceElement?,
     override val candidateSymbol: AbstractFirBasedSymbol<*>?,
-    override val resolvedSymbol: FirBackingFieldSymbol
+    override val resolvedSymbol: FirBackingFieldSymbol,
 ) : FirBackingFieldReference() {
     override val name: Name get() = Name.identifier("\$field")
 

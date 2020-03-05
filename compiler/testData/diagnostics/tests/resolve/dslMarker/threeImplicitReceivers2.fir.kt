@@ -55,7 +55,7 @@ fun test() {
                     with(D()) {
                         x()
                     }
-                    A().<!UNRESOLVED_REFERENCE!>x<!>()
+                    A().x()
                 }
 
                 foo2 {

@@ -57,7 +57,7 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
             if (existingMethod != null) {
                 // In the case that we find a defined method that matches the stub signature, we add the overridden symbols to that
                 // defined method, so that bridge lowering can still generate correct bridge for that method
-                existingMethod.overriddenSymbols.addAll(member.overriddenSymbols)
+                existingMethod.overriddenSymbols += member.overriddenSymbols
             } else {
                 irClass.declarations.add(member)
             }
@@ -78,20 +78,16 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
         }.apply {
             // Replace Function metadata with the data from class
             // Add the abstract function symbol to stub function for bridge lowering
-            overriddenSymbols.add(function.symbol)
+            overriddenSymbols = listOf(function.symbol)
             parent = irClass
             dispatchReceiverParameter = function.dispatchReceiverParameter?.copyWithSubstitution(this, substitutionMap)
             extensionReceiverParameter = function.extensionReceiverParameter?.copyWithSubstitution(this, substitutionMap)
-            for (parameter in function.valueParameters) {
-                valueParameters.add(parameter.copyWithSubstitution(this, substitutionMap))
-            }
+            valueParameters = function.valueParameters.map { it.copyWithSubstitution(this, substitutionMap) }
             // Function body consist only of throwing UnsupportedOperationException statement
             body = context.createIrBuilder(function.symbol).irBlockBody {
                 +irThrow(
                     irCall(
-                        this@CollectionStubMethodLowering.context.ir.symbols.unsupportedOperationExceptionClass.owner.constructors.single {
-                            it.valueParameters.size == 1 && it.valueParameters.single().type.isNullableString()
-                        }
+                        this@CollectionStubMethodLowering.context.ir.symbols.ThrowUnsupportOperationExceptionClass
                     ).apply {
                         putValueArgument(0, irString("Operation is not supported for read-only collection"))
                     }

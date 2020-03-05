@@ -1,15 +1,15 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
 import com.intellij.ui.components.JBTabbedPane
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
+import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
 
-class SourcesetSettingsComponent(valuesReadingContext: ValuesReadingContext) : DynamicComponent(valuesReadingContext) {
-    private val templatesComponent = TemplatesComponent(valuesReadingContext).asSubComponent()
-    private val dependenciesComponent = SourcesetDependenciesSettingsComponent(valuesReadingContext).asSubComponent()
+class SourcesetSettingsComponent(ideContext: IdeContext) : DynamicComponent(ideContext) {
+    private val dependenciesComponent = SourcesetDependenciesSettingsComponent(ideContext).asSubComponent()
+
     override val component = JBTabbedPane().apply {
-        add("Template", templatesComponent.component)
         add("Dependencies", dependenciesComponent.component)
     }
 
@@ -17,6 +17,5 @@ class SourcesetSettingsComponent(valuesReadingContext: ValuesReadingContext) : D
         set(value) {
             field = value
             dependenciesComponent.sourceset = value
-            templatesComponent.sourceset = value
         }
 }

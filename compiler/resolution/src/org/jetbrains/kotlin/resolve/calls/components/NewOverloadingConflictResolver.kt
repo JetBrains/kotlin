@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver
 import org.jetbrains.kotlin.resolve.calls.results.PlatformOverloadsSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.util.CancellationChecker
 import java.util.*
 
 class NewOverloadingConflictResolver(
@@ -34,6 +35,7 @@ class NewOverloadingConflictResolver(
     module: ModuleDescriptor,
     specificityComparator: TypeSpecificityComparator,
     platformOverloadsSpecificityComparator: PlatformOverloadsSpecificityComparator,
+    cancellationChecker: CancellationChecker,
     statelessCallbacks: KotlinResolutionStatelessCallbacks,
     constraintInjector: ConstraintInjector
 ) : OverloadingConflictResolver<KotlinResolutionCandidate>(
@@ -41,6 +43,7 @@ class NewOverloadingConflictResolver(
     module,
     specificityComparator,
     platformOverloadsSpecificityComparator,
+    cancellationChecker,
     {
         // todo investigate
         it.resolvedCall.candidateDescriptor

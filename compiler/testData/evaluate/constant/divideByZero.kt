@@ -72,9 +72,6 @@ val prop23 = -1.0 % 0
 // val prop24: NaN.toDouble()
 val prop24 = -0.0 % 0
 
-// val prop25: NaN.toDouble()
-val prop25 = 1.0.mod(0)
-
 // val prop26: NaN.toDouble()
 val prop26 = 1.0.rem(0)
 

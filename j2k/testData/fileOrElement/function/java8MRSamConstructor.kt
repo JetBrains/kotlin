@@ -118,7 +118,7 @@ internal class Java8Class {
         val memberFunFromClass = JFunction2<String, Int> { it.length }
         memberFunFromClass.foo("str")
 
-        Thread(Runnable { println() }).start()
+        Thread { println() }.start()
         Runnable { println() }.run()
     }
 

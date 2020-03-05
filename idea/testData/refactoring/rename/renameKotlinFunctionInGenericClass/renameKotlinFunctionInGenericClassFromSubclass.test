@@ -1,0 +1,6 @@
+{
+  "type": "KOTLIN_FUNCTION",
+  "classId": "test/B",
+  "oldName": "foo",
+  "newName": "bar"
+}

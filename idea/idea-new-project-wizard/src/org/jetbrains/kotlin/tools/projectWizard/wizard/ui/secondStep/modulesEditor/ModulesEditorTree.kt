@@ -7,12 +7,14 @@ import com.intellij.ui.treeStructure.Tree
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.path
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.icon
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import javax.swing.JComponent
 import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
+import javax.swing.tree.TreePath
 import javax.swing.tree.TreeSelectionModel
 
 class ModulesEditorTree(
@@ -30,6 +32,17 @@ class ModulesEditorTree(
         }
         model.reload()
         openPaths.forEach(::expandPath)
+    }
+
+    fun selectModule(moduleToSelect: Module) {
+        for (value in (model.root as DefaultMutableTreeNode).depthFirstEnumeration().iterator()) {
+            val node = value as? DefaultMutableTreeNode ?: continue
+            val module = node.userObject as? Module ?: continue
+            if (module.path == moduleToSelect.path) {
+                selectionPath = TreePath(node.path)
+                break
+            }
+        }
     }
 
     val selectedSettingItem

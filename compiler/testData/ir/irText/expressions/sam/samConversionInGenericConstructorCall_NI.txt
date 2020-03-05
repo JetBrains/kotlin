@@ -1,13 +1,13 @@
 FILE fqName:<root> fileName:/samConversionInGenericConstructorCall_NI.kt
-  FUN name:test3 visibility:public modality:FINAL <> (f1:kotlin.Function1<kotlin.String, kotlin.String>, f2:kotlin.Function1<kotlin.Int, kotlin.String>) returnType:<root>.C.D<kotlin.Int, kotlin.String>
+  FUN name:test3 visibility:public modality:FINAL <> (f1:kotlin.Function1<kotlin.String, kotlin.String>, f2:kotlin.Function1<kotlin.Int, kotlin.String>) returnType:<root>.C.D<kotlin.Int?, kotlin.String?>
     VALUE_PARAMETER name:f1 index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
     VALUE_PARAMETER name:f2 index:1 type:kotlin.Function1<kotlin.Int, kotlin.String>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test3 (f1: kotlin.Function1<kotlin.String, kotlin.String>, f2: kotlin.Function1<kotlin.Int, kotlin.String>): <root>.C.D<kotlin.Int, kotlin.String> declared in <root>'
-        CONSTRUCTOR_CALL 'public constructor <init> (jxy: <root>.J<X of <root>.C?, Y of <root>.C.D?>?) declared in <root>.C.D' type=<root>.C.D<kotlin.Int, kotlin.String> origin=null
-          <class: Y>: kotlin.Int
-          $outer: CONSTRUCTOR_CALL 'public constructor <init> (jxx: <root>.J<X of <root>.C?, X of <root>.C?>?) declared in <root>.C' type=<root>.C<kotlin.String> origin=null
-            <class: X>: kotlin.String
+      RETURN type=kotlin.Nothing from='public final fun test3 (f1: kotlin.Function1<kotlin.String, kotlin.String>, f2: kotlin.Function1<kotlin.Int, kotlin.String>): <root>.C.D<kotlin.Int?, kotlin.String?> declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> (jxy: <root>.J<X of <root>.C?, Y of <root>.C.D?>?) declared in <root>.C.D' type=<root>.C.D<kotlin.Int?, kotlin.String?> origin=null
+          <class: Y>: kotlin.Int?
+          $outer: CONSTRUCTOR_CALL 'public constructor <init> (jxx: <root>.J<X of <root>.C?, X of <root>.C?>?) declared in <root>.C' type=<root>.C<kotlin.String?> origin=null
+            <class: X>: kotlin.String?
             jxx: TYPE_OP type=<root>.J<kotlin.String?, kotlin.String?>? origin=SAM_CONVERSION typeOperand=<root>.J<kotlin.String?, kotlin.String?>?
               GET_VAR 'f1: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.test3' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
           jxy: TYPE_OP type=<root>.J<kotlin.String?, kotlin.Int?>? origin=SAM_CONVERSION typeOperand=<root>.J<kotlin.String?, kotlin.Int?>?
@@ -77,26 +77,26 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall_NI.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:test4 visibility:public modality:FINAL <> (f:kotlin.Function1<kotlin.String, kotlin.String>, g:kotlin.Function1<kotlin.Any, kotlin.String>) returnType:<root>.Outer.Inner<kotlin.Any, kotlin.String>
+  FUN name:test4 visibility:public modality:FINAL <> (f:kotlin.Function1<kotlin.String, kotlin.String>, g:kotlin.Function1<kotlin.Any, kotlin.String>) returnType:<root>.Outer.Inner<kotlin.Any?, kotlin.String?>
     VALUE_PARAMETER name:f index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
     VALUE_PARAMETER name:g index:1 type:kotlin.Function1<kotlin.Any, kotlin.String>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test4 (f: kotlin.Function1<kotlin.String, kotlin.String>, g: kotlin.Function1<kotlin.Any, kotlin.String>): <root>.Outer.Inner<kotlin.Any, kotlin.String> declared in <root>'
-        CONSTRUCTOR_CALL 'public constructor <init> (j12: <root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner>) [primary] declared in <root>.Outer.Inner' type=<root>.Outer.Inner<kotlin.Any, kotlin.String> origin=null
-          <class: T2>: kotlin.Any
-          $outer: CONSTRUCTOR_CALL 'public constructor <init> (j11: <root>.J<T1 of <root>.Outer, T1 of <root>.Outer>) [primary] declared in <root>.Outer' type=<root>.Outer<kotlin.String> origin=null
-            <class: T1>: kotlin.String
-            j11: TYPE_OP type=<root>.J<kotlin.String, kotlin.String> origin=SAM_CONVERSION typeOperand=<root>.J<kotlin.String, kotlin.String>
+      RETURN type=kotlin.Nothing from='public final fun test4 (f: kotlin.Function1<kotlin.String, kotlin.String>, g: kotlin.Function1<kotlin.Any, kotlin.String>): <root>.Outer.Inner<kotlin.Any?, kotlin.String?> declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> (j12: <root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner>) [primary] declared in <root>.Outer.Inner' type=<root>.Outer.Inner<kotlin.Any?, kotlin.String?> origin=null
+          <class: T2>: kotlin.Any?
+          $outer: CONSTRUCTOR_CALL 'public constructor <init> (j11: <root>.J<T1 of <root>.Outer, T1 of <root>.Outer>) [primary] declared in <root>.Outer' type=<root>.Outer<kotlin.String?> origin=null
+            <class: T1>: kotlin.String?
+            j11: TYPE_OP type=<root>.J<kotlin.String?, kotlin.String?> origin=SAM_CONVERSION typeOperand=<root>.J<kotlin.String?, kotlin.String?>
               GET_VAR 'f: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.test4' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
-          j12: TYPE_OP type=<root>.J<kotlin.String, kotlin.Any> origin=SAM_CONVERSION typeOperand=<root>.J<kotlin.String, kotlin.Any>
+          j12: TYPE_OP type=<root>.J<kotlin.String?, kotlin.Any?> origin=SAM_CONVERSION typeOperand=<root>.J<kotlin.String?, kotlin.Any?>
             GET_VAR 'g: kotlin.Function1<kotlin.Any, kotlin.String> declared in <root>.test4' type=kotlin.Function1<kotlin.Any, kotlin.String> origin=null
-  FUN name:testGenericJavaCtor1 visibility:public modality:FINAL <> (f:kotlin.Function1<kotlin.String, kotlin.Int>) returnType:<root>.G<kotlin.String>
+  FUN name:testGenericJavaCtor1 visibility:public modality:FINAL <> (f:kotlin.Function1<kotlin.String, kotlin.Int>) returnType:<root>.G<kotlin.String?>
     VALUE_PARAMETER name:f index:0 type:kotlin.Function1<kotlin.String, kotlin.Int>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun testGenericJavaCtor1 (f: kotlin.Function1<kotlin.String, kotlin.Int>): <root>.G<kotlin.String> declared in <root>'
-        CONSTRUCTOR_CALL 'public constructor <init> <TCtor> (x: <root>.J<TCtor of <root>.G.<init>?, TClass of <root>.G?>?) declared in <root>.G' type=<root>.G<kotlin.String> origin=null
-          <class: TClass>: kotlin.String
-          <TCtor>: kotlin.Int
+      RETURN type=kotlin.Nothing from='public final fun testGenericJavaCtor1 (f: kotlin.Function1<kotlin.String, kotlin.Int>): <root>.G<kotlin.String?> declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> <TCtor> (x: <root>.J<TCtor of <root>.G.<init>?, TClass of <root>.G?>?) declared in <root>.G' type=<root>.G<kotlin.String?> origin=null
+          <class: TClass>: kotlin.String?
+          <TCtor>: kotlin.Int?
           x: TYPE_OP type=<root>.J<kotlin.Int?, kotlin.String?>? origin=SAM_CONVERSION typeOperand=<root>.J<kotlin.Int?, kotlin.String?>?
             GET_VAR 'f: kotlin.Function1<kotlin.String, kotlin.Int> declared in <root>.testGenericJavaCtor1' type=kotlin.Function1<kotlin.String, kotlin.Int> origin=null
   FUN name:testGenericJavaCtor2 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Unit
@@ -106,9 +106,9 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall_NI.kt
         TYPE_OP type=kotlin.Function1<kotlin.String, kotlin.Int> origin=CAST typeOperand=kotlin.Function1<kotlin.String, kotlin.Int>
           GET_VAR 'x: kotlin.Any declared in <root>.testGenericJavaCtor2' type=kotlin.Any origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CONSTRUCTOR_CALL 'public constructor <init> <TCtor> (x: <root>.J<TCtor of <root>.G.<init>?, TClass of <root>.G?>?) declared in <root>.G' type=<root>.G<kotlin.String> origin=null
-          <class: TClass>: kotlin.String
-          <TCtor>: kotlin.Int
+        CONSTRUCTOR_CALL 'public constructor <init> <TCtor> (x: <root>.J<TCtor of <root>.G.<init>?, TClass of <root>.G?>?) declared in <root>.G' type=<root>.G<kotlin.String?> origin=null
+          <class: TClass>: kotlin.String?
+          <TCtor>: kotlin.Int?
           x: TYPE_OP type=<root>.J<kotlin.Int?, kotlin.String?>? origin=SAM_CONVERSION typeOperand=<root>.J<kotlin.Int?, kotlin.String?>?
             TYPE_OP type=kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String?, kotlin.Int?> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String?, kotlin.Int?>
               GET_VAR 'x: kotlin.Any declared in <root>.testGenericJavaCtor2' type=kotlin.Any origin=null

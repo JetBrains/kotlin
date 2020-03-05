@@ -1,6 +1,6 @@
 // !LANGUAGE: +StrictJavaNullabilityAssertions
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM
+// IGNORE_BACKEND: JVM, JVM_IR
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // JVM_TARGET: 1.8
@@ -10,6 +10,9 @@
 // CodegenAnnotatingVisitor/RuntimeAssertionsOnDeclarationBodyChecker do not analyze the need for not-null assertions on
 // KtDestructuringDeclarations and their entries.
 
+// Note: this fails on JVM_IR because of KT-36347.
+// It requires potentially breaking changes in FE, so please, don't touch it until the language design decision.
+
 // FILE: box.kt
 import kotlin.test.*
 
@@ -18,14 +21,14 @@ fun box(): String {
     try {
         val (index, i) = J.listOfNotNull().withIndex().first()
         return "Fail: should throw on get()"
-    } catch (e: IllegalStateException) {}
+    } catch (e: NullPointerException) {}
 
     try {
         for ((index, i) in J.listOfNotNull().withIndex()) {
             return "Fail: should throw on get() in loop header"
         }
     }
-    catch (e: IllegalStateException) {}
+    catch (e: NullPointerException) {}
     return "OK"
 }
 

@@ -1,7 +1,7 @@
-// ERROR: Type mismatch: inferred type is Any? but String? was expected
-// ERROR: Type mismatch: inferred type is (CapturedType(*)!!..Any?) but String? was expected
-// ERROR: Type mismatch: inferred type is Any? but String? was expected
-// ERROR: Type mismatch: inferred type is (CapturedType(*)!!..Any?) but String? was expected
+// ERROR: Type mismatch: inferred type is Any! but String? was expected
+// ERROR: Type mismatch: inferred type is (Any?..Any?) but String? was expected
+// ERROR: Type mismatch: inferred type is Any! but String? was expected
+// ERROR: Type mismatch: inferred type is (Any?..Any?) but String? was expected
 // ERROR: Type mismatch: inferred type is HashMap<Any?, Any?> but Map<String?, String?> was expected
 import java.util.HashMap
 import java.util.Properties

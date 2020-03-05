@@ -10,22 +10,30 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.BaseFirBuilder
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.escapedStringToCharacter
-import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.lexer.KtToken
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 open class BaseConverter(
-    session: FirSession,
+    baseSession: FirSession,
     private val tree: FlyweightCapableTreeStructure<LighterASTNode>,
-    context: Context = Context()
-) : BaseFirBuilder<LighterASTNode>(session, context) {
-    protected val implicitType = FirImplicitTypeRefImpl(null)
+    context: Context<LighterASTNode> = Context()
+) : BaseFirBuilder<LighterASTNode>(baseSession, context) {
+    protected val implicitType = buildImplicitTypeRef()
+
+    override fun LighterASTNode.toFirSourceElement(): FirSourceElement {
+        return FirLightSourceElement(this)
+    }
 
     override val LighterASTNode.elementType: IElementType
         get() = this.tokenType
@@ -98,6 +106,7 @@ open class BaseConverter(
         return kidsRef.get()
     }
 
+    @UseExperimental(ExperimentalContracts::class)
     protected inline fun LighterASTNode.forEachChildren(vararg skipTokens: KtToken, f: (LighterASTNode) -> Unit) {
         val kidsArray = this.getChildrenAsArray()
         for (kid in kidsArray) {

@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 class A(val x: (String.() -> Unit)?)
 
 fun test(a: A) {
@@ -15,8 +14,8 @@ fun test(a: A) {
         a.<!INAPPLICABLE_CANDIDATE!>x<!>()
         <!INAPPLICABLE_CANDIDATE!>(a.x)()<!>
         if (a.x != null) {
-            a.x() // todo
-            (a.x)()
+            a.<!INAPPLICABLE_CANDIDATE!>x<!>() // todo
+            <!INAPPLICABLE_CANDIDATE!>(a.x)()<!>
         }
     }
 }

@@ -2,22 +2,24 @@ package org.jetbrains.kotlin.ir.symbols
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.util.UniqId
+import org.jetbrains.kotlin.ir.util.IdSignature
 
-abstract class IrDelegatingSymbol<S: IrBindableSymbol<D, B>, B: IrSymbolOwner, D: DeclarationDescriptor>(var delegate: S)
-    : IrBindableSymbol<D, B> {
+abstract class IrDelegatingSymbol<S : IrBindableSymbol<D, B>, B : IrSymbolOwner, D : DeclarationDescriptor>(var delegate: S) :
+    IrBindableSymbol<D, B> {
     override val owner: B get() = delegate.owner
     override val descriptor: D get() = delegate.descriptor
     override val isBound: Boolean get() = delegate.isBound
-    override var uniqId: UniqId
-        get() = delegate.uniqId
-        set(value: UniqId) { delegate.uniqId = value }
+    override val isPublicApi: Boolean
+        get() = delegate.isPublicApi
+
+    override val signature: IdSignature
+        get() = delegate.signature
 
     override fun bind(owner: B) = delegate.bind(owner)
     override fun hashCode() = delegate.hashCode()
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (this === delegate) return true
+        if (delegate === other) return true
         return false
     }
 }

@@ -188,17 +188,17 @@ class SerializableCodegenImpl(
             val propType = prop.asmType
             if (!prop.optional) {
                 // primary were validated before constructor call
-                genValidateProperty(i, bitMaskOff)
+                genValidateProperty(i, bitMaskOff(i))
                 val nonThrowLabel = Label()
                 ificmpne(nonThrowLabel)
-                genExceptionThrow(serializationExceptionMissingFieldName, prop.name)
+                genMissingFieldExceptionThrow(prop.name)
                 visitLabel(nonThrowLabel)
                 // setting field
                 load(0, thisAsmType)
                 load(propOffset, propType)
                 putfield(thisAsmType.internalName, prop.descriptor.name.asString(), propType.descriptor)
             } else {
-                genValidateProperty(i, bitMaskOff)
+                genValidateProperty(i, bitMaskOff(i))
                 val setLbl = Label()
                 val nextLabel = Label()
                 ificmpeq(setLbl)

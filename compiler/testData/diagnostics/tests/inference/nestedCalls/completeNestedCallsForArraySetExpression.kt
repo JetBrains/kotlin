@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun <T> foo(t: T) = t
 
 fun test(map: MutableMap<Int, Int>, t: Int) {

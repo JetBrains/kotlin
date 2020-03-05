@@ -5,38 +5,16 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
-import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
+import org.jetbrains.kotlin.fir.scopes.FirIterableScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.name.Name
 
 class FirTypeResolveScopeForBodyResolve(
-    private val topLevelScopes: List<FirScope>,
-    private val implicitReceiverStack: ImplicitReceiverStack,
-    private val localScopes: List<FirScope>
-) : FirScope() {
-    override fun processClassifiersByName(
-        name: Name,
-        processor: (FirClassifierSymbol<*>) -> ProcessorAction
-    ): ProcessorAction {
-        for (scope in localScopes.asReversed()) {
-            if (!scope.processClassifiersByName(name, processor)) {
-                return ProcessorAction.STOP
-            }
-        }
-        for (receiverValue in implicitReceiverStack.receiversAsReversed()) {
-            if (receiverValue is ImplicitExtensionReceiverValue) continue
-            if (receiverValue.implicitScope?.processClassifiersByName(name, processor) == ProcessorAction.STOP) {
-                return ProcessorAction.STOP
-            }
-        }
-        for (scope in topLevelScopes.asReversed()) {
-            if (!scope.processClassifiersByName(name, processor)) {
-                return ProcessorAction.STOP
-            }
-        }
-        return ProcessorAction.NEXT
-    }
+    private val components: BodyResolveComponents
+) : FirIterableScope() {
+    override val scopes: Iterable<FirScope>
+        get() = components.localScopes.asReversed() + components.implicitReceiverStack.receiversAsReversed().mapNotNull {
+            (it as? ImplicitDispatchReceiverValue)?.implicitScope
+        } + components.topLevelScopes.asReversed()
 }

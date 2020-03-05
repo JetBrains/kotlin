@@ -1,4 +1,6 @@
 // IGNORE_BACKEND: JVM_IR
+// TODO KT-36772 Equality compaison between enums should use reference equality in JVM_IR
+
 enum class Bar {
     ONE,
     TWO

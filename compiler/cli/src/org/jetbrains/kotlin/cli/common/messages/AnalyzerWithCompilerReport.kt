@@ -20,10 +20,14 @@ import com.intellij.openapi.util.io.FileUtil.toSystemDependentName
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiFormatUtil
+import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTrackerImpl
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.sortedDiagnostics
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
@@ -43,8 +47,13 @@ import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErr
 class AnalyzerWithCompilerReport(
     private val messageCollector: MessageCollector,
     private val languageVersionSettings: LanguageVersionSettings
-) {
-    lateinit var analysisResult: AnalysisResult
+) : AbstractAnalyzerWithCompilerReport {
+    override lateinit var analysisResult: AnalysisResult
+
+    constructor(configuration: CompilerConfiguration) : this(
+        configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY) ?: MessageCollector.NONE,
+        configuration.languageVersionSettings
+    )
 
     private fun reportIncompleteHierarchies() {
         val bindingContext = analysisResult.bindingContext
@@ -99,11 +108,10 @@ class AnalyzerWithCompilerReport(
 
     class SyntaxErrorReport(val isHasErrors: Boolean, val isAllErrorsAtEof: Boolean)
 
-    fun hasErrors(): Boolean {
-        return messageCollector.hasErrors()
-    }
+    override fun hasErrors(): Boolean =
+        messageCollector.hasErrors()
 
-    fun analyzeAndReport(files: Collection<KtFile>, analyze: () -> AnalysisResult) {
+    override fun analyzeAndReport(files: Collection<KtFile>, analyze: () -> AnalysisResult) {
         analysisResult = analyze()
         ExperimentalUsageChecker.checkCompilerArguments(
             analysisResult.moduleDescriptor, languageVersionSettings,
@@ -146,29 +154,31 @@ class AnalyzerWithCompilerReport(
             return diagnostic.severity == Severity.ERROR
         }
 
-        data class ReportDiagnosticsResult(val hasErrors: Boolean, val hasIncompatibleClassErrors: Boolean)
-
-        fun reportDiagnostics(unsortedDiagnostics: Diagnostics, reporter: DiagnosticMessageReporter): ReportDiagnosticsResult {
+        fun reportDiagnostics(unsortedDiagnostics: Diagnostics, reporter: DiagnosticMessageReporter): Boolean {
             var hasErrors = false
-            var hasIncompatibleClassErrors = false
             val diagnostics = sortedDiagnostics(unsortedDiagnostics.all())
             for (diagnostic in diagnostics) {
                 hasErrors = hasErrors or reportDiagnostic(diagnostic, reporter)
-                hasIncompatibleClassErrors = hasIncompatibleClassErrors or
-                        (diagnostic.factory == Errors.INCOMPATIBLE_CLASS || diagnostic.factory == Errors.PRE_RELEASE_CLASS)
             }
-
-            return ReportDiagnosticsResult(hasErrors, hasIncompatibleClassErrors)
+            return hasErrors
         }
 
         fun reportDiagnostics(diagnostics: Diagnostics, messageCollector: MessageCollector): Boolean {
-            val (hasErrors, hasIncompatibleClassErrors) = reportDiagnostics(diagnostics, DefaultDiagnosticReporter(messageCollector))
+            val hasErrors = reportDiagnostics(diagnostics, DefaultDiagnosticReporter(messageCollector))
 
-            if (hasIncompatibleClassErrors) {
+            if (diagnostics.any { it.factory == Errors.INCOMPATIBLE_CLASS || it.factory == Errors.PRE_RELEASE_CLASS }) {
                 messageCollector.report(
                     ERROR,
                     "Incompatible classes were found in dependencies. " +
                             "Remove them from the classpath or use '-Xskip-metadata-version-check' to suppress errors"
+                )
+            }
+
+            if (diagnostics.any { it.factory == Errors.IR_COMPILED_CLASS }) {
+                messageCollector.report(
+                    ERROR,
+                    "Classes compiled by a new Kotlin compiler backend were found in dependencies. " +
+                            "Remove them from the classpath or use '-Xallow-jvm-ir-dependencies' to suppress errors"
                 )
             }
 

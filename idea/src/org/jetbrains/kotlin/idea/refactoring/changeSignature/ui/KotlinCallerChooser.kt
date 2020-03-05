@@ -13,7 +13,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.changeSignature.CallerChooserBase
-import com.intellij.refactoring.changeSignature.MethodNodeBase
+import com.intellij.refactoring.changeSignature.MemberNodeBase
 import com.intellij.ui.ColoredTreeCellRenderer
 import com.intellij.ui.JBColor
 import com.intellij.ui.SimpleTextAttributes
@@ -58,7 +58,7 @@ class KotlinMethodNode(
     called: HashSet<PsiElement>,
     project: Project,
     cancelCallback: Runnable
-) : MethodNodeBase<PsiElement>(method?.namedUnwrappedElement ?: method, called, project, cancelCallback) {
+) : MemberNodeBase<PsiElement>(method?.namedUnwrappedElement ?: method, called, project, cancelCallback) {
     override fun createNode(caller: PsiElement, called: HashSet<PsiElement>) = KotlinMethodNode(caller, called, myProject, myCancelCallback)
 
     override fun customizeRendererText(renderer: ColoredTreeCellRenderer) {

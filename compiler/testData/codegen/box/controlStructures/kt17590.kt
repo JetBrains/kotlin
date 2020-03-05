@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun zap(s: String): String? = s
 
 inline fun tryZap(s: String, fn: (String) -> String): String {

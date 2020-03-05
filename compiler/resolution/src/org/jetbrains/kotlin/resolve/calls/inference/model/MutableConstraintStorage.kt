@@ -33,15 +33,8 @@ class MutableVariableWithConstraints(
     // see @OnlyInputTypes annotation
     val projectedInputCallTypes: Collection<UnwrappedType>
         get() = mutableConstraints
-            .filter { it.position.isInputTypePosition }
+            .filter { it.position.from is OnlyInputTypeConstraintPosition || it.inputTypePositionBeforeIncorporation != null }
             .map { (it.type as KotlinType).unCapture().unwrap() }
-
-    private val ConstraintPosition?.isInputTypePosition: Boolean
-        get() = when (this) {
-            is OnlyInputTypeConstraintPosition -> true
-            !is IncorporationConstraintPosition -> false
-            else -> from.isInputTypePosition || inputTypePositions.any { it.isInputTypePosition }
-        }
 
     private val mutableConstraints = ArrayList(constraints)
 
@@ -49,7 +42,11 @@ class MutableVariableWithConstraints(
 
     // return new actual constraint, if this constraint is new
     fun addConstraint(constraint: Constraint): Constraint? {
-        val previousConstraintWithSameType = constraints.filter { it.typeHashCode == constraint.typeHashCode && it.type == constraint.type }
+        val previousConstraintWithSameType = constraints.filter { oldConstraint ->
+            oldConstraint.typeHashCode == constraint.typeHashCode
+                    && oldConstraint.type == constraint.type
+                    && oldConstraint.isNullabilityConstraint == constraint.isNullabilityConstraint
+        }
 
         if (previousConstraintWithSameType.any { previous -> newConstraintIsUseless(previous, constraint) })
             return null

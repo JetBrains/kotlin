@@ -1,8 +1,8 @@
 // "Add '@TopMarker' annotation to 'topUserVal'" "true"
-// COMPILER_ARGUMENTS: -Xuse-experimental=kotlin.Experimental
+// COMPILER_ARGUMENTS: -Xopt-in=kotlin.RequiresOptIn
 // WITH_RUNTIME
 
-@Experimental
+@RequiresOptIn
 annotation class TopMarker
 
 @TopMarker

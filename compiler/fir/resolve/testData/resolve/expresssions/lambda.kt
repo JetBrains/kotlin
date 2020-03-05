@@ -8,5 +8,10 @@ fun main() {
     bar { "This is also test" }
     itIs { "this is $it test" }
     multipleArgs { a, b -> "This is test of $a, $b" }
+
+    val s = { "OK" }()
+
+    val f = { "OK" }
+    val ss = f.invoke()
 }
 

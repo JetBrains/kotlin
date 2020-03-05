@@ -13,7 +13,7 @@ object Generators : TemplateGroupBase() {
     init {
         defaultBuilder {
             specialFor(ArraysOfUnsigned) {
-                since("1.3")
+                sinceAtLeast("1.3")
                 annotation("@ExperimentalUnsignedTypes")
             }
         }

@@ -17,10 +17,10 @@ public class A<T> {
 // FILE: k.kt
 
 fun test() {
-    A.create().bar(null)
+    A.create().<!INAPPLICABLE_CANDIDATE!>bar<!>(null)
     A.create().bar("")
 
-    A<String>().bar(null)
-    A<String?>().bar(null)
+    A<String>().<!INAPPLICABLE_CANDIDATE!>bar<!>(null)
+    A<String?>().<!INAPPLICABLE_CANDIDATE!>bar<!>(null)
     A<String?>().bar("")
 }

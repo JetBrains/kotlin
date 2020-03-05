@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrScript
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IrSymbolVisitor
-import org.jetbrains.kotlin.ir.util.UniqId
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 
@@ -30,7 +30,9 @@ interface IrSymbol {
     val descriptor: DeclarationDescriptor
     val isBound: Boolean
 
-    var uniqId: UniqId
+    val signature: IdSignature
+
+    val isPublicApi: Boolean
 
     fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R
 }

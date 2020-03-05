@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-// !LANGUAGE: +NewInference +SamConversionForKotlinFunctions -ProhibitVarargAsArrayAfterSamArgument
+// !LANGUAGE: +NewInference +SamConversionForKotlinFunctions -ProhibitVarargAsArrayAfterSamArgument -SamConversionPerArgument
 // IGNORE_BACKEND: JS, JS_IR
 // SKIP_TXT
 
@@ -36,10 +36,10 @@ fun main(x2: Runnable) {
     Test.foo1(x2, *arrayOf(""))
 
     val i1 = <!INAPPLICABLE_CANDIDATE!>Test<!>({}, arrayOf())
-    val i2 = <!INAPPLICABLE_CANDIDATE!>Test<!>({}, *arrayOf())
+    val i2 = Test({}, *arrayOf())
     val i3 = <!INAPPLICABLE_CANDIDATE!>Test<!>({}, x3)
     val i4 = <!INAPPLICABLE_CANDIDATE!>Test<!>({}, arrayOf(""))
-    val i5 = <!INAPPLICABLE_CANDIDATE!>Test<!>({}, {}, *arrayOf(""))
+    val i5 = Test({}, {}, *arrayOf(""))
     val i6 = <!INAPPLICABLE_CANDIDATE!>Test<!>({}, {}, arrayOf())
 
     i1.<!UNRESOLVED_REFERENCE!>foo2<!>({}, {}, arrayOf())

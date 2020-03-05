@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_EXPRESSION
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !WITH_NEW_INFERENCE
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
@@ -13,7 +14,7 @@ import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1
 fun case_1(): Boolean? {
-    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract<!> { returnsNotNull() implies (<!NULL_FOR_NONNULL_TYPE!>null<!>) }
+    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract<!> { returnsNotNull() implies <!NI;TYPE_MISMATCH!>(<!OI;NULL_FOR_NONNULL_TYPE!>null<!>)<!> }
     return true
 }
 

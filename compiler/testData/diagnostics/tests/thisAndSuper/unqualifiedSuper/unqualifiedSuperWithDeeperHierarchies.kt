@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // Check that it works with inherited members
 //
 //  DeeperBase  DeeperInterface

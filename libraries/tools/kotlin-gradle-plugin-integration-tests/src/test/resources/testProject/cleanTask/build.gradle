@@ -1,0 +1,68 @@
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlatform
+
+import java.io.File
+import java.time.*
+
+plugins {
+    id "org.jetbrains.kotlin.js" version "<pluginMarkerVersion>"
+}
+
+String nodeJsVersion
+String nodeJsLocation
+
+tasks.create("checkDownloadedFolder") {
+    description = "updated last modified date for downloaded folder"
+    dependsOn "build"
+    doLast {
+        println("check downloaded folder existance")
+        def downloadedFolder = new File(project.gradle.gradleUserHomeDir, nodeJsLocation)
+        if (!downloadedFolder.exists() || !downloadedFolder.isDirectory()) {
+            throw new InvalidUserDataException("Downloaded folder was not found")
+        }
+        println("try to update lastModifiedDate")
+        println(downloadedFolder.lastModified())
+        def successUpdated = downloadedFolder.setLastModified(LocalDateTime.now().minusDays(35).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
+        println(downloadedFolder.lastModified())
+        if (!successUpdated) {
+            throw new InvalidUserDataException("Unable to update last modified date")
+        }
+    }
+}
+
+tasks.create("testCleanTask") {
+    description = "check clean task behaviour"
+    doLast {
+        println("check deletion of downloaded folder")
+        def downloadedFolder = new File(project.gradle.gradleUserHomeDir, nodeJsLocation)
+        if (downloadedFolder.exists()) {
+            throw new InvalidUserDataException("Folder was not deleted")
+        }
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+afterEvaluate {
+    project.kotlinNodeJs.nodeVersion = "10.15.3"
+
+    project.tasks.nodeKotlinClean.dependsOn(checkDownloadedFolder)
+    project.tasks.testCleanTask.dependsOn(nodeKotlinClean)
+
+    nodeJsVersion = project.extensions.getByName("kotlinNodeJs").nodeVersion
+    println("Node js version: $nodeJsVersion")
+
+    String platform = NodeJsPlatform.name
+    String architecture = NodeJsPlatform.architecture
+
+    nodeJsLocation = "/nodejs/node-v$nodeJsVersion-$platform-$architecture"
+    println("Use $nodeJsLocation location")
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-js"
+}
+
+kotlin.target.browser {}

@@ -1,0 +1,8 @@
+package test
+
+public fun </*0*/ V> f(/*0*/ V): kotlin.Int
+
+public/*package*/ open class TypeParamInInner2 {
+    public/*package*/ constructor TypeParamInInner2()
+    public/*package*/ open fun check(): kotlin.Unit
+}

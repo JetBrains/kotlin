@@ -1556,6 +1556,16 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                     runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/innerClassConstuctorReference.kt");
                 }
 
+                @TestMetadata("mutableBoundPropertyReferenceFromClass.kt")
+                public void testMutableBoundPropertyReferenceFromClass() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/mutableBoundPropertyReferenceFromClass.kt");
+                }
+
+                @TestMetadata("mutablePropertyReferenceFromClass.kt")
+                public void testMutablePropertyReferenceFromClass() throws Exception {
+                    runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/mutablePropertyReferenceFromClass.kt");
+                }
+
                 @TestMetadata("privateFunctionReference.kt")
                 public void testPrivateFunctionReference() throws Exception {
                     runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/privateFunctionReference.kt");
@@ -2119,6 +2129,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             runTest("compiler/testData/codegen/boxInline/nonLocalReturns/explicitLocalReturn.kt");
         }
 
+        @TestMetadata("fromInterfaceDefaultGetter.kt")
+        public void testFromInterfaceDefaultGetter() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/nonLocalReturns/fromInterfaceDefaultGetter.kt");
+        }
+
         @TestMetadata("justReturnInLambda.kt")
         public void testJustReturnInLambda() throws Exception {
             runTest("compiler/testData/codegen/boxInline/nonLocalReturns/justReturnInLambda.kt");
@@ -2586,24 +2601,6 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         }
     }
 
-    @TestMetadata("compiler/testData/codegen/boxInline/nullChecks")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class NullChecks extends AbstractCompileKotlinAgainstInlineKotlinTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM, testDataFilePath, "// IGNORE_BACKEND_MULTI_MODULE: ");
-        }
-
-        public void testAllFilesPresentInNullChecks() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/nullChecks"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-        }
-
-        @TestMetadata("parameterNullCheck_1_4.kt")
-        public void testParameterNullCheck_1_4() throws Exception {
-            runTest("compiler/testData/codegen/boxInline/nullChecks/parameterNullCheck_1_4.kt");
-        }
-    }
-
     @TestMetadata("compiler/testData/codegen/boxInline/optimizations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -2875,6 +2872,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             runTest("compiler/testData/codegen/boxInline/reified/kt9637_2.kt");
         }
 
+        @TestMetadata("nonCapturingObjectInLambda.kt")
+        public void testNonCapturingObjectInLambda() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/nonCapturingObjectInLambda.kt");
+        }
+
         @TestMetadata("packages.kt")
         public void testPackages() throws Exception {
             runTest("compiler/testData/codegen/boxInline/reified/packages.kt");
@@ -2935,6 +2937,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             @TestMetadata("simpleSafe.kt")
             public void testSimpleSafe() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/reified/checkCast/simpleSafe.kt");
+            }
+
+            @TestMetadata("simple_1_3.kt")
+            public void testSimple_1_3() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/reified/checkCast/simple_1_3.kt");
             }
         }
 
@@ -3231,6 +3238,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("classFromDefaultPackage.kt")
         public void testClassFromDefaultPackage() throws Exception {
             runTest("compiler/testData/codegen/boxInline/smap/classFromDefaultPackage.kt");
+        }
+
+        @TestMetadata("crossroutines.kt")
+        public void testCrossroutines() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/crossroutines.kt");
         }
 
         @TestMetadata("defaultFunction.kt")
@@ -3651,6 +3663,16 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/crossinlineSuspendLambdaInsideCrossinlineSuspendLambda.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("doubleRegenerationWithNonSuspendingLambda.kt")
+        public void testDoubleRegenerationWithNonSuspendingLambda_1_2() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/doubleRegenerationWithNonSuspendingLambda.kt", "kotlin.coroutines.experimental");
+        }
+
+        @TestMetadata("doubleRegenerationWithNonSuspendingLambda.kt")
+        public void testDoubleRegenerationWithNonSuspendingLambda_1_3() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/doubleRegenerationWithNonSuspendingLambda.kt", "kotlin.coroutines");
+        }
+
         @TestMetadata("enclodingMethod.kt")
         public void testEnclodingMethod_1_2() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/enclodingMethod.kt", "kotlin.coroutines.experimental");
@@ -3756,6 +3778,16 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfSuspend.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("jvmName.kt")
+        public void testJvmName_1_2() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/jvmName.kt", "kotlin.coroutines.experimental");
+        }
+
+        @TestMetadata("jvmName.kt")
+        public void testJvmName_1_3() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/jvmName.kt", "kotlin.coroutines");
+        }
+
         @TestMetadata("kt26658.kt")
         public void testKt26658() throws Exception {
             runTest("compiler/testData/codegen/boxInline/suspend/kt26658.kt");
@@ -3791,6 +3823,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/multipleSuspensionPoints.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("nestedMethodWith2XParameter.kt")
+        public void testNestedMethodWith2XParameter() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/suspend/nestedMethodWith2XParameter.kt");
+        }
+
         @TestMetadata("nonSuspendCrossinline.kt")
         public void testNonSuspendCrossinline_1_2() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/nonSuspendCrossinline.kt", "kotlin.coroutines.experimental");
@@ -3809,6 +3846,16 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("returnValue.kt")
         public void testReturnValue_1_3() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/returnValue.kt", "kotlin.coroutines");
+        }
+
+        @TestMetadata("tryCatchReceiver.kt")
+        public void testTryCatchReceiver_1_2() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/tryCatchReceiver.kt", "kotlin.coroutines.experimental");
+        }
+
+        @TestMetadata("tryCatchReceiver.kt")
+        public void testTryCatchReceiver_1_3() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/tryCatchReceiver.kt", "kotlin.coroutines");
         }
 
         @TestMetadata("tryCatchStackTransform.kt")
@@ -4316,6 +4363,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             @TestMetadata("privateInCrossInline.kt")
             public void testPrivateInCrossInline() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/privateInCrossInline.kt");
+            }
+
+            @TestMetadata("protectedMembersFromSuper.kt")
+            public void testProtectedMembersFromSuper() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/protectedMembersFromSuper.kt");
             }
 
             @TestMetadata("superCall.kt")

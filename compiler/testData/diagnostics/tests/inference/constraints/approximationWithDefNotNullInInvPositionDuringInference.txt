@@ -1,0 +1,33 @@
+package
+
+public fun </*0*/ K> foo(/*0*/ x: K): kotlin.Unit
+public fun </*0*/ S> main(/*0*/ x: S): kotlin.Unit
+public fun </*0*/ R> select(/*0*/ vararg x: R /*kotlin.Array<out R>*/): R
+public inline fun </*0*/ R> test(/*0*/ transform: () -> R): kotlin.Unit
+
+public final class Bar</*0*/ T> : Parent<T> {
+    public constructor Bar</*0*/ T>(/*0*/ x: T)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Foo</*0*/ K> : Parent<K> {
+    public constructor Foo</*0*/ K>(/*0*/ x: K?)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>(/*0*/ x: T?)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Parent</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

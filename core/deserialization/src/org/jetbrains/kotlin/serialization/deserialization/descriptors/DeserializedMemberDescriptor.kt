@@ -52,6 +52,10 @@ interface DeserializedContainerSource : SourceElement {
     // True iff this is container is "invisible" because it's loaded from a pre-release class and this compiler is a release
     val isPreReleaseInvisible: Boolean
 
+    // True iff this container was compiled by the new IR backend, this compiler is not using the IR backend right now,
+    // and no additional flags to override this behavior were specified.
+    val isInvisibleIrDependency: Boolean
+
     // This string should only be used in error messages
     val presentableString: String
 }

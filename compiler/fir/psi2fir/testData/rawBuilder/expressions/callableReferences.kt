@@ -20,3 +20,5 @@ val test5 = A::bar
 val test6 = A::qux
 
 val test7 = ::baz
+
+val test8 = A?::foo

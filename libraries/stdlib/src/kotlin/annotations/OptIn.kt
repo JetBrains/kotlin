@@ -15,16 +15,24 @@ import kotlin.reflect.KClass
 /**
  * Signals that the annotated annotation class is a marker of an API that requires an explicit opt-in.
  *
- * Call sites of any declaration annotated with that marker should opt-in to the API either by using [OptIn],
+ * Call sites of any declaration annotated with that marker should opt in to the API either by using [OptIn],
  * or by being annotated with that marker themselves, effectively causing further propagation of the opt-in requirement.
  *
  * This class requires opt-in itself and can only be used with the compiler argument `-Xopt-in=kotlin.RequiresOptIn`.
+ *
+ * @property message message to be reported on usages of API without an explicit opt-in, or empty string for the default message.
+ *                   The default message is: "This declaration is experimental and its usage should be marked with 'Marker'
+ *                   or '@OptIn(Marker::class)'", where `Marker` is the opt-in requirement marker.
+ * @property level specifies how usages of API without an explicit opt-in are reported in code.
  */
 @Target(ANNOTATION_CLASS)
 @Retention(BINARY)
 @SinceKotlin("1.3")
 @RequireKotlin("1.3.70", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
-public annotation class RequiresOptIn(val level: Level = Level.ERROR) {
+public annotation class RequiresOptIn(
+    val message: String = "",
+    val level: Level = Level.ERROR
+) {
     /**
      * Severity of the diagnostic that should be reported on usages which did not explicitly opted into
      * the API either by using [OptIn] or by being annotated with the corresponding marker annotation.
@@ -40,7 +48,7 @@ public annotation class RequiresOptIn(val level: Level = Level.ERROR) {
 
 /**
  * Allows to use the API denoted by the given markers in the annotated file, declaration, or expression.
- * If a declaration is annotated with [OptIn], its usages are **not** required to opt-in to that API.
+ * If a declaration is annotated with [OptIn], its usages are **not** required to opt in to that API.
  *
  * This class requires opt-in itself and can only be used with the compiler argument `-Xopt-in=kotlin.RequiresOptIn`.
  */

@@ -119,8 +119,7 @@ L3 [after inlined declaration]:
     mark(println(y))
     call(println(y), println|<v5>) -> <v6>
     magic[UNRESOLVED_CALL](DEBUG_INFO_SMARTCAST) -> <v7>
-    mark(!DEBUG_INFO_SMARTCAST)
-    call(!DEBUG_INFO_SMARTCAST, <ERROR FUNCTION>|<v7>) -> <v8>
+    magic[UNRESOLVED_CALL](!DEBUG_INFO_SMARTCAST|<v7>) -> <v8>
   2 jmp(L7)
 L6 [else branch]:
   3 mark({ println(y) x.<!UNRESOLVED_REFERENCE!>length<!> })
@@ -203,8 +202,7 @@ L4 [after inlined declaration]:
     mark(println(y))
     call(println(y), println|<v8>) -> <v9>
     magic[UNRESOLVED_CALL](DEBUG_INFO_SMARTCAST) -> <v10>
-    mark(!DEBUG_INFO_SMARTCAST)
-    call(!DEBUG_INFO_SMARTCAST, <ERROR FUNCTION>|<v10>) -> <v11>
+    magic[UNRESOLVED_CALL](!DEBUG_INFO_SMARTCAST|<v10>) -> <v11>
   2 jmp(L8)
 L7 [else branch]:
   3 mark({ println(y) x.<!UNRESOLVED_REFERENCE!>length<!> })

@@ -1,4 +1,4 @@
-import org.gradle.jvm.tasks.Jar
+import org.gradle.api.tasks.PathSensitivity.RELATIVE
 import java.io.File
 
 plugins {
@@ -8,17 +8,33 @@ plugins {
 
 val builtinsSrc = fileFrom(rootDir, "core", "builtins", "src")
 val builtinsNative = fileFrom(rootDir, "core", "builtins", "native")
+val kotlinReflect = fileFrom(rootDir, "libraries/stdlib/src/kotlin/reflect")
+val builtinsCherryPicked = fileFrom(buildDir, "src")
+
+val prepareSources by tasks.registering(Sync::class) {
+    from(kotlinReflect) {
+        exclude("typeOf.kt")
+        exclude("KClasses.kt")
+    }
+    into(builtinsCherryPicked)
+}
 
 val serialize by tasks.registering(NoDebugJavaExec::class) {
-    val outDir = "$buildDir/$name"
-    val inDirs = arrayOf(builtinsSrc, builtinsNative)
-    inDirs.forEach { inputs.dir(it) }
+    dependsOn(prepareSources)
+    val outDir = buildDir.resolve(name)
+    val inDirs = arrayOf(builtinsSrc, builtinsNative, builtinsCherryPicked)
+    inDirs.forEach { inputs.dir(it).withPathSensitivity(RELATIVE) }
+
     outputs.dir(outDir)
+    outputs.cacheIf { true }
 
     classpath(rootProject.buildscript.configurations["bootstrapCompilerClasspath"])
     main = "org.jetbrains.kotlin.serialization.builtins.RunKt"
     jvmArgs("-Didea.io.use.nio2=true")
-    args(outDir, *inDirs)
+    args(
+        pathRelativeToWorkingDir(outDir),
+        *inDirs.map(::pathRelativeToWorkingDir).toTypedArray()
+    )
 }
 
 val builtinsJar by task<Jar> {

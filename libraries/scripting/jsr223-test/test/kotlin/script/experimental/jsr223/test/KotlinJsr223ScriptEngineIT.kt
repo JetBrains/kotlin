@@ -66,6 +66,17 @@ class KotlinJsr223ScriptEngineIT {
     }
 
     @Test
+    fun testIncomplete() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        val res0 = try {
+            engine.eval("val x =")
+        } catch (e: ScriptException) {
+            e
+        }
+        Assert.assertTrue("Unexpected check results: $res0", (res0 as? ScriptException)?.message?.contains("Expecting an expression") ?: false)
+    }
+
+    @Test
     fun testEvalWithError() {
         val engine = ScriptEngineManager().getEngineByExtension("kts")!!
 

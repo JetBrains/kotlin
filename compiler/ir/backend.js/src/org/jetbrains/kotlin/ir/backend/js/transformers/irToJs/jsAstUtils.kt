@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
+import org.jetbrains.kotlin.ir.backend.js.lower.InteropCallableReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -61,11 +62,12 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
     return function
 }
 
-private fun isNativeInvoke(call: IrCall): Boolean {
+private fun isNativeInvoke(receiver: JsExpression?, call: IrCall): Boolean {
+    if (receiver == null || receiver is JsThisRef) return false
     val simpleFunction = call.symbol.owner as? IrSimpleFunction ?: return false
     val receiverType = simpleFunction.dispatchReceiverParameter?.type ?: return false
 
-    if (simpleFunction.isSuspend) return false
+    if (call.origin === InteropCallableReferenceLowering.Companion.EXPLICIT_INVOKE) return false
 
     return simpleFunction.name == OperatorNameConventions.INVOKE && receiverType.isFunctionTypeOrSubtype()
 }
@@ -102,7 +104,7 @@ fun translateCall(
         }
     }
 
-    if (isNativeInvoke(expression)) {
+    if (isNativeInvoke(jsDispatchReceiver, expression)) {
         return JsInvocation(jsDispatchReceiver!!, arguments)
     }
 

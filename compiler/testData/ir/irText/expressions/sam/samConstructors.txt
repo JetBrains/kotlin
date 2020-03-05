@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/samConstructors.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (): java.lang.Runnable declared in <root>'
         TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
-          FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
+          FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
   FUN name:test4 visibility:public modality:FINAL <> () returnType:java.util.Comparator<kotlin.Int>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (): java.util.Comparator<kotlin.Int> declared in <root>'

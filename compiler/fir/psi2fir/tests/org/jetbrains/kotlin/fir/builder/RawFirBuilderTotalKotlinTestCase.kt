@@ -267,7 +267,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                     println("Not traversed ${element.javaClass}: ${element.text}")
                     val traversedParent = element.parents.firstOrNull { it in psiSetViaFir }
                     if (traversedParent != null) {
-                        println("(traversed parent: ${traversedParent.javaClass})")
+                        println("(traversed parent: ${traversedParent.javaClass} ${traversedParent.text})")
                     }
                 }
                 println(firFile.render())

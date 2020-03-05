@@ -21,8 +21,8 @@ import first.foo
 
 fun main() {
     val x = first.A::foo
-    first.A::bar
-    A::baz
+    <!UNRESOLVED_REFERENCE!>first.A::bar<!>
+    <!UNRESOLVED_REFERENCE!>A::baz<!>
 
     checkSubtype<KFunction1<A, Unit>>(x)
 }

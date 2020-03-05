@@ -1,9 +1,12 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
+import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
+import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeWizard
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEditor.ModulesEditorComponent
@@ -11,10 +14,15 @@ import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JComponent
 
-class SecondStepWizardComponent(wizard: IdeWizard) : WizardStepComponent(wizard.valuesReadingContext) {
+class SecondStepWizardComponent(
+    wizard: IdeWizard,
+    uiEditorUsagesStats: UiEditorUsageStats
+) : WizardStepComponent(wizard.ideContext) {
     private val moduleEditorSubStep =
-        ModulesEditorSubStep(wizard.valuesReadingContext, ::onNodeSelected).asSubComponent()
-    private val templatesSubStep = ModuleSettingsSubStep(wizard).asSubComponent()
+        ModulesEditorSubStep(wizard.ideContext, uiEditorUsagesStats, ::onNodeSelected) {
+            templatesSubStep.selectSettingWithError(it)
+        }.asSubComponent()
+    private val templatesSubStep = ModuleSettingsSubStep(wizard, uiEditorUsagesStats).asSubComponent()
 
     override val component = splitterFor(
         moduleEditorSubStep.component,
@@ -28,12 +36,16 @@ class SecondStepWizardComponent(wizard: IdeWizard) : WizardStepComponent(wizard.
 
 
 class ModulesEditorSubStep(
-    valuesReadingContext: ValuesReadingContext,
-    onNodeSelected: (data: DisplayableSettingItem?) -> Unit
-) : SubStep(valuesReadingContext) {
+    ideContext: IdeContext,
+    uiEditorUsagesStats: UiEditorUsageStats,
+    onNodeSelected: (data: DisplayableSettingItem?) -> Unit,
+    selectSettingWithError: (ValidationResult.ValidationError) -> Unit
+) : SubStep(ideContext) {
     private val moduleSettingComponent = ModulesEditorComponent(
-        valuesReadingContext,
-        onNodeSelected
+        ideContext,
+        uiEditorUsagesStats,
+        onNodeSelected,
+        selectSettingWithError
     ).asSubComponent()
 
     override fun buildContent(): JComponent = panel {
@@ -47,9 +59,12 @@ class ModulesEditorSubStep(
 }
 
 
-class ModuleSettingsSubStep(wizard: IdeWizard) : SubStep(wizard.valuesReadingContext) {
-    private val sourcesetSettingsComponent = SourcesetSettingsComponent(wizard.valuesReadingContext).asSubComponent()
-    private val moduleSettingsComponent = ModuleSettingsComponent(valuesReadingContext).asSubComponent()
+class ModuleSettingsSubStep(
+    wizard: IdeWizard,
+    uiEditorUsagesStats: UiEditorUsageStats
+) : SubStep(wizard.ideContext) {
+    private val sourcesetSettingsComponent = SourcesetSettingsComponent(wizard.ideContext).asSubComponent()
+    private val moduleSettingsComponent = ModuleSettingsComponent(wizard.ideContext, uiEditorUsagesStats).asSubComponent()
     private val nothingSelectedComponent = NothingSelectedComponent().asSubComponent()
 
     private val panel = panel {
@@ -64,6 +79,10 @@ class ModuleSettingsSubStep(wizard: IdeWizard) : SubStep(wizard.valuesReadingCon
             moduleSettingsComponent.module = value as? Module
             changeComponent()
         }
+
+    fun selectSettingWithError(error: ValidationResult.ValidationError) {
+        moduleSettingsComponent.selectSettingWithError(error)
+    }
 
     private fun changeComponent() {
         panel.removeAll()

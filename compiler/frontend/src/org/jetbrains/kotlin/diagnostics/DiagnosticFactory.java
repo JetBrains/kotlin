@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.diagnostics;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRenderer;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,6 +27,8 @@ public abstract class DiagnosticFactory<D extends Diagnostic> {
 
     private String name = null;
     private final Severity severity;
+
+    private DiagnosticRenderer<D> defaultRenderer;
 
     protected DiagnosticFactory(@NotNull Severity severity) {
         this.severity = severity;
@@ -47,6 +51,15 @@ public abstract class DiagnosticFactory<D extends Diagnostic> {
     @NotNull
     public Severity getSeverity() {
         return severity;
+    }
+
+    @Nullable
+    public DiagnosticRenderer<D> getDefaultRenderer() {
+        return defaultRenderer;
+    }
+
+    void setDefaultRenderer(@Nullable DiagnosticRenderer<D> defaultRenderer) {
+        this.defaultRenderer = defaultRenderer;
     }
 
     @NotNull

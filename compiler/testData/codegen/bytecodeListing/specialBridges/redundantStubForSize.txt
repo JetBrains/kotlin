@@ -13,14 +13,14 @@ public final class A2 {
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
     public method contains(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
-    public final method contains(p0: java.lang.Object): boolean
+    public bridge final method contains(p0: java.lang.Object): boolean
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public method isEmpty(): boolean
     public @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
     public method retainAll(p0: java.util.Collection): boolean
-    public final method size(): int
+    public bridge final method size(): int
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }

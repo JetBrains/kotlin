@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class Wise {
 
     val x = 1

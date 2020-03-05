@@ -22,15 +22,13 @@ import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.jvm.checkers.PolymorphicSignatureCallChecker
 
 internal val polymorphicSignaturePhase = makeIrFilePhase(
     ::PolymorphicSignatureLowering,
     name = "PolymorphicSignature",
     description = "Replace polymorphic methods with fake ones according to types at the call site"
 )
-
-private val polymorphicSignatureAnnotation = FqName("java.lang.invoke.MethodHandle.PolymorphicSignature")
 
 class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
@@ -52,7 +50,7 @@ class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrElementTr
 
     private fun IrCall.transform(castReturnType: IrType?): IrCall? {
         val function = symbol.owner as? IrSimpleFunction ?: return null
-        if (!function.hasAnnotation(polymorphicSignatureAnnotation))
+        if (!function.hasAnnotation(PolymorphicSignatureCallChecker.polymorphicSignatureFqName))
             return null
         assert(function.valueParameters.singleOrNull()?.varargElementType != null) {
             "@PolymorphicSignature methods should only have a single vararg argument: ${dump()}"

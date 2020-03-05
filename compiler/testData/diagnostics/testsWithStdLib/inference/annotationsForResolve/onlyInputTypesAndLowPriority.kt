@@ -1,5 +1,6 @@
 //!DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 // !WITH_NEW_INFERENCE
+// !LANGUAGE: -NonStrictOnlyInputTypesChecks
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 @kotlin.jvm.JvmName("containsAny")

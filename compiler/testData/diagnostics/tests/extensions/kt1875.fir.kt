@@ -1,9 +1,8 @@
-// !WITH_NEW_INFERENCE
 //KT-1875 Safe call should be binded with receiver or this object (but not with both by default)
 
 package kt1875
 
-fun foo(a : Int?, b : Int.(Int)->Int) = a?.b(1) //unnecessary safe call warning
+fun foo(a : Int?, b : Int.(Int)->Int) = a?.<!INAPPLICABLE_CANDIDATE!>b<!>(1) //unnecessary safe call warning
 
 interface T {
     val f : ((i: Int) -> Unit)?

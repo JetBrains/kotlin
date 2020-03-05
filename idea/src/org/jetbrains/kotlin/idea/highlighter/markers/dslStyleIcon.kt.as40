@@ -9,7 +9,6 @@ import com.intellij.icons.AllIcons
 import javax.swing.Icon
 
 // BUNCH: as35
-// BUNCH: as34
 internal fun createDslStyleIcon(styleId: Int): Icon {
     return AllIcons.Gutter.Colors
 }

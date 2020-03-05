@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.fir.FirResolution
 import org.jetbrains.kotlin.idea.fir.firResolveState
 import org.jetbrains.kotlin.idea.fir.getOrBuildFir
+import org.jetbrains.kotlin.idea.util.application.runWithCancellationCheck
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
@@ -282,8 +283,10 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
             }
 
             override fun resolve(ref: AbstractKtReference<KtElement>, incompleteCode: Boolean): Array<ResolveResult> {
-                val resolveToPsiElements = resolveToPsiElements(ref)
-                return resolveToPsiElements.map { KotlinResolveResult(it) }.toTypedArray()
+                return runWithCancellationCheck {
+                    val resolveToPsiElements = resolveToPsiElements(ref)
+                    resolveToPsiElements.map { KotlinResolveResult(it) }.toTypedArray()
+                }
             }
         }
 

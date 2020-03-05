@@ -12,11 +12,10 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.inferenceContext
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.inferenceContext
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.scopes.scope
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
 
 abstract class SupertypeSupplier {
     abstract fun forClass(firClass: FirClass<*>): List<ConeClassLikeType>
@@ -53,19 +52,19 @@ fun FirClassSymbol<*>.buildUseSiteMemberScope(useSiteSession: FirSession, builde
 }
 
 fun FirClass<*>.buildUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
-    return this.scope(ConeSubstitutor.Empty, useSiteSession, builder)
+    return this.unsubstitutedScope(useSiteSession, builder)
 }
 
 /* TODO REMOVE */
 fun createSubstitution(
     typeParameters: List<FirTypeParameter>,
-    typeArguments: Array<out ConeKotlinTypeProjection>,
+    typeArguments: Array<out ConeTypeProjection>,
     session: FirSession
 ): Map<FirTypeParameterSymbol, ConeKotlinType> {
     return typeParameters.zip(typeArguments) { typeParameter, typeArgument ->
         val typeParameterSymbol = typeParameter.symbol
         typeParameterSymbol to when (typeArgument) {
-            is ConeTypedProjection -> {
+            is ConeKotlinTypeProjection -> {
                 typeArgument.type
             }
             else /* StarProjection */ -> {
@@ -82,7 +81,8 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
     session: FirSession,
     useSiteMemberScope: FirScope,
     declaration: FirClassLikeDeclaration<*>,
-    builder: ScopeSession
+    builder: ScopeSession,
+    derivedClassId: ClassId? = null
 ): FirScope {
     if (this.typeArguments.isEmpty()) return useSiteMemberScope
     return builder.getOrBuild(declaration.symbol, SubstitutionScopeKey(this)) {
@@ -96,9 +96,15 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
             // to determine parameter types properly (e.g. String, String instead of K, V)
             val javaTypeParameters = javaClass.typeParameters
             val javaSubstitution = createSubstitution(javaTypeParameters, typeArguments, session)
-            FirClassSubstitutionScope(session, useSiteMemberScope, builder, originalSubstitution + javaSubstitution)
+            FirClassSubstitutionScope(
+                session, useSiteMemberScope, builder, originalSubstitution + javaSubstitution,
+                skipPrivateMembers = true, derivedClassId = derivedClassId
+            )
         } else {
-            FirClassSubstitutionScope(session, useSiteMemberScope, builder, originalSubstitution)
+            FirClassSubstitutionScope(
+                session, useSiteMemberScope, builder, originalSubstitution,
+                skipPrivateMembers = true, derivedClassId = derivedClassId
+            )
         }
     }
 }

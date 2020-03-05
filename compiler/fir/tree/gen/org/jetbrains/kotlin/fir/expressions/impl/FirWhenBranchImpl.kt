@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirWhenBranchImpl(
+internal class FirWhenBranchImpl(
     override val source: FirSourceElement?,
     override var condition: FirExpression,
-    override var result: FirBlock
+    override var result: FirBlock,
 ) : FirWhenBranch() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         condition.accept(visitor, data)

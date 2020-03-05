@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.nj2k.JKImportStorage
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.postProcessing.FileBasedPostProcessing
 import org.jetbrains.kotlin.nj2k.postProcessing.GeneralPostProcessing
+import org.jetbrains.kotlin.nj2k.postProcessing.PostProcessingOptions
 import org.jetbrains.kotlin.nj2k.postProcessing.runUndoTransparentActionInEdt
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtQualifiedExpression

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class Base {
     open val x: Int = 1
         get() = field - 1

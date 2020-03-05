@@ -26,11 +26,11 @@ public interface IrExpressionOrBuilder extends
   int getType();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates coordinates = 3;</code>
+   * <code>required int64 coordinates = 3;</code>
    */
   boolean hasCoordinates();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates coordinates = 3;</code>
+   * <code>required int64 coordinates = 3;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates getCoordinates();
+  long getCoordinates();
 }

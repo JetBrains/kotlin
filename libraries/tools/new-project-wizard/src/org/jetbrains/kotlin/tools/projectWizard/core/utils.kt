@@ -1,8 +1,10 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
+import kotlinx.collections.immutable.toPersistentList
 import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.*
 import kotlin.properties.ReadOnlyProperty
 import kotlin.random.Random
 import kotlin.reflect.KProperty
@@ -86,11 +88,16 @@ class ListBuilder<T> {
         irs += this
     }
 
+    fun isNotEmpty(): Boolean = irs.isNotEmpty()
+
     fun build() = irs.toList()
 }
 
 fun <T> buildList(builder: ListBuilder<T>.() -> Unit) =
     ListBuilder<T>().apply(builder).build()
+
+fun <T> buildPersistenceList(builder: ListBuilder<T>.() -> Unit) =
+    buildList(builder).toPersistentList()
 
 object RandomIdGenerator {
     private val chars = ('a'..'z') + ('A'..'Z') + ('0'..'9')

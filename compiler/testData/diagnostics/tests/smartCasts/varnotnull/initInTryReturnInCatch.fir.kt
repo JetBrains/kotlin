@@ -76,5 +76,5 @@ fun test6() {
     finally {
         a = null
     }
-    a.<!UNRESOLVED_REFERENCE!>hashCode<!>() // a is null here
+    a.<!INAPPLICABLE_CANDIDATE!>hashCode<!>() // a is null here
 }

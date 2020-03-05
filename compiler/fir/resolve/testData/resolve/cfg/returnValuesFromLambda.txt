@@ -21,7 +21,7 @@ FILE: returnValuesFromLambda.kt
                 }
             }
 
-            R|/C.C|()
+            ^ R|/C.C|()
         }
         )
     }

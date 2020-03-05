@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.PathUtil
 import junit.framework.TestCase
+import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.Companion.DIAGNOSTIC_IN_TESTDATA_PATTERN
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
@@ -27,10 +28,16 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     private fun compareBase(path: String, withTestData: Boolean, compareFir: (File) -> Boolean) {
         var counter = 0
         var errorCounter = 0
+        val differentFiles = mutableListOf<File>()
 
         val onEachFile: (File) -> Unit = { file ->
-            if (!compareFir(file)) errorCounter++
-            counter++
+            if (!compareFir(file)) {
+                errorCounter++
+                differentFiles += file
+            }
+            if (!file.name.endsWith(".fir.kt")) {
+                counter++
+            }
         }
         println("BASE PATH: $path")
         if (!withTestData) {
@@ -40,6 +47,9 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
         }
         println("All scanned files: $counter")
         println("Files that aren't equal to FIR: $errorCounter")
+        if (errorCounter > 0) {
+            println(differentFiles)
+        }
         TestCase.assertEquals(0, errorCounter)
     }
 
@@ -64,8 +74,11 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     fun testCompareDiagnostics() {
         val lightTreeConverter = LightTree2Fir(scopeProvider = StubFirScopeProvider, stubMode = false)
         compareBase("compiler/testData/diagnostics/tests", withTestData = true) { file ->
+            if (file.name.endsWith(".fir.kt")) {
+                return@compareBase true
+            }
             val notEditedText = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
-            val text = notEditedText.replace("(<!>)|(<!.*?!>)".toRegex(), "").replaceAfter(".java", "")
+            val text = notEditedText.replace(DIAGNOSTIC_IN_TESTDATA_PATTERN, "").replaceAfter(".java", "")
 
             //psi
             val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.path)), text) as KtFile

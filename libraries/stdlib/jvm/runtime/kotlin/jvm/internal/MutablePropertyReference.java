@@ -8,6 +8,7 @@ package kotlin.jvm.internal;
 import kotlin.SinceKotlin;
 import kotlin.reflect.KMutableProperty;
 
+@SuppressWarnings("rawtypes")
 public abstract class MutablePropertyReference extends PropertyReference implements KMutableProperty {
     public MutablePropertyReference() {
     }

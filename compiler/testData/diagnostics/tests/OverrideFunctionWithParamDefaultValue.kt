@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 abstract class B() {
     abstract fun foo2(arg: Int = 239) : Int
 }

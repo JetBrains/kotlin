@@ -14,11 +14,12 @@ import kotlin.internal.RequireKotlinVersionKind
  * Marks the API that is dependent on the experimental unsigned types, including those types themselves.
  *
  * Usages of such API will be reported as warnings unless an explicit opt-in with
- * the [UseExperimental] annotation, e.g. `@UseExperimental(ExperimentalUnsignedTypes::class)`,
- * or with the `-Xuse-experimental=kotlin.ExperimentalUnsignedTypes` compiler option is given.
+ * the [OptIn] annotation, e.g. `@OptIn(ExperimentalUnsignedTypes::class)`,
+ * or with the `-Xopt-in=kotlin.ExperimentalUnsignedTypes` compiler option is given.
  *
  * It's recommended to propagate the experimental status to the API that depends on unsigned types by annotating it with this annotation.
  */
+@Suppress("DEPRECATION")
 @Experimental(level = Experimental.Level.WARNING)
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @MustBeDocumented

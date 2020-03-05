@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.spec.utils.models.SpecTestCaseInfoElementType
 import org.jetbrains.kotlin.spec.utils.models.SpecTestInfoElements
 import org.jetbrains.kotlin.spec.utils.parsers.TestCasePatterns.testCaseInfoPattern
 import org.jetbrains.kotlin.spec.utils.parsers.CommonParser.splitByComma
+import org.jetbrains.kotlin.spec.utils.validators.SpecTestValidationException
+import org.jetbrains.kotlin.spec.utils.validators.SpecTestValidationFailedReason
 import java.util.*
 
 private operator fun SpecTestCase.plusAssign(addTestCase: SpecTestCase) {
@@ -30,7 +32,13 @@ private fun SpecTestCase.save(
     caseInfoElements: SpecTestInfoElements<SpecTestInfoElementType>
 ) {
     val testCaseNumbers =
-        caseInfoElements[SpecTestCaseInfoElementType.TESTCASE_NUMBER]!!.content.splitByComma().map { it.trim().toInt() }
+        caseInfoElements[SpecTestCaseInfoElementType.TESTCASE_NUMBER]!!.content.splitByComma().map {
+            it.trim().toIntOrNull()
+                ?: throw SpecTestValidationException(
+                    SpecTestValidationFailedReason.TEST_CASE_NUMBER_FORMAT,
+                    "impossible to parse number '${it.trim()}'"
+                )
+        }
     val startPosition = this.ranges[0].first
 
     testCaseNumbers.forEach { testCaseNumber ->

@@ -5,7 +5,10 @@ FILE: localImplicitBodies.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final fun sss(): <ERROR TYPE REF: Cannot calculate return type (local class/object?)> {
+            public final fun sss(): <ERROR TYPE REF: Cannot calculate return type during full-body resolution (local class/object?): public final fun abc(): <implicit> {
+    ^abc IntegerLiteral(1)
+}
+> {
                 ^sss R?C|/anonymous.abc|()
             }
 
@@ -15,5 +18,8 @@ FILE: localImplicitBodies.kt
 
         }
 
-        lval g: <ERROR TYPE REF: Cannot calculate return type (local class/object?)> = R|<local>/x|.R?C|/anonymous.sss|()
+        lval g: <ERROR TYPE REF: Cannot calculate return type during full-body resolution (local class/object?): public final fun abc(): <implicit> {
+    ^abc IntegerLiteral(1)
+}
+> = R|<local>/x|.R?C|/anonymous.sss|()
     }

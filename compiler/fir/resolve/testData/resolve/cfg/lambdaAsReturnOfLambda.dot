@@ -1,0 +1,79 @@
+digraph lambdaAsReturnOfLambda_kt {
+    graph [splines=ortho nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+        1 [label="Jump: ^@run lambda@fun <anonymous>(foo: R|ERROR CLASS: No type for parameter|): R|kotlin/Unit| {
+    R|/bar|(R|<local>/foo|)
+}
+"];
+        2 [label="Stub" style="filled" fillcolor=gray];
+        3 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+    }
+
+    0 -> {1};
+    1 -> {3};
+    1 -> {2} [style=dotted];
+    2 -> {3} [style=dotted];
+
+    subgraph cluster_1 {
+        color=red
+        4 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+        5 [label="Access variable R|<local>/foo|"];
+        6 [label="Function call: R|/bar|(R|<local>/foo|)"];
+        7 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+    }
+
+    4 -> {5};
+    5 -> {6};
+    6 -> {7};
+
+    subgraph cluster_2 {
+        color=red
+        8 [label="Enter function getter" style="filled" fillcolor=red];
+        9 [label="Exit function getter" style="filled" fillcolor=red];
+    }
+
+    8 -> {9};
+
+    subgraph cluster_3 {
+        color=red
+        10 [label="Enter property" style="filled" fillcolor=red];
+        11 [label="Postponed enter to lambda"];
+        12 [label="Postponed exit from lambda"];
+        13 [label="Function call: R|/run|<R|(ERROR CLASS: No type for parameter) -> kotlin/Unit|>(<L> = run@fun <anonymous>(): R|(ERROR CLASS: No type for parameter) -> kotlin/Unit|)"];
+        14 [label="Exit property" style="filled" fillcolor=red];
+    }
+
+    10 -> {11};
+    11 -> {12 12} [color=green];
+    12 -> {13};
+    13 -> {14};
+
+    subgraph cluster_4 {
+        color=red
+        15 [label="Enter function bar" style="filled" fillcolor=red];
+        16 [label="Exit function bar" style="filled" fillcolor=red];
+    }
+
+    15 -> {16};
+
+    subgraph cluster_5 {
+        color=red
+        17 [label="Enter function run" style="filled" fillcolor=red];
+        18 [label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()"];
+        19 [label="Jump: ^run R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()"];
+        20 [label="Stub" style="filled" fillcolor=gray];
+        21 [label="Exit function run" style="filled" fillcolor=red];
+    }
+
+    17 -> {18};
+    18 -> {19};
+    19 -> {21};
+    19 -> {20} [style=dotted];
+    20 -> {21} [style=dotted];
+
+}

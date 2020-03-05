@@ -8,13 +8,13 @@ public interface IrSetVariableOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required int32 symbol = 1;</code>
+   * <code>required int64 symbol = 1;</code>
    */
   boolean hasSymbol();
   /**
-   * <code>required int32 symbol = 1;</code>
+   * <code>required int64 symbol = 1;</code>
    */
-  int getSymbol();
+  long getSymbol();
 
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value = 2;</code>
@@ -26,11 +26,11 @@ public interface IrSetVariableOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getValue();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 3;</code>
+   * <code>optional int32 origin_name = 3;</code>
    */
-  boolean hasOrigin();
+  boolean hasOriginName();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 3;</code>
+   * <code>optional int32 origin_name = 3;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin getOrigin();
+  int getOriginName();
 }

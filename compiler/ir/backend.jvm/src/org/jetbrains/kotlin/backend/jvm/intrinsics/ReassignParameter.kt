@@ -28,6 +28,6 @@ object ReassignParameter : IntrinsicMethod() {
         val parameter = parameterGet?.symbol as? IrValueParameterSymbol
             ?: throw AssertionError("${expression.getValueArgument(0)} is not a get of a parameter")
         codegen.setVariable(parameter, expression.getValueArgument(1)!!, data)
-        return codegen.immaterialUnitValue
+        return codegen.unitValue
     }
 }

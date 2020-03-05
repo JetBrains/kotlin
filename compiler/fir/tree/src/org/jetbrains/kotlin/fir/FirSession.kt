@@ -48,6 +48,7 @@ class BuiltinTypes {
     val enumType: FirImplicitBuiltinTypeRef = FirImplicitEnumTypeRef(null)
     val annotationType: FirImplicitBuiltinTypeRef = FirImplicitAnnotationTypeRef(null)
     val booleanType: FirImplicitBuiltinTypeRef = FirImplicitBooleanTypeRef(null)
+    val intType: FirImplicitBuiltinTypeRef = FirImplicitIntTypeRef(null)
     val nothingType: FirImplicitBuiltinTypeRef = FirImplicitNothingTypeRef(null)
     val nullableNothingType: FirImplicitBuiltinTypeRef = FirImplicitNullableNothingTypeRef(null)
     val stringType: FirImplicitBuiltinTypeRef = FirImplicitStringTypeRef(null)

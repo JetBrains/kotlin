@@ -21,11 +21,14 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import kotlin.reflect.KClass
 
@@ -49,7 +52,7 @@ internal val Project.multiplatformExtensionOrNull: KotlinMultiplatformExtension?
 internal val Project.multiplatformExtension: KotlinMultiplatformExtension
     get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinMultiplatformExtension
 
-open class KotlinProjectExtension: KotlinSourceSetContainer {
+open class KotlinProjectExtension : KotlinSourceSetContainer {
     val experimental: ExperimentalExtension
         get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)
 
@@ -68,7 +71,7 @@ abstract class KotlinSingleTargetExtension : KotlinProjectExtension() {
 }
 
 abstract class KotlinSingleJavaTargetExtension : KotlinSingleTargetExtension() {
-    override abstract val target: KotlinWithJavaTarget<*>
+    abstract override val target: KotlinWithJavaTarget<*>
 }
 
 open class KotlinJvmProjectExtension : KotlinSingleJavaTargetExtension() {
@@ -85,10 +88,71 @@ open class Kotlin2JsProjectExtension : KotlinSingleJavaTargetExtension() {
     open fun target(body: KotlinWithJavaTarget<KotlinJsOptions>.() -> Unit) = target.run(body)
 }
 
-open class KotlinJsProjectExtension : KotlinSingleTargetExtension() {
-    override lateinit var target: KotlinJsTarget
+open class KotlinJsProjectExtension :
+    KotlinSingleTargetExtension(),
+    KotlinJsCompilerTypeHolder {
+    lateinit var irPreset: KotlinJsIrSingleTargetPreset
 
-    open fun target(body: KotlinJsTarget.() -> Unit) = target.run(body)
+    lateinit var legacyPreset: KotlinJsSingleTargetPreset
+
+    // target is public property
+    // Users can write kotlin.target and it should work
+    // So call of target should init default canfiguration
+    internal var _target: KotlinJsTargetDsl? = null
+        private set
+
+    override var target: KotlinJsTargetDsl
+        get() {
+            if (_target == null) {
+                js {}
+            }
+            return _target!!
+        }
+        set(value) {
+            _target = value
+        }
+
+    override lateinit var defaultJsCompilerType: KotlinJsCompilerType
+
+    open fun js(
+        compiler: KotlinJsCompilerType = defaultJsCompilerType,
+        body: KotlinJsTargetDsl.() -> Unit
+    ) {
+        if (_target == null) {
+            val target: KotlinJsTargetDsl = when (compiler) {
+                LEGACY -> legacyPreset
+                    .also { it.irPreset = null }
+                    .createTarget("js")
+                IR -> irPreset
+                    .also { it.mixedMode = false }
+                    .createTarget("js")
+                BOTH -> legacyPreset
+                    .also {
+                        irPreset.mixedMode = true
+                        it.irPreset = irPreset
+                    }
+                    .createTarget(
+                        lowerCamelCaseName(
+                            "js",
+                            LEGACY.lowerName
+                        )
+                    )
+            }
+
+            this._target = target
+
+            target.project.components.addAll(target.components)
+        }
+
+        target.run(body)
+    }
+
+    open fun js(
+        body: KotlinJsTargetDsl.() -> Unit
+    ) = js(compiler = defaultJsCompilerType, body = body)
+
+    @Deprecated("Use js instead", ReplaceWith("js(body)"))
+    open fun target(body: KotlinJsTargetDsl.() -> Unit) = js(body)
 
     @Deprecated(
         "Needed for IDE import using the MPP import mechanism",

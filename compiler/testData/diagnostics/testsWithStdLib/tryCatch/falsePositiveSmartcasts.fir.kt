@@ -13,15 +13,15 @@ fun test1() {
     try {
         x = null
     } catch (e: Exception) {
-        x.<!UNRESOLVED_REFERENCE!>length<!> // smartcast shouldn't be allowed (OOME could happen after `x = null`)
+        x.<!INAPPLICABLE_CANDIDATE!>length<!> // smartcast shouldn't be allowed (OOME could happen after `x = null`)
         throw e
     }
     finally {
         // smartcast shouldn't be allowed, `x = null` could've happened
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.<!INAPPLICABLE_CANDIDATE!>length<!>
     }
     // smartcast shouldn't be allowed, `x = null` could've happened
-    x.<!UNRESOLVED_REFERENCE!>length<!>
+    x.<!INAPPLICABLE_CANDIDATE!>length<!>
 }
 
 // With old DFA of try/catch info about unsound smartcasts after try
@@ -33,12 +33,12 @@ fun test2() {
     try {
         x = null
     } catch (e: Exception) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.<!INAPPLICABLE_CANDIDATE!>length<!>
     }
     finally {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.<!INAPPLICABLE_CANDIDATE!>length<!>
     }
-    x.<!UNRESOLVED_REFERENCE!>length<!>
+    x.<!INAPPLICABLE_CANDIDATE!>length<!>
 }
 
 fun test3() {
@@ -49,7 +49,7 @@ fun test3() {
         } catch (e: Exception) {
             t2 = null
         }
-        t2.<!UNRESOLVED_REFERENCE!>not<!>() // wrong smartcast, NPE
+        t2.<!INAPPLICABLE_CANDIDATE!>not<!>() // wrong smartcast, NPE
     }
 }
 
@@ -59,7 +59,7 @@ fun test4() {
         try {
             t2 = null
         } finally { }
-        t2.<!UNRESOLVED_REFERENCE!>not<!>() // wrong smartcast, NPE
+        t2.<!INAPPLICABLE_CANDIDATE!>not<!>() // wrong smartcast, NPE
     }
 }
 
@@ -80,10 +80,10 @@ fun test5() {
     }
     finally {
         s1.length
-        s2.<!UNRESOLVED_REFERENCE!>length<!>
+        s2.<!INAPPLICABLE_CANDIDATE!>length<!>
     }
     s1.length
-    s2.<!UNRESOLVED_REFERENCE!>length<!>
+    s2.<!INAPPLICABLE_CANDIDATE!>length<!>
 }
 
 fun test6(s1: String?, s2: String?) {
@@ -97,10 +97,10 @@ fun test6(s1: String?, s2: String?) {
         return
     }
     finally {
-        s.<!UNRESOLVED_REFERENCE!>length<!>
+        s.<!INAPPLICABLE_CANDIDATE!>length<!>
         requireNotNull(s2)
     }
-    s.<!UNRESOLVED_REFERENCE!>length<!>
+    s.<!INAPPLICABLE_CANDIDATE!>length<!>
     s1.length
     s2.length
 }

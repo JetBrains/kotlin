@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.templates
 
-import org.jetbrains.kotlin.tools.projectWizard.core.TaskRunningContext
+import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.asPath
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.TemplateSetting
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
@@ -25,11 +26,10 @@ class KtorServerTemplate : Template() {
     override val title: String = "Ktor-based Server"
     override val htmlDescription: String = title
     override val moduleTypes: Set<ModuleType> = setOf(ModuleType.jvm)
-    override val sourcesetTypes: Set<SourcesetType> = setOf(SourcesetType.main)
     override val id: String = "ktorServer"
 
-    override fun TaskRunningContext.getRequiredLibraries(sourceset: SourcesetIR): List<DependencyIR> =
-        withSettingsOf(sourceset.original) {
+    override fun WritingContext.getRequiredLibraries(module: ModuleIR): List<DependencyIR> =
+        withSettingsOf(module.originalModule) {
             buildList {
                 +ktorArtifactDependency(serverEngine.reference.settingValue.dependencyName)
                 +ktorArtifactDependency("ktor-html-builder")
@@ -41,20 +41,20 @@ class KtorServerTemplate : Template() {
             }
         }
 
-    override fun TaskRunningContext.getIrsToAddToBuildFile(sourceset: SourcesetIR): List<BuildSystemIR> = buildList {
+    override fun WritingContext.getIrsToAddToBuildFile(module: ModuleIR): List<BuildSystemIR> = buildList {
         +RepositoryIR(Repositories.KTOR_BINTRAY)
         +RepositoryIR(DefaultRepository.JCENTER)
         +runTaskIrs(mainClass = "ServerKt")
     }
 
-    override fun updateTargetIr(sourceset: SourcesetIR, targetConfigurationIR: TargetConfigurationIR): TargetConfigurationIR =
+    override fun updateTargetIr(module: ModuleIR, targetConfigurationIR: TargetConfigurationIR): TargetConfigurationIR =
         targetConfigurationIR.addWithJavaIntoJvmTarget()
 
-    override fun TaskRunningContext.getFileTemplates(sourceset: SourcesetIR): List<FileTemplateDescriptor> = listOf(
-        FileTemplateDescriptor("$id/server.kt.vm", sourcesPath("server.kt"))
+    override fun WritingContext.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = listOf(
+        FileTemplateDescriptor("$id/server.kt.vm", "server.kt".asPath()) asSrcOf SourcesetType.main
     )
 
-    val serverEngine by enumSetting<KtorServerEngine>("Ktor Server", GenerationPhase.PROJECT_GENERATION)
+    val serverEngine by enumSetting<KtorServerEngine>("Ktor Server Engine", GenerationPhase.PROJECT_GENERATION)
 
     val imports = InterceptionPoint("imports", emptyList<String>())
     val routes = InterceptionPoint("routes", emptyList<String>())

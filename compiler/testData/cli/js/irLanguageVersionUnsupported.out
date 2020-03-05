@@ -1,0 +1,2 @@
+error: IR backend cannot be used with language or API version below 1.4
+COMPILATION_ERROR

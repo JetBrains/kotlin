@@ -12,15 +12,16 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.test.ConfigurationKind
 
 abstract class AbstractDiagnosticsWithUnsignedTypes : AbstractDiagnosticsTest() {
-    override fun getConfigurationKind(): ConfigurationKind {
+
+    override fun extractConfigurationKind(files: List<TestFile>): ConfigurationKind {
         return ConfigurationKind.NO_KOTLIN_REFLECT
     }
 
     override fun defaultLanguageVersionSettings(): LanguageVersionSettings =
         CompilerTestLanguageVersionSettings(
             DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
-            ApiVersion.KOTLIN_1_3,
-            LanguageVersion.KOTLIN_1_3,
+            ApiVersion.LATEST_STABLE,
+            LanguageVersion.LATEST_STABLE,
             mapOf(AnalysisFlags.useExperimental to listOf("kotlin.ExperimentalUnsignedTypes"))
         )
 }

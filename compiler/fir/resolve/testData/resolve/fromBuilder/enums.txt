@@ -1,30 +1,12 @@
 FILE: enums.kt
     public final enum class Order : R|kotlin/Enum<Order>| {
         private constructor(): R|Order| {
-            super<R|kotlin/Any|>()
+            super<R|kotlin/Enum<Order>|>()
         }
 
-        public final enum entry FIRST : R|kotlin/Any| {
-            public constructor(): R|Order.FIRST| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
-        public final enum entry SECOND : R|kotlin/Any| {
-            public constructor(): R|Order.SECOND| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
-        public final enum entry THIRD : R|kotlin/Any| {
-            public constructor(): R|Order.THIRD| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
+        public final static enum entry FIRST: R|Order|
+        public final static enum entry SECOND: R|Order|
+        public final static enum entry THIRD: R|Order|
         public final static fun values(): R|kotlin/Array<Order>| {
         }
 
@@ -34,7 +16,7 @@ FILE: enums.kt
     }
     public final enum class Planet : R|kotlin/Enum<Planet>| {
         private constructor(m: R|kotlin/Double|, r: R|kotlin/Double|): R|Planet| {
-            super<R|kotlin/Any|>()
+            super<R|kotlin/Enum<Planet>|>()
         }
 
         public final val m: R|kotlin/Double| = R|<local>/m|
@@ -43,8 +25,8 @@ FILE: enums.kt
         internal final val r: R|kotlin/Double| = R|<local>/r|
             internal get(): R|kotlin/Double|
 
-        public final enum entry MERCURY : R|Planet| {
-            public constructor(): R|Planet.MERCURY| {
+        public final static enum entry MERCURY: R|Planet| = object : R|Planet| {
+            private constructor(): R|anonymous| {
                 super<R|Planet|>(Double(1.0), Double(2.0))
             }
 
@@ -54,8 +36,8 @@ FILE: enums.kt
 
         }
 
-        public final enum entry VENERA : R|Planet| {
-            public constructor(): R|Planet.VENERA| {
+        public final static enum entry VENERA: R|Planet| = object : R|Planet| {
+            private constructor(): R|anonymous| {
                 super<R|Planet|>(Double(3.0), Double(4.0))
             }
 
@@ -65,8 +47,8 @@ FILE: enums.kt
 
         }
 
-        public final enum entry EARTH : R|Planet| {
-            public constructor(): R|Planet.EARTH| {
+        public final static enum entry EARTH: R|Planet| = object : R|Planet| {
+            private constructor(): R|anonymous| {
                 super<R|Planet|>(Double(5.0), Double(6.0))
             }
 
@@ -76,7 +58,7 @@ FILE: enums.kt
 
         }
 
-        public final val g: R|kotlin/Double| = R|/Planet.Companion.G|.R|kotlin/Double.times|(R|<local>/m|).R|kotlin/Double.div|(R|<local>/r|.R|kotlin/Double.times|(R|<local>/r|))
+        public final val g: R|kotlin/Double| = this@R|/Planet.Companion|.R|/Planet.Companion.G|.R|kotlin/Double.times|(R|<local>/m|).R|kotlin/Double.div|(R|<local>/r|.R|kotlin/Double.times|(R|<local>/r|))
             public get(): R|kotlin/Double|
 
         public abstract fun sayHello(): R|kotlin/Unit|

@@ -7,12 +7,7 @@ package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.newvfs.BulkFileListener
-import com.intellij.openapi.vfs.newvfs.events.VFileEvent
-import com.intellij.util.PathUtil
 import org.jetbrains.annotations.TestOnly
 
 @State(
@@ -23,69 +18,22 @@ class GradleScriptInputsWatcher(val project: Project) : PersistentStateComponent
     private var storage = Storage()
 
     fun startWatching() {
-        project.messageBus.connect().subscribe(
-            VirtualFileManager.VFS_CHANGES,
-            object : BulkFileListener {
-                override fun after(events: List<VFileEvent>) {
-                    if (project.isDisposed) return
-
-                    val files = getAffectedGradleProjectFiles(project)
-                    for (event in events) {
-                        val file = event.file ?: return
-                        if (isInAffectedGradleProjectFiles(files, file)) {
-                            storage.fileChanged(file, file.timeStamp)
-                        }
-                    }
-                }
-            })
+        addVfsListener(this)
     }
 
     fun areRelatedFilesUpToDate(file: VirtualFile, timeStamp: Long): Boolean {
-        return storage.lastModifiedTimeStampExcept(file) < timeStamp
+        return storage.lastModifiedTimeStampExcept(file.path) < timeStamp
     }
 
-    class Storage(
-        private var lastModifiedTS: Long = 0,
-        private var lastModifiedFiles: MutableSet<String> = hashSetOf(),
-        private var previousModifiedTS: Long = 0,
-        private var previousModifiedFiles: MutableSet<String> = hashSetOf()
-    ) {
-        fun lastModifiedTimeStampExcept(file: VirtualFile): Long {
-            val fileId = getFileId(file)
-            synchronized(this) {
-                if (lastModifiedFiles.contains(fileId) && lastModifiedFiles.size == 1) {
-                    return previousModifiedTS
-                }
-                return lastModifiedTS
-            }
+    class Storage {
+        private val lastModifiedFiles = LastModifiedFiles()
 
+        fun lastModifiedTimeStampExcept(filePath: String): Long {
+            return lastModifiedFiles.lastModifiedTimeStampExcept(filePath)
         }
 
-        fun fileChanged(file: VirtualFile, ts: Long) {
-            val fileId = getFileId(file)
-            synchronized(this) {
-                when {
-                    ts > lastModifiedTS -> {
-                        previousModifiedFiles = lastModifiedFiles
-                        previousModifiedTS = lastModifiedTS
-
-                        lastModifiedFiles = hashSetOf(fileId)
-                        lastModifiedTS = ts
-                    }
-                    ts == lastModifiedTS -> {
-                        lastModifiedFiles.add(fileId)
-                    }
-                    ts == previousModifiedTS -> {
-                        previousModifiedFiles.add(fileId)
-                    }
-                    else -> {}
-                }
-            }
-        }
-
-        private fun getFileId(file: VirtualFile): String {
-            val canonized = PathUtil.getCanonicalPath(file.path)
-            return FileUtil.toSystemIndependentName(canonized)
+        fun fileChanged(filePath: String, ts: Long) {
+            lastModifiedFiles.fileChanged(ts, filePath)
         }
     }
 
@@ -97,13 +45,12 @@ class GradleScriptInputsWatcher(val project: Project) : PersistentStateComponent
         this.storage = state
     }
 
-    @TestOnly
-    fun clearAndRefillState() {
-        loadState(project.service<GradleScriptInputsWatcher>().state)
+    fun fileChanged(filePath: String, ts: Long) {
+        storage.fileChanged(filePath, ts)
     }
 
     @TestOnly
-    fun fileChanged(file: VirtualFile, ts: Long) {
-        storage.fileChanged(file, ts)
+    fun clearAndRefillState() {
+        loadState(project.service<GradleScriptInputsWatcher>().state)
     }
 }

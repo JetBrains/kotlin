@@ -1,0 +1,22 @@
+FILE: Main.kt
+    public final fun <T> myListOf(vararg elements: R|kotlin/Array<out T>|): R|kotlin/collections/List<T>| {
+        ^myListOf Null(null)!!
+    }
+    public final fun <T> myListOf(element: R|T|): R|kotlin/collections/List<T>| {
+        ^myListOf Null(null)!!
+    }
+    public final fun takeStrings(list: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
+    }
+    public final fun getStrings(): R|kotlin/Array<kotlin/String>| {
+        ^getStrings Null(null)!!
+    }
+    public final fun testFromKotlin(): R|kotlin/Unit| {
+        lval values: R|kotlin/Array<kotlin/String>| = R|/getStrings|()
+        lval list: R|kotlin/collections/List<kotlin/String>| = R|/myListOf|<R|kotlin/String|>(vararg(*R|<local>/values|))
+        R|/takeStrings|(R|<local>/list|)
+    }
+    public final fun testFromJava(): R|kotlin/Unit| {
+        lval values: R|ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>?>!| = Q|Utils|.R|/Utils.getStrings|()
+        lval list: R|kotlin/collections/List<ft<kotlin/String, kotlin/String?>!>| = R|/myListOf|<R|ft<kotlin/String, kotlin/String?>!|>(vararg(*R|<local>/values|))
+        R|/takeStrings|(R|<local>/list|)
+    }

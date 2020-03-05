@@ -1,0 +1,28 @@
+package
+
+public fun main(): kotlin.Unit
+public fun A.test(): kotlin.Boolean
+public fun B.test(): kotlin.Boolean
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class B {
+    public constructor B()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object Foo {
+    private constructor Foo()
+    public final fun </*0*/ T> bar(/*0*/ fn: kotlin.reflect.KFunction1<T, kotlin.Boolean>): kotlin.String
+    public final fun </*0*/ T, /*1*/ U> bar(/*0*/ fn: kotlin.reflect.KFunction2<T, U, kotlin.Boolean>): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

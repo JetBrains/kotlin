@@ -8,5 +8,4 @@ class Foo {
         //some comment 2
         if (state == 2) println("2")
     }
-
 }

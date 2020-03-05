@@ -1,6 +1,6 @@
 // FILE: I.kt
 
-open class I : <!AMBIGUITY!>K<!>() {
+open class I : K() {
     fun foo() {}
 }
 
@@ -12,6 +12,6 @@ class J extends I {
 
 // FILE: K.kt
 
-open class K : <!AMBIGUITY!>J<!>() {
+open class K : J() {
     fun baz() {}
 }

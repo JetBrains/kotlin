@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.unblockDocument
+import org.jetbrains.kotlin.idea.inspections.ReplaceNegatedIsEmptyWithIsNotEmptyInspection.Companion.invertSelectorFunction
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
@@ -39,7 +40,8 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
             element.nextEolCommentOnSameLine()?.delete()
         }
 
-        val newCondition = element.condition!!.negate()
+        val condition = element.condition!!
+        val newCondition = (condition as? KtQualifiedExpression)?.invertSelectorFunction() ?: condition.negate()
 
         val newIf = handleSpecialCases(element, newCondition) ?: handleStandardCase(element, newCondition)
 
@@ -182,12 +184,13 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
         }
 
         if (thenBranch is KtBlockExpression) {
+            (thenBranch.statements.lastOrNull() as? KtContinueExpression)?.delete()
             val range = thenBranch.contentRange()
             if (!range.isEmpty) {
                 parent.addRangeAfter(range.first, range.last, ifExpression)
                 parent.addAfter(factory.createNewLine(), ifExpression)
             }
-        } else {
+        } else if (thenBranch !is KtContinueExpression) {
             parent.addAfter(thenBranch, ifExpression)
             parent.addAfter(factory.createNewLine(), ifExpression)
         }

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 inline fun <T> tryOrElse(f1: () -> T, f2: () -> T): T {
     try {
         return f1()

@@ -446,7 +446,7 @@ public class KotlinTestUtils {
             tags.add(new TagsTestDataUtil.TagInfo<>(selectionEnd, false, "selection"));
         }
 
-        String afterText = TagsTestDataUtil.insertTagsInText(tags, editor.getDocument().getText());
+        String afterText = TagsTestDataUtil.insertTagsInText(tags, editor.getDocument().getText(), (TagsTestDataUtil.TagInfo t) -> null);
 
         assertEqualsToFile(expectedFile, afterText);
     }
@@ -715,6 +715,18 @@ public class KotlinTestUtils {
     public static void runTest(@NotNull TestCase testCase, @NotNull Function0 test) {
         //noinspection unchecked
         MuteWithDatabaseKt.runTest(testCase, test);
+    }
+
+    public static void runTestWithThrowable(@NotNull TestCase testCase, @NotNull RunnableWithThrowable test) {
+        MuteWithDatabaseKt.runTest(testCase, () -> {
+            try {
+                test.run();
+            }
+            catch (Throwable throwable) {
+                throw new IllegalStateException(throwable);
+            }
+            return null;
+        });
     }
 
     // In this test runner version the `testDataFile` parameter is annotated by `TestDataFile`.

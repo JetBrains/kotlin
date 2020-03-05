@@ -9,15 +9,14 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.carriers.FunctionCarrier
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.SmartList
 
 class IrFunctionImpl(
     startOffset: Int,
@@ -36,8 +35,9 @@ class IrFunctionImpl(
     isExpect: Boolean,
     override val isFakeOverride: Boolean
 ) :
-    IrFunctionBase(startOffset, endOffset, origin, name, visibility, isInline, isExternal, isExpect, returnType),
-    IrSimpleFunction {
+    IrFunctionBase<FunctionCarrier>(startOffset, endOffset, origin, name, visibility, isInline, isExternal, isExpect, returnType),
+    IrSimpleFunction,
+    FunctionCarrier {
 
     constructor(
         startOffset: Int,
@@ -64,10 +64,35 @@ class IrFunctionImpl(
 
     override val descriptor: FunctionDescriptor = symbol.descriptor
 
-    override val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = SmartList()
-    override var attributeOwnerId: IrAttributeContainer = this
+    override var overriddenSymbolsField: List<IrSimpleFunctionSymbol> = emptyList()
 
-    override var correspondingPropertySymbol: IrPropertySymbol? = null
+    override var overriddenSymbols: List<IrSimpleFunctionSymbol>
+        get() = getCarrier().overriddenSymbolsField
+        set(v) {
+            if (overriddenSymbols !== v) {
+                setCarrier().overriddenSymbolsField = v
+            }
+        }
+
+    override var attributeOwnerIdField: IrAttributeContainer = this
+
+    override var attributeOwnerId: IrAttributeContainer
+        get() = getCarrier().attributeOwnerIdField
+        set(v) {
+            if (attributeOwnerId !== v) {
+                setCarrier().attributeOwnerIdField = v
+            }
+        }
+
+    override var correspondingPropertySymbolField: IrPropertySymbol? = null
+
+    override var correspondingPropertySymbol: IrPropertySymbol?
+        get() = getCarrier().correspondingPropertySymbolField
+        set(v) {
+            if (correspondingPropertySymbol !== v) {
+                setCarrier().correspondingPropertySymbolField = v
+            }
+        }
 
     // Used by kotlin-native in InteropLowering.kt and IrUtils2.kt
     constructor(

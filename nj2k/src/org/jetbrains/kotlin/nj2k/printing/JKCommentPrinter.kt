@@ -21,9 +21,10 @@ internal class JKCommentPrinter(val printer: JKPrinter) {
         if (this !in printedTokens) {
             printedTokens += this
 
-            // hack till #KT-16845 is fixed
-            if (!isSingleline && text.endsWith("/*/")) {
-                text.replaceRange(text.length - "/*/".length, text.length, "/ */")
+            // hack till #KT-16845, #KT-23333 are fixed
+            if (!isSingleline && text.lastIndexOf("/*") != text.indexOf("/*")) {
+                text.replace("/*", "/ *")
+                    .replaceFirst("/ *", "/*")
             } else text
         } else null
 

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // FILE: j/J.java
 
 package j;
@@ -21,5 +20,5 @@ fun test() {
 
 // @KKt.class:
 // 1 LDC "a"
-// 1 checkExpressionValueIsNotNull
-// 0 checkNotNullExpressionValue
+// 0 checkExpressionValueIsNotNull
+// 1 checkNotNullExpressionValue

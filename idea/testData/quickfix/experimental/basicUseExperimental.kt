@@ -1,10 +1,10 @@
 // "Add '@OptIn(MyExperimentalAPI::class)' annotation to 'bar'" "true"
-// COMPILER_ARGUMENTS: -Xuse-experimental=kotlin.Experimental
+// COMPILER_ARGUMENTS: -Xopt-in=kotlin.RequiresOptIn
 // WITH_RUNTIME
 
 package a.b
 
-@Experimental
+@RequiresOptIn
 @Target(AnnotationTarget.CLASS)
 annotation class MyExperimentalAPI
 

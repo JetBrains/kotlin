@@ -25,7 +25,7 @@ fun ifThenElse(x: Int?) {
 
 fun ifIs(x: Int?, cond: Boolean) {
     if ((x is Int) == cond) {
-        checkSubtype<Int>(x)
+        <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(x)
     }
-    checkSubtype<Int>(x)
+    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(x)
 }

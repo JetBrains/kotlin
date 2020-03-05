@@ -25,7 +25,17 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
     }
 
     public void testAllFilesPresentInResolve() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "stdlib", "cfg", "smartcasts");
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+    }
+
+    @TestMetadata("asImports.kt")
+    public void testAsImports() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/asImports.kt");
+    }
+
+    @TestMetadata("bareTypes.kt")
+    public void testBareTypes() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/bareTypes.kt");
     }
 
     @TestMetadata("cast.kt")
@@ -38,14 +48,39 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/resolve/testData/resolve/companion.kt");
     }
 
+    @TestMetadata("companionObjectCall.kt")
+    public void testCompanionObjectCall() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/companionObjectCall.kt");
+    }
+
     @TestMetadata("companionUsesNested.kt")
     public void testCompanionUsesNested() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/companionUsesNested.kt");
     }
 
+    @TestMetadata("constantValues.kt")
+    public void testConstantValues() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/constantValues.kt");
+    }
+
     @TestMetadata("copy.kt")
     public void testCopy() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/copy.kt");
+    }
+
+    @TestMetadata("covariantArrayAsReceiver.kt")
+    public void testCovariantArrayAsReceiver() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/covariantArrayAsReceiver.kt");
+    }
+
+    @TestMetadata("defaultJavaImportHiding.kt")
+    public void testDefaultJavaImportHiding() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/defaultJavaImportHiding.kt");
+    }
+
+    @TestMetadata("definitelyNotNullAmbiguity.kt")
+    public void testDefinitelyNotNullAmbiguity() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/definitelyNotNullAmbiguity.kt");
     }
 
     @TestMetadata("delegatedSuperType.kt")
@@ -76,6 +111,16 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
     @TestMetadata("enumWithCompanion.kt")
     public void testEnumWithCompanion() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/enumWithCompanion.kt");
+    }
+
+    @TestMetadata("exhaustiveWhenAndDNNType.kt")
+    public void testExhaustiveWhenAndDNNType() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/exhaustiveWhenAndDNNType.kt");
+    }
+
+    @TestMetadata("exhaustiveWhenAndFlexibleType.kt")
+    public void testExhaustiveWhenAndFlexibleType() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/exhaustiveWhenAndFlexibleType.kt");
     }
 
     @TestMetadata("exhaustiveness_boolean.kt")
@@ -123,6 +168,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/resolve/testData/resolve/ft.kt");
     }
 
+    @TestMetadata("functionTypeAlias.kt")
+    public void testFunctionTypeAlias() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/functionTypeAlias.kt");
+    }
+
     @TestMetadata("functionTypes.kt")
     public void testFunctionTypes() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/functionTypes.kt");
@@ -138,9 +188,49 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/resolve/testData/resolve/genericFunctions.kt");
     }
 
+    @TestMetadata("incorrectSuperCall.kt")
+    public void testIncorrectSuperCall() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/incorrectSuperCall.kt");
+    }
+
+    @TestMetadata("intersectionScope.kt")
+    public void testIntersectionScope() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/intersectionScope.kt");
+    }
+
     @TestMetadata("intersectionTypes.kt")
     public void testIntersectionTypes() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/intersectionTypes.kt");
+    }
+
+    @TestMetadata("invokeOfLambdaWithReceiver.kt")
+    public void testInvokeOfLambdaWithReceiver() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/invokeOfLambdaWithReceiver.kt");
+    }
+
+    @TestMetadata("javaFieldVsAccessor.kt")
+    public void testJavaFieldVsAccessor() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/javaFieldVsAccessor.kt");
+    }
+
+    @TestMetadata("javaStaticScopeInheritance.kt")
+    public void testJavaStaticScopeInheritance() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/javaStaticScopeInheritance.kt");
+    }
+
+    @TestMetadata("lambdaArgInScopeFunction.kt")
+    public void testLambdaArgInScopeFunction() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/lambdaArgInScopeFunction.kt");
+    }
+
+    @TestMetadata("lambdaPropertyTypeInference.kt")
+    public void testLambdaPropertyTypeInference() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/lambdaPropertyTypeInference.kt");
+    }
+
+    @TestMetadata("localFunctionsHiding.kt")
+    public void testLocalFunctionsHiding() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/localFunctionsHiding.kt");
     }
 
     @TestMetadata("localObject.kt")
@@ -151,6 +241,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
     @TestMetadata("nestedClass.kt")
     public void testNestedClass() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/nestedClass.kt");
+    }
+
+    @TestMetadata("nestedClassContructor.kt")
+    public void testNestedClassContructor() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/nestedClassContructor.kt");
     }
 
     @TestMetadata("nestedClassNameClash.kt")
@@ -173,14 +268,34 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/resolve/testData/resolve/NestedSuperType.kt");
     }
 
+    @TestMetadata("objectInnerClass.kt")
+    public void testObjectInnerClass() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/objectInnerClass.kt");
+    }
+
     @TestMetadata("problems2.kt")
     public void testProblems2() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/problems2.kt");
     }
 
+    @TestMetadata("propertyFromJavaPlusAssign.kt")
+    public void testPropertyFromJavaPlusAssign() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/propertyFromJavaPlusAssign.kt");
+    }
+
+    @TestMetadata("qualifierWithCompanion.kt")
+    public void testQualifierWithCompanion() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/qualifierWithCompanion.kt");
+    }
+
     @TestMetadata("recursiveCallOnWhenWithSealedClass.kt")
     public void testRecursiveCallOnWhenWithSealedClass() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/recursiveCallOnWhenWithSealedClass.kt");
+    }
+
+    @TestMetadata("sealedClass.kt")
+    public void testSealedClass() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/sealedClass.kt");
     }
 
     @TestMetadata("simpleClass.kt")
@@ -191,6 +306,16 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
     @TestMetadata("simpleTypeAlias.kt")
     public void testSimpleTypeAlias() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/simpleTypeAlias.kt");
+    }
+
+    @TestMetadata("spreadOperator.kt")
+    public void testSpreadOperator() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/spreadOperator.kt");
+    }
+
+    @TestMetadata("syntheticsVsNormalProperties.kt")
+    public void testSyntheticsVsNormalProperties() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/syntheticsVsNormalProperties.kt");
     }
 
     @TestMetadata("treeSet.kt")
@@ -233,9 +358,29 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/resolve/testData/resolve/typeParameterVsNested.kt");
     }
 
+    @TestMetadata("typesInLocalFunctions.kt")
+    public void testTypesInLocalFunctions() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/typesInLocalFunctions.kt");
+    }
+
+    @TestMetadata("varargInPrimaryConstructor.kt")
+    public void testVarargInPrimaryConstructor() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/varargInPrimaryConstructor.kt");
+    }
+
     @TestMetadata("whenAsReceiver.kt")
     public void testWhenAsReceiver() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/whenAsReceiver.kt");
+    }
+
+    @TestMetadata("whenElse.kt")
+    public void testWhenElse() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/whenElse.kt");
+    }
+
+    @TestMetadata("whenExpressionType.kt")
+    public void testWhenExpressionType() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/whenExpressionType.kt");
     }
 
     @TestMetadata("whenInference.kt")
@@ -268,6 +413,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestMetadata("defaultFromOverrides.kt")
         public void testDefaultFromOverrides() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/arguments/defaultFromOverrides.kt");
+        }
+
+        @TestMetadata("extensionLambdaInDefaultArgument.kt")
+        public void testExtensionLambdaInDefaultArgument() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/extensionLambdaInDefaultArgument.kt");
         }
 
         @TestMetadata("fieldPlusAssign.kt")
@@ -345,9 +495,19 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/arguments/tryInLambda.kt");
         }
 
+        @TestMetadata("untouchedReturnInIf.kt")
+        public void testUntouchedReturnInIf() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/untouchedReturnInIf.kt");
+        }
+
         @TestMetadata("vararg.kt")
         public void testVararg() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/arguments/vararg.kt");
+        }
+
+        @TestMetadata("varargProjection.kt")
+        public void testVarargProjection() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/varargProjection.kt");
         }
     }
 
@@ -366,6 +526,142 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestMetadata("lists.kt")
         public void testLists() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/builtins/lists.kt");
+        }
+    }
+
+    @TestMetadata("compiler/fir/resolve/testData/resolve/cfg")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Cfg extends AbstractFirDiagnosticsWithLightTreeTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCfg() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/cfg"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("binaryOperations.kt")
+        public void testBinaryOperations() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/binaryOperations.kt");
+        }
+
+        @TestMetadata("booleanOperatorsWithConsts.kt")
+        public void testBooleanOperatorsWithConsts() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/booleanOperatorsWithConsts.kt");
+        }
+
+        @TestMetadata("complex.kt")
+        public void testComplex() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/complex.kt");
+        }
+
+        @TestMetadata("emptyWhen.kt")
+        public void testEmptyWhen() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/emptyWhen.kt");
+        }
+
+        @TestMetadata("initBlock.kt")
+        public void testInitBlock() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/initBlock.kt");
+        }
+
+        @TestMetadata("initBlockAndInPlaceLambda.kt")
+        public void testInitBlockAndInPlaceLambda() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/initBlockAndInPlaceLambda.kt");
+        }
+
+        @TestMetadata("jumps.kt")
+        public void testJumps() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/jumps.kt");
+        }
+
+        @TestMetadata("lambdaAsReturnOfLambda.kt")
+        public void testLambdaAsReturnOfLambda() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/lambdaAsReturnOfLambda.kt");
+        }
+
+        @TestMetadata("lambdas.kt")
+        public void testLambdas() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/lambdas.kt");
+        }
+
+        @TestMetadata("loops.kt")
+        public void testLoops() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/loops.kt");
+        }
+
+        @TestMetadata("postponedLambdas.kt")
+        public void testPostponedLambdas() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/postponedLambdas.kt");
+        }
+
+        @TestMetadata("propertiesAndInitBlocks.kt")
+        public void testPropertiesAndInitBlocks() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/propertiesAndInitBlocks.kt");
+        }
+
+        @TestMetadata("returnValuesFromLambda.kt")
+        public void testReturnValuesFromLambda() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/returnValuesFromLambda.kt");
+        }
+
+        @TestMetadata("safeCalls.kt")
+        public void testSafeCalls() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/safeCalls.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/simple.kt");
+        }
+
+        @TestMetadata("tryCatch.kt")
+        public void testTryCatch() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/tryCatch.kt");
+        }
+
+        @TestMetadata("when.kt")
+        public void testWhen() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/when.kt");
+        }
+    }
+
+    @TestMetadata("compiler/fir/resolve/testData/resolve/delegates")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Delegates extends AbstractFirDiagnosticsWithLightTreeTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInDelegates() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/delegates"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("delegateInference.kt")
+        public void testDelegateInference() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/delegates/delegateInference.kt");
+        }
+
+        @TestMetadata("delegateWithLambda.kt")
+        public void testDelegateWithLambda() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/delegates/delegateWithLambda.kt");
+        }
+
+        @TestMetadata("extensionGenericGetValue.kt")
+        public void testExtensionGenericGetValue() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/delegates/extensionGenericGetValue.kt");
+        }
+
+        @TestMetadata("extensionGetValueWithTypeVariableAsReceiver.kt")
+        public void testExtensionGetValueWithTypeVariableAsReceiver() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/delegates/extensionGetValueWithTypeVariableAsReceiver.kt");
+        }
+
+        @TestMetadata("provideDelegate.kt")
+        public void testProvideDelegate() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/delegates/provideDelegate.kt");
         }
     }
 
@@ -414,9 +710,24 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/expresssions/annotations.kt");
         }
 
+        @TestMetadata("baseQualifier.kt")
+        public void testBaseQualifier() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/baseQualifier.kt");
+        }
+
+        @TestMetadata("CallBasedInExpressionGenerator.kt")
+        public void testCallBasedInExpressionGenerator() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/CallBasedInExpressionGenerator.kt");
+        }
+
         @TestMetadata("checkArguments.kt")
         public void testCheckArguments() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/checkArguments.kt");
+        }
+
+        @TestMetadata("classifierAccessFromCompanion.kt")
+        public void testClassifierAccessFromCompanion() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/classifierAccessFromCompanion.kt");
         }
 
         @TestMetadata("companion.kt")
@@ -439,9 +750,19 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/expresssions/dispatchReceiver.kt");
         }
 
+        @TestMetadata("enumEntryUse.kt")
+        public void testEnumEntryUse() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/enumEntryUse.kt");
+        }
+
         @TestMetadata("enumValues.kt")
         public void testEnumValues() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/enumValues.kt");
+        }
+
+        @TestMetadata("errCallable.kt")
+        public void testErrCallable() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/errCallable.kt");
         }
 
         @TestMetadata("extensionPropertyInLambda.kt")
@@ -479,6 +800,21 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/expresssions/importedReceiver.kt");
         }
 
+        @TestMetadata("innerQualifier.kt")
+        public void testInnerQualifier() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/innerQualifier.kt");
+        }
+
+        @TestMetadata("innerWithSuperCompanion.kt")
+        public void testInnerWithSuperCompanion() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/innerWithSuperCompanion.kt");
+        }
+
+        @TestMetadata("javaFieldCallable.kt")
+        public void testJavaFieldCallable() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/javaFieldCallable.kt");
+        }
+
         @TestMetadata("lambda.kt")
         public void testLambda() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/lambda.kt");
@@ -487,6 +823,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestMetadata("lambdaWithReceiver.kt")
         public void testLambdaWithReceiver() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/lambdaWithReceiver.kt");
+        }
+
+        @TestMetadata("localClassAccessesContainingClass.kt")
+        public void testLocalClassAccessesContainingClass() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/localClassAccessesContainingClass.kt");
         }
 
         @TestMetadata("localConstructor.kt")
@@ -534,6 +875,16 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/expresssions/memberExtension.kt");
         }
 
+        @TestMetadata("nestedConstructorCallable.kt")
+        public void testNestedConstructorCallable() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/nestedConstructorCallable.kt");
+        }
+
+        @TestMetadata("nestedObjects.kt")
+        public void testNestedObjects() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/nestedObjects.kt");
+        }
+
         @TestMetadata("nestedVisibility.kt")
         public void testNestedVisibility() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/nestedVisibility.kt");
@@ -552,6 +903,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestMetadata("objects.kt")
         public void testObjects() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/objects.kt");
+        }
+
+        @TestMetadata("outerMemberAccesses.kt")
+        public void testOuterMemberAccesses() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/outerMemberAccesses.kt");
         }
 
         @TestMetadata("outerObject.kt")
@@ -584,6 +940,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/expresssions/qualifiedExpressions.kt");
         }
 
+        @TestMetadata("qualifierPriority.kt")
+        public void testQualifierPriority() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/qualifierPriority.kt");
+        }
+
         @TestMetadata("receiverConsistency.kt")
         public void testReceiverConsistency() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/receiverConsistency.kt");
@@ -599,9 +960,24 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/expresssions/simple.kt");
         }
 
+        @TestMetadata("syntheticInImplicitBody.kt")
+        public void testSyntheticInImplicitBody() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/syntheticInImplicitBody.kt");
+        }
+
+        @TestMetadata("syntheticSmartCast.kt")
+        public void testSyntheticSmartCast() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/syntheticSmartCast.kt");
+        }
+
         @TestMetadata("this.kt")
         public void testThis() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/this.kt");
+        }
+
+        @TestMetadata("topExtensionVsOuterMember.kt")
+        public void testTopExtensionVsOuterMember() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/topExtensionVsOuterMember.kt");
         }
 
         @TestMetadata("typeAliasConstructor.kt")
@@ -679,6 +1055,16 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/extension.kt");
             }
 
+            @TestMetadata("extensionOnObject.kt")
+            public void testExtensionOnObject() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/extensionOnObject.kt");
+            }
+
+            @TestMetadata("extensionSafeCall.kt")
+            public void testExtensionSafeCall() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/extensionSafeCall.kt");
+            }
+
             @TestMetadata("farInvokeExtension.kt")
             public void testFarInvokeExtension() throws Exception {
                 runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/farInvokeExtension.kt");
@@ -717,6 +1103,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             @TestMetadata("threeReceivers.kt")
             public void testThreeReceivers() throws Exception {
                 runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/threeReceivers.kt");
+            }
+
+            @TestMetadata("threeReceiversCorrect.kt")
+            public void testThreeReceiversCorrect() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/expresssions/invoke/threeReceiversCorrect.kt");
             }
         }
 
@@ -799,6 +1190,31 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/inference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("callableReferenceOnInstance.kt")
+        public void testCallableReferenceOnInstance() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/inference/callableReferenceOnInstance.kt");
+        }
+
+        @TestMetadata("capturedTypeForJavaTypeParameter.kt")
+        public void testCapturedTypeForJavaTypeParameter() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/inference/capturedTypeForJavaTypeParameter.kt");
+        }
+
+        @TestMetadata("definitelyNotNullIntersectionType.kt")
+        public void testDefinitelyNotNullIntersectionType() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/inference/definitelyNotNullIntersectionType.kt");
+        }
+
+        @TestMetadata("lambdaAsReturnStatementOfLambda.kt")
+        public void testLambdaAsReturnStatementOfLambda() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/inference/lambdaAsReturnStatementOfLambda.kt");
+        }
+
+        @TestMetadata("nestedLambdas.kt")
+        public void testNestedLambdas() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/inference/nestedLambdas.kt");
+        }
+
         @TestMetadata("receiverWithCapturedType.kt")
         public void testReceiverWithCapturedType() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/inference/receiverWithCapturedType.kt");
@@ -807,6 +1223,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestMetadata("simpleCapturedTypes.kt")
         public void testSimpleCapturedTypes() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/inference/simpleCapturedTypes.kt");
+        }
+
+        @TestMetadata("typeDepthForTypeAlias.kt")
+        public void testTypeDepthForTypeAlias() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/inference/typeDepthForTypeAlias.kt");
         }
     }
 
@@ -966,74 +1387,29 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
-        @TestMetadata("asImports.kt")
-        public void testAsImports() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/asImports.kt");
+        @TestMetadata("callableReferenceToLocalClass.kt")
+        public void testCallableReferenceToLocalClass() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/callableReferenceToLocalClass.kt");
         }
 
-        @TestMetadata("covariantArrayAsReceiver.kt")
-        public void testCovariantArrayAsReceiver() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/covariantArrayAsReceiver.kt");
+        @TestMetadata("callableReferencesAndDefaultParameters.kt")
+        public void testCallableReferencesAndDefaultParameters() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/callableReferencesAndDefaultParameters.kt");
         }
 
-        @TestMetadata("defaultJavaImportHiding.kt")
-        public void testDefaultJavaImportHiding() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/defaultJavaImportHiding.kt");
+        @TestMetadata("definetelyNotNullForTypeParameter.kt")
+        public void testDefinetelyNotNullForTypeParameter() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/definetelyNotNullForTypeParameter.kt");
         }
 
-        @TestMetadata("definitelyNotNullAmbiguity.kt")
-        public void testDefinitelyNotNullAmbiguity() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/definitelyNotNullAmbiguity.kt");
-        }
-
-        @TestMetadata("invokeOfLambdaWithReceiver.kt")
-        public void testInvokeOfLambdaWithReceiver() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/invokeOfLambdaWithReceiver.kt");
+        @TestMetadata("definitelyNotNullAndOriginalType.kt")
+        public void testDefinitelyNotNullAndOriginalType() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/definitelyNotNullAndOriginalType.kt");
         }
 
         @TestMetadata("javaAccessorConversion.kt")
         public void testJavaAccessorConversion() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/javaAccessorConversion.kt");
-        }
-
-        @TestMetadata("javaFieldVsAccessor.kt")
-        public void testJavaFieldVsAccessor() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/javaFieldVsAccessor.kt");
-        }
-
-        @TestMetadata("javaStaticScopeInheritance.kt")
-        public void testJavaStaticScopeInheritance() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/javaStaticScopeInheritance.kt");
-        }
-
-        @TestMetadata("localFunctionsHiding.kt")
-        public void testLocalFunctionsHiding() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/localFunctionsHiding.kt");
-        }
-
-        @TestMetadata("nestedClassContructor.kt")
-        public void testNestedClassContructor() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/nestedClassContructor.kt");
-        }
-
-        @TestMetadata("noSmartcast.kt")
-        public void testNoSmartcast() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/noSmartcast.kt");
-        }
-
-        @TestMetadata("propertyFromJavaPlusAssign.kt")
-        public void testPropertyFromJavaPlusAssign() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/propertyFromJavaPlusAssign.kt");
-        }
-
-        @TestMetadata("samConversionInConstructorCall.kt")
-        public void testSamConversionInConstructorCall() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/samConversionInConstructorCall.kt");
-        }
-
-        @TestMetadata("syntheticsVsNormalProperties.kt")
-        public void testSyntheticsVsNormalProperties() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/syntheticsVsNormalProperties.kt");
         }
     }
 
@@ -1135,6 +1511,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/samConversions/runnable.kt");
         }
 
+        @TestMetadata("samConversionInConstructorCall.kt")
+        public void testSamConversionInConstructorCall() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/samConversions/samConversionInConstructorCall.kt");
+        }
+
         @TestMetadata("samSupertype.kt")
         public void testSamSupertype() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/samConversions/samSupertype.kt");
@@ -1153,6 +1534,350 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/samConversions/simple.kt");
+        }
+    }
+
+    @TestMetadata("compiler/fir/resolve/testData/resolve/smartcasts")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Smartcasts extends AbstractFirDiagnosticsWithLightTreeTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSmartcasts() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("bangbang.kt")
+        public void testBangbang() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/bangbang.kt");
+        }
+
+        @TestMetadata("casts.kt")
+        public void testCasts() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/casts.kt");
+        }
+
+        @TestMetadata("equalsAndIdentity.kt")
+        public void testEqualsAndIdentity() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/equalsAndIdentity.kt");
+        }
+
+        @TestMetadata("multipleCasts.kt")
+        public void testMultipleCasts() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/multipleCasts.kt");
+        }
+
+        @TestMetadata("nullability.kt")
+        public void testNullability() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/nullability.kt");
+        }
+
+        @TestMetadata("orInWhenBranch.kt")
+        public void testOrInWhenBranch() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/orInWhenBranch.kt");
+        }
+
+        @TestMetadata("smartCastInInit.kt")
+        public void testSmartCastInInit() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/smartCastInInit.kt");
+        }
+
+        @TestMetadata("smartcastToNothing.kt")
+        public void testSmartcastToNothing() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/smartcastToNothing.kt");
+        }
+
+        @TestMetadata("compiler/fir/resolve/testData/resolve/smartcasts/booleans")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Booleans extends AbstractFirDiagnosticsWithLightTreeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInBooleans() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/smartcasts/booleans"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("booleanOperators.kt")
+            public void testBooleanOperators() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/booleans/booleanOperators.kt");
+            }
+
+            @TestMetadata("equalsToBoolean.kt")
+            public void testEqualsToBoolean() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/booleans/equalsToBoolean.kt");
+            }
+
+            @TestMetadata("jumpFromRhsOfOperator.kt")
+            public void testJumpFromRhsOfOperator() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/booleans/jumpFromRhsOfOperator.kt");
+            }
+        }
+
+        @TestMetadata("compiler/fir/resolve/testData/resolve/smartcasts/boundSmartcasts")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class BoundSmartcasts extends AbstractFirDiagnosticsWithLightTreeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInBoundSmartcasts() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/smartcasts/boundSmartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("boundSmartcasts.kt")
+            public void testBoundSmartcasts() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/boundSmartcasts/boundSmartcasts.kt");
+            }
+
+            @TestMetadata("boundSmartcastsInBranches.kt")
+            public void testBoundSmartcastsInBranches() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/boundSmartcasts/boundSmartcastsInBranches.kt");
+            }
+
+            @TestMetadata("functionCallBound.kt")
+            public void testFunctionCallBound() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/boundSmartcasts/functionCallBound.kt");
+            }
+        }
+
+        @TestMetadata("compiler/fir/resolve/testData/resolve/smartcasts/controlStructures")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ControlStructures extends AbstractFirDiagnosticsWithLightTreeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInControlStructures() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/smartcasts/controlStructures"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("elvis.kt")
+            public void testElvis() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/controlStructures/elvis.kt");
+            }
+
+            @TestMetadata("returns.kt")
+            public void testReturns() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/controlStructures/returns.kt");
+            }
+
+            @TestMetadata("simpleIf.kt")
+            public void testSimpleIf() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/controlStructures/simpleIf.kt");
+            }
+
+            @TestMetadata("smartcastFromArgument.kt")
+            public void testSmartcastFromArgument() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/controlStructures/smartcastFromArgument.kt");
+            }
+
+            @TestMetadata("when.kt")
+            public void testWhen() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/controlStructures/when.kt");
+            }
+        }
+
+        @TestMetadata("compiler/fir/resolve/testData/resolve/smartcasts/lambdas")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Lambdas extends AbstractFirDiagnosticsWithLightTreeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInLambdas() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/smartcasts/lambdas"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("inPlaceLambdas.kt")
+            public void testInPlaceLambdas() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/lambdas/inPlaceLambdas.kt");
+            }
+
+            @TestMetadata("smartcastOnLambda.kt")
+            public void testSmartcastOnLambda() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/lambdas/smartcastOnLambda.kt");
+            }
+        }
+
+        @TestMetadata("compiler/fir/resolve/testData/resolve/smartcasts/loops")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Loops extends AbstractFirDiagnosticsWithLightTreeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInLoops() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/smartcasts/loops"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("dataFlowInfoFromWhileCondition.kt")
+            public void testDataFlowInfoFromWhileCondition() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/loops/dataFlowInfoFromWhileCondition.kt");
+            }
+
+            @TestMetadata("endlessLoops.kt")
+            public void testEndlessLoops() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/loops/endlessLoops.kt");
+            }
+        }
+
+        @TestMetadata("compiler/fir/resolve/testData/resolve/smartcasts/problems")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Problems extends AbstractFirDiagnosticsWithLightTreeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInProblems() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/smartcasts/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("invoke.kt")
+            public void testInvoke() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/problems/invoke.kt");
+            }
+        }
+
+        @TestMetadata("compiler/fir/resolve/testData/resolve/smartcasts/receivers")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Receivers extends AbstractFirDiagnosticsWithLightTreeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInReceivers() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/smartcasts/receivers"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("implicitReceiverAsWhenSubject.kt")
+            public void testImplicitReceiverAsWhenSubject() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/receivers/implicitReceiverAsWhenSubject.kt");
+            }
+
+            @TestMetadata("implicitReceivers.kt")
+            public void testImplicitReceivers() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/receivers/implicitReceivers.kt");
+            }
+
+            @TestMetadata("mixingImplicitAndExplicitReceivers.kt")
+            public void testMixingImplicitAndExplicitReceivers() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/receivers/mixingImplicitAndExplicitReceivers.kt");
+            }
+
+            @TestMetadata("thisOfExtensionProperty.kt")
+            public void testThisOfExtensionProperty() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/receivers/thisOfExtensionProperty.kt");
+            }
+        }
+
+        @TestMetadata("compiler/fir/resolve/testData/resolve/smartcasts/safeCalls")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class SafeCalls extends AbstractFirDiagnosticsWithLightTreeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInSafeCalls() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/smartcasts/safeCalls"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("assignSafeCall.kt")
+            public void testAssignSafeCall() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/safeCalls/assignSafeCall.kt");
+            }
+
+            @TestMetadata("safeCallAndEqualityToBool.kt")
+            public void testSafeCallAndEqualityToBool() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/safeCalls/safeCallAndEqualityToBool.kt");
+            }
+
+            @TestMetadata("safeCalls.kt")
+            public void testSafeCalls() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/safeCalls/safeCalls.kt");
+            }
+        }
+
+        @TestMetadata("compiler/fir/resolve/testData/resolve/smartcasts/stability")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Stability extends AbstractFirDiagnosticsWithLightTreeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInStability() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/smartcasts/stability"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("overridenOpenVal.kt")
+            public void testOverridenOpenVal() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/stability/overridenOpenVal.kt");
+            }
+        }
+
+        @TestMetadata("compiler/fir/resolve/testData/resolve/smartcasts/variables")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Variables extends AbstractFirDiagnosticsWithLightTreeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInVariables() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/smartcasts/variables"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("delayedAssignment.kt")
+            public void testDelayedAssignment() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/variables/delayedAssignment.kt");
+            }
+
+            @TestMetadata("smartcastAfterReassignment.kt")
+            public void testSmartcastAfterReassignment() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/smartcasts/variables/smartcastAfterReassignment.kt");
+            }
+        }
+    }
+
+    @TestMetadata("compiler/fir/resolve/testData/resolve/stdlib")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Stdlib extends AbstractFirDiagnosticsWithLightTreeTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInStdlib() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("compiler/fir/resolve/testData/resolve/stdlib/j+k")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class J_k extends AbstractFirDiagnosticsWithLightTreeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJ_k() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib/j+k"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("flexibleWildcard.kt")
+            public void testFlexibleWildcard() throws Exception {
+                runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/flexibleWildcard.kt");
+            }
         }
     }
 }

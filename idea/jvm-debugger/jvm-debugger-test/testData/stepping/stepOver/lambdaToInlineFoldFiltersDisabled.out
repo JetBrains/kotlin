@@ -1,0 +1,14 @@
+LineBreakpoint created at lambdaToInlineFoldFiltersDisabled.kt:7
+Run Java
+Connected to the target VM
+lambdaToInlineFoldFiltersDisabled.kt:7
+_Collections.!EXT!
+_Collections.!EXT!
+_Collections.!EXT!
+lambdaToInlineFoldFiltersDisabled.kt:7
+_Collections.!EXT!
+resuming lambdaToInlineFoldFiltersDisabled.kt:7
+resuming lambdaToInlineFoldFiltersDisabled.kt:7
+Disconnected from the target VM
+
+Process finished with exit code 0

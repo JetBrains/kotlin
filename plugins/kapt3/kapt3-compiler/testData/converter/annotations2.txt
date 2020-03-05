@@ -31,7 +31,7 @@ public final class AnnotationsTest {
 
     @Anno(value = "top-level-val")
     @java.lang.Deprecated()
-    public static void topLevelVal$annotations(int p0) {
+    public static void getTopLevelVal$annotations(int p0) {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -84,7 +84,7 @@ public abstract class Test {
 
     @Anno(value = "abstract-val")
     @java.lang.Deprecated()
-    public static void abstractVal$annotations() {
+    public static void getAbstractVal$annotations() {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -92,7 +92,7 @@ public abstract class Test {
 
     @Anno(value = "v-property")
     @java.lang.Deprecated()
-    public static void v$annotations() {
+    public static void getV$annotations() {
     }
 
     @org.jetbrains.annotations.NotNull()

@@ -11,40 +11,6 @@ final class null /* null*/ {
 
 }
 
-public final class Fun /* Fun*/ {
-  @null()
-  public  Fun();
-
-  private final java.lang.Object someFun();
-
-}
-
-final class null /* null*/ {
-  private  ();
-
-}
-
-public final class ArrayOfAnonymous /* ArrayOfAnonymous*/ {
-  private final java.lang.Object[] a1;
-
-  @null()
-  public  ArrayOfAnonymous();
-
-  @org.jetbrains.annotations.NotNull()
-  public final java.lang.Object[] getA1();
-
-}
-
-final class null /* null*/ {
-  private static final java.lang.String fy = "text" /* initializer type: java.lang.String */ /* constant value text */;
-
-  @org.jetbrains.annotations.NotNull()
-  public final java.lang.String getFy();
-
-  private  ();
-
-}
-
 final class C /* C*/ {
   private final int y;
 
@@ -63,36 +29,6 @@ final class C /* C*/ {
 final class null /* null*/ {
   @org.jetbrains.annotations.NotNull()
   public java.lang.String toString();
-
-  private  ();
-
-}
-
-public abstract class Super /* Super*/ {
-  @null()
-  public  Super();
-
-  @org.jetbrains.annotations.Nullable()
-  public abstract java.lang.Object getA();
-
-}
-
-public final class Sub /* Sub*/ extends Super {
-  private final java.lang.Object[] a;
-
-  @null()
-  public  Sub();
-
-  @org.jetbrains.annotations.NotNull()
-  public java.lang.Object[] getA();
-
-}
-
-final class null /* null*/ {
-  private static final java.lang.String fy = "text" /* initializer type: java.lang.String */ /* constant value text */;
-
-  @org.jetbrains.annotations.NotNull()
-  public final java.lang.String getFy();
 
   private  ();
 

@@ -40,12 +40,12 @@ FILE: nestedClassNameClash.kt
         }
 
         public final fun test_5(): R|kotlin/Unit| {
-            lval result: R|Foo.Result| = this@R|/Foo|.R|/Foo.Result.Result|()
+            lval result: R|Foo.Result| = R|/Foo.Result.Result|()
             this@R|/Foo|.R|/Foo.saveResult|(R|<local>/result|)
         }
 
         private final fun getResult(): R|Foo.Result| {
-            ^getResult this@R|/Foo|.R|/Foo.Result.Result|()
+            ^getResult R|/Foo.Result.Result|()
         }
 
         private final fun saveResults(results: R|kotlin/collections/List<Foo.Result>|): R|kotlin/Unit| {

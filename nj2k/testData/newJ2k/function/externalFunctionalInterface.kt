@@ -8,6 +8,6 @@ internal class Test {
     }
 
     fun nya(): Double {
-        return foo(1, FunctionalI { x: Int -> this.toDouble(x) })
+        return foo(1, { x: Int -> this.toDouble(x) })
     }
 }

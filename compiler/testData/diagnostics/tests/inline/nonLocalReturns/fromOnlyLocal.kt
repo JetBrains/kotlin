@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 
 inline fun <R> onlyLocal(crossinline p: () -> R) {
     inlineAll(p)

@@ -8,7 +8,7 @@ import kotlin.test.*
 fun String.extension() {}
 
 fun box(): String {
-    assertFailsWith<IllegalStateException> { J.s().extension() }
+    assertFailsWith<NullPointerException> { J.s().extension() }
     return "OK"
 }
 

@@ -1,0 +1,27 @@
+{
+  "2": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-220",
+          "casesNumber": 0,
+          "description": "",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "1": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-220",
+          "casesNumber": 0,
+          "description": "",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/logical-not-expression/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

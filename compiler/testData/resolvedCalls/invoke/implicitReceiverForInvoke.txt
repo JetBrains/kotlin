@@ -8,6 +8,7 @@ fun bar(f: Int.() -> Unit, i: Int) {
 
 Resolved call:
 
+Candidate descriptor: operator fun Int.invoke(): Unit defined in kotlin.Function1
 Resulting descriptor: operator fun Int.invoke(): Unit defined in kotlin.Function1
 
 Explicit receiver kind = DISPATCH_RECEIVER

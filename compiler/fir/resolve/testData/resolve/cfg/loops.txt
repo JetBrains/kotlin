@@ -14,8 +14,7 @@ FILE: loops.kt
         (R|<local>/x| is R|kotlin/String|)
     }
     public final fun testFor(x: R|kotlin/Any?|): R|kotlin/Unit| {
-        lval <range>: R|kotlin/ranges/IntRange| = Int(0).R|kotlin/Int.rangeTo|(Int(5))
-        lval <iterator>: R|kotlin/collections/IntIterator| = R|<local>/<range>|.R|kotlin/ranges/IntProgression.iterator|()
+        lval <iterator>: R|kotlin/collections/IntIterator| = Int(0).R|kotlin/Int.rangeTo|(Int(5)).R|kotlin/ranges/IntProgression.iterator|()
         while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
             lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
             lval y: R|kotlin/Boolean| = (R|<local>/x| is R|kotlin/String|)
@@ -25,7 +24,7 @@ FILE: loops.kt
     }
     public final fun testWhileTrue(): R|kotlin/Unit| {
         while(Boolean(true)) {
-            Int(1)
+            IntegerLiteral(1)
         }
 
         Int(1)
@@ -44,14 +43,14 @@ FILE: loops.kt
     }
     public final fun testWhileFalse(): R|kotlin/Unit| {
         while(Boolean(false)) {
-            Int(1)
+            IntegerLiteral(1)
         }
 
         Int(1)
     }
     public final fun testDoWhileTrue(): R|kotlin/Unit| {
         do {
-            Int(1)
+            IntegerLiteral(1)
         }
         while(Boolean(true))
         Int(1)
@@ -70,7 +69,7 @@ FILE: loops.kt
     }
     public final fun testDoWhileFalse(): R|kotlin/Unit| {
         do {
-            Int(1)
+            IntegerLiteral(1)
         }
         while(Boolean(false))
         Int(1)

@@ -55,8 +55,7 @@ data class BuildDiffsStorage(val buildDiffs: List<BuildDifference>) {
                     }
                     return result
                 }
-            }
-            catch (e: IOException) {
+            } catch (e: IOException) {
                 reportFail(e.toString())
             }
 
@@ -76,8 +75,7 @@ data class BuildDiffsStorage(val buildDiffs: List<BuildDifference>) {
                         output.writeBuildDifference(diff)
                     }
                 }
-            }
-            catch (e: IOException) {
+            } catch (e: IOException) {
                 reporter?.report { "Could not write diff to file $file: $e" }
             }
         }
@@ -129,7 +127,7 @@ data class BuildDiffsStorage(val buildDiffs: List<BuildDifference>) {
             }
         }
 
-        internal val MAX_DIFFS_ENTRIES: Int = 10
+        internal const val MAX_DIFFS_ENTRIES: Int = 10
 
         @set:TestOnly
         var CURRENT_VERSION: Int = 0

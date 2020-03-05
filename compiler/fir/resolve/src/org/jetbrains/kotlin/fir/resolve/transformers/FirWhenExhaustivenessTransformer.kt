@@ -11,15 +11,18 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.ClassId
 
@@ -39,11 +42,13 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             return whenExpression
         }
 
-        val typeRef = (whenExpression.subjectVariable?.returnTypeRef
-            ?: (whenExpression.subject as? FirQualifiedAccessExpression)?.typeRef) as? FirResolvedTypeRef
+        val typeRef = whenExpression.subjectVariable?.returnTypeRef
+            ?: whenExpression.subject?.typeRef
             ?: return null
 
-        val lookupTag = (typeRef.type as? ConeLookupTagBasedType)?.lookupTag ?: return null
+        // TODO: add some report logic about flexible type (see WHEN_ENUM_CAN_BE_NULL_IN_JAVA diagnostic in old frontend)
+        val type = (typeRef as? FirResolvedTypeRef)?.type?.lowerBoundIfFlexible() ?: return null
+        val lookupTag = (type as? ConeLookupTagBasedType)?.lookupTag ?: return null
         val nullable = typeRef.type.nullability == ConeNullability.NULLABLE
         val isExhaustive = when {
             ((lookupTag as? ConeClassLikeLookupTag)?.classId == bodyResolveComponents.session.builtinTypes.booleanType.id) -> {
@@ -72,16 +77,16 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
 
     private fun checkEnumExhaustiveness(whenExpression: FirWhenExpression, enum: FirRegularClass, nullable: Boolean): Boolean {
         val data = EnumExhaustivenessData(
-            enum.collectEnumEntries().associateByTo(mutableMapOf(), { it.classId }, { false }),
+            enum.collectEnumEntries().map { it.symbol }.toMutableSet(),
             !nullable
         )
         for (branch in whenExpression.branches) {
             branch.condition.accept(EnumExhaustivenessVisitor, data)
         }
-        return data.containsNull && data.visitedEntries.values.all { it }
+        return data.containsNull && data.remainingEntries.isEmpty()
     }
 
-    private class EnumExhaustivenessData(val visitedEntries: MutableMap<ClassId, Boolean>, var containsNull: Boolean)
+    private class EnumExhaustivenessData(val remainingEntries: MutableSet<FirVariableSymbol<FirEnumEntry>>, var containsNull: Boolean)
 
     private object EnumExhaustivenessVisitor : FirVisitor<Unit, EnumExhaustivenessData>() {
         override fun visitElement(element: FirElement, data: EnumExhaustivenessData) {}
@@ -94,9 +99,11 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
                             data.containsNull = true
                         }
                     }
-                    is FirResolvedQualifier -> {
-                        val classId = argument.classId ?: return
-                        data.visitedEntries.replace(classId, true)
+                    is FirQualifiedAccessExpression -> {
+                        val reference = argument.calleeReference as? FirResolvedNamedReference ?: return
+                        val symbol = (reference.resolvedSymbol.fir as? FirEnumEntry)?.symbol ?: return
+
+                        data.remainingEntries.remove(symbol)
                     }
                 }
             }
@@ -115,18 +122,18 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         if (sealedClass.inheritors.isEmpty()) return true
         val data = SealedExhaustivenessData(
             sealedClass.session.firSymbolProvider,
-            sealedClass.inheritors.associateByTo(mutableMapOf(), { it }, { false }),
+            sealedClass.inheritors.toMutableSet(),
             !nullable
         )
         for (branch in whenExpression.branches) {
             branch.condition.accept(SealedExhaustivenessVisitor, data)
         }
-        return data.containsNull && data.visitedInheritors.values.all { it }
+        return data.containsNull && data.remainingInheritors.isEmpty()
     }
 
     private class SealedExhaustivenessData(
         val symbolProvider: FirSymbolProvider,
-        val visitedInheritors: MutableMap<ClassId, Boolean>,
+        val remainingInheritors: MutableSet<ClassId>,
         var containsNull: Boolean
     )
 
@@ -151,7 +158,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: SealedExhaustivenessData) {
             val lookupTag = (resolvedTypeRef.type as? ConeLookupTagBasedType)?.lookupTag ?: return
             val symbol = data.symbolProvider.getSymbolByLookupTag(lookupTag) as? FirClassSymbol ?: return
-            data.visitedInheritors.replace(symbol.classId, true)
+            data.remainingInheritors.remove(symbol.classId)
         }
 
         override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: SealedExhaustivenessData) {

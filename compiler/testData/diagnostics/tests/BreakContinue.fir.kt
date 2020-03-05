@@ -38,7 +38,7 @@ class C {
                 break;
             }
         }
-        a.<!INAPPLICABLE_CANDIDATE!>compareTo<!>("2")
+        a.compareTo("2")
     }
 
     fun containsBreakWithLabel(a: String?) {
@@ -52,7 +52,7 @@ class C {
         loop@ while(a == null) {
             break@label
         }
-        a.<!INAPPLICABLE_CANDIDATE!>compareTo<!>("2")
+        a.compareTo("2")
     }
 
     fun containsBreakToOuterLoop(a: String?, b: String?) {
@@ -60,7 +60,7 @@ class C {
             while(a == null) {
                 break@loop
             }
-            a.<!INAPPLICABLE_CANDIDATE!>compareTo<!>("2")
+            a.compareTo("2")
         }
     }
 

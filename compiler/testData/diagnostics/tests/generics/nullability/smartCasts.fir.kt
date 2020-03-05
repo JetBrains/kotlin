@@ -27,8 +27,8 @@ fun <T : CharSequence?> foo(x: T) {
     x.length
 
     if (x is String) {
-        x.<!AMBIGUITY!>length<!>
-        x?.<!AMBIGUITY!>length<!>
+        x.length
+        x?.length
 
         x.bar1()
         x.bar2()

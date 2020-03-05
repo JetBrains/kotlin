@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 infix fun distance(x: Int, y: Int) = x + y
 
 fun test(): Int = 3 distance 4

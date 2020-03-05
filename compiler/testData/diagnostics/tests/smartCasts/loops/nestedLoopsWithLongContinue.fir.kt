@@ -14,6 +14,6 @@ public fun foo(p: String?, r: String?, q: String?): Int {
     // Smart cast is possible only for q
     q.length
     // But not possible for the others
-    r.<!INAPPLICABLE_CANDIDATE!>length<!>
+    r.length
     return p.length
 }

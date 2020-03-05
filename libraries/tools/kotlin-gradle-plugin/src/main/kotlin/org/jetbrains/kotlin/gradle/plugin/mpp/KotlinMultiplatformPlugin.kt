@@ -21,19 +21,24 @@ import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.configureOrCreate
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.checkSourceSetVisibilityRequirements
+import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.target.presetName
+import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 
 class KotlinMultiplatformPlugin(
     private val kotlinPluginVersion: String,
@@ -68,11 +73,13 @@ class KotlinMultiplatformPlugin(
             presets = project.container(KotlinTargetPreset::class.java)
             addExtension("presets", presets)
 
+            defaultJsCompilerType = PropertiesProvider(project).jsCompiler
+
             isGradleMetadataAvailable =
-                    featurePreviews.activeFeatures.find { it.name == "GRADLE_METADATA" }?.let { metadataFeature ->
-                        isGradleMetadataExperimental = true
-                        featurePreviews.isFeatureEnabled(metadataFeature)
-                    } ?: true // the feature entry will be gone once the feature is stable
+                featurePreviews.activeFeatures.find { it.name == "GRADLE_METADATA" }?.let { metadataFeature ->
+                    isGradleMetadataExperimental = true
+                    featurePreviews.isFeatureEnabled(metadataFeature)
+                } ?: true // the feature entry will be gone once the feature is stable
         }
 
         setupDefaultPresets(project)
@@ -89,12 +96,12 @@ class KotlinMultiplatformPlugin(
         targetsContainer.withType(AbstractKotlinTarget::class.java).all { applyUserDefinedAttributes(it) }
 
         // propagate compiler plugin options to the source set language settings
-        setupCompilerPluginOptions(project)
+        setupAdditionalCompilerArguments(project)
 
         project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
     }
 
-    private fun setupCompilerPluginOptions(project: Project) {
+    private fun setupAdditionalCompilerArguments(project: Project) {
         // common source sets use the compiler options from the metadata compilation:
         val metadataCompilation =
             project.multiplatformExtension.metadata().compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
@@ -127,6 +134,22 @@ class KotlinMultiplatformPlugin(
                     val associatedCompilation = primaryCompilationsBySourceSet[sourceSet] ?: metadataCompilation
                     project.tasks.getByName(associatedCompilation.compileKotlinTaskName) as AbstractCompile
                 }
+
+                // Also set ad-hoc free compiler args from the internal project property
+                freeCompilerArgsProvider = project.provider {
+                    val propertyValue = with(project.extensions.extraProperties) {
+                        val sourceSetFreeCompilerArgsPropertyName = sourceSetFreeCompilerArgsPropertyName(sourceSet.name)
+                        if (has(sourceSetFreeCompilerArgsPropertyName)) {
+                            get(sourceSetFreeCompilerArgsPropertyName)
+                        } else null
+                    }
+                    mutableListOf<String>().apply {
+                        when (propertyValue) {
+                            is String -> add(propertyValue)
+                            is Iterable<*> -> addAll(propertyValue.map { it.toString() })
+                        }
+                    }
+                }
             }
         }
     }
@@ -134,7 +157,17 @@ class KotlinMultiplatformPlugin(
     fun setupDefaultPresets(project: Project) {
         with(project.multiplatformExtension.presets) {
             add(KotlinJvmTargetPreset(project, kotlinPluginVersion))
-            add(KotlinJsTargetPreset(project, kotlinPluginVersion))
+            add(KotlinJsTargetPreset(project, kotlinPluginVersion).apply { irPreset = null })
+            add(KotlinJsIrTargetPreset(project, kotlinPluginVersion).apply { mixedMode = false })
+            add(
+                KotlinJsTargetPreset(
+                    project,
+                    kotlinPluginVersion
+                ).apply {
+                    irPreset = KotlinJsIrTargetPreset(project, kotlinPluginVersion)
+                        .apply { mixedMode = true }
+                }
+            )
             add(KotlinAndroidTargetPreset(project, kotlinPluginVersion))
             add(KotlinJvmWithJavaTargetPreset(project, kotlinPluginVersion))
 
@@ -181,7 +214,9 @@ class KotlinMultiplatformPlugin(
 
             // Publish the root publication only if Gradle metadata publishing is enabled:
             project.tasks.withType(AbstractPublishToMaven::class.java).configureEach { publishTask ->
-                publishTask.onlyIf { publishTask.publication != rootPublication || project.multiplatformExtension.isGradleMetadataAvailable }
+                publishTask.onlyIf {
+                    publishTask.publication != rootPublication || project.multiplatformExtension.isGradleMetadataAvailable
+                }
             }
 
             // Enforce the order of creating the publications, since the metadata publication is used in the other publications:
@@ -190,8 +225,8 @@ class KotlinMultiplatformPlugin(
                 .withType(AbstractKotlinTarget::class.java).matching { it.publishable && it.name != METADATA_TARGET_NAME }
                 .all {
                     if (it is KotlinAndroidTarget || it is KotlinMetadataTarget)
-                        // Android targets have their variants created in afterEvaluate; TODO handle this better?
-                        // Kotlin Metadata targets rely on complete source sets hierearchy and cannot be inspected for publication earlier
+                    // Android targets have their variants created in afterEvaluate; TODO handle this better?
+                    // Kotlin Metadata targets rely on complete source sets hierearchy and cannot be inspected for publication earlier
                         project.whenEvaluated { it.createMavenPublications(publishing.publications) }
                     else
                         it.createMavenPublications(publishing.publications)
@@ -244,9 +279,13 @@ class KotlinMultiplatformPlugin(
         val (group, name, _) = groupNameVersion
 
         val project = target.project
-        val metadataApiLegacyElements = project.configurations.getByName(COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME)
+        val commonMain = project.kotlinExtension.sourceSets?.findByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
+            ?: return true
 
-        return metadataApiLegacyElements.allDependencies.any { it.group == group && it.name == name }
+        // Only the commonMain API dependencies can be published for consumers who can't read Gradle project metadata
+        val commonMainApi = project.sourceSetDependencyConfigurationByScope(commonMain, KotlinDependencyScope.API_SCOPE)
+
+        return commonMainApi.allDependencies.any { it.group == group && it.name == name }
     }
 
     private fun configureSourceSets(project: Project) = with(project.multiplatformExtension) {
@@ -255,12 +294,14 @@ class KotlinMultiplatformPlugin(
 
         targets.all { target ->
             target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.let { mainCompilation ->
-                sourceSets.findByName(mainCompilation.defaultSourceSetName)?.dependsOn(production)
+                mainCompilation.defaultSourceSet.takeIf { it != production }?.dependsOn(production)
             }
 
             target.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME)?.let { testCompilation ->
-                sourceSets.findByName(testCompilation.defaultSourceSetName)?.dependsOn(test)
+                testCompilation.defaultSourceSet.takeIf { it != test }?.dependsOn(test)
             }
+
+            KotlinBuildStatsService.getInstance()?.report(StringMetrics.MPP_PLATFORMS, target.targetName)
         }
 
         UnusedSourceSetsChecker.checkSourceSets(project)
@@ -272,6 +313,9 @@ class KotlinMultiplatformPlugin(
 
     companion object {
         const val METADATA_TARGET_NAME = "metadata"
+
+        private fun sourceSetFreeCompilerArgsPropertyName(sourceSetName: String) =
+            "kotlin.mpp.freeCompilerArgsForSourceSet.$sourceSetName"
 
         internal const val GRADLE_NO_METADATA_WARNING = "This build consumes Gradle module metadata but does not produce " +
                 "it when publishing Kotlin multiplatform libraries. \n" +

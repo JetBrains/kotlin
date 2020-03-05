@@ -43,20 +43,20 @@ class X: D() {
 
         A_S()
         A.A_S()
-        C.A_S()
-        D.A_S()
-        X.A_S()
+        C.<!UNRESOLVED_REFERENCE!>A_S<!>()
+        D.<!UNRESOLVED_REFERENCE!>A_S<!>()
+        X.<!UNRESOLVED_REFERENCE!>A_S<!>()
 
         B_S()
         B.B_S()
-        C.B_S()
-        D.B_S()
-        X.B_S()
+        C.<!UNRESOLVED_REFERENCE!>B_S<!>()
+        D.<!UNRESOLVED_REFERENCE!>B_S<!>()
+        X.<!UNRESOLVED_REFERENCE!>B_S<!>()
 
         E_S()
         E.E_S()
-        D.E_S()
-        X.E_S()
+        D.<!UNRESOLVED_REFERENCE!>E_S<!>()
+        X.<!UNRESOLVED_REFERENCE!>E_S<!>()
     }
 }
 
@@ -68,15 +68,15 @@ class Y: F() {
         Y.<!UNRESOLVED_REFERENCE!>B_<!>()
 
         A_S()
-        F.A_S()
-        Y.A_S()
+        F.<!UNRESOLVED_REFERENCE!>A_S<!>()
+        Y.<!UNRESOLVED_REFERENCE!>A_S<!>()
 
         B_S()
-        F.B_S()
-        Y.B_S()
+        F.<!UNRESOLVED_REFERENCE!>B_S<!>()
+        Y.<!UNRESOLVED_REFERENCE!>B_S<!>()
 
         E_S()
-        F.E_S()
-        Y.E_S()
+        F.<!UNRESOLVED_REFERENCE!>E_S<!>()
+        Y.<!UNRESOLVED_REFERENCE!>E_S<!>()
     }
 }

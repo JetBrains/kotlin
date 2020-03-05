@@ -1,0 +1,61 @@
+public abstract interface foo/Ann : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface foo/Ann2 : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface foo/Ann3 : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface foo/Ann4 : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public final class foo/Bar : java/lang/Object {
+    public void <init>()
+}
+
+public final class foo/Kotlin : java/lang/Object {
+    public void <init>()
+
+    public final void foo(foo.Outer$NestedStatic s)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/Ann2;([]) : METHOD_FORMAL_PARAMETER 0, 0;
+
+    public final foo.Outer$NestedStatic foo()
+      @Lfoo/Ann;([]) : METHOD_RETURN, null
+      @Lfoo/Ann2;([]) : METHOD_RETURN, 0;
+
+    public final void fooArray(foo.Outer$NestedStatic[] s)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/Ann2;([]) : METHOD_FORMAL_PARAMETER 0, [
+      @Lfoo/Ann3;([]) : METHOD_FORMAL_PARAMETER 0, [0;
+
+    public final foo.Outer$NestedStatic[] fooArray()
+      @Lfoo/Ann;([]) : METHOD_RETURN, null
+      @Lfoo/Ann2;([]) : METHOD_RETURN, [
+      @Lfoo/Ann3;([]) : METHOD_RETURN, [0;
+
+    public final void fooArrayIn(java.lang.Object[] s)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+
+    public final foo.Outer$NestedStatic[] fooArrayOut()
+      @Lfoo/Ann;([]) : METHOD_RETURN, null
+
+    public final void fooGenericIn(foo.Bar s)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+
+    public final void fooGenericOut(foo.Bar s)
+      @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+}
+
+public final class foo/Outer$NestedStatic : java/lang/Object {
+    public void <init>()
+}
+
+public final class foo/Outer : java/lang/Object {
+    public void <init>()
+}

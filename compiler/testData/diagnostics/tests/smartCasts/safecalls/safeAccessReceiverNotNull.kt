@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !LANGUAGE: -SafeCastCheckBoundSmartCasts -BooleanElvisBoundSmartCasts
 // A set of examples for
 // "If the result of a safe call is not null, understand that its receiver is not null"
@@ -60,11 +59,11 @@ fun kt4565_1(a: SomeClass?) {
 fun kt4565_2(a: SomeClass?) {
     // To be supported
     if (a as? SubClass != null) {
-        a.<!UNRESOLVED_REFERENCE!>extra<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>hashCode<!>()
+        a.<!UNRESOLVED_REFERENCE!>extra<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>hashCode<!>()
     }
     val extra = (a as? SubClass)?.extra
     if (extra != null) {
-        a.<!UNRESOLVED_REFERENCE!>extra<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>hashCode<!>()
+        a.<!UNRESOLVED_REFERENCE!>extra<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>hashCode<!>()
     }
 }
 
@@ -130,7 +129,7 @@ class Invokable(val x: String) {
 class InvokableProperty(val i: Invokable)
 
 fun checkInvokable(ip: InvokableProperty?) {
-    if (ip?.<!OI;UNSAFE_IMPLICIT_INVOKE_CALL!>i<!>() == "Hello") {
+    if (ip?.<!UNSAFE_IMPLICIT_INVOKE_CALL!>i<!>() == "Hello") {
         <!DEBUG_INFO_SMARTCAST!>ip<!>.hashCode()
     }
 }

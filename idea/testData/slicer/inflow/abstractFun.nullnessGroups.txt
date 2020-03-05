@@ -1,0 +1,3 @@
+[NotNull Values]
+4 	fun foo(<bold>p: Int</bold>)
+4 		fun foo(<bold>p: Int</bold>)

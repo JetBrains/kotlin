@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 fun bar(x: Int): Int = x + 1
 
 fun foo() {
@@ -6,7 +5,7 @@ fun foo() {
     val a = Array<Int>(3, {0})
 
     for (p in a) {
-        bar(x)
+        <!INAPPLICABLE_CANDIDATE!>bar<!>(x)
         if (x == null) continue
         bar(x)
         for (q in a) {
@@ -16,7 +15,7 @@ fun foo() {
     }
 
     for (p in a) {
-        bar(x)
+        <!INAPPLICABLE_CANDIDATE!>bar<!>(x)
         if (x == null) break
         bar(x)
     }

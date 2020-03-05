@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigura
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationState
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
+import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsIndexer
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
@@ -82,6 +83,17 @@ internal abstract class AbstractScriptConfigurationManager(
         forceSync: Boolean = false
     )
 
+    /**
+     * Will be called on user action
+     * Load configuration event it is already cached or inputs are up-to-date
+     *
+     * @param loader is used to load configuration. Other loaders aren't taken into account.
+     */
+    protected abstract fun forceReloadConfiguration(
+        file: KtFile,
+        loader: ScriptConfigurationLoader
+    )
+
     @Deprecated("Use getScriptClasspath(KtFile) instead")
     override fun getScriptClasspath(file: VirtualFile): List<VirtualFile> {
         val ktFile = project.getKtFile(file) ?: return emptyList()
@@ -120,6 +132,19 @@ internal abstract class AbstractScriptConfigurationManager(
         }
 
         return getAppliedConfiguration(virtualFile)?.configuration
+    }
+
+    override fun forceReloadConfiguration(
+        file: VirtualFile,
+        loader: ScriptConfigurationLoader
+    ): ScriptCompilationConfigurationWrapper? {
+        val ktFile = project.getKtFile(file, null) ?: return null
+
+        rootsIndexer.transaction {
+            forceReloadConfiguration(ktFile, loader)
+        }
+
+        return getAppliedConfiguration(file)?.configuration
     }
 
     override val updater: ScriptConfigurationUpdater = object : ScriptConfigurationUpdater {
@@ -268,16 +293,10 @@ internal abstract class AbstractScriptConfigurationManager(
                 val value2 = _classpathRoots
                 if (value2 != null) return value2
 
-                val value3 = newClassRootsCache()
+                val value3 = ScriptClassRootsCache(project, cache.allApplied())
                 _classpathRoots = value3
                 return value3
             }
-        }
-
-    private fun newClassRootsCache() =
-        object : ScriptClassRootsCache(project, cache.allApplied()) {
-            override fun getConfiguration(file: VirtualFile) =
-                this@AbstractScriptConfigurationManager.getConfiguration(file)
         }
 
     private fun clearClassRootsCaches() {
@@ -297,12 +316,25 @@ internal abstract class AbstractScriptConfigurationManager(
         ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
     }
 
-    override fun getScriptSdk(file: VirtualFile): Sdk? = classpathRoots.getScriptSdk(file)
+    /**
+     * Returns script classpath roots
+     * Loads script configuration if classpath roots don't contain [file] yet
+     */
+    private fun getActualClasspathRoots(file: VirtualFile): ScriptClassRootsCache {
+        if (classpathRoots.contains(file)) {
+            return classpathRoots
+        }
+
+        getConfiguration(file)
+        return classpathRoots
+    }
+
+    override fun getScriptSdk(file: VirtualFile): Sdk? = getActualClasspathRoots(file).getScriptSdk(file)
 
     override fun getFirstScriptsSdk(): Sdk? = classpathRoots.firstScriptSdk
 
     override fun getScriptDependenciesClassFilesScope(file: VirtualFile): GlobalSearchScope =
-        classpathRoots.getScriptDependenciesClassFilesScope(file)
+        getActualClasspathRoots(file).getScriptDependenciesClassFilesScope(file)
 
     override fun getAllScriptsDependenciesClassFilesScope(): GlobalSearchScope = classpathRoots.allDependenciesClassFilesScope
 

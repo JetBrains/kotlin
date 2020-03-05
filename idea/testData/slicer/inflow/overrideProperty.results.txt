@@ -1,0 +1,5 @@
+13 val <bold>v = d.prop</bold>
+13 	val v = <bold>d.prop</bold>
+8 		override var <bold>prop: Int = 1</bold>
+8 			override var prop: Int = <bold>1</bold>
+12 			b.prop = <bold>10</bold>

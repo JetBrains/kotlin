@@ -39,16 +39,16 @@ fun some(x: Any) {
     }
     when (x) {
         is
-        Int
+        Int,
         -> {
             0
         }
-        3
+        3,
         -> {
             2
         }
         in
-        0..3
+        0..3,
         -> {
             2
         }
@@ -58,3 +58,4 @@ fun some(x: Any) {
         }
     }
 }
+// SET_TRUE: ALLOW_TRAILING_COMMA

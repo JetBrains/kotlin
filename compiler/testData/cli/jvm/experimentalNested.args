@@ -1,5 +1,5 @@
 $TESTDATA_DIR$/experimentalNested.kt
 -d
 $TEMP_DIR$
--Xuse-experimental=kotlin.Experimental
+-Xopt-in=kotlin.RequiresOptIn
 -Xexperimental=org.test.Outer.Nested

@@ -1,0 +1,8 @@
+package
+
+public val x1: (kotlin.String) -> kotlin.Unit
+public val x2: (kotlin.String) -> kotlin.Unit
+public val x3: (kotlin.String) -> kotlin.Unit
+public val x4: (kotlin.String) -> kotlin.Unit
+public fun bar(/*0*/ s: kotlin.String): kotlin.Unit
+public fun </*0*/ R> run(/*0*/ block: () -> R): R

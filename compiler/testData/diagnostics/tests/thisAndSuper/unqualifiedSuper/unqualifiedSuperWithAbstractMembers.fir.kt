@@ -26,7 +26,7 @@ class B : A(), I {
 
     override fun foo(): Int {
         super.foo()
-        return super.<!UNRESOLVED_REFERENCE!>x<!>
+        return super.x
     }
 
     override fun bar() {
@@ -34,6 +34,6 @@ class B : A(), I {
     }
 
     override fun qux() {
-        super.qux()
+        super.<!AMBIGUITY!>qux<!>()
     }
 }

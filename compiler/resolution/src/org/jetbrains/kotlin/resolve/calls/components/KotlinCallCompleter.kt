@@ -17,14 +17,9 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.Empt
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.forceResolution
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
-import org.jetbrains.kotlin.types.model.isIntegerLiteralTypeConstructor
-import org.jetbrains.kotlin.types.model.typeConstructor
-import org.jetbrains.kotlin.types.typeUtil.contains
 
 class KotlinCallCompleter(
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
@@ -51,14 +46,26 @@ class KotlinCallCompleter(
         candidate.addExpectedTypeFromCastConstraint(returnType, resolutionCallbacks)
         candidate.checkSamWithVararg(diagnosticHolder)
 
-        return if (resolutionCallbacks.inferenceSession.shouldRunCompletion(candidate))
-            candidate.runCompletion(
-                CompletionModeCalculator.computeCompletionMode(candidate, expectedType, returnType, trivialConstraintTypeInferenceOracle),
-                diagnosticHolder,
-                resolutionCallbacks
-            )
-        else
-            candidate.asCallResolutionResult(ConstraintSystemCompletionMode.PARTIAL, diagnosticHolder)
+        val completionMode =
+            CompletionModeCalculator.computeCompletionMode(candidate, expectedType, returnType, trivialConstraintTypeInferenceOracle)
+
+        return when (completionMode) {
+            ConstraintSystemCompletionMode.FULL -> {
+                if (resolutionCallbacks.inferenceSession.shouldRunCompletion(candidate)) {
+                    candidate.runCompletion(completionMode, diagnosticHolder, resolutionCallbacks)
+                    candidate.asCallResolutionResult(completionMode, diagnosticHolder)
+                } else {
+                    candidate.asCallResolutionResult(
+                        ConstraintSystemCompletionMode.PARTIAL, diagnosticHolder, forwardToInferenceSession = true
+                    )
+                }
+            }
+            ConstraintSystemCompletionMode.PARTIAL -> {
+                candidate.runCompletion(completionMode, diagnosticHolder, resolutionCallbacks)
+                candidate.asCallResolutionResult(completionMode, diagnosticHolder)
+            }
+
+        }
     }
 
     private fun KotlinResolutionCandidate.checkSamWithVararg(diagnosticHolder: KotlinDiagnosticsHolder.SimpleHolder) {
@@ -104,18 +111,11 @@ class KotlinCallCompleter(
     }
 
     private fun KotlinResolutionCandidate.runCompletion(
-        completionType: ConstraintSystemCompletionMode,
-        diagnosticHolder: KotlinDiagnosticsHolder.SimpleHolder,
-        resolutionCallbacks: KotlinResolutionCallbacks
-    ): CallResolutionResult {
-        if (isErrorCandidate()) {
-            runCompletion(resolvedCall, ConstraintSystemCompletionMode.FULL, diagnosticHolder, getSystem(), resolutionCallbacks)
-            return asCallResolutionResult(completionType, diagnosticHolder)
-        }
-
-        runCompletion(resolvedCall, completionType, diagnosticHolder, getSystem(), resolutionCallbacks)
-
-        return asCallResolutionResult(completionType, diagnosticHolder)
+        completionMode: ConstraintSystemCompletionMode,
+        diagnosticHolder: KotlinDiagnosticsHolder,
+        resolutionCallbacks: KotlinResolutionCallbacks,
+    ) {
+        runCompletion(resolvedCall, completionMode, diagnosticHolder, getSystem(), resolutionCallbacks)
     }
 
     private fun runCompletion(
@@ -131,7 +131,8 @@ class KotlinCallCompleter(
             constraintSystem.asConstraintSystemCompleterContext(),
             completionMode,
             listOf(resolvedCallAtom),
-            returnType
+            returnType,
+            diagnosticsHolder
         ) {
             if (collectAllCandidatesMode) {
                 it.setEmptyAnalyzedResults()
@@ -157,7 +158,12 @@ class KotlinCallCompleter(
 
         // this is needed at least for non-local return checker, because when we analyze lambda we should already bind descriptor for outer call
         candidate?.resolvedCall?.let {
-            resolutionCallbacks.bindStubResolvedCallForCandidate(it)
+            val mayNeedDescriptor = it.argumentToCandidateParameter.keys.any { arg ->
+                arg is LambdaKotlinCallArgument
+            }
+            if (mayNeedDescriptor) {
+                resolutionCallbacks.bindStubResolvedCallForCandidate(it)
+            }
             resolutionCallbacks.disableContractsIfNecessary(it)
         }
 
@@ -210,7 +216,8 @@ class KotlinCallCompleter(
 
     fun KotlinResolutionCandidate.asCallResolutionResult(
         type: ConstraintSystemCompletionMode,
-        diagnosticsHolder: KotlinDiagnosticsHolder.SimpleHolder
+        diagnosticsHolder: KotlinDiagnosticsHolder.SimpleHolder,
+        forwardToInferenceSession: Boolean = false
     ): CallResolutionResult {
         val systemStorage = getSystem().asReadOnlyStorage()
         val allDiagnostics = diagnosticsHolder.getDiagnostics() + this.diagnosticsFromResolutionParts
@@ -222,11 +229,11 @@ class KotlinCallCompleter(
         return if (type == ConstraintSystemCompletionMode.FULL) {
             CompletedCallResolutionResult(resolvedCall, allDiagnostics, systemStorage)
         } else {
-            PartialCallResolutionResult(resolvedCall, allDiagnostics, systemStorage)
+            PartialCallResolutionResult(resolvedCall, allDiagnostics, systemStorage, forwardToInferenceSession)
         }
     }
+}
 
-    private fun KotlinResolutionCandidate.isErrorCandidate(): Boolean {
-        return ErrorUtils.isError(resolvedCall.candidateDescriptor) || hasContradiction
-    }
+internal fun KotlinResolutionCandidate.isErrorCandidate(): Boolean {
+    return ErrorUtils.isError(resolvedCall.candidateDescriptor) || hasContradiction
 }

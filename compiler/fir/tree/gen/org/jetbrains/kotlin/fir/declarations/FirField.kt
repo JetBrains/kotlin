@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -22,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirField : FirPureAbstractElement(), FirVariable<FirField>, FirCallableMemberDeclaration<FirField> {
+abstract class FirField : FirVariable<FirField>(), FirCallableMemberDeclaration<FirField> {
     abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
@@ -49,6 +48,8 @@ abstract class FirField : FirPureAbstractElement(), FirVariable<FirField>, FirCa
     abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirField
 
     abstract override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirField
+
+    abstract override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirField
 
     abstract override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirField
 

@@ -82,7 +82,6 @@ fun case_5(x: Any?) {
 
 /*
  * TESTCASE NUMBER: 6
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-35668
  */
 fun case_6(x: Any?) {
@@ -96,7 +95,6 @@ fun case_6(x: Any?) {
 
 /*
  * TESTCASE NUMBER: 7
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-35668
  */
 fun case_7(x: Any?, z: Any) {
@@ -110,7 +108,6 @@ fun case_7(x: Any?, z: Any) {
 
 /*
  * TESTCASE NUMBER: 8
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-35668
  */
 fun case_8(x: Any?, z: Any) {
@@ -132,15 +129,14 @@ fun case_9(x: Any?, z: Any) {
 
 /*
  * TESTCASE NUMBER: 6
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-35668
  */
 fun case_10(x: Any?, z: Any, b: Boolean?) {
-    var y = x ?: when (b) {
+    var y = x ?: <!DEBUG_INFO_IMPLICIT_EXHAUSTIVE!>when (b) {
         true -> null!!
         false -> return
         null -> throw Exception()
-    }
+    }<!>
     z === y || if (b == true) return else if (<!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>b === false<!>) null!! else throw Exception()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>

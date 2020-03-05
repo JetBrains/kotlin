@@ -10,11 +10,9 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.TowerScopeLevel
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.scope
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
@@ -36,7 +34,7 @@ abstract class FirAbstractImportingScope(
                 return getStaticsScope(expansionSymbol.classId)
             }
         } else {
-            return (symbol as FirClassSymbol<*>).fir.scope(ConeSubstitutor.Empty, session, scopeSession)
+            return (symbol as FirClassSymbol<*>).fir.unsubstitutedScope(session, scopeSession)
         }
 
         return null
@@ -46,16 +44,15 @@ abstract class FirAbstractImportingScope(
         import: FirResolvedImport,
         name: Name,
         token: TowerScopeLevel.Token<T>,
-        processor: (FirCallableSymbol<*>) -> ProcessorAction
-    ): ProcessorAction {
+        processor: (FirCallableSymbol<*>) -> Unit
+    ) {
         val callableId = CallableId(import.packageFqName, import.relativeClassName, name)
 
         val classId = import.resolvedClassId
         if (classId != null) {
-            val scope = getStaticsScope(classId) ?: return ProcessorAction.NEXT
+            val scope = getStaticsScope(classId) ?: return
 
-
-            val action = when (token) {
+            when (token) {
                 TowerScopeLevel.Token.Functions -> scope.processFunctionsByName(
                     callableId.callableName,
                     processor.cast()
@@ -64,45 +61,38 @@ abstract class FirAbstractImportingScope(
                     callableId.callableName,
                     processor.cast()
                 )
-                else -> ProcessorAction.NEXT
-            }
-            if (action.stop()) {
-                return ProcessorAction.STOP
             }
         } else if (name.isSpecial || name.identifier.isNotEmpty()) {
             val symbols = provider.getTopLevelCallableSymbols(callableId.packageName, callableId.callableName)
             if (symbols.isEmpty()) {
-                return ProcessorAction.NONE
+                return
             }
 
             for (symbol in symbols) {
-                if (processor(symbol).stop()) {
-                    return ProcessorAction.STOP
-                }
+                processor(symbol)
             }
         }
 
-        return ProcessorAction.NEXT
     }
 
     abstract fun <T : FirCallableSymbol<*>> processCallables(
         name: Name,
         token: TowerScopeLevel.Token<T>,
-        processor: (FirCallableSymbol<*>) -> ProcessorAction
-    ): ProcessorAction
+        processor: (FirCallableSymbol<*>) -> Unit
+    )
 
-    final override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
+    final override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         return processCallables(
             name,
             TowerScopeLevel.Token.Functions
-        ) { if (it is FirFunctionSymbol<*>) processor(it) else ProcessorAction.NEXT }
+        ) { if (it is FirFunctionSymbol<*>) processor(it) }
     }
 
-    final override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
+    final override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         return processCallables(
             name,
             TowerScopeLevel.Token.Properties
-        ) { if (it is FirVariableSymbol<*>) processor(it) else ProcessorAction.NEXT }
+        ) { if (it is FirVariableSymbol<*>) processor(it) }
     }
 
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
@@ -12,5 +13,5 @@ fun <T, R : Number> bar(f: (T) -> Inv<R>, p: String = "") {}
 fun <T, R : Base> bar(f: (T) -> Inv<R>, p: Int = 4) {}
 
 fun test() {
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>(::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>)
+    bar(::foo)
 }

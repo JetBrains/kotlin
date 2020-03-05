@@ -15,12 +15,9 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -28,23 +25,23 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirAnonymousFunctionImpl(
+internal class FirAnonymousFunctionImpl(
     override val source: FirSourceElement?,
     override val session: FirSession,
+    override val annotations: MutableList<FirAnnotationCall>,
     override var returnTypeRef: FirTypeRef,
     override var receiverTypeRef: FirTypeRef?,
+    override val typeParameters: MutableList<FirTypeParameter>,
+    override var controlFlowGraphReference: FirControlFlowGraphReference,
+    override val valueParameters: MutableList<FirValueParameter>,
+    override var body: FirBlock?,
+    override var typeRef: FirTypeRef,
     override val symbol: FirAnonymousFunctionSymbol,
-    override val isLambda: Boolean
-) : FirAnonymousFunction(), FirModifiableFunction<FirAnonymousFunction>, FirAbstractAnnotatedElement {
+    override var label: FirLabel?,
+    override var invocationKind: InvocationKind?,
+    override val isLambda: Boolean,
+) : FirAnonymousFunction() {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
-    override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
-    override var body: FirBlock? = null
-    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-    override var label: FirLabel? = null
-    override var invocationKind: InvocationKind? = null
 
     init {
         symbol.bind(this)
@@ -54,8 +51,8 @@ class FirAnonymousFunctionImpl(
         annotations.forEach { it.accept(visitor, data) }
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
-        controlFlowGraphReference.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
+        controlFlowGraphReference.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
         typeRef.accept(visitor, data)
@@ -66,8 +63,8 @@ class FirAnonymousFunctionImpl(
         annotations.transformInplace(transformer, data)
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
-        transformControlFlowGraphReference(transformer, data)
         typeParameters.transformInplace(transformer, data)
+        transformControlFlowGraphReference(transformer, data)
         transformValueParameters(transformer, data)
         body = body?.transformSingle(transformer, data)
         typeRef = typeRef.transformSingle(transformer, data)
@@ -103,11 +100,20 @@ class FirAnonymousFunctionImpl(
         returnTypeRef = newReturnTypeRef
     }
 
+    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
+        receiverTypeRef = newReceiverTypeRef
+    }
+
+    override fun replaceValueParameters(newValueParameters: List<FirValueParameter>) {
+        valueParameters.clear()
+        valueParameters.addAll(newValueParameters)
+    }
+
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }
 
-    override fun replaceInvocationKind(newInvocationKind: InvocationKind) {
+    override fun replaceInvocationKind(newInvocationKind: InvocationKind?) {
         invocationKind = newInvocationKind
     }
 }

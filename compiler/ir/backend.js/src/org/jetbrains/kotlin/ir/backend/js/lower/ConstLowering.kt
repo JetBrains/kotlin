@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -40,17 +41,17 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
     }
 
     private fun createLong(v: Long): IrExpression =
-        lowerConst(context.intrinsics.longClassSymbol, IrConstImpl<*>::int, v.toInt(), (v shr 32).toInt())
+        lowerConst(context.intrinsics.longClassSymbol, IrConstImpl.Companion::int, v.toInt(), (v shr 32).toInt())
 
     override fun <T> visitConst(expression: IrConst<T>): IrExpression {
         with(context.intrinsics) {
             if (expression.type.isUnsigned()) {
                 return when (expression.type.classifierOrNull) {
-                    uByteClassSymbol -> lowerConst(uByteClassSymbol, IrConstImpl<*>::byte, IrConstKind.Byte.valueOf(expression))
+                    uByteClassSymbol -> lowerConst(uByteClassSymbol, IrConstImpl.Companion::byte, IrConstKind.Byte.valueOf(expression))
 
-                    uShortClassSymbol -> lowerConst(uShortClassSymbol, IrConstImpl<*>::short, IrConstKind.Short.valueOf(expression))
+                    uShortClassSymbol -> lowerConst(uShortClassSymbol, IrConstImpl.Companion::short, IrConstKind.Short.valueOf(expression))
 
-                    uIntClassSymbol -> lowerConst(uIntClassSymbol, IrConstImpl<*>::int, IrConstKind.Int.valueOf(expression))
+                    uIntClassSymbol -> lowerConst(uIntClassSymbol, IrConstImpl.Companion::int, IrConstKind.Int.valueOf(expression))
 
                     uLongClassSymbol -> lowerConst(uLongClassSymbol, { _, _, _, v -> createLong(v) }, IrConstKind.Long.valueOf(expression))
 
@@ -59,7 +60,7 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
             }
             return when {
                 expression.kind is IrConstKind.Char ->
-                    lowerConst(charClassSymbol, IrConstImpl<*>::int, IrConstKind.Char.valueOf(expression).toInt())
+                    lowerConst(charClassSymbol, IrConstImpl.Companion::int, IrConstKind.Char.valueOf(expression).toInt())
 
                 expression.kind is IrConstKind.Long ->
                     createLong(IrConstKind.Long.valueOf(expression))
@@ -70,8 +71,8 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
     }
 }
 
-class ConstLowering(private val context: JsIrBackendContext) : FileLoweringPass {
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(ConstTransformer(context))
+class ConstLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        irBody.transformChildrenVoid(ConstTransformer(context))
     }
 }

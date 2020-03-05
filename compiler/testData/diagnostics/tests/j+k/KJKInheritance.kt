@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: K1.kt
 open class KFirst() {
     fun foo() {

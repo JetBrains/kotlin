@@ -75,7 +75,7 @@ fun box(): String {
         // and returning defaultValue if null was received seems incorrect here
         mm.getOrDefault("abc", null)
         return "fail 7"
-    } catch (e: java.lang.IllegalArgumentException) {
+    } catch (e: java.lang.NullPointerException) {
         // Parameter specified as non-null is null
     }
 

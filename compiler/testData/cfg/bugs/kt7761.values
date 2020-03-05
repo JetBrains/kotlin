@@ -19,18 +19,15 @@ fun testUnitIncDec() {
     x = <warning>x<error>++</error></warning>
 }
 ---------------------
-                                                                     <v10>: *            NEW: magic[VALUE_CONSUMER](/warning>|<v9>) -> <v10>
-                                                                     <v4>: *             NEW: magic[VALUE_CONSUMER](>++|!<v3>) -> <v4>
-                                                                     <v7>: *             NEW: magic[VALUE_CONSUMER](/error>|<v6>) -> <v7>
-UnitIncDec()                                                         <v0>: UnitIncDec    NEW: call(UnitIncDec(), <init>) -> <v0>
-<warning>                                                            <v1>: *             NEW: magic[UNRESOLVED_CALL](<warning>) -> <v1>
-<warning>x<                                                          <v2>: *             NEW: call(<warning>x<, <ERROR FUNCTION>|<v1>) -> <v2>
+UnitIncDec()                                                         <v0>: UnitIncDec   NEW: call(UnitIncDec(), <init>) -> <v0>
+<warning>                                                            <v1>: *            NEW: magic[UNRESOLVED_CALL](<warning>) -> <v1>
+<warning>x<                                                          <v2>: *            NEW: magic[UNRESOLVED_CALL](<warning>x<|<v1>) -> <v2>
 >++                                                                  !<v3>: *
-<warning>x<error>++                                                  <v5>: *             NEW: call(<warning>x<error>++, <ERROR FUNCTION>|<v2>) -> <v5>
-/error>                                                              <v6>: *             NEW: magic[UNRESOLVED_CALL](/error>) -> <v6>
-<warning>x<error>++</error>                                          <v8>: *             NEW: call(<warning>x<error>++</error>, <ERROR FUNCTION>|<v5>) -> <v8>
-/warning>                                                            <v9>: *             NEW: magic[UNRESOLVED_CALL](/warning>) -> <v9>
-<warning>x<error>++</error></warning>                                <v11>: UnitIncDec   NEW: call(<warning>x<error>++</error></warning>, <ERROR FUNCTION>|<v8>) -> <v11>
-x = <warning>x<error>++</error></warning>                            !<v12>: *
-{ var x = UnitIncDec() x = <warning>x<error>++</error></warning> }   !<v12>: *           COPY
+<warning>x<error>++                                                  <v4>: *            NEW: magic[UNRESOLVED_CALL](<warning>x<error>++|<v2>, !<v3>) -> <v4>
+/error>                                                              <v5>: *            NEW: magic[UNRESOLVED_CALL](/error>) -> <v5>
+<warning>x<error>++</error>                                          <v6>: *            NEW: magic[UNRESOLVED_CALL](<warning>x<error>++</error>|<v4>, <v5>) -> <v6>
+/warning>                                                            <v7>: *            NEW: magic[UNRESOLVED_CALL](/warning>) -> <v7>
+<warning>x<error>++</error></warning>                                <v8>: UnitIncDec   NEW: magic[UNRESOLVED_CALL](<warning>x<error>++</error></warning>|<v6>, <v7>) -> <v8>
+x = <warning>x<error>++</error></warning>                            !<v9>: *
+{ var x = UnitIncDec() x = <warning>x<error>++</error></warning> }   !<v9>: *           COPY
 =====================

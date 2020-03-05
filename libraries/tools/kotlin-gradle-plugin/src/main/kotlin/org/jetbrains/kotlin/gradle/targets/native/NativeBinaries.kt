@@ -11,6 +11,7 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.AbstractExecTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -27,10 +28,16 @@ import java.io.File
  */
 sealed class NativeBinary(
     private val name: String,
-    open var baseName: String,
+    baseNameProvided: String,
     val buildType: NativeBuildType,
     var compilation: KotlinNativeCompilation
 ) : Named {
+    open var baseName: String
+        get() = baseNameProvider.get()
+        set(value) {
+            baseNameProvider = project.provider { value }
+        }
+    internal var baseNameProvider: Provider<String> = project.provider { baseNameProvided }
 
     internal val konanTarget: KonanTarget
         get() = compilation.konanTarget
@@ -76,7 +83,7 @@ sealed class NativeBinary(
 
     // Output access.
     // TODO: Provide output configurations and integrate them with Gradle Native.
-    val outputDirectory: File = with(project) {
+    var outputDirectory: File = with(project) {
         val targetSubDirectory = target.disambiguationClassifier?.let { "$it/" }.orEmpty()
         buildDir.resolve("bin/$targetSubDirectory${this@NativeBinary.name}")
     }
@@ -148,37 +155,13 @@ class TestExecutable(
         get() = NativeOutputKind.TEST
 }
 
-class StaticLibrary(
-    name: String,
-    baseName: String,
-    buildType: NativeBuildType,
-    compilation: KotlinNativeCompilation
-) : NativeBinary(name, baseName, buildType, compilation) {
-    override val outputKind: NativeOutputKind
-        get() = NativeOutputKind.STATIC
-}
-
-class SharedLibrary(
-    name: String,
-    baseName: String,
-    buildType: NativeBuildType,
-    compilation: KotlinNativeCompilation
-) : NativeBinary(name, baseName, buildType, compilation) {
-    override val outputKind: NativeOutputKind
-        get() = NativeOutputKind.DYNAMIC
-}
-
-class Framework(
+abstract class AbstractNativeLibrary(
     name: String,
     baseName: String,
     buildType: NativeBuildType,
     compilation: KotlinNativeCompilation
 ) : NativeBinary(name, baseName, buildType, compilation) {
 
-    override val outputKind: NativeOutputKind
-        get() = NativeOutputKind.FRAMEWORK
-
-    // Export symbols from klibraries.
     val exportConfigurationName: String
         get() = target.disambiguateName(lowerCamelCaseName(name, "export"))
 
@@ -213,6 +196,37 @@ class Framework(
             configure.execute(it)
         }
     }
+}
+
+class StaticLibrary(
+    name: String,
+    baseName: String,
+    buildType: NativeBuildType,
+    compilation: KotlinNativeCompilation
+) : AbstractNativeLibrary(name, baseName, buildType, compilation) {
+    override val outputKind: NativeOutputKind
+        get() = NativeOutputKind.STATIC
+}
+
+class SharedLibrary(
+    name: String,
+    baseName: String,
+    buildType: NativeBuildType,
+    compilation: KotlinNativeCompilation
+) : AbstractNativeLibrary(name, baseName, buildType, compilation) {
+    override val outputKind: NativeOutputKind
+        get() = NativeOutputKind.DYNAMIC
+}
+
+class Framework(
+    name: String,
+    baseName: String,
+    buildType: NativeBuildType,
+    compilation: KotlinNativeCompilation
+) : AbstractNativeLibrary(name, baseName, buildType, compilation) {
+
+    override val outputKind: NativeOutputKind
+        get() = NativeOutputKind.FRAMEWORK
 
     // Embedding bitcode.
     /**
@@ -247,8 +261,10 @@ class Framework(
     enum class BitcodeEmbeddingMode {
         /** Don't embed LLVM IR bitcode. */
         DISABLE,
+
         /** Embed LLVM IR bitcode as data. */
         BITCODE,
+
         /** Embed placeholder LLVM IR data as a marker. */
         MARKER,
     }

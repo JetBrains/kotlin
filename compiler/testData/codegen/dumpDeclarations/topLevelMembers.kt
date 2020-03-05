@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // properties
 
 public val publicVal: Int = 1

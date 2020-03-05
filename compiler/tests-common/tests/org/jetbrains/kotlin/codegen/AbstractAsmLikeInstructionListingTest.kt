@@ -13,14 +13,18 @@ import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.util.Printer
+import org.jetbrains.org.objectweb.asm.util.Textifier
+import org.jetbrains.org.objectweb.asm.util.TraceFieldVisitor
+import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
 import java.io.File
 
 private val LINE_SEPARATOR = System.getProperty("line.separator")
 
 abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
     private companion object {
-        val CURIOUS_ABOUT_DIRECTIVE = "// CURIOUS_ABOUT "
-        val LOCAL_VARIABLE_TABLE_DIRECTIVE = "// LOCAL_VARIABLE_TABLE"
+        const val CURIOUS_ABOUT_DIRECTIVE = "// CURIOUS_ABOUT "
+        const val LOCAL_VARIABLE_TABLE_DIRECTIVE = "// LOCAL_VARIABLE_TABLE"
+        const val TYPE_ANNOTATIONS_DIRECTIVE = "// TYPE_ANNOTATIONS"
     }
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
@@ -40,15 +44,21 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
                 .flatMap { it.split(',').map { it.trim() } }
 
         val showLocalVariables = testFileLines.any { it.trim() == LOCAL_VARIABLE_TABLE_DIRECTIVE }
+        val showTypeAnnotations = testFileLines.any { it.trim() == TYPE_ANNOTATIONS_DIRECTIVE }
 
         KotlinTestUtils.assertEqualsToFile(txtFile, classes.joinToString(LINE_SEPARATOR.repeat(2)) {
-            renderClassNode(it, printBytecodeForTheseMethods, showLocalVariables)
+            renderClassNode(it, printBytecodeForTheseMethods, showLocalVariables, showTypeAnnotations)
         })
     }
 
     protected open fun getExpectedTextFileName(wholeFile: File): String = wholeFile.nameWithoutExtension + ".txt"
 
-    private fun renderClassNode(clazz: ClassNode, showBytecodeForTheseMethods: List<String>, showLocalVariables: Boolean): String {
+    private fun renderClassNode(
+        clazz: ClassNode,
+        showBytecodeForTheseMethods: List<String>,
+        showLocalVariables: Boolean,
+        showTypeAnnotations: Boolean
+    ): String {
         val fields = (clazz.fields ?: emptyList()).sortedBy { it.name }
         val methods = (clazz.methods ?: emptyList()).sortedBy { it.name }
 
@@ -66,7 +76,7 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
 
             appendln(" {")
 
-            fields.joinTo(this, LINE_SEPARATOR.repeat(2)) { renderField(it).withMargin() }
+            fields.joinTo(this, LINE_SEPARATOR.repeat(2)) { renderField(it, showTypeAnnotations).withMargin() }
 
             if (fields.isNotEmpty()) {
                 appendln().appendln()
@@ -74,21 +84,40 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
 
             methods.joinTo(this, LINE_SEPARATOR.repeat(2)) {
                 val showBytecode = showBytecodeForTheseMethods.contains(it.name)
-                renderMethod(it, showBytecode, showLocalVariables).withMargin()
+                renderMethod(it, showBytecode, showLocalVariables, showTypeAnnotations).withMargin()
             }
 
             appendln().append("}")
         }
     }
 
-    private fun renderField(field: FieldNode) = buildString {
+    private fun renderField(field: FieldNode, showTypeAnnotations: Boolean) = buildString {
         renderVisibilityModifiers(field.access)
         renderModalityModifiers(field.access)
         append(Type.getType(field.desc).className).append(' ')
         append(field.name)
+
+        if (showTypeAnnotations) {
+            val textifier = Textifier()
+            val visitor = TraceFieldVisitor(textifier)
+            field.visibleTypeAnnotations?.forEach {
+                it.accept(visitor.visitTypeAnnotation(it.typeRef, it.typePath, it.desc, true))
+            }
+            field.invisibleTypeAnnotations?.forEach {
+                it.accept(visitor.visitTypeAnnotation(it.typeRef, it.typePath, it.desc, false))
+            }
+            textifier.getText().takeIf { it.isNotEmpty() }?.let {
+                append("\n${textifier.getText().joinToString("").trimEnd()}")
+            }
+        }
     }
 
-    private fun renderMethod(method: MethodNode, showBytecode: Boolean, showLocalVariables: Boolean) = buildString {
+    private fun renderMethod(
+        method: MethodNode,
+        showBytecode: Boolean,
+        showLocalVariables: Boolean,
+        showTypeAnnotations: Boolean
+    ) = buildString {
         renderVisibilityModifiers(method.access)
         renderModalityModifiers(method.access)
         val (returnType, parameterTypes) = with(Type.getMethodType(method.desc)) { returnType to argumentTypes }
@@ -99,6 +128,20 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
             val name = getParameterName(index, method)
             "${type.className} $name"
         }.joinTo(this, prefix = "(", postfix = ")")
+
+        if (showTypeAnnotations) {
+            val textifier = Textifier()
+            val visitor = TraceMethodVisitor(textifier)
+            method.visibleTypeAnnotations?.forEach {
+                it.accept(visitor.visitTypeAnnotation(it.typeRef, it.typePath, it.desc, true))
+            }
+            method.invisibleTypeAnnotations?.forEach {
+                it.accept(visitor.visitTypeAnnotation(it.typeRef, it.typePath, it.desc, false))
+            }
+            textifier.getText().takeIf { it.isNotEmpty() }?.let {
+                append("\n${textifier.getText().joinToString("").trimEnd()}")
+            }
+        }
 
         val actualShowBytecode = showBytecode && (method.access and ACC_ABSTRACT) == 0
         val actualShowLocalVariables = showLocalVariables && method.localVariables?.takeIf { it.isNotEmpty() } != null
@@ -121,6 +164,8 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
             }
 
             appendln().append("}")
+
+            method.visibleTypeAnnotations
         }
     }
 

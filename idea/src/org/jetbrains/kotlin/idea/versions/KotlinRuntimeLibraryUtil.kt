@@ -41,10 +41,9 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
 import org.jetbrains.kotlin.idea.framework.isExternalLibrary
-import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.isSnapshot
 import org.jetbrains.kotlin.idea.util.projectStructure.version
-import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
+import org.jetbrains.kotlin.idea.util.runReadActionInSmartMode
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinJavaScriptMetaFileIndex
 import org.jetbrains.kotlin.idea.vfilefinder.hasSomethingInPackage
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -192,10 +191,8 @@ fun showRuntimeJarNotFoundDialog(project: Project, jarName: String) {
 private val KOTLIN_JS_FQ_NAME = FqName("kotlin.js")
 
 fun hasKotlinJsKjsmFile(project: Project, scope: GlobalSearchScope): Boolean {
-    return runReadAction {
-        project.runWithAlternativeResolveEnabled {
-            KotlinJavaScriptMetaFileIndex.hasSomethingInPackage(KOTLIN_JS_FQ_NAME, scope)
-        }
+    return project.runReadActionInSmartMode {
+        KotlinJavaScriptMetaFileIndex.hasSomethingInPackage(KOTLIN_JS_FQ_NAME, scope)
     }
 }
 

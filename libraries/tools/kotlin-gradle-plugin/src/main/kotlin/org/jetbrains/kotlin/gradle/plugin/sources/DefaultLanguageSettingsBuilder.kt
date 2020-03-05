@@ -7,14 +7,19 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
+import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
+import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 
 internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
     private var languageVersionImpl: LanguageVersion? = null
@@ -85,29 +90,48 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
                 else -> error("Unexpected task: $pluginClasspathTask")
             }
         }
+
+    var freeCompilerArgsProvider: Provider<List<String>>? = null
+
+    val freeCompilerArgs: List<String>
+        get() = freeCompilerArgsProvider?.get().orEmpty()
 }
 
-internal fun applyLanguageSettingsToKotlinTask(
+internal fun applyLanguageSettingsToKotlinOptions(
     languageSettingsBuilder: LanguageSettingsBuilder,
-    kotlinTask: org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>
-) = with(kotlinTask.kotlinOptions) {
+    kotlinOptions: KotlinCommonOptions
+) = with(kotlinOptions) {
     languageVersion = languageVersion ?: languageSettingsBuilder.languageVersion
     apiVersion = apiVersion ?: languageSettingsBuilder.apiVersion
-
-    if (languageSettingsBuilder.progressiveMode) {
-        freeCompilerArgs += "-progressive"
+    
+    val freeArgs = mutableListOf<String>().apply {
+        if (languageSettingsBuilder.progressiveMode) {
+            add("-progressive")
+        }
+    
+        languageSettingsBuilder.enabledLanguageFeatures.forEach { featureName ->
+            add("-XXLanguage:+$featureName")
+        }
+    
+        languageSettingsBuilder.experimentalAnnotationsInUse.forEach { annotationName ->
+            add("-Xopt-in=$annotationName")
+        }
+    
+        if (languageSettingsBuilder is DefaultLanguageSettingsBuilder) {
+            addAll(languageSettingsBuilder.freeCompilerArgs)
+        }
     }
 
-    languageSettingsBuilder.enabledLanguageFeatures.forEach { featureName ->
-        freeCompilerArgs += "-XXLanguage:+$featureName"
-    }
+    freeCompilerArgs = freeCompilerArgs + freeArgs
 
-    languageSettingsBuilder.experimentalAnnotationsInUse.forEach { annotationName ->
-        freeCompilerArgs += "-Xuse-experimental=$annotationName"
+    KotlinBuildStatsService.getInstance()?.apply {
+        report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, languageSettingsBuilder.progressiveMode)
+        apiVersion?.also { v -> report(StringMetrics.KOTLIN_API_VERSION, v) }
+        languageVersion?.also { v -> report(StringMetrics.KOTLIN_LANGUAGE_VERSION, v) }
     }
 }
 
-private val apiVersionValues = ApiVersion.run { listOf(KOTLIN_1_0, KOTLIN_1_1, KOTLIN_1_2, KOTLIN_1_3) }
+private val apiVersionValues = ApiVersion.run { listOf(KOTLIN_1_0, KOTLIN_1_1, KOTLIN_1_2, KOTLIN_1_3, KOTLIN_1_4) }
 
 internal fun parseLanguageVersionSetting(versionString: String) = LanguageVersion.fromVersionString(versionString)
 internal fun parseApiVersionSettings(versionString: String) = apiVersionValues.find { it.versionString == versionString }

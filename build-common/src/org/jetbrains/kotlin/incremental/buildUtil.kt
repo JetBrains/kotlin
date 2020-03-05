@@ -28,9 +28,8 @@ import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.synthetic.SAM_LOOKUP_NAME
+import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
-import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
 import java.util.*
 import kotlin.collections.HashSet

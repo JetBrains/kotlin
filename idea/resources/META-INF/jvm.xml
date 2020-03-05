@@ -57,7 +57,7 @@
         <group id="Kotlin.XDebugger.Actions">
 <!--            TODO(design)-->
             <action id="Kotlin.XDebugger.CoroutinesDump"
-                class="org.jetbrains.kotlin.idea.debugger.coroutines.CoroutineDumpAction"
+                class="org.jetbrains.kotlin.idea.debugger.coroutine.command.CoroutineDumpAction"
             text="Get Coroutines Dump"
             icon="/org/jetbrains/kotlin/idea/icons/kotlin.png"/>
         </group>
@@ -90,7 +90,7 @@
 
         <applicationService serviceImplementation="org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesState"/>
 
-        <debugger.asyncStackTraceProvider implementation="org.jetbrains.kotlin.idea.debugger.KotlinCoroutinesAsyncStackTraceProvider"/>
+        <debugger.asyncStackTraceProvider implementation="org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineAsyncStackTraceProvider"/>
         <debugger.jvmSmartStepIntoHandler implementation="org.jetbrains.kotlin.idea.debugger.stepping.smartStepInto.KotlinSmartStepIntoHandler"/>
         <debugger.positionManagerFactory implementation="org.jetbrains.kotlin.idea.debugger.KotlinPositionManagerFactory"/>
         <debugger.codeFragmentFactory implementation="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory"/>
@@ -111,7 +111,7 @@
         <debugger.javaBreakpointHandlerFactory implementation="org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFunctionBreakpointHandlerFactory"/>
         <debugger.jvmSteppingCommandProvider implementation="org.jetbrains.kotlin.idea.debugger.stepping.KotlinSteppingCommandProvider"/>
         <debugger.simplePropertyGetterProvider implementation="org.jetbrains.kotlin.idea.debugger.stepping.KotlinSimpleGetterProvider"/>
-        <runConfigurationExtension implementation="org.jetbrains.kotlin.idea.debugger.coroutines.CoroutinesDebugConfigurationExtension"/>
+        <runConfigurationExtension implementation="org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineDebugConfigurationExtension"/>
 
         <framework.type implementation="org.jetbrains.kotlin.idea.framework.JavaFrameworkType"/>
         <projectTemplatesFactory implementation="org.jetbrains.kotlin.idea.framework.KotlinTemplatesFactory" />
@@ -119,7 +119,6 @@
         <library.presentationProvider implementation="org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider"/>
 
         <configurationType implementation="org.jetbrains.kotlin.idea.run.KotlinRunConfigurationType"/>
-        <configurationType implementation="org.jetbrains.kotlin.idea.run.KotlinJUnitConfigurationType"/>
         <configurationType implementation="org.jetbrains.kotlin.idea.run.script.standalone.KotlinStandaloneScriptRunConfigurationType"/>
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinRunConfigurationProducer"/>
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.script.standalone.KotlinStandaloneScriptRunConfigurationProducer"/>
@@ -176,14 +175,14 @@
                    defaultValue="true"
                    restartRequired="false"/>
 
-      <registryKey key="kotlin.uast.multiresolve.enabled"
-                   description="Whether to use multi resolve for UAST in Kotlin provided by `Call.resolveCandidates`, otherwise PsiPolyVariantReference-based multiResolve will be performed"
+      <registryKey key="kotlin.ultra.light.classes.empty.text.range"
+                   description="Return 'null' text range as in old light class implementation"
                    defaultValue="true"
                    restartRequired="false"/>
 
       <registryKey key="kotlin.uast.force.uinjectionhost"
                    description="Whether to convert `KtStringTemplateExpression` to `KotlinStringTemplateUPolyadicExpression` in all cases"
-                   defaultValue="false"
+                   defaultValue="true"
                    restartRequired="false"/>
 
       <registryKey key="kotlin.jps.instrument.bytecode"

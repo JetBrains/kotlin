@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.config;
 
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
+import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker;
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider;
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
@@ -64,6 +65,9 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<IncrementalResultsConsumer> INCREMENTAL_RESULTS_CONSUMER =
             CompilerConfigurationKey.create("incremental results consumer");
+
+    public static final CompilerConfigurationKey<IncrementalNextRoundChecker> INCREMENTAL_NEXT_ROUND_CHECKER =
+            CompilerConfigurationKey.create("incremental compilation next round checker");
 
     public static final CompilerConfigurationKey<Boolean> FRIEND_PATHS_DISABLED =
             CompilerConfigurationKey.create("disable support for friend paths");

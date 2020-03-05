@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.script
 
 import com.intellij.ProjectTopics
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootEvent
 import com.intellij.openapi.roots.ModuleRootListener
@@ -96,28 +97,31 @@ private fun scriptDefinitionsFromDependencies(project: Project): TemplatesWithCp
         return templatesFound
     }
 
-    // processing source roots from the same project first since the resources are copied to the classes roots only on compilation
-    project.allModules().forEach { module ->
-        OrderEnumerator.orderEntries(module).withoutDepModules().withoutLibraries().withoutSdk().sourceRoots.forEach { root ->
-            if (addTemplatesFromRoot(root)) {
-                classpath.addAll(OrderEnumerator.orderEntries(module).withoutSdk().classesRoots.mapNotNull {
-                    it.canonicalPath?.removeSuffix("!/").let(::File)
-                })
+    runReadAction {
+        if (project.isDisposed) return@runReadAction
+        // processing source roots from the same project first since the resources are copied to the classes roots only on compilation
+        project.allModules().forEach { module ->
+            OrderEnumerator.orderEntries(module).withoutDepModules().withoutLibraries().withoutSdk().sourceRoots.forEach { root ->
+                if (addTemplatesFromRoot(root)) {
+                    classpath.addAll(OrderEnumerator.orderEntries(module).withoutSdk().classesRoots.mapNotNull {
+                        it.canonicalPath?.removeSuffix("!/").let(::File)
+                    })
+                }
             }
         }
-    }
 
-    project.allModules().forEach { module ->
-        // assuming that all libraries are placed into classes roots
-        // TODO: extract exact library dependencies instead of putting all module dependencies into classpath
-        OrderEnumerator.orderEntries(module).withoutDepModules().withoutSdk().classesRoots.forEach { root ->
-            if (addTemplatesFromRoot(root)) {
-                // minimizing the classpath needed to use the template by taking cp only from modules with new templates found
-                // on the other hand the approach may fail if some module contains a template without proper classpath, while
-                // the other has properly configured classpath, so assuming that the dependencies are set correctly everywhere
-                classpath.addAll(OrderEnumerator.orderEntries(module).withoutSdk().classesRoots.mapNotNull {
-                    it.canonicalPath?.removeSuffix("!/").let(::File)
-                })
+        project.allModules().forEach { module ->
+            // assuming that all libraries are placed into classes roots
+            // TODO: extract exact library dependencies instead of putting all module dependencies into classpath
+            OrderEnumerator.orderEntries(module).withoutDepModules().withoutSdk().classesRoots.forEach { root ->
+                if (addTemplatesFromRoot(root)) {
+                    // minimizing the classpath needed to use the template by taking cp only from modules with new templates found
+                    // on the other hand the approach may fail if some module contains a template without proper classpath, while
+                    // the other has properly configured classpath, so assuming that the dependencies are set correctly everywhere
+                    classpath.addAll(OrderEnumerator.orderEntries(module).withoutSdk().classesRoots.mapNotNull {
+                        it.canonicalPath?.removeSuffix("!/").let(::File)
+                    })
+                }
             }
         }
     }

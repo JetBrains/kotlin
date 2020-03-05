@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
-// COMMON_COROUTINES_TEST
 // !WITH_NEW_INFERENCE
+// COMMON_COROUTINES_TEST
 import COROUTINES_PACKAGE.*
 
 class Controller {
@@ -38,7 +38,7 @@ fun test() {
         severalParams("", 89) checkType { _<Double>() }
 
         // TODO: should we allow somehow to call with passing continuation explicitly?
-        severalParams("", 89, <!TOO_MANY_ARGUMENTS!>6.9<!>) checkType { <!TYPE_MISMATCH!>_<!><Unit>() }
-        severalParams("", 89, <!TOO_MANY_ARGUMENTS!>this <!CAST_NEVER_SUCCEEDS!>as<!> Continuation<Double><!>) checkType { <!TYPE_MISMATCH!>_<!><Unit>() }
+        severalParams("", 89, <!TOO_MANY_ARGUMENTS!>6.9<!>) checkType { <!NI;TYPE_MISMATCH, OI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Unit>() }
+        severalParams("", 89, <!TOO_MANY_ARGUMENTS!>this <!CAST_NEVER_SUCCEEDS!>as<!> Continuation<Double><!>) checkType { <!NI;TYPE_MISMATCH, OI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Unit>() }
     }
 }

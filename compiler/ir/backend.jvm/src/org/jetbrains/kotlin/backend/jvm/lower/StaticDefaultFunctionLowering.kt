@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.copyBodyToStatic
 import org.jetbrains.kotlin.backend.common.ir.createStaticFunctionWithReceivers
+import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.phaser.SameTypeNamedPhaseWrapper
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.phaser.then
@@ -60,16 +60,14 @@ private class StaticDefaultFunctionLowering(val context: JvmBackendContext) : Ir
         irClass.accept(this, null)
     }
 
-    override fun visitFunction(declaration: IrFunction): IrStatement {
-        return if (declaration.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER && declaration.dispatchReceiverParameter != null) {
+    override fun visitFunction(declaration: IrFunction): IrStatement = super.visitFunction(
+        if (declaration.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER && declaration.dispatchReceiverParameter != null)
             context.getStaticFunctionWithReceivers(declaration).also {
-                copyBodyToStatic(declaration, it)
-                super.visitFunction(it)
+                it.body = declaration.moveBodyTo(it)
             }
-        } else {
-            super.visitFunction(declaration)
-        }
-    }
+        else
+            declaration
+    )
 
     override fun visitReturn(expression: IrReturn): IrExpression {
         return super.visitReturn(
@@ -94,9 +92,7 @@ private class StaticDefaultCallLowering(
 
     override fun visitCall(expression: IrCall): IrExpression {
         val callee = expression.symbol.owner
-        if (callee.origin !== IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
-                expression.dispatchReceiver == null
-        ) {
+        if (callee.origin !== IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER || expression.dispatchReceiver == null) {
             return super.visitCall(expression)
         }
 

@@ -4,15 +4,6 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 
 object TargetConfigurationGroups {
-    val JVM = FinalTargetConfiguratorGroup(
-        ModuleType.jvm.projectTypeName,
-        ModuleType.jvm,
-        listOf(
-            JvmTargetConfigurator,
-            AndroidTargetConfigurator
-        )
-    )
-
     val JS = FinalTargetConfiguratorGroup(
         ModuleType.js.projectTypeName,
         ModuleType.js,
@@ -87,9 +78,10 @@ object TargetConfigurationGroups {
     val FIRST = FirstStepTargetConfiguratorGroup(
         listOf(
             CommonTargetConfigurator,
-            JVM,
+            JvmTargetConfigurator,
             NATIVE.ALL,
-            JS
+            JS,
+            AndroidTargetConfigurator
         )
     )
 }

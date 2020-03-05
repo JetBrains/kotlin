@@ -7,6 +7,7 @@ package kotlin.jvm.internal;
 
 import kotlin.reflect.KDeclarationContainer;
 
+@SuppressWarnings({"unused", "NullableProblems"})
 public class MutablePropertyReference0Impl extends MutablePropertyReference0 {
     private final KDeclarationContainer owner;
     private final String name;

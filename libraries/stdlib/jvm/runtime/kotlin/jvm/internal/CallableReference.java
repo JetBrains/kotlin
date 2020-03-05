@@ -21,7 +21,7 @@ import java.util.Map;
  * All methods from KCallable should be implemented here and should delegate to the actual implementation, loaded dynamically
  * and stored in the {@link CallableReference#reflected} field.
  */
-@SuppressWarnings({"unchecked", "NullableProblems"})
+@SuppressWarnings({"unchecked", "NullableProblems", "rawtypes"})
 public abstract class CallableReference implements KCallable, Serializable {
     // This field is not volatile intentionally:
     // 1) It's fine if the value is computed multiple times in different threads;

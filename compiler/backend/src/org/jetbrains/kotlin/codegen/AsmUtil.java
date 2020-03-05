@@ -1081,27 +1081,23 @@ public class AsmUtil {
     }
 
     public static void pushDefaultValueOnStack(@NotNull Type type, @NotNull InstructionAdapter v) {
-        if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
-            v.aconst(null);
-        }
-        else {
-            pushDefaultPrimitiveValueOnStack(type, v);
-        }
+        v.visitInsn(defaultValueOpcode(type));
     }
 
-    public static void pushDefaultPrimitiveValueOnStack(@NotNull Type type, @NotNull InstructionAdapter v) {
+    public static int defaultValueOpcode(@NotNull Type type) {
+        if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
+            return ACONST_NULL;
+        }
         if (type.getSort() == Type.FLOAT) {
-            v.fconst(0);
+            return FCONST_0;
         }
-        else if (type.getSort() == Type.DOUBLE) {
-            v.dconst(0);
+        if (type.getSort() == Type.DOUBLE) {
+            return DCONST_0;
         }
-        else if (type.getSort() == Type.LONG) {
-            v.lconst(0);
+        if (type.getSort() == Type.LONG) {
+            return LCONST_0;
         }
-        else {
-            v.iconst(0);
-        }
+        return ICONST_0;
     }
 
     public static boolean isInstancePropertyWithStaticBackingField(@NotNull PropertyDescriptor propertyDescriptor) {

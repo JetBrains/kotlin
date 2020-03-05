@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard
 
-import YamlParsingError
+import org.jetbrains.kotlin.tools.projectWizard.wizard.core.YamlParsingError
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.yaml.snakeyaml.Yaml

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 data class A(val x: Unit)
 
 fun box(): String {

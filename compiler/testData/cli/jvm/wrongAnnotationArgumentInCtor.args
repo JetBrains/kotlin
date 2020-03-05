@@ -1,0 +1,3 @@
+$TESTDATA_DIR$/wrongAnnotationArgumentInCtor.kt
+-d
+$TEMP_DIR$

@@ -8,13 +8,7 @@ repositories {
     mavenCentral()
 }
 kotlin {
-    linuxX64 {
-        binaries {
-            executable {
-                entryPoint = "MAIN CLASS"
-            }
-        }
-    }
+    linuxX64()
     sourceSets {
         val linuxX64Main by getting
         val linuxX64Test by getting

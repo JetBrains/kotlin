@@ -20,15 +20,19 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.UnknownTaskException
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mapKotlinTaskProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinTask
+import org.jetbrains.kotlin.gradle.plugin.runOnceAfterEvaluated
+import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinOptions
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLinkWithWorkers
 
 /**
  * Registers the task with [name] and [type] and initialization script [body]
  */
 @JvmName("registerTaskOld")
-@Deprecated("please use Project.createOrRegisterTask", ReplaceWith("project.createOrRegisterTask(name, body)"))
+@Deprecated("please use Project.registerTask", ReplaceWith("project.registerTask(name, type, emptyList(), body)"))
 internal fun <T : Task> registerTask(project: Project, name: String, type: Class<T>, body: (T) -> (Unit)): TaskProvider<T> =
     project.registerTask(name, type, emptyList(), body)
 
@@ -98,6 +102,21 @@ internal open class KotlinTasksProvider(val targetName: String) {
         return result
     }
 
+    fun registerKotlinJsIrTask(
+        project: Project,
+        name: String,
+        compilation: AbstractKotlinCompilation<*>,
+        configureAction: (KotlinJsIrLink) -> Unit
+    ): TaskProvider<out KotlinJsIrLink> {
+        val properties = PropertiesProvider(project)
+        val taskClass = taskOrWorkersTask<KotlinJsIrLink, KotlinJsIrLinkWithWorkers>(properties)
+        val result = project.registerTask(name, taskClass) {
+            configureAction(it)
+        }
+        configure(result, project, properties, compilation)
+        return result
+    }
+
     fun registerKotlinCommonTask(
         project: Project,
         name: String,
@@ -122,9 +141,9 @@ internal open class KotlinTasksProvider(val targetName: String) {
         project.runOnceAfterEvaluated("apply properties and language settings to ${kotlinTaskHolder.name}", kotlinTaskHolder) {
             propertiesProvider.mapKotlinTaskProperties(kotlinTaskHolder.get())
 
-            applyLanguageSettingsToKotlinTask(
+            applyLanguageSettingsToKotlinOptions(
                 compilation.defaultSourceSet.languageSettings,
-                kotlinTaskHolder.get() as org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>
+                (kotlinTaskHolder.get() as org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>).kotlinOptions
             )
         }
     }

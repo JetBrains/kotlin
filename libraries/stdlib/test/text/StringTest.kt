@@ -1029,6 +1029,29 @@ class StringTest {
         assertFailsWith<NoSuchElementException> { data("").random() }
     }
 
+    @Test fun randomOrNull() = withOneCharSequenceArg { data ->
+        data("abcdefg").let { charSeq ->
+            val tosses = List(10) { charSeq.randomOrNull() }
+            assertTrue(tosses.distinct().size > 1, "Should be some distinct elements in $tosses")
+
+            val seed = Random.nextInt()
+            val random1 = Random(seed)
+            val random2 = Random(seed)
+
+            val tosses1 = List(10) { charSeq.randomOrNull(random1) }
+            val tosses2 = List(10) { charSeq.randomOrNull(random2) }
+
+            assertEquals(tosses1, tosses2)
+        }
+
+        data("x").let { singletonCharSeq ->
+            val tosses = List(10) { singletonCharSeq.randomOrNull() }
+            assertEquals(singletonCharSeq.toList(), tosses.distinct())
+        }
+
+        assertNull(data("").randomOrNull())
+    }
+
     @Test fun partition() {
         val data = "a1b2c3"
         val pair = data.partition { it.isAsciiDigit() }
@@ -1286,6 +1309,47 @@ class StringTest {
         assertEquals('a', arg1("bacfd").reduceOrNull { v, c -> if (v > c) c else v })
 
         expect(null, { arg1("").reduceOrNull { _, _ -> '\n' } })
+    }
+
+
+    @Test
+    fun scan() = withOneCharSequenceArg { arg1 ->
+        for (size in 0 until 4) {
+            assertEquals(
+                listOf("", "0", "01", "012", "0123").take(size + 1),
+                arg1((0 until size).joinToString(separator = "")).scan("") { acc, e -> acc + e }
+            )
+        }
+    }
+
+    @Test
+    fun scanIndexed() = withOneCharSequenceArg { arg1 ->
+        for (size in 0 until 4) {
+            assertEquals(
+                listOf("+", "+[0: a]", "+[0: a][1: b]", "+[0: a][1: b][2: c]", "+[0: a][1: b][2: c][3: d]").take(size + 1),
+                arg1(('a' until 'a' + size).joinToString(separator = "")).scanIndexed("+") { index, acc, e -> "$acc[$index: $e]" }
+            )
+        }
+    }
+
+    @Test
+    fun scanReduce() = withOneCharSequenceArg { arg1 ->
+        for (size in 0 until 4) {
+            assertEquals(
+                listOf(0, 1, 3, 6).take(size).map { it.toChar() },
+                arg1((0.toChar() until size.toChar()).joinToString(separator = "")).scanReduce { acc, e -> acc + e.toInt() }
+            )
+        }
+    }
+
+    @Test
+    fun scanReduceIndexed() = withOneCharSequenceArg { arg1 ->
+        for (size in 0 until 4) {
+            assertEquals(
+                listOf(0, 1, 6, 27).take(size).map { it.toChar() },
+                arg1((0.toChar() until size.toChar()).joinToString(separator = "")).scanReduceIndexed { index, acc, e -> (index * (acc.toInt() + e.toInt())).toChar() }
+            )
+        }
     }
 
     @Test fun groupBy() = withOneCharSequenceArg("abAbaABcD") { data ->

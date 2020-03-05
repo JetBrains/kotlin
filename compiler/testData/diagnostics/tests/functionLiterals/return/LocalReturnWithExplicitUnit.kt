@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 val flag = true
 
 // type of lambda was checked by txt

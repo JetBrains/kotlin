@@ -1,55 +1,55 @@
 @R|NonNullApi|() public open class A : R|kotlin/Any| {
-    public open operator fun foo1(x: R|kotlin/String|): R|kotlin/String|
+    public open fun foo1(x: R|kotlin/String|): R|kotlin/String|
 
-    public open operator fun foo2(x: R|kotlin/String|): R|kotlin/String|
+    public open fun foo2(x: R|kotlin/String|): R|kotlin/String|
 
-    public open operator fun foo3(x: R|kotlin/String|): R|kotlin/String|
+    public open fun foo3(x: R|kotlin/String|): R|kotlin/String|
 
-    @R|javax/annotation/Nullable|() public open operator fun bar1(@R|javax/annotation/Nullable|() x: R|kotlin/String?|): R|kotlin/String?|
+    @R|javax/annotation/Nullable|() public open fun bar1(@R|javax/annotation/Nullable|() x: R|kotlin/String?|): R|kotlin/String?|
 
-    @R|javax/annotation/Nullable|() public open operator fun bar2(@R|javax/annotation/Nullable|() x: R|kotlin/String?|): R|kotlin/String?|
+    @R|javax/annotation/Nullable|() public open fun bar2(@R|javax/annotation/Nullable|() x: R|kotlin/String?|): R|kotlin/String?|
 
-    public open operator fun baz(@R|javax/annotation/Nonnull|() x: R|kotlin/String|): R|kotlin/String|
+    public open fun baz(@R|javax/annotation/Nonnull|() x: R|kotlin/String|): R|kotlin/String|
 
     public constructor(): R|A|
 
 }
 @R|NonNullApi|() public abstract interface AInt : R|kotlin/Any| {
-    public abstract operator fun foo1(x: R|kotlin/String|): R|kotlin/CharSequence|
+    public abstract fun foo1(x: R|kotlin/String|): R|kotlin/CharSequence|
 
-    public abstract operator fun foo2(x: R|kotlin/String|): R|kotlin/CharSequence|
+    public abstract fun foo2(x: R|kotlin/String|): R|kotlin/CharSequence|
 
-    public abstract operator fun foo3(x: R|kotlin/String|): R|kotlin/CharSequence|
+    public abstract fun foo3(x: R|kotlin/String|): R|kotlin/CharSequence|
 
-    @R|javax/annotation/Nullable|() public abstract operator fun bar1(@R|javax/annotation/Nullable|() x: R|kotlin/String?|): R|kotlin/CharSequence?|
+    @R|javax/annotation/Nullable|() public abstract fun bar1(@R|javax/annotation/Nullable|() x: R|kotlin/String?|): R|kotlin/CharSequence?|
 
-    @R|javax/annotation/Nullable|() public abstract operator fun bar2(@R|javax/annotation/Nullable|() x: R|kotlin/String?|): R|kotlin/CharSequence?|
+    @R|javax/annotation/Nullable|() public abstract fun bar2(@R|javax/annotation/Nullable|() x: R|kotlin/String?|): R|kotlin/CharSequence?|
 
-    public abstract operator fun baz(@R|javax/annotation/Nonnull|() x: R|kotlin/String|): R|kotlin/CharSequence|
+    public abstract fun baz(@R|javax/annotation/Nonnull|() x: R|kotlin/String|): R|kotlin/CharSequence|
 
 }
 @R|NullableApi|() public open class B : R|A|, R|AInt| {
-    public open operator fun foo1(x: R|kotlin/String|): R|kotlin/String|
+    public open fun foo1(x: R|kotlin/String|): R|kotlin/String|
 
-    @R|javax/annotation/Nonnull|() public open operator fun foo2(@R|javax/annotation/Nonnull|() x: R|kotlin/String|): R|kotlin/String|
+    @R|javax/annotation/Nonnull|() public open fun foo2(@R|javax/annotation/Nonnull|() x: R|kotlin/String|): R|kotlin/String|
 
-    public open operator fun bar1(x: R|kotlin/String?|): R|kotlin/String?|
+    public open fun bar1(x: R|kotlin/String?|): R|kotlin/String?|
 
-    public open operator fun baz(x: R|kotlin/String|): R|kotlin/String|
+    public open fun baz(x: R|kotlin/String|): R|kotlin/String|
 
     public constructor(): R|B|
 
 }
 @R|NonNullApi|() public open class C : R|A|, R|AInt| {
-    public open operator fun foo1(x: R|kotlin/String|): R|kotlin/String|
+    public open fun foo1(x: R|kotlin/String|): R|kotlin/String|
 
-    public open operator fun foo2(@R|javax/annotation/Nonnull|() x: R|kotlin/String|): R|kotlin/String|
+    public open fun foo2(@R|javax/annotation/Nonnull|() x: R|kotlin/String|): R|kotlin/String|
 
-    public open operator fun bar1(x: R|kotlin/String?|): R|kotlin/String?|
+    public open fun bar1(x: R|kotlin/String?|): R|kotlin/String?|
 
-    @R|javax/annotation/Nullable|() public open operator fun bar2(@R|javax/annotation/Nullable|() x: R|kotlin/String?|): R|kotlin/String?|
+    @R|javax/annotation/Nullable|() public open fun bar2(@R|javax/annotation/Nullable|() x: R|kotlin/String?|): R|kotlin/String?|
 
-    public open operator fun baz(x: R|kotlin/String|): R|kotlin/String|
+    public open fun baz(x: R|kotlin/String|): R|kotlin/String|
 
     public constructor(): R|C|
 

@@ -1,5 +1,6 @@
 // "Add '@loop' to continue" "true"
 // WITH_RUNTIME
+// LANGUAGE_VERSION: 1.3
 
 fun foo(chars: CharArray) {
     val length = chars.size

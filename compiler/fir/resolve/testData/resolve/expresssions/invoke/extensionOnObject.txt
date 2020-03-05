@@ -1,0 +1,19 @@
+FILE: extensionOnObject.kt
+    public final object X : R|kotlin/Any| {
+        private constructor(): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Y : R|kotlin/Any| {
+        public constructor(): R|Y| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun f(op: R|X.() -> kotlin/Unit|): R|kotlin/Unit| {
+            R|<local>/op|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(Q|X|)
+            lval x: R|X| = Q|X|
+            R|<local>/op|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/x|)
+        }
+
+    }

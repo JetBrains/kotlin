@@ -1,17 +1,17 @@
 FILE fqName:<root> fileName:/delegatedMembers.kt
   CLASS INTERFACE name:IBase modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IBase
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IBase<T of <root>.IBase>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-    FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.IBase, x:kotlin.Int) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.IBase
+    FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.IBase<T of <root>.IBase>, x:kotlin.Int) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.IBase<T of <root>.IBase>
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
     PROPERTY name:bar visibility:public modality:ABSTRACT [val]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:ABSTRACT <> ($this:<root>.IBase) returnType:kotlin.Int
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:ABSTRACT <> ($this:<root>.IBase<T of <root>.IBase>) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:bar visibility:public modality:ABSTRACT [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.IBase
-    FUN name:qux visibility:public modality:ABSTRACT <X> ($this:<root>.IBase, t:T of <root>.IBase, x:X of <root>.IBase.qux) returnType:kotlin.Unit
+        $this: VALUE_PARAMETER name:<this> type:<root>.IBase<T of <root>.IBase>
+    FUN name:qux visibility:public modality:ABSTRACT <X> ($this:<root>.IBase<T of <root>.IBase>, t:T of <root>.IBase, x:X of <root>.IBase.qux) returnType:kotlin.Unit
       TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?]
-      $this: VALUE_PARAMETER name:<this> type:<root>.IBase
+      $this: VALUE_PARAMETER name:<this> type:<root>.IBase<T of <root>.IBase>
       VALUE_PARAMETER name:t index:0 type:T of <root>.IBase
       VALUE_PARAMETER name:x index:1 type:X of <root>.IBase.qux
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -28,29 +28,29 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[<root>.IBase<TT of <root>.Test>]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test<TT of <root>.Test>
     TYPE_PARAMETER name:TT index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (impl:<root>.IBase<TT of <root>.Test>) returnType:<root>.Test<TT of <root>.Test> [primary]
       VALUE_PARAMETER name:impl index:0 type:<root>.IBase<TT of <root>.Test>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[<root>.IBase<TT of <root>.Test>]'
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.IBase, x:kotlin.Int) returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.IBase<T of <root>.IBase>, x:kotlin.Int) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun foo (x: kotlin.Int): kotlin.Unit declared in <root>.IBase
-      $this: VALUE_PARAMETER name:<this> type:<root>.IBase
+      $this: VALUE_PARAMETER name:<this> type:<root>.IBase<T of <root>.IBase>
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
     PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT [fake_override,val]
-      FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:ABSTRACT <> ($this:<root>.Test) returnType:kotlin.Int [fake_override]
+      FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:ABSTRACT <> ($this:<root>.Test<TT of <root>.Test>) returnType:kotlin.Int [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-bar> (): kotlin.Int declared in <root>.IBase
-        $this: VALUE_PARAMETER name:<this> type:<root>.Test
-    FUN FAKE_OVERRIDE name:qux visibility:public modality:ABSTRACT <X> ($this:<root>.IBase, t:TT of <root>.Test, x:X of <root>.Test.qux) returnType:kotlin.Unit [fake_override]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test<TT of <root>.Test>
+    FUN FAKE_OVERRIDE name:qux visibility:public modality:ABSTRACT <X> ($this:<root>.IBase<T of <root>.IBase>, t:TT of <root>.Test, x:X of <root>.Test.qux) returnType:kotlin.Unit [fake_override]
       overridden:
         public abstract fun qux <X> (t: T of <root>.IBase, x: X of <root>.IBase.qux): kotlin.Unit declared in <root>.IBase
       TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?]
-      $this: VALUE_PARAMETER name:<this> type:<root>.IBase
+      $this: VALUE_PARAMETER name:<this> type:<root>.IBase<T of <root>.IBase>
       VALUE_PARAMETER name:t index:0 type:TT of <root>.Test
       VALUE_PARAMETER name:x index:1 type:X of <root>.Test.qux
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

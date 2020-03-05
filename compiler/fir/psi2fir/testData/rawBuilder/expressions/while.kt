@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 fun foo(limit: Int) {
     var k = 0
     some@ while (k < limit) {

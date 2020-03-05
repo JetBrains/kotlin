@@ -5,20 +5,22 @@
 
 package org.jetbrains.kotlin.fir.builder
 
+import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirLoop
+import org.jetbrains.kotlin.fir.FirLoopTarget
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.builder.FirFunctionCallBuilder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-class Context {
+class Context<T> {
     lateinit var packageFqName: FqName
     var className: FqName = FqName.ROOT
-    val currentClassId get() = ClassId(packageFqName, className, firFunctions.isNotEmpty())
+    val currentClassId get() = ClassId(packageFqName, className, firFunctionTargets.isNotEmpty())
 
-    val firFunctions = mutableListOf<FirFunction<*>>()
-    val firFunctionCalls = mutableListOf<FirFunctionCall>()
+    val firFunctionTargets = mutableListOf<FirFunctionTarget>()
+    val firFunctionCalls = mutableListOf<FirFunctionCallBuilder>()
     val firLabels = mutableListOf<FirLabel>()
-    val firLoops = mutableListOf<FirLoop>()
+    val firLoopTargets = mutableListOf<FirLoopTarget>()
+    val arraySetArgument = mutableMapOf<T, FirExpression>()
 }

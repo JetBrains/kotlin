@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // !LANGUAGE: +UseReturnsEffect
 // Issue: KT-26386

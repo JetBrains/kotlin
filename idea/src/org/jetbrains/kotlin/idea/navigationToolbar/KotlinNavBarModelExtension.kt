@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.navigationToolbar
 
 import com.intellij.ide.navigationToolbar.AbstractNavBarModelExtension
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinIconProvider
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile

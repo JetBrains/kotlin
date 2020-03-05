@@ -40,3 +40,5 @@ fun commented2() {}
 
 // Comment
 fun commented3() {}
+
+// TRAILING_COMMA: false

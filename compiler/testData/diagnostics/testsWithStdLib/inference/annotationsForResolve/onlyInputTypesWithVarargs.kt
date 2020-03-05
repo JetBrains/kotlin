@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun test1(ns: String?, vararg nullableStrs: String?) {
     nullableStrs.contains("x")
     nullableStrs.contains(ns)

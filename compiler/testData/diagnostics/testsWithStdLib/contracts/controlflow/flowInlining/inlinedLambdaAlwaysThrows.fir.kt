@@ -6,12 +6,12 @@ import kotlin.contracts.*
 
 inline fun myRun(block: () -> Unit): Unit {
     contract {
-        <!INAPPLICABLE_CANDIDATE!>callsInPlace<!>(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
     block()
 }
 
 fun test() {
-    myRun { throw java.lang.<!UNRESOLVED_REFERENCE!>IllegalArgumentException<!>() }
+    myRun { throw java.lang.IllegalArgumentException() }
     val x: Int = 42
 }

@@ -1,4 +1,4 @@
-// !USE_EXPERIMENTAL: kotlin.Experimental
+// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 // !DIAGNOSTICS: -UNUSED_EXPRESSION, -UNUSED_VARIABLE, -UNUSED_PARAMETER
 
 fun test() {
@@ -18,7 +18,7 @@ fun test() {
         5u
     )
 
-    @UseExperimental(ExperimentalUnsignedTypes::class) 42u
+    @OptIn(ExperimentalUnsignedTypes::class) 42u
 }
 
 fun takeAll(

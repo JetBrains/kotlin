@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations
 
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.LangDataKeys
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
 import com.intellij.psi.*
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
@@ -35,6 +37,8 @@ import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinAwar
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinSelectNestedClassRefactoringDialog
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinNestedClassesDialog
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
+import org.jetbrains.kotlin.idea.util.isEffectivelyActual
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -122,6 +126,19 @@ class MoveKotlinDeclarationsHandler internal constructor(private val handlerActi
     ): Boolean {
         if (!CommonRefactoringUtil.checkReadOnlyStatusRecursively(project, elements.toList(), true)) return false
 
+        if (!ApplicationManager.getApplication().isUnitTestMode &&
+            elements.any { it is KtDeclaration && (it.isExpectDeclaration() || it.isEffectivelyActual()) }
+        ) {
+            val proceedWithIncompleteRefactoring = Messages.showYesNoDialog(
+                project,
+                "This refactoring will move selected declaration without it's expect/actual counterparts that may lead to compilation errors.\n" +
+                        "Do you wish to proceed?",
+                "MPP declarations does not supported by this refactoring.",
+                Messages.getWarningIcon()
+            )
+            if (proceedWithIncompleteRefactoring != Messages.YES) return true
+        }
+
         val container = getUniqueContainer(elements)
         if (container == null) {
             handlerActions.showErrorHint(
@@ -147,7 +164,8 @@ class MoveKotlinDeclarationsHandler internal constructor(private val handlerActi
 
         if (elementsToSearch.any { !it.canMove() }) {
             val message =
-                RefactoringBundle.getCannotRefactorMessage("Move declaration is only supported for top-level declarations and nested classes")
+                RefactoringBundle
+                    .getCannotRefactorMessage("Move declaration is only supported for top-level declarations and nested classes")
             handlerActions.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
             return true
         }
@@ -242,7 +260,8 @@ class MoveKotlinDeclarationsHandler internal constructor(private val handlerActi
 
         return elements.all { e ->
             when {
-                e is KtClass || e is KtObjectDeclaration && !e.isObjectLiteral() || e is KtNamedFunction || e is KtProperty || e is KtTypeAlias ->
+                e is KtClass || e is KtObjectDeclaration && !e
+                    .isObjectLiteral() || e is KtNamedFunction || e is KtProperty || e is KtTypeAlias ->
                     (editorMode || (e as KtNamedDeclaration).canMove()) && e.canRefactor()
                 e is KtFile ->
                     e.declarations.any { it is KtNamedDeclaration } && e.canRefactor()

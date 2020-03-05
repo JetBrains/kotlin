@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import com.google.common.collect.LinkedHashMultimap
-import com.google.common.collect.SetMultimap
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.PersistentMap
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -21,34 +23,45 @@ interface ImplicitReceiverStack {
 
     fun lastDispatchReceiver(): ImplicitDispatchReceiverValue?
     fun receiversAsReversed(): List<ImplicitReceiverValue<*>>
+
+    fun snapshot(): ImplicitReceiverStack
 }
 
-class ImplicitReceiverStackImpl : ImplicitReceiverStack, Iterable<ImplicitReceiverValue<*>> {
-    private val stack: MutableList<ImplicitReceiverValue<*>> = mutableListOf()
-    private val originalTypes: MutableList<ConeKotlinType> = mutableListOf()
+class ImplicitReceiverStackImpl private constructor(
+    private var stack: PersistentList<ImplicitReceiverValue<*>>,
     // This multi-map holds indexes of the stack ^
-    private val indexesPerLabel: SetMultimap<Name, Int> = LinkedHashMultimap.create()
-    private val indexesPerSymbol: MutableMap<FirBasedSymbol<*>, Int> = mutableMapOf()
+    private var originalTypes: PersistentList<ConeKotlinType>,
+    private var indexesPerLabel: PersistentSetMultimap<Name, Int>,
+    private var indexesPerSymbol: PersistentMap<FirBasedSymbol<*>, Int>
+) : ImplicitReceiverStack, Iterable<ImplicitReceiverValue<*>> {
     val size: Int get() = stack.size
 
+    constructor() : this(
+        persistentListOf(),
+        persistentListOf(),
+        PersistentSetMultimap(),
+        persistentMapOf()
+    )
+
     override fun add(name: Name?, value: ImplicitReceiverValue<*>) {
-        stack += value
-        originalTypes += value.type
+        stack = stack.add(value)
+        originalTypes = originalTypes.add(value.type)
         val index = stack.size - 1
         if (name != null) {
-            indexesPerLabel.put(name, index)
+            indexesPerLabel = indexesPerLabel.put(name, index)
         }
-        indexesPerSymbol.put(value.boundSymbol, index)
+        indexesPerSymbol = indexesPerSymbol.put(value.boundSymbol, index)
     }
 
     override fun pop(name: Name?) {
         val index = stack.size - 1
         if (name != null) {
-            indexesPerLabel.remove(name, index)
+            indexesPerLabel = indexesPerLabel.remove(name, index)
         }
-        originalTypes.removeAt(index)
-        val value = stack.removeAt(index)
-        indexesPerSymbol.remove(value.boundSymbol)
+        originalTypes = originalTypes.removeAt(index)
+        val value = stack.get(index)
+        stack = stack.removeAt(index)
+        indexesPerSymbol = indexesPerSymbol.remove(value.boundSymbol)
     }
 
     override operator fun get(name: String?): ImplicitReceiverValue<*>? {
@@ -75,5 +88,9 @@ class ImplicitReceiverStackImpl : ImplicitReceiverStack, Iterable<ImplicitReceiv
 
     override operator fun iterator(): Iterator<ImplicitReceiverValue<*>> {
         return stack.iterator()
+    }
+
+    override fun snapshot(): ImplicitReceiverStack {
+        return ImplicitReceiverStackImpl(stack, originalTypes, indexesPerLabel, indexesPerSymbol)
     }
 }

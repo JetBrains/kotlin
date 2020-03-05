@@ -80,6 +80,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("idea/testData/refactoring/inline/function/Reference.kt");
         }
 
+        @TestMetadata("ReferenceReceiver.kt")
+        public void testReferenceReceiver() throws Exception {
+            runTest("idea/testData/refactoring/inline/function/ReferenceReceiver.kt");
+        }
+
         @TestMetadata("ReturnNotInTheEnd.kt")
         public void testReturnNotInTheEnd() throws Exception {
             runTest("idea/testData/refactoring/inline/function/ReturnNotInTheEnd.kt");
@@ -378,6 +383,16 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 runTest("idea/testData/refactoring/inline/function/returnAtEnd/DefaultParameter.kt");
             }
 
+            @TestMetadata("InnerFunction.kt")
+            public void testInnerFunction() throws Exception {
+                runTest("idea/testData/refactoring/inline/function/returnAtEnd/InnerFunction.kt");
+            }
+
+            @TestMetadata("InnerFunction2.kt")
+            public void testInnerFunction2() throws Exception {
+                runTest("idea/testData/refactoring/inline/function/returnAtEnd/InnerFunction2.kt");
+            }
+
             @TestMetadata("MultipleStatements.kt")
             public void testMultipleStatements() throws Exception {
                 runTest("idea/testData/refactoring/inline/function/returnAtEnd/MultipleStatements.kt");
@@ -603,6 +618,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
         @TestMetadata("varWithInc.kt")
         public void testVarWithInc() throws Exception {
             runTest("idea/testData/refactoring/inline/inlineVariableOrProperty/varWithInc.kt");
+        }
+
+        @TestMetadata("whenSubject.kt")
+        public void testWhenSubject() throws Exception {
+            runTest("idea/testData/refactoring/inline/inlineVariableOrProperty/whenSubject.kt");
         }
 
         @TestMetadata("idea/testData/refactoring/inline/inlineVariableOrProperty/addParenthesis")

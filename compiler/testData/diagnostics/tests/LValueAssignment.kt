@@ -93,7 +93,7 @@ class Test() {
 
     fun testIncompleteSyntax() {
         val s = "s"
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>++<!>s.<!SYNTAX!><!>
+        <!DEBUG_INFO_MISSING_UNRESOLVED!>++<!>s.<!SYNTAX!><!>
     }
 
     fun testVariables() {

@@ -54,6 +54,7 @@ interface KotlinGradleModel : Serializable {
     val implements: List<String>
     val kotlinTarget: String?
     val kotlinTaskProperties: KotlinTaskPropertiesBySourceSet
+    val gradleUserHome: String
 }
 
 data class KotlinGradleModelImpl(
@@ -63,7 +64,8 @@ data class KotlinGradleModelImpl(
     override val platformPluginId: String?,
     override val implements: List<String>,
     override val kotlinTarget: String? = null,
-    override val kotlinTaskProperties: KotlinTaskPropertiesBySourceSet
+    override val kotlinTaskProperties: KotlinTaskPropertiesBySourceSet,
+    override val gradleUserHome: String
 ) : KotlinGradleModel
 
 abstract class AbstractKotlinGradleModelBuilder : ModelBuilderService {
@@ -189,7 +191,8 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
             platform,
             implementedProjects.map { it.pathOrName() },
             platform ?: kotlinPluginId,
-            extraProperties
+            extraProperties,
+            project.gradle.gradleUserHomeDir.absolutePath
         )
     }
 }

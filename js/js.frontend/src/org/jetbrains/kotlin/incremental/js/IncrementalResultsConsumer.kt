@@ -45,13 +45,18 @@ interface IncrementalResultsConsumer {
     fun processIrFile(
         sourceFile: File,
         fileData: ByteArray,
-        symbols: ByteArray,
         types: ByteArray,
+        signatures: ByteArray,
         strings: ByteArray,
         declarations: ByteArray,
         bodies: ByteArray,
         fqn: ByteArray
     )
+}
+
+interface IncrementalNextRoundChecker {
+    fun checkProtoChanges(sourceFile: File, packagePartMetadata: ByteArray)
+    fun shouldGoToNextRound(): Boolean
 }
 
 class JsInlineFunctionHash(val sourceFilePath: String, val fqName: String, val inlineFunctionMd5Hash: Long): Serializable
@@ -61,7 +66,7 @@ class FunctionWithSourceInfo(val expression: Any, val line: Int, val column: Int
         get() = "($line:$column)$expression".toByteArray().md5()
 }
 
-class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
+open class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
     lateinit var headerMetadata: ByteArray
         private set
 
@@ -127,14 +132,14 @@ class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
     override fun processIrFile(
         sourceFile: File,
         fileData: ByteArray,
-        symbols: ByteArray,
         types: ByteArray,
+        signatures: ByteArray,
         strings: ByteArray,
         declarations: ByteArray,
         bodies: ByteArray,
         fqn: ByteArray
     ) {
-        _irFileData[sourceFile] = IrTranslationResultValue(fileData, symbols, types, strings, declarations, bodies, fqn)
+        _irFileData[sourceFile] = IrTranslationResultValue(fileData, types, signatures, strings, declarations, bodies, fqn)
     }
 }
 

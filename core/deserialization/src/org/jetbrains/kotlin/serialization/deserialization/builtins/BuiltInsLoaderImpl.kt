@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
@@ -78,7 +79,8 @@ class BuiltInsLoaderImpl : BuiltInsLoader {
             ContractDeserializer.DEFAULT,
             additionalClassPartsProvider,
             platformDependentDeclarationFilter,
-            BuiltInSerializerProtocol.extensionRegistry
+            BuiltInSerializerProtocol.extensionRegistry,
+            samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList())
         )
 
         for (packageFragment in packageFragments) {

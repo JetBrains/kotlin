@@ -11,3 +11,9 @@ fun doSelectItem(selectItemFunction: () -> Unit) {
     }
     baz()
 }
+
+fun lambdaInPlaceCall() {
+    while ({ true }()) {
+
+    }
+}

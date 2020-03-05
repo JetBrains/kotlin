@@ -17,6 +17,7 @@ import com.intellij.codeInspection.ex.EntryPointsManagerBase
 import com.intellij.codeInspection.ex.EntryPointsManagerImpl
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiClass
@@ -32,6 +33,7 @@ import com.intellij.psi.search.searches.DefinitionsScopedSearch
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.safeDelete.SafeDeleteHandler
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -200,6 +202,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return namedDeclarationVisitor(fun(declaration) {
+            ProgressManager.checkCanceled()
             val message = declaration.describe()?.let { "$it is never used" } ?: return
 
             if (!ProjectRootsUtil.isInProjectSource(declaration)) return
@@ -320,6 +323,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
     private val KtNamedDeclaration.isObjectOrEnum: Boolean get() = this is KtObjectDeclaration || this is KtClass && isEnum()
 
     private fun checkReference(ref: PsiReference, declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor?): Boolean {
+        ProgressManager.checkCanceled()
         if (declaration.isAncestor(ref.element)) return true // usages inside element's declaration are not counted
 
         if (ref.element.parent is KtValueArgumentName) return true // usage of parameter in form of named argument is not counted
@@ -376,17 +380,24 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             useScope,
             kotlinOptions = searchOptions
         )
-        val referenceUsed: Boolean by lazy { !ReferencesSearch.search(searchParameters).forEach(::checkReference) }
+        val referenceUsed: Boolean by lazy { !ReferencesSearch.search(searchParameters).forEach(Processor { checkReference(it) }) }
 
         if (descriptor is FunctionDescriptor && DescriptorUtils.findJvmNameAnnotation(descriptor) != null) {
             if (referenceUsed) return true
+        }
+
+        if (declaration is KtSecondaryConstructor) {
+            val containingClass = declaration.containingClass()
+            if (containingClass != null && ReferencesSearch.search(KotlinReferencesSearchParameters(containingClass, useScope)).any {
+                    it.element.getStrictParentOfType<KtTypeAlias>() != null
+                }) return true
         }
 
         if (declaration is KtCallableDeclaration && declaration.canBeHandledByLightMethods(descriptor)) {
             val lightMethods = declaration.toLightMethods()
             if (lightMethods.isNotEmpty()) {
                 val lightMethodsUsed = lightMethods.any { method ->
-                    !MethodReferencesSearch.search(method).forEach(::checkReference)
+                    !MethodReferencesSearch.search(method).forEach(Processor { checkReference(it) })
                 }
                 if (lightMethodsUsed) return true
                 if (!declaration.hasActualModifier()) return false
@@ -395,13 +406,8 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
         if (declaration is KtEnumEntry) {
             val enumClass = declaration.containingClass()?.takeIf { it.isEnum() }
-            if (enumClass != null && ReferencesSearch.search(
-                    KotlinReferencesSearchParameters(
-                        enumClass,
-                        useScope,
-                        kotlinOptions = searchOptions
-                    )
-                ).any(::hasBuiltInEnumFunctionReference)
+            if (enumClass != null
+                && ReferencesSearch.search(KotlinReferencesSearchParameters(enumClass, useScope)).any(::hasBuiltInEnumFunctionReference)
             ) return true
         }
 
@@ -533,7 +539,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             if (fqName.startsWith("kotlin.")
                 || fqName.startsWith("java.")
                 || fqName.startsWith("javax.")
-                || fqName.startsWith("org.jetbrains.") && AnnotationUtil.isJetbrainsAnnotation(StringUtil.getShortName(fqName))
+                || fqName.startsWith("org.jetbrains.annotations.")
             )
                 continue
 

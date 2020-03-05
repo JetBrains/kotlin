@@ -8,15 +8,16 @@ package org.jetbrains.kotlin.backend.common.ir
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DumpIrTreeWithDescriptorsVisitor
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
-import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.Scope
+import org.jetbrains.kotlin.ir.builders.declarations.IrTypeParameterBuilder
+import org.jetbrains.kotlin.ir.builders.declarations.build
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
@@ -35,15 +36,13 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import java.io.StringWriter
 
 
-fun ir2string(ir: IrElement?): String = ir2stringWhole(ir).takeWhile { it != '\n' }
+fun ir2string(ir: IrElement?): String = ir?.render() ?: ""
 
 fun ir2stringWhole(ir: IrElement?, withDescriptors: Boolean = false): String {
     val strWriter = StringWriter()
@@ -77,7 +76,7 @@ fun IrClass.addSimpleDelegatingConstructor(
         constructor.parent = this
         declarations += constructor
 
-        superConstructor.valueParameters.mapIndexedTo(constructor.valueParameters) { index, parameter ->
+        constructor.valueParameters = superConstructor.valueParameters.mapIndexed { index, parameter ->
             parameter.copyTo(constructor, index = index)
         }
 
@@ -122,7 +121,7 @@ val IrClass.isFinalClass: Boolean
 fun IrCall.getAnnotationClass(): IrClass {
     val callable = symbol.owner
     assert(callable is IrConstructor) { "Constructor call expected, got ${ir2string(this)}" }
-    val annotationClass =  callable.parentAsClass
+    val annotationClass = callable.parentAsClass
     assert(annotationClass.isAnnotationClass) { "Annotation class expected, got ${ir2string(annotationClass)}" }
     return annotationClass
 }
@@ -136,9 +135,11 @@ fun IrValueParameter.copyTo(
     startOffset: Int = this.startOffset,
     endOffset: Int = this.endOffset,
     name: Name = this.name,
+    remapTypeMap: Map<IrTypeParameter, IrTypeParameter> = mapOf(),
     type: IrType = this.type.remapTypeParameters(
-            (parent as IrTypeParametersContainer).classIfConstructor,
-            irFunction.classIfConstructor
+        (parent as IrTypeParametersContainer).classIfConstructor,
+        irFunction.classIfConstructor,
+        remapTypeMap
     ),
     varargElementType: IrType? = this.varargElementType, // TODO: remapTypeParameters here as well
     defaultValue: IrExpressionBody? = this.defaultValue,
@@ -151,8 +152,13 @@ fun IrValueParameter.copyTo(
         WrappedValueParameterDescriptor(this.descriptor.annotations, this.descriptor.source)
     }
     val symbol = IrValueParameterSymbolImpl(descriptor)
-    val defaultValueCopy = defaultValue?.deepCopyWithVariables()
-    defaultValueCopy?.patchDeclarationParents(irFunction)
+    val defaultValueCopy = defaultValue?.let { originalDefault ->
+        IrExpressionBodyImpl(originalDefault.startOffset, originalDefault.endOffset) {
+            expression = originalDefault.expression.deepCopyWithVariables().also {
+                it.patchDeclarationParents(irFunction)
+            }
+        }
+    }
     return IrValueParameterImpl(
         startOffset, endOffset, origin, symbol,
         name, index, type, varargElementType, isCrossinline, isNoinline
@@ -160,32 +166,34 @@ fun IrValueParameter.copyTo(
         descriptor.bind(it)
         it.parent = irFunction
         it.defaultValue = defaultValueCopy
-        it.annotations.addAll(annotations.map { it.deepCopyWithSymbols() })
+        it.annotations = annotations.map { it.deepCopyWithSymbols() }
     }
 }
 
 fun IrTypeParameter.copyToWithoutSuperTypes(
     target: IrTypeParametersContainer,
-    shift: Int = 0,
+    index: Int = this.index,
     origin: IrDeclarationOrigin = this.origin
 ): IrTypeParameter {
     val descriptor = WrappedTypeParameterDescriptor(symbol.descriptor.annotations, symbol.descriptor.source)
     val symbol = IrTypeParameterSymbolImpl(descriptor)
-    return IrTypeParameterImpl(startOffset, endOffset, origin, symbol, name, shift + index, isReified, variance).also { copied ->
+    return IrTypeParameterImpl(startOffset, endOffset, origin, symbol, name, index, isReified, variance).also { copied ->
         descriptor.bind(copied)
         copied.parent = target
     }
 }
 
-fun IrFunction.copyValueParametersFrom(from: IrFunction) {
-    // TODO: should dispatch receiver be copied?
+fun IrFunction.copyReceiverParametersFrom(from: IrFunction) {
     dispatchReceiverParameter = from.dispatchReceiverParameter?.let {
         IrValueParameterImpl(it.startOffset, it.endOffset, it.origin, it.descriptor, it.type, it.varargElementType).also {
             it.parent = this
         }
     }
     extensionReceiverParameter = from.extensionReceiverParameter?.copyTo(this)
+}
 
+fun IrFunction.copyValueParametersFrom(from: IrFunction) {
+    copyReceiverParametersFrom(from)
     val shift = valueParameters.size
     valueParameters += from.valueParameters.map { it.copyTo(this, index = it.index + shift) }
 }
@@ -198,32 +206,37 @@ fun IrFunction.copyParameterDeclarationsFrom(from: IrFunction) {
 
 fun IrTypeParametersContainer.copyTypeParameters(
     srcTypeParameters: List<IrTypeParameter>,
-    origin: IrDeclarationOrigin? = null
-) {
+    origin: IrDeclarationOrigin? = null,
+    parameterMap: Map<IrTypeParameter, IrTypeParameter>? = null
+): List<IrTypeParameter> {
     val shift = typeParameters.size
+    val oldToNewParameterMap = parameterMap.orEmpty().toMutableMap()
     // Any type parameter can figure in a boundary type for any other parameter.
     // Therefore, we first copy the parameters themselves, then set up their supertypes.
-    srcTypeParameters.forEachIndexed { i, sourceParameter ->
-        assert(sourceParameter.index == i)
-        typeParameters.add(sourceParameter.copyToWithoutSuperTypes(this, shift = shift, origin = origin ?: sourceParameter.origin))
+    val newTypeParameters = srcTypeParameters.mapIndexed { i, sourceParameter ->
+        sourceParameter.copyToWithoutSuperTypes(this, index = i + shift, origin = origin ?: sourceParameter.origin).also {
+                oldToNewParameterMap[sourceParameter] = it
+            }
     }
-    srcTypeParameters.zip(typeParameters.drop(shift)).forEach { (srcParameter, dstParameter) ->
-        dstParameter.copySuperTypesFrom(srcParameter)
+    typeParameters += newTypeParameters
+    srcTypeParameters.zip(newTypeParameters).forEach { (srcParameter, dstParameter) ->
+        dstParameter.copySuperTypesFrom(srcParameter, oldToNewParameterMap)
     }
+    return newTypeParameters
 }
 
 fun IrTypeParametersContainer.copyTypeParametersFrom(
     source: IrTypeParametersContainer,
-    origin: IrDeclarationOrigin? = null
-) = copyTypeParameters(source.typeParameters, origin)
+    origin: IrDeclarationOrigin? = null,
+    parameterMap: Map<IrTypeParameter, IrTypeParameter>? = null
+) = copyTypeParameters(source.typeParameters, origin, parameterMap)
 
-private fun IrTypeParameter.copySuperTypesFrom(source: IrTypeParameter) {
+private fun IrTypeParameter.copySuperTypesFrom(source: IrTypeParameter, srcToDstParameterMap: Map<IrTypeParameter, IrTypeParameter>) {
     val target = this
     val sourceParent = source.parent as IrTypeParametersContainer
     val targetParent = target.parent as IrTypeParametersContainer
-    val shift = target.index - source.index
     source.superTypes.forEach {
-        target.superTypes.add(it.remapTypeParameters(sourceParent, targetParent, shift))
+        target.superTypes.add(it.remapTypeParameters(sourceParent, targetParent, srcToDstParameterMap))
     }
 }
 
@@ -247,35 +260,29 @@ fun IrFunction.copyValueParametersToStatic(
             target.classIfConstructor
         )
 
-        target.valueParameters.add(
-            originalDispatchReceiver.copyTo(
-                target,
-                origin = originalDispatchReceiver.origin,
-                index = shift++,
-                type = type,
-                name = Name.identifier("\$this")
-            )
+        target.valueParameters += originalDispatchReceiver.copyTo(
+            target,
+            origin = originalDispatchReceiver.origin,
+            index = shift++,
+            type = type,
+            name = Name.identifier("\$this")
         )
     }
     source.extensionReceiverParameter?.let { originalExtensionReceiver ->
-        target.valueParameters.add(
-            originalExtensionReceiver.copyTo(
-                target,
-                origin = originalExtensionReceiver.origin,
-                index = shift++,
-                name = Name.identifier("\$receiver")
-            )
+        target.valueParameters += originalExtensionReceiver.copyTo(
+            target,
+            origin = originalExtensionReceiver.origin,
+            index = shift++,
+            name = Name.identifier("\$receiver")
         )
     }
 
     for (oldValueParameter in source.valueParameters) {
         if (oldValueParameter.index >= numValueParametersToCopy) break
-        target.valueParameters.add(
-            oldValueParameter.copyTo(
-                target,
-                origin = origin,
-                index = oldValueParameter.index + shift
-            )
+        target.valueParameters += oldValueParameter.copyTo(
+            target,
+            origin = origin,
+            index = oldValueParameter.index + shift
         )
     }
 }
@@ -286,17 +293,36 @@ fun IrFunctionAccessExpression.passTypeArgumentsFrom(irFunction: IrTypeParameter
     }
 }
 
-/*
-    Type parameters should correspond to the function where they are defined.
-    `source` is where the type is originally taken from.
+/**
+ * Perform a substitution of type parameters occuring in [this]. In order of
+ * precedence, parameter `P` is substituted with...
+ *
+ *   1) `T`, if `srcToDstParameterMap.get(P) == T`
+ *   2) `T`, if `source.typeParameters[i] == P` and
+ *      `target.typeParameters[i] == T`
+ *   3) `P`
+ *
+ *  If [srcToDstParameterMap] is total on the domain of type parameters in
+ *  [this], this effectively performs a substitution according to that map.
  */
-fun IrType.remapTypeParameters(source: IrTypeParametersContainer, target: IrTypeParametersContainer, shift: Int = 0): IrType =
+fun IrType.remapTypeParameters(
+    source: IrTypeParametersContainer,
+    target: IrTypeParametersContainer,
+    srcToDstParameterMap: Map<IrTypeParameter, IrTypeParameter>? = null
+): IrType =
     when (this) {
         is IrSimpleType -> {
             val classifier = classifier.owner
             when {
-                classifier is IrTypeParameter && classifier.parent == source ->
-                    IrSimpleTypeImpl(target.typeParameters[classifier.index + shift].symbol, hasQuestionMark, arguments, annotations)
+                classifier is IrTypeParameter -> {
+                    val newClassifier =
+                        srcToDstParameterMap?.get(classifier) ?:
+                        if (classifier.parent == source)
+                            target.typeParameters[classifier.index]
+                        else
+                            classifier
+                    IrSimpleTypeImpl(newClassifier.symbol, hasQuestionMark, arguments, annotations)
+                }
 
                 classifier is IrClass ->
                     IrSimpleTypeImpl(
@@ -305,7 +331,7 @@ fun IrType.remapTypeParameters(source: IrTypeParametersContainer, target: IrType
                         arguments.map {
                             when (it) {
                                 is IrTypeProjection -> makeTypeProjection(
-                                    it.type.remapTypeParameters(source, target, shift),
+                                    it.type.remapTypeParameters(source, target, srcToDstParameterMap),
                                     it.variance
                                 )
                                 else -> it
@@ -322,7 +348,9 @@ fun IrType.remapTypeParameters(source: IrTypeParametersContainer, target: IrType
 
 /* Copied from K/N */
 fun IrDeclarationContainer.addChild(declaration: IrDeclaration) {
-    this.declarations += declaration
+    stageController.unrestrictDeclarationListsAccess {
+        this.declarations += declaration
+    }
     declaration.accept(SetDeclarationsParentVisitor, this)
 }
 
@@ -347,14 +375,15 @@ val IrDeclaration.isTopLevel: Boolean
     get() {
         if (parent is IrPackageFragment) return true
         val parentClass = parent as? IrClass
-        return parentClass?.origin == IrDeclarationOrigin.FILE_CLASS && parentClass.parent is IrPackageFragment
+        return parentClass?.isFileClass == true && parentClass.parent is IrPackageFragment
     }
 
 fun Scope.createTemporaryVariableWithWrappedDescriptor(
     irExpression: IrExpression,
     nameHint: String? = null,
     isMutable: Boolean = false,
-    origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE): IrVariable {
+    origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+): IrVariable {
 
     val descriptor = WrappedVariableDescriptor()
     return createTemporaryVariableWithGivenDescriptor(
@@ -368,7 +397,7 @@ fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() {
         startOffset, endOffset,
         IrDeclarationOrigin.INSTANCE_RECEIVER,
         IrValueParameterSymbolImpl(thisReceiverDescriptor),
-        Name.identifier("<this>"),
+        Name.special("<this>"),
         index = -1,
         type = symbol.typeWithParameters(typeParameters),
         varargElementType = null,
@@ -398,8 +427,9 @@ fun IrClass.simpleFunctions() = declarations.flatMap {
     }
 }
 
+
 fun IrClass.createParameterDeclarations() {
-    assert (thisReceiver == null)
+    assert(thisReceiver == null)
 
     thisReceiver = WrappedReceiverParameterDescriptor().let {
         IrValueParameterImpl(
@@ -439,21 +469,22 @@ fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = nu
 
 val IrFunction.allParameters: List<IrValueParameter>
     get() = if (this is IrConstructor) {
-        listOf(this.constructedClass.thisReceiver
-                   ?: error(this.descriptor)
+        listOf(
+            this.constructedClass.thisReceiver
+                ?: error(this.descriptor)
         ) + explicitParameters
     } else {
         explicitParameters
     }
 
-fun IrClass.addFakeOverrides() {
+fun IrClass.addFakeOverrides(implementedMembers: List<IrSimpleFunction> = emptyList()) {
     fun IrDeclaration.toList() = when (this) {
         is IrSimpleFunction -> listOf(this)
         is IrProperty -> listOfNotNull(getter, setter)
         else -> emptyList()
     }
 
-    val overriddenFunctions = declarations
+    val overriddenFunctions = (declarations + implementedMembers)
         .flatMap { it.toList() }
         .flatMap { it.overriddenSymbols.map { it.owner } }
         .toSet()
@@ -493,7 +524,7 @@ fun IrClass.addFakeOverrides() {
             ).apply {
                 descriptor.bind(this)
                 parent = this@addFakeOverrides
-                overriddenSymbols += overriddenFunctions.map { it.symbol }
+                overriddenSymbols = overriddenFunctions.map { it.symbol }
                 copyParameterDeclarationsFrom(irFunction)
                 copyAttributes(irFunction)
             }
@@ -504,7 +535,9 @@ fun IrClass.addFakeOverrides() {
         .associate { it.value.first() to createFakeOverride(it.value) }
         .toMutableMap()
 
-    declarations += fakeOverriddenFunctions.values
+    for (fo in fakeOverriddenFunctions.values) {
+        addChild(fo)
+    }
 }
 
 fun createStaticFunctionWithReceivers(
@@ -514,7 +547,9 @@ fun createStaticFunctionWithReceivers(
     dispatchReceiverType: IrType? = oldFunction.dispatchReceiverParameter?.type,
     origin: IrDeclarationOrigin = oldFunction.origin,
     modality: Modality = Modality.FINAL,
-    copyMetadata: Boolean = true
+    visibility: Visibility = oldFunction.visibility,
+    copyMetadata: Boolean = true,
+    typeParametersFromContext: List<IrTypeParameter> = listOf()
 ): IrSimpleFunction {
     val descriptor = (oldFunction.descriptor as? DescriptorWithContainerSource)?.let {
         WrappedFunctionDescriptorWithContainerSource(it.containerSource)
@@ -524,7 +559,7 @@ fun createStaticFunctionWithReceivers(
         origin,
         IrSimpleFunctionSymbolImpl(descriptor),
         name,
-        oldFunction.visibility,
+        visibility,
         modality,
         oldFunction.returnType,
         isInline = oldFunction.isInline,
@@ -538,71 +573,94 @@ fun createStaticFunctionWithReceivers(
         descriptor.bind(this)
         parent = irParent
 
-        copyTypeParametersFrom(oldFunction)
+        val newTypeParametersFromContext = copyAndRenameConflictingTypeParametersFrom(
+            typeParametersFromContext,
+            oldFunction.typeParameters
+        )
+        val newTypeParametersFromFunction = copyTypeParametersFrom(oldFunction)
+        val typeParameterMap =
+            (typeParametersFromContext + oldFunction.typeParameters)
+                .zip(newTypeParametersFromContext + newTypeParametersFromFunction).toMap()
 
-        annotations.addAll(oldFunction.annotations)
+        fun remap(type: IrType): IrType =
+            type.remapTypeParameters(oldFunction, this, typeParameterMap)
+
+        typeParameters.forEach { it.superTypes.replaceAll { remap(it) } }
+
+        annotations = oldFunction.annotations
 
         var offset = 0
         val dispatchReceiver = oldFunction.dispatchReceiverParameter?.copyTo(
             this,
             name = Name.identifier("this"),
             index = offset++,
-            type = dispatchReceiverType!!,
-            origin = IrDeclarationOrigin.MOVED_RECEIVER_PARAMETER
+            type = remap(dispatchReceiverType!!),
+            origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
         )
         val extensionReceiver = oldFunction.extensionReceiverParameter?.copyTo(
             this,
             name = Name.identifier("receiver"),
             index = offset++,
-            origin = IrDeclarationOrigin.MOVED_RECEIVER_PARAMETER
+            origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER,
+            remapTypeMap = typeParameterMap
         )
-        valueParameters.addAll(listOfNotNull(dispatchReceiver, extensionReceiver) +
-                                       oldFunction.valueParameters.map { it.copyTo(this, index = it.index + offset) }
-        )
+        valueParameters = listOfNotNull(dispatchReceiver, extensionReceiver) +
+                                       oldFunction.valueParameters.map {
+                                           it.copyTo(
+                                               this,
+                                               index = it.index + offset,
+                                               remapTypeMap = typeParameterMap
+                                           )
+                                       }
 
         if (copyMetadata) metadata = oldFunction.metadata
     }
 }
 
-fun copyBodyToStatic(oldFunction: IrFunction, staticFunction: IrFunction) {
-    val mapping: Map<IrValueParameter, IrValueParameter> =
-        (listOfNotNull(oldFunction.dispatchReceiverParameter, oldFunction.extensionReceiverParameter) + oldFunction.valueParameters)
-            .zip(staticFunction.valueParameters).toMap()
-    copyBodyWithParametersMapping(staticFunction, oldFunction, mapping)
-}
+/**
+ * Appends the parameters in [contextParameters] to the type parameters of
+ * [this] function, renaming those that may clash with a provided collection of
+ * [existingParameters] (e.g. type parameters of the function itself, when
+ * creating DefaultImpls).
+ *
+ * @returns List of newly created, possibly renamed, copies of type parameters
+ *     in order of the corresponding parameters in [context].
+ */
+private fun IrSimpleFunction.copyAndRenameConflictingTypeParametersFrom(
+    contextParameters: List<IrTypeParameter>,
+    existingParameters: Collection<IrTypeParameter>
+): List<IrTypeParameter> {
+    val newParameters = mutableListOf<IrTypeParameter>()
 
-fun copyBodyWithParametersMapping(
-    newFunction: IrFunction,
-    oldFunction: IrFunction,
-    mapping: Map<IrValueParameter, IrValueParameter>
-) {
-    newFunction.body = oldFunction.body?.deepCopyWithSymbols(oldFunction)
-        ?.transform(
-            object : IrElementTransformerVoid() {
-                // Remap return targets to the static method so they do not appear to be
-                // non-local returns.
-                override fun visitReturn(expression: IrReturn): IrExpression {
-                    expression.transformChildrenVoid(this);
-                    return if (expression.returnTargetSymbol == oldFunction.symbol) {
-                        IrReturnImpl(
-                            expression.startOffset,
-                            expression.endOffset,
-                            expression.type,
-                            newFunction.symbol,
-                            expression.value
-                        )
-                    } else expression
-                }
+    val existingNames =
+        (contextParameters.map { it.name.asString() } + existingParameters.map { it.name.asString() }).toMutableSet()
 
-                // Remap argument values.
-                override fun visitGetValue(expression: IrGetValue): IrExpression =
-                    mapping[expression.symbol.owner]?.let {
-                        IrGetValueImpl(expression.startOffset, expression.endOffset, it.type, it.symbol, expression.origin)
-                    } ?: expression
+    contextParameters.forEach { contextType ->
+        val newName = if (existingParameters.any { it.name.asString() == contextType.name.asString() }) {
+            val newNamePrefix = contextType.name.asString() + "_I"
+            val newName = newNamePrefix + generateSequence(1) { x -> x + 1 }.first { n ->
+                (newNamePrefix + n) !in existingNames
+            }
+            existingNames.add(newName)
+            newName
+        } else {
+            contextType.name.asString()
+        }
 
-            }, null
-        )
-        ?.patchDeclarationParents(newFunction)
+        val newTypeParameter = IrTypeParameterBuilder().run {
+            updateFrom(contextType)
+            name = Name.identifier(newName)
+            build()
+        }.also {
+            it.parent = this
+        }
+
+        newParameters.add(newTypeParameter)
+    }
+
+    typeParameters = typeParameters + newParameters
+
+    return newParameters
 }
 
 val IrSymbol.isSuspend: Boolean

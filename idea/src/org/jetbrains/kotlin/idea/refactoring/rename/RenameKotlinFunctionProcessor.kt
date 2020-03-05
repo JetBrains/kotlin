@@ -11,10 +11,8 @@ import com.intellij.openapi.util.Pass
 import com.intellij.psi.*
 import com.intellij.psi.search.SearchScope
 import com.intellij.refactoring.listeners.RefactoringElementListener
-import com.intellij.refactoring.rename.RenameDialog
-import com.intellij.refactoring.rename.RenameJavaMethodProcessor
-import com.intellij.refactoring.rename.RenameProcessor
-import com.intellij.refactoring.rename.RenameUtil
+import com.intellij.refactoring.rename.*
+import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.RefactoringUtil
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.SmartList
@@ -122,7 +120,13 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
             return substitutedJavaElement.kotlinOrigin as? KtNamedFunction
         }
 
-        return substitutedJavaElement
+        val canRename = try {
+            PsiElementRenameHandler.canRename(element.project, editor, substitutedJavaElement)
+        } catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
+            false
+        }
+
+        return if (canRename) substitutedJavaElement else element
     }
 
     override fun substituteElementToRename(element: PsiElement, editor: Editor, renameCallback: Pass<PsiElement>) {

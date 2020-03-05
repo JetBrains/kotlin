@@ -1,14 +1,9 @@
 description = 'Kotlin annotations for JVM'
 
 apply plugin: 'kotlin'
-apply plugin: 'pill-configurable'
 
 configureJvm6Project(project)
 configurePublishing(project)
-
-pill {
-    importAsLibrary = true
-}
 
 sourceSets {
     main {

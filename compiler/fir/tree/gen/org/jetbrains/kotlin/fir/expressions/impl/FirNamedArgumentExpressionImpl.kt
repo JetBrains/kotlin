@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
@@ -19,14 +18,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirNamedArgumentExpressionImpl(
+internal class FirNamedArgumentExpressionImpl(
     override val source: FirSourceElement?,
+    override val annotations: MutableList<FirAnnotationCall>,
     override var expression: FirExpression,
     override val isSpread: Boolean,
-    override val name: Name
-) : FirNamedArgumentExpression(), FirAbstractAnnotatedElement {
+    override val name: Name,
+) : FirNamedArgumentExpression() {
     override val typeRef: FirTypeRef get() = expression.typeRef
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

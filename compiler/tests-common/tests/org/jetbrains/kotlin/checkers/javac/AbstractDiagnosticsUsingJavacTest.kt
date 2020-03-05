@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.checkers.javac
 
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils.getHomeDirectory
@@ -24,24 +25,22 @@ import java.io.File
 
 abstract class AbstractDiagnosticsUsingJavacTest : AbstractDiagnosticsTest() {
 
-    override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
+    override fun shouldSkipTest(wholeFile: File, files: List<TestFile>): Boolean {
+        return isJavacSkipTest(wholeFile, files)
+    }
+
+    override fun setupEnvironment(environment: KotlinCoreEnvironment, testDataFile: File, files: List<TestFile>) {
         val testDataFileText = testDataFile.readText()
-        if (InTextDirectivesUtils.isDirectiveDefined(testDataFileText, "// JAVAC_SKIP")) {
-            println("${testDataFile.name} test is skipped")
-            return
-        }
         val groupedByModule = files.groupBy(TestFile::module)
         val allKtFiles = groupedByModule.values.flatMap { getKtFiles(it, true) }
 
         if (InTextDirectivesUtils.isDirectiveDefined(testDataFileText, "// FULL_JDK")) {
             environment.registerJavac(kotlinFiles = allKtFiles)
-        }
-        else {
+        } else {
             val mockJdk = listOf(File(getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/rt.jar"))
             environment.registerJavac(kotlinFiles = allKtFiles, bootClasspath = mockJdk)
         }
 
         environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
-        super.analyzeAndCheck(testDataFile, files)
     }
 }

@@ -46,10 +46,12 @@ public actual inline fun Int.toString(radix: Int): String = java.lang.Integer.to
 public actual inline fun Long.toString(radix: Int): String = java.lang.Long.toString(this, checkRadix(radix))
 
 /**
- * Returns `true` if the contents of this string is equal to the word "true", ignoring case, and `false` otherwise.
+ * Returns `true` if this string is not `null` and its content is equal to the word "true", ignoring case, and `false` otherwise.
  */
+@JvmName("toBooleanNullable")
+@SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public actual inline fun String.toBoolean(): Boolean = java.lang.Boolean.parseBoolean(this)
+public actual inline fun String?.toBoolean(): Boolean = java.lang.Boolean.parseBoolean(this)
 
 /**
  * Parses the string as a signed [Byte] number and returns the result.

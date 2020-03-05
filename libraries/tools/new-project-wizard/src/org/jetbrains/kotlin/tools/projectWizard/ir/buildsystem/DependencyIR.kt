@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem
 
-import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleIR
 import org.jetbrains.kotlin.tools.projectWizard.library.LibraryArtifact
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
@@ -109,31 +108,37 @@ data class ArtifactBasedLibraryDependencyIR(
 }
 
 
-data class KotlinLibraryDependencyIR(
-    val name: String,
+abstract class KotlinLibraryDependencyIR(
+    val artifactName: String,
     override val version: Version,
     override val dependencyType: DependencyType
 ) : LibraryDependencyIR {
+    abstract val isInMppModule: Boolean
+
     override val artifact: LibraryArtifact
         get() = MavenArtifact(
             MAVEN_CENTRAL,
             "org.jetbrains.kotlin",
-            "kotlin-$name"
+            "kotlin-$artifactName"
         )
-
-    override fun withDependencyType(type: DependencyType): KotlinLibraryDependencyIR =
-        copy(dependencyType = type)
 
     override fun BuildFilePrinter.render() {
         when (this) {
             is GradlePrinter -> call(dependencyType.gradleName) {
-                +"kotlin("
-                +name.quotified
-                +")"
+                if (GradlePrinter.GradleDsl.KOTLIN == dsl || isInMppModule) {
+                    +"kotlin("
+                    +artifactName.quotified
+                    +")"
+                } else {
+                    +"org.jetbrains.kotlin:kotlin-$artifactName".quotified
+                }
             }
             is MavenPrinter -> node("dependency") {
                 singleLineNode("groupId") { +"org.jetbrains.kotlin" }
-                singleLineNode("artifactId") { +"kotlin-stdlib" }
+                singleLineNode("artifactId") {
+                    +"kotlin-"
+                    +artifactName
+                }
                 singleLineNode("version") { +version.toString() }
                 if (dependencyType == DependencyType.TEST) {
                     singleLineNode("scope") { +"test" }
@@ -143,5 +148,30 @@ data class KotlinLibraryDependencyIR(
     }
 }
 
+data class KotlinStdlibDependencyIR(
+    val type: StdlibType,
+    override val isInMppModule: Boolean,
+    override val version: Version,
+    override val dependencyType: DependencyType
+) : KotlinLibraryDependencyIR(type.artifact, version, dependencyType) {
+    override fun withDependencyType(type: DependencyType): KotlinStdlibDependencyIR = copy(dependencyType = type)
+}
+
+data class KotlinArbitraryDependencyIR(
+    val name: String,
+    override val isInMppModule: Boolean,
+    override val version: Version,
+    override val dependencyType: DependencyType
+) : KotlinLibraryDependencyIR(name, version, dependencyType) {
+    override fun withDependencyType(type: DependencyType): KotlinArbitraryDependencyIR = copy(dependencyType = type)
+}
+
+enum class StdlibType(val artifact: String) {
+    StdlibJdk7("stdlib-jdk7"),
+    StdlibJdk8("stdlib-jdk8"),
+    StdlibJs("stdlib-js"),
+    StdlibCommon("stdlib-common"),
+}
+
 val LibraryDependencyIR.isKotlinStdlib
-    get() = safeAs<KotlinLibraryDependencyIR>()?.name?.contains("stdlib") == true
+    get() = this is KotlinStdlibDependencyIR

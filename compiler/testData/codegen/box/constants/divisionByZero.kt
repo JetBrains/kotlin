@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS
 // reason - no error from division by zero in JS

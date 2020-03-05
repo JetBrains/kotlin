@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.ClassId
@@ -18,16 +18,22 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirResolvedQualifier : FirPureAbstractElement(), FirExpression {
+abstract class FirResolvedQualifier : FirExpression() {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>
     abstract val packageFqName: FqName
     abstract val relativeClassFqName: FqName?
     abstract val classId: ClassId?
+    abstract val symbol: FirClassLikeSymbol<*>?
+    abstract val safe: Boolean
     abstract val typeArguments: List<FirTypeProjection>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedQualifier(this, data)
+
+    abstract fun replaceSafe(newSafe: Boolean)
+
+    abstract fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 
     abstract fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirResolvedQualifier
 }

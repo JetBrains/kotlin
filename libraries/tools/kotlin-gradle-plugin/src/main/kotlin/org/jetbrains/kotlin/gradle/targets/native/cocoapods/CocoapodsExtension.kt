@@ -47,6 +47,12 @@ open class CocoapodsExtension(private val project: Project) {
     @Input
     var homepage: String? = null
 
+    /**
+     * Configure framework name of the pod built from this project.
+     */
+    @Input
+    var frameworkName: String = project.name.asValidFrameworkName()
+
     private val _pods = project.container(CocoapodsDependency::class.java)
 
     // For some reason Gradle doesn't consume the @Nested annotation on NamedDomainObjectContainer.

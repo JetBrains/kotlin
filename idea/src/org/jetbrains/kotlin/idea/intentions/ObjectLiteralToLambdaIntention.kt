@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
+import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -65,7 +65,7 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
     override fun applicabilityRange(element: KtObjectLiteralExpression): TextRange? {
         val (baseTypeRef, baseType, singleFunction) = extractData(element) ?: return null
 
-        if (!SingleAbstractMethodUtils.isSamType(baseType)) return null
+        if (!JavaSingleAbstractMethodUtils.isSamType(baseType)) return null
 
         val functionDescriptor = singleFunction.resolveToDescriptorIfAny(BodyResolveMode.FULL) ?: return null
         val overridden = functionDescriptor.overriddenDescriptors.singleOrNull() ?: return null
@@ -150,14 +150,14 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
         }
 
         val replaced = runWriteAction { element.replaced(newExpression) }
-        val callee = replaced.getCalleeExpressionIfAny()!! as KtNameReferenceExpression
+        val pointerToReplaced = replaced.createSmartPointer()
+        val callee = replaced.callee
         val callExpression = callee.parent as KtCallExpression
         val functionLiteral = callExpression.lambdaArguments.single().getLambdaExpression()!!
 
         val returnLabel = callee.getReferencedNameAsName()
         runWriteAction {
             returnSaver.restore(functionLiteral, returnLabel)
-            commentSaver.restore(replaced, forceAdjustIndent = true/* by some reason lambda body is sometimes not properly indented */)
         }
         val parentCall = ((replaced.parent as? KtValueArgument)
             ?.parent as? KtValueArgumentList)
@@ -165,15 +165,27 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
         if (parentCall != null && RedundantSamConstructorInspection.samConstructorCallsToBeConverted(parentCall)
                 .singleOrNull() == callExpression
         ) {
+            runWriteAction {
+                commentSaver.restore(replaced, forceAdjustIndent = true/* by some reason lambda body is sometimes not properly indented */)
+            }
             RedundantSamConstructorInspection.replaceSamConstructorCall(callExpression)
             if (parentCall.canMoveLambdaOutsideParentheses()) runWriteAction {
                 parentCall.moveFunctionLiteralOutsideParentheses()
             }
         } else {
-            val endOffset = (callee.parent as? KtCallExpression)?.typeArgumentList?.endOffset ?: callee.endOffset
-            ShortenReferences.DEFAULT.process(replaced.containingKtFile, replaced.startOffset, endOffset)
+            runWriteAction {
+                commentSaver.restore(replaced, forceAdjustIndent = true/* by some reason lambda body is sometimes not properly indented */)
+            }
+            pointerToReplaced.element?.let { replacedByPointer ->
+                val endOffset = (replacedByPointer.callee.parent as? KtCallExpression)?.typeArgumentList?.endOffset
+                    ?: replacedByPointer.callee.endOffset
+                ShortenReferences.DEFAULT.process(replacedByPointer.containingKtFile, replacedByPointer.startOffset, endOffset)
+            }
         }
     }
+
+    private val KtExpression.callee
+        get() = getCalleeExpressionIfAny() as KtNameReferenceExpression
 }
 
 private data class Data(

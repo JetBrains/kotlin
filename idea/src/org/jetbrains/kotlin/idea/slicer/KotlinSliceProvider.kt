@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.slicer.compat.PsiElement_N183_NN191
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isPlainWithEscapes
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -74,11 +73,7 @@ class KotlinSliceProvider : SliceLanguageSupportProvider, SliceUsageTransformer 
         return listOf(KotlinSliceUsage(usage.element, usage.parent, 0, false))
     }
 
-    override fun getExpressionAtCaret(atCaret: PsiElement_N183_NN191, dataFlowToThis: Boolean): KtExpression? {
-        // BUNCH: 183
-        @Suppress("SENSELESS_COMPARISON")
-        if (atCaret == null) return null
-
+    override fun getExpressionAtCaret(atCaret: PsiElement, dataFlowToThis: Boolean): KtExpression? {
         val element =
             atCaret.parentsWithSelf
                 .firstOrNull {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,6 +22,11 @@ import java.util.regex.Pattern;
 public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+    }
+
+    @TestMetadata("abstractFun.kt")
+    public void testAbstractFun() throws Exception {
+        runTest("idea/testData/slicer/inflow/abstractFun.kt");
     }
 
     public void testAllFilesPresentInInflow() throws Exception {
@@ -223,6 +228,26 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
         runTest("idea/testData/slicer/inflow/nullsAndNotNulls.kt");
     }
 
+    @TestMetadata("openFun.kt")
+    public void testOpenFun() throws Exception {
+        runTest("idea/testData/slicer/inflow/openFun.kt");
+    }
+
+    @TestMetadata("openFunInvokeOnParameter.kt")
+    public void testOpenFunInvokeOnParameter() throws Exception {
+        runTest("idea/testData/slicer/inflow/openFunInvokeOnParameter.kt");
+    }
+
+    @TestMetadata("overrideFun.kt")
+    public void testOverrideFun() throws Exception {
+        runTest("idea/testData/slicer/inflow/overrideFun.kt");
+    }
+
+    @TestMetadata("overrideProperty.kt")
+    public void testOverrideProperty() throws Exception {
+        runTest("idea/testData/slicer/inflow/overrideProperty.kt");
+    }
+
     @TestMetadata("overridingFunctionResult.kt")
     public void testOverridingFunctionResult() throws Exception {
         runTest("idea/testData/slicer/inflow/overridingFunctionResult.kt");
@@ -251,6 +276,11 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
     @TestMetadata("primaryConstructorParameterWithDefault.kt")
     public void testPrimaryConstructorParameterWithDefault() throws Exception {
         runTest("idea/testData/slicer/inflow/primaryConstructorParameterWithDefault.kt");
+    }
+
+    @TestMetadata("propertyInInterface.kt")
+    public void testPropertyInInterface() throws Exception {
+        runTest("idea/testData/slicer/inflow/propertyInInterface.kt");
     }
 
     @TestMetadata("qualifiedAssignmentsForQualifiedRef.kt")

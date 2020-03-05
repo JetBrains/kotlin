@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // FILE: Part1.kt
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("MultifileFacade")

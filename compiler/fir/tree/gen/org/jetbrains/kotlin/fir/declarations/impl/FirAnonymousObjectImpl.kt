@@ -12,11 +12,9 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -24,19 +22,18 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirAnonymousObjectImpl(
+internal class FirAnonymousObjectImpl(
     override val source: FirSourceElement?,
     override val session: FirSession,
+    override var resolvePhase: FirResolvePhase,
+    override val classKind: ClassKind,
+    override val superTypeRefs: MutableList<FirTypeRef>,
+    override val declarations: MutableList<FirDeclaration>,
+    override val annotations: MutableList<FirAnnotationCall>,
     override val scopeProvider: FirScopeProvider,
-    override val symbol: FirAnonymousObjectSymbol
-) : FirAnonymousObject(), FirModifiableClass<FirAnonymousObject>, FirAbstractAnnotatedElement {
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override val classKind: ClassKind get() = ClassKind.OBJECT
-    override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
-    override val declarations: MutableList<FirDeclaration> = mutableListOf()
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-
+    override var typeRef: FirTypeRef,
+    override val symbol: FirAnonymousObjectSymbol,
+) : FirAnonymousObject() {
     init {
         symbol.bind(this)
     }

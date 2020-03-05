@@ -10,7 +10,7 @@ fun test() {
     val y: Unit = if (false);
     foo(y)
 
-    foo(<!UNRESOLVED_REFERENCE!>{if (1==1);}()<!>)
+    foo({if (1==1);}())
 
     return if (true);
 }

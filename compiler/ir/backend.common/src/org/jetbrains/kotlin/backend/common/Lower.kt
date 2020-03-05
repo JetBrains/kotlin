@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.backend.common
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -58,7 +60,7 @@ interface FunctionLoweringPass : FileLoweringPass {
 }
 
 interface BodyLoweringPass : FileLoweringPass {
-    fun lower(irBody: IrBody)
+    fun lower(irBody: IrBody, container: IrDeclaration)
 
     override fun lower(irFile: IrFile) = runOnFilePostfix(irFile)
 }
@@ -110,17 +112,35 @@ fun DeclarationContainerLoweringPass.runOnFilePostfix(irFile: IrFile) {
     this.lower(irFile as IrDeclarationContainer)
 }
 
-fun BodyLoweringPass.runOnFilePostfix(irFile: IrFile) {
-    irFile.acceptVoid(object : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
+fun BodyLoweringPass.runOnFilePostfix(irFile: IrFile, withLocalDeclarations: Boolean = false, allowDeclarationModification: Boolean = false) {
+    ArrayList(irFile.declarations).forEach {
+        it.accept(object : IrElementVisitor<Unit, IrDeclaration?> {
+            override fun visitElement(element: IrElement, data: IrDeclaration?) {
+                element.acceptChildren(this, data)
+            }
 
-        override fun visitBody(body: IrBody) {
-            body.acceptChildrenVoid(this)
-            lower(body)
-        }
-    })
+            override fun visitDeclaration(declaration: IrDeclaration, data: IrDeclaration?) {
+                declaration.acceptChildren(this, declaration)
+            }
+
+            override fun visitClass(declaration: IrClass, data: IrDeclaration?) {
+                declaration.thisReceiver?.accept(this, declaration)
+                declaration.typeParameters.forEach { it.accept(this, declaration) }
+                ArrayList(declaration.declarations).forEach { it.accept(this, declaration) }
+            }
+
+            override fun visitBody(body: IrBody, data: IrDeclaration?) {
+                if (withLocalDeclarations) body.acceptChildren(this, null)
+                if (allowDeclarationModification) {
+                    lower(body, data!!)
+                } else {
+                    stageController.bodyLowering {
+                        lower(body, data!!)
+                    }
+                }
+            }
+        }, null)
+    }
 }
 
 fun FunctionLoweringPass.runOnFilePostfix(irFile: IrFile) {
@@ -134,4 +154,94 @@ fun FunctionLoweringPass.runOnFilePostfix(irFile: IrFile) {
             lower(declaration)
         }
     })
+}
+
+interface DeclarationTransformer: FileLoweringPass {
+    fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>?
+
+    override fun lower(irFile: IrFile) {
+        runPostfix().toFileLoweringPass().lower(irFile)
+    }
+}
+
+fun DeclarationTransformer.transformFlatRestricted(declaration: IrDeclaration): List<IrDeclaration>? {
+    return stageController.restrictTo(declaration) {
+        transformFlat(declaration)
+    }
+}
+
+fun DeclarationTransformer.toFileLoweringPass(): FileLoweringPass {
+    return object : FileLoweringPass {
+        override fun lower(irFile: IrFile) {
+            irFile.declarations.transformFlat(this@toFileLoweringPass::transformFlat)
+        }
+    }
+}
+
+fun DeclarationTransformer.runPostfix(withLocalDeclarations: Boolean = false): DeclarationTransformer {
+    return object : DeclarationTransformer {
+        override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+            declaration.acceptVoid(object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
+
+                override fun visitBody(body: IrBody) {
+                    if (withLocalDeclarations) {
+                        super.visitBody(body)
+                    }
+                    // else stop
+                }
+
+                override fun visitFunction(declaration: IrFunction) {
+                    declaration.acceptChildrenVoid(this)
+
+                    for (v in declaration.valueParameters) {
+                        val result = this@runPostfix.transformFlatRestricted(v)
+                        if (result != null) error("Don't know how to add value parameters")
+                    }
+                }
+
+                override fun visitProperty(declaration: IrProperty) {
+                    // TODO This is a hack to allow lowering a getter separately from the enclosing property
+
+                    val visitor = this
+
+                    fun IrDeclaration.transform() {
+
+                        acceptVoid(visitor)
+
+                        val result = this@runPostfix.transformFlatRestricted(this)
+                        if (result != null) {
+                            (parent as? IrDeclarationContainer)?.let {
+                                var index = it.declarations.indexOf(this)
+                                if (index == -1) {
+                                    index = it.declarations.indexOf(declaration)
+                                } else {
+                                    it.declarations.removeAt(index)
+                                    --index
+                                }
+
+                                it.declarations.addAll(index + 1, result)
+                            }
+                        }
+                    }
+
+                    declaration.backingField?.transform()
+                    declaration.getter?.transform()
+                    declaration.setter?.transform()
+                }
+
+                override fun visitClass(declaration: IrClass) {
+                    declaration.thisReceiver?.accept(this, null)
+                    declaration.typeParameters.forEach { it.accept(this, null) }
+                    ArrayList(declaration.declarations).forEach { it.accept(this, null) }
+
+                    declaration.declarations.transformFlat(this@runPostfix::transformFlatRestricted)
+                }
+            })
+
+            return this@runPostfix.transformFlatRestricted(declaration)
+        }
+    }
 }

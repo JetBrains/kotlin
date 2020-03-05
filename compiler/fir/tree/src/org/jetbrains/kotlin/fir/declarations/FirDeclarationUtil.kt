@@ -6,16 +6,15 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableRegularClass
-import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
+import org.jetbrains.kotlin.fir.declarations.builder.AbstractFirRegularClassBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 
-fun FirTypeParameterImpl.addDefaultBoundIfNecessary() {
+fun FirTypeParameterBuilder.addDefaultBoundIfNecessary() {
     if (bounds.isEmpty()) {
         bounds += session.builtinTypes.nullableAnyType
     }
@@ -40,24 +39,23 @@ inline val FirMemberDeclaration.isExternal: Boolean get() = status.isExternal
 inline val FirMemberDeclaration.isSuspend: Boolean get() = status.isSuspend
 inline val FirMemberDeclaration.isConst: Boolean get() = status.isConst
 inline val FirMemberDeclaration.isLateInit: Boolean get() = status.isLateInit
+inline val FirMemberDeclaration.isFromSealedClass: Boolean get() = status.isFromSealedClass
+inline val FirMemberDeclaration.isFromEnumClass: Boolean get() = status.isFromEnumClass
 
 inline val FirPropertyAccessor.modality get() = status.modality
 inline val FirPropertyAccessor.visibility get() = status.visibility
 
-fun FirModifiableRegularClass.addDeclaration(declaration: FirDeclaration) {
+fun AbstractFirRegularClassBuilder.addDeclaration(declaration: FirDeclaration) {
     declarations += declaration
     if (companionObject == null && declaration is FirRegularClass && declaration.isCompanion) {
         companionObject = declaration
     }
 }
 
-fun FirModifiableRegularClass.addDeclarations(declarations: Collection<FirDeclaration>) {
+fun AbstractFirRegularClassBuilder.addDeclarations(declarations: Collection<FirDeclaration>) {
     declarations.forEach(this::addDeclaration)
 }
 
-fun FirEnumEntryImpl.addDeclaration(declaration: FirDeclaration) {
-    declarations += declaration
-}
 
 val FirTypeAlias.expandedConeType: ConeClassLikeType? get() = expandedTypeRef.coneTypeSafe()
 

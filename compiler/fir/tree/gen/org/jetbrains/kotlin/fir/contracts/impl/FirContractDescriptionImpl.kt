@@ -15,11 +15,10 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirContractDescriptionImpl(
-    override val source: FirSourceElement?
+internal class FirContractDescriptionImpl(
+    override val source: FirSourceElement?,
+    override val effects: MutableList<ConeEffectDeclaration>,
 ) : FirContractDescription() {
-    override val effects: MutableList<ConeEffectDeclaration> = mutableListOf()
-
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirContractDescriptionImpl {

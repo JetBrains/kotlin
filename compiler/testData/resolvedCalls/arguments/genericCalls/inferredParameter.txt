@@ -10,7 +10,7 @@ fun test(a: Any, ls: List<String>) {
 Resolved call:
 
 Candidate descriptor: fun <T> foo(t: T, l: List<T>): Unit defined in root package
-Resulting descriptor: fun <T> foo(t: Any, l: List<Any>): Unit defined in root package
+Resulting descriptor: fun <T> foo(t: {Comparable<{Int & String}> & java.io.Serializable}, l: List<{Comparable<{Int & String}> & java.io.Serializable}>): Unit defined in root package
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER
 Dispatch receiver = NO_RECEIVER
@@ -18,5 +18,5 @@ Extension receiver = NO_RECEIVER
 
 Value arguments mapping:
 
-SUCCESS  t : Any = 11
-SUCCESS  l : List<Any> = ls
+SUCCESS  t : {Comparable<{Int & String}> & java.io.Serializable} = 11
+SUCCESS  l : List<{Comparable<{Int & String}> & java.io.Serializable}> = ls

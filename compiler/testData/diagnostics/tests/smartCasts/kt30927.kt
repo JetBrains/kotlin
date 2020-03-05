@@ -8,7 +8,7 @@ fun case_0() {
         this as Int
         <!NI;DEBUG_INFO_SMARTCAST!>this<!> // error in NI: required Int, found Any?; just inferred to Any? in OI
     }
-    y checkType { <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Any?>() }
+    y checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Any?>() }
     y checkType { <!OI;TYPE_MISMATCH!>_<!><Int>() }
 }
 
@@ -20,7 +20,7 @@ fun case_1(z: Any?) {
             else -> return@run ""
         }
     }
-    y checkType { <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Any?>() }
+    y checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Any?>() }
     y checkType { <!OI;TYPE_MISMATCH!>_<!><kotlin.String>() }
     // y is inferred to Any?
 }
@@ -45,7 +45,7 @@ fun case_3(z: Any?) {
             else -> return@let ""
         }
     }
-    y checkType { <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Any?>() }
+    y checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Any?>() }
     y checkType { <!OI;TYPE_MISMATCH!>_<!><kotlin.String>() }
     // y is inferred to String
 }

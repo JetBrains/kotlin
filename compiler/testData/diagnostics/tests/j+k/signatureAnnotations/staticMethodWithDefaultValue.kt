@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // IGNORE_BACKEND: JS, NATIVE
 
 // FILE: A.java

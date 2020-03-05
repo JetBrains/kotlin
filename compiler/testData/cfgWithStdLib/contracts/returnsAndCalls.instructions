@@ -119,8 +119,7 @@ L3 [after inlined declaration]:
     mark(println(y))
     call(println(y), println|<v5>) -> <v6>
     magic[UNRESOLVED_CALL](DEBUG_INFO_SMARTCAST) -> <v7>
-    mark(!DEBUG_INFO_SMARTCAST)
-    call(!DEBUG_INFO_SMARTCAST, <ERROR FUNCTION>|<v7>) -> <v8>
+    magic[UNRESOLVED_CALL](!DEBUG_INFO_SMARTCAST|<v7>) -> <v8>
   2 jmp(L7)                                                                                                                                                                                     NEXT:[merge(if (callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> }|<v8>, <v12>) -> <v13>]
 L6 [else branch]:
   3 mark({ println(y) x.<!UNRESOLVED_REFERENCE!>length<!> })                                                                                                                                    PREV:[jf(L6|<v4>)]
@@ -203,8 +202,7 @@ L4 [after inlined declaration]:
     mark(println(y))
     call(println(y), println|<v8>) -> <v9>
     magic[UNRESOLVED_CALL](DEBUG_INFO_SMARTCAST) -> <v10>
-    mark(!DEBUG_INFO_SMARTCAST)
-    call(!DEBUG_INFO_SMARTCAST, <ERROR FUNCTION>|<v10>) -> <v11>
+    magic[UNRESOLVED_CALL](!DEBUG_INFO_SMARTCAST|<v10>) -> <v11>
   2 jmp(L8)                                                                                                                                                                                                       NEXT:[merge(if (unknownBoolean && callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> }|<v11>, <v15>) -> <v16>]
 L7 [else branch]:
   3 mark({ println(y) x.<!UNRESOLVED_REFERENCE!>length<!> })                                                                                                                                                      PREV:[jf(L7|<v7>)]

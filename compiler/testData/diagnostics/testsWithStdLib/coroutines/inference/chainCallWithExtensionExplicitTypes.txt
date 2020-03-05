@@ -1,6 +1,6 @@
 package
 
-@kotlin.UseExperimental(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ E> produce(/*0*/ @kotlin.BuilderInference block: suspend ProducerScope<E>.() -> kotlin.Unit): ProducerScope<E>
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ E> produce(/*0*/ @kotlin.BuilderInference block: suspend ProducerScope<E>.() -> kotlin.Unit): ProducerScope<E>
 public fun test(/*0*/ ls: kotlin.collections.List<kotlin.Int>): ProducerScope<kotlin.Int>
 private fun </*0*/ E> kotlin.collections.Iterable<E>.asReceiveChannel(): ReceiveChannel<E>
 public suspend fun </*0*/ E, /*1*/ C> ReceiveChannel<E>.toChannel(/*0*/ destination: C): C

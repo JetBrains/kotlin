@@ -10,7 +10,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
@@ -25,6 +24,7 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.*
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.impl.PsiTreeChangeEventImpl
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.search.GlobalSearchScope
@@ -50,25 +50,52 @@ import java.util.concurrent.ConcurrentMap
 class KotlinPackageContentModificationListener(private val project: Project) : Disposable {
     val connection = project.messageBus.connect()
 
+    companion object {
+        val LOG = Logger.getInstance(this::class.java)
+    }
+
     init {
         connection.subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener {
-            override fun before(events: MutableList<out VFileEvent>) = onEvents(events)
-            override fun after(events: List<VFileEvent>) = onEvents(events)
+            override fun before(events: MutableList<out VFileEvent>) = onEvents(events, false)
+            override fun after(events: List<VFileEvent>) = onEvents(events, true)
 
-            private fun isRelevant(it: VFileEvent): Boolean =
-                it is VFileMoveEvent || it is VFileCreateEvent || it is VFileCopyEvent || it is VFileDeleteEvent
+            private fun isRelevant(event: VFileEvent): Boolean = when (event) {
+                is VFilePropertyChangeEvent -> false
+                is VFileCreateEvent -> true
+                is VFileMoveEvent -> true
+                is VFileDeleteEvent -> true
+                is VFileContentChangeEvent -> true
+                is VFileCopyEvent -> true
+                else -> {
+                    LOG.warn("Unknown vfs event: ${event.javaClass}")
+                    false
+                }
+            }
 
-            fun onEvents(events: List<VFileEvent>) {
+            fun onEvents(events: List<VFileEvent>, isAfter: Boolean) {
                 val service = PerModulePackageCacheService.getInstance(project)
+                val fileManager = PsiManagerEx.getInstanceEx(project).fileManager
                 if (events.size >= FULL_DROP_THRESHOLD) {
                     service.onTooComplexChange()
                 } else {
                     events.asSequence()
                         .filter(::isRelevant)
-                        .filter { (it.isValid || it !is VFileCreateEvent) && it.file != null }
+                        .filter {
+                            (it.isValid || it !is VFileCreateEvent) && it.file != null
+                        }
                         .filter {
                             val vFile = it.file!!
                             vFile.isDirectory || vFile.fileType == KotlinFileType.INSTANCE
+                        }
+                        .filter {
+                            // It expected that content change events will be duplicated with more precise PSI events and processed
+                            // in KotlinPackageStatementPsiTreeChangePreprocessor, but events might have been missing if PSI view provider
+                            // is absent.
+                            if (it is VFileContentChangeEvent) {
+                                isAfter && fileManager.findCachedViewProvider(it.file) == null
+                            } else {
+                                true
+                            }
                         }
                         .filter {
                             when (val origin = it.requestor) {
@@ -97,7 +124,9 @@ class KotlinPackageContentModificationListener(private val project: Project) : D
 class KotlinPackageStatementPsiTreeChangePreprocessor(private val project: Project) : PsiTreeChangePreprocessor {
     override fun treeChanged(event: PsiTreeChangeEventImpl) {
         val eFile = event.file ?: event.child as? PsiFile
-        if (eFile == null) LOG.debugIfEnabled(project, true) { "Got PsiEvent: $event without file" }
+        if (eFile == null) {
+            LOG.debugIfEnabled(project, true) { "Got PsiEvent: $event without file" }
+        }
         val file = eFile as? KtFile ?: return
 
         when (event.code) {
@@ -118,10 +147,12 @@ class KotlinPackageStatementPsiTreeChangePreprocessor(private val project: Proje
                     return
                 }
                 val childrenOfType = parent.getChildrenOfType<KtPackageDirective>()
-                if ((!event.isGenericChange && (childrenOfType.any() || parent is KtPackageDirective)) ||
+                if (
+                    (!event.isGenericChange && (childrenOfType.any() || parent is KtPackageDirective)) ||
                     (childrenOfType.any { it.name.isEmpty() } && parent is KtFile)
-                )
+                ) {
                     ServiceManager.getService(project, PerModulePackageCacheService::class.java).notifyPackageChange(file)
+                }
             }
             else -> {
             }

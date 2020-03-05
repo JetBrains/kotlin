@@ -1,0 +1,4 @@
+package
+
+public fun foo(/*0*/ x: kotlin.String): kotlin.Unit
+public fun foo(/*0*/ x: kotlin.String?): kotlin.Unit

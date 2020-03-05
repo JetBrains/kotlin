@@ -28,7 +28,7 @@ class X: A {
     init {
         A_S()
         A.A_S()
-        X.A_S()
+        X.<!UNRESOLVED_REFERENCE!>A_S<!>()
     }
 
     object xD {
@@ -51,7 +51,7 @@ class Y: B() {
 
         B_S()
         B.B_S()
-        Y.B_S()
+        Y.<!UNRESOLVED_REFERENCE!>B_S<!>()
     }
 
     object X {

@@ -86,7 +86,7 @@ class CapturingInClosureChecker : CallChecker {
         if (parameter !is ValueParameterDescriptor) return false
         val contractDescription = function.getUserData(ContractProviderKey)?.getContractDescription() ?: return false
         val effect = contractDescription.effects.filterIsInstance<CallsEffectDeclaration>()
-            .find { it.variableReference.descriptor == parameter } ?: return false
+            .find { it.variableReference.descriptor == parameter.original } ?: return false
         return effect.kind == InvocationKind.EXACTLY_ONCE
     }
 

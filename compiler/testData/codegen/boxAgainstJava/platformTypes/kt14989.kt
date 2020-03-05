@@ -19,7 +19,7 @@ fun box(): String {
     try {
         test(JavaClass().test())
     }
-    catch (e: IllegalStateException) {
+    catch (e: NullPointerException) {
         return "OK"
     }
     return "fail"

@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.core.entity
 
+import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import kotlin.reflect.KProperty1
@@ -14,12 +15,12 @@ sealed class Task : EntityBase()
 
 data class Task1<A, B : Any>(
     override val path: String,
-    val action: TaskRunningContext.(A) -> TaskResult<B>
+    val action: WritingContext.(A) -> TaskResult<B>
 ) : Task() {
     class Builder<A, B : Any>(private val name: String) {
-        private var action: TaskRunningContext.(A) -> TaskResult<B> = { Failure() }
+        private var action: WritingContext.(A) -> TaskResult<B> = { Failure() }
 
-        fun withAction(action: TaskRunningContext.(A) -> TaskResult<B>) {
+        fun withAction(action: WritingContext.(A) -> TaskResult<B>) {
             this.action = action
         }
 
@@ -38,26 +39,26 @@ data class Task1<A, B : Any>(
 
 data class PipelineTask(
     override val path: String,
-    val action: TaskRunningContext.() -> TaskResult<Unit>,
+    val action: WritingContext.() -> TaskResult<Unit>,
     val before: List<PipelineTaskReference>,
     val after: List<PipelineTaskReference>,
     val phase: GenerationPhase,
-    val checker: Checker,
+    val isAvailable: Checker,
     val title: String?
 ) : Task() {
     class Builder(
         private val name: String,
         private val phase: GenerationPhase
     ) {
-        private var action: TaskRunningContext.() -> TaskResult<Unit> = { UNIT_SUCCESS }
+        private var action: WritingContext.() -> TaskResult<Unit> = { UNIT_SUCCESS }
         private val before = mutableListOf<PipelineTaskReference>()
         private val after = mutableListOf<PipelineTaskReference>()
 
-        var activityChecker: Checker = Checker.ALWAYS_AVAILABLE
+        var isAvailable: Checker = ALWAYS_AVAILABLE_CHECKER
 
         var title: String? = null
 
-        fun withAction(action: TaskRunningContext.() -> TaskResult<Unit>) {
+        fun withAction(action: WritingContext.() -> TaskResult<Unit>) {
             this.action = action
         }
 
@@ -69,7 +70,7 @@ data class PipelineTask(
             this.after.addAll(after)
         }
 
-        fun build(): PipelineTask = PipelineTask(name, action, before, after, phase, activityChecker, title)
+        fun build(): PipelineTask = PipelineTask(name, action, before, after, phase, isAvailable, title)
     }
 
     companion object {

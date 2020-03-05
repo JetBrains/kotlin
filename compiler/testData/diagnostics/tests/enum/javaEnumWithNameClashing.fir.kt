@@ -10,6 +10,6 @@ public enum A {
 
 fun main() {
     val c: A = A.ENTRY
-    val c2: String? = c.<!AMBIGUITY!>ENTRY<!>
-    val c3: String? = A.ANOTHER.<!AMBIGUITY!>ENTRY<!>
+    val c2: String? = c.ENTRY
+    val c3: String? = A.ANOTHER.ENTRY
 }

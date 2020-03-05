@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeLoadingMetadataCach
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
-import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
-import org.jetbrains.kotlin.library.KLIB_MANIFEST_FILE_NAME
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_UNIQUE_NAME
-import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.KotlinLibraryImpl
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
@@ -47,25 +44,25 @@ fun createLoggingErrorReporter(log: Logger) = LoggingErrorReporter(log)
 internal object CachingIdeKonanLibraryMetadataLoader : PackageAccessHandler {
     override fun loadModuleHeader(library: KotlinLibrary): KlibMetadataProtoBuf.Header {
         val virtualFile = getVirtualFile(library, library.moduleHeaderFile)
-        return cache.getCachedModuleHeader(virtualFile)!!
+        return virtualFile?.let { cache.getCachedModuleHeader(virtualFile) } ?: KlibMetadataProtoBuf.Header.getDefaultInstance()
     }
 
     override fun loadPackageFragment(library: KotlinLibrary, packageFqName: String, partName: String): ProtoBuf.PackageFragment {
         val virtualFile = getVirtualFile(library, library.packageFragmentFile(packageFqName, partName))
-        return cache.getCachedPackageFragment(virtualFile)!!
+        return virtualFile?.let { cache.getCachedPackageFragment(virtualFile) } ?: ProtoBuf.PackageFragment.getDefaultInstance()
     }
 
-    private fun getVirtualFile(library: KotlinLibrary, file: KFile): VirtualFile =
+    private fun getVirtualFile(library: KotlinLibrary, file: KFile): VirtualFile? =
         if (library.isZipped) asJarFileSystemFile(library.libraryFile, file) else asLocalFile(file)
 
-    private fun asJarFileSystemFile(jarFile: KFile, localFile: KFile): VirtualFile {
+    private fun asJarFileSystemFile(jarFile: KFile, localFile: KFile): VirtualFile? {
         val fullPath = jarFile.absolutePath + "!" + PathUtil.toSystemIndependentName(localFile.path)
-        return StandardFileSystems.jar().findFileByPath(fullPath) ?: error("File not found: $fullPath")
+        return StandardFileSystems.jar().findFileByPath(fullPath)
     }
 
-    private fun asLocalFile(localFile: KFile): VirtualFile {
+    private fun asLocalFile(localFile: KFile): VirtualFile? {
         val fullPath = localFile.absolutePath
-        return StandardFileSystems.local().findFileByPath(fullPath) ?: error("File not found: $fullPath")
+        return StandardFileSystems.local().findFileByPath(fullPath)
     }
 
     private val cache
@@ -89,13 +86,24 @@ internal val VirtualFile.isKonanLibraryRoot: Boolean
         val extension = extension
         if (!extension.isNullOrEmpty() && extension != KLIB_FILE_EXTENSION) return false
 
-        val manifestFile = findChild(KLIB_MANIFEST_FILE_NAME)?.takeIf { !it.isDirectory } ?: return false
+        fun checkComponent(componentFile: VirtualFile): Boolean {
+            val manifestFile = componentFile.findChild(KLIB_MANIFEST_FILE_NAME)?.takeIf { !it.isDirectory } ?: return false
 
-        val manifestProperties = try {
-            manifestFile.inputStream.use { Properties().apply { load(it) } }
-        } catch (_: IOException) {
-            return false
+            // this is a hacky way to determine whether this is a Kotlin/Native .klib or common .klib (common .klibs don't have ir)
+            // TODO(dsavvinov): introduce more robust way to detect library platform
+            val irFolder = componentFile.findChild(KLIB_IR_FOLDER_NAME)
+            if (irFolder == null || irFolder.children.isEmpty()) return false
+
+            val manifestProperties = try {
+                manifestFile.inputStream.use { Properties().apply { load(it) } }
+            } catch (_: IOException) {
+                return false
+            }
+
+            return manifestProperties.containsKey(KLIB_PROPERTY_UNIQUE_NAME)
         }
 
-        return manifestProperties.containsKey(KLIB_PROPERTY_UNIQUE_NAME)
+        // run check for library root too
+        // this is necessary to recognize old style KLIBs that do not have components, and report tem to user appropriately
+        return checkComponent(this) || children?.any(::checkComponent) == true
     }

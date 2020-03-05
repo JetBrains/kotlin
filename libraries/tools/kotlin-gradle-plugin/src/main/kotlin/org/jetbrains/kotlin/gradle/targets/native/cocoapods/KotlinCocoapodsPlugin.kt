@@ -61,9 +61,10 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     private fun KotlinMultiplatformExtension.targetsForPlatform(requestedPlatform: KonanTarget) =
         supportedTargets().matching { it.konanTarget == requestedPlatform }
 
-    private fun createDefaultFrameworks(kotlinExtension: KotlinMultiplatformExtension) {
+    private fun createDefaultFrameworks(kotlinExtension: KotlinMultiplatformExtension, cocoapodsExtension: CocoapodsExtension) {
         kotlinExtension.supportedTargets().all { target ->
             target.binaries.framework {
+                baseNameProvider = project.provider { cocoapodsExtension.frameworkName }
                 isStatic = true
             }
         }
@@ -156,7 +157,9 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project: Project,
         cocoapodsExtension: CocoapodsExtension
     ) {
-        val dummyFrameworkTask = project.tasks.create("generateDummyFramework", DummyFrameworkTask::class.java)
+        val dummyFrameworkTask = project.tasks.create("generateDummyFramework", DummyFrameworkTask::class.java) {
+            it.settings = cocoapodsExtension
+        }
 
         project.tasks.create("podspec", PodspecTask::class.java) {
             it.group = TASK_GROUP
@@ -237,12 +240,13 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     }
 
     override fun apply(project: Project): Unit = with(project) {
+
         pluginManager.withPlugin("kotlin-multiplatform") {
             val kotlinExtension = project.multiplatformExtension
             val cocoapodsExtension = CocoapodsExtension(this)
 
             kotlinExtension.addExtension(EXTENSION_NAME, cocoapodsExtension)
-            createDefaultFrameworks(kotlinExtension)
+            createDefaultFrameworks(kotlinExtension, cocoapodsExtension)
             createSyncTask(project, kotlinExtension)
             createPodspecGenerationTask(project, cocoapodsExtension)
             createInterops(project, kotlinExtension, cocoapodsExtension)

@@ -1,0 +1,57 @@
+group 'com.example'
+version '1.0'
+
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin-multiplatform'
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url "https://dl.bintray.com/kotlin/kotlinx.html/" }
+}
+
+kotlin {
+    js('nodeJs')
+
+    targets {
+        all {
+            mavenPublication {
+                pom.withXml {
+                    asNode().appendNode('name', 'Sample MPP library')
+                }
+            }
+        }
+    }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                api 'org.jetbrains.kotlin:kotlin-stdlib-common'
+            }
+        }
+        nodeJsMain {
+            dependencies {
+                api 'org.jetbrains.kotlin:kotlin-stdlib-js'
+            }
+        }
+    }
+}
+
+kotlin.sourceSets.each { println it.kotlin.srcDirs }
+
+apply plugin: 'maven-publish'
+
+publishing {
+    repositories {
+        maven { url "file://${projectDir.absolutePath.replace('\\', '/')}/repo" }
+    }
+}

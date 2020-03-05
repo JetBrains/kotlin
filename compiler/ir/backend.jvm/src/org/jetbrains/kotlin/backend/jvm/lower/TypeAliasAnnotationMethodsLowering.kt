@@ -50,7 +50,7 @@ class TypeAliasAnnotationMethodsLowering(val context: CommonBackendContext) :
                 origin = JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_TYPEALIAS_ANNOTATIONS
             }.apply {
                 body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-                annotations.addAll(alias.annotations)
+                annotations += alias.annotations
                 metadata = alias.metadata
             }
         }

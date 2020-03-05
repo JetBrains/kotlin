@@ -1,3 +1,5 @@
+// !WITH_NEW_INFERENCE
+
 // FILE: J.java
 
 import kotlin.jvm.functions.Function1;

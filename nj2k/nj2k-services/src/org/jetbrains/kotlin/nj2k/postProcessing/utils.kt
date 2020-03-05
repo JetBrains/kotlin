@@ -19,14 +19,13 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
+import org.jetbrains.kotlin.psi.psiUtil.getPossiblyQualifiedCallExpression
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 
 
 fun KtExpression.unpackedReferenceToProperty(): KtProperty? =
     when (this) {
-        is KtDotQualifiedExpression ->
-            if (receiverExpression is KtThisExpression) selectorExpression as? KtNameReferenceExpression
-            else null
+        is KtDotQualifiedExpression -> selectorExpression as? KtNameReferenceExpression
         is KtNameReferenceExpression -> this
         else -> null
     }?.references
@@ -84,7 +83,7 @@ inline fun <reified T : PsiElement> List<PsiElement>.descendantsOfType(): List<T
 fun PsiElement.isInRange(outerRange: TextRange) =
     outerRange.contains(range)
 
-internal fun runUndoTransparentActionInEdt(inWriteAction: Boolean, action: () -> Unit) {
+fun runUndoTransparentActionInEdt(inWriteAction: Boolean, action: () -> Unit) {
     ApplicationManager.getApplication().invokeAndWait {
         CommandProcessor.getInstance().runUndoTransparentAction {
             if (inWriteAction) {

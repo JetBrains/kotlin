@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.statistics
 
 import com.intellij.facet.ProjectFacetManager
-import com.intellij.internal.statistic.beans.UsageDescriptor
+import com.intellij.internal.statistic.beans.MetricEvent
 import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector
 import com.intellij.openapi.module.Module
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.isJs
@@ -23,24 +24,28 @@ import org.jetbrains.kotlin.platform.konan.isNative
 
 class ProjectConfigurationCollector : ProjectUsagesCollector() {
 
-    override fun getUsages(project: Project): Set<UsageDescriptor> {
-        val usages = mutableSetOf<UsageDescriptor>()
+    override fun getMetrics(project: Project): Set<MetricEvent> {
+        val metrics = mutableSetOf<MetricEvent>()
         val modulesWithFacet = ProjectFacetManager.getInstance(project).getModulesWithFacet(KotlinFacetType.TYPE_ID)
 
         if (modulesWithFacet.isNotEmpty()) {
             val pluginVersion = KotlinPluginUtil.getPluginVersion()
             modulesWithFacet.forEach {
+
                 val buildSystem = getBuildSystemType(it)
                 val platform = getPlatform(it)
+                val languageVersion = it.languageVersionSettings.languageVersion.versionString
+
                 val data = FeatureUsageData()
                     .addData("pluginVersion", pluginVersion)
                     .addData("system", buildSystem)
                     .addData("platform", platform)
-                val usageDescriptor = UsageDescriptor("Build", data)
-                usages.add(usageDescriptor)
+                    .addData("languageVersion", languageVersion)
+                val usageDescriptor = MetricEvent("Build", data)
+                metrics.add(usageDescriptor)
             }
         }
-        return usages
+        return metrics
     }
 
     private fun getPlatform(it: Module): String {

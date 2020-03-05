@@ -12,7 +12,7 @@ fun printMessages() {
     Message.HELLO.text!!
     Message.HELLO.text.length
 
-    Message.NOTHING.text.length
+    Message.NOTHING.text.<!INAPPLICABLE_CANDIDATE!>length<!>
 
     Message.NOTHING.text!!
     Message.NOTHING.text.length

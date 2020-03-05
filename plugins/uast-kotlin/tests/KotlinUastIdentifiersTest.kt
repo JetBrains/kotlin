@@ -25,6 +25,15 @@ class KotlinUastIdentifiersTest : AbstractKotlinIdentifiersTest() {
     fun testAnonymous() = doTest("Anonymous")
 
     @Test
+    fun testLambdas() = doTest("Lambdas")
+
+    @Test
     fun testSuperCalls() = doTest("SuperCalls")
+
+    @Test
+    fun testPropertyInitializer() = doTest("PropertyInitializer")
+
+    @Test
+    fun testEnumValuesConstructors() = doTest("EnumValuesConstructors")
 
 }

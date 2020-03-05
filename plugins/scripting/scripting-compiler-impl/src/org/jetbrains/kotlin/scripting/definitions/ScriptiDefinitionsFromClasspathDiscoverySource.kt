@@ -72,7 +72,7 @@ private fun scriptTemplatesDiscoverySequence(
     hostConfiguration: ScriptingHostConfiguration,
     messageReporter: MessageReporter
 ): Sequence<ScriptDefinition> {
-    return sequence {
+    return sequence<ScriptDefinition> {
         // for jar files the definition class is expected in the same jar as the discovery file
         // in case of directories, the class output may come separate from the resources, so some candidates should be deffered and processed later
         val defferedDirDependencies = ArrayList<File>()
@@ -165,7 +165,7 @@ fun loadScriptTemplatesFromClasspath(
     messageReporter: MessageReporter
 ): Sequence<ScriptDefinition> =
     if (scriptTemplates.isEmpty()) emptySequence()
-    else sequence {
+    else sequence<ScriptDefinition> {
         // trying the direct classloading from baseClassloader first, since this is the most performant variant
         val (initialLoadedDefinitions, initialNotFoundTemplates) = scriptTemplates.partitionMapNotNull {
             loadScriptDefinition(

@@ -1,9 +1,9 @@
-// !USE_EXPERIMENTAL: kotlin.Experimental
+// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 // FILE: api.kt
 
 package api
 
-@Experimental
+@RequiresOptIn
 annotation class E
 
 open class Base {
