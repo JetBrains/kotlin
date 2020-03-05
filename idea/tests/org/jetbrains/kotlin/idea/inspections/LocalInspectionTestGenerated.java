@@ -13531,9 +13531,9 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/unusedSymbol/internal.kt");
         }
 
-        @TestMetadata("jsName.kt")
-        public void testJsName() throws Exception {
-            runTest("idea/testData/inspectionsLocal/unusedSymbol/jsName.kt");
+        @TestMetadata("jsExport.kt")
+        public void testJsExport() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedSymbol/jsExport.kt");
         }
 
         @TestMetadata("propertyOfInlineClassType.kt")
