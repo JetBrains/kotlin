@@ -101,4 +101,14 @@ enum class Color3() {
     var field1: Int by Delegate()
 }
 
+enum class Color4 {
+    RED {
+        <!VARIABLE_IN_ENUM!>var a = 2<!>
+        override fun foo() { a = 42 }
+    },
+    GREEN,
+    BLUE;
+    open fun foo() {}
+}
+
 var topLevelProperty = "Global var"
