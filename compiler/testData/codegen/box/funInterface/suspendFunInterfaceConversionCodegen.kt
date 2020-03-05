@@ -1,7 +1,6 @@
 // !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
 // WITH_COROUTINES
 // WITH_RUNTIME
-// SKIP_DCE_DRIVEN
 
 import helpers.*
 import kotlin.coroutines.*

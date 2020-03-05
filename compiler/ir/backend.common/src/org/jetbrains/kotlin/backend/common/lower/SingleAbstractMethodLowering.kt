@@ -21,11 +21,9 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isNullable
@@ -58,9 +56,9 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
     // Coming from the frontend, every SAM interface is associated with exactly one function type
     // (see SamType.getKotlinFunctionType). This is why we can cache implementations just based on
     // the superType.
-    private val cachedImplementations = mutableMapOf<IrType, IrClass>()
-    private val inlineCachedImplementations = mutableMapOf<IrType, IrClass>()
-    private var enclosingContainer: IrDeclarationContainer? = null
+    protected val cachedImplementations = mutableMapOf<IrType, IrClass>()
+    protected val inlineCachedImplementations = mutableMapOf<IrType, IrClass>()
+    protected var enclosingContainer: IrDeclarationContainer? = null
 
     abstract fun getWrapperVisibility(expression: IrTypeOperatorCall, scopes: List<ScopeWithIr>): Visibility
 
@@ -81,6 +79,10 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
         }
     }
 
+    protected open fun currentScopeSymbol(): IrSymbol? {
+        return currentScope?.scope?.scopeOwnerSymbol
+    }
+
     override fun visitClassNew(declaration: IrClass): IrStatement {
         val prevContainer = enclosingContainer
         if (prevContainer == null || prevContainer is IrFile)
@@ -99,7 +101,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
         val erasedSuperType = getSuperTypeForWrapper(expression.typeOperand)
         val superType = if (expression.typeOperand.isNullable()) erasedSuperType.makeNullable() else erasedSuperType
         val invokable = expression.argument.transform(this, null)
-        context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).apply {
+        context.createIrBuilder(currentScopeSymbol()!!).apply {
             // Do not generate a wrapper class for null, it has no invoke() anyway.
             if (invokable.isNullConst())
                 return invokable
