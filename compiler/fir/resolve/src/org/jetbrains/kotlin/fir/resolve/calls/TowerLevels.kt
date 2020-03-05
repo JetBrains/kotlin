@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 interface TowerScopeLevel {
 
     sealed class Token<out T : AbstractFirBasedSymbol<*>> {
-        object Properties : Token<FirPropertySymbol>()
+        object Properties : Token<FirVariableSymbol<*>>()
 
         object Functions : Token<FirFunctionSymbol<*>>()
         object Objects : Token<AbstractFirBasedSymbol<*>>()
@@ -121,17 +121,30 @@ class MemberScopeTowerLevel(
             return ProcessorAction.NEXT
         }
         return when (token) {
-            TowerScopeLevel.Token.Properties -> processMembers(processor) { symbol ->
-                this.processPropertiesByName(name, symbol.cast())
+            is TowerScopeLevel.Token.Properties -> processMembers(processor) { consumer ->
+                this.processPropertiesByName(name) {
+                    // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
+                    @Suppress("UNCHECKED_CAST")
+                    consumer(it as T)
+                }
             }
-            TowerScopeLevel.Token.Functions -> processMembers(processor) { symbol ->
+            TowerScopeLevel.Token.Functions -> processMembers(processor) { consumer ->
                 this.processFunctionsAndConstructorsByName(
                     name, session, bodyResolveComponents,
-                    noInnerConstructors = false, processor = symbol.cast()
+                    noInnerConstructors = false,
+                    processor = {
+                        // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
+                        @Suppress("UNCHECKED_CAST")
+                        consumer(it as T)
+                    }
                 )
             }
-            TowerScopeLevel.Token.Objects -> processMembers(processor) { symbol ->
-                this.processClassifiersByName(name, symbol.cast())
+            TowerScopeLevel.Token.Objects -> processMembers(processor) { consumer ->
+                this.processClassifiersByName(name) {
+                    // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
+                    @Suppress("UNCHECKED_CAST")
+                    consumer(it as T)
+                }
             }
         }
     }
