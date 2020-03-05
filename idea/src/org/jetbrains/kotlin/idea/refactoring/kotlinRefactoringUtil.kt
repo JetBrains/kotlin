@@ -1029,7 +1029,7 @@ fun PsiElement.getLineCount(): Int {
 
 @Deprecated(
     "Use org.jetbrains.kotlin.idea.core.util.toPsiDirectory() instead",
-    ReplaceWith("this.toPsiDirectory()", "org.jetbrains.kotlin.idea.core.util.toPsiDirectory"),
+    ReplaceWith("this.toPsiDirectory(project)", "org.jetbrains.kotlin.idea.core.util.toPsiDirectory"),
     DeprecationLevel.ERROR
 )
 fun VirtualFile.toPsiDirectory(project: Project): PsiDirectory? {
@@ -1038,7 +1038,7 @@ fun VirtualFile.toPsiDirectory(project: Project): PsiDirectory? {
 
 @Deprecated(
     "Use org.jetbrains.kotlin.idea.core.util.toPsiFile() instead",
-    ReplaceWith("this.toPsiFile()", "org.jetbrains.kotlin.idea.core.util.toPsiFile"),
+    ReplaceWith("this.toPsiFile(project)", "org.jetbrains.kotlin.idea.core.util.toPsiFile"),
     DeprecationLevel.ERROR
 )
 fun VirtualFile.toPsiFile(project: Project): PsiFile? {
