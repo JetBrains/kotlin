@@ -68,6 +68,9 @@ tasks.register<ShadowJar>("shadowJar") {
     addArtifact("runtime", this, artifactRef)
 }
 
+val test by tasks
+test.dependsOn("shadowJar")
+
 sourcesJar {
     for (dependency in shadows.dependencies) {
         if (dependency is ProjectDependency) {
