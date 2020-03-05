@@ -6,7 +6,7 @@ plugins {
 dependencies {
     compile(project(":idea:jvm-debugger:jvm-debugger-core"))
 
-    compileOnly(toolsJar())
+    compileOnly(toolsJarApi())
     compileOnly(intellijDep())
 
     Platform[192].orHigher {

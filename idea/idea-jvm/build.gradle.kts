@@ -10,7 +10,7 @@ dependencies {
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:backend.jvm"))
 
-    compileOnly(toolsJar())
+    compileOnly(toolsJarApi())
     compileOnly(intellijDep())
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
 
