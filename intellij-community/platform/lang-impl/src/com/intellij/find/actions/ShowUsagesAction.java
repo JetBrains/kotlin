@@ -314,7 +314,6 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     AsyncProcessIcon processIcon = new AsyncProcessIcon("xxx");
     TitlePanel statusPanel = new TitlePanel();
     statusPanel.add(processIcon, BorderLayout.EAST);
-    Consumer<String> statusConsumer = statusPanel::setText;
 
     addUsageNodes(usageView.getRoot(), usageView, new ArrayList<>());
 
@@ -366,9 +365,18 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
         copy = new ArrayList<>(usages);
       }
 
-      rebuildTable(
-        usageView, copy, nodes, table, popup, statusConsumer, popupPosition, minWidth, !processIcon.isDisposed()
-      );
+      boolean shouldShowMoreSeparator = copy.contains(ShowUsagesTable.MORE_USAGES_SEPARATOR);
+      if (shouldShowMoreSeparator) {
+        nodes.add(Holder.MORE_USAGES_SEPARATOR_NODE);
+      }
+      boolean hasOutsideScopeUsages = copy.contains(ShowUsagesTable.USAGES_OUTSIDE_SCOPE_SEPARATOR);
+      if (hasOutsideScopeUsages && !shouldShowMoreSeparator) {
+        nodes.add(Holder.USAGES_OUTSIDE_SCOPE_NODE);
+      }
+      boolean hasMore = shouldShowMoreSeparator || hasOutsideScopeUsages;
+      statusPanel.setText(getStatusString(!processIcon.isDisposed(), hasMore, nodes.size(), copy.size()));
+
+      rebuildTable(usageView, copy, nodes, table, popup, popupPosition, minWidth);
     });
 
     MessageBusConnection messageBusConnection = project.getMessageBus().connect(usageView);
@@ -774,23 +782,9 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
                                    @NotNull List<UsageNode> nodes,
                                    @NotNull ShowUsagesTable table,
                                    @Nullable JBPopup popup,
-                                   @NotNull Consumer<? super String> statusConsumer,
                                    @NotNull RelativePoint popupPosition,
-                                   @NotNull IntRef minWidth,
-                                   boolean findUsagesInProgress) {
+                                   @NotNull IntRef minWidth) {
     ApplicationManager.getApplication().assertIsDispatchThread();
-
-    boolean shouldShowMoreSeparator = usages.contains(ShowUsagesTable.MORE_USAGES_SEPARATOR);
-    if (shouldShowMoreSeparator) {
-      nodes.add(Holder.MORE_USAGES_SEPARATOR_NODE);
-    }
-    boolean hasOutsideScopeUsages = usages.contains(ShowUsagesTable.USAGES_OUTSIDE_SCOPE_SEPARATOR);
-    if (hasOutsideScopeUsages && !shouldShowMoreSeparator) {
-      nodes.add(Holder.USAGES_OUTSIDE_SCOPE_NODE);
-    }
-
-    boolean hasMore = shouldShowMoreSeparator || hasOutsideScopeUsages;
-    statusConsumer.accept(getStatusString(findUsagesInProgress, hasMore, nodes.size(), usages.size()));
 
     List<UsageNode> data = collectData(usages, nodes, usageView);
     ShowUsagesTable.MyModel tableModel = table.setTableModel(data);
