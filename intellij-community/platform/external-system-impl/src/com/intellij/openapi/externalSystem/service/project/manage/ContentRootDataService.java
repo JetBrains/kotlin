@@ -253,6 +253,11 @@ public class ContentRootDataService extends AbstractProjectDataService<ContentRo
                                                   @NotNull JpsModuleSourceRootType<?> sourceRootType,
                                                   boolean createEmptyContentRootDirectories) {
 
+    String path = sourceRoot.getPath();
+    if (createEmptyContentRootDirectories) {
+      createEmptyDirectory(path);
+    }
+
     SourceFolder folder = findSourceFolder(contentEntry, sourceRoot);
     if (folder != null) {
       final JpsModuleSourceRootType<?> folderRootType = folder.getRootType();
@@ -262,11 +267,7 @@ public class ContentRootDataService extends AbstractProjectDataService<ContentRo
       contentEntry.removeSourceFolder(folder);
     }
 
-    String path = sourceRoot.getPath();
     String url = pathToUrl(path);
-    if (createEmptyContentRootDirectories) {
-      createEmptyDirectory(path);
-    }
 
     if (!FileUtil.exists(path)) {
       logDebug("Source folder [%s] does not exist and will not be created, will add when dir is created", url);
