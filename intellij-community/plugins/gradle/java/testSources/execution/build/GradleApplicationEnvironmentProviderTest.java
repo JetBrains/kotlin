@@ -138,26 +138,31 @@ public class GradleApplicationEnvironmentProviderTest extends GradleSettingsImpo
         if (!id.equals(myId)) {
           return;
         }
-        notificationManager.removeNotificationListener(this);
         done.up();
       }
     };
-    notificationManager.addNotificationListener(listener);
-    edt(() -> {
-      try {
-        ExecutionEnvironment environment =
-          ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), configurationSettings)
-            .contentToReuse(null)
-            .dataContext(null)
-            .activeTarget()
-            .build();
-        ProgramRunnerUtil.executeConfiguration(environment, false, true);
-      }
-      catch (ExecutionException e) {
-        fail(e.getMessage());
-      }
-    });
-    Assert.assertTrue(done.waitFor(30000));
+
+    try {
+      notificationManager.addNotificationListener(listener);
+      edt(() -> {
+        try {
+          ExecutionEnvironment environment =
+            ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), configurationSettings)
+              .contentToReuse(null)
+              .dataContext(null)
+              .activeTarget()
+              .build();
+          ProgramRunnerUtil.executeConfiguration(environment, false, true);
+        }
+        catch (ExecutionException e) {
+          fail(e.getMessage());
+        }
+      });
+      Assert.assertTrue(done.waitFor(30000));
+    }
+    finally {
+      notificationManager.removeNotificationListener(listener);
+    }
     return out.toString();
   }
 }
