@@ -19,12 +19,12 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
     private val debugName: String,
     protected val projectContext: ProjectContext,
     modules: Collection<M>,
-    private val fallbackModificationTracker: ModificationTracker? = null,
+    protected val fallbackModificationTracker: ModificationTracker? = null,
     private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
     private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory
 ) : ResolverForProject<M>() {
 
-    private class ModuleData(
+    protected class ModuleData(
         val moduleDescriptor: ModuleDescriptorImpl,
         val modificationTracker: ModificationTracker?
     ) {
@@ -37,7 +37,7 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
     }
 
     // Protected by ("projectContext.storageManager.lock")
-    private val descriptorByModule = mutableMapOf<M, ModuleData>()
+    protected val descriptorByModule = mutableMapOf<M, ModuleData>()
 
     // Protected by ("projectContext.storageManager.lock")
     private val moduleInfoByDescriptor = mutableMapOf<ModuleDescriptorImpl, M>()

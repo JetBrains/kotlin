@@ -65,9 +65,13 @@ class CommonResolverForModuleFactory(
         override val name: Name,
         override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>,
         private val dependencies: Iterable<ModuleInfo>,
+        override val expectedBy: List<ModuleInfo>,
+        private val modulesWhoseInternalsAreVisible: Collection<ModuleInfo>,
         private val dependOnOldBuiltIns: Boolean
     ) : ModuleInfo {
         override fun dependencies() = listOf(this, *dependencies.toList().toTypedArray() )
+
+        override fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> = modulesWhoseInternalsAreVisible
 
         override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
             if (dependOnOldBuiltIns) ModuleInfo.DependencyOnBuiltIns.LAST else ModuleInfo.DependencyOnBuiltIns.NONE
@@ -123,6 +127,8 @@ class CommonResolverForModuleFactory(
                 moduleName,
                 capabilities,
                 dependenciesContainer?.moduleInfos?.toList().orEmpty(),
+                dependenciesContainer?.refinesModuleInfos.orEmpty(),
+                dependenciesContainer?.friendModuleInfos.orEmpty(),
                 dependOnBuiltIns
             )
             val project = files.firstOrNull()?.project ?: throw AssertionError("No files to analyze")
@@ -150,7 +156,8 @@ class CommonResolverForModuleFactory(
                 GlobalSearchScope.allScope(project),
                 languageVersionSettings = multiplatformLanguageSettings,
                 syntheticFiles = files,
-                dependencyModules = dependenciesContainer?.moduleInfos ?: emptyList()
+                knownDependencyModuleDescriptors = dependenciesContainer?.moduleInfos
+                    ?.associateWith(dependenciesContainer::moduleDescriptorForModuleInfo).orEmpty()
             )
 
             val moduleDescriptor = resolver.descriptorForModule(moduleInfo)
@@ -167,7 +174,11 @@ class CommonResolverForModuleFactory(
 interface CommonDependenciesContainer {
     val moduleInfos: List<ModuleInfo>
 
+    fun moduleDescriptorForModuleInfo(moduleInfo: ModuleInfo): ModuleDescriptor
+
     fun packageFragmentProviderForModuleInfo(moduleInfo: ModuleInfo): PackageFragmentProvider?
+    val friendModuleInfos: List<ModuleInfo>
+    val refinesModuleInfos: List<ModuleInfo>
 }
 
 private fun createContainerToResolveCommonCode(
