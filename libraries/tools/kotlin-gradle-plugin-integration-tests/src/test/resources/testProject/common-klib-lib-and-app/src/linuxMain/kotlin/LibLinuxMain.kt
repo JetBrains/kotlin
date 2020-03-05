@@ -12,6 +12,7 @@ actual class LibCommonMainExpect : LibCommonMainIface {
         println("actualized in iosMain")
         libCommonMainTopLevelFun()
         println(CArrayPointer::class)
+        libCommonMainInternalFun()
     }
 
     fun additionalFunInLinuxActual() {

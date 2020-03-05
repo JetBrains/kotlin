@@ -11,6 +11,7 @@ import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
@@ -18,6 +19,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
+import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -96,4 +99,17 @@ class KotlinNativeCompilation(
 
 class KotlinSharedNativeCompilation(override val target: KotlinMetadataTarget, name: String) :
     AbstractKotlinNativeCompilation(target, HostManager.host, name),
-    KotlinMetadataCompilation<KotlinCommonOptions>
+    KotlinMetadataCompilation<KotlinCommonOptions> {
+
+    override val friendArtifacts: FileCollection
+        get() = super.friendArtifacts.plus(run {
+            val project = target.project
+            val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(project, defaultSourceSet).toMutableSet().apply {
+                // TODO: implement proper dependsOn/refines compiler args for Kotlin/Native and pass the dependsOn klibs separately;
+                //       But for now, those dependencies don't have any special semantics, so passing all them as friends works, too
+                addAll(defaultSourceSet.getSourceSetHierarchy())
+                remove(defaultSourceSet)
+            }
+            project.files(friendSourceSets.mapNotNull { target.compilations.findByName(it.name)?.output?.classesDirs })
+        })
+}

@@ -11,6 +11,8 @@ fun libCommonMainTopLevelFun(): Int {
     return 2
 }
 
+fun libCommonMainInternalFun() = Unit
+
 fun main() {
     
 }
