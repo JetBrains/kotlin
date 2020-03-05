@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.rt.execution.junit.FileComparisonFailure
 import junit.framework.AssertionFailedError
 import junit.framework.TestCase
 import org.jetbrains.kotlin.TestsCompilerError
@@ -281,7 +282,16 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             }
         }
         if (testDataFile.readText().contains("// FIR_IDENTICAL")) {
-            testRunner.analyzeAndCheckUnhandled(testDataFile, files)
+            try {
+                testRunner.analyzeAndCheckUnhandled(testDataFile, files)
+            } catch (e: FileComparisonFailure) {
+                println("Old FE & FIR produces different diagnostics for this file. Please remove FIR_IDENTICAL line manually")
+                throw FileComparisonFailure(
+                    "Old FE & FIR produces different diagnostics for this file. Please remove FIR_IDENTICAL line manually\n" +
+                            e.message,
+                    e.expected, e.actual, e.filePath, e.actualFilePath
+                )
+            }
         } else {
             FileUtil.copy(testDataFile, firTestDataFile)
             testRunner.analyzeAndCheckUnhandled(firTestDataFile, files)

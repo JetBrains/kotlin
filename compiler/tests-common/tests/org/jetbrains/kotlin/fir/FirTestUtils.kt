@@ -36,7 +36,9 @@ fun compareAndMergeFirFileAndOldFrontendFile(
             oldFrontendTestDataFile.writeText("// FIR_IDENTICAL\n" + oldFrontendTestDataFile.readText())
         }
         TestCase.assertFalse(
-            "Dumps via FIR & via old FE are the same. Deleted .fir.txt dump, added // FIR_IDENTICAL to test source",
+            "Dumps via FIR & via old FE are the same. " +
+                    "\nDeleted .fir.txt dump, added // FIR_IDENTICAL to test source" +
+                    "\nPlease re-run the test now",
             sameDumps
         )
     }
