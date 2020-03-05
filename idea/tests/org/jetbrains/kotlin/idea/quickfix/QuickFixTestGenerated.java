@@ -7744,6 +7744,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/implement/local.kt");
         }
 
+        @TestMetadata("menyImplMemberNotImplemented.kt")
+        public void testMenyImplMemberNotImplemented() throws Exception {
+            runTest("idea/testData/quickfix/implement/menyImplMemberNotImplemented.kt");
+        }
+
         @TestMetadata("nested.kt")
         public void testNested() throws Exception {
             runTest("idea/testData/quickfix/implement/nested.kt");
@@ -9998,24 +10003,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             public void testReturnTypeMismatchOnOverrideUnitInt() throws Exception {
                 runTest("idea/testData/quickfix/override/typeMismatchOnOverride/returnTypeMismatchOnOverrideUnitInt.kt");
             }
-        }
-    }
-
-    @TestMetadata("idea/testData/quickfix/overrideManyImplementations")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class OverrideManyImplementations extends AbstractQuickFixTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInOverrideManyImplementations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/overrideManyImplementations"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
-        }
-
-        @TestMetadata("simple.kt")
-        public void testSimple() throws Exception {
-            runTest("idea/testData/quickfix/overrideManyImplementations/simple.kt");
         }
     }
 
