@@ -415,6 +415,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/arguments/defaultFromOverrides.kt");
         }
 
+        @TestMetadata("definetelyNotNullForTypeParameter.kt")
+        public void testDefinetelyNotNullForTypeParameter() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/definetelyNotNullForTypeParameter.kt");
+        }
+
         @TestMetadata("extensionLambdaInDefaultArgument.kt")
         public void testExtensionLambdaInDefaultArgument() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/arguments/extensionLambdaInDefaultArgument.kt");
@@ -1395,11 +1400,6 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestMetadata("callableReferencesAndDefaultParameters.kt")
         public void testCallableReferencesAndDefaultParameters() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/callableReferencesAndDefaultParameters.kt");
-        }
-
-        @TestMetadata("definetelyNotNullForTypeParameter.kt")
-        public void testDefinetelyNotNullForTypeParameter() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/definetelyNotNullForTypeParameter.kt");
         }
 
         @TestMetadata("definitelyNotNullAndOriginalType.kt")
