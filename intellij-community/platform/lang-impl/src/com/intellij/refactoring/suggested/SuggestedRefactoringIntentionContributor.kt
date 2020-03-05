@@ -12,7 +12,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.suggested.SuggestedRefactoringState.ErrorLevel
@@ -112,8 +111,6 @@ class SuggestedRefactoringIntentionContributor : IntentionMenuContributor {
     override fun isAvailable(project: Project, editor: Editor, file: PsiFile?) = true
 
     override fun startInWriteAction() = false
-
-    override fun getElementToMakeWritable(currentFile: PsiFile): PsiElement = currentFile
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile?) {
       performSuggestedRefactoring(project, editor, null, null, showReviewBalloon, ActionPlaces.INTENTION_MENU)
