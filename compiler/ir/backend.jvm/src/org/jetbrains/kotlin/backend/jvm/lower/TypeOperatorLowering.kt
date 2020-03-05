@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.fileParent
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -184,18 +183,14 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
     private fun sourceViewFor(declaration: IrDeclaration) =
         context.psiSourceManager.getKtFile(declaration.fileParent)!!.viewProvider.contents
 
-    // Since Kotlin 1.4 we throw NullPointerExceptions instead of more specialized exception classes.
-    private val useNullPointerExceptions: Boolean
-        get() = context.state.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
-
     private val typeCastException: IrFunctionSymbol =
-        if (useNullPointerExceptions)
+        if (context.state.unifiedNullChecks)
             context.ir.symbols.ThrowNullPointerException
         else
             context.ir.symbols.ThrowTypeCastException
 
     private val checkExpressionValueIsNotNull: IrFunctionSymbol =
-        if (useNullPointerExceptions)
+        if (context.state.unifiedNullChecks)
             context.ir.symbols.checkNotNullExpressionValue
         else
             context.ir.symbols.checkExpressionValueIsNotNull

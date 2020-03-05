@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.codegen.intrinsics.HashCode;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
-import org.jetbrains.kotlin.config.ApiVersion;
 import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
@@ -1023,9 +1022,7 @@ public class AsmUtil {
             }
             value.put(asmType, v);
             v.visitLdcInsn(name);
-            String methodName = state.getLanguageVersionSettings().getApiVersion().compareTo(ApiVersion.KOTLIN_1_4) >= 0
-                                ? "checkNotNullParameter"
-                                : "checkParameterIsNotNull";
+            String methodName = state.getUnifiedNullChecks() ? "checkNotNullParameter" : "checkParameterIsNotNull";
             v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, methodName, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
         }
     }
@@ -1048,9 +1045,7 @@ public class AsmUtil {
                 if (innerType.getSort() == Type.OBJECT || innerType.getSort() == Type.ARRAY) {
                     v.dup();
                     v.visitLdcInsn(runtimeAssertionInfo.getMessage());
-                    String methodName = state.getLanguageVersionSettings().getApiVersion().compareTo(ApiVersion.KOTLIN_1_4) >= 0
-                                        ? "checkNotNullExpressionValue"
-                                        : "checkExpressionValueIsNotNull";
+                    String methodName = state.getUnifiedNullChecks() ? "checkNotNullExpressionValue" : "checkExpressionValueIsNotNull";
                     v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, methodName, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
                 }
                 StackValue.coerce(innerType, innerKotlinType, type, kotlinType, v);
