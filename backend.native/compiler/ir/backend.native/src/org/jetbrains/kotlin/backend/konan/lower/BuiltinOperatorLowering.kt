@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.containsNull
 import org.jetbrains.kotlin.backend.konan.ir.isSubtypeOf
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptor
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNothing
@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  */
 internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass, IrBuildingTransformer(context) {
 
-    private val builtIns = context.builtIns
     private val irBuiltins = context.irModule!!.irBuiltins
     private val symbols = context.ir.symbols
 
@@ -135,11 +134,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
         val equals = irClass.simpleFunctions()
                 .single { it.name.asString() == "equals" && it.valueParameters.size == 1 && it.overrides(anyEquals) }
 
-        // Note: this is not absolutely correct for inline class from other module
-        // since custom equals implementation can be added after compilation but before linking.
-        // TODO: reimplement after inline classes get properly designed `equals` operator.
-        // see https://youtrack.jetbrains.com/issue/KT-26354.
-        return equals.descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
+        return equals.origin == IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER
     }
 
     fun IrBuilderWithScope.genInlineClassEquals(

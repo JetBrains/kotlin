@@ -3008,6 +3008,10 @@ task inlineClass0(type: KonanLocalTest) {
     source = "codegen/inlineClass/inlineClass0.kt"
 }
 
+task inlineClass_customEquals(type: KonanLocalTest) {
+    source = "codegen/inlineClass/customEquals.kt"
+}
+
 task deserialized_inline0(type: KonanLocalTest) {
     source = "serialization/deserialized_inline0.kt"
 }
