@@ -46,6 +46,11 @@ public class JvmDecompiledTextTestGenerated extends AbstractJvmDecompiledTextTes
         runTest("testData/decompiler/decompiledTextJvm/PackageWithQuotes/");
     }
 
+    @TestMetadata("ParameterName")
+    public void testParameterName() throws Exception {
+        runTest("testData/decompiler/decompiledTextJvm/ParameterName/");
+    }
+
     @TestMetadata("TestKt")
     public void testTestKt() throws Exception {
         runTest("testData/decompiler/decompiledTextJvm/TestKt/");
