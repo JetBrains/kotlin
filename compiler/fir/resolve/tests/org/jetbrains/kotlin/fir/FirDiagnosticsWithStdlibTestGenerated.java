@@ -585,6 +585,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/resolve/testData/resolveWithStdlib/j+k/FieldSubstitution.kt");
         }
 
+        @TestMetadata("flexibleTypeAliases.kt")
+        public void testFlexibleTypeAliases() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/j+k/flexibleTypeAliases.kt");
+        }
+
         @TestMetadata("FunctionTypeInJava.kt")
         public void testFunctionTypeInJava() throws Exception {
             runTest("compiler/fir/resolve/testData/resolveWithStdlib/j+k/FunctionTypeInJava.kt");
