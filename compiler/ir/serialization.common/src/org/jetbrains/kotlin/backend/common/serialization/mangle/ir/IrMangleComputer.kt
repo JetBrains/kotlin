@@ -96,16 +96,6 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
 
         builder.append(name.asString())
 
-        if (visibility == Visibilities.INTERNAL) {
-            builder.append(MangleConstant.MODULE_SEPARATOR)
-            val moduleName = try {
-                module.name.asString().run { substring(1, lastIndex) }
-            } catch (e: Throwable) {
-                MangleConstant.UNKNOWN_MARK
-            }
-            builder.append(moduleName)
-        }
-
         mangleSignature(isCtor, isStatic)
     }
 
