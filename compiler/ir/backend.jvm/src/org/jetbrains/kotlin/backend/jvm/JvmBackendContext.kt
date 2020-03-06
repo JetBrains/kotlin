@@ -115,22 +115,11 @@ class JvmBackendContext(
 
     val suspendLambdaToOriginalFunctionMap = mutableMapOf<IrFunctionReference, IrFunction>()
     val suspendFunctionOriginalToView = mutableMapOf<IrFunction, IrFunction>()
-    val suspendFunctionOriginalToStub = mutableMapOf<IrFunction, IrFunction>()
     val fakeContinuation: IrExpression = createFakeContinuation(this)
 
     val staticDefaultStubs = mutableMapOf<IrFunctionSymbol, IrFunction>()
 
     val inlineClassReplacements = MemoizedInlineClassReplacements()
-
-    internal fun recordSuspendFunctionView(function: IrFunction, view: IrFunction) {
-        val attribute = function.suspendFunctionOriginal()
-        suspendFunctionOriginalToStub.remove(attribute)
-        suspendFunctionOriginalToView[attribute] = view
-    }
-
-    internal fun recordSuspendFunctionViewStub(function: IrFunction, stub: IrFunction) {
-        suspendFunctionOriginalToStub[function.suspendFunctionOriginal()] = stub
-    }
 
     internal fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
         symbolTable.lazyWrapper.referenceClass(descriptor)
