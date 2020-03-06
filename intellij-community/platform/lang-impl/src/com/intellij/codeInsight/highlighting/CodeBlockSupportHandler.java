@@ -2,13 +2,16 @@
 package com.intellij.codeInsight.highlighting;
 
 import com.intellij.codeInsight.TargetElementUtil;
+import com.intellij.lang.Language;
 import com.intellij.lang.LanguageExtension;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.openapi.util.TextRange.EMPTY_RANGE;
@@ -62,6 +65,34 @@ public interface CodeBlockSupportHandler {
       .map(handler -> handler.getCodeBlockRange(contextElement))
       .filter(codeBlockRange -> !codeBlockRange.isEmpty())
       .findFirst().orElse(EMPTY_RANGE);
+  }
+
+  /**
+   * @return ranges of markers to highlight iff {@code markerPsiElement} is one of these markers.
+   */
+  static @NotNull List<TextRange> findMarkersRanges(@Nullable PsiElement markerPsiElement) {
+    if (markerPsiElement == null) {
+      return Collections.emptyList();
+    }
+    for (CodeBlockSupportHandler handler : EP.allForLanguage(markerPsiElement.getLanguage())) {
+      List<TextRange> rangesToHighlight = handler.getCodeBlockMarkerRanges(markerPsiElement);
+      if (!rangesToHighlight.isEmpty()) {
+        return rangesToHighlight;
+      }
+    }
+    return Collections.emptyList();
+  }
+
+  /**
+   * @param language language helps to use a proper psi subtree in case of multi-root psi trees
+   * @return ranges of markers to highlight iff there is a marker in {@code psiFile} at {@code offset}.
+   * @see #findMarkersRanges(PsiElement)
+   */
+  static @NotNull List<TextRange> findMarkersRanges(@Nullable PsiFile psiFile, @NotNull Language language, int offset) {
+    if (psiFile == null) {
+      return Collections.emptyList();
+    }
+    return findMarkersRanges(psiFile.getViewProvider().findElementAt(offset, language));
   }
 }
 

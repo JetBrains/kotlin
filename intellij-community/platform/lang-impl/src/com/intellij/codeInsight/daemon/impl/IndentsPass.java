@@ -8,6 +8,7 @@ package com.intellij.codeInsight.daemon.impl;
 import com.intellij.codeHighlighting.TextEditorHighlightingPass;
 import com.intellij.codeInsight.highlighting.BraceMatcher;
 import com.intellij.codeInsight.highlighting.BraceMatchingUtil;
+import com.intellij.codeInsight.highlighting.CodeBlockSupportHandler;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.ParserDefinition;
@@ -42,6 +43,7 @@ import com.intellij.util.DocumentUtil;
 import com.intellij.util.containers.IntStack;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
 import java.awt.*;
 import java.util.List;
@@ -355,6 +357,11 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
     return answer != 0 ? answer : r.getEndOffset() - h.getEndOffset();
   }
 
+  @TestOnly
+  public @NotNull List<IndentGuideDescriptor> getDescriptors() {
+    return new ArrayList<>(myDescriptors);
+  }
+
   private class IndentsCalculator {
     @NotNull final Map<Language, TokenSet> myComments = new HashMap<>();
     final int @NotNull [] lineIndents; // negative value means the line is empty (or contains a comment) and indent
@@ -421,7 +428,10 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
             int lineEnd = myDocument.getLineEndOffset(line);
             int nonWhitespaceOffset = CharArrayUtil.shiftForward(myChars, lineStart, lineEnd, " \t");
             HighlighterIterator iterator = myEditor.getHighlighter().createIterator(nonWhitespaceOffset);
-            if (BraceMatchingUtil.isRBraceToken(iterator, myChars, fileType)) {
+            IElementType tokenType = iterator.getTokenType();
+            if (BraceMatchingUtil.isRBraceToken(iterator, myChars, fileType) ||
+                tokenType != null &&
+                !CodeBlockSupportHandler.findMarkersRanges(myFile, tokenType.getLanguage(), nonWhitespaceOffset).isEmpty()) {
               indent = topIndent;
             }
           }
