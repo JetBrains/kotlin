@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor;
 import org.jetbrains.kotlin.types.refinement.TypeRefinement;
+import org.jetbrains.kotlin.utils.SmartSet;
 
 import java.util.*;
 
@@ -418,20 +419,24 @@ public class TypeUtils {
             @Nullable KotlinType type,
             @NotNull Function1<UnwrappedType, Boolean> isSpecialType
     ) {
-        return contains(type, isSpecialType, new HashSet<KotlinType>());
+        return contains(type, isSpecialType, null);
     }
 
     private static boolean contains(
             @Nullable KotlinType type,
             @NotNull Function1<UnwrappedType, Boolean> isSpecialType,
-            HashSet<KotlinType> visited
+            SmartSet<KotlinType> visited
     ) {
         if (type == null) return false;
-        if (visited.contains(type)) return false;
-        visited.add(type);
+        if (visited != null && visited.contains(type)) return false;
 
         UnwrappedType unwrappedType = type.unwrap();
         if (isSpecialType.invoke(unwrappedType)) return true;
+
+        if (visited == null) {
+            visited = SmartSet.create();
+        }
+        visited.add(type);
 
         FlexibleType flexibleType = unwrappedType instanceof FlexibleType ? (FlexibleType) unwrappedType : null;
         if (flexibleType != null
