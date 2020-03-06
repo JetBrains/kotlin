@@ -10,7 +10,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.ir.ir2string
-import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionView
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.OwnerKind
@@ -100,16 +99,7 @@ class IrSourceCompilerForInline(
 
     private fun makeInlineNode(function: IrFunction, classCodegen: ClassCodegen, isLambda: Boolean): SMAPAndMethodNode {
         var node: MethodNode? = null
-        // Do not inline the generated state-machine, which was generated to support java interop of inline suspend functions.
-        // Instead, find its $$forInline companion (they share the same attributeOwnerId), which is generated for the inliner to use.
-        val forInlineFunction =
-            if (function.isSuspend)
-                function.parentAsClass.functions.find {
-                    it.name.asString() == function.name.asString() + FOR_INLINE_SUFFIX &&
-                            it.attributeOwnerId == (function as? IrAttributeContainer)?.attributeOwnerId
-                } ?: function.suspendFunctionView(codegen.classCodegen.context)
-            else function
-        val functionCodegen = object : FunctionCodegen(forInlineFunction, classCodegen, codegen.takeIf { isLambda }) {
+        val functionCodegen = object : FunctionCodegen(function, classCodegen, codegen.takeIf { isLambda }) {
             override fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
                 val asmMethod = signature.asmMethod
                 node = MethodNode(
@@ -137,7 +127,16 @@ class IrSourceCompilerForInline(
         asmMethod: Method
     ): SMAPAndMethodNode {
         assert(callableDescriptor == callee.symbol.descriptor.original) { "Expected $callableDescriptor got ${callee.descriptor.original}" }
-        return makeInlineNode(callee, FakeClassCodegen(callee, codegen.classCodegen), false)
+        // Do not inline the generated state-machine, which was generated to support java interop of inline suspend functions.
+        // Instead, find its $$forInline companion (they share the same attributeOwnerId), which is generated for the inliner to use.
+        val forInlineFunction = if (callee.isSuspend)
+            callee.parentAsClass.functions.find {
+                it.name.asString() == callee.name.asString() + FOR_INLINE_SUFFIX &&
+                        it.attributeOwnerId == (callee as IrAttributeContainer).attributeOwnerId
+            } ?: callee
+        else
+            callee
+        return makeInlineNode(forInlineFunction, FakeClassCodegen(forInlineFunction, codegen.classCodegen), false)
     }
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()
