@@ -131,11 +131,6 @@ class SettingContext(val onUpdated: (SettingReference<*, *>) -> Unit) {
         onUpdated(reference)
     }
 
-    fun ReadingContext.initPluginSettings(settings: List<PluginSetting<*, *>>) {
-        for (setting in settings) {
-            setting.reference.savedOrDefaultValue?.let { values[setting.path] = it }
-        }
-    }
 
     val allPluginSettings: Collection<PluginSetting<*, *>>
         get() = pluginSettings.values

@@ -26,13 +26,10 @@ class IdeWizard(
     },
     isUnitTestMode
 ) {
-    private val allSettings = plugins.flatMap { it.declaredSettings }
     val ideContext = IdeContext(context, servicesManager, isUnitTestMode)
 
     init {
-        with(valuesReadingContext) {
-            context.settingContext.apply { initPluginSettings(allSettings) }
-        }
+        initPluginSettingsDefaultValues()
     }
 
     var projectPath by setting(StructurePlugin::projectPath.reference)

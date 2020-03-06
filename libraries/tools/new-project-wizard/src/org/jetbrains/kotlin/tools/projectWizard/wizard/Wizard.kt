@@ -37,7 +37,7 @@ abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: Servic
         }
     }
 
-    private fun initPluginDefaultValues() {
+    protected fun initPluginSettingsDefaultValues() {
         with(settingsWritingContext) {
             for (setting in pluginSettings) {
                 setting.reference.setSettingValueToItsDefaultIfItIsNotSetValue()
@@ -72,7 +72,7 @@ abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: Servic
         phases: Set<GenerationPhase>,
         onTaskExecuting: (PipelineTask) -> Unit = {}
     ): TaskResult<Unit> = computeM {
-        initPluginDefaultValues()
+        initPluginSettingsDefaultValues()
         initNonPluginDefaultValues()
         context.checkAllRequiredSettingPresent(phases).ensure()
         val taskRunningContext = WritingContext(context, servicesManager.withServices(services), isUnitTestMode)
