@@ -41,7 +41,7 @@ abstract class YarnBasics : NpmApi {
     }
 
     override fun resolveDependency(
-        resolvedNpmProject: KotlinCompilationNpmResolution,
+        npmResolution: KotlinCompilationNpmResolution,
         dependency: NpmDependency,
         transitive: Boolean
     ): Set<File> {
@@ -51,7 +51,7 @@ abstract class YarnBasics : NpmApi {
             return files
         }
 
-        val npmProject = resolvedNpmProject.npmProject
+        val npmProject = npmResolution.npmProject
 
         val all = mutableSetOf<File>()
 
@@ -73,7 +73,7 @@ abstract class YarnBasics : NpmApi {
         if (transitive) {
             dependency.dependencies.forEach {
                 resolveDependency(
-                    resolvedNpmProject,
+                    npmResolution,
                     it,
                     transitive
                 ).also { files ->

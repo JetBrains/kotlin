@@ -24,7 +24,7 @@ interface NpmApi {
     )
 
     fun resolveDependency(
-        resolvedNpmProject: KotlinCompilationNpmResolution,
+        npmResolution: KotlinCompilationNpmResolution,
         dependency: NpmDependency,
         transitive: Boolean
     ): Set<File>
