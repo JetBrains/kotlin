@@ -411,7 +411,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
           parent.remove(processIcon);
           parent.repaint();
         }
-        pingEDT.ping(); // repaint title
+        pingEDT.ping(); // repaint status
         synchronized (usages) {
           if (visibleNodes.isEmpty()) {
             if (usages.isEmpty()) {
@@ -445,10 +445,6 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
                 cancel(popup);
               }
             }
-          }
-          else {
-            boolean hasMore = visibleNodes.contains(Holder.MORE_USAGES_SEPARATOR_NODE);
-            statusConsumer.accept(getStatusString(false, hasMore, visibleNodes.size(), usages.size()));
           }
         }
       },
