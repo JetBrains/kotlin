@@ -71,7 +71,7 @@ open class CommonInteropArguments(val argParser: ArgParser) {
         const val MODE_SOURCECODE = "sourcecode"
         const val MODE_METADATA = "metadata"
 
-        const val DEFAULT_MODE = MODE_SOURCECODE
+        const val DEFAULT_MODE = MODE_METADATA
     }
 }
 
