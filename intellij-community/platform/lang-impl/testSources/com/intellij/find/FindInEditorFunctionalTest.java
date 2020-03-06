@@ -90,15 +90,15 @@ public class FindInEditorFunctionalTest extends AbstractFindInEditorTest {
     assertEquals(ActionButtonComponent.NORMAL, actions.get(ToggleSelectionOnlyAction.class).getPopState());
     assertTrue(actions.get(AddOccurrenceAction.class).isEnabled());
     assertTrue(actions.get(RemoveOccurrenceAction.class).isEnabled());
-    assertEquals(ApplicationBundle.message("editorsearch.matches", 4), component.getStatusText());
+    assertEquals(ApplicationBundle.message("editorsearch.current.cursor.position", 2, 4), component.getStatusText());
     checkResultByText("first foo\n<selection>foo</selection> bar baz\n" +
                       "baz bar foo\nlast foo");
     model.setGlobal(false); // restore selection
     checkResultByText(origText);
-    assertEquals(ApplicationBundle.message("editorsearch.matches", 2), component.getStatusText());
+    assertEquals(ApplicationBundle.message("editorsearch.current.cursor.position", 1, 2), component.getStatusText());
     // React on selection change
     editor.getSelectionModel().setSelection(0, editor.getDocument().getLineEndOffset(2));
-    assertEquals(ApplicationBundle.message("editorsearch.matches", 3), component.getStatusText());
+    assertEquals(ApplicationBundle.message("editorsearch.current.cursor.position", 2, 3), component.getStatusText());
     editor.getSelectionModel().removeSelection();
     assertEquals(ApplicationBundle.message("editorsearch.noselection"), component.getStatusText());
 
@@ -214,7 +214,7 @@ public class FindInEditorFunctionalTest extends AbstractFindInEditorTest {
     model.setStringToFind("|");
     assertEquals(ApplicationBundle.message("editorsearch.empty.string.matches"), component.getStatusText());
     model.setStringToFind("ba.?");
-    assertEquals(ApplicationBundle.message("editorsearch.matches", 4), component.getStatusText());
+    assertEquals(ApplicationBundle.message("editorsearch.current.cursor.position", 1, 4), component.getStatusText());
   }
 
   public void testFindWholeWords() {
@@ -229,10 +229,10 @@ public class FindInEditorFunctionalTest extends AbstractFindInEditorTest {
     assertFalse(model.isWholeWordsOnly()); // default is false
     assertFalse(actionButton.isSelected());
     model.setStringToFind("abc");
-    assertEquals(ApplicationBundle.message("editorsearch.matches", 2), component.getStatusText());
+    assertEquals(ApplicationBundle.message("editorsearch.current.cursor.position", 1, 2), component.getStatusText());
     model.setWholeWordsOnly(true);
     assertTrue(actionButton.isSelected());
-    assertEquals(ApplicationBundle.message("editorsearch.matches", 1), component.getStatusText());
+    assertEquals(ApplicationBundle.message("editorsearch.current.cursor.position", 1, 1), component.getStatusText());
   }
 
   public void testFindCaseSensitive() {
@@ -247,10 +247,10 @@ public class FindInEditorFunctionalTest extends AbstractFindInEditorTest {
     assertFalse(model.isCaseSensitive()); // default is false
     assertFalse(actionButton.isSelected());
     model.setStringToFind("ab");
-    assertEquals(ApplicationBundle.message("editorsearch.matches", 4), component.getStatusText());
+    assertEquals(ApplicationBundle.message("editorsearch.current.cursor.position", 1, 4), component.getStatusText());
     model.setCaseSensitive(true);
     assertTrue(actionButton.isSelected());
-    assertEquals(ApplicationBundle.message("editorsearch.matches", 1), component.getStatusText());
+    assertEquals(ApplicationBundle.message("editorsearch.current.cursor.position", 1, 1), component.getStatusText());
   }
 
   public void testNextFromFoldedRegion() {

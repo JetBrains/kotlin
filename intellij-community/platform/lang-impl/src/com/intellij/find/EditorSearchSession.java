@@ -316,7 +316,9 @@ public class EditorSearchSession implements SearchSession,
         int cursorIndex = sr.getCursorVisualIndex();
         status = tooManyMatches
                  ? ApplicationBundle.message("editorsearch.toomuch", mySearchResults.getMatchesLimit())
-                 : cursorIndex != -1 ? cursorIndex + "/" + matches : ApplicationBundle.message("editorsearch.matches", matches);
+                 : cursorIndex != -1
+                   ? ApplicationBundle.message("editorsearch.current.cursor.position", cursorIndex, matches)
+                   : ApplicationBundle.message("editorsearch.matches", matches);
         if (!tooManyMatches && matches <= 0) {
           myComponent.setNotFoundBackground();
         }
