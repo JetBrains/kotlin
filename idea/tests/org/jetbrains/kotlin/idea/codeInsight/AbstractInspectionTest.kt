@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.codeInspection.ex.EntryPointsManagerBase
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
@@ -14,6 +15,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.testFramework.TestLoggerFactory
 import org.jdom.Document
 import org.jdom.input.SAXBuilder
+import org.jetbrains.kotlin.formatter.FormatSettingsUtil
 import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
 import org.jetbrains.kotlin.idea.inspections.runInspection
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -114,31 +116,38 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
                     }
                 }.toList()
 
-                try {
-                fixtureClasses.forEach { TestFixtureExtension.loadFixture(it, myFixture.module) }
+                val codeStyleSettings = CodeStyle.getSettings(project)
+                configureRegistryAndRun(options) {
+                    try {
+                        FormatSettingsUtil.createConfigurator(options, codeStyleSettings).configureSettings()
+                        fixtureClasses.forEach { TestFixtureExtension.loadFixture(it, myFixture.module) }
 
-                configExtra(psiFiles, options)
+                        configExtra(psiFiles, options)
 
-                val presentation = runInspection(
-                    inspectionClass, project,
-                    settings = settingsElement,
-                    files = psiFiles.map { it.virtualFile!! }, withTestDir = inspectionsTestDir.path
-                )
+                        val presentation = runInspection(
+                            inspectionClass, project,
+                            settings = settingsElement,
+                            files = psiFiles.map { it.virtualFile!! }, withTestDir = inspectionsTestDir.path
+                        )
 
-                if (afterFiles.isNotEmpty()) {
-                    presentation.problemDescriptors.forEach { problem ->
-                        problem.fixes?.forEach {
-                            CommandProcessor.getInstance().executeCommand(project, {
-                                runWriteAction { it.applyFix(project, problem) }
-                            }, it.name, it.familyName)
+                        if (afterFiles.isNotEmpty()) {
+                            presentation.problemDescriptors.forEach { problem ->
+                                problem.fixes?.forEach {
+                                    CommandProcessor.getInstance().executeCommand(
+                                        project,
+                                        {
+                                            runWriteAction { it.applyFix(project, problem) }
+                                        },
+                                        it.name, it.familyName
+                                    )
+                                }
+                            }
+
+                            for (filePath in afterFiles) {
+                                val kotlinFile = psiFiles.first { filePath.name == it.name + ".after" }
+                                KotlinTestUtils.assertEqualsToFile(filePath, kotlinFile.text)
+                            }
                         }
-                    }
-
-                    for (filePath in afterFiles) {
-                        val kotlinFile = psiFiles.first { filePath.name == it.name + ".after" }
-                        KotlinTestUtils.assertEqualsToFile(filePath, kotlinFile.text)
-                    }
-                }
 
                     } finally {
                         codeStyleSettings.clearCodeStyleSettings()

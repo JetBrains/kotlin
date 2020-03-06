@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.test
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.openapi.actionSystem.ActionPlaces
@@ -18,6 +19,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
@@ -25,6 +27,7 @@ import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.PsiClassOwner
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
+import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.ProjectScope
 import com.intellij.testFramework.LightProjectDescriptor
@@ -292,6 +295,20 @@ fun <T> configureRegistryAndRun(fileText: String, body: () -> T) {
         for ((register, _) in registers) {
             register.resetToDefault()
         }
+    }
+}
+
+fun configureCodeStyleAndRun(
+    project: Project,
+    configurator: (CodeStyleSettings) -> Unit,
+    body: () -> Unit
+) {
+    val codeStyleSettings = CodeStyle.getSettings(project)
+    try {
+        configurator(codeStyleSettings)
+        body()
+    } finally {
+        codeStyleSettings.clearCodeStyleSettings()
     }
 }
 

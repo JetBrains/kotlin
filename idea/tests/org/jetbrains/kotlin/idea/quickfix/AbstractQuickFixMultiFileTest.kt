@@ -155,7 +155,7 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
                             actionShouldBeAvailable,
                             getTestName(false),
                             this::availableActions,
-                            myFixture::doHighlighting,
+                            myFixture::doHighlighting
                         )
 
                         val actualText = file.text
@@ -236,7 +236,7 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
                             actionShouldBeAvailable,
                             beforeFileName,
                             this::availableActions,
-                            myFixture::doHighlighting,
+                            myFixture::doHighlighting
                         )
 
                         if (actionShouldBeAvailable) {
@@ -252,8 +252,8 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
                                 if (fileName == myFixture.file.name || !fileName.startsWith(
                                         extraFileNamePrefix(
                                             myFixture.file
-                                                .name,
-                                        ),
+                                                .name
+                                        )
                                     )
                                 ) continue
 
