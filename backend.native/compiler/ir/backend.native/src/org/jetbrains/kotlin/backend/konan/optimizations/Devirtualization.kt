@@ -1729,26 +1729,30 @@ internal object Devirtualization {
 
                     is IrBlock -> {
                         val statements = expression.statements
-                        val lastStatement = statements.last() as IrExpression
-                        val foldedLastStatement = fold(lastStatement, coercion, cast, transformRecursively)
-                        statements.transform {
-                            if (it == lastStatement)
-                                foldedLastStatement.expression
-                            else
-                                it.transformIfAsked()
+                        if (statements.isEmpty())
+                            PossiblyFoldedExpression(expression, false)
+                        else {
+                            val lastStatement = statements.last() as IrExpression
+                            val foldedLastStatement = fold(lastStatement, coercion, cast, transformRecursively)
+                            statements.transform {
+                                if (it == lastStatement)
+                                    foldedLastStatement.expression
+                                else
+                                    it.transformIfAsked()
+                            }
+                            val transformedBlock =
+                                    if (!foldedLastStatement.folded)
+                                        expression
+                                    else with(expression) {
+                                        IrBlockImpl(
+                                                startOffset = startOffset,
+                                                endOffset = endOffset,
+                                                type = coercion.type,
+                                                origin = origin,
+                                                statements = statements)
+                                    }
+                            PossiblyFoldedExpression(transformedBlock, foldedLastStatement.folded)
                         }
-                        val transformedBlock =
-                                if (!foldedLastStatement.folded)
-                                    expression
-                                else with(expression) {
-                                    IrBlockImpl(
-                                            startOffset = startOffset,
-                                            endOffset   = endOffset,
-                                            type        = coercion.type,
-                                            origin      = origin,
-                                            statements  = statements)
-                                }
-                        PossiblyFoldedExpression(transformedBlock, foldedLastStatement.folded)
                     }
 
                     is IrWhen -> {
