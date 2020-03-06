@@ -3718,6 +3718,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/inlineSuspendContinuation.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("inlineSuspendInMultifileClass.kt")
+        public void testInlineSuspendInMultifileClass() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/suspend/inlineSuspendInMultifileClass.kt");
+        }
+
         @TestMetadata("inlineSuspendOfCrossinlineOrdinary.kt")
         public void testInlineSuspendOfCrossinlineOrdinary_1_2() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfCrossinlineOrdinary.kt", "kotlin.coroutines.experimental");
