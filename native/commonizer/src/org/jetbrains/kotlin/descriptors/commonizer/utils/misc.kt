@@ -16,3 +16,9 @@ internal fun <T> Sequence<T>.toList(expectedCapacity: Int): List<T> {
 internal inline fun <reified T> Iterable<T?>.firstNonNull() = firstIsInstance<T>()
 
 internal fun Any?.isNull(): Boolean = this == null
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun hashCode(value: Any?): Int = value.hashCode()
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun Int.appendHashCode(value: Any?): Int = 31 * this + hashCode(value)

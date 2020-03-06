@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
-import java.util.WeakHashMap
+import com.intellij.util.containers.WeakInterner
 
-internal class NonThreadSafeInterner<T : Any> {
-    private val pool = WeakHashMap<T, T>()
+class Interner<T : Any> {
+    private val pool = WeakInterner<T>()
 
-    fun intern(value: T): T = pool.computeIfAbsent(value) { value }
+    fun intern(value: T): T = pool.intern(value)
 }

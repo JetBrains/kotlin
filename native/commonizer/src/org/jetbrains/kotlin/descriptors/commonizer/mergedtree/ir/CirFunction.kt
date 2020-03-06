@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.utils.NonThreadSafeInterner
+import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
+import org.jetbrains.kotlin.descriptors.commonizer.utils.hashCode
+import org.jetbrains.kotlin.descriptors.commonizer.utils.appendHashCode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.Name
 
@@ -85,16 +87,13 @@ class CirValueParameterImpl private constructor(original: ValueParameterDescript
     // See also org.jetbrains.kotlin.types.KotlinType.cachedHashCode
     private var cachedHashCode = 0
 
-    private fun computeHashCode(): Int {
-        var result = name.hashCode()
-        result += 31 * result + annotations.hashCode()
-        result += 31 * result + returnType.hashCode()
-        result += 31 * result + varargElementType.hashCode()
-        result += 31 * result + declaresDefaultValue.hashCode()
-        result += 31 * result + isCrossinline.hashCode()
-        result += 31 * result + isNoinline.hashCode()
-        return result
-    }
+    private fun computeHashCode() = hashCode(name)
+        .appendHashCode(annotations)
+        .appendHashCode(returnType)
+        .appendHashCode(varargElementType)
+        .appendHashCode(declaresDefaultValue)
+        .appendHashCode(isCrossinline)
+        .appendHashCode(isNoinline)
 
     override fun hashCode(): Int {
         var currentHashCode = cachedHashCode
@@ -105,8 +104,9 @@ class CirValueParameterImpl private constructor(original: ValueParameterDescript
         return currentHashCode
     }
 
-    override fun equals(other: Any?): Boolean =
-        if (other is CirValueParameterImpl) {
+    override fun equals(other: Any?): Boolean = when {
+        other === this -> true
+        other is CirValueParameterImpl -> {
             name == other.name
                     && returnType == other.returnType
                     && annotations == other.annotations
@@ -114,11 +114,12 @@ class CirValueParameterImpl private constructor(original: ValueParameterDescript
                     && declaresDefaultValue == other.declaresDefaultValue
                     && isCrossinline == other.isCrossinline
                     && isNoinline == other.isNoinline
-        } else
-            false
+        }
+        else -> false
+    }
 
     companion object {
-        private val interner = NonThreadSafeInterner<CirValueParameterImpl>()
+        private val interner = Interner<CirValueParameterImpl>()
 
         fun create(original: ValueParameterDescriptor): CirValueParameterImpl = interner.intern(CirValueParameterImpl(original))
     }

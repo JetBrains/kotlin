@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirGetter.Companion.toGetter
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirSetter.Companion.toSetter
-import org.jetbrains.kotlin.descriptors.commonizer.utils.NonThreadSafeInterner
+import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
 interface CirProperty : CirFunctionOrProperty {
@@ -78,7 +78,7 @@ data class CirGetter private constructor(
     override val isInline: Boolean
 ) : CirPropertyAccessor {
     companion object {
-        private val interner = NonThreadSafeInterner<CirGetter>()
+        private val interner = Interner<CirGetter>()
 
         val DEFAULT_NO_ANNOTATIONS = interner.intern(
             CirGetter(
@@ -114,7 +114,7 @@ data class CirSetter private constructor(
     override val isInline: Boolean
 ) : CirPropertyAccessor, CirDeclarationWithVisibility {
     companion object {
-        private val interner = NonThreadSafeInterner<CirSetter>()
+        private val interner = Interner<CirSetter>()
 
         fun createDefaultNoAnnotations(visibility: Visibility) = interner.intern(
             CirSetter(
