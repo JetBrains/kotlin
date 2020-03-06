@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
@@ -61,7 +62,7 @@ data class CallInfo(
         )
 
     fun replaceWithVariableAccess(): CallInfo =
-        copy(callKind = CallKind.VariableAccess, argumentList = FirEmptyArgumentList)
+        copy(callKind = CallKind.VariableAccess, typeArguments = emptyList(), argumentList = FirEmptyArgumentList)
 
     fun replaceExplicitReceiver(explicitReceiver: FirExpression?): CallInfo =
         copy(explicitReceiver = explicitReceiver)
@@ -112,6 +113,7 @@ class Candidate(
     var usesSAM: Boolean = false
 
     var argumentMapping: Map<FirExpression, FirValueParameter>? = null
+    lateinit var typeArgumentMapping: TypeArgumentMapping
     val postponedAtoms = mutableListOf<PostponedResolvedAtomMarker>()
 
     val diagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
