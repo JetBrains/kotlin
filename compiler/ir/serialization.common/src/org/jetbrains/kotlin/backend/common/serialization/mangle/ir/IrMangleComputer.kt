@@ -5,19 +5,16 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.mangle.ir
 
-import org.jetbrains.kotlin.backend.common.ir.isStatic
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComputer
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
 import org.jetbrains.kotlin.backend.common.serialization.mangle.collect
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.isVararg
-import org.jetbrains.kotlin.ir.util.module
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.Variance
@@ -33,6 +30,8 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
     open fun IrFunction.platformSpecificFunctionName(): String? = null
 
     open fun IrFunction.specialValueParamPrefix(param: IrValueParameter): String = ""
+
+    open fun addReturnType(): Boolean = false
 
     abstract override fun copy(newMode: MangleMode): IrMangleComputer
 
@@ -117,7 +116,7 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
         }
         typeParameters.collect(builder, MangleConstant.TYPE_PARAMETERS) { mangleTypeParameter(this, it) }
 
-        if (!isCtor && !returnType.isUnit()) {
+        if (!isCtor && !returnType.isUnit() && addReturnType()) {
             mangleType(builder, returnType)
         }
     }
