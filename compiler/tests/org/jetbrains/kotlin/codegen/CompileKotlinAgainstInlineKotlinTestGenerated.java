@@ -3917,6 +3917,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                 runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/defaultParameter/defaultValueCrossinline.kt", "kotlin.coroutines");
             }
 
+            @TestMetadata("defaultValueInClass.kt")
+            public void testDefaultValueInClass() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/defaultParameter/defaultValueInClass.kt");
+            }
+
             @TestMetadata("defaultValueInlineFromMultiFileFacade.kt")
             public void testDefaultValueInlineFromMultiFileFacade_1_2() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/defaultParameter/defaultValueInlineFromMultiFileFacade.kt", "kotlin.coroutines.experimental");
