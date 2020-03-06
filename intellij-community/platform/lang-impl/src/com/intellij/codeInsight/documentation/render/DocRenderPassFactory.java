@@ -7,13 +7,13 @@ import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Segment;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.PsiDocCommentBase;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -39,7 +39,6 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
   @Nullable
   @Override
   public TextEditorHighlightingPass createHighlightingPass(@NotNull PsiFile file, @NotNull Editor editor) {
-    if (!Registry.is("editor.render.doc.comments")) return null;
     long current = PsiModificationTracker.SERVICE.getInstance(file.getProject()).getModificationCount();
     Long existing = editor.getUserData(MODIFICATION_STAMP);
     return existing != null && existing == current ? null : new DocRenderPass(editor, file);
@@ -66,15 +65,17 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
   @NotNull
   public static Items calculateItemsToRender(@NotNull Document document, @NotNull PsiFile psiFile) {
     Items items = new Items();
-    SyntaxTraverser.psiTraverser(psiFile).filter(PsiDocCommentBase.class).forEach(comment -> {
-      TextRange range = comment.getTextRange();
-      if (range != null && DocRenderItem.isValidRange(document, range)) {
-        String textToRender = calcText(comment);
-        if (textToRender != null) {
-          items.addItem(new Item(range, textToRender));
+    if (EditorSettingsExternalizable.getInstance().isDocCommentRenderingEnabled()) {
+      SyntaxTraverser.psiTraverser(psiFile).filter(PsiDocCommentBase.class).forEach(comment -> {
+        TextRange range = comment.getTextRange();
+        if (range != null && DocRenderItem.isValidRange(document, range)) {
+          String textToRender = calcText(comment);
+          if (textToRender != null) {
+            items.addItem(new Item(range, textToRender));
+          }
         }
-      }
-    });
+      });
+    }
     return items;
   }
 
@@ -101,6 +102,10 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
 
   public static class Items implements Iterable<Item> {
     private final Map<TextRange, Item> myItems = new LinkedHashMap<>();
+
+    boolean isEmpty() {
+      return myItems.isEmpty();
+    }
 
     private void addItem(@NotNull Item item) {
       myItems.put(item.textRange, item);

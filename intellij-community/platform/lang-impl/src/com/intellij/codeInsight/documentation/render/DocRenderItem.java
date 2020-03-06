@@ -70,6 +70,7 @@ class DocRenderItem {
     Collection<DocRenderItem> items;
     Collection<DocRenderItem> existing = editor.getUserData(OUR_ITEMS);
     if (existing == null) {
+      if (itemsToSet.isEmpty()) return;
       editor.putUserData(OUR_ITEMS, items = new ArrayList<>());
     }
     else {
