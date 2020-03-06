@@ -26,13 +26,13 @@ fun String.parseKotlinAbiVersion(): KotlinAbiVersion {
     }
 }
 
-// We still enumerate klib abi_version with a single number,
-// but we don't break if in the future we switch to triples.
+// For 1.4 compiler we switch klib abi_version to a triple,
+// but we don't break if we still encounter a single digit from 1.3.
 data class KotlinAbiVersion(val major: Int, val minor: Int, val patch: Int) {
     constructor(single: Int) : this(0, single, 0)
     companion object {
-        val CURRENT = KotlinAbiVersion(26)
+        val CURRENT = KotlinAbiVersion(1, 4, 0)
     }
 
-    override fun toString() = if (major == 0 && patch == 0) "$minor" else "$major.$minor.$patch"
+    override fun toString() = "$major.$minor.$patch"
 }
