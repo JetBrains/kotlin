@@ -356,6 +356,7 @@ private val jvmFilePhases =
         fakeInliningLocalVariablesLowering then
 
         makePatchParentsPhase(3)
+
 val jvmPhases = namedIrModulePhase(
     name = "IrLowering",
     description = "IR lowering",
