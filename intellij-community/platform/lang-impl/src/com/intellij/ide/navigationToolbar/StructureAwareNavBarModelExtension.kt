@@ -4,6 +4,7 @@ package com.intellij.ide.navigationToolbar
 import com.intellij.ide.structureView.StructureViewModel
 import com.intellij.ide.structureView.StructureViewTreeElement
 import com.intellij.ide.structureView.TreeBasedStructureViewBuilder
+import com.intellij.ide.structureView.impl.common.PsiTreeElementBase
 import com.intellij.ide.ui.UISettings
 import com.intellij.ide.util.treeView.smartTree.NodeProvider
 import com.intellij.ide.util.treeView.smartTree.TreeElement
@@ -112,7 +113,8 @@ abstract class StructureAwareNavBarModelExtension : AbstractNavBarModelExtension
   }
 
   private fun childrenFromNodeAndProviders(parent: StructureViewTreeElement): List<TreeElement> {
-    return parent.children.toList() + applicableNodeProviders.flatMap { it.provideNodes(parent) }
+    val children = if (parent is PsiTreeElementBase<*>) parent.childrenWithoutCustomRegions else parent.children
+    return children.toList() + applicableNodeProviders.flatMap { it.provideNodes(parent) }
   }
 
   override fun normalizeChildren() = false
