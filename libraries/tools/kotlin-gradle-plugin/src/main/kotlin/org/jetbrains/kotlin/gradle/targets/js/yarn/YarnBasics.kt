@@ -15,7 +15,8 @@ import java.io.File
 
 abstract class YarnBasics : NpmApi {
 
-    private val resolvedDependencies = mutableMapOf<NpmDependency, Set<File>>()
+    private val nonTransitiveResolvedDependencies = mutableMapOf<NpmDependency, Set<File>>()
+    private val transitiveResolvedDependencies = mutableMapOf<NpmDependency, Set<File>>()
 
     override fun setup(project: Project) {
         YarnPlugin.apply(project).executeSetup()
@@ -45,7 +46,11 @@ abstract class YarnBasics : NpmApi {
         dependency: NpmDependency,
         transitive: Boolean
     ): Set<File> {
-        val files = resolvedDependencies[dependency]
+        val files = (if (transitive) {
+            transitiveResolvedDependencies
+        } else {
+            nonTransitiveResolvedDependencies
+        })[dependency]
 
         if (files != null) {
             return files
@@ -70,6 +75,8 @@ abstract class YarnBasics : NpmApi {
             }
         }
 
+        nonTransitiveResolvedDependencies[dependency] = all
+
         if (transitive) {
             dependency.dependencies.forEach {
                 resolveDependency(
@@ -80,9 +87,8 @@ abstract class YarnBasics : NpmApi {
                     all.addAll(files)
                 }
             }
+            transitiveResolvedDependencies[dependency] = all
         }
-
-        resolvedDependencies[dependency] = all
 
         return all
     }
