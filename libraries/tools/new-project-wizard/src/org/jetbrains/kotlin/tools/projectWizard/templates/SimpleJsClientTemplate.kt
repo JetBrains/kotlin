@@ -39,7 +39,7 @@ class SimpleJsClientTemplate : Template() {
                 || module.configurator == JsSingleplatformModuleConfigurator
 
     val renderEngine by enumSetting<RenderEngine>("Rendering engine", GenerationPhase.PROJECT_GENERATION) {
-        defaultValue = RenderEngine.REACT_WITH_STYLED
+        defaultValue = value(RenderEngine.REACT_WITH_STYLED)
     }
 
     override val settings: List<TemplateSetting<*, *>> = listOf(renderEngine)

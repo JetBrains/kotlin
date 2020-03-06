@@ -24,7 +24,7 @@ abstract class UIComponentDelegatingSettingComponent<V : Any, T : SettingType<V>
     override fun onInit() {
         super.onInit()
         if (value == null) {
-            read { valueForSetting(uiComponent, setting) }?.let { value = it }
+            read { valueForSetting(uiComponent, reference) }?.let { value = it }
         }
         value?.let(uiComponent::updateUiValue)
     }

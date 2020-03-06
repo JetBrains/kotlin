@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @TestMetadata("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class BuildFileGenerationTestGenerated extends AbstractBuildFileGenerationTest {
+public class YamlBuildFileGenerationTestGenerated extends AbstractYamlBuildFileGenerationTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
@@ -61,5 +61,10 @@ public class BuildFileGenerationTestGenerated extends AbstractBuildFileGeneratio
     @TestMetadata("simpleNativeTarget")
     public void testSimpleNativeTarget() throws Exception {
         runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration/simpleNativeTarget/");
+    }
+
+    @TestMetadata("singleplatformJs")
+    public void testSingleplatformJs() throws Exception {
+        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration/singleplatformJs/");
     }
 }

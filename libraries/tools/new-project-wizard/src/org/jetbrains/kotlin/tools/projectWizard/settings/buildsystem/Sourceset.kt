@@ -31,7 +31,7 @@ data class PathBasedSourcesetDependency(val path: ModulePath) : SourcesetDepende
 // A `main` or `test` sourceset for single or multiplatform projects
 class Sourceset(
     val sourcesetType: SourcesetType,
-    var dependencies: List<SourcesetDependency>,
+    var dependencies: List<SourcesetDependency> = emptyList(),
     var parent: Module? = null,
     override val identificator: Identificator = GeneratedIdentificator(sourcesetType.name)
 ) : DisplayableSettingItem, IdentificatorOwner {

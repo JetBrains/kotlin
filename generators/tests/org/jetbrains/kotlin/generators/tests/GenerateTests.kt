@@ -163,10 +163,13 @@ import org.jetbrains.kotlin.search.AbstractAnnotatedMembersSearchTest
 import org.jetbrains.kotlin.search.AbstractInheritorsSearchTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.tools.projectWizard.cli.AbstractBuildFileGenerationTest
+import org.jetbrains.kotlin.tools.projectWizard.cli.AbstractProjectTemplateBuildFileGenerationTest
+import org.jetbrains.kotlin.tools.projectWizard.cli.AbstractYamlBuildFileGenerationTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationIrBytecodeListingTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginBytecodeListingTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginDiagnosticTest
+import org.jetbrains.kotlin.tools.projectWizard.wizard.AbstractProjectTemplateNewWizardProjectImportTest
+import org.jetbrains.kotlin.tools.projectWizard.wizard.AbstractYamlNewWizardProjectImportTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -1092,8 +1095,34 @@ fun main(args: Array<String>) {
         "libraries/tools/new-project-wizard/new-project-wizard-cli/tests",
         "libraries/tools/new-project-wizard/new-project-wizard-cli/testData"
     ) {
-        testClass<AbstractBuildFileGenerationTest> {
+        testClass<AbstractYamlBuildFileGenerationTest> {
             model("buildFileGeneration", recursive = false, extension = null)
+        }
+        testClass<AbstractProjectTemplateBuildFileGenerationTest> {
+            model("projectTemplatesBuildFileGeneration", recursive = false, extension = null)
+        }
+    }
+
+    testGroup(
+        "idea/idea-new-project-wizard/tests",
+        "libraries/tools/new-project-wizard/new-project-wizard-cli/testData"
+    ) {
+        fun TestGroup.TestClass.allBuildSystemTests(relativeRootPath: String) {
+            for (testClass in listOf("GradleKts", "GradleGroovy", "Maven")) {
+                model(
+                    relativeRootPath,
+                    recursive = false,
+                    extension = null,
+                    testMethod = "doTest${testClass}",
+                    testClassName = testClass
+                )
+            }
+        }
+        testClass<AbstractYamlNewWizardProjectImportTest> {
+            allBuildSystemTests("buildFileGeneration")
+        }
+        testClass<AbstractProjectTemplateNewWizardProjectImportTest> {
+            allBuildSystemTests("projectTemplatesBuildFileGeneration")
         }
     }
 

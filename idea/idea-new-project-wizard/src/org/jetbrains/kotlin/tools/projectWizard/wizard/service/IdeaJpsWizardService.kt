@@ -36,7 +36,11 @@ class IdeaJpsWizardService(
     override fun isSuitableFor(buildSystemType: BuildSystemType): Boolean =
         buildSystemType == BuildSystemType.Jps
 
-    override fun importProject(path: Path, modulesIrs: List<ModuleIR>): TaskResult<Unit> = runWriteAction {
+    override fun importProject(
+        path: Path,
+        modulesIrs: List<ModuleIR>,
+        buildSystem: BuildSystemType
+    ): TaskResult<Unit> = runWriteAction {
         ProjectImporter(project, modulesModel, path, modulesIrs)
             .import()
     }

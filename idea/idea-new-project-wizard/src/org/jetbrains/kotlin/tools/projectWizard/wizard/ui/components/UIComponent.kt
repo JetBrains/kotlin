@@ -88,5 +88,5 @@ abstract class UIComponent<V : Any>(
 
 fun <V : Any> ReadingContext.valueForSetting(
     uiComponent: UIComponent<V>,
-    setting: Setting<V, SettingType<V>>
+    setting: SettingReference<V, SettingType<V>>
 ): V? = setting.savedOrDefaultValue ?: uiComponent.getUiValue()

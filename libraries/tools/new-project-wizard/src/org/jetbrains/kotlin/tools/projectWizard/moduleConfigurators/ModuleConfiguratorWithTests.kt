@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.ModuleConfiguratorSetting
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.ModuleConfiguratorSettingReference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyType
@@ -26,8 +25,6 @@ interface ModuleConfiguratorWithTests : ModuleConfiguratorWithSettings {
             "Test Framework",
             neededAtPhase = GenerationPhase.PROJECT_GENERATION
         ) {
-            defaultValue = KotlinTestFramework.COMMON
-
             filter = filter@{ reference, kotlinTestFramework ->
                 if (reference !is ModuleConfiguratorSettingReference<*, *>) return@filter true
 

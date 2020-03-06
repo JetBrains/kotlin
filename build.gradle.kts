@@ -670,7 +670,8 @@ tasks {
         dependsOn("dist")
         dependsOn(
             ":libraries:tools:new-project-wizard:test",
-            ":libraries:tools:new-project-wizard:new-project-wizard-cli:test"
+            ":libraries:tools:new-project-wizard:new-project-wizard-cli:test",
+            ":idea:idea-new-project-wizard:test"
         )
     }
 

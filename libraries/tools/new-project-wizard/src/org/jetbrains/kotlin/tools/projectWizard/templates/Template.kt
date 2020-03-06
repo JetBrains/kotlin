@@ -78,8 +78,11 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor {
     fun SettingsWritingContext.initDefaultValuesFor(module: Module) {
         withSettingsOf(module) {
             settings.forEach { setting ->
-                val defaultValue = setting.savedOrDefaultValue ?: return@forEach
-                setting.reference.setValue(defaultValue)
+                val reference = setting.reference
+                val defaultValue = reference.savedOrDefaultValue ?: return@forEach
+                if (reference.notRequiredSettingValue == null) {
+                    reference.setValue(defaultValue)
+                }
             }
         }
     }

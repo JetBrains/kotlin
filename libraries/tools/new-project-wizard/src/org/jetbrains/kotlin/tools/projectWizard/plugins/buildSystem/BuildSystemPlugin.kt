@@ -87,8 +87,8 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
         runAfter(BuildSystemPlugin::createModules)
         withAction {
             val data = BuildSystemPlugin::buildSystemData.propertyValue.first { it.type == buildSystemType }
-            service<ProjectImportingWizardService> { service -> service.isSuitableFor(data.type) }!!
-                .importProject(StructurePlugin::projectPath.reference.settingValue, allIRModules)
+            service<ProjectImportingWizardService> { service -> service.isSuitableFor(data.type) }
+                .importProject(StructurePlugin::projectPath.reference.settingValue, allIRModules, buildSystemType)
         }
     }
 

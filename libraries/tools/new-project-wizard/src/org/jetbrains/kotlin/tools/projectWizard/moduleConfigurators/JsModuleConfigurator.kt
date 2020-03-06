@@ -19,7 +19,7 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType {
     override val moduleType: ModuleType get() = ModuleType.js
 }
 
-object JsSingleplatformModuleConfigurator : JSConfigurator, ModuleConfiguratorWithTests {
+object JsSingleplatformModuleConfigurator : JSConfigurator, ModuleConfiguratorWithTests, SinglePlatformModuleConfigurator {
     override val moduleKind = ModuleKind.singleplatformJs
     override val suggestedModuleName = "js"
     override val id = "jsSinglepaltform"

@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
+import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.applyProjectTemplate
 import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.ProjectTemplate
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
@@ -57,12 +58,8 @@ class TemplatesSubStep(ideContext: IdeContext) : SubStep(ideContext) {
 
     private fun applySelectedTemplate() {
         modify {
-            projectTemplateSettingComponent.value?.setsValues?.forEach { (setting, value) ->
-                setting.setValue(value)
-            }
-            allModules().forEach { module ->
-                module.apply { initDefaultValuesForSettings() }
-            }
+            val selectedProjectTemplate = projectTemplateSettingComponent.value ?: return@modify
+            applyProjectTemplate(selectedProjectTemplate)
         }
     }
 

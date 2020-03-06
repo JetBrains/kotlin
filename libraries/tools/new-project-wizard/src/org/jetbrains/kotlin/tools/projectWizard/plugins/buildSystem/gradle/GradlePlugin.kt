@@ -24,14 +24,8 @@ import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
 
 
 abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
-    val createGradleWrapper by booleanSetting("Create Gradle Wrapper", GenerationPhase.FIRST_STEP) {
-        defaultValue = true
-        isAvailable = isGradle
-    }
-
-
     val version by versionSetting("Gradle Version", GenerationPhase.FIRST_STEP) {
-        defaultValue = defaultVersions.first()
+        defaultValue = value(defaultVersions.first())
         isAvailable = isGradle
     }
 
@@ -92,7 +86,6 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
         runBefore(TemplatesPlugin::renderFileTemplates)
         isAvailable = isGradle
         withAction {
-            if (!GradlePlugin::createGradleWrapper.reference.settingValue) return@withAction UNIT_SUCCESS
             TemplatesPlugin::addFileTemplate.execute(
                 FileTemplate(
                     FileTemplateDescriptor(

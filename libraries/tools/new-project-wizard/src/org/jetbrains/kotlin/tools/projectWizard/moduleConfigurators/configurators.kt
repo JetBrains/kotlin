@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 interface JvmModuleConfigurator : ModuleConfiguratorWithTests {
     companion object : ModuleConfiguratorSettings() {
         val targetJvmVersion by enumSetting<TargetJvmVersion>("Target JVM Version", GenerationPhase.PROJECT_GENERATION) {
-            defaultValue = TargetJvmVersion.JVM_1_8
+            defaultValue = value(TargetJvmVersion.JVM_1_8)
         }
     }
 

@@ -133,7 +133,7 @@ class SettingContext(val onUpdated: (SettingReference<*, *>) -> Unit) {
 
     fun ReadingContext.initPluginSettings(settings: List<PluginSetting<*, *>>) {
         for (setting in settings) {
-            setting.savedOrDefaultValue?.let { values[setting.path] = it }
+            setting.reference.savedOrDefaultValue?.let { values[setting.path] = it }
         }
     }
 
@@ -166,7 +166,7 @@ typealias AnySetting = Setting<*, *>
 
 interface Setting<out V : Any, out T : SettingType<V>> : Entity, ActivityCheckerOwner, Validatable<V> {
     val title: String
-    val defaultValue: V?
+    val defaultValue: SettingDefaultValue<V>?
     val isRequired: Boolean
     val isSavable: Boolean
     var neededAtPhase: GenerationPhase
@@ -176,7 +176,7 @@ interface Setting<out V : Any, out T : SettingType<V>> : Entity, ActivityChecker
 data class InternalSetting<out V : Any, out T : SettingType<V>>(
     override val path: String,
     override val title: String,
-    override val defaultValue: V?,
+    override val defaultValue: SettingDefaultValue<V>?,
     override val isAvailable: Checker,
     override val isRequired: Boolean,
     override val isSavable: Boolean,
@@ -200,6 +200,13 @@ class TemplateSetting<out V : Any, out T : SettingType<V>>(
 ) : SettingImpl<V, T>(), Setting<V, T> by internal
 
 
+sealed class SettingDefaultValue<out V : Any> {
+    data class Value<V : Any>(val value: V) : SettingDefaultValue<V>()
+    data class Dynamic<V : Any>(
+        val getter: ReadingContext.(SettingReference<V, SettingType<V>>) -> V
+    ) : SettingDefaultValue<V>()
+}
+
 
 abstract class SettingBuilder<V : Any, T : SettingType<V>>(
     private val path: String,
@@ -207,9 +214,12 @@ abstract class SettingBuilder<V : Any, T : SettingType<V>>(
     private val neededAtPhase: GenerationPhase
 ) {
     var isAvailable: ReadingContext.() -> Boolean = { true }
-    var defaultValue: V? = null
+    open var defaultValue: SettingDefaultValue<V>? = null
     var isSavable: Boolean = false
     var isRequired: Boolean? = null
+
+    fun value(value: V) = SettingDefaultValue.Value(value)
+    fun dynamic(getter: ReadingContext.(SettingReference<V, SettingType<V>>) -> V) = SettingDefaultValue.Dynamic(getter)
 
     protected var validator = SettingValidator<V> { ValidationResult.OK }
 
@@ -316,6 +326,16 @@ class DropDownSettingType<V : DisplayableSettingItem>(
 
         override val type
             get() = DropDownSettingType(values, filter, parser)
+
+
+        init {
+            defaultValue = dynamic { reference ->
+                values.first {
+                    @Suppress("UNCHECKED_CAST")
+                    filter(reference as SettingReference<V, DropDownSettingType<V>>, it)
+                }
+            }
+        }
     }
 }
 

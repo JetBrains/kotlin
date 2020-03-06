@@ -57,12 +57,15 @@ open class ReadingContext(
         return serializer.fromString(savedValue)
     }
 
-    val <V : Any> Setting<V, SettingType<V>>.savedOrDefaultValue: V?
-        get() = getSavedValueForSetting() ?: defaultValue
+    val <V : Any> SettingReference<V, SettingType<V>>.savedOrDefaultValue: V?
+        get() = setting.getSavedValueForSetting() ?: when (val defaultValue = setting.defaultValue) {
+            is SettingDefaultValue.Value -> defaultValue.value
+            is SettingDefaultValue.Dynamic<V> -> defaultValue.getter(this@ReadingContext, this)
+            null -> null
+        }
 
     val <V : Any, T : SettingType<V>> SettingReference<V, T>.setting: Setting<V, T>
         get() = with(this) { getSetting() }
-
 
     @PublishedApi
     internal val `access$context`: Context

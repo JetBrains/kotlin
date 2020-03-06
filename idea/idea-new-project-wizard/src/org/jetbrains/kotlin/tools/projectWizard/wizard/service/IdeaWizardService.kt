@@ -20,10 +20,10 @@ object IdeaServices {
         IdeaSettingSavingWizardService()
     )
 
-    fun createScopeDependent(project: Project, model: ModifiableModuleModel) = listOf(
+    fun createScopeDependent(project: Project, model: ModifiableModuleModel?) = listOfNotNull(
         IdeaGradleWizardService(project),
         IdeaMavenWizardService(project),
-        IdeaJpsWizardService(project, model),
+        model?.let { IdeaJpsWizardService(project, it) },
         IdeaFileFormattingService(project),
         IdeaRunConfigurationsService(project)
     )

@@ -62,7 +62,6 @@ class NewModuleCreator {
             }
             val createdModule = Module(
                 name,
-                configurator.moduleKind,
                 configurator,
                 template = null,
                 sourcesets = sourcesets,

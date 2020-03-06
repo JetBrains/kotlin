@@ -26,14 +26,16 @@ enum class ModuleKind : DisplayableSettingItem {
 // TODO separate to classes
 class Module(
     var name: String,
-    val kind: ModuleKind,
-    var configurator: ModuleConfigurator,
+    val configurator: ModuleConfigurator,
     var template: Template?,
     val sourcesets: List<Sourceset>,
     subModules: List<Module>,
     var parent: Module? = null,
     override val identificator: Identificator = GeneratedIdentificator(name)
 ) : DisplayableSettingItem, Validatable<Module>, IdentificatorOwner {
+
+    val kind: ModuleKind
+        get() = configurator.moduleKind
 
     override val validator: SettingValidator<Module> = settingValidator<Module> { module ->
         StringValidators.shouldNotBeBlank("Module name").validate(this, module.name)
@@ -42,12 +44,13 @@ class Module(
     } and settingValidator { module ->
         withSettingsOf(module) {
             allSettingsOfModuleConfigurator(configurator).map { setting ->
-                val value = when (setting) {
-                    is PluginSetting<Any, SettingType<Any>> -> setting.reference.notRequiredSettingValue
-                    is ModuleConfiguratorSetting<Any, SettingType<Any>> -> setting.reference.notRequiredSettingValue
+                val reference = when (setting) {
+                    is PluginSetting<Any, SettingType<Any>> -> setting.reference
+                    is ModuleConfiguratorSetting<Any, SettingType<Any>> -> setting.reference
                     else -> null
                 }
-                    ?: setting.savedOrDefaultValue
+                val value = reference?.notRequiredSettingValue
+                    ?: reference?.savedOrDefaultValue
                     ?: return@map ValidationResult.ValidationError("${setting.title.capitalize()} should not be blank")
                 (setting.validator as SettingValidator<Any>).validate(this@settingValidator, value)
             }.fold()
@@ -57,7 +60,7 @@ class Module(
         org.jetbrains.kotlin.tools.projectWizard.templates.withSettingsOf(module) {
             template.settings.map { setting ->
                 val value = setting.reference.notRequiredSettingValue
-                    ?: setting.savedOrDefaultValue
+                    ?: setting.reference.savedOrDefaultValue
                     ?: return@map ValidationResult.ValidationError("${setting.title.capitalize()} should not be blank")
                 (setting.validator as SettingValidator<Any>).validate(this@settingValidator, value)
             }.fold()
@@ -100,19 +103,14 @@ class Module(
         val parser: Parser<Module> = mapParser { map, path ->
             val (name) = map.parseValue<String>(path, "name")
             val identificator = GeneratedIdentificator(name)
-            val (kind) = map.parseValue<ModuleKind>(this, path, "kind", enumParser())
             val (configurator) = map.parseValue(this, path, "type", ModuleConfigurator.getParser(identificator))
+
             val template = map["template"]?.let {
                 Template.parser(identificator).parse(this, it, "$path.template")
             }.nullableValue()
-            val (sourcesets) = map.parseValue(
-                this,
-                path,
-                "sourcesets",
-                listParser(Sourceset.parser())
-            ) { emptyList() }
+            val sourcesets = listOf(Sourceset(SourcesetType.main), Sourceset(SourcesetType.test))
             val (submodules) = map.parseValue(this, path, "subModules", listParser(Module.parser)) { emptyList() }
-            Module(name, kind, configurator, template, sourcesets, submodules, identificator = identificator)
+            Module(name, configurator, template, sourcesets, submodules, identificator = identificator)
         }
     }
 
@@ -142,7 +140,6 @@ val Module.isRootModule
 fun MultiplatformTargetModule(name: String, configurator: ModuleConfigurator, sourcesets: List<Sourceset>) =
     Module(
         name,
-        ModuleKind.target,
         configurator,
         null,
         sourcesets,
@@ -153,7 +150,6 @@ fun MultiplatformTargetModule(name: String, configurator: ModuleConfigurator, so
 fun MultiplatformModule(name: String, targets: List<Module> = emptyList()) =
     Module(
         name,
-        ModuleKind.multiplatform,
         MppModuleConfigurator,
         null,
         emptyList(),
@@ -164,7 +160,6 @@ fun MultiplatformModule(name: String, targets: List<Module> = emptyList()) =
 fun SingleplatformModule(name: String, sourcesets: List<Sourceset>) =
     Module(
         name,
-        ModuleKind.singleplatformJvm,
         JvmSinglePlatformModuleConfigurator,
         null,
         sourcesets,

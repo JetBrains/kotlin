@@ -34,7 +34,8 @@ class IdeaGradleWizardService(private val project: Project) : ProjectImportingWi
     // to import Gradle project in all IDEAs from 183 to 193
     override fun importProject(
         path: Path,
-        modulesIrs: List<ModuleIR>
+        modulesIrs: List<ModuleIR>,
+        buildSystem: BuildSystemType
     ): TaskResult<Unit> = performImport(path) andThen createGradleWrapper(path)
 
     private fun performImport(path: Path) = safe {

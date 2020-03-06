@@ -35,6 +35,8 @@ sealed class ProjectTemplate : DisplayableSettingItem {
     abstract val htmlDescription: String
     abstract val suggestedProjectName: String
     abstract val projectKind: ProjectKind
+    open val id: String
+        get() = this::class.simpleName.toString().removeSuffix("Template").removeSuffix("Project")
     val tags: List<TemplateTag>
         get() = setsPluginSettings
             .firstOrNull { it.setting == KotlinPlugin::modules.reference }
@@ -74,8 +76,8 @@ sealed class ProjectTemplate : DisplayableSettingItem {
 
     companion object {
         val ALL = listOf(
-            CustomSingleplatformProjectTemplate,
-            CustomMultiplatformProjectTemplate,
+            EmptySingleplatformProjectTemplate,
+            EmptyMultiplatformProjectTemplate,
             JvmConsoleApplication,
             JvmServerJsClient,
             MultiplatformLibrary,
@@ -84,6 +86,10 @@ sealed class ProjectTemplate : DisplayableSettingItem {
             NativeConsoleApplication,
             JsBrowserApplication
         )
+
+        fun byId(id: String): ProjectTemplate? = ALL.firstOrNull {
+            it.id.equals(id, ignoreCase = true)
+        }
     }
 }
 
@@ -122,7 +128,7 @@ private fun ModuleType.createDefaultTarget(
     name: String = this.name
 ) = MultiplatformTargetModule(name, defaultTarget, createDefaultSourcesets())
 
-object CustomSingleplatformProjectTemplate : ProjectTemplate() {
+object EmptySingleplatformProjectTemplate : ProjectTemplate() {
     override val title = "Empty Kotlin/JVM Project"
     override val htmlDescription = title
     override val suggestedProjectName = "myKotlinJvmProject"
@@ -136,7 +142,7 @@ object CustomSingleplatformProjectTemplate : ProjectTemplate() {
         )
 }
 
-object CustomMultiplatformProjectTemplate : ProjectTemplate() {
+object EmptyMultiplatformProjectTemplate : ProjectTemplate() {
     override val title = "Empty Kotlin Multiplatform Project"
     override val htmlDescription = "Multiplatform Gradle project without predefined targets"
     override val suggestedProjectName = "myKotlinMultiplatformProject"
@@ -234,7 +240,6 @@ object AndroidApplication : ProjectTemplate() {
             KotlinPlugin::modules withValue listOf(
                 Module(
                     "app",
-                    ModuleKind.singleplatformJvm,
                     AndroidSinglePlatformModuleConfigurator,
                     template = null,
                     sourcesets = SourcesetType.ALL.map { type ->
@@ -257,7 +262,6 @@ object NativeConsoleApplication : ProjectTemplate() {
             KotlinPlugin::modules withValue listOf(
                 Module(
                     "app",
-                    ModuleKind.multiplatform,
                     MppModuleConfigurator,
                     template = null,
                     sourcesets = emptyList(),
@@ -282,7 +286,6 @@ object JsBrowserApplication : ProjectTemplate() {
             KotlinPlugin::modules withValue listOf(
                 Module(
                     "frontend",
-                    ModuleKind.singleplatformJs,
                     JsSingleplatformModuleConfigurator,
                     template = SimpleJsClientTemplate(),
                     sourcesets = SourcesetType.ALL.map { type ->
@@ -308,7 +311,6 @@ object IOSApplication : ProjectTemplate() {
             KotlinPlugin::modules withValue listOf(
                 Module(
                     "iosApp",
-                    ModuleKind.singleplatformJvm,
                     IOSSinglePlatformModuleConfigurator,
                     template = null,
                     sourcesets = SourcesetType.ALL.map { type ->

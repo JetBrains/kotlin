@@ -71,6 +71,10 @@ data class ValidationError(val validationMessage: String) : Error() {
         get() = validationMessage.capitalize()
 }
 
+
+data class ProjectImportingError(override val message: String) : Error()
+
+
 data class InvalidSourceSetName(val name: String) : Error() {
     override val message: String
         get() = "Source set name `$name` is invalid"

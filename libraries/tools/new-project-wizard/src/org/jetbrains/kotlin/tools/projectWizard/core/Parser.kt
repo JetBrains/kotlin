@@ -39,14 +39,13 @@ fun <T : Any> Parser<T>.parse(context: ParsingContext, value: Any?, path: String
 inline fun <reified E> enumParser(): Parser<E> where E : Enum<E>, E : DisplayableSettingItem = object : Parser<E>() {
     override fun ParsingContext.parse(value: Any?, path: String): TaskResult<E> = computeM {
         val (name) = value.parseAs<String>(path)
-        val createError = {
+        enumValues<E>().firstOrNull { enumValue ->
+            enumValue.name.equals(name, ignoreCase = true) || enumValue.text.equals(name, ignoreCase = true)
+        }.toResult {
             ParseError(
                 "For setting `$path` one of [${enumValues<E>().joinToString { it.name }}] was expected but `$name` was found"
             )
         }
-        val byEnumName = safe { enumValueOf<E>(name) }.mapFailure { createError() }
-        val byText = enumValues<E>().firstOrNull { it.text == name }.toResult { createError() }
-        byEnumName.recover { byText }
     }
 }
 

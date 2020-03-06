@@ -13,7 +13,7 @@ import java.nio.file.Paths
 
 class StructurePlugin(context: Context) : Plugin(context) {
     val projectPath by valueSetting("Root path", GenerationPhase.PROJECT_GENERATION, pathParser) {
-        defaultValue = Paths.get(".")
+        defaultValue = value(Paths.get("."))
     }
     val name by stringSetting("Name", GenerationPhase.PROJECT_GENERATION)
 
@@ -29,7 +29,7 @@ class StructurePlugin(context: Context) : Plugin(context) {
     val version by stringSetting("Version", GenerationPhase.PROJECT_GENERATION) {
         shouldNotBeBlank()
         validate(StringValidators.shouldBeValidIdentifier("Version", setOf('_', '-', '.')))
-        defaultValue = "1.0-SNAPSHOT"
+        defaultValue = value("1.0-SNAPSHOT")
     }
 
     val createProjectDir by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
