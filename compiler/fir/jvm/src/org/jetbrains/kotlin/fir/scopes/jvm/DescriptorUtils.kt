@@ -116,6 +116,10 @@ private fun StringBuilder.appendConeType(coneType: ConeKotlinType) {
                 appendClassLikeType(representative.coneTypeUnsafe())
             }
         }
+        is ConeDefinitelyNotNullType -> {
+            appendConeType(coneType.original)
+            return
+        }
         is ConeFlexibleType -> {
             appendConeType(coneType.lowerBound)
             return
