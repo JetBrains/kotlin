@@ -374,14 +374,16 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
         nodes.add(Holder.USAGES_OUTSIDE_SCOPE_NODE);
       }
       List<UsageNode> data = new ArrayList<>(nodes);
-      int filtered = filtered(copy, usageView);
-      if (filtered != 0) {
-        data.add(createStringNode(UsageViewBundle.message("usages.were.filtered.out", filtered)));
+      int filteredCount = filtered(copy, usageView);
+      if (filteredCount != 0) {
+        data.add(createStringNode(UsageViewBundle.message("usages.were.filtered.out", filteredCount)));
       }
       data.sort(Holder.USAGE_NODE_COMPARATOR);
 
       boolean hasMore = shouldShowMoreSeparator || hasOutsideScopeUsages;
-      statusPanel.setText(getStatusString(!processIcon.isDisposed(), hasMore, nodes.size(), copy.size()));
+      int totalCount = copy.size();
+      int visibleCount = totalCount - filteredCount;
+      statusPanel.setText(getStatusString(!processIcon.isDisposed(), hasMore, visibleCount, totalCount));
       rebuildTable(usageView, data, table, popup, popupPosition, minWidth);
     });
 
