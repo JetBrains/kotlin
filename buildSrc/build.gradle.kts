@@ -5,7 +5,8 @@ buildscript {
     val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
     extra["defaultSnapshotVersion"] = kotlinBuildProperties.defaultSnapshotVersion
-    kotlinBootstrapFrom(BootstrapOption.BintrayBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
+    kotlinBootstrapFrom(BootstrapOption.Local("1.4.0-dev-2781"))
+//    kotlinBootstrapFrom(BootstrapOption.BintrayBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
 
     repositories {
         if (cacheRedirectorEnabled) {
@@ -19,12 +20,16 @@ buildscript {
         project.bootstrapKotlinRepo?.let {
             maven(url = it)
         }
+
+        maven("https://repo.labs.intellij.net/dl.bintray.com.kotlin.kotlin-dev")
     }
 
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.15")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
-        classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:${project.bootstrapKotlinVersion}")
+        /*classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:${project.bootstrapKotlinVersion}")*/
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.0-dev-2781")
+        classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:1.4.0-dev-2781")
     }
 }
 
@@ -87,6 +92,7 @@ repositories {
     extra["bootstrapKotlinRepo"]?.let {
         maven(url = it)
     }
+    mavenLocal()
 }
 
 dependencies {
