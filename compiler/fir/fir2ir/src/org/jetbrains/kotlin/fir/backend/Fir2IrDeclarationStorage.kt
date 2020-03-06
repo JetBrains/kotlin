@@ -196,7 +196,7 @@ class Fir2IrDeclarationStorage(
                         getIrProperty(declaration, irClass)
                     }
                     is FirConstructor -> getIrConstructor(declaration, irClass)
-                    is FirRegularClass -> getIrClass(declaration)
+                    is FirRegularClass -> getIrClass(declaration, exactlySourceClass = false)
                     else -> continue
                 }
             }
@@ -250,7 +250,7 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private fun createIrClass(klass: FirClass<*>): IrClass {
+    private fun createIrClass(klass: FirClass<*>, exactlySourceClass: Boolean = false): IrClass {
         // NB: klass can be either FirRegularClass or FirAnonymousObject
         if (klass is FirAnonymousObject) {
             return createIrAnonymousObject(klass)
@@ -258,7 +258,9 @@ class Fir2IrDeclarationStorage(
         val regularClass = klass as FirRegularClass
 
         val descriptor = WrappedClassDescriptor()
-        val origin = IrDeclarationOrigin.DEFINED
+        val origin =
+            if (exactlySourceClass || firProvider.getFirClassifierContainerFileIfAny(klass.symbol) != null) IrDeclarationOrigin.DEFINED
+            else IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
         val visibility = regularClass.visibility
         val modality = if (regularClass.classKind == ClassKind.ENUM_CLASS) {
             regularClass.enumClassModality()
@@ -298,8 +300,8 @@ class Fir2IrDeclarationStorage(
         return irClass
     }
 
-    fun getIrClass(klass: FirClass<*>): IrClass {
-        return getCachedIrClass(klass) ?: createIrClass(klass)
+    fun getIrClass(klass: FirClass<*>, exactlySourceClass: Boolean = true): IrClass {
+        return getCachedIrClass(klass) ?: createIrClass(klass, exactlySourceClass)
     }
 
     private fun createIrAnonymousObject(
