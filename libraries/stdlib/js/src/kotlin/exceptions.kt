@@ -16,37 +16,20 @@ public open class MyException : Exception {
 */
 
 
-// TODO: remove workarounds for KT-22053 from direct Throwable inheritors
 // TODO: remove primary constructors, make all secondary KT-22055
 
 @Suppress("USELESS_ELVIS_RIGHT_IS_NULL")
 public actual open class Error actual constructor(message: String?, cause: Throwable?) : Throwable(message, cause ?: null) {
-    actual constructor() : this(null, null) {
-        Error::class.js.asDynamic().call(this, null, null)
-    }
-
-    actual constructor(message: String?) : this(message, null) {
-        Error::class.js.asDynamic().call(this, message, null)
-    }
-
-    actual constructor(cause: Throwable?) : this(undefined, cause) {
-        Error::class.js.asDynamic().call(this, undefined, cause)
-    }
+    actual constructor() : this(null, null)
+    actual constructor(message: String?) : this(message, null)
+    actual constructor(cause: Throwable?) : this(undefined, cause)
 }
 
 @Suppress("USELESS_ELVIS_RIGHT_IS_NULL")
 public actual open class Exception actual constructor(message: String?, cause: Throwable?) : Throwable(message, cause ?: null) {
-    actual constructor() : this(null, null) {
-        Exception::class.js.asDynamic().call(this, null, null)
-    }
-
-    actual constructor(message: String?) : this(message, null) {
-        Exception::class.js.asDynamic().call(this, message, null)
-    }
-
-    actual constructor(cause: Throwable?) : this(undefined, cause) {
-        Exception::class.js.asDynamic().call(this, undefined, cause)
-    }
+    actual constructor() : this(null, null)
+    actual constructor(message: String?) : this(message, null)
+    actual constructor(cause: Throwable?) : this(undefined, cause)
 }
 
 public actual open class RuntimeException actual constructor(message: String?, cause: Throwable?) : Exception(message, cause) {
