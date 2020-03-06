@@ -12,6 +12,8 @@ import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMo
 import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
 import com.intellij.openapi.externalSystem.task.TaskCallback
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.util.concurrency.FutureResult
 import com.jetbrains.mobile.MobileBundle
 import com.jetbrains.mobile.execution.testing.MobileTestRunConfiguration
@@ -51,7 +53,14 @@ object MobileBuild {
         val success = FutureResult<Boolean>()
         val callback = object : TaskCallback {
             override fun onSuccess() {
-                success.set(true)
+                success.set(
+                    try {
+                        ProgressManager.checkCanceled()
+                        true
+                    } catch (e: ProcessCanceledException) {
+                        false
+                    }
+                )
             }
 
             override fun onFailure() {
