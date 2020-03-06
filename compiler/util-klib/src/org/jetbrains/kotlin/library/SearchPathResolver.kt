@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.library.impl.isComprehencible
 import org.jetbrains.kotlin.util.*
 
 const val KOTLIN_STDLIB_NAME = "stdlib"
@@ -56,7 +57,7 @@ abstract class KotlinLibrarySearchPathResolver<L: KotlinLibrary>(
 
     private fun found(candidate: File): File? {
         fun check(file: File): Boolean =
-                file.exists && (file.isFile || File(file, "manifest").exists)
+                file.exists && file.isComprehencible
 
         val noSuffix = File(candidate.path.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT))
         val withSuffix = File(candidate.path.suffixIfNot(KLIB_FILE_EXTENSION_WITH_DOT))
