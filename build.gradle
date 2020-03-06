@@ -297,6 +297,7 @@ task detectJarCollision(type: CollisionDetector) {
     if (project.hasProperty('kotlinProjectPath')) {
         resolvingRulesWithRegexes[new Regex("META-INF/.+\\.kotlin_module")] = "kotlin-compiler"
         resolvingRules["META-INF/extensions/compiler.xml"] = "kotlin-compiler"
+        resolvingRules["META-INF/compiler.version"] = "kotlin-compiler"
         resolvingRules["kotlinManifest.properties"] = "kotlin-compiler"
         librariesWithIgnoredClassCollisions.addAll(["util", "container", "resolution", "serialization", "psi", "frontend",
                                                     "frontend.common", "frontend.java", "cli-common", "ir.tree",
