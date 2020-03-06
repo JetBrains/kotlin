@@ -166,11 +166,11 @@ class ExpressionCodegen(
     }
 
     // TODO remove
-    fun gen(expression: IrExpression, type: Type, irType: IrType, data: BlockInfo): StackValue {
+    fun gen(expression: IrExpression, type: Type, irType: IrType, data: BlockInfo, forceCast: Boolean = false): StackValue {
         if (expression.attributeOwnerId === context.fakeContinuation) {
             addFakeContinuationMarker(mv)
         } else {
-            expression.accept(this, data).materializeAt(type, irType)
+            expression.accept(this, data).materializeAt(type, irType, forceCast)
         }
         return StackValue.onStack(type, irType.toKotlinType())
     }
@@ -699,7 +699,7 @@ class ExpressionCodegen(
             if (!exhaustive) {
                 result.discard()
             } else {
-                val materializedResult = result.materializedAt(expression.type)
+                val materializedResult = result.materializedAt(expression.type, forceCast = true)
                 if (branch.condition.isTrueConst()) {
                     // The rest of the expression is dead code.
                     mv.mark(endLabel)

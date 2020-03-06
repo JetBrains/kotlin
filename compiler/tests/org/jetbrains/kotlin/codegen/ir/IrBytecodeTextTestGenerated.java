@@ -1761,6 +1761,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         public void testKt18731_2() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/enum/kt18731_2.kt");
         }
+
+        @TestMetadata("noCheckcastInClinit.kt")
+        public void testNoCheckcastInClinit() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/enum/noCheckcastInClinit.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/exclExcl")

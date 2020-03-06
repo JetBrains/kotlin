@@ -124,7 +124,7 @@ class IrInlineCodegen(
                     // Do not reuse locals for receivers. While it's actually completely fine, the non-IR
                     // backend does not do it for internal reasons, and here we replicate the debugging
                     // experience.
-                -> codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)
+                -> codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo, forceCast = true)
             }
 
 

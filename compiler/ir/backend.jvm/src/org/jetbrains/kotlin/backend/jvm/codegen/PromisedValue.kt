@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
@@ -23,7 +24,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val irType: IrType) {
     // If this value is immaterial, construct an object on the top of the stack. This
     // must always be done before generating other values or emitting raw bytecode.
-    open fun materializeAt(target: Type, irTarget: IrType) {
+    open fun materializeAt(target: Type, irTarget: IrType, forceCast: Boolean = false) {
         val erasedSourceType = irType.eraseTypeParameters()
         val erasedTargetType = irTarget.eraseTypeParameters()
         val isFromTypeInlineClass = erasedSourceType.classOrNull!!.owner.isInline
@@ -53,7 +54,14 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
             }
         }
 
-        if (type != target) {
+        if (type == target) return
+
+        if (
+            forceCast
+            || AsmUtil.isPrimitive(type) || AsmUtil.isPrimitive(target) || type.sort == Type.ARRAY || target.sort == Type.ARRAY
+            || !erasedSourceType.classOrNull!!.owner.isSubclassOf(erasedTargetType.classOrNull!!.owner)
+            || typeMapper.mapType(irType) != type || typeMapper.mapType(irTarget) != target
+        ) {
             StackValue.coerce(type, target, mv)
         }
     }
@@ -85,7 +93,7 @@ abstract class BooleanValue(codegen: ExpressionCodegen) :
     abstract fun jumpIfFalse(target: Label)
     abstract fun jumpIfTrue(target: Label)
 
-    override fun materializeAt(target: Type, irTarget: IrType) {
+    override fun materializeAt(target: Type, irTarget: IrType, forceCast: Boolean) {
         val const0 = Label()
         val end = Label()
         jumpIfFalse(const0)
@@ -103,7 +111,7 @@ abstract class BooleanValue(codegen: ExpressionCodegen) :
 class BooleanConstant(codegen: ExpressionCodegen, val value: Boolean) : BooleanValue(codegen) {
     override fun jumpIfFalse(target: Label) = if (value) Unit else mv.goTo(target)
     override fun jumpIfTrue(target: Label) = if (value) mv.goTo(target) else Unit
-    override fun materializeAt(target: Type, irTarget: IrType) {
+    override fun materializeAt(target: Type, irTarget: IrType, forceCast: Boolean) {
         mv.iconst(if (value) 1 else 0)
         if (Type.BOOLEAN_TYPE != target) {
             StackValue.coerce(Type.BOOLEAN_TYPE, target, mv)
@@ -130,16 +138,16 @@ fun PromisedValue.coerceToBoolean(): BooleanValue =
     }
 
 
-fun PromisedValue.materializedAt(target: Type, irTarget: IrType): MaterialValue {
-    materializeAt(target, irTarget)
+fun PromisedValue.materializedAt(target: Type, irTarget: IrType, forceCast: Boolean = false): MaterialValue {
+    materializeAt(target, irTarget, forceCast)
     return MaterialValue(codegen, target, irTarget)
 }
 
 fun PromisedValue.materialized(): MaterialValue =
     materializedAt(type, irType)
 
-fun PromisedValue.materializedAt(irTarget: IrType): MaterialValue =
-    materializedAt(typeMapper.mapType(irTarget), irTarget)
+fun PromisedValue.materializedAt(irTarget: IrType, forceCast: Boolean = false): MaterialValue =
+    materializedAt(typeMapper.mapType(irTarget), irTarget, forceCast)
 
 fun PromisedValue.materializedAtBoxed(irTarget: IrType): MaterialValue =
     materializedAt(typeMapper.boxType(irTarget), irTarget)
