@@ -90,7 +90,6 @@ fun Project.guessCidrProductNameFromProject(lowerCase: Boolean): String = with(n
         startsWith("appcode") -> "AppCode"
         startsWith("clion") -> "CLion"
         startsWith("mobile") -> "Mobile"
-        startsWith("cidr") -> "CIDR"
         else -> error("Invalid CIDR project name: $name")
     }.let { if (lowerCase) it.toLowerCase() else it }
 }
@@ -165,9 +164,6 @@ fun packageCidrPlugin(
         from(ideaPluginDir) {
             exclude("lib/kotlin-plugin.jar")
             exclude(excludesListFromIdeaPlugin)
-            if (project.name.startsWith("cidr")) {
-                exclude("lib/markdown-*.jar")
-            }
         }
     }
 }

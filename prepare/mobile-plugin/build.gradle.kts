@@ -111,7 +111,7 @@ val mobilePlugin: Task by tasks.creating(Copy::class) {
     dependsOn(
         copyNativeDeps,
         copyRuntimeDeps,
-        ":kotlin-ultimate:prepare:cidr-plugin:cidrPlugin"
+        ":kotlin-ultimate:prepare:clion-plugin:clionPlugin"
     )
 }
 
