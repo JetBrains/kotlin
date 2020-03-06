@@ -30,7 +30,7 @@ open class NodeJsRootExtension(val rootProject: Project) : ConfigurationPhaseAwa
 
     var nodeCommand by Property("node")
 
-    var packageManager: NpmApi by Property(Yarn)
+    var packageManager: NpmApi by Property(Yarn())
 
     private val projectProperties = PropertiesProvider(rootProject)
 
