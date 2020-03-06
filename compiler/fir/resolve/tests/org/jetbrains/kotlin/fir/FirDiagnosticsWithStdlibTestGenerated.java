@@ -519,6 +519,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/resolve/testData/resolveWithStdlib/delegates/delegateWithAnonymousObject.kt");
         }
 
+        @TestMetadata("propertyWithFunctionalType.kt")
+        public void testPropertyWithFunctionalType() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/delegates/propertyWithFunctionalType.kt");
+        }
+
         @TestMetadata("simpleDelegateProvider.kt")
         public void testSimpleDelegateProvider() throws Exception {
             runTest("compiler/fir/resolve/testData/resolveWithStdlib/delegates/simpleDelegateProvider.kt");

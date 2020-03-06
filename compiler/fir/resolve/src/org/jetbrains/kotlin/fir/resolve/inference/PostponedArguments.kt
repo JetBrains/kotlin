@@ -30,15 +30,16 @@ fun Candidate.preprocessLambdaArgument(
     argument: FirAnonymousFunction,
     expectedType: ConeKotlinType?,
     expectedTypeRef: FirTypeRef,
-    forceResolution: Boolean = false
-) {
+    forceResolution: Boolean = false,
+    returnTypeVariable: ConeTypeVariableForLambdaReturnType? = null
+): PostponedResolvedAtom {
     if (expectedType != null && !forceResolution && csBuilder.isTypeVariable(expectedType)) {
-        //return LambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType)
+        return LambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType, expectedTypeRef, this)
     }
 
     val resolvedArgument =
-        extractLambdaInfoFromFunctionalType(expectedType, expectedTypeRef, argument, bodyResolveComponents.session, bodyResolveComponents)
-            ?: extraLambdaInfo(expectedType, argument, csBuilder, bodyResolveComponents.session, bodyResolveComponents)
+        extractLambdaInfoFromFunctionalType(expectedType, expectedTypeRef, argument, returnTypeVariable, bodyResolveComponents, this)
+            ?: extraLambdaInfo(expectedType, argument, csBuilder, bodyResolveComponents.session, this)
 
     if (expectedType != null) {
         // TODO: add SAM conversion processing
@@ -46,7 +47,7 @@ fun Candidate.preprocessLambdaArgument(
         csBuilder.addSubtypeConstraint(lambdaType, expectedType, SimpleConstraintSystemConstraintPosition)
     }
 
-    postponedAtoms += resolvedArgument
+    return resolvedArgument
 }
 
 fun Candidate.preprocessCallableReference(
@@ -103,7 +104,7 @@ private fun extraLambdaInfo(
     argument: FirAnonymousFunction,
     csBuilder: ConstraintSystemBuilder,
     session: FirSession,
-    components: BodyResolveComponents
+    candidate: Candidate?
 ): ResolvedLambdaAtom {
     val isSuspend = expectedType?.isSuspendFunctionType(session) ?: false
 
@@ -111,7 +112,7 @@ private fun extraLambdaInfo(
         expectedType != null && expectedType.lowerBoundIfFlexible()
             .isBuiltinFunctionalType(session)//isNotNullOrNullableFunctionSupertype(expectedType)
 
-    val typeVariable = TypeVariableForLambdaReturnType(argument, "_L")
+    val typeVariable = ConeTypeVariableForLambdaReturnType(argument, "_L")
 
     val receiverType = argument.receiverType
     val returnType =
@@ -129,11 +130,13 @@ private fun extraLambdaInfo(
 
     return ResolvedLambdaAtom(
         argument,
+        expectedType,
         isSuspend,
         receiverType,
         parameters,
         returnType,
-        typeVariable.takeIf { newTypeVariableUsed }
+        typeVariable.takeIf { newTypeVariableUsed },
+        candidate
     )
 }
 
@@ -141,12 +144,14 @@ internal fun extractLambdaInfoFromFunctionalType(
     expectedType: ConeKotlinType?,
     expectedTypeRef: FirTypeRef,
     argument: FirAnonymousFunction,
-    session: FirSession,
-    components: BodyResolveComponents
+    returnTypeVariable: ConeTypeVariableForLambdaReturnType?,
+    components: BodyResolveComponents,
+    candidate: Candidate?
 ): ResolvedLambdaAtom? {
+    val session = components.session
     if (expectedType == null) return null
     if (expectedType is ConeFlexibleType) {
-        return extractLambdaInfoFromFunctionalType(expectedType.lowerBound, expectedTypeRef, argument, session, components)
+        return extractLambdaInfoFromFunctionalType(expectedType.lowerBound, expectedTypeRef, argument, returnTypeVariable, components, candidate)
     }
     if (!expectedType.isBuiltinFunctionalType(session)) return null
 
@@ -156,11 +161,13 @@ internal fun extractLambdaInfoFromFunctionalType(
 
     return ResolvedLambdaAtom(
         argument,
+        expectedType,
         expectedType.isSuspendFunctionType(session),
         receiverType,
         parameters,
         returnType,
-        typeVariableForLambdaReturnType = null
+        typeVariableForLambdaReturnType = returnTypeVariable,
+        candidate
     )
 }
 
@@ -196,31 +203,54 @@ private fun ConeKotlinType.extractParametersForFunctionalType(
     }
 }
 
-class TypeVariableForLambdaReturnType(val argument: FirAnonymousFunction, name: String) : ConeTypeVariable(name)
+class ConeTypeVariableForLambdaReturnType(val argument: FirAnonymousFunction, name: String) : ConeTypeVariable(name)
 
 sealed class PostponedResolvedAtom : PostponedResolvedAtomMarker {
     abstract override val inputTypes: Collection<ConeKotlinType>
     abstract override val outputType: ConeKotlinType?
     override var analyzed: Boolean = false
+    abstract val expectedType: ConeKotlinType?
 }
 
 class ResolvedLambdaAtom(
     val atom: FirAnonymousFunction,
+    override val expectedType: ConeKotlinType?,
     val isSuspend: Boolean,
     val receiver: ConeKotlinType?,
     val parameters: List<ConeKotlinType>,
     val returnType: ConeKotlinType,
-    val typeVariableForLambdaReturnType: TypeVariableForLambdaReturnType?
+    val typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType?,
+    val candidateForOuterCall: Candidate?
 ) : PostponedResolvedAtom() {
+    init {
+        candidateForOuterCall?.let {
+            it.postponedAtoms += this
+        }
+    }
+
     lateinit var returnStatements: Collection<FirStatement>
 
     override val inputTypes: Collection<ConeKotlinType> get() = receiver?.let { parameters + it } ?: parameters
     override val outputType: ConeKotlinType get() = returnType
 }
 
+class LambdaWithTypeVariableAsExpectedTypeAtom(
+    val atom: FirAnonymousFunction,
+    override val expectedType: ConeKotlinType,
+    val expectedTypeRef: FirTypeRef,
+    val candidateForOuterCall: Candidate
+) : PostponedResolvedAtom() {
+    init {
+        candidateForOuterCall.postponedAtoms += this
+    }
+
+    override val inputTypes: Collection<ConeKotlinType> get() = listOf(expectedType)
+    override val outputType: ConeKotlinType? get() = null
+}
+
 class ResolvedCallableReferenceAtom(
     val reference: FirCallableReferenceAccess,
-    val expectedType: ConeKotlinType?,
+    override val expectedType: ConeKotlinType?,
     val lhs: DoubleColonLHS?,
     private val session: FirSession
 ) : PostponedResolvedAtom() {

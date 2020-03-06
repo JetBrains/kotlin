@@ -41,15 +41,15 @@ FILE: delegateTypeMismatch.kt
                 D|/A.classifierNamePolicy|.R|FakeOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/A|, ::R|/A.classifierNamePolicy|, R|<local>/classifierNamePolicy|)
             }
 
-        public final var typeNormalizer: <ERROR TYPE REF: Ambiguity: getValue, [kotlin/getValue, kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>by <Inapplicable(INAPPLICABLE): [/A.property]>#<R|(KotlinType) -> KotlinType|>(property@fun <anonymous>(): R|ERROR CLASS: Unresolved name: it| {
-            ^ <Unresolved name: it>#
+        public final var typeNormalizer: R|(KotlinType) -> KotlinType|by this@R|/A|.R|/A.property|<R|(KotlinType) -> KotlinType|>(property@fun <anonymous>(it: R|KotlinType|): R|KotlinType| {
+            ^ R|<local>/it|
         }
         )
-            public get(): <ERROR TYPE REF: Ambiguity: getValue, [kotlin/getValue, kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]> {
-                ^ D|/A.typeNormalizer|.<Ambiguity: getValue, [kotlin/getValue, kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>#(this@R|/A|, ::R|/A.typeNormalizer|)
+            public get(): R|(KotlinType) -> KotlinType| {
+                ^ D|/A.typeNormalizer|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|(KotlinType) -> KotlinType|>|(this@R|/A|, ::R|/A.typeNormalizer|)
             }
-            public set(<set-?>: <ERROR TYPE REF: Ambiguity: getValue, [kotlin/getValue, kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>): R|kotlin/Unit| {
-                D|/A.typeNormalizer|.<Inapplicable(INAPPLICABLE): [kotlin/collections/setValue]>#(this@R|/A|, ::R|/A.typeNormalizer|, R|<local>/typeNormalizer|)
+            public set(<set-?>: R|(KotlinType) -> KotlinType|): R|kotlin/Unit| {
+                D|/A.typeNormalizer|.R|FakeOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/A|, ::R|/A.typeNormalizer|, R|<local>/typeNormalizer|)
             }
 
     }

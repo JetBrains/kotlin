@@ -38,7 +38,7 @@ class W4(val f: L2) {
 fun test1() { // to extension lambda 0
     val w10 = W1 { this } // oi+ ni+
     val i10: E0 = id { this } // o1- ni+
-    val j10 = <!INAPPLICABLE_CANDIDATE!>id<!><E0> { this } // oi+ ni+
+    val j10 = id<E0> { this } // oi+ ni+
     val f10 = W1(fun Int.(): Int = this) // oi+ ni+
     val g10: E0 = id(fun Int.(): Int = this) // oi+ ni+
 
@@ -46,7 +46,7 @@ fun test1() { // to extension lambda 0
     val i11: E0 = id { i: Int -> i } // o1+ ni+
     val w12 = <!INAPPLICABLE_CANDIDATE!>W1<!> { i -> i } // oi- ni-
     val i12: E0 = id { i -> i } // oi- ni-
-    val j12 = <!INAPPLICABLE_CANDIDATE!>id<!><E0> { i -> i } // oi- ni-
+    val j12 = id<E0> { i -> i } // oi- ni-
 
     // yet unsupported cases - considering lambdas as extension ones unconditionally
 //    val w13 = W1 { it } // this or it: oi- ni-
@@ -79,7 +79,7 @@ fun test2() { // to extension lambda 1
 //    val i27: E1 = id { i, s: String -> i + s.length } // overload oi- ni-
 
     val w28 = <!INAPPLICABLE_CANDIDATE!>W2<!> { i: Int, s -> i <!AMBIGUITY!>+<!> s.<!UNRESOLVED_REFERENCE!>length<!> } // oi- ni-
-    val i28: E1 = id { i: Int, s -> i <!AMBIGUITY!>+<!> s.<!UNRESOLVED_REFERENCE!>length<!> } // oi- ni-
+    val i28: E1 = id { i: Int, s -> i + s.length } // oi- ni-
     val w29 = <!INAPPLICABLE_CANDIDATE!>W2<!> { i: Int, s: String -> i + s.length } // oi- ni-
     val i29: E1 = id { i: Int, s: String -> i + s.length } // oi+ ni+
 
@@ -92,8 +92,8 @@ fun test3() { // to non-extension lambda 1
     val w30 = W3 { i -> i } // oi+ ni+
     val i30: L1 = id { i -> i } // oi+ ni+
     val w31 = W3 { it } // oi+ ni+
-    val i31: L1 = id { <!UNRESOLVED_REFERENCE!>it<!> } // oi- ni+
-    val j31 = <!INAPPLICABLE_CANDIDATE!>id<!><L1> { <!UNRESOLVED_REFERENCE!>it<!> } // oi+ ni+
+    val i31: L1 = id { it } // oi- ni+
+    val j31 = id<L1> { it } // oi+ ni+
 
     // yet unsupported cases - considering lambdas as extension ones unconditionally
 //    val w32 = W3 { this } // this or it: oi- ni-

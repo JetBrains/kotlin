@@ -22,5 +22,5 @@ class A(val isLocked: Boolean) {
     var classifierNamePolicy: ClassifierNamePolicy by property(ClassifierNamePolicy.SOURCE_CODE_QUALIFIED)
     // getter has INAPPLICABLE diagnostic, see dump
 
-    var typeNormalizer by <!INAPPLICABLE_CANDIDATE!>property<!><(KotlinType) -> KotlinType>({ <!UNRESOLVED_REFERENCE!>it<!> })
+    var typeNormalizer by property<(KotlinType) -> KotlinType>({ it })
 }

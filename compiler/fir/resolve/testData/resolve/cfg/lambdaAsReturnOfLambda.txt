@@ -1,6 +1,6 @@
 FILE: lambdaAsReturnOfLambda.kt
-    public final val x4: R|(kotlin/String) -> kotlin/Unit| = R|/run|<R|(ERROR CLASS: No type for parameter) -> kotlin/Unit|>(<L> = run@fun <anonymous>(): R|(ERROR CLASS: No type for parameter) -> kotlin/Unit| {
-        ^@run lambda@fun <anonymous>(foo: R|ERROR CLASS: No type for parameter|): R|kotlin/Unit| {
+    public final val x4: R|(kotlin/String) -> kotlin/Unit| = R|/run|<R|(kotlin/String) -> kotlin/Unit|>(<L> = run@fun <anonymous>(): R|(kotlin/String) -> kotlin/Unit| {
+        ^@run lambda@fun <anonymous>(foo: R|kotlin/String|): R|kotlin/Unit| {
             R|/bar|(R|<local>/foo|)
         }
 

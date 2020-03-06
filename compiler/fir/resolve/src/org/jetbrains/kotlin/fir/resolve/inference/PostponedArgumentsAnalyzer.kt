@@ -11,14 +11,15 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedReferenceError
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.CoroutinePosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.StubTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.model.freshTypeConstructor
@@ -53,17 +54,15 @@ class PostponedArgumentsAnalyzer(
         candidate: Candidate
         //diagnosticsHolder: KotlinDiagnosticsHolder
     ) {
-        when (argument) {
+        return when (argument) {
             is ResolvedLambdaAtom ->
                 analyzeLambda(c, argument, candidate/*, diagnosticsHolder*/)
 
-//            is LambdaWithTypeVariableAsExpectedTypeAtom ->
-//                analyzeLambda(
-//                    c, resolutionCallbacks, argument.transformToResolvedLambda(c.getBuilder()), diagnosticsHolder
-//                )
+            is LambdaWithTypeVariableAsExpectedTypeAtom ->
+                analyzeLambda(c, argument.transformToResolvedLambda(c.getBuilder()), candidate/*, diagnosticsHolder*/)
 
             is ResolvedCallableReferenceAtom -> processCallableReference(argument, candidate)
-//
+
 //            is ResolvedCollectionLiteralAtom -> TODO("Not supported")
         }
     }
@@ -184,4 +183,22 @@ class PostponedArgumentsAnalyzer(
     }
 }
 
-
+fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
+    csBuilder: ConstraintSystemBuilder,
+    /*diagnosticHolder: KotlinDiagnosticsHolder,*/
+    expectedType: ConeKotlinType? = null,
+    returnTypeVariable: ConeTypeVariableForLambdaReturnType? = null
+): ResolvedLambdaAtom {
+    val fixedExpectedType = (csBuilder.buildCurrentSubstitutor() as ConeSubstitutor)
+        .substituteOrSelf(expectedType ?: this.expectedType)
+    val resolvedAtom = candidateOfOuterCall.preprocessLambdaArgument(
+        csBuilder,
+        atom,
+        fixedExpectedType,
+        expectedTypeRef,
+        forceResolution = true,
+        returnTypeVariable
+    ) as ResolvedLambdaAtom
+    analyzed = true
+    return resolvedAtom
+}

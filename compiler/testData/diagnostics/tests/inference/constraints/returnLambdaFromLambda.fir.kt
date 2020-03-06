@@ -6,7 +6,7 @@ fun testLambda() {
         if (x is String) return@myRun { it -> x.length <!AMBIGUITY!>+<!> it }
         if (x !is Int) return@myRun { it -> it }
 
-        { it -> x <!AMBIGUITY!>+<!> it }
+        { it -> x + it }
     }
 
     val twoLambda: (Int) -> Int = myRun {

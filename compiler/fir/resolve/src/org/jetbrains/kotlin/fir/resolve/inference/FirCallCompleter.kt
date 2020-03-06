@@ -41,7 +41,7 @@ class FirCallCompleter(
     private val transformer: FirBodyResolveTransformer,
     components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents
 ) : BodyResolveComponents by components {
-    val completer = ConstraintSystemCompleter(components.inferenceComponents)
+    val completer = ConstraintSystemCompleter(components)
     private val inferenceSession
         get() = inferenceComponents.inferenceSession
 
