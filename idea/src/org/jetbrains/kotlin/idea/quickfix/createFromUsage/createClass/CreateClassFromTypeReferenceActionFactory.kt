@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -55,7 +56,9 @@ object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<K
 
     private fun KtSuperTypeEntry.classExpected(): Boolean {
         val containingClass = getStrictParentOfType<KtClass>() ?: return false
-        return containingClass.primaryConstructor == null && containingClass.secondaryConstructors.isNotEmpty()
+        return !containingClass.hasModifier(KtTokens.ANNOTATION_KEYWORD)
+                && !containingClass.hasModifier(KtTokens.ENUM_KEYWORD)
+                && !containingClass.hasModifier(KtTokens.INLINE_KEYWORD)
     }
 
     private fun getExpectedUpperBound(element: KtUserType, context: BindingContext): KotlinType? {

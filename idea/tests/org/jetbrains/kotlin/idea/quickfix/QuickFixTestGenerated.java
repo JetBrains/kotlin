@@ -3229,11 +3229,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
                 }
 
-                @TestMetadata("classDelegatorToSuperclass.kt")
-                public void testClassDelegatorToSuperclass() throws Exception {
-                    runTest("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier/classDelegatorToSuperclass.kt");
-                }
-
                 @TestMetadata("createSuperClassFromSuperTypeEntry.kt")
                 public void testCreateSuperClassFromSuperTypeEntry() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier/createSuperClassFromSuperTypeEntry.kt");
@@ -3247,6 +3242,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("createSuperClassFromSuperTypeEntry3.kt")
                 public void testCreateSuperClassFromSuperTypeEntry3() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier/createSuperClassFromSuperTypeEntry3.kt");
+                }
+
+                @TestMetadata("createSuperClassFromSuperTypeEntryForAnnotation.kt")
+                public void testCreateSuperClassFromSuperTypeEntryForAnnotation() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier/createSuperClassFromSuperTypeEntryForAnnotation.kt");
+                }
+
+                @TestMetadata("createSuperClassFromSuperTypeEntryForEnum.kt")
+                public void testCreateSuperClassFromSuperTypeEntryForEnum() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier/createSuperClassFromSuperTypeEntryForEnum.kt");
+                }
+
+                @TestMetadata("createSuperClassFromSuperTypeEntryForInline.kt")
+                public void testCreateSuperClassFromSuperTypeEntryForInline() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier/createSuperClassFromSuperTypeEntryForInline.kt");
                 }
 
                 @TestMetadata("createSuperclassInsideSubclass.kt")
