@@ -63,6 +63,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/classLiteralForParameter.kt");
     }
 
+    @TestMetadata("cloneArray.kt")
+    public void testCloneArray() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolveWithStdlib/cloneArray.kt");
+    }
+
     @TestMetadata("companionLoad.kt")
     public void testCompanionLoad() throws Exception {
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/companionLoad.kt");
@@ -688,11 +693,6 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
 
         public void testAllFilesPresentInProblems() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolveWithStdlib/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
-        }
-
-        @TestMetadata("cloneArray.kt")
-        public void testCloneArray() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolveWithStdlib/problems/cloneArray.kt");
         }
 
         @TestMetadata("invokePriority.kt")
