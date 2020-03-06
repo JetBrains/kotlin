@@ -55,8 +55,6 @@
     <orderEnumerationHandlerFactory implementation="org.jetbrains.plugins.gradle.execution.GradleOrderEnumeratorHandler$FactoryImpl"/>
     <consoleFilterProvider implementation="org.jetbrains.plugins.gradle.execution.GradleConsoleFilterProvider"/>
     <stacktrace.fold substring="at org.gradle."/>
-    <stacktrace.fold substring="at org.jetbrains.plugins.gradle."/>
-    <stacktrace.fold substring="at com.intellij.openapi.externalSystem."/>
 
     <externalSystemOutputDispatcher implementation="org.jetbrains.plugins.gradle.execution.build.output.GradleOutputDispatcherFactory"/>
     <externalSystemOutputParserProvider implementation="org.jetbrains.plugins.gradle.execution.build.output.GradleOutputParserProvider"
