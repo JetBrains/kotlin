@@ -57,9 +57,12 @@ org.jetbrains.kotlin.idea.caches.resolve.IdeLightClassTestGenerated.testDeprecat
 org.jetbrains.kotlin.idea.caches.resolve.MultiModuleLineMarkerTestGenerated.testKotlinTestAnnotations, No line markers for test run
 org.jetbrains.kotlin.idea.caches.resolve.MultiPlatformHighlightingTestGenerated.testMultifileFacade, KT-34689 invalid light class
 org.jetbrains.kotlin.idea.codeInsight.InspectionTestGenerated.Inspections.testAndroidIllegalIdentifiers_inspectionData_Inspections_test, Unprocessed
+org.jetbrains.kotlin.idea.codeInsight.OutOfBlockModificationTestGenerated.testInSecondaryConstructorParameter, IDEA-234737 element.parent must not be null
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleFacetImportTest.testAndroidGradleJsDetection, NPE during import
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleFacetImportTest.testKotlinAndroidPluginDetection, NPE during import
 org.jetbrains.kotlin.idea.codeInsight.gradle.GradleKtsImportTest.testCompositeBuild, FLAKY on windows
+org.jetbrains.kotlin.idea.codeInsight.gradle.GradleTestRunConfigurationAndHighlightingTest.preferredConfigurations[0: with Gradle-4.9], IDEA-234737 element.parent must not be null
+org.jetbrains.kotlin.idea.codeInsight.gradle.GradleTestRunConfigurationAndHighlightingTest.preferredConfigurations[1: with Gradle-5.6.4], IDEA-234737 element.parent must not be null
 org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.MoveDeclarationsOut.Order.testTwoClasses, flaky failure
 org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.MoveDeclarationsOut.Order.testValAndClass, flaky failure
 org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.MoveDeclarationsOut.Order.testValOrder, flaky failure
@@ -158,11 +161,15 @@ org.jetbrains.kotlin.idea.navigation.KotlinGotoImplementationMultiModuleTestGene
 org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib1.testUseJavaFromLib, KT-34542, FAIL
 org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib2.testUseJavaSAMFromLib, KT-34542, FAIL
 org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib3.testUseJavaSAMFromLib, KT-34542, FAIL
+org.jetbrains.kotlin.idea.quickfix.QuickFixMultiFileTestGenerated.ChangeSignature.Jk.testJkChangeSecondaryConstructorParameter, IDEA-234737 element.parent must not be null
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiFileTestGenerated.ChangeSignature.Jk.testJkKeepValOnParameterTypeChange, Unprocessed
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiModuleTestGenerated.AddMissingActualMembers.testClassFunctionWithIncompatibleConstructor, Range must be inside element being annotated
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiModuleTestGenerated.Other.testConvertActualSealedClassToEnum, Enum reorder
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiModuleTestGenerated.Other.testConvertExpectSealedClassToEnum, Enum reorder
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.CreateFromUsage.CreateSecondaryConstructor.testNoneApplicable, Range must be inside element being annotated
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.CreateFromUsage.CreateVariable.Parameter.testInSecondaryConstructor, IDEA-234737 element.parent must not be null
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InitializeWithConstructorParameter.testMemberPropertyInClassNameClashInSecondaryConstructor, IDEA-234737 element.parent must not be null
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InitializeWithConstructorParameter.testMemberPropertyInClassSecondaryConstructorsOnly, IDEA-234737 element.parent must not be null
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testNonApplicableInsertSuper, Range must be inside element being annotated
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testNonApplicableInsertSuper, Range must be inside element being annotated
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testNonApplicableInsertThis, Range must be inside element being annotated
@@ -179,8 +186,14 @@ org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.te
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testPrimaryRequiredWithBody, Range must be inside element being annotated
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testPrimaryRequiredWithParameter, Range must be inside element being annotated
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.InsertDelegationCall.testPrimaryRequiredWithParameter, Range must be inside element being annotated
+org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.Variables.RemoveValVarFromParameter.testSecondaryConstructorParameter, IDEA-234737 element.parent must not be null
+org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureTest.testSecondaryConstructorBySuperRef, IDEA-234737 element.parent must not be null
+org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureTest.testSecondaryConstructorByThisRef, IDEA-234737 element.parent must not be null
 org.jetbrains.kotlin.idea.refactoring.inline.InlineTestGenerated.Function.ExpressionBody.testMultipleInExpression, Unstable order of usages
 org.jetbrains.kotlin.idea.refactoring.introduce.ExtractionTestGenerated.IntroduceJavaParameter.testJavaMethodOverridingKotlinFunctionWithUsages, Unprocessed
+org.jetbrains.kotlin.idea.refactoring.introduce.ExtractionTestGenerated.IntroduceParameter.testSecondaryConstructorWithDefaultValue, IDEA-234737 element.parent must not be null
+org.jetbrains.kotlin.idea.refactoring.introduce.ExtractionTestGenerated.IntroduceParameter.testSubstituteDelegationCallsNoTempVar, IDEA-234737 element.parent must not be null
+org.jetbrains.kotlin.idea.refactoring.introduce.ExtractionTestGenerated.IntroduceParameter.testSubstituteInSecondaryConstructorCall, IDEA-234737 element.parent must not be null
 org.jetbrains.kotlin.idea.refactoring.move.MoveTestGenerated.testJava_moveClass_moveInnerToTop_moveNestedClassToTopLevelInTheSamePackageAndAddOuterInstanceWithLambda_MoveNestedClassToTopLevelInTheSamePackageAndAddOuterInstanceWithLambda, final modifier added
 org.jetbrains.kotlin.idea.refactoring.move.MoveTestGenerated.testJava_moveClass_moveInnerToTop_moveNestedClassToTopLevelInTheSamePackageAndAddOuterInstance_MoveNestedClassToTopLevelInTheSamePackageAndAddOuterInstance, final modifier added
 org.jetbrains.kotlin.idea.refactoring.move.MoveTestGenerated.testKotlin_moveTopLevelDeclarations_moveFunctionToPackage_MoveFunctionToPackage, Broken in 0dc7c37b62f0cfdfb57ee41a808137196c45a9f5
@@ -188,11 +201,14 @@ org.jetbrains.kotlin.idea.refactoring.pullUp.PullUpTestGenerated.K2K.testAcciden
 org.jetbrains.kotlin.idea.refactoring.rename.RenameTestGenerated.testJavaEnumValueOf_JavaEnumValueOf, Enums in 201
 org.jetbrains.kotlin.idea.refactoring.rename.RenameTestGenerated.testOverloadsWithSameOrigin_OverloadsWithSameOrigin, Bad imports after rename
 org.jetbrains.kotlin.idea.refactoring.rename.RenameTestGenerated.testRenameKotlinMultifileFacadeClassWithJvmNameByRef_RenameKotlinMultifileFacadeClassWithJvmName, KT-34689
+org.jetbrains.kotlin.idea.refactoring.rename.RenameTestGenerated.testSecondaryCnstructorParameterRedeclaration_SecondaryConstructorParameterRedeclaration, IDEA-234737 element.parent must not be null
 org.jetbrains.kotlin.idea.refactoring.suggested.KotlinSuggestedRefactoringChangeListenerTest.test1, Additional signature
 org.jetbrains.kotlin.idea.refactoring.suggested.KotlinSuggestedRefactoringChangeListenerTest.testAddImport, Additional signature
 org.jetbrains.kotlin.idea.refactoring.suggested.KotlinSuggestedRefactoringChangeListenerTest.testAddImportWithBlankLineInsertion, Additional signature
 org.jetbrains.kotlin.idea.refactoring.suggested.KotlinSuggestedRefactoringChangeListenerTest.testAddImportWithBlankLinesRemoval, Additional signature
 org.jetbrains.kotlin.idea.refactoring.suggested.KotlinSuggestedRefactoringChangeListenerTest.testCommentTyping, Additional signature
+org.jetbrains.kotlin.idea.refactoring.suggested.KotlinSuggestedRefactoringChangeListenerTest.testNewSecondaryConstructor, IDEA-234737 element.parent must not be null
+org.jetbrains.kotlin.idea.refactoring.suggested.KotlinSuggestedRefactoringTest.testAddSecondaryConstructorParameter, IDEA-234737 element.parent must not be null
 org.jetbrains.kotlin.idea.repl.IdeReplCompletionTestGenerated.testBuiltInMember, KT-34825
 org.jetbrains.kotlin.idea.repl.IdeReplCompletionTestGenerated.testDefinedClass, KT-34825
 org.jetbrains.kotlin.idea.repl.IdeReplCompletionTestGenerated.testDefinedClassMember, KT-34825
@@ -213,6 +229,14 @@ org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcherTest.testCon
 org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcherTest.testFileAttributesUpdateAfterChangeOutsideSectionsOfOtherFile, Assert: some script configuration loading tasks should be scheduled
 org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcherTest.testLoadedConfigurationWhenExternalFileChanged, Assert: some script configuration loading tasks should be scheduled
 org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcherTest.testTwoFilesChanged, Assert: some script configuration loading tasks should be scheduled
+org.jetbrains.kotlin.idea.slicer.SlicerLeafGroupingTestGenerated.testSecondaryConstructorParameter, IDEA-234737 element.parent must not be null
+org.jetbrains.kotlin.idea.slicer.SlicerLeafGroupingTestGenerated.testSecondaryConstructorParameterWithDefault, IDEA-234737 element.parent must not be null
+org.jetbrains.kotlin.idea.slicer.SlicerNullnessGroupingTestGenerated.testSecondaryConstructorParameter, IDEA-234737 element.parent must not be null
+org.jetbrains.kotlin.idea.slicer.SlicerNullnessGroupingTestGenerated.testSecondaryConstructorParameter, IDEA-234737 element.parent must not be null
+org.jetbrains.kotlin.idea.slicer.SlicerNullnessGroupingTestGenerated.testSecondaryConstructorParameterWithDefault, IDEA-234737 element.parent must not be null
+org.jetbrains.kotlin.idea.slicer.SlicerNullnessGroupingTestGenerated.testSecondaryConstructorParameterWithDefault, IDEA-234737 element.parent must not be null
+org.jetbrains.kotlin.idea.slicer.SlicerTreeTestGenerated.testInflow_SecondaryConstructorParameter, IDEA-234737 element.parent must not be null
+org.jetbrains.kotlin.idea.slicer.SlicerTreeTestGenerated.testInflow_SecondaryConstructorParameterWithDefault, IDEA-234737 element.parent must not be null
 org.jetbrains.kotlin.idea.spring.tests.rename.SpringRenameTestGenerated.testAnnotationArgBySpELRefInXMLConf_AnnotationArgBySpELRefInXMLConf, Rename failed in Spring
 org.jetbrains.kotlin.idea.spring.tests.rename.SpringRenameTestGenerated.testAnnotationArgBySpELRefInXMLConf_AnnotationArgBySpELRefInXMLConf, Rename failed in Spring
 org.jetbrains.kotlin.idea.spring.tests.rename.SpringRenameTestGenerated.testIsPropertyWithXmlRefsBySpelRef_IsPropertyWithXmlRefBySpelRef, Rename failed in Spring
