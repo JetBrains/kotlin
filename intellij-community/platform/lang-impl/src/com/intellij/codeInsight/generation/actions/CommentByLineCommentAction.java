@@ -19,6 +19,7 @@ package com.intellij.codeInsight.generation.actions;
 import com.intellij.codeInsight.actions.MultiCaretCodeInsightAction;
 import com.intellij.codeInsight.actions.MultiCaretCodeInsightActionHandler;
 import com.intellij.codeInsight.generation.CommentByLineCommentHandler;
+import com.intellij.ide.lightEdit.LightEditCompatible;
 import com.intellij.lang.LanguageCommenters;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.editor.Caret;
@@ -31,7 +32,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
-public class CommentByLineCommentAction extends MultiCaretCodeInsightAction implements DumbAware {
+public class CommentByLineCommentAction extends MultiCaretCodeInsightAction implements DumbAware, LightEditCompatible {
   public CommentByLineCommentAction() {
     setEnabledInModalContext(true);
   }
