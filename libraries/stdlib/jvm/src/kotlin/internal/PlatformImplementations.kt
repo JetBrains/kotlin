@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,17 +12,29 @@ import kotlin.random.Random
 
 internal open class PlatformImplementations {
 
-    private object ReflectAddSuppressedMethod {
+    private object ReflectThrowable {
         @JvmField
-        public val method: Method? = Throwable::class.java.let { throwableClass ->
-            throwableClass.methods.find {
+        public val addSuppressed: Method?
+        @JvmField
+        public val getSuppressed: Method?
+
+        init {
+            val throwableClass = Throwable::class.java
+            val throwableMethods = throwableClass.methods
+            addSuppressed = throwableMethods.find {
                 it.name == "addSuppressed" && it.parameterTypes.singleOrNull() == throwableClass
             }
+            getSuppressed = throwableMethods.find { it.name == "getSuppressed" }
         }
     }
 
     public open fun addSuppressed(cause: Throwable, exception: Throwable) {
-        ReflectAddSuppressedMethod.method?.invoke(cause, exception)
+        ReflectThrowable.addSuppressed?.invoke(cause, exception)
+    }
+
+    public open fun getSuppressed(exception: Throwable): List<Throwable> {
+        return ReflectThrowable.getSuppressed?.invoke(exception)?.let { (it as Array<Throwable>).asList() }
+            ?: emptyList()
     }
 
     public open fun getMatchResultNamedGroup(matchResult: MatchResult, name: String): MatchGroup? {

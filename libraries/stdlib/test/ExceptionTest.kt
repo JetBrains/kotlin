@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package test.exceptions
 
+import test.supportsSuppressedExceptions
 import kotlin.test.*
 
 class ExceptionTest {
@@ -64,6 +65,25 @@ class ExceptionTest {
 
         fromCause?.invoke(cause)?.let { e ->
             assertSame(cause, e.cause)
+        }
+    }
+
+    @Test
+    fun suppressedExceptions() {
+        val e1 = Throwable()
+
+        val c1 = Exception("Suppressed 1")
+        val c2 = Exception("Suppressed 2")
+
+        assertTrue(e1.suppressedExceptions.isEmpty())
+
+        e1.addSuppressed(c1)
+        e1.addSuppressed(c2)
+
+        if (supportsSuppressedExceptions) {
+            assertEquals(listOf(c1, c2), e1.suppressedExceptions)
+        } else {
+            assertTrue(e1.suppressedExceptions.isEmpty())
         }
     }
 
