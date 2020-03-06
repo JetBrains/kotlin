@@ -306,7 +306,7 @@ class FirCallResolver(
         val scope = symbol.fir.unsubstitutedScope(session, scopeSession)
         val className = symbol.classId.shortClassName
         val callInfo = CallInfo(
-            CallKind.Function,
+            CallKind.DelegatingConstructorCall,
             className,
             explicitReceiver = null,
             delegatedConstructorCall.argumentList,
@@ -322,7 +322,9 @@ class FirCallResolver(
 
         scope.processFunctionsByName(className) {
             if (it is FirConstructorSymbol) {
-                candidates += candidateFactory.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER)
+                val candidate = candidateFactory.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER)
+                candidate.typeArgumentMapping = TypeArgumentMapping.Mapped(typeArguments)
+                candidates += candidate
             }
         }
         return callResolver.selectCandidateFromGivenCandidates(delegatedConstructorCall, className, candidates)

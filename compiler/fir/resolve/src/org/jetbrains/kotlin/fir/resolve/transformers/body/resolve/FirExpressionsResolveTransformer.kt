@@ -599,15 +599,16 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 is FirSuperReference -> {
                     // TODO: unresolved supertype
                     val supertype = reference.superTypeRef.coneTypeSafe<ConeClassLikeType>() ?: return delegatedConstructorCall.compose()
-                    typeArguments = supertype.typeArguments.takeIf { it.isNotEmpty() }?.map { it.toFirTypeProjection() } ?: emptyList()
                     val expandedSupertype = supertype.fullyExpandedType(session)
-                    val lookupTag = expandedSupertype.lookupTag
-                    if (lookupTag is ConeClassLookupTagWithFixedSymbol) {
-                        lookupTag.symbol
-                    } else {
-                        // TODO: support locals
-                        symbolProvider.getSymbolByLookupTag(lookupTag) ?: return delegatedConstructorCall.compose()
-                    } as FirClassSymbol<*>
+                val symbol =
+                    expandedSupertype.lookupTag.toSymbol(session) as? FirClassSymbol<*> ?: return delegatedConstructorCall.compose()
+                    val classTypeParametersCount = (symbol.fir as? FirTypeParametersOwner)?.typeParameters?.size ?: 0
+                typeArguments = expandedSupertype.typeArguments
+                    .takeLast(classTypeParametersCount) // Hack for KT-37525
+                    .takeIf { it.isNotEmpty() }
+                    ?.map { it.toFirTypeProjection() }
+                    ?: emptyList()
+                symbol
                 }
                 else -> return delegatedConstructorCall.compose()
             }

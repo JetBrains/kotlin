@@ -36,10 +36,11 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
             return
         }
 
+
         // optimization
-//        if (resolvedCall.typeArgumentMappingByOriginal == NoExplicitArguments && knownTypeParametersResultingSubstitutor == null) {
-//            return
-//        }
+        if (candidate.typeArgumentMapping == TypeArgumentMapping.NoExplicitArguments /*&& knownTypeParametersResultingSubstitutor == null*/) {
+            return
+        }
 
         val typeParameters = declaration.typeParameters
         for (index in typeParameters.indices) {
@@ -57,10 +58,8 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
 //            }
 
 
-            val typeArgument =
-                callInfo.typeArguments.getOrElse(index) { FirTypePlaceholderProjection }//resolvedCall.typeArgumentMappingByOriginal.getTypeArgument(typeParameter)
-//
-            when (typeArgument) {
+            //
+            when (val typeArgument = candidate.typeArgumentMapping[index]) {
                 is FirTypeProjectionWithVariance -> csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
                     typeArgument.typeRef.coneTypeUnsafe(),
@@ -69,7 +68,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                 is FirStarProjection -> csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
                     typeParameter.bounds.firstOrNull()?.coneTypeUnsafe()
-                        ?: sink.components.session.builtinTypes.nullableAnyType.type, //StandardClassIds.Any(sink.components.session.firSymbolProvider).constructType(emptyArray(), true),
+                        ?: sink.components.session.builtinTypes.nullableAnyType.type,
                     SimpleConstraintSystemConstraintPosition
                 )
                 else -> assert(typeArgument == FirTypePlaceholderProjection) {
