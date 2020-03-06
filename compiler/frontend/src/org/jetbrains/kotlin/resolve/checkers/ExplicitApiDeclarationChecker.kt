@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,6 +21,7 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
         if (state == ExplicitApiMode.DISABLED) return
 
         if (descriptor !is DeclarationDescriptorWithVisibility) return
+        if (descriptor is ClassDescriptor && descriptor.kind == ClassKind.ENUM_ENTRY) return // Enum entries does not have visibilities
         if (!descriptor.isEffectivelyPublicApi) return
 
         checkVisibilityModifier(state, declaration, descriptor, context)
