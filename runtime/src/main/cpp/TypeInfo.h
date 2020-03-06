@@ -103,8 +103,8 @@ struct TypeInfo {
     const TypeInfo* typeInfo_;
     // Extended RTTI, to retain cross-version debuggability, since ABI version 5 shall always be at the second position.
     const ExtendedTypeInfo* extendedInfo_;
-    // ABI version.
-    uint32_t abiVersion_;
+    // Unused field.
+    uint32_t unused_;
     // Negative value marks array class/string, and it is negated element size.
     int32_t instanceSize_;
     // Must be pointer to Any for array classes, and null for Any.

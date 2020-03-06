@@ -101,7 +101,10 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
                     extendedInfo,
 
-                    Int32(KotlinAbiVersion.CURRENT.version),
+                    // TODO: it used to be a single int32 ABI version,
+                    // but klib abi version is not an int anymore.
+                    // So now this field is just reserved to preserve the layout.
+                    Int32(0),
 
                     Int32(size),
 
