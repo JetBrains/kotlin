@@ -500,7 +500,7 @@ public class ConsoleHistoryController implements Disposable {
     catch (final IOException e) {
       LOG.warn(e);
       ApplicationManager.getApplication().invokeLater(() -> {
-        String message = String.format("Unable to open '%s/%s'\nReason: %s", rootType.getId(), pathName, e.getLocalizedMessage());
+        String message = ExecutionBundle.message("dialog.message.unable.to.open.file", rootType.getId(), pathName, e.getLocalizedMessage());
         Messages.showErrorDialog(message, ExecutionBundle.message("dialog.title.unable.to.open.file"));
       });
       return null;

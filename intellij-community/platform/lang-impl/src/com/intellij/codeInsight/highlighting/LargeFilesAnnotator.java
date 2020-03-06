@@ -33,10 +33,9 @@ public class LargeFilesAnnotator implements Annotator {
     if (element instanceof PsiFile) {
       VirtualFile file = ((PsiFile)element).getViewProvider().getVirtualFile();
       if (SingleRootFileViewProvider.isTooLargeForIntelligence(file)) {
-        holder.newAnnotation(HighlightSeverity.WARNING, CodeInsightBundle
-          .message("message.the.file.size.0.exceeds.configured.limit.1.code.insight.features.are.not.available",
-                   StringUtil.formatFileSize(file.getLength()),
-                   StringUtil.formatFileSize(PersistentFSConstants.getMaxIntellisenseFileSize())))
+        holder.newAnnotation(HighlightSeverity.WARNING, CodeInsightBundle.message("message.file.size.0.exceeds.code.insight.limit.1",
+                                                                                  StringUtil.formatFileSize(file.getLength()),
+                                                                                  StringUtil.formatFileSize(PersistentFSConstants.getMaxIntellisenseFileSize())))
           .fileLevel()
           .create();
       }
