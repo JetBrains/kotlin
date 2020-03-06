@@ -16,14 +16,23 @@
 
 package org.jetbrains.kotlin.library
 
-fun String.parseKonanAbiVersion(): KotlinAbiVersion {
-    return KotlinAbiVersion(this.toInt())
+fun String.parseKotlinAbiVersion(): KotlinAbiVersion {
+    val values = this.split(".").map { it.toInt() }
+
+    return when (values.size) {
+        3 -> KotlinAbiVersion(values[0], values[1], values[2])
+        1 -> KotlinAbiVersion(values[0])
+        else -> error("Could not parse abi version: $this")
+    }
 }
 
-data class KotlinAbiVersion(val version: Int) {
+// We still enumerate klib abi_version with a single number,
+// but we don't break if in the future we switch to triples.
+data class KotlinAbiVersion(val major: Int, val minor: Int, val patch: Int) {
+    constructor(single: Int) : this(0, single, 0)
     companion object {
         val CURRENT = KotlinAbiVersion(26)
     }
 
-    override fun toString() = "$version"
+    override fun toString() = if (major == 0 && patch == 0) "$minor" else "$major.$minor.$patch"
 }
