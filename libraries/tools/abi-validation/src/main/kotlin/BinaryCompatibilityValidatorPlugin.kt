@@ -26,7 +26,7 @@ class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
 
     private fun Project.validateExtension() {
         rootProject.afterEvaluate {
-            val ignored = extensions.getByType(ApiValidationExtension::class.java).ignoredProjects
+            val ignored = ignoredProjects()
             val all = allprojects.map { it.name }
             for (project in ignored) {
                 require(project in all) { "Cannot find excluded project $project in all projects: $all" }
@@ -36,6 +36,7 @@ class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
 
     private fun configureProject(project: Project) {
         project.pluginManager.withPlugin("kotlin") {
+            if (project.name in project.rootProject.ignoredProjects()) return@withPlugin
             project.sourceSets.all { sourceSet ->
                 if (sourceSet.name != SourceSet.MAIN_SOURCE_SET_NAME) {
                     return@all
@@ -45,6 +46,7 @@ class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
         }
 
         project.pluginManager.withPlugin("kotlin-android") {
+            if (project.name in project.rootProject.ignoredProjects()) return@withPlugin
             val extension = project.extensions.getByName("kotlin") as KotlinAndroidProjectExtension
             extension.target.compilations.matching {
                 it.compilationName == "release"
@@ -54,6 +56,7 @@ class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
         }
 
         project.pluginManager.withPlugin("kotlin-multiplatform") {
+            if (project.name in project.rootProject.ignoredProjects()) return@withPlugin
             val kotlin = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
             kotlin.targets.matching {
                 it.platformType == KotlinPlatformType.jvm
@@ -146,3 +149,6 @@ inline fun <reified T : Task> Project.task(
     name: String,
     noinline configuration: T.() -> Unit
 ): TaskProvider<T> = tasks.register(name, T::class.java, Action(configuration))
+
+private fun Project.ignoredProjects(): Set<String> =
+    extensions.getByType(ApiValidationExtension::class.java).ignoredProjects
