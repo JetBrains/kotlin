@@ -426,6 +426,10 @@ public class SequenceTest {
         expect(null, { sequenceOf<Int>().reduceOrNull { acc, i -> acc + i } })
     }
 
+    @Test fun reduceIndexedOrNullOnEmpty() {
+        expect(null, { sequenceOf<Int>().reduceIndexedOrNull { index, acc, i -> acc + i + index } })
+    }
+
     @Test fun minusElement() = testMinus(expected = listOf("foo", "bar")) { it - "bar" - "zoo" }
     @Test fun minusCollection() = testMinus { it - listOf("bar", "zoo") }
     @Test fun minusArray() = testMinus { it - arrayOf("bar", "zoo") }

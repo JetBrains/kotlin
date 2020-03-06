@@ -296,6 +296,24 @@ class CollectionTest {
         }
     }
 
+    @Test fun reduceIndexedOrNull() {
+        expect("123") {
+            val list = listOf("1", "2", "3", "4")
+            list.reduceIndexedOrNull { index, a, b -> if (index == 3) a else a + b }
+        }
+
+        expect(5) {
+            listOf(2, 3).reduceIndexedOrNull { index, acc: Number, e ->
+                assertEquals(1, index)
+                assertEquals(2, acc)
+                assertEquals(3, e)
+                acc.toInt() + e
+            }
+        }
+
+        expect(null, { arrayListOf<Int>().reduceIndexedOrNull { index, a, b -> index + a + b } })
+    }
+
     @Test fun reduceRightIndexed() {
         expect("234") {
             val list = listOf("1", "2", "3", "4")
@@ -314,6 +332,24 @@ class CollectionTest {
         assertFailsWith<UnsupportedOperationException> {
             arrayListOf<Int>().reduceRightIndexed { index, a, b -> index + a + b }
         }
+    }
+
+    @Test fun reduceRightIndexedOrNull() {
+        expect("234") {
+            val list = listOf("1", "2", "3", "4")
+            list.reduceRightIndexedOrNull { index, a, b -> if (index == 0) b else a + b }
+        }
+
+        expect(1) {
+            listOf(2, 3).reduceRightIndexedOrNull { index, e, acc: Number ->
+                assertEquals(0, index)
+                assertEquals(3, acc)
+                assertEquals(2, e)
+                acc.toInt() - e
+            }
+        }
+
+        expect(null, { arrayListOf<Int>().reduceRightIndexedOrNull { index, a, b -> index + a + b } })
     }
 
     @Test fun reduce() {

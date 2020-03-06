@@ -1016,6 +1016,20 @@ class ArraysTest {
         }
     }
 
+    @Test fun reduceIndexedOrNull() {
+        expect(-1) { intArrayOf(1, 2, 3).reduceIndexedOrNull { index, a, b -> index + a - b } }
+        expect(-1.toLong()) { longArrayOf(1, 2, 3).reduceIndexedOrNull { index, a, b -> index + a - b } }
+        expect(-1F) { floatArrayOf(1F, 2F, 3F).reduceIndexedOrNull { index, a, b -> index + a - b } }
+        expect(-1.0) { doubleArrayOf(1.0, 2.0, 3.0).reduceIndexedOrNull { index, a, b -> index + a - b } }
+        expect('2') { charArrayOf('1', '3', '2').reduceIndexedOrNull { index, a, b -> if (a > b && index == 1) a else b } }
+        expect(true) { booleanArrayOf(true, true, false).reduceIndexedOrNull { index, a, b -> a && b || index == 2 } }
+        expect(false) { booleanArrayOf(true, true).reduceIndexedOrNull { index, a, b -> a && b && index != 1 } }
+        expect(1.toByte()) { byteArrayOf(3, 2, 1).reduceIndexedOrNull { index, a, b -> if (index != 2) (a - b).toByte() else a.toByte() } }
+        expect(1.toShort()) { shortArrayOf(3, 2, 1).reduceIndexedOrNull { index, a, b -> if (index != 2) (a - b).toShort() else a.toShort() } }
+
+        expect(null, { intArrayOf().reduceIndexedOrNull { index, a, b -> index + a + b } })
+    }
+
     @Test fun reduceRightIndexed() {
         expect(1) { intArrayOf(1, 2, 3).reduceRightIndexed { index, a, b -> index + a - b } }
         expect(1.toLong()) { longArrayOf(1, 2, 3).reduceRightIndexed { index, a, b -> index + a - b } }
@@ -1030,6 +1044,20 @@ class ArraysTest {
         assertFailsWith<UnsupportedOperationException> {
             intArrayOf().reduceRightIndexed { index, a, b -> index + a + b }
         }
+    }
+
+    @Test fun reduceRightIndexedOrNull() {
+        expect(1) { intArrayOf(1, 2, 3).reduceRightIndexedOrNull { index, a, b -> index + a - b } }
+        expect(1.toLong()) { longArrayOf(1, 2, 3).reduceRightIndexedOrNull { index, a, b -> index + a - b } }
+        expect(1F) { floatArrayOf(1F, 2F, 3F).reduceRightIndexedOrNull { index, a, b -> index + a - b } }
+        expect(1.0) { doubleArrayOf(1.0, 2.0, 3.0).reduceRightIndexedOrNull { index, a, b -> index + a - b } }
+        expect('2') { charArrayOf('1', '3', '2').reduceRightIndexedOrNull { index, a, b -> if (a > b && index == 0) a else b } }
+        expect(true) { booleanArrayOf(true, true, false).reduceRightIndexedOrNull { index, a, b -> a && b || index == 1 } }
+        expect(false) { booleanArrayOf(true, true).reduceRightIndexedOrNull { index, a, b -> a && b && index != 0 } }
+        expect(1.toByte()) { byteArrayOf(3, 2, 1).reduceRightIndexedOrNull { index, a, b -> if (index != 1) (a - b).toByte() else a.toByte() } }
+        expect(1.toShort()) { shortArrayOf(3, 2, 1).reduceRightIndexedOrNull { index, a, b -> if (index != 1) (a - b).toShort() else a.toShort() } }
+
+        expect(null, { intArrayOf().reduceRightIndexedOrNull { index, a, b -> index + a + b } })
     }
 
     @Test fun reduce() {

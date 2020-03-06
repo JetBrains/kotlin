@@ -708,6 +708,85 @@ object Aggregates : TemplateGroupBase() {
         }
     }
 
+    val f_reduceIndexedOrNull = fn("reduceIndexedOrNull(operation: (index: Int, acc: T, T) -> T)") {
+        include(ArraysOfPrimitives, ArraysOfUnsigned, CharSequences)
+    } builder {
+        since("1.4")
+        inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
+        doc {
+            """
+            Accumulates value starting with the first ${f.element} and applying [operation] from left to right
+            to current accumulator value and each ${f.element} with its index in the original ${f.collection}.
+            Returns null if the ${f.collection} is empty.
+            @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, current accumulator value
+            and the ${f.element} itself and calculates the next accumulator value.
+            """
+        }
+        sample("samples.collections.Collections.Aggregates.reduceOrNull")
+        returns("T?")
+        body {
+            """
+            if (isEmpty())
+                return null
+
+            var accumulator = this[0]
+            for (index in 1..lastIndex) {
+                accumulator = operation(index, accumulator, this[index])
+            }
+            return accumulator
+            """
+        }
+    }
+
+    val f_reduceIndexedOrNullSuper = fn("reduceIndexedOrNull(operation: (index: Int, acc: S, T) -> S)") {
+        include(ArraysOfObjects, Iterables, Sequences)
+    } builder {
+        since("1.4")
+        inline()
+
+        doc {
+            """
+            Accumulates value starting with the first ${f.element} and applying [operation] from left to right
+            to current accumulator value and each ${f.element} with its index in the original ${f.collection}.
+            Returns null if the ${f.collection} is empty.
+            @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, current accumulator value
+            and the ${f.element} itself and calculates the next accumulator value.
+            """
+        }
+        typeParam("S")
+        typeParam("T : S")
+        sample("samples.collections.Collections.Aggregates.reduceOrNull")
+        returns("S?")
+        body {
+            fun checkOverflow(value: String) = if (f == Sequences || f == Iterables) "checkIndexOverflow($value)" else value
+            """
+            val iterator = this.iterator()
+            if (!iterator.hasNext()) return null
+
+            var index = 1
+            var accumulator: S = iterator.next()
+            while (iterator.hasNext()) {
+                accumulator = operation(${checkOverflow("index++")}, accumulator, iterator.next())
+            }
+            return accumulator
+            """
+        }
+        body(ArraysOfObjects) {
+            """
+            if (isEmpty())
+                return null
+
+            var accumulator: S = this[0]
+            for (index in 1..lastIndex) {
+                accumulator = operation(index, accumulator, this[index])
+            }
+            return accumulator
+            """
+        }
+    }
+
     val f_reduceRightIndexed = fn("reduceRightIndexed(operation: (index: Int, T, acc: T) -> T)") {
         include(CharSequences, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
@@ -776,6 +855,90 @@ object Aggregates : TemplateGroupBase() {
             val iterator = listIterator(size)
             if (!iterator.hasPrevious())
                 throw UnsupportedOperationException("Empty list can't be reduced.")
+
+            var accumulator: S = iterator.previous()
+            while (iterator.hasPrevious()) {
+                val index = iterator.previousIndex()
+                accumulator = operation(index, iterator.previous(), accumulator)
+            }
+
+            return accumulator
+            """
+        }
+    }
+
+    val f_reduceRightIndexedOrNull = fn("reduceRightIndexedOrNull(operation: (index: Int, T, acc: T) -> T)") {
+        include(CharSequences, ArraysOfPrimitives, ArraysOfUnsigned)
+    } builder {
+        since("1.4")
+        inline()
+        specialFor(ArraysOfUnsigned) { inlineOnly() }
+
+        doc {
+            """
+            Accumulates value starting with last ${f.element} and applying [operation] from right to left
+            to each ${f.element} with its index in the original ${f.collection} and current accumulator value.
+            Returns null if the ${f.collection} is empty.
+            @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, the ${f.element} itself
+            and current accumulator value, and calculates the next accumulator value.
+            """
+        }
+        sample("samples.collections.Collections.Aggregates.reduceRightOrNull")
+        returns("T?")
+        body {
+            """
+            var index = lastIndex
+            if (index < 0) return null
+
+            var accumulator = get(index--)
+            while (index >= 0) {
+                accumulator = operation(index, get(index), accumulator)
+                --index
+            }
+
+            return accumulator
+            """
+        }
+    }
+
+    val f_reduceRightIndexedOrNullSuper = fn("reduceRightIndexedOrNull(operation: (index: Int, T, acc: S) -> S)") {
+        include(Lists, ArraysOfObjects)
+    } builder {
+        since("1.4")
+        inline()
+
+        doc {
+            """
+            Accumulates value starting with last ${f.element} and applying [operation] from right to left
+            to each ${f.element} with its index in the original ${f.collection} and current accumulator value.
+            Returns null if the ${f.collection} is empty.
+            @param [operation] function that takes the index of ${f.element.prefixWithArticle()}, the ${f.element} itself
+            and current accumulator value, and calculates the next accumulator value.
+            """
+        }
+        sample("samples.collections.Collections.Aggregates.reduceRightOrNull")
+        typeParam("S")
+        typeParam("T : S")
+        returns("S?")
+        body {
+            """
+            var index = lastIndex
+            if (index < 0) return null
+
+            var accumulator: S = get(index--)
+            while (index >= 0) {
+                accumulator = operation(index, get(index), accumulator)
+                --index
+            }
+
+            return accumulator
+            """
+        }
+        body(Lists) {
+            """
+            val iterator = listIterator(size)
+            if (!iterator.hasPrevious())
+                return null
 
             var accumulator: S = iterator.previous()
             while (iterator.hasPrevious()) {

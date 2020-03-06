@@ -549,6 +549,16 @@ class UnsignedArraysTest {
     }
 
     @Test
+    fun reduceIndexedOrNull() {
+        expect(1u) { ubyteArrayOf(3, 2, 1).reduceIndexedOrNull { index, acc, e -> if (index != 2) (e - acc).toUByte() else e } }
+        expect(1u) { ushortArrayOf(3, 2, 1).reduceIndexedOrNull { index, acc, e -> if (index != 2) (e - acc).toUShort() else e } }
+        expect(UInt.MAX_VALUE) { uintArrayOf(1, 2, 3).reduceIndexedOrNull { index, acc, e -> index.toUInt() + acc - e } }
+        expect(ULong.MAX_VALUE) { ulongArrayOf(1, 2, 3).reduceIndexedOrNull { index, acc, e -> index.toULong() + acc - e } }
+
+        expect(null, { uintArrayOf().reduceIndexedOrNull { index, acc, e -> index.toUInt() + e + acc } })
+    }
+
+    @Test
     fun reduceRight() {
         expect(2u) { ubyteArrayOf(1, 2, 3).reduceRightOrNull { e, acc -> (e - acc).toUByte() } }
         expect(2u) { ushortArrayOf(1, 2, 3).reduceRightOrNull { e, acc -> (e - acc).toUShort() } }
@@ -580,6 +590,16 @@ class UnsignedArraysTest {
         assertFailsWith<UnsupportedOperationException> {
             uintArrayOf().reduceRightIndexed { index, e, acc -> index.toUInt() + e + acc }
         }
+    }
+
+    @Test
+    fun reduceRightIndexedOrNull() {
+        expect(1u) { ubyteArrayOf(3, 2, 1).reduceRightIndexedOrNull { index, e, acc -> if (index != 1) (e - acc).toUByte() else e } }
+        expect(1u) { ushortArrayOf(3, 2, 1).reduceRightIndexedOrNull { index, e, acc -> if (index != 1) (e - acc).toUShort() else e } }
+        expect(1u) { uintArrayOf(1, 2, 3).reduceRightIndexedOrNull { index, e, acc -> index.toUInt() + e - acc } }
+        expect(1uL) { ulongArrayOf(1, 2, 3).reduceRightIndexedOrNull { index, e, acc -> index.toULong() + e - acc } }
+
+        expect(null, { uintArrayOf().reduceRightIndexedOrNull { index, e, acc -> index.toUInt() + e + acc } })
     }
 
     @Test
