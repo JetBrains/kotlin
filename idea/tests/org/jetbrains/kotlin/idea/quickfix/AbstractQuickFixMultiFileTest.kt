@@ -189,7 +189,7 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
                         TestCase.fail(getTestName(true))
                     }
                 },
-                "", "",
+                "", ""
             )
         }
 
@@ -275,7 +275,7 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
                         TestCase.fail(getTestName(true))
                     }
                 },
-                "", "",
+                "", ""
             )
         }
     }

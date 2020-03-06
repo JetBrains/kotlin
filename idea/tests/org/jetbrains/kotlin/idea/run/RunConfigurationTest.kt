@@ -66,7 +66,7 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
                                 override fun visitNamedFunction(function: KtNamedFunction) {
                                     functionVisitor(languageVersionSettings, function)
                                 }
-                            },
+                            }
                         )
                     }
                 }
@@ -83,7 +83,7 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
         ModuleRootModificationUtil.setModuleSdk(moduleWithDependency, testProjectJdk)
 
         val moduleWithDependencySrcDir = configureModule(
-            moduleDirPath("moduleWithDependency"), moduleWithDependencyDir, configModule = moduleWithDependency,
+            moduleDirPath("moduleWithDependency"), moduleWithDependencyDir, configModule = moduleWithDependency
         ).srcOutputDir
 
         ModuleRootModificationUtil.addDependency(moduleWithDependency, module)
@@ -198,7 +198,7 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
                             actualClasses.add(actualClass)
                         }
                     }
-                },
+                }
             )
             assertEquals(expectedClasses, actualClasses)
         } finally {
@@ -238,13 +238,13 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
 
                     assertNotNull(
                         "$file: Kotlin configuration producer should produce configuration for ${function.fqName?.asString()}",
-                        KotlinRunConfigurationProducer.getEntryPointContainer(function),
+                        KotlinRunConfigurationProducer.getEntryPointContainer(function)
                     )
                 } else {
                     try {
                         createConfigurationFromMain(project, function.fqName?.asString()!!).checkConfiguration()
                         fail(
-                            "$file: configuration for function ${function.fqName?.asString()} at least shouldn't pass checkConfiguration()",
+                            "$file: configuration for function ${function.fqName?.asString()} at least shouldn't pass checkConfiguration()"
                         )
                     } catch (expected: Throwable) {
                     }
@@ -252,12 +252,12 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
                     if (function.containingFile.text.startsWith("// entryPointExists")) {
                         assertNotNull(
                             "$file: Kotlin configuration producer should produce configuration for ${function.fqName?.asString()}",
-                            KotlinRunConfigurationProducer.getEntryPointContainer(function),
+                            KotlinRunConfigurationProducer.getEntryPointContainer(function)
                         )
                     } else {
                         assertNull(
                             "Kotlin configuration producer shouldn't produce configuration for ${function.fqName?.asString()}",
-                            KotlinRunConfigurationProducer.getEntryPointContainer(function),
+                            KotlinRunConfigurationProducer.getEntryPointContainer(function)
                         )
                     }
                 }

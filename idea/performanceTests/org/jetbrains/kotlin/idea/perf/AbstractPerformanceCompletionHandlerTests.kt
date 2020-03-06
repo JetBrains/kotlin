@@ -93,7 +93,7 @@ abstract class AbstractPerformanceCompletionHandlerTests(
                 }
 
                 doPerfTestWithTextLoaded(
-                    testPath, completionType, invocationCount, lookupString, itemText, tailText, completionChars,
+                    testPath, completionType, invocationCount, lookupString, itemText, tailText, completionChars
                 )
             }
         } finally {

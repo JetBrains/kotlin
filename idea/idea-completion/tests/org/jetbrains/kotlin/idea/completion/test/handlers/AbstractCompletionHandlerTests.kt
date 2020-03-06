@@ -73,7 +73,7 @@ abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: 
                     itemText,
                     tailText,
                     completionChars,
-                    File(testPath).name + ".after",
+                    File(testPath).name + ".after"
                 )
             }
         } finally {

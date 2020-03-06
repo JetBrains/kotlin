@@ -208,7 +208,7 @@ private fun parametrizedMethodKey(child: FrameworkMethod, parametersName: String
 private inline fun RunNotifier.withMuteFailureListener(
     declaredClass: Class<*>,
     methodKey: String,
-    crossinline run: () -> Unit,
+    crossinline run: () -> Unit
 ) {
     val doAutoMute = DO_AUTO_MUTE
     if (doAutoMute == null) {
