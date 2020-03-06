@@ -188,6 +188,23 @@ private class UastFakeLightMethod(private val original: KtFunction, containingCl
     }
 
     override fun getParent(): PsiElement? = containingClass
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as UastFakeLightMethod
+
+        if (original != other.original) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + original.hashCode()
+        return result
+    }
 }
 
 class KotlinUMethodWithFakeLightDelegate(val original: KtFunction, containingLightClass: PsiClass, givenParent: UElement?) :
