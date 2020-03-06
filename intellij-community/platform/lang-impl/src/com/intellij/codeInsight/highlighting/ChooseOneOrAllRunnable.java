@@ -36,7 +36,7 @@ public abstract class ChooseOneOrAllRunnable<T extends PsiElement> implements Ru
 
   private final String myTitle;
 
-  public ChooseOneOrAllRunnable(final List<T> classes, final Editor editor, final String title, Class<T> type) {
+  public ChooseOneOrAllRunnable(@NotNull List<? extends T> classes, @NotNull Editor editor, @NotNull String title, @NotNull Class<T> type) {
     myClasses = ArrayUtil.toObjectArray(classes, type);
     myEditor = editor;
     myTitle = title;
@@ -84,5 +84,6 @@ public abstract class ChooseOneOrAllRunnable<T extends PsiElement> implements Ru
     }
   }
 
+  @NotNull
   protected abstract PsiElementListCellRenderer<T> createRenderer();
 }
