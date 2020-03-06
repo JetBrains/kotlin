@@ -1262,11 +1262,18 @@ class Fir2IrVisitor(
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: Any?): IrElement {
         val classSymbol = resolvedQualifier.symbol
         if (classSymbol != null) {
+            val resultingSymbol = when (val klass = classSymbol.fir) {
+                is FirRegularClass -> {
+                    if (klass.classKind in listOf(ClassKind.OBJECT, ClassKind.ENUM_ENTRY)) classSymbol
+                    else klass.companionObject?.symbol ?: classSymbol
+                }
+                else -> classSymbol
+            }
             return resolvedQualifier.convertWithOffsets { startOffset, endOffset ->
                 IrGetObjectValueImpl(
                     startOffset, endOffset,
                     resolvedQualifier.typeRef.toIrType(),
-                    classSymbol.toIrSymbol(session, declarationStorage) as IrClassSymbol
+                    resultingSymbol.toIrSymbol(session, declarationStorage) as IrClassSymbol
                 )
             }
         }
