@@ -258,9 +258,12 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
       PsiFile psiFile = (PsiFile)node.getPsi();
       InjectedFileViewProvider viewProvider = (InjectedFileViewProvider)psiFile.getViewProvider();
       synchronized (InjectedLanguageManagerImpl.ourInjectionPsiLock) {
-        psiFile = createOrMergeInjectedFile(myHostPsiFile, myDocumentManagerBase, place, documentWindow, psiFile, viewProvider);
         if (psiFile.getLanguage() == viewProvider.getBaseLanguage()) {
+          psiFile = createOrMergeInjectedFile(myHostPsiFile, myDocumentManagerBase, place, documentWindow, psiFile, viewProvider);
           addFileToResults(psiFile);
+        } else {
+          cacheEverything(place, documentWindow, viewProvider, psiFile);
+          InjectedLanguageUtil.setHighlightTokens(psiFile, InjectedLanguageUtil.getHighlightTokens(psiFile));
         }
 
         DocumentWindowImpl retrieved = (DocumentWindowImpl)myDocumentManagerBase.getDocument(psiFile);
