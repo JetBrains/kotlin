@@ -1407,6 +1407,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/problems/definitelyNotNullAndOriginalType.kt");
         }
 
+        @TestMetadata("flexibleTypeVarAgainstNull.kt")
+        public void testFlexibleTypeVarAgainstNull() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/flexibleTypeVarAgainstNull.kt");
+        }
+
         @TestMetadata("javaAccessorConversion.kt")
         public void testJavaAccessorConversion() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/javaAccessorConversion.kt");
