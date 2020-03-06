@@ -204,7 +204,7 @@ abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
                 knownAbiVersions!!.contains(candidateAbiVersion)
 
         if (!abiVersionMatch) {
-            logger.warning("skipping $candidatePath. The abi versions don't match. Expected '${knownAbiVersions}', found '${candidateAbiVersion}'")
+            logger.warning("skipping $candidatePath. The abi versions don't match. Expected '${knownAbiVersions}', found '${candidateAbiVersion}'. The library produced by ${candidateCompilerVersion} compiler")
             return false
         }
 
