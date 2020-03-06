@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.ir.ir2string
-import org.jetbrains.kotlin.backend.jvm.lower.getOrCreateSuspendFunctionViewIfNeeded
+import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionView
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.OwnerKind
@@ -107,7 +107,7 @@ class IrSourceCompilerForInline(
                 function.parentAsClass.functions.find {
                     it.name.asString() == function.name.asString() + FOR_INLINE_SUFFIX &&
                             it.attributeOwnerId == (function as? IrAttributeContainer)?.attributeOwnerId
-                } ?: function.getOrCreateSuspendFunctionViewIfNeeded(classCodegen.context)
+                } ?: function.suspendFunctionView(codegen.classCodegen.context)
             else function
         val functionCodegen = object : FunctionCodegen(forInlineFunction, classCodegen, codegen.takeIf { isLambda }) {
             override fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {

@@ -560,7 +560,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                 val flag = MutableFlag(false)
                 function.accept(this, flag)
 
-                val view = function.getOrCreateSuspendFunctionViewIfNeeded(context) as IrSimpleFunction
+                val view = function.suspendFunctionView(context) as IrSimpleFunction
                 val result = mutableListOf(view)
                 if (function.body == null || !function.hasContinuation()) return result
 
@@ -621,14 +621,19 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
 
 // Transform `suspend fun foo(params): RetType` into `fun foo(params, $completion: Continuation<RetType>): Any?`
 // the result is called 'view', just to be consistent with old backend.
-internal fun IrFunction.getOrCreateSuspendFunctionViewIfNeeded(context: JvmBackendContext): IrFunction {
+internal fun IrFunction.suspendFunctionView(context: JvmBackendContext): IrFunction {
     if (!isSuspend) return this
-    return context.suspendFunctionOriginalToView[suspendFunctionOriginal()] ?: suspendFunctionView(context)
+    val stub = suspendFunctionViewOrStub(context)
+    if (stub.body == null) {
+        val continuationParameter = stub.continuationParameter()
+        stub.body = moveBodyTo(stub, explicitParameters.zip(stub.explicitParameters.filter { it != continuationParameter }).toMap())
+    }
+    return stub
 }
 
-private fun IrFunction.getOrCreateSuspendFunctionStub(context: JvmBackendContext): IrFunction {
+internal fun IrFunction.suspendFunctionViewOrStub(context: JvmBackendContext): IrFunction {
     if (!isSuspend) return this
-    return context.suspendFunctionOriginalToStub[suspendFunctionOriginal()] ?: suspendFunctionStub(context)
+    return context.suspendFunctionOriginalToView.getOrPut(suspendFunctionOriginal()) { suspendFunctionStub(context) }
 }
 
 internal fun IrFunction.suspendFunctionOriginal(): IrFunction {
@@ -667,8 +672,6 @@ private fun IrFunction.suspendFunctionStub(context: JvmBackendContext): IrFuncti
             SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationType(context), JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
         )
         function.valueParameters += valueParameters.drop(index).map { it.copyTo(function, index = it.index + 1) }
-
-        context.recordSuspendFunctionViewStub(this, function)
     }
 }
 
@@ -683,25 +686,6 @@ private fun IrFunction.continuationType(context: JvmBackendContext): IrType {
         context.irBuiltIns.anyNType
     else
         context.ir.symbols.continuationClass.typeWith(returnType)
-}
-
-private fun IrFunction.suspendFunctionView(context: JvmBackendContext): IrFunction {
-    require(isSuspend && this is IrSimpleFunction)
-    return getOrCreateSuspendFunctionStub(context).also { function ->
-        context.recordSuspendFunctionView(this, function)
-
-        val continuationParameter =
-            function.valueParameters.find { it.origin == IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION }
-                ?.let { function.valueParameters[it.index - 1] } ?: function.valueParameters.last()
-
-        function.body =
-            moveBodyTo(function, explicitParameters.zip(function.explicitParameters.filter { it != continuationParameter }).toMap())
-    }
-}
-
-fun IrFunction.suspendFunctionViewOrStub(context: JvmBackendContext): IrFunction {
-    if (!isSuspend) return this
-    return context.suspendFunctionOriginalToView[suspendFunctionOriginal()] ?: getOrCreateSuspendFunctionStub(context)
 }
 
 private fun IrCall.createSuspendFunctionCallViewIfNeeded(context: JvmBackendContext, caller: IrFunction): IrCall {
