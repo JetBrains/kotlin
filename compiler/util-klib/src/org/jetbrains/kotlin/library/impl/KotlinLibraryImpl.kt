@@ -234,3 +234,9 @@ fun createKotlinLibrary(
 
     return KotlinLibraryImpl(base, metadata, ir)
 }
+
+val File.isComprehencible: Boolean
+    get() {
+        val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(this)
+        return baseAccess.inPlace { it.manifestFile.exists }
+    }
