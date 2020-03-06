@@ -39,10 +39,6 @@ private val myCbInsertJavadocStubOnEnter                       get() = CheckboxD
 internal val myCbHonorCamelHumpsWhenSelectingByClicking         get() = CheckboxDescriptor(ApplicationBundle.message("checkbox.honor.camelhumps.words.settings.on.double.click"), PropertyBinding(editorSettings::isMouseClickSelectionHonorsCamelWords, editorSettings::setMouseClickSelectionHonorsCamelWords))
 // @formatter:on
 
-private val childOptions = EditorSmartKeysConfigurable().configurables
-  .map { c -> if (c is ConfigurableWrapper) c.configurable else c }
-  .flatMap { c -> if (c is ConfigurableWithOptionDescriptors) c.getOptionDescriptors(ID, { s -> s }) else emptyList() }
-
 internal val editorSmartKeysOptionDescriptors = listOf(
   myCbSmartHome,
   myCbSmartEnd,
@@ -57,7 +53,7 @@ internal val editorSmartKeysOptionDescriptors = listOf(
   myCbInsertPairCurlyBraceOnEnter,
   myCbInsertJavadocStubOnEnter,
   myCbHonorCamelHumpsWhenSelectingByClicking
-).map(CheckboxDescriptor::asOptionDescriptor) + childOptions
+).map(CheckboxDescriptor::asOptionDescriptor)
 
 @NonNls
 const val ID = "editor.preferences.smartKeys"
