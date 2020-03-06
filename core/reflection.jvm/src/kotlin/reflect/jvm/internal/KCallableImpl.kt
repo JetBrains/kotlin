@@ -188,12 +188,13 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
 
     private fun defaultPrimitiveValue(type: Type): Any? =
         if (type is Class<*> && type.isPrimitive) {
+            @Suppress("RemoveRedundantCallsOfConversionMethods")
             when (type) {
                 Boolean::class.java -> false
                 Char::class.java -> 0.toChar()
                 Byte::class.java -> 0.toByte()
                 Short::class.java -> 0.toShort()
-                Int::class.java -> 0
+                Int::class.java -> 0.toInt() // .toInt() conversion is workaround for KT-37302
                 Float::class.java -> 0f
                 Long::class.java -> 0L
                 Double::class.java -> 0.0
