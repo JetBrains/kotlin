@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
+import org.gradle.api.Project
+import org.gradle.process.ExecResult
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -25,11 +27,14 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
+import org.jetbrains.kotlin.gradle.tasks.internal.GradleExecOperationsHolder
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.zip.ZipFile
 import kotlin.concurrent.thread
 
@@ -37,14 +42,17 @@ internal fun loadCompilerVersion(compilerClasspath: List<File>): String {
     var result: String? = null
 
     fun checkVersion(bytes: ByteArray) {
-        ClassReader(bytes).accept(object : ClassVisitor(Opcodes.API_VERSION) {
-            override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor {
-                if (name == KotlinCompilerVersion::VERSION.name && value is String) {
-                    result = value
+        ClassReader(bytes).accept(
+            object : ClassVisitor(Opcodes.API_VERSION) {
+                override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor {
+                    if (name == KotlinCompilerVersion::VERSION.name && value is String) {
+                        result = value
+                    }
+                    return super.visitField(access, name, desc, signature, value)
                 }
-                return super.visitField(access, name, desc, signature, value)
-            }
-        }, ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES or ClassReader.SKIP_DEBUG)
+            },
+            ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES or ClassReader.SKIP_DEBUG
+        )
     }
 
     try {
@@ -78,15 +86,34 @@ internal fun loadCompilerVersion(compilerClasspath: List<File>): String {
     return result ?: "<unknown>"
 }
 
+internal fun runToolInSeparateProcessForGradle6AndMore(
+    argsArray: Array<String>,
+    compilerClassName: String,
+    classpath: List<File>,
+    project: Project
+): ExecResult {
+    val gradleExecutionOperation = project.objects.newInstance(GradleExecOperationsHolder::class.java)
+    val compilationArguments = writeArgumentsToFile(project.buildDir, argsArray)
+    return gradleExecutionOperation.execOperation.javaexec {
+        it.classpath = project.files(classpath)
+        it.args = listOf("@${compilationArguments.absolutePath}")
+        it.main = compilerClassName
+    }
+}
+
 internal fun runToolInSeparateProcess(
     argsArray: Array<String>,
     compilerClassName: String,
     classpath: List<File>,
-    logger: KotlinLogger
+    logger: KotlinLogger,
+    buildDir: File
 ): ExitCode {
     val javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java"
     val classpathString = classpath.map { it.absolutePath }.joinToString(separator = File.pathSeparator)
-    val builder = ProcessBuilder(javaBin, "-cp", classpathString, compilerClassName, *argsArray)
+
+    val compilerOptions = writeArgumentsToFile(buildDir, argsArray)
+
+    val builder = ProcessBuilder(javaBin, "-cp", classpathString, compilerClassName, "@${compilerOptions.absolutePath}")
     val messageCollector = createLoggingMessageCollector(logger)
     val process = launchProcessWithFallback(builder, DaemonReportingTargets(messageCollector = messageCollector))
 
@@ -114,6 +141,13 @@ internal fun runToolInSeparateProcess(
     return exitCodeFromProcessExitCode(logger, exitCode)
 }
 
+private fun writeArgumentsToFile(directory: File, argsArray: Array<String>): File {
+    val compilerOptions = File.createTempFile(LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE) + "_", ".compiler.options", directory)
+    compilerOptions.deleteOnExit()
+    compilerOptions.writeText(argsArray.joinToString(" "))
+    return compilerOptions
+}
+
 private fun createLoggingMessageCollector(log: KotlinLogger): MessageCollector = object : MessageCollector {
     private var hasErrors = false
     private val messageRenderer = MessageRenderer.PLAIN_FULL_PATHS
@@ -131,7 +165,8 @@ private fun createLoggingMessageCollector(log: KotlinLogger): MessageCollector =
             CompilerMessageSeverity.ERROR,
             CompilerMessageSeverity.STRONG_WARNING,
             CompilerMessageSeverity.WARNING,
-            CompilerMessageSeverity.INFO -> log.info(locMessage)
+            CompilerMessageSeverity.INFO
+            -> log.info(locMessage)
             CompilerMessageSeverity.LOGGING -> log.debug(locMessage)
             CompilerMessageSeverity.OUTPUT -> {
             }
