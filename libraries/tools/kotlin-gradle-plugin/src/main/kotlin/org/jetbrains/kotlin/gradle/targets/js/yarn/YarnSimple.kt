@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonUpToDateCheck
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 
-object YarnSimple : YarnBasics() {
+class YarnSimple : YarnBasics() {
     override fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution) {
         setup(resolvedNpmProject.project.rootProject)
 
