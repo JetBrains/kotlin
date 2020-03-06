@@ -65,6 +65,7 @@ import com.intellij.usages.rules.UsageFilteringRuleProvider;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.BitUtil;
 import com.intellij.util.Processor;
+import com.intellij.util.SmartList;
 import com.intellij.util.concurrency.EdtScheduledExecutorService;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.AsyncProcessIcon;
@@ -319,7 +320,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
 
     List<Usage> usages = new ArrayList<>();
     Set<UsageNode> visibleNodes = new LinkedHashSet<>();
-    table.setTableModel(Collections.singletonList(createStringNode(UsageViewBundle.message("progress.searching"))));
+    table.setTableModel(new SmartList<>(createStringNode(UsageViewBundle.message("progress.searching"))));
 
     boolean isPreviewMode =
       Boolean.TRUE == PreviewManager.SERVICE.preview(project, UsagesPreviewPanelProvider.ID, Pair.create(usageView, table), false);
