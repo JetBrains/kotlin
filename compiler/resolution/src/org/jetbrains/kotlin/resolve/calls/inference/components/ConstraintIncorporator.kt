@@ -41,7 +41,8 @@ class ConstraintIncorporator(
     fun incorporate(c: Context, typeVariable: TypeVariableMarker, constraint: Constraint) {
         // we shouldn't incorporate recursive constraint -- It is too dangerous
         with(c) {
-            if (constraint.type.contains { it.typeConstructor() == typeVariable.freshTypeConstructor() }) return
+            val freshTypeConstructor = typeVariable.freshTypeConstructor()
+            if (constraint.type.contains { it.typeConstructor() == freshTypeConstructor }) return
         }
 
         c.directWithVariable(typeVariable, constraint)
@@ -101,9 +102,10 @@ class ConstraintIncorporator(
         typeVariable: TypeVariableMarker,
         constraint: Constraint
     ) {
+        val freshTypeConstructor = typeVariable.freshTypeConstructor()
         for (typeVariableWithConstraint in this@insideOtherConstraint.allTypeVariablesWithConstraints) {
             val constraintsWhichConstraintMyVariable = typeVariableWithConstraint.constraints.filter {
-                it.type.contains { it.typeConstructor() == typeVariable.freshTypeConstructor() }
+                it.type.contains { it.typeConstructor() == freshTypeConstructor }
             }
             constraintsWhichConstraintMyVariable.forEach {
                 generateNewConstraint(typeVariableWithConstraint.typeVariable, it, typeVariable, constraint)

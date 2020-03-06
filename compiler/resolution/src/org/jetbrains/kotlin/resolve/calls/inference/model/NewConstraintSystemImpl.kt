@@ -298,16 +298,18 @@ class NewConstraintSystemImpl(
             this, variable.defaultType(), resultType, FixVariableConstraintPosition(variable, atom)
         )
 
-        val variableWithConstraints = notFixedTypeVariables.remove(variable.freshTypeConstructor())
+        val freshTypeConstructor = variable.freshTypeConstructor()
+
+        val variableWithConstraints = notFixedTypeVariables.remove(freshTypeConstructor)
         checkOnlyInputTypesAnnotation(variableWithConstraints, resultType)
 
         for (variableWithConstraint in notFixedTypeVariables.values) {
             variableWithConstraint.removeConstrains {
-                it.type.contains { it.typeConstructor() == variable.freshTypeConstructor() }
+                it.type.contains { it.typeConstructor() == freshTypeConstructor }
             }
         }
 
-        storage.fixedTypeVariables[variable.freshTypeConstructor()] = resultType
+        storage.fixedTypeVariables[freshTypeConstructor] = resultType
     }
 
     private fun checkOnlyInputTypesAnnotation(
@@ -336,8 +338,9 @@ class NewConstraintSystemImpl(
     override fun containsOnlyFixedOrPostponedVariables(type: KotlinTypeMarker): Boolean {
         checkState(State.BUILDING, State.COMPLETION)
         return !type.contains {
-            val variable = storage.notFixedTypeVariables[it.typeConstructor()]?.typeVariable
-            variable !in storage.postponedTypeVariables && storage.notFixedTypeVariables.containsKey(it.typeConstructor())
+            val typeConstructor = it.typeConstructor()
+            val variable = storage.notFixedTypeVariables[typeConstructor]?.typeVariable
+            variable !in storage.postponedTypeVariables && storage.notFixedTypeVariables.containsKey(typeConstructor)
         }
     }
 

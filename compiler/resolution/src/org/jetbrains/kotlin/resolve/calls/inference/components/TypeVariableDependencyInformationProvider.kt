@@ -111,7 +111,8 @@ class TypeVariableDependencyInformationProvider(
     private fun KotlinTypeMarker.forAllMyTypeVariables(action: (TypeConstructorMarker) -> Unit) =
         with(typeSystemContext) {
             contains {
-                if (isMyTypeVariable(it.typeConstructor())) action(it.typeConstructor())
+                val typeConstructor = it.typeConstructor()
+                if (isMyTypeVariable(typeConstructor)) action(typeConstructor)
                 false
             }
         }
