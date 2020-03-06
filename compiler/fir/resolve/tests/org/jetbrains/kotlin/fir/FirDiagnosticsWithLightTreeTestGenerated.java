@@ -1411,6 +1411,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         public void testJavaAccessorConversion() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/javaAccessorConversion.kt");
         }
+
+        @TestMetadata("javaArrayInGeneric.kt")
+        public void testJavaArrayInGeneric() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/javaArrayInGeneric.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/resolve/testData/resolve/references")
