@@ -25,6 +25,12 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
             "@SharedImmutable is applicable only to val with backing field or to property with delegation"
         )
         put(ErrorsNative.INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL, "@SharedImmutable is applicable only to top level declarations")
+        put(
+            ErrorsNative.VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL,
+            "Variable in singleton without @ThreadLocal can't be changed after initialization"
+        )
+        put(ErrorsNative.ENUM_THREAD_LOCAL_INAPPLICABLE, "@ThreadLocal isn't applicable to enum classes")
+        put(ErrorsNative.VARIABLE_IN_ENUM, "Variable in enum class can't be changed after initialization")
     }
 }
 

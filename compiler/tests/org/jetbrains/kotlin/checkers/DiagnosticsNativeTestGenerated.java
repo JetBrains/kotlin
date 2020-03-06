@@ -37,4 +37,9 @@ public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTes
     public void testThrows() throws Exception {
         runTest("compiler/testData/diagnostics/nativeTests/throws.kt");
     }
+
+    @TestMetadata("topLevelSingleton.kt")
+    public void testTopLevelSingleton() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/topLevelSingleton.kt");
+    }
 }
