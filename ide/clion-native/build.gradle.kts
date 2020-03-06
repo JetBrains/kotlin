@@ -18,7 +18,6 @@ if (!isStandaloneBuild) {
 
 dependencies {
     compile(project(":kotlin-ultimate:ide:common-cidr-native"))
-    compile(project(":kotlin-ultimate:ide:cidr-konan-workspace"))
     compileOnly(fileTree(clionUnscrambledJarDir) { include("**/*.jar") })
 
     if (!isStandaloneBuild) {

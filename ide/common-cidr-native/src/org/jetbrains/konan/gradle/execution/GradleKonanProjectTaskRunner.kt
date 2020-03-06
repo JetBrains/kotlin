@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.konan.gradle.execution
@@ -15,13 +15,17 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.task.*
+import com.intellij.task.ModuleBuildTask
+import com.intellij.task.ProjectModelBuildTask
+import com.intellij.task.ProjectTask
+import com.intellij.task.ProjectTaskContext
+import com.intellij.task.ProjectTaskNotification
+import com.intellij.task.ProjectTaskRunner
+import org.jetbrains.konan.gradle.GradleKonanWorkspace
 import com.jetbrains.konan.KonanBundle.message
 import com.jetbrains.konan.runBuildTasks
-import org.jetbrains.konan.gradle.GradleKonanWorkspace
 import org.jetbrains.konan.gradle.KonanModel
-import org.jetbrains.konan.gradle.execution.GradleBuildTasksOrigin.FromConfiguration
-import org.jetbrains.konan.gradle.execution.GradleBuildTasksOrigin.FromProject
+import org.jetbrains.konan.gradle.execution.GradleBuildTasksOrigin.*
 import org.jetbrains.konan.gradle.forEachKonanProject
 import org.jetbrains.kotlin.idea.configuration.externalProjectPath
 import org.jetbrains.kotlin.idea.facet.KotlinFacet

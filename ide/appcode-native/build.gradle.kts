@@ -22,7 +22,6 @@ repositories {
 
 dependencies {
     compile(project(":kotlin-ultimate:ide:common-cidr-swift-native"))
-    compile(project(":kotlin-ultimate:ide:cidr-konan-workspace"))
     compileOnly(fileTree(appcodeUnscrambledJarDir) { include("**/*.jar") })
 }
 
