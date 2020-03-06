@@ -22,6 +22,10 @@ org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testDependenciesRe
 org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testDependenciesReachableViaImpl[1: Gradle-4.9, KotlinGradlePlugin-latest stable], Gradle Tests in 201
 org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testDependenciesReachableViaImpl[2: Gradle-5.6.4, KotlinGradlePlugin-minimal], Gradle Tests in 201
 org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testDependenciesReachableViaImpl[3: Gradle-5.6.4, KotlinGradlePlugin-latest stable], Gradle Tests in 201
+org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testJsTestOutputFileInProjectWithAndroid[0: Gradle-4.9, KotlinGradlePlugin-minimal], NPE - no facet configured
+org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testJsTestOutputFileInProjectWithAndroid[1: Gradle-4.9, KotlinGradlePlugin-latest stable], NPE - no facet configured
+org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testJsTestOutputFileInProjectWithAndroid[2: Gradle-5.6.4, KotlinGradlePlugin-minimal], NPE - no facet configured
+org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testJsTestOutputFileInProjectWithAndroid[3: Gradle-5.6.4, KotlinGradlePlugin-latest stable], NPE - no facet configured
 org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testTransitiveImplementWithAndroid, KT-35225
 org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testTransitiveImplementWithNonDefaultConfig[0: Gradle-4.9, KotlinGradlePlugin-minimal], Gradle Tests in 201
 org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testTransitiveImplementWithNonDefaultConfig[1: Gradle-4.9, KotlinGradlePlugin-latest stable], Gradle Tests in 201
