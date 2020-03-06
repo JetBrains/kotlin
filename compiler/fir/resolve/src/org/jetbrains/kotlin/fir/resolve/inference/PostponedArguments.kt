@@ -44,11 +44,6 @@ fun Candidate.preprocessLambdaArgument(
         // TODO: add SAM conversion processing
         val lambdaType = createFunctionalType(resolvedArgument.parameters, resolvedArgument.receiver, resolvedArgument.returnType)
         csBuilder.addSubtypeConstraint(lambdaType, expectedType, SimpleConstraintSystemConstraintPosition)
-//        val lambdaType = createFunctionType(
-//            csBuilder.builtIns, Annotations.EMPTY, resolvedArgument.receiver,
-//            resolvedArgument.parameters, null, resolvedArgument.returnType, resolvedArgument.isSuspend
-//        )
-//        csBuilder.addSubtypeConstraint(lambdaType, expectedType, ArgumentConstraintPosition(argument))
     }
 
     postponedAtoms += resolvedArgument
@@ -203,6 +198,12 @@ private fun ConeKotlinType.extractParametersForFunctionalType(
 
 class TypeVariableForLambdaReturnType(val argument: FirAnonymousFunction, name: String) : ConeTypeVariable(name)
 
+sealed class PostponedResolvedAtom : PostponedResolvedAtomMarker {
+    abstract override val inputTypes: Collection<ConeKotlinType>
+    abstract override val outputType: ConeKotlinType?
+    override var analyzed: Boolean = false
+}
+
 class ResolvedLambdaAtom(
     val atom: FirAnonymousFunction,
     val isSuspend: Boolean,
@@ -210,20 +211,8 @@ class ResolvedLambdaAtom(
     val parameters: List<ConeKotlinType>,
     val returnType: ConeKotlinType,
     val typeVariableForLambdaReturnType: TypeVariableForLambdaReturnType?
-) : PostponedResolvedAtomMarker {
-    override var analyzed: Boolean = false
+) : PostponedResolvedAtom() {
     lateinit var returnStatements: Collection<FirStatement>
-
-//    lateinit var resultArguments: List<KotlinCallArgument>
-//        private set
-
-//    fun setAnalyzedResults(
-//        resultArguments: List<KotlinCallArgument>,
-//        subResolvedAtoms: List<ResolvedAtom>
-//    ) {
-//        this.resultArguments = resultArguments
-//        setAnalyzedResults(subResolvedAtoms)
-//    }
 
     override val inputTypes: Collection<ConeKotlinType> get() = receiver?.let { parameters + it } ?: parameters
     override val outputType: ConeKotlinType get() = returnType
@@ -234,8 +223,7 @@ class ResolvedCallableReferenceAtom(
     val expectedType: ConeKotlinType?,
     val lhs: DoubleColonLHS?,
     private val session: FirSession
-) : PostponedResolvedAtomMarker {
-    override var analyzed: Boolean = false
+) : PostponedResolvedAtom() {
     var postponed: Boolean = false
 
     var resultingCandidate: Pair<Candidate, CandidateApplicability>? = null

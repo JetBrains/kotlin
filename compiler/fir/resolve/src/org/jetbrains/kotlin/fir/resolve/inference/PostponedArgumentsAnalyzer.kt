@@ -49,8 +49,7 @@ class PostponedArgumentsAnalyzer(
 
     fun analyze(
         c: PostponedArgumentsAnalyzer.Context,
-//        resolutionCallbacks: KotlinResolutionCallbacks,
-        argument: PostponedResolvedAtomMarker,
+        argument: PostponedResolvedAtom,
         candidate: Candidate
         //diagnosticsHolder: KotlinDiagnosticsHolder
     ) {
@@ -66,8 +65,6 @@ class PostponedArgumentsAnalyzer(
             is ResolvedCallableReferenceAtom -> processCallableReference(argument, candidate)
 //
 //            is ResolvedCollectionLiteralAtom -> TODO("Not supported")
-
-            else -> error("Unexpected resolved primitive: ${argument.javaClass.canonicalName}")
         }
     }
 

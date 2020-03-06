@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirec
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
-import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtom
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -97,12 +96,13 @@ private fun Candidate.hasProperNonTrivialLowerConstraints(components: InferenceC
 
 class ConstraintSystemCompleter(val components: InferenceComponents) {
     private val variableFixationFinder = VariableFixationFinder(components.trivialConstraintTypeInferenceOracle)
+
     fun complete(
         c: KotlinConstraintSystemCompleter.Context,
         completionMode: KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode,
         topLevelAtoms: List<FirStatement>,
         candidateReturnType: ConeKotlinType,
-        analyze: (PostponedResolvedAtomMarker) -> Unit
+        analyze: (PostponedResolvedAtom) -> Unit
     ) {
 
         while (true) {
@@ -198,7 +198,7 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
     private fun analyzePostponeArgumentIfPossible(
         c: KotlinConstraintSystemCompleter.Context,
         topLevelAtoms: List<FirStatement>,
-        analyze: (PostponedResolvedAtomMarker) -> Unit
+        analyze: (PostponedResolvedAtom) -> Unit
     ): Boolean {
         for (argument in getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)) {
             if (canWeAnalyzeIt(c, argument)) {
@@ -209,8 +209,8 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
         return false
     }
 
-    private fun getOrderedNotAnalyzedPostponedArguments(topLevelAtoms: List<FirStatement>): List<PostponedResolvedAtomMarker> {
-        val notAnalyzedArguments = arrayListOf<PostponedResolvedAtomMarker>()
+    private fun getOrderedNotAnalyzedPostponedArguments(topLevelAtoms: List<FirStatement>): List<PostponedResolvedAtom> {
+        val notAnalyzedArguments = arrayListOf<PostponedResolvedAtom>()
         for (primitive in topLevelAtoms) {
             primitive.processAllContainingCallCandidates(
                 // TODO: remove this argument and relevant parameter
@@ -218,7 +218,7 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
                 processBlocks = true
             ) { candidate ->
                 candidate.postponedAtoms.forEach {
-                    notAnalyzedArguments.addIfNotNull(it.safeAs<PostponedResolvedAtomMarker>()?.takeUnless { it.analyzed })
+                    notAnalyzedArguments.addIfNotNull(it.safeAs<PostponedResolvedAtom>()?.takeUnless { it.analyzed })
                 }
             }
         }
