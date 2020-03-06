@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.org.objectweb.asm.tree.LineNumberNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.util.*
@@ -31,13 +30,7 @@ class SMAPAndMethodNode(val node: MethodNode, val classSMAP: SMAP) {
 
 private fun createLineNumberSequence(node: MethodNode, classSMAP: SMAP): Sequence<RangeMapping> {
     return InsnSequence(node.instructions.first, null).filterIsInstance<LineNumberNode>().map { lineNumber ->
-        val mapping = RangeMapping(lineNumber.line, lineNumber.line, 1)
-
-        if (lineNumber.line in JvmAbi.SYNTHETIC_MARKER_LINE_NUMBERS) {
-            return@map mapping
-        }
-
-        val index = classSMAP.intervals.binarySearch(mapping, Comparator { value, key ->
+        val index = classSMAP.intervals.binarySearch(RangeMapping(lineNumber.line, lineNumber.line, 1), Comparator { value, key ->
             if (key.dest in value) 0 else RangeMapping.Comparator.compare(value, key)
         })
         if (index < 0) {

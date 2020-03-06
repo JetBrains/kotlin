@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.codegen.inline.SMAP.Companion.END
 import org.jetbrains.kotlin.codegen.inline.SMAP.Companion.FILE_SECTION
 import org.jetbrains.kotlin.codegen.inline.SMAP.Companion.LINE_SECTION
 import org.jetbrains.kotlin.codegen.inline.SMAP.Companion.STRATA_SECTION
-import org.jetbrains.kotlin.load.java.JvmAbi
 import java.util.*
 import kotlin.math.max
 
@@ -93,10 +92,6 @@ open class NestedSourceMapper(
     private var lastVisitedRange: RangeMapping? = null
 
     override fun mapLineNumber(lineNumber: Int): Int {
-        if (lineNumber in JvmAbi.SYNTHETIC_MARKER_LINE_NUMBERS) {
-            return lineNumber
-        }
-
         val mappedLineNumber = visitedLines.get(lineNumber)
 
         return if (mappedLineNumber > 0) {

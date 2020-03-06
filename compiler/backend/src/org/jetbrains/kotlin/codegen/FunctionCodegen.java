@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.KClassValue;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.resolve.inline.InlineOnlyKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.RuntimeAssertionInfo;
@@ -77,7 +76,6 @@ import static org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.isAccessor;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION;
 import static org.jetbrains.kotlin.descriptors.ModalityKt.isOverridable;
-import static org.jetbrains.kotlin.load.java.JvmAbi.LOCAL_VARIABLE_INLINE_ARGUMENT_SYNTHETIC_LINE_NUMBER;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isEffectivelyInlineOnly;
@@ -638,19 +636,11 @@ public class FunctionCodegen {
                 frameMap.enter(continuationValueDescriptor, typeMapper.mapType(continuationValueDescriptor));
             }
             if (context.isInlineMethodContext()) {
-                functionFakeIndex = newFakeTempIndex(mv, frameMap, -1);
+                functionFakeIndex = newFakeTempIndex(mv, frameMap);
             }
 
             if (context instanceof InlineLambdaContext) {
-                int lineNumber = -1;
-                if (strategy instanceof ClosureGenerationStrategy) {
-                    KtDeclarationWithBody declaration = ((ClosureGenerationStrategy) strategy).getDeclaration();
-                    BindingContext bindingContext = typeMapper.getBindingContext();
-                    if (declaration instanceof KtFunctionLiteral && isLambdaPassedToInlineOnly((KtFunction) declaration, bindingContext)) {
-                        lineNumber = LOCAL_VARIABLE_INLINE_ARGUMENT_SYNTHETIC_LINE_NUMBER;
-                    }
-                }
-                lambdaFakeIndex = newFakeTempIndex(mv, frameMap, lineNumber);
+                lambdaFakeIndex = newFakeTempIndex(mv, frameMap);
             }
 
             methodEntry = new Label();
@@ -714,27 +704,8 @@ public class FunctionCodegen {
         }
     }
 
-    private static boolean isLambdaPassedToInlineOnly(KtFunction lambda, BindingContext bindingContext) {
-        ValueParameterDescriptor parameterDescriptor = InlineUtil.getInlineArgumentDescriptor(lambda, bindingContext);
-        if (parameterDescriptor == null) {
-            return false;
-        }
-
-        CallableDescriptor containingCallable = parameterDescriptor.getContainingDeclaration();
-        if (containingCallable instanceof FunctionDescriptor) {
-            return InlineOnlyKt.isInlineOnly((MemberDescriptor) containingCallable);
-        }
-
-        return false;
-    }
-
-    private static int newFakeTempIndex(@NotNull MethodVisitor mv, @NotNull FrameMap frameMap, int lineNumber) {
+    private static int newFakeTempIndex(@NotNull MethodVisitor mv, FrameMap frameMap) {
         int fakeIndex = frameMap.enterTemp(Type.INT_TYPE);
-        if (lineNumber >= 0) {
-            Label label = new Label();
-            mv.visitLabel(label);
-            mv.visitLineNumber(lineNumber, label);
-        }
         mv.visitLdcInsn(0);
         mv.visitVarInsn(ISTORE, fakeIndex);
         return fakeIndex;
