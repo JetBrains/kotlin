@@ -98,11 +98,6 @@ abstract class DescriptorMangleComputer(protected val builder: StringBuilder, pr
 
         builder.append(name.asString())
 
-        if (visibility == Visibilities.INTERNAL) {
-            builder.append(MangleConstant.MODULE_SEPARATOR)
-            builder.append(module.name.asString().run { substring(1, lastIndex) })
-        }
-
         mangleSignature(isCtor, container)
     }
 
