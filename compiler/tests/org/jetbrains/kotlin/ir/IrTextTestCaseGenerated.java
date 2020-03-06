@@ -180,6 +180,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/classes/innerClassWithDelegatingConstructor.kt");
         }
 
+        @TestMetadata("kt31649.kt")
+        public void testKt31649() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/kt31649.kt");
+        }
+
         @TestMetadata("lambdaInDataClassDefaultParameter.kt")
         public void testLambdaInDataClassDefaultParameter() throws Exception {
             runTest("compiler/testData/ir/irText/classes/lambdaInDataClassDefaultParameter.kt");
