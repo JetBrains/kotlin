@@ -169,11 +169,7 @@ interface ModuleConfiguratorWithSettings : ModuleConfigurator {
     fun SettingsWritingContext.initDefaultValuesFor(module: Module) {
         withSettingsOf(module) {
             getConfiguratorSettings().forEach { setting ->
-                val reference = setting.reference
-                val defaultValue = reference.savedOrDefaultValue ?: return@forEach
-                if (reference.notRequiredSettingValue == null) {
-                    reference.setValue(defaultValue)
-                }
+                setting.reference.setSettingValueToItsDefaultIfItIsNotSetValue()
             }
         }
     }

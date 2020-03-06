@@ -21,4 +21,11 @@ open class SettingsWritingContext(context: Context, servicesManager: ServicesMan
     fun <V : Any, T : SettingType<V>> SettingReference<V, T>.setValue(newValue: V) {
         context.settingContext[this] = newValue
     }
+
+    fun <V : Any, T : SettingType<V>> SettingReference<V, T>.setSettingValueToItsDefaultIfItIsNotSetValue() {
+        val defaultValue = savedOrDefaultValue ?: return
+        if (notRequiredSettingValue == null) {
+            setValue(defaultValue)
+        }
+    }
 }

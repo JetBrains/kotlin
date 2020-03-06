@@ -40,10 +40,7 @@ abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: Servic
     private fun initPluginDefaultValues() {
         with(settingsWritingContext) {
             for (setting in pluginSettings) {
-                if (setting.reference.notRequiredSettingValue == null) {
-                    val defaultValue = setting.reference.savedOrDefaultValue ?: continue
-                    setting.reference.setValue(defaultValue)
-                }
+                setting.reference.setSettingValueToItsDefaultIfItIsNotSetValue()
             }
         }
     }
