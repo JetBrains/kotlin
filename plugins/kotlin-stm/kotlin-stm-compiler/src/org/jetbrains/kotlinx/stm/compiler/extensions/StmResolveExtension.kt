@@ -109,7 +109,7 @@ open class StmResolveExtension : SyntheticResolveExtension {
                 source = sourceElement
             )
 
-        private fun findSTMContextClass(module: ModuleDescriptor) = module.findClassAcrossModuleDependencies(
+        internal fun findSTMContextClass(module: ModuleDescriptor) = module.findClassAcrossModuleDependencies(
             ClassId(
                 STM_PACKAGE,
                 STM_CONTEXT
@@ -120,12 +120,16 @@ open class StmResolveExtension : SyntheticResolveExtension {
             module: ModuleDescriptor,
             sourceElement: SourceElement,
             containingFunction: FunctionDescriptor,
-            index: Int
+            index: Int,
+            nullable: Boolean = false
         ) =
             createValueParam(
                 sourceElement,
                 containingFunction,
-                findSTMContextClass(module).defaultType,
+                findSTMContextClass(module).defaultType.let {
+                    if (nullable) it.makeNullableAsSpecified(true)
+                    else it
+                },
                 name = "ctx",
                 index = index
             )
@@ -166,7 +170,7 @@ open class StmResolveExtension : SyntheticResolveExtension {
                 type = property.type,
                 visibility = property.visibility
             ) { newGetter ->
-                add(createContextValueParam(thisDescriptor.module, thisDescriptor.source, newGetter, index = 0))
+                add(createContextValueParam(thisDescriptor.module, thisDescriptor.source, newGetter, index = 0, nullable = true))
             }
 
             result += newGetter
@@ -180,7 +184,7 @@ open class StmResolveExtension : SyntheticResolveExtension {
                 type = DefaultBuiltIns.Instance.unitType,
                 visibility = property.visibility
             ) { newSetter ->
-                add(createContextValueParam(thisDescriptor.module, thisDescriptor.source, newSetter, index = 0))
+                add(createContextValueParam(thisDescriptor.module, thisDescriptor.source, newSetter, index = 0, nullable = true))
                 add(createValueParam(thisDescriptor.source, newSetter, property.type, name = "newValue", index = 1))
             }
 

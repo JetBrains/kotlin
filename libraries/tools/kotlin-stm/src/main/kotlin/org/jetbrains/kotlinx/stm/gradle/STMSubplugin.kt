@@ -27,7 +27,6 @@ class STMKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
     companion object {
         const val STM_GROUP_NAME = "org.jetbrains.kotlin"
         const val STM_ARTIFACT_NAME = "kotlin-stm"
-        const val STM_ARTIFACT_UNSHADED_NAME = "kotlin-stm-unshaded"
     }
 
     override fun isApplicable(project: Project, task: AbstractCompile): Boolean =
@@ -48,7 +47,7 @@ class STMKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
         SubpluginArtifact(STM_GROUP_NAME, STM_ARTIFACT_NAME)
 
     override fun getNativeCompilerPluginArtifact(): SubpluginArtifact? =
-        SubpluginArtifact(STM_GROUP_NAME, STM_ARTIFACT_UNSHADED_NAME)
+        SubpluginArtifact(STM_GROUP_NAME, STM_ARTIFACT_NAME)
 
     override fun getCompilerPluginId() = "org.jetbrains.kotlinx.stm"
 }

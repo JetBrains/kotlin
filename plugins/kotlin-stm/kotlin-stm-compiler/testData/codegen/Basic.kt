@@ -1,4 +1,4 @@
-// CURIOUS_ABOUT <init>, invoke, g, f, a, _get_firstName$_______Sharable____, _get_lastName$_______Sharable____, _set_firstName$_______Sharable____, _set_lastName$_______Sharable____
+// CURIOUS_ABOUT <init>, invoke, g, f, a, _____get_firstName$_______Sharable____, _____get_lastName$_______Sharable____, _set_____firstName$_______Sharable____, _set_____lastName$_______Sharable____
 // WITH_RUNTIME
 
 package koko
@@ -40,6 +40,8 @@ fun g() {
 
         a(u)
     }
+
+    println(u.firstName)
 }
 
 //class KoUser(val firstName: String, val lastName: String) {

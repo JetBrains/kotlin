@@ -59,9 +59,19 @@ final class koko/BasicKt$g$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/
           ALOAD (2)
           INVOKEVIRTUAL (koko/User, _set_____lastName$_______Sharable____, (Lkotlinx/stm/STMContext;Ljava/lang/String;)V)
         LABEL (L12)
-        LINENUMBER (40)
-          RETURN
+        LINENUMBER (41)
+          ALOAD (0)
+          GETFIELD ($u, Lkoko/User;)
         LABEL (L13)
+        LINENUMBER (36)
+          ALOAD (1)
+        LABEL (L14)
+        LINENUMBER (41)
+          INVOKESTATIC (koko/BasicKt, a, (Lkoko/User;Lkotlinx/stm/STMContext;)V)
+        LABEL (L15)
+        LINENUMBER (42)
+          RETURN
+        LABEL (L16)
     }
 
     public java.lang.Object invoke(java.lang.Object p1) {
@@ -82,6 +92,9 @@ public final class koko/BasicKt : java/lang/Object {
           ALOAD (0)
           LDC (u)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          LDC (ctx)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           NEW
           DUP
         LABEL (L1)
@@ -91,7 +104,7 @@ public final class koko/BasicKt : java/lang/Object {
           INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/String;)Ljava/lang/StringBuilder;)
           ALOAD (0)
         LABEL (L2)
-        LINENUMBER (29)
+        LINENUMBER (1)
           ALOAD (1)
         LABEL (L3)
         LINENUMBER (30)
@@ -101,7 +114,7 @@ public final class koko/BasicKt : java/lang/Object {
           INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/String;)Ljava/lang/StringBuilder;)
           ALOAD (0)
         LABEL (L4)
-        LINENUMBER (29)
+        LINENUMBER (1)
           ALOAD (1)
         LABEL (L5)
         LINENUMBER (30)
@@ -115,7 +128,7 @@ public final class koko/BasicKt : java/lang/Object {
           ALOAD (2)
           INVOKEVIRTUAL (java/io/PrintStream, println, (Ljava/lang/Object;)V)
         LABEL (L6)
-        LINENUMBER (31)
+        LINENUMBER (49)
           RETURN
         LABEL (L7)
     }
@@ -142,9 +155,20 @@ public final class koko/BasicKt : java/lang/Object {
           INVOKESTATIC (kotlinx/stm/STMKt, runAtomically$default, (Lkotlinx/stm/STM;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/lang/Object;)
           POP
         LABEL (L2)
-        LINENUMBER (41)
-          RETURN
+        LINENUMBER (44)
+          ALOAD (0)
+          ACONST_NULL
+          INVOKEVIRTUAL (koko/User, _____get_firstName$_______Sharable____, (Lkotlinx/stm/STMContext;)Ljava/lang/String;)
+          ASTORE (1)
+          ICONST_0
+          ISTORE (2)
+          GETSTATIC (out, Ljava/io/PrintStream;)
+          ALOAD (1)
+          INVOKEVIRTUAL (java/io/PrintStream, println, (Ljava/lang/Object;)V)
         LABEL (L3)
+        LINENUMBER (45)
+          RETURN
+        LABEL (L4)
     }
 }
 
@@ -226,13 +250,73 @@ public final class koko/User : java/lang/Object {
         LABEL (L7)
     }
 
-    public final java.lang.String _____get_firstName$_______Sharable____(kotlinx.stm.STMContext ctx)
+    public final java.lang.String _____get_firstName$_______Sharable____(kotlinx.stm.STMContext ctx) {
+        LABEL (L0)
+        LINENUMBER (8)
+          ALOAD (0)
+          GETFIELD (_______stm_____, Lkotlinx/stm/STM;)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (firstName$_______Sharable____, Lkotlinx/stm/UniversalDelegate;)
+          INVOKEVIRTUAL (kotlinx/stm/STM, getVar, (Lkotlinx/stm/STMContext;Lkotlinx/stm/UniversalDelegate;)Ljava/lang/Object;)
+          CHECKCAST
+          ARETURN
+        LABEL (L1)
+    }
 
-    public final java.lang.String _____get_lastName$_______Sharable____(kotlinx.stm.STMContext ctx)
+    public final java.lang.String _____get_lastName$_______Sharable____(kotlinx.stm.STMContext ctx) {
+        LABEL (L0)
+        LINENUMBER (8)
+          ALOAD (0)
+          GETFIELD (_______stm_____, Lkotlinx/stm/STM;)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (lastName$_______Sharable____, Lkotlinx/stm/UniversalDelegate;)
+          INVOKEVIRTUAL (kotlinx/stm/STM, getVar, (Lkotlinx/stm/STMContext;Lkotlinx/stm/UniversalDelegate;)Ljava/lang/Object;)
+          CHECKCAST
+          ARETURN
+        LABEL (L1)
+    }
 
-    public final void _set_____firstName$_______Sharable____(kotlinx.stm.STMContext ctx, java.lang.String newValue)
+    public final void _set_____firstName$_______Sharable____(kotlinx.stm.STMContext ctx, java.lang.String newValue) {
+        LABEL (L0)
+          ALOAD (2)
+          LDC (newValue)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+        LABEL (L1)
+        LINENUMBER (8)
+          ALOAD (0)
+          GETFIELD (_______stm_____, Lkotlinx/stm/STM;)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (firstName$_______Sharable____, Lkotlinx/stm/UniversalDelegate;)
+          ALOAD (2)
+          INVOKEVIRTUAL (kotlinx/stm/STM, setVar, (Lkotlinx/stm/STMContext;Lkotlinx/stm/UniversalDelegate;Ljava/lang/Object;)V)
+        LABEL (L2)
+        LINENUMBER (25)
+          RETURN
+        LABEL (L3)
+    }
 
-    public final void _set_____lastName$_______Sharable____(kotlinx.stm.STMContext ctx, java.lang.String newValue)
+    public final void _set_____lastName$_______Sharable____(kotlinx.stm.STMContext ctx, java.lang.String newValue) {
+        LABEL (L0)
+          ALOAD (2)
+          LDC (newValue)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+        LABEL (L1)
+        LINENUMBER (8)
+          ALOAD (0)
+          GETFIELD (_______stm_____, Lkotlinx/stm/STM;)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (lastName$_______Sharable____, Lkotlinx/stm/UniversalDelegate;)
+          ALOAD (2)
+          INVOKEVIRTUAL (kotlinx/stm/STM, setVar, (Lkotlinx/stm/STMContext;Lkotlinx/stm/UniversalDelegate;Ljava/lang/Object;)V)
+        LABEL (L2)
+        LINENUMBER (25)
+          RETURN
+        LABEL (L3)
+    }
 
     public final void f() {
         LABEL (L0)
