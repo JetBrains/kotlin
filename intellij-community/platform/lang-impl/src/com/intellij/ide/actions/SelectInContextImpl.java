@@ -118,7 +118,7 @@ public class SelectInContextImpl extends FileSelectInContext {
   private static SelectInContext createEditorContext(@Nullable Project project,
                                                      @Nullable FileEditor editor,
                                                      @Nullable VirtualFile contextFile) {
-    if (project == null || editor == null) {
+    if (project == null || editor == null || project.isDefault()) {
       return null;
     }
 
