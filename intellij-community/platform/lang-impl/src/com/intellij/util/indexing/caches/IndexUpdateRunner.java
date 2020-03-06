@@ -134,10 +134,10 @@ public final class IndexUpdateRunner {
 
   private static boolean processSomeFilesWhileUserIsInactive(@NotNull CachedFileContentQueue queue,
                                                              @NotNull ProgressUpdater progressUpdater,
-                                                             @NotNull ProgressIndicator suspendableIndicator,
+                                                             @NotNull ProgressIndicator indexingIndicator,
                                                              @NotNull Project project,
                                                              @NotNull Consumer<? super CachedFileContent> fileProcessor) {
-    final ProgressIndicatorBase innerIndicator = new ProgressIndicatorBase() {
+    final ProgressIndicatorBase writeActionIndicator = new ProgressIndicatorBase() {
       @Override
       protected boolean isCancelable() {
         return true; // the inner indicator must be always cancelable
@@ -146,7 +146,7 @@ public final class IndexUpdateRunner {
     final ApplicationListener canceller = new ApplicationListener() {
       @Override
       public void beforeWriteActionStart(@NotNull Object action) {
-        innerIndicator.cancel();
+        writeActionIndicator.cancel();
       }
     };
     final Application application = ApplicationManager.getApplication();
@@ -169,8 +169,8 @@ public final class IndexUpdateRunner {
     try {
       int threadsCount = UnindexedFilesUpdater.getNumberOfIndexingThreads();
       if (threadsCount == 1 || application.isWriteAccessAllowed()) {
-        Runnable process = createRunnable(project, queue, progressUpdater, suspendableIndicator, innerIndicator, isFinished, fileProcessor);
-        ProgressManager.getInstance().runProcess(process, innerIndicator);
+        Runnable process = createRunnable(project, queue, progressUpdater, indexingIndicator, writeActionIndicator, isFinished, fileProcessor);
+        ProgressManager.getInstance().runProcess(process, writeActionIndicator);
       }
       else {
         AtomicBoolean[] finishedRefs = new AtomicBoolean[threadsCount];
@@ -178,7 +178,7 @@ public final class IndexUpdateRunner {
         for (int i = 0; i < threadsCount; i++) {
           AtomicBoolean localFinished = new AtomicBoolean();
           finishedRefs[i] = localFinished;
-          Runnable process = createRunnable(project, queue, progressUpdater, suspendableIndicator, innerIndicator, localFinished, fileProcessor);
+          Runnable process = createRunnable(project, queue, progressUpdater, indexingIndicator, writeActionIndicator, localFinished, fileProcessor);
           futures[i] = application.executeOnPooledThread(process);
         }
         isFinished.set(waitForAll(finishedRefs, futures));
@@ -222,27 +222,27 @@ public final class IndexUpdateRunner {
   private static Runnable createRunnable(@NotNull Project project,
                                          @NotNull CachedFileContentQueue queue,
                                          @NotNull ProgressUpdater progressUpdater,
-                                         @NotNull ProgressIndicator suspendableIndicator,
-                                         @NotNull ProgressIndicatorBase innerIndicator,
+                                         @NotNull ProgressIndicator indexingIndicator,
+                                         @NotNull ProgressIndicatorBase writeActionIndicator,
                                          @NotNull AtomicBoolean isFinished,
                                          @NotNull Consumer<? super CachedFileContent> fileProcessor) {
     return ConcurrencyUtil.underThreadNameRunnable("Indexing", () -> {
       while (true) {
-        if (project.isDisposed() || innerIndicator.isCanceled()) {
+        if (project.isDisposed() || writeActionIndicator.isCanceled()) {
           return;
         }
 
         try {
-          suspendableIndicator.checkCanceled();
+          indexingIndicator.checkCanceled();
 
-          final CachedFileContent fileContent = queue.take(innerIndicator);
+          final CachedFileContent fileContent = queue.take(writeActionIndicator);
           if (fileContent == null) {
             isFinished.set(true);
             return;
           }
 
           final Runnable action = () -> {
-            innerIndicator.checkCanceled();
+            writeActionIndicator.checkCanceled();
             if (!project.isDisposed()) {
               final VirtualFile file = fileContent.getVirtualFile();
               try {
@@ -267,7 +267,7 @@ public final class IndexUpdateRunner {
               if (app.isDisposed() || !app.tryRunReadAction(action)) {
                 throw new ProcessCanceledException();
               }
-            }, ProgressWrapper.wrap(innerIndicator));
+            }, ProgressWrapper.wrap(writeActionIndicator));
           }
           catch (ProcessCanceledException e) {
             queue.pushBack(fileContent);
