@@ -319,8 +319,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
 
     List<Usage> usages = new ArrayList<>();
     Set<UsageNode> visibleNodes = new LinkedHashSet<>();
-    List<UsageNode> data = collectData(usages, visibleNodes, usageView);
-    table.setTableModel(data);
+    table.setTableModel(Collections.singletonList(createStringNode(UsageViewBundle.message("progress.searching"))));
 
     boolean isPreviewMode =
       Boolean.TRUE == PreviewManager.SERVICE.preview(project, UsagesPreviewPanelProvider.ID, Pair.create(usageView, table), false);
@@ -727,15 +726,12 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
   private static List<UsageNode> collectData(@NotNull List<? extends Usage> usages,
                                              @NotNull Collection<? extends UsageNode> visibleNodes,
                                              @NotNull UsageViewImpl usageView) {
-    @NotNull List<UsageNode> data = new ArrayList<>();
+    List<UsageNode> data = new ArrayList<>();
     int filtered = filtered(usages, usageView);
     if (filtered != 0) {
       data.add(createStringNode(UsageViewBundle.message("usages.were.filtered.out", filtered)));
     }
     data.addAll(visibleNodes);
-    if (data.isEmpty()) {
-      data.add(createStringNode(UsageViewBundle.message("progress.searching")));
-    }
     data.sort(Holder.USAGE_NODE_COMPARATOR);
     return data;
   }
