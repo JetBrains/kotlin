@@ -8417,6 +8417,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/enum/kt18731.kt");
         }
 
+        @TestMetadata("kt18731_2.kt")
+        public void testKt18731_2() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/kt18731_2.kt");
+        }
+
         @TestMetadata("kt20651.kt")
         public void testKt20651() throws Exception {
             runTest("compiler/testData/codegen/box/enum/kt20651.kt");

@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.util.isEnumClass
+import org.jetbrains.kotlin.ir.util.isEnumEntry
 import org.jetbrains.kotlin.ir.util.isNullConst
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -80,10 +82,14 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
         val leftType = with(codegen) { a.asmType }
         val rightType = with(codegen) { b.asmType }
         val opToken = expression.origin
+        val aIsEnum = a.type.classOrNull?.owner?.run { isEnumClass || isEnumEntry } == true
+        val bIsEnum = b.type.classOrNull?.owner?.run { isEnumClass || isEnumEntry } == true
         val useEquals = opToken !== IrStatementOrigin.EQEQEQ && opToken !== IrStatementOrigin.EXCLEQEQ &&
                 // `==` is `equals` for objects and floating-point numbers. In the latter case, the difference
                 // is that `equals` is a total order (-0 < +0 and NaN == NaN) and `===` is IEEE754-compliant.
                 (!isPrimitive(leftType) || leftType != rightType || leftType == Type.FLOAT_TYPE || leftType == Type.DOUBLE_TYPE)
+                // Reference equality can be used for enums.
+                && !aIsEnum && !bIsEnum
         return if (useEquals) {
             a.accept(codegen, data).materializeAt(AsmTypes.OBJECT_TYPE, codegen.context.irBuiltIns.anyNType)
             b.accept(codegen, data).materializeAt(AsmTypes.OBJECT_TYPE, codegen.context.irBuiltIns.anyNType)
