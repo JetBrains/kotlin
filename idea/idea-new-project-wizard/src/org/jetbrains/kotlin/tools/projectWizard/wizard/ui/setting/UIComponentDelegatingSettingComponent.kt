@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting
 
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingType
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
 import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.UIComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.valueForSetting

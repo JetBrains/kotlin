@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.core.service.BuildSystemAvailabilityWizardService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ProjectImportingWizardService
@@ -113,7 +113,7 @@ data class BuildFileData(
 enum class BuildSystemType(override val text: String) : DisplayableSettingItem {
     GradleKotlinDsl("Gradle (Kotlin DSL)"),
     GradleGroovyDsl("Gradle (Groovy DSL)"),
-    Jps("IDEA Build System"),
+        Jps("IDEA Build System"),
     Maven("Maven")
 
     ;

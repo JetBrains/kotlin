@@ -2,9 +2,12 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui
 
 import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.tools.projectWizard.core.context.SettingsWritingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSettingPropertyReference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 
 abstract class Component : Displayable {
     private val subComponents = mutableListOf<Component>()

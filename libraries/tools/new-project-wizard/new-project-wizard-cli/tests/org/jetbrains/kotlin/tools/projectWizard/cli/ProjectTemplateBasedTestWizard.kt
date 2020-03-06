@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.compute
 import org.jetbrains.kotlin.tools.projectWizard.core.computeM
 import org.jetbrains.kotlin.tools.projectWizard.core.context.SettingsWritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
 import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemP
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.applyProjectTemplate
 import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.ProjectTemplate
 import org.jetbrains.kotlin.tools.projectWizard.wizard.Wizard
-import org.jetbrains.kotlin.tools.projectWizard.wizard.YamlWizard
 import org.jetbrains.kotlin.tools.projectWizard.wizard.parseYaml
 import java.nio.file.Path
 

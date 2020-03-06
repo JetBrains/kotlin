@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.context.SettingsWritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
 import org.jetbrains.kotlin.tools.projectWizard.core.service.SettingSavingWizardService
@@ -59,7 +60,7 @@ abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: Servic
             if (setting.neededAtPhase !in phases) continue
             if (!setting.isSavable) continue
             if (!setting.isAvailable(valuesReadingContext)) continue
-            val serializer = setting.type.serializer as? SerializerImpl<Any> ?: continue
+            val serializer = setting.type.serializer as? SettingSerializer.Serializer<Any> ?: continue
             service<SettingSavingWizardService>().saveSettingValue(
                 setting.path,
                 serializer.toString(setting.reference.settingValue)

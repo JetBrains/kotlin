@@ -13,6 +13,6 @@ import java.nio.file.Path
 abstract class AbstractYamlBuildFileGenerationTest : AbstractBuildFileGenerationTest() {
     override fun createWizard(directory: Path, buildSystem: BuildSystem, projectDirectory: Path): Wizard {
         val yaml = readSettingsYaml(directory, buildSystem) ?: error("settings.yaml should exists in $directory")
-        return YamlWizard(yaml, projectDirectory.toString(), Plugins.allPlugins, isUnitTestMode = true)
+        return YamlWizard(yaml, projectDirectory, Plugins.allPlugins, isUnitTestMode = true)
     }
 }

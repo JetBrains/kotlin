@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.tools.projectWizard.core
 
 import org.jetbrains.kotlin.tools.projectWizard.SettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
 import org.jetbrains.kotlin.tools.projectWizard.enumSettingImpl
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
@@ -10,7 +11,6 @@ import java.nio.file.Path
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
-import kotlin.reflect.KProperty1
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.memberProperties
 
@@ -33,7 +33,8 @@ abstract class Plugin(override val context: Context) : EntityBase(),
             @Suppress("UNCHECKED_CAST")
             val reference = property as PluginSettingPropertyReference<V, T>
             context.settingContext.getPluginSetting(reference)?.let { return it }
-            val setting = PluginSetting(create(reference.path).buildInternal())
+            val setting =
+                PluginSetting(create(reference.path).buildInternal())
             context.settingContext.setPluginSetting(reference, setting)
             return setting
         }

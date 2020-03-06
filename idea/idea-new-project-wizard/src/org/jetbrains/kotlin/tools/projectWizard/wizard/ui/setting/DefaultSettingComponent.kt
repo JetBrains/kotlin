@@ -1,8 +1,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting
 
 import com.intellij.openapi.ui.ComboBox
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext

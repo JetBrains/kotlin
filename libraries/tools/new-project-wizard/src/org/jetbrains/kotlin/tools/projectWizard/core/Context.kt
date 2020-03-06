@@ -1,6 +1,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.AnySetting
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingContext
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
@@ -21,7 +23,8 @@ class Context(private val pluginsCreator: PluginsCreator, val eventManager: Even
         }
     }
 
-    val settingContext = SettingContext(eventManager::fireListeners)
+    val settingContext =
+        SettingContext(eventManager::fireListeners)
     val propertyContext = PropertyContext()
     val taskContext = TaskContext()
     val plugins = pluginsCreator(this).onEach(::initPlugin)

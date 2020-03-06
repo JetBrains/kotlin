@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.DropDownSettingType
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.DropDownSettingType
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.ProjectTemplate
 import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext

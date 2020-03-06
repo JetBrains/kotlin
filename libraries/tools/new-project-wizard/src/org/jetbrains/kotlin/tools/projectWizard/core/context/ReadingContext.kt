@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.tools.projectWizard.core.context
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.Plugin
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
 import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
@@ -52,7 +53,7 @@ open class ReadingContext(
 
     private fun <V : Any> Setting<V, SettingType<V>>.getSavedValueForSetting(): V? {
         if (!isSavable || this !is PluginSetting<*, *>) return null
-        val serializer = type.serializer.safeAs<SerializerImpl<V>>() ?: return null
+        val serializer = type.serializer.safeAs<SettingSerializer.Serializer<V>>() ?: return null
         val savedValue = service<SettingSavingWizardService>().getSettingValue(path) ?: return null
         return serializer.fromString(savedValue)
     }

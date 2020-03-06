@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.core.context
 
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingType
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
 
 

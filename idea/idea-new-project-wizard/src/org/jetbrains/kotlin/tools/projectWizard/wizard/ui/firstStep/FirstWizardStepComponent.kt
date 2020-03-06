@@ -1,11 +1,9 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 
 import TemplateTag
-import com.intellij.ide.plugins.newui.VerticalLayout
-import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.applyProjectTemplate

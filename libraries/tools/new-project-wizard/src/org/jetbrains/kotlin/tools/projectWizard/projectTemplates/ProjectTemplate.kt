@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.tools.projectWizard.projectTemplates
 import TemplateTag
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
 import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin

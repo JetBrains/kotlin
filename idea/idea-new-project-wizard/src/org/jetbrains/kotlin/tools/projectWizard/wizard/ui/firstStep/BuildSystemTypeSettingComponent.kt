@@ -4,14 +4,13 @@ import com.intellij.icons.AllIcons
 import icons.GradleIcons
 import icons.OpenapiIcons
 import org.jetbrains.kotlin.idea.KotlinIcons
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.DropDownSettingType
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.DropDownSettingType
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
-import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.DropDownComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.UIComponentDelegatingSettingComponent
 
@@ -25,7 +24,7 @@ class BuildSystemTypeSettingComponent(
     override val uiComponent: DropDownComponent<BuildSystemType> = DropDownComponent(
         ideContext,
         setting.type.values,
-        labelText = KotlinNewProjectWizardBundle.message("setting.build.system.label"),
+        labelText = "Build System",
         filter = { value -> read { setting.type.filter(this, reference, value) } },
         validator = setting.validator,
         iconProvider = BuildSystemType::icon,
