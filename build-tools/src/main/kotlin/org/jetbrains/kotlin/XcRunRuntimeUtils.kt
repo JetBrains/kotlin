@@ -2,6 +2,7 @@ package org.jetbrains.kotlin
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.Xcode
 import kotlin.math.min
@@ -25,7 +26,8 @@ private fun compareStringsAsVersions(version1: String, version2: String): Int {
  * Returns parsed output of `xcrun simctl list runtimes -j`.
  */
 private fun Xcode.getSimulatorRuntimeDescriptors(): List<SimulatorRuntimeDescriptor> =
-     Json.nonstrict.parse(ListRuntimesReport.serializer(), this.simulatorRuntimes).runtimes
+     Json(JsonConfiguration.Stable.copy(ignoreUnknownKeys = true, useArrayPolymorphism = true))
+             .parse(ListRuntimesReport.serializer(), this.simulatorRuntimes).runtimes
 
 /**
  * Returns first available simulator runtime for [target] with at least [osMinVersion] OS version.

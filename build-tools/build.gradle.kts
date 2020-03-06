@@ -44,7 +44,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     implementation("com.ullink.slack:simpleslackapi:1.2.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0")
 
     implementation("io.ktor:ktor-client-auth:1.2.1")
     implementation("io.ktor:ktor-client-core:1.2.1")

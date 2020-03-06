@@ -1,8 +1,7 @@
 package org.jetbrains.kotlin
 
-import kotlinx.io.PrintWriter
-import kotlinx.io.StringWriter
-import kotlinx.serialization.Optional
+import java.io.PrintWriter
+import java.io.StringWriter
 import kotlinx.serialization.Serializable
 import org.gradle.api.Project
 
@@ -13,7 +12,7 @@ enum class TestStatus {
     SKIPPED
 }
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class Statistics(
         var passed: Int = 0,
         var failed: Int = 0,
@@ -42,20 +41,20 @@ val Statistics.total: Int
 
 class TestFailedException(msg:String) : RuntimeException(msg)
 
-@kotlinx.serialization.Serializable
-data class KonanTestGroupReport(val name:String, val suites:List<KonanTestSuiteReport>)
+@Serializable
+data class KonanTestGroupReport(val name: String, val suites: List<KonanTestSuiteReport>)
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class KonanTestSuiteReport(val name: String, val tests: List<KonanTestCaseReport>)
 
-@kotlinx.serialization.Serializable
-data class KonanTestCaseReport(val name:String, val status: TestStatus, @Optional val comment:String? = null)
+@Serializable
+data class KonanTestCaseReport(val name: String, val status: TestStatus, val comment: String? = null)
 
-class KonanTestSuiteReportEnvironment(val name:String, val project: Project, val statistics: Statistics) {
+class KonanTestSuiteReportEnvironment(val name: String, val project: Project, val statistics: Statistics) {
     private val tc = if (Tc.enabled) TeamCityTestPrinter(project) else null
     val tests = mutableListOf<KonanTestCaseReport>()
     fun executeTest(testName: String, action:() -> Unit) {
-        var test:KonanTestCaseReport? = null
+        var test: KonanTestCaseReport?
         try {
             tc?.startTest(testName)
             action()
