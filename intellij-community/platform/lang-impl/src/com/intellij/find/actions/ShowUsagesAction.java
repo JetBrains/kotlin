@@ -373,10 +373,16 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
       if (hasOutsideScopeUsages && !shouldShowMoreSeparator) {
         nodes.add(Holder.USAGES_OUTSIDE_SCOPE_NODE);
       }
+      List<UsageNode> data = new ArrayList<>(nodes);
+      int filtered = filtered(copy, usageView);
+      if (filtered != 0) {
+        data.add(createStringNode(UsageViewBundle.message("usages.were.filtered.out", filtered)));
+      }
+      data.sort(Holder.USAGE_NODE_COMPARATOR);
+
       boolean hasMore = shouldShowMoreSeparator || hasOutsideScopeUsages;
       statusPanel.setText(getStatusString(!processIcon.isDisposed(), hasMore, nodes.size(), copy.size()));
-
-      rebuildTable(usageView, copy, nodes, table, popup, popupPosition, minWidth);
+      rebuildTable(usageView, data, table, popup, popupPosition, minWidth);
     });
 
     MessageBusConnection messageBusConnection = project.getMessageBus().connect(usageView);
@@ -731,20 +737,6 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     return true;
   }
 
-  @NotNull
-  private static List<UsageNode> collectData(@NotNull List<? extends Usage> usages,
-                                             @NotNull Collection<? extends UsageNode> visibleNodes,
-                                             @NotNull UsageViewImpl usageView) {
-    List<UsageNode> data = new ArrayList<>();
-    int filtered = filtered(usages, usageView);
-    if (filtered != 0) {
-      data.add(createStringNode(UsageViewBundle.message("usages.were.filtered.out", filtered)));
-    }
-    data.addAll(visibleNodes);
-    data.sort(Holder.USAGE_NODE_COMPARATOR);
-    return data;
-  }
-
   private static int calcMaxWidth(@NotNull JTable table) {
     int colsNum = table.getColumnModel().getColumnCount();
 
@@ -778,15 +770,13 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
   }
 
   private static void rebuildTable(@NotNull UsageViewImpl usageView,
-                                   @NotNull List<? extends Usage> usages,
-                                   @NotNull List<UsageNode> nodes,
+                                   @NotNull List<UsageNode> data,
                                    @NotNull ShowUsagesTable table,
                                    @Nullable JBPopup popup,
                                    @NotNull RelativePoint popupPosition,
                                    @NotNull IntRef minWidth) {
     ApplicationManager.getApplication().assertIsDispatchThread();
 
-    List<UsageNode> data = collectData(usages, nodes, usageView);
     ShowUsagesTable.MyModel tableModel = table.setTableModel(data);
     List<UsageNode> existingData = tableModel.getItems();
 
