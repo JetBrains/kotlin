@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.ir.allParameters
 import org.jetbrains.kotlin.backend.konan.ir.isUnit
 import org.jetbrains.kotlin.backend.konan.isExternalObjCClass
-import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
+import org.jetbrains.kotlin.backend.konan.serialization.AbstractKonanIrMangler
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
@@ -30,7 +30,8 @@ import org.jetbrains.kotlin.library.uniqueName
 // TODO: do not serialize descriptors of non-exported declarations.
 
 object KonanBinaryInterface {
-    private val mangler = KonanManglerIr
+    private val mangler = object : AbstractKonanIrMangler(true) {}
+
     private val exportChecker = mangler.getExportChecker()
 
     val IrFunction.functionName: String get() = mangler.run { signatureString }

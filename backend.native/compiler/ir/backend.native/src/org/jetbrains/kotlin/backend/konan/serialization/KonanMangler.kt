@@ -13,10 +13,11 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 
-abstract class AbstractKonanIrMangler : IrBasedKotlinManglerImpl() {
+abstract class AbstractKonanIrMangler(private val withReturnType: Boolean) : IrBasedKotlinManglerImpl() {
     override fun getExportChecker(): IrExportCheckerVisitor = KonanIrExportChecker()
 
-    override fun getMangleComputer(mode: MangleMode): IrMangleComputer = KonanIrManglerComputer(StringBuilder(256), mode)
+    override fun getMangleComputer(mode: MangleMode): IrMangleComputer =
+            KonanIrManglerComputer(StringBuilder(256), mode, withReturnType)
 
     private class KonanIrExportChecker : IrExportCheckerVisitor() {
         override fun IrDeclaration.isPlatformSpecificExported(): Boolean {
@@ -41,11 +42,12 @@ abstract class AbstractKonanIrMangler : IrBasedKotlinManglerImpl() {
 
             return false
         }
-
     }
 
-    private class KonanIrManglerComputer(builder: StringBuilder, mode: MangleMode) : IrMangleComputer(builder, mode) {
-        override fun copy(newMode: MangleMode): IrMangleComputer = KonanIrManglerComputer(builder, newMode)
+    private class KonanIrManglerComputer(builder: StringBuilder, mode: MangleMode, private val withReturnType: Boolean) : IrMangleComputer(builder, mode) {
+        override fun copy(newMode: MangleMode): IrMangleComputer = KonanIrManglerComputer(builder, newMode, withReturnType)
+
+        override fun addReturnType(): Boolean = withReturnType
 
         override fun IrFunction.platformSpecificFunctionName(): String? {
             (if (this is IrConstructor && this.isObjCConstructor) this.getObjCInitMethod() else this)?.getObjCMethodInfo()
@@ -76,12 +78,10 @@ abstract class AbstractKonanIrMangler : IrBasedKotlinManglerImpl() {
 
             return if (this.hasObjCMethodAnnotation || this.hasObjCFactoryAnnotation || this.isObjCClassMethod()) "${param.name}:" else ""
         }
-
-
     }
 }
 
-object KonanManglerIr : AbstractKonanIrMangler()
+object KonanManglerIr : AbstractKonanIrMangler(false)
 
 abstract class AbstractKonanDescriptorMangler : DescriptorBasedKotlinManglerImpl() {
     override fun getExportChecker(): DescriptorExportCheckerVisitor = KonanDescriptorExportChecker()
