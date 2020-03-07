@@ -30,11 +30,6 @@ data class TemplateNotFoundError(val id: String) : Error() {
         get() = "Template with an id `$id` is not found"
 }
 
-data class SettingNotFoundError(val settingName: String) : Error() {
-    override val message: String
-        get() = "Setting with name `$settingName` was not found"
-}
-
 data class RequiredSettingsIsNotPresentError(val settingNames: List<String>) : Error() {
     override val message: String
         get() = buildString {
@@ -43,23 +38,12 @@ data class RequiredSettingsIsNotPresentError(val settingNames: List<String>) : E
         }
 }
 
-data class BadApplicationExitCodeError(val applicationName: String, val exitCode: Int) : Error() {
-    override val message: String
-        get() = "Application $applicationName exited with code $exitCode"
-}
-
-
 data class CircularTaskDependencyError(val taskName: String) : Error() {
     override val message: String
         get() = "$taskName task has circular dependencies"
 }
 
 data class BadSettingValueError(override val message: String) : Error()
-
-data class LibraryNotFoundError(val name: String) : Error() {
-    override val message: String
-        get() = "Library with name `$name` was not found"
-}
 
 data class ConfiguratorNotFoundError(val id: String) : Error() {
     override val message: String
@@ -71,18 +55,4 @@ data class ValidationError(val validationMessage: String) : Error() {
         get() = validationMessage.capitalize()
 }
 
-
 data class ProjectImportingError(override val message: String) : Error()
-
-
-data class InvalidSourceSetName(val name: String) : Error() {
-    override val message: String
-        get() = "Source set name `$name` is invalid"
-}
-
-data class ModuleNotFoundError(val path: String) : Error() {
-    override val message: String
-        get() = "Sourceset with a path `$path` was not found invalid"
-}
-
-
