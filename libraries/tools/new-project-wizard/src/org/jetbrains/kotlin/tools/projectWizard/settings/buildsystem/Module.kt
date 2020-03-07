@@ -40,37 +40,10 @@ class Module(
     val kind: ModuleKind
         get() = configurator.moduleKind
 
-    override val validator: SettingValidator<Module> = settingValidator<Module> { module ->
-        StringValidators.shouldNotBeBlank("Module name").validate(this, module.name)
-    } and settingValidator { module ->
-        StringValidators.shouldBeValidIdentifier("Module name `$name`", ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES).validate(this, module.name)
-    } and settingValidator { module ->
-        withSettingsOf(module) {
-            allSettingsOfModuleConfigurator(configurator).map { setting ->
-                val reference = when (setting) {
-                    is PluginSetting<Any, SettingType<Any>> -> setting.reference
-                    is ModuleConfiguratorSetting<Any, SettingType<Any>> -> setting.reference
-                    else -> null
-                }
-                val value = reference?.notRequiredSettingValue
-                    ?: reference?.savedOrDefaultValue
-                    ?: return@map ValidationResult.ValidationError("${setting.title.capitalize()} should not be blank")
-                (setting.validator as SettingValidator<Any>).validate(this@settingValidator, value)
-            }.fold()
-        }
-    } and settingValidator { module ->
-        val template = module.template ?: return@settingValidator ValidationResult.OK
-        org.jetbrains.kotlin.tools.projectWizard.templates.withSettingsOf(module) {
-            template.settings.map { setting ->
-                val value = setting.reference.notRequiredSettingValue
-                    ?: setting.reference.savedOrDefaultValue
-                    ?: return@map ValidationResult.ValidationError("${setting.title.capitalize()} should not be blank")
-                (setting.validator as SettingValidator<Any>).validate(this@settingValidator, value)
-            }.fold()
-        }
-    } and inValidatorContext { module ->
-        validateList(module.subModules)
-    }
+    override val validator = moduleNameValidator and
+            moduleConfiguratorValidator and
+            moduleTemplateValidator and
+            subModulesValidator
 
     var subModules = subModules
         set(value) {
@@ -114,6 +87,45 @@ class Module(
             val sourcesets = listOf(Sourceset(SourcesetType.main), Sourceset(SourcesetType.test))
             val (submodules) = map.parseValue(this, path, "subModules", listParser(Module.parser)) { emptyList() }
             Module(name, configurator, template, sourcesets, submodules, identificator = identificator)
+        }
+
+        private val moduleNameValidator = settingValidator<Module> { module ->
+            StringValidators.shouldNotBeBlank("Module name").validate(this, module.name)
+        } and settingValidator { module ->
+            StringValidators.shouldBeValidIdentifier("Module name `${module.name}`", ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES)
+                .validate(this, module.name)
+        }
+
+        val moduleConfiguratorValidator = settingValidator<Module> { module ->
+            withSettingsOf(module) {
+                allSettingsOfModuleConfigurator(module.configurator).map { setting ->
+                    val reference = when (setting) {
+                        is PluginSetting<Any, SettingType<Any>> -> setting.reference
+                        is ModuleConfiguratorSetting<Any, SettingType<Any>> -> setting.reference
+                        else -> null
+                    }
+                    val value = reference?.notRequiredSettingValue
+                        ?: reference?.savedOrDefaultValue
+                        ?: return@map ValidationResult.ValidationError("${setting.title.capitalize()} should not be blank")
+                    (setting.validator as SettingValidator<Any>).validate(this@settingValidator, value)
+                }.fold()
+            }
+        }
+
+        val moduleTemplateValidator = settingValidator<Module> { module ->
+            val template = module.template ?: return@settingValidator ValidationResult.OK
+            org.jetbrains.kotlin.tools.projectWizard.templates.withSettingsOf(module) {
+                template.settings.map { setting ->
+                    val value = setting.reference.notRequiredSettingValue
+                        ?: setting.reference.savedOrDefaultValue
+                        ?: return@map ValidationResult.ValidationError("${setting.title.capitalize()} should not be blank")
+                    (setting.validator as SettingValidator<Any>).validate(this@settingValidator, value)
+                }.fold()
+            }
+        }
+
+        val subModulesValidator = inValidatorContext<Module> { module ->
+            validateList(module.subModules)
         }
     }
 
