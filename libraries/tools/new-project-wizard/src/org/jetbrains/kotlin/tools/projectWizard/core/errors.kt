@@ -9,7 +9,14 @@ abstract class Error {
 abstract class ExceptionError : Error() {
     abstract val exception: Exception
     override val message: String
-        get() = exception.asString()
+        get() = exception::class.simpleName!!.removeSuffix("Exception").splitByWords() +
+                exception.message?.let { ": $it" }.orEmpty()
+
+    companion object {
+        private val wordRegex = "[A-Z][a-z0-9]+".toRegex()
+        private fun String.splitByWords() =
+            wordRegex.findAll(this).joinToString(separator = " ") { it.value }
+    }
 }
 
 data class IOError(override val exception: IOException) : ExceptionError()
@@ -77,13 +84,5 @@ data class ModuleNotFoundError(val path: String) : Error() {
     override val message: String
         get() = "Sourceset with a path `$path` was not found invalid"
 }
-
-
-fun Throwable.asString() =
-    this::class.simpleName!!.removeSuffix("Exception").splitByWords() + message?.let { ": $it" }.orEmpty()
-
-private val wordRegex = "[A-Z][a-z0-9]+".toRegex()
-private fun String.splitByWords() =
-    wordRegex.findAll(this).joinToString(separator = " ") { it.value }
 
 
