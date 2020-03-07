@@ -9,8 +9,12 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.tools.projectWizard.cli.TestWizardService
 
 object TestWizardServices {
-    fun createProjectDependent(project: Project): List<TestWizardService>  = listOf(
+    fun createProjectDependent(project: Project): List<TestWizardService> = listOf(
         GradleProjectImportingTestWizardService(project)
     )
-    val PROJECT_INDEPENDENT = listOf(FormattingTestWizardService())
+
+    val PROJECT_INDEPENDENT = listOf(
+        FormattingTestWizardService(),
+        KotlinVersionProviderTestWizardService()
+    )
 }

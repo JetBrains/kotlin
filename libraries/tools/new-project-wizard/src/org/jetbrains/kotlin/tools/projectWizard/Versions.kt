@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.tools.projectWizard
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 
 object Versions {
+    val KOTLIN = version("1.3.70")
+
     object GradlePlugins {
         val ANDROID = version("3.5.2")
     }

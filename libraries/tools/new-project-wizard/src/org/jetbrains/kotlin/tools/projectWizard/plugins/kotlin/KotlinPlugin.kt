@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin
 
+import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import java.nio.file.Path
 
 class KotlinPlugin(context: Context) : Plugin(context) {
-    val version by property(KotlinVersionProviderServiceImpl.DEFAULT)
+    val version by property(Versions.KOTLIN)
 
     val initKotlinVersions by pipelineTask(GenerationPhase.PREPARE_GENERATION) {
         title = "Downloading list of Kotlin versions"

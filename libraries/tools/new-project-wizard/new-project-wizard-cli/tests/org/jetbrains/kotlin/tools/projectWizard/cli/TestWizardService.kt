@@ -7,5 +7,4 @@ package org.jetbrains.kotlin.tools.projectWizard.cli
 
 import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 
-interface TestWizardService : WizardService {
-}
+interface TestWizardService : WizardService

@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform") version "1.3.61"
+    kotlin("multiplatform") version "1.3.70"
 }
 group = "me.user"
 version = "1.0-SNAPSHOT"

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.service
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion
+import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskResult
 import org.jetbrains.kotlin.tools.projectWizard.core.asNullable
 import org.jetbrains.kotlin.tools.projectWizard.core.compute
@@ -25,7 +26,7 @@ class IdeaKotlinVersionProviderService : KotlinVersionProviderService, IdeaWizar
     override fun getKotlinVersion(): Version =
         getKotlinVersionFromCompiler()
             ?: VersionsDownloader.downloadLatestEapOrStableKotlinVersion()
-            ?: KotlinVersionProviderServiceImpl.DEFAULT
+            ?: Versions.KOTLIN
 
     private fun getKotlinVersionFromCompiler() =
         KotlinCompilerVersion.getVersion()
