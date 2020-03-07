@@ -1635,7 +1635,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     .single { it.getAttribute("name").value == "fail" }
                     .getChild("failure")
                     .text
-                assertTrue(stacktrace.contains("""at org\.foo\.test\.fail\(.*test\.kt:24\)""".toRegex()))
+                assertTrue(stacktrace.contains("""at org\.foo\.test#fail\(.*test\.kt:24\)""".toRegex()))
             }
 
             assertTestResults("testProject/new-mpp-native-tests/TEST-TestKt.xml", hostTestTask)
