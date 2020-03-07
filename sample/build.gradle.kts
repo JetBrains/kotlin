@@ -1,11 +1,11 @@
 buildscript {
   dependencies {
-    classpath("gradle.plugin.com.bnorm.power:kotlin-power-assert-gradle:0.1.0")
+    classpath("gradle.plugin.com.bnorm.power:kotlin-power-assert-gradle:0.2.0")
   }
 }
 
 plugins {
-  kotlin("jvm") version "1.3.60"
+  kotlin("jvm") version "1.3.70"
 }
 apply(plugin = "com.bnorm.power.kotlin-power-assert")
 
@@ -16,7 +16,6 @@ repositories {
 dependencies {
   implementation(kotlin("stdlib-jdk8"))
   testImplementation(kotlin("test-junit"))
-  testImplementation("org.assertj:assertj-core:3.15.0")
 }
 
 tasks.compileTestKotlin {
@@ -25,5 +24,5 @@ tasks.compileTestKotlin {
 }
 
 configure<com.bnorm.power.PowerAssertGradleExtension> {
-  functions = listOf("kotlin.test.AssertionsKt.assertTrue", "kotlin.PreconditionsKt.require")
+  functions = listOf("kotlin.test.assertTrue", "kotlin.require")
 }

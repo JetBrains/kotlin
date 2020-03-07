@@ -345,7 +345,7 @@ assertTrue(1 == 2, message = "${"$"}text, the world is broken")
              |
              false
 """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.AssertionsKt.assertTrue")))
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertTrue")))
     )
   }
 
@@ -362,7 +362,7 @@ require(1 == 2) { "the world is broken" }
           |
           false
 """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.PreconditionsKt.require")))
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.require")))
     )
   }
 
@@ -379,7 +379,7 @@ check(1 == 2) { "the world is broken" }
         |
         false
 """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.PreconditionsKt.check")))
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.check")))
     )
   }
 }
@@ -387,7 +387,7 @@ check(1 == 2) { "the world is broken" }
 fun assertMessage(
   @Language("kotlin") source: String,
   message: String,
-  vararg plugins: ComponentRegistrar = arrayOf(PowerAssertComponentRegistrar(setOf(FqName("kotlin.PreconditionsKt.assert"))))
+  vararg plugins: ComponentRegistrar = arrayOf(PowerAssertComponentRegistrar(setOf(FqName("kotlin.assert"))))
 ) {
   val result = KotlinCompilation().apply {
     sources = listOf(SourceFile.kotlin("main.kt", source))
@@ -400,7 +400,7 @@ fun assertMessage(
   assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode)
 
   val kClazz = result.classLoader.loadClass("MainKt")
-  val main = kClazz.declaredMethods.single { it.name == "main" }
+  val main = kClazz.declaredMethods.single { it.name == "main" && it.parameterCount == 0 }
   try {
     try {
       main.invoke(null)
