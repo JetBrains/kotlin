@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.util.application
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
+import com.intellij.openapi.progress.impl.CancellationCheck
 import com.intellij.openapi.project.Project
 
 fun <T> runReadAction(action: () -> T): T {
@@ -43,4 +44,4 @@ fun <T> Project.executeCommand(name: String, groupId: Any? = null, command: () -
     return result as T
 }
 
-fun <T> runWithCancellationCheck(block: () -> T): T = block()
+fun <T> runWithCancellationCheck(block: () -> T): T = CancellationCheck.runWithCancellationCheck(block)
