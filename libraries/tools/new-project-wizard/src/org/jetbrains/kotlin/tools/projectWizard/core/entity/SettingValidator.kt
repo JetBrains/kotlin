@@ -23,8 +23,6 @@ fun <V> inValidatorContext(validator: ReadingContext.(V) -> SettingValidator<V>)
 
 
 
-typealias StringValidator = SettingValidator<String>
-
 object StringValidators {
     fun shouldNotBeBlank(name: String) = settingValidator { value: String ->
         if (value.isBlank()) ValidationResult.ValidationError("${name.capitalize()} should not be blank ")

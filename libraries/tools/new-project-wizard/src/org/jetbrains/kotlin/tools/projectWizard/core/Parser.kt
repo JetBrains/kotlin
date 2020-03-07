@@ -25,14 +25,6 @@ abstract class Parser<out T : Any> {
     abstract fun ParsingContext.parse(value: Any?, path: String): TaskResult<T>
 }
 
-fun <T : Any> alwaysFailingParser() = object : Parser<T>() {
-    override fun ParsingContext.parse(value: Any?, path: String): TaskResult<T> =
-        Failure(object : Error() {
-            override val message: String
-                get() = "Should not be called"
-        })
-}
-
 fun <T : Any> Parser<T>.parse(context: ParsingContext, value: Any?, path: String) =
     with(context) { parse(value, path) }
 
@@ -88,40 +80,6 @@ fun <T : Any> valueParserM(parser: suspend ParsingContext.(value: Any?, path: St
 
 inline fun <reified T : Any> valueParser() = valueParser { value, path ->
     value.parseAs(path, T::class).get()
-}
-
-
-class DisjunctionParser<T : Any>(
-    private val keyToParser: Map<String, Parser<T>>
-) : Parser<T>() {
-    constructor(vararg keyToParser: Pair<String, Parser<T>>) : this(keyToParser.toMap())
-
-    override fun ParsingContext.parse(value: Any?, path: String): TaskResult<T> = when (value) {
-        is String -> // consider string value as an empty map
-            mapOf(value to emptyMap<Any?, Any?>()).asSuccess()
-        else -> value.parseAs<Map<*, *>>(path)
-    }.flatMap { map ->
-        computeM {
-            val (singleItem) = map.entries.singleOrNull()
-                ?.takeIf { it.key is String }
-                .toResult { ParseError("Setting `$path` should contain a single-key value") }
-            val (parser) = keyToParser[singleItem.key as String]
-                .toResult { ParseError("`$path` should be one of [${keyToParser.keys.joinToString()}]") }
-            parser.parse(this@parse, singleItem.value, path)
-        }
-    }
-}
-
-class CollectingParser<T : Any>(
-    private val keyToParser: Map<String, Parser<T>>
-) : Parser<List<T>>() {
-    override fun ParsingContext.parse(value: Any?, path: String): TaskResult<List<T>> =
-        value.parseAs<Map<*, *>, List<T>>(this, path) { map ->
-            map.mapNotNull { (key, value) ->
-                val parser = keyToParser[key] ?: return@mapNotNull null
-                parser.parse(this, value, "$path.$key")
-            }.sequence()
-        }
 }
 
 fun Any?.classMismatchError(path: String, expected: KClass<*>): ParseError {

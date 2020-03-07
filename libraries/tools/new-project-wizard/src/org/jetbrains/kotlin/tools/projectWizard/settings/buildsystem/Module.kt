@@ -119,13 +119,6 @@ class Module(
 
 }
 
-val Module.mainSourceset: Sourceset?
-    get() = sourcesets.firstOrNull { it.sourcesetType == SourcesetType.main }
-
-val Module.testSourceset: Sourceset?
-    get() = sourcesets.firstOrNull { it.sourcesetType == SourcesetType.test }
-
-
 val Module.path
     get() = generateSequence(this, Module::parent)
         .map { it.name }

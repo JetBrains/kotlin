@@ -254,8 +254,7 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
                 .forEach { (id, configurators) -> assert(configurators.size == 1) { id } }
         }
 
-        val BY_ID = ALL.associateBy(ModuleConfigurator::id)
-        val BY_MODULE_KIND = ALL.groupBy(ModuleConfigurator::moduleKind)
+        private val BY_ID = ALL.associateBy(ModuleConfigurator::id)
 
         fun getParser(moduleIdentificator: Identificator): Parser<ModuleConfigurator> =
             valueParserM { value, path ->
