@@ -247,7 +247,6 @@
 - [`KT-33902`](https://youtrack.jetbrains.com/issue/KT-33902) False positive for "Remove explicit type specification" with type alias as return type
 - [`KT-33933`](https://youtrack.jetbrains.com/issue/KT-33933) "Create expect" quick fix generates the declaration in a default source set even if an alternative is chosen
 - [`KT-34078`](https://youtrack.jetbrains.com/issue/KT-34078) ReplaceWith does not work if replacement is fun in companion object
-- [`KT-34203`](https://youtrack.jetbrains.com/issue/KT-34203) 'Add constructor parameter' fix does not add generics
 - [`KT-34297`](https://youtrack.jetbrains.com/issue/KT-34297) "Add 'replaceWith' argument" inserts positional instead of named argument
 - [`KT-34325`](https://youtrack.jetbrains.com/issue/KT-34325) "Control flow with empty body" inspection should not report ifs with comments
 - [`KT-34411`](https://youtrack.jetbrains.com/issue/KT-34411) Create expect/actual quick fix: focus is lost in the editor (193 IDEA)
