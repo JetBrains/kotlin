@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+## Version 0.3.0
+
+_2020-03-07_
+
+ * Support Kotlin 1.3.70.
+ * Fix: Including Kotlin wrapper class for top-level functions in Gradle
+ configuration is no longer required.
+
 ## Version 0.2.0
 
 _2020-02-12_
