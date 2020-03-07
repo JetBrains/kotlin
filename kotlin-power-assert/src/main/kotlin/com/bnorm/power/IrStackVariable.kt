@@ -16,11 +16,9 @@
 
 package com.bnorm.power
 
-import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irConcat
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irString
@@ -29,8 +27,6 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrThrow
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 
 data class IrStackVariable(
   val temporary: IrVariable,
@@ -43,13 +39,6 @@ data class ValueDisplay(
   val row: Int,
   val source: String
 )
-
-fun IrBuilderWithScope.buildThrow(
-  constructor: IrConstructorSymbol,
-  message: IrExpression
-): IrThrow = irThrow(irCall(constructor).apply {
-  putValueArgument(0, message)
-})
 
 fun IrBuilderWithScope.buildMessage(
   file: IrFile,
@@ -74,7 +63,7 @@ fun IrBuilderWithScope.buildMessage(
 
     val columnOffset: Int = when (original) {
       is IrMemberAccessExpression -> {
-        val descriptor = original.descriptor
+        val descriptor = original.symbol.descriptor
         when {
           descriptor is FunctionDescriptor && descriptor.isInfix -> source.indexOf(descriptor.name.asString())
           else -> when (original.origin) {

@@ -101,7 +101,7 @@ fun buildAssertTree(expression: IrExpression): RootNode {
     }
 
     override fun visitCall(expression: IrCall, data: Node) {
-      if (expression.descriptor.name.asString() == "EQEQ" && expression.origin == IrStatementOrigin.EXCLEQ) {
+      if (expression.symbol.descriptor.name.asString() == "EQEQ" && expression.origin == IrStatementOrigin.EXCLEQ) {
         // Skip the EQEQ part of a EXCLEQ call
         expression.acceptChildren(this, data)
       } else {

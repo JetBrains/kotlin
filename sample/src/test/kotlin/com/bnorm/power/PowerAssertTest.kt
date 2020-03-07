@@ -25,7 +25,7 @@ data class Person(
 )
 
 class PowerAssertTest {
-  private val people = listOf(Person("Brian", "Norman"), Person("Melinda", "Norman"))
+  private val people = listOf(Person("John", "Doe"), Person("Jane", "Doe"))
 
   @Test
   fun assertTrue() {

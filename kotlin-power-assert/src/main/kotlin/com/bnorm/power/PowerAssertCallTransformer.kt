@@ -16,13 +16,16 @@
 
 package com.bnorm.power
 
-import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.asSimpleLambda
 import org.jetbrains.kotlin.backend.common.ir.inline
+import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.at
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.serialization.findPackage
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
@@ -36,7 +39,6 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -46,16 +48,14 @@ import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.referenceFunction
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -76,9 +76,9 @@ fun FileLoweringPass.runOnFileInOrder(irFile: IrFile) {
 }
 
 class PowerAssertCallTransformer(
-  private val context: BackendContext,
+  private val context: IrPluginContext,
   private val functions: Set<FqName>
-) : IrElementTransformerVoid(), FileLoweringPass {
+) : IrElementTransformerVoidWithContext(), FileLoweringPass {
   private lateinit var file: IrFile
   private lateinit var fileSource: String
 
@@ -90,8 +90,8 @@ class PowerAssertCallTransformer(
   }
 
   override fun visitCall(expression: IrCall): IrExpression {
-    val function = expression.symbol.owner
-    if (functions.none { function.fqNameWhenAvailable == it })
+    val function = expression.symbol.descriptor
+    if (functions.none { function.fqNameSafe == it })
       return super.visitCall(expression)
 
     val delegate = findDelegate(function) ?: run {
@@ -103,24 +103,26 @@ class PowerAssertCallTransformer(
     val assertionArgument = expression.getValueArgument(0)!!
     val messageArgument = if (function.valueParameters.size == 2) expression.getValueArgument(1) else null
 
-    context.createIrBuilder(expression.symbol).run {
+    val symbol = currentScope!!.scope.scopeOwnerSymbol
+    DeclarationIrBuilder(context, symbol).run {
       at(expression)
-
-      val lambda = messageArgument?.asSimpleLambda()
-      val title = when {
-        messageArgument is IrConst<*> -> messageArgument
-        messageArgument is IrStringConcatenation -> messageArgument
-        lambda != null -> lambda.inline()
-        messageArgument != null -> {
-          val invoke = messageArgument.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
-          irCallOp(invoke.symbol, invoke.returnType, messageArgument)
-        }
-        // TODO what should the default message be?
-        else -> irString("Assertion failed")
-      }
 
       val generator = object : PowerAssertGenerator() {
         override fun IrBuilderWithScope.buildAssertThrow(subStack: List<IrStackVariable>): IrExpression {
+
+          val lambda = messageArgument?.asSimpleLambda()
+          val title = when {
+            messageArgument is IrConst<*> -> messageArgument
+            messageArgument is IrStringConcatenation -> messageArgument
+            lambda != null -> lambda.inline()
+            messageArgument != null -> {
+              val invoke = messageArgument.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
+              irCallOp(invoke.symbol, invoke.returnType, messageArgument)
+            }
+            // TODO what should the default message be?
+            else -> irString("Assertion failed")
+          }
+
           return delegate.buildCall(this, buildMessage(file, fileSource, title, expression, subStack))
         }
       }
@@ -140,7 +142,9 @@ class PowerAssertCallTransformer(
     fun buildCall(builder: IrBuilderWithScope, message: IrExpression): IrExpression
   }
 
-  private fun findDelegate(function: IrFunction): FunctionDelegate? {
+  private fun findDelegate(function: FunctionDescriptor): FunctionDelegate? {
+    fun KotlinType.toIrType() = context.typeTranslator.translateType(this)
+
     return context.findOverloads(function)
       .mapNotNull { overload ->
         // TODO allow other signatures than (Boolean, String) and (Boolean, () -> String))
@@ -152,7 +156,7 @@ class PowerAssertCallTransformer(
           isStringSupertype(parameters[1].type) -> {
             object : FunctionDelegate {
               override fun buildCall(builder: IrBuilderWithScope, message: IrExpression): IrExpression = with(builder) {
-                irCall(overload).apply {
+                irCall(overload, type = overload.descriptor.returnType!!.toIrType()).apply {
                   putValueArgument(0, irFalse())
                   putValueArgument(1, message)
                 }
@@ -168,13 +172,13 @@ class PowerAssertCallTransformer(
                   visibility = Visibilities.LOCAL
                   origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                 }.apply {
-                  val bodyBuilder = this@PowerAssertCallTransformer.context.createIrBuilder(symbol)
+                  val bodyBuilder = DeclarationIrBuilder(this@PowerAssertCallTransformer.context, symbol)
                   body = bodyBuilder.irBlockBody {
                     +irReturn(message)
                   }
                 }
                 val expression = IrFunctionExpressionImpl(-1, -1, context.irBuiltIns.stringType, lambda, IrStatementOrigin.LAMBDA)
-                irCall(overload).apply {
+                irCall(overload, type = overload.descriptor.returnType!!.toIrType()).apply {
                   putValueArgument(0, irFalse())
                   putValueArgument(1, expression)
                 }
@@ -195,7 +199,7 @@ class PowerAssertCallTransformer(
 }
 
 // TODO is this the best way to find overload functions?
-private fun BackendContext.findOverloads(function: IrFunction): List<IrFunctionSymbol> =
-  function.getPackageFragment()!!.symbol.descriptor.getMemberScope()
+private fun IrPluginContext.findOverloads(function: FunctionDescriptor): List<IrFunctionSymbol> =
+  function.findPackage().getMemberScope()
     .getContributedFunctions(function.name, NoLookupLocation.FROM_BACKEND)
-    .map { ir.symbols.externalSymbolTable.referenceFunction(it) }
+    .map { symbolTable.referenceFunction(it) }
