@@ -666,22 +666,26 @@ tasks {
         )
     }
 
-    register("idea-new-project-wizard-tests") {
-        dependsOn("dist")
-        dependsOn(
-            ":libraries:tools:new-project-wizard:test",
-            ":libraries:tools:new-project-wizard:new-project-wizard-cli:test",
-            ":idea:idea-new-project-wizard:test"
-        )
+    if (Ide.IJ()) {
+        register("idea-new-project-wizard-tests") {
+            dependsOn("dist")
+            dependsOn(
+                ":libraries:tools:new-project-wizard:test",
+                ":libraries:tools:new-project-wizard:new-project-wizard-cli:test",
+                ":idea:idea-new-project-wizard:test"
+            )
+        }
     }
 
     register("idea-plugin-tests") {
         dependsOn("dist")
         dependsOn(
             "idea-plugin-main-tests",
-            "idea-plugin-additional-tests",
-            "idea-new-project-wizard-tests"
+            "idea-plugin-additional-tests"
         )
+        if (Ide.IJ()) {
+            dependsOn("idea-new-project-wizard-tests")
+        }
     }
 
     register("idea-plugin-performance-tests") {

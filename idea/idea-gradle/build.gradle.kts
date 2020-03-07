@@ -53,7 +53,9 @@ dependencies {
     testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
     testRuntime(project(":native:frontend.native")) { isTransitive = false }
     testRuntime(project(":native:kotlin-native-utils")) { isTransitive = false }
-    testRuntime(project(":idea:idea-new-project-wizard"))
+    if (Ide.IJ()) {
+        testRuntime(project(":idea:idea-new-project-wizard"))
+    }
 
     testRuntimeOnly(toolsJar())
     testRuntime(project(":kotlin-reflect"))

@@ -39,9 +39,6 @@ val projectsToShadow by extra(listOf(
         ":idea:scripting-support",
         ":idea:idea-j2k",
         ":idea:formatter",
-        ":libraries:tools:new-project-wizard",
-        ":idea:idea-new-project-wizard",
-        ":libraries:tools:new-project-wizard:new-project-wizard-cli",
         ":compiler:psi",
         ":compiler:fir:cones",
         ":compiler:fir:checkers",
@@ -92,7 +89,12 @@ val projectsToShadow by extra(listOf(
         ":idea:idea-git",
         ":idea:idea-jps-common",
         *if (Ide.IJ())
-            arrayOf(":idea:idea-maven")
+            arrayOf(
+                ":idea:idea-maven",
+                ":libraries:tools:new-project-wizard",
+                ":idea:idea-new-project-wizard",
+                ":libraries:tools:new-project-wizard:new-project-wizard-cli"
+            )
         else
             emptyArray<String>()
 ))

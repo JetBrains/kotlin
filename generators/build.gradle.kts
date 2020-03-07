@@ -40,7 +40,10 @@ dependencies {
     testCompile(projectTests(":idea:idea-fir"))
     testCompile(projectTests(":j2k"))
     testCompile(projectTests(":nj2k"))
-    testCompile(projectTests(":libraries:tools:new-project-wizard:new-project-wizard-cli"))
+    if (Ide.IJ()) {
+        testCompile(projectTests(":libraries:tools:new-project-wizard:new-project-wizard-cli"))
+        testCompile(projectTests(":idea:idea-new-project-wizard"))
+    }
     testCompile(projectTests(":idea:idea-android"))
     testCompile(projectTests(":idea:performanceTests"))
     testCompile(projectTests(":idea:scripting-support"))
