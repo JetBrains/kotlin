@@ -1,7 +1,5 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
-import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
-import org.jetbrains.kotlin.tools.projectWizard.settings.version.VersionRange
 import java.io.IOException
 
 abstract class Error {
@@ -59,11 +57,6 @@ data class LibraryNotFoundError(val name: String) : Error() {
 data class ConfiguratorNotFoundError(val id: String) : Error() {
     override val message: String
         get() = "Module type `$id` was not found"
-}
-
-data class VersionIsNotInRangeError(val subject: String, val version: Version, val range: VersionRange) : Error() {
-    override val message: String
-        get() = "${subject.capitalize()}'s version $version is not in expected range $range"
 }
 
 data class ValidationError(val validationMessage: String) : Error() {
