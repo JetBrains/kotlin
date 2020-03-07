@@ -289,7 +289,10 @@ include ":kotlin-build-common",
         ":kotlinx-serialization-ide-plugin",
         ":kotlin-serialization",
         ":kotlin-serialization-unshaded",
-        ":kotlin-serialization:plugin-marker"
+        ":kotlin-serialization:plugin-marker",
+
+        //composite build:
+        ":intellij-kotlin"
 
 if (buildProperties.includeCidrPlugins) {
     logger.info("Including CIDR modules in settings.gradle")
