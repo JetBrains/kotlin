@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.wizard.service
 
+import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskResult
@@ -22,10 +23,20 @@ import java.util.stream.Collectors
 
 class IdeaKotlinVersionProviderService : KotlinVersionProviderService, IdeaWizardService {
     override fun getKotlinVersion(): Version =
-        KotlinCompilerVersion.getVersion()?.let { Version.fromString(it) }
+        getKotlinVersionFromCompiler()
             ?: VersionsDownloader.downloadLatestEapOrStableKotlinVersion()
             ?: KotlinVersionProviderServiceImpl.DEFAULT
+
+    private fun getKotlinVersionFromCompiler() =
+        KotlinCompilerVersion.getVersion()
+            ?.takeUnless { it.contains(SNAPSHOT_TAG, ignoreCase = true) }
+            ?.let { Version.fromString(it) }
+
+    companion object {
+        private const val SNAPSHOT_TAG = "snapshot"
+    }
 }
+
 
 private object VersionsDownloader {
     fun downloadLatestEapOrStableKotlinVersion(): Version? = runWithProgressBar("Downloading Kotlin version") {
@@ -34,7 +45,7 @@ private object VersionsDownloader {
         when {
             latestEap == null -> latestStable
             latestStable == null -> latestEap
-            latestEap > latestStable -> latestEap
+            VersionComparatorUtil.compare(latestEap.text, latestStable.text) > 0 -> latestEap
             else -> latestStable
         }
     }
