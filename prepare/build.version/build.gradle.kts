@@ -44,6 +44,8 @@ val writeStdlibVersion by tasks.registering {
     }
 }
 
+val writePluginVersion by tasks.registering // Remove this task after removing usages in the TeamCity build
+
 val writeVersions by tasks.registering {
     dependsOn(writeBuildNumber, writeStdlibVersion)
 }
