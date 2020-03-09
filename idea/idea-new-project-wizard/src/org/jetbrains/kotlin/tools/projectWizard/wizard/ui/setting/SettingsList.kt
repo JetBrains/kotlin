@@ -1,10 +1,10 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting
 
 import com.intellij.ui.components.panels.VerticalLayout
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.isSpecificError
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
-import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.PanelWithStatusText
@@ -16,8 +16,8 @@ interface ErrorAwareComponent {
 
 class SettingsList(
     settings: List<SettingReference<*, *>>,
-    private val ideContext: IdeContext
-) : DynamicComponent(ideContext), ErrorAwareComponent {
+    private val context: Context
+) : DynamicComponent(context), ErrorAwareComponent {
     private val panel = PanelWithStatusText(VerticalLayout(5), "This module has no settings to configure")
 
     var settingComponents: List<SettingComponent<*, *>> = emptyList()
@@ -38,7 +38,7 @@ class SettingsList(
         panel.isStatusTextVisible = settings.isEmpty()
         panel.removeAll()
         settingComponents = settings.map { setting ->
-            DefaultSettingComponent.create(setting, ideContext)
+            DefaultSettingComponent.create(setting, context)
         }
         settingComponents.forEach { setting -> setting.onInit(); panel.add(setting.component) }
     }

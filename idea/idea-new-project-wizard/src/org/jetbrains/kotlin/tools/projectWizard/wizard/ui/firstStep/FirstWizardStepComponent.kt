@@ -2,14 +2,12 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 
 import TemplateTag
 import com.intellij.util.ui.JBUI
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.applyProjectTemplate
 import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.ProjectTemplate
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
-import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeWizard
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import java.awt.BorderLayout
@@ -18,9 +16,9 @@ import javax.swing.BoxLayout
 import javax.swing.JComponent
 import java.awt.Component as AwtComponent
 
-class FirstWizardStepComponent(wizard: IdeWizard) : WizardStepComponent(wizard.ideContext) {
-    private val buildSystemSubStep = BuildSystemSubStep(wizard.ideContext).asSubComponent()
-    private val templatesSubStep = TemplatesSubStep(wizard.ideContext).asSubComponent()
+class FirstWizardStepComponent(wizard: IdeWizard) : WizardStepComponent(wizard.context) {
+    private val buildSystemSubStep = BuildSystemSubStep(wizard.context).asSubComponent()
+    private val templatesSubStep = TemplatesSubStep(wizard.context).asSubComponent()
 
     override val component: JComponent = panel {
         add(templatesSubStep.component, BorderLayout.CENTER)
@@ -28,17 +26,17 @@ class FirstWizardStepComponent(wizard: IdeWizard) : WizardStepComponent(wizard.i
     }
 }
 
-class BuildSystemSubStep(ideContext: IdeContext) : SubStep(ideContext) {
-    private val buildSystemSetting = BuildSystemTypeSettingComponent(ideContext).asSubComponent()
+class BuildSystemSubStep(context: Context) : SubStep(context) {
+    private val buildSystemSetting = BuildSystemTypeSettingComponent(context).asSubComponent()
 
     override fun buildContent(): JComponent = panel {
         add(buildSystemSetting.component, BorderLayout.CENTER)
     }
 }
 
-class TemplatesSubStep(ideContext: IdeContext) : SubStep(ideContext) {
+class TemplatesSubStep(context: Context) : SubStep(context) {
     private val projectTemplateSettingComponent =
-        ProjectTemplateSettingComponent(ideContext) { projectTemplate ->
+        ProjectTemplateSettingComponent(context) { projectTemplate ->
             templateDescriptionComponent.setTemplate(projectTemplate)
         }.asSubComponent()
 
@@ -59,21 +57,6 @@ class TemplatesSubStep(ideContext: IdeContext) : SubStep(ideContext) {
             val selectedProjectTemplate = projectTemplateSettingComponent.value ?: return@modify
             applyProjectTemplate(selectedProjectTemplate)
         }
-    }
-
-    private fun allModules(): List<Module> {
-        val modules = mutableListOf<Module>()
-
-        fun addModule(module: Module) {
-            modules += module
-            module.subModules.forEach(::addModule)
-        }
-
-        read {
-            KotlinPlugin::modules.reference.notRequiredSettingValue
-        }?.forEach(::addModule)
-
-        return modules
     }
 
     override fun onValueUpdated(reference: SettingReference<*, *>?) {

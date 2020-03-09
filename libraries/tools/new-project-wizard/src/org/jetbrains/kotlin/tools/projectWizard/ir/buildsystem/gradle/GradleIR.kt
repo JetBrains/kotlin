@@ -1,6 +1,9 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle
 
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.FreeIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.RepositoryIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.render
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 

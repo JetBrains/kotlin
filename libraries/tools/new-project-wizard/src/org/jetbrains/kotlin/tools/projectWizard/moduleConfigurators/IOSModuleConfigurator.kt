@@ -5,15 +5,12 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
-import org.jetbrains.kotlin.tools.projectWizard.core.TaskResult
-import org.jetbrains.kotlin.tools.projectWizard.core.asPath
-import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.*
+
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
-import org.jetbrains.kotlin.tools.projectWizard.core.buildList
-import org.jetbrains.kotlin.tools.projectWizard.core.div
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
 import java.nio.file.Path

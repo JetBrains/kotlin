@@ -6,7 +6,8 @@ import org.apache.velocity.runtime.RuntimeConstants
 import org.apache.velocity.runtime.RuntimeServices
 import org.apache.velocity.runtime.log.LogChute
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskResult
-import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.WritingContext
+
 import org.jetbrains.kotlin.tools.projectWizard.core.div
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileFormattingService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService

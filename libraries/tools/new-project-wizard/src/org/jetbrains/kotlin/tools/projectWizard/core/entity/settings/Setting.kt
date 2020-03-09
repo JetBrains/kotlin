@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.tools.projectWizard.core.entity.settings
 
 import org.jetbrains.kotlin.tools.projectWizard.core.ActivityCheckerOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.Checker
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.Entity
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.EntityWithValue
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator

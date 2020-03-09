@@ -4,8 +4,8 @@ import org.jetbrains.kotlin.tools.projectWizard.core.PluginsCreator
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
-import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
+import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
@@ -25,8 +25,6 @@ class IdeWizard(
     },
     isUnitTestMode
 ) {
-    val ideContext = IdeContext(context, servicesManager, isUnitTestMode)
-
     init {
         initPluginSettingsDefaultValues()
     }
@@ -43,12 +41,15 @@ class IdeWizard(
     private fun <V : Any, T : SettingType<V>> setting(reference: SettingReference<V, T>) =
         object : ReadWriteProperty<Any?, V?> {
             override fun setValue(thisRef: Any?, property: KProperty<*>, value: V?) {
-                context.settingContext[reference] = value ?: return
+                if (value == null) return
+                context.writeSettings {
+                    reference.setValue(value)
+                }
             }
 
-            @Suppress("UNCHECKED_CAST")
-            override fun getValue(thisRef: Any?, property: KProperty<*>): V? =
-                context.settingContext[reference]
+            override fun getValue(thisRef: Any?, property: KProperty<*>): V? = context.read {
+                reference.notRequiredSettingValue
+            }
         }
 }
 

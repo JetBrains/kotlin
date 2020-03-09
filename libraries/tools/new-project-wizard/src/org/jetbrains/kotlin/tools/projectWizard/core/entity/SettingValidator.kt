@@ -1,9 +1,10 @@
 package org.jetbrains.kotlin.tools.projectWizard.core.entity
 
 import org.jetbrains.kotlin.tools.projectWizard.core.Failure
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.UNIT_SUCCESS
 import org.jetbrains.kotlin.tools.projectWizard.core.ValidationError
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+
 
 inline class SettingValidator<V>(val validate: ReadingContext.(V) -> ValidationResult) {
     infix fun and(other: SettingValidator<V>) = SettingValidator<V> { value ->

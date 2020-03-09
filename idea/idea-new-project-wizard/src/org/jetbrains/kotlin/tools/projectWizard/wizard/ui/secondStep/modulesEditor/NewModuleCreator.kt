@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEditor
 
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.TargetConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 
 class NewModuleCreator {

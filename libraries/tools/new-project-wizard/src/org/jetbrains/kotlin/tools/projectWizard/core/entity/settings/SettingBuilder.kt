@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.core.entity.settings
 
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settingValidator

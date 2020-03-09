@@ -2,14 +2,14 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEdi
 
 import com.intellij.ui.JBColor
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ListSettingType
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ListSettingType
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
-import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.AlwaysShownValidationIndicator
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
@@ -19,11 +19,11 @@ import javax.swing.JComponent
 
 
 class ModulesEditorComponent(
-    ideContext: IdeContext,
+    context: Context,
     uiEditorUsagesStats: UiEditorUsageStats,
     oneEntrySelected: (data: DisplayableSettingItem?) -> Unit,
     selectSettingWithError: (ValidationResult.ValidationError) -> Unit
-) : SettingComponent<List<Module>, ListSettingType<Module>>(KotlinPlugin::modules.reference, ideContext) {
+) : SettingComponent<List<Module>, ListSettingType<Module>>(KotlinPlugin::modules.reference, context) {
     private val tree: ModulesEditorTree =
         ModulesEditorTree(
             onSelected = { oneEntrySelected(it) },
@@ -41,7 +41,7 @@ class ModulesEditorComponent(
             }
         )
 
-    private val model = TargetsModel(tree, ::value, ideContext, uiEditorUsagesStats)
+    private val model = TargetsModel(tree, ::value, context, uiEditorUsagesStats)
 
     override fun onInit() {
         super.onInit()

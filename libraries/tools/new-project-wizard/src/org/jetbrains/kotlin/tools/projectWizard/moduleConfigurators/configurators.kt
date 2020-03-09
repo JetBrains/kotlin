@@ -1,21 +1,22 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSetting
 import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinBuildSystemPluginIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.maven.MavenPropertyIR
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
-import org.jetbrains.kotlin.tools.projectWizard.core.buildList
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.maven.MavenPropertyIR
-import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 
 interface JvmModuleConfigurator : ModuleConfiguratorWithTests {
     companion object : ModuleConfiguratorSettings() {

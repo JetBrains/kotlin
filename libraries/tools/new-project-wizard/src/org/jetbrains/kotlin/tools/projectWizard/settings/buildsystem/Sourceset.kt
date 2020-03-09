@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.tools.projectWizard.GeneratedIdentificator
 import org.jetbrains.kotlin.tools.projectWizard.Identificator
 import org.jetbrains.kotlin.tools.projectWizard.IdentificatorOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
+
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildFileIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin

@@ -1,11 +1,13 @@
 package org.jetbrains.kotlin.tools.projectWizard.templates
 
-import org.jetbrains.kotlin.tools.projectWizard.core.buildList
-import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.asPath
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
+import org.jetbrains.kotlin.tools.projectWizard.core.buildList
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.addWithJavaIntoJvmTarget
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.runTaskIrs
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 

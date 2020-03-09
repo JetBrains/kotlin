@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.service
 
 import com.intellij.openapi.module.ModifiableModuleModel
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.tools.projectWizard.core.service.FileFormattingService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 
 interface IdeaWizardService : WizardService

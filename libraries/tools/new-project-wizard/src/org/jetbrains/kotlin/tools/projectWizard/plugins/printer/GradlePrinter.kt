@@ -1,9 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.printer
 
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BodyIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.isEmpty
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.render
 
 class GradlePrinter(val dsl: GradleDsl, override val indent: Int = 4) : BuildFilePrinter() {
     fun inBrackets(inner: () -> Unit) {

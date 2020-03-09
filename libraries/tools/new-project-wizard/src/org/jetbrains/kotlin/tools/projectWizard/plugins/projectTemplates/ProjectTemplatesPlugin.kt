@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates
 
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.core.context.SettingsWritingContext
+
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules

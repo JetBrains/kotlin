@@ -4,9 +4,14 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionToolbarPosition
 import com.intellij.openapi.ui.Messages
 import com.intellij.ui.ToolbarDecorator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidSinglePlatformModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.IOSSinglePlatformModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsSingleplatformModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.MppModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.createPanelWithPopupHandler
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import javax.swing.JComponent

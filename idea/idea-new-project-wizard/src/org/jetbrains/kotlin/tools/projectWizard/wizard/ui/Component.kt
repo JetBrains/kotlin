@@ -1,9 +1,10 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui
 
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
-import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
-import org.jetbrains.kotlin.tools.projectWizard.core.context.SettingsWritingContext
+
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.SettingsWritingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSettingPropertyReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
@@ -21,7 +22,7 @@ abstract class Component : Displayable {
     }
 }
 
-abstract class DynamicComponent(private val ideContext: IdeContext) : Component() {
+abstract class DynamicComponent(private val context: Context) : Component() {
     private var isInitialized: Boolean = false
 
     override fun onInit() {
@@ -40,19 +41,21 @@ abstract class DynamicComponent(private val ideContext: IdeContext) : Component(
         get() = reference.value
 
     init {
-        ideContext.eventManager.addSettingUpdaterEventListener { reference ->
-            if (isInitialized) onValueUpdated(reference)
+        write {
+            eventManager.addSettingUpdaterEventListener { reference ->
+                if (isInitialized) onValueUpdated(reference)
+            }
         }
     }
 
     protected fun <T> read(reader: ReadingContext.() -> T): T =
-        reader(ideContext)
+        context.read(reader)
 
     protected fun <T> write(writer: WritingContext.() -> T): T =
-        writer(ideContext)
+        context.write(writer)
 
     protected fun <T> modify(modifier: SettingsWritingContext.() -> T): T =
-        modifier(ideContext)
+        context.writeSettings(modifier)
 
     open fun onValueUpdated(reference: SettingReference<*, *>?) {}
 }

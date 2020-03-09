@@ -11,7 +11,10 @@ import com.intellij.openapi.projectRoots.SimpleJavaSdkType
 import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.PlatformTestCase
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
-import org.jetbrains.kotlin.tools.projectWizard.cli.*
+import org.jetbrains.kotlin.tools.projectWizard.cli.BuildSystem
+import org.jetbrains.kotlin.tools.projectWizard.cli.TestWizardService
+import org.jetbrains.kotlin.tools.projectWizard.cli.assertSuccess
+import org.jetbrains.kotlin.tools.projectWizard.cli.isGradle
 import org.jetbrains.kotlin.tools.projectWizard.core.service.Services
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase

@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard
 
 import org.jetbrains.kotlin.tools.projectWizard.cli.BuildSystem
 import org.jetbrains.kotlin.tools.projectWizard.cli.ProjectTemplateBasedTestWizard
-import org.jetbrains.kotlin.tools.projectWizard.cli.readSettingsYaml
-import org.jetbrains.kotlin.tools.projectWizard.plugins.Plugins
 import java.nio.file.Path
 
 abstract class AbstractProjectTemplateNewWizardProjectImportTest : AbstractNewWizardProjectImportTest() {

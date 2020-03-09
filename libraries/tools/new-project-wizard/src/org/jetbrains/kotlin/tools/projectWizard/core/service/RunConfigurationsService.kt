@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.core.service
 
 import org.jetbrains.kotlin.tools.projectWizard.WizardRunConfiguration
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+
 
 interface RunConfigurationsService : WizardService {
     fun ReadingContext.addRunConfigurations(configurations: List<WizardRunConfiguration>)

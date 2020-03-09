@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.templates
 
-import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
+
+import org.jetbrains.kotlin.tools.projectWizard.core.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.asPath
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.TemplateSetting

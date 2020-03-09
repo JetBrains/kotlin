@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.core.entity
 
-import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
+
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import kotlin.reflect.KProperty1
@@ -25,15 +25,6 @@ data class Task1<A, B : Any>(
         }
 
         fun build(): Task1<A, B> = Task1(name, action)
-    }
-
-    companion object {
-        fun <A, B : Any> delegate(
-            context: EntityContext<Task, TaskReference>,
-            init: Builder<A, B>.() -> Unit
-        ) = entityDelegate(context) { name ->
-            Builder<A, B>(name).apply(init).build()
-        }
     }
 }
 
@@ -71,15 +62,5 @@ data class PipelineTask(
         }
 
         fun build(): PipelineTask = PipelineTask(name, action, before, after, phase, isAvailable, title)
-    }
-
-    companion object {
-        fun delegate(
-            context: EntityContext<Task, TaskReference>,
-            phase: GenerationPhase,
-            init: Builder.() -> Unit
-        ) = entityDelegate(context) { name ->
-            Builder(name, phase).apply(init).build()
-        }
     }
 }

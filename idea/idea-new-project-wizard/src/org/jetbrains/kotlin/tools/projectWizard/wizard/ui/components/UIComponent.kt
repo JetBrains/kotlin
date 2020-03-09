@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.isSpecificError
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
-import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.label
@@ -21,11 +23,11 @@ import java.awt.BorderLayout
 import javax.swing.JComponent
 
 abstract class UIComponent<V : Any>(
-    ideContext: IdeContext,
+    context: Context,
     labelText: String? = null,
     private val validator: SettingValidator<V>? = null,
     private val onValueUpdate: (V) -> Unit = {}
-) : DynamicComponent(ideContext), ErrorAwareComponent, FocusableComponent, Disposable {
+) : DynamicComponent(context), ErrorAwareComponent, FocusableComponent, Disposable {
     private val validationIndicator by lazy(LazyThreadSafetyMode.NONE) {
         if (validator != null)
             IdeaBasedComponentValidator(this, getValidatorTarget())

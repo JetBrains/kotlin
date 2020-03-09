@@ -2,8 +2,6 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard
 
 import org.jetbrains.kotlin.tools.projectWizard.YamlSettingsParser
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.context.SettingsWritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSetting
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
@@ -24,16 +22,15 @@ class YamlWizard(
     servicesManager: ServicesManager = CLI_SERVICES_MANAGER,
     isUnitTestMode: Boolean
 ) : Wizard(createPlugins, servicesManager, isUnitTestMode) {
-    private val settingsWritingContext = SettingsWritingContext(context, servicesManager, isUnitTestMode)
 
     override fun apply(
         services: List<WizardService>,
         phases: Set<GenerationPhase>,
         onTaskExecuting: (PipelineTask) -> Unit
     ): TaskResult<Unit> = computeM {
-        val (settingsValuesFromYaml) = valuesReadingContext.parseYaml(yaml, pluginSettings)
+        val (settingsValuesFromYaml) = context.read { parseYaml(yaml, pluginSettings) }
 
-        with(settingsWritingContext) {
+        context.writeSettings {
             settingsValuesFromYaml.forEach { (reference, value) -> reference.setValue(value) }
             StructurePlugin::projectPath.reference.setValue(projectPath)
         }

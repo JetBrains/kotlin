@@ -132,7 +132,9 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
     }
 
     override fun validateModuleName(moduleName: String): Boolean {
-        when (val validationResult = projectNameValidator.validate(wizard.valuesReadingContext, moduleName)) {
+        when (val validationResult = wizard.context.read {
+            projectNameValidator.validate(this, moduleName)
+        }) {
             ValidationResult.OK -> return true
             is ValidationResult.ValidationError -> {
                 val message = validationResult.messages.firstOrNull() ?: INVALID_PROJECT_NAME_MESSAGE
@@ -143,7 +145,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
 
     private fun updateProjectNameAndPomDate(settingsStep: SettingsStep) {
         if (pomValuesAreSet) return
-        val suggestedProjectName = with(wizard.valuesReadingContext) {
+        val suggestedProjectName = wizard.context.read {
             ProjectTemplatesPlugin::template.settingValue.suggestedProjectName.decapitalize()
         }
         settingsStep.moduleNameLocationSettings?.apply {
@@ -182,7 +184,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
 abstract class WizardStep(protected val wizard: IdeWizard, private val phase: GenerationPhase) : ModuleWizardStep() {
     override fun updateDataModel() = Unit // model is updated on every UI action
     override fun validate(): Boolean =
-        when (val result = with(wizard.valuesReadingContext) { with(wizard) { validate(setOf(phase)) } }) {
+        when (val result = wizard.context.read{ with(wizard) { validate(setOf(phase)) } }) {
             is Success<*> -> true
             is Failure -> {
                 throw ConfigurationException(result.asHtml(), KotlinNewProjectWizardBundle.message("error.validation"))
@@ -194,7 +196,7 @@ private class PomWizardStep(
     originalSettingStep: SettingsStep,
     wizard: IdeWizard
 ) : WizardStep(wizard, GenerationPhase.PROJECT_GENERATION) {
-    private val pomWizardStepComponent = PomWizardStepComponent(wizard.ideContext)
+    private val pomWizardStepComponent = PomWizardStepComponent(wizard.context)
 
     init {
         originalSettingStep.addSettingsComponent(component)

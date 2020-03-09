@@ -4,25 +4,25 @@ import com.intellij.icons.AllIcons
 import icons.GradleIcons
 import icons.OpenapiIcons
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.DropDownSettingType
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
-import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.DropDownComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.UIComponentDelegatingSettingComponent
 
 
 class BuildSystemTypeSettingComponent(
-    ideContext: IdeContext
+    context: Context
 ) : UIComponentDelegatingSettingComponent<BuildSystemType, DropDownSettingType<BuildSystemType>>(
     BuildSystemPlugin::type.reference,
-    ideContext
+    context
 ) {
     override val uiComponent: DropDownComponent<BuildSystemType> = DropDownComponent(
-        ideContext,
+        context,
         setting.type.values,
         labelText = "Build System",
         filter = { value -> read { setting.type.filter(this, reference, value) } },

@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.core.entity.settings
 
+import org.jetbrains.kotlin.tools.projectWizard.core.EventManager
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.path
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 
-class SettingContext(val onUpdated: (SettingReference<*, *>) -> Unit) {
+class SettingContext {
     private val values = mutableMapOf<String, Any>()
     private val pluginSettings = mutableMapOf<String, PluginSetting<*, *>>()
+    val eventManager = EventManager()
 
     @Suppress("UNCHECKED_CAST")
     operator fun <V : Any, T : SettingType<V>> get(
@@ -21,30 +25,34 @@ class SettingContext(val onUpdated: (SettingReference<*, *>) -> Unit) {
         newValue: V
     ) {
         values[reference.path] = newValue
-        onUpdated(reference)
+        eventManager.fireListeners(reference)
     }
-
-
-    val allPluginSettings: Collection<PluginSetting<*, *>>
-        get() = pluginSettings.values
 
     @Suppress("UNCHECKED_CAST")
     fun <V : Any, T : SettingType<V>> getPluginSetting(pluginSettingReference: PluginSettingReference<V, T>) =
         pluginSettings[pluginSettingReference.path] as PluginSetting<V, T>
 
     @Suppress("UNCHECKED_CAST")
-    fun <V : Any, T : SettingType<V>> getPluginSetting(pluginSettingReference: PluginSettingPropertyReference<V, T>) =
+    private fun <V : Any, T : SettingType<V>> getPluginSetting(pluginSettingReference: PluginSettingPropertyReference<V, T>) =
         pluginSettings[pluginSettingReference.path] as? PluginSetting<V, T>
 
-    @Suppress("UNCHECKED_CAST")
-    fun <V : Any, T : SettingType<V>> setPluginSetting(
+    private fun <V : Any, T : SettingType<V>> setPluginSetting(
         pluginSettingReference: PluginSettingPropertyReference<V, T>,
         setting: PluginSetting<V, T>
     ) {
         pluginSettings[pluginSettingReference.path] = setting
     }
 
-    @Suppress("UNCHECKED_CAST")
-    fun <V : Any, T : SettingType<V>> pluginSettingValue(setting: PluginSetting<V, T>): V? =
-        values[setting.path] as? V
+    fun <V : Any, T : SettingType<V>> settingDelegate(
+        create: (path: String) -> SettingBuilder<V, T>
+    ): ReadOnlyProperty<Any, PluginSetting<V, T>> = object : ReadOnlyProperty<Any, PluginSetting<V, T>> {
+        override fun getValue(thisRef: Any, property: KProperty<*>): PluginSetting<V, T> {
+            @Suppress("UNCHECKED_CAST")
+            val reference = property as PluginSettingPropertyReference<V, T>
+            getPluginSetting(reference)?.let { return it }
+            val setting = PluginSetting(create(reference.path).buildInternal())
+            setPluginSetting(reference, setting)
+            return setting
+        }
+    }
 }

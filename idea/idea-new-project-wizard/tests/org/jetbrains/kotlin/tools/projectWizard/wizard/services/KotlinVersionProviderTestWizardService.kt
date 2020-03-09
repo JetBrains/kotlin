@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.services
 
 import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.cli.TestWizardService
-import org.jetbrains.kotlin.tools.projectWizard.core.service.FileFormattingService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionProviderService
-import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionProviderServiceImpl
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 
 class KotlinVersionProviderTestWizardService : KotlinVersionProviderService, TestWizardService {

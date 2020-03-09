@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
 import com.intellij.ui.components.JBTabbedPane
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.getConfiguratorSettings
@@ -10,8 +11,6 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module.Companion.ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
-import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
-import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.TextFieldComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
@@ -20,21 +19,19 @@ import java.awt.BorderLayout
 import javax.swing.JComponent
 
 class ModuleSettingsComponent(
-    ideContext: IdeContext,
+    context: Context,
     uiEditorUsagesStats: UiEditorUsageStats
-) : DynamicComponent(ideContext) {
-    private val validateModuleName = run {
-        val entityName = KotlinNewProjectWizardBundle.message("editor.entity.module.name")
-        StringValidators.shouldNotBeBlank(entityName) and
-                StringValidators.shouldBeValidIdentifier(entityName, ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES)
-    }
+) : DynamicComponent(context) {
+    private val validateModuleName =
+        StringValidators.shouldNotBeBlank("Module name") and
+                StringValidators.shouldBeValidIdentifier("Module Name", ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES)
 
-    private val moduleConfiguratorSettingsList = SettingsList(emptyList(), ideContext).asSubComponent()
-    private val templateComponent = TemplatesComponent(ideContext, uiEditorUsagesStats).asSubComponent()
+    private val moduleConfiguratorSettingsList = SettingsList(emptyList(), context).asSubComponent()
+    private val templateComponent = TemplatesComponent(context, uiEditorUsagesStats).asSubComponent()
 
     private val tabPanel = JBTabbedPane().apply {
-        add(KotlinNewProjectWizardBundle.message("editor.tab.template"), templateComponent.component)
-        add(KotlinNewProjectWizardBundle.message("editor.tab.module.settings"), moduleConfiguratorSettingsList.component)
+        add("Template", templateComponent.component)
+        add("Module Settings", moduleConfiguratorSettingsList.component)
     }
 
     fun selectSettingWithError(error: ValidationResult.ValidationError) {
@@ -45,11 +42,11 @@ class ModuleSettingsComponent(
     }
 
     private val nameField = TextFieldComponent(
-        ideContext,
-        labelText = KotlinNewProjectWizardBundle.message("editor.field.name"),
+        context,
+        labelText = "Name",
         onValueUpdate = { value ->
             module?.name = value
-            ideContext.eventManager.fireListeners(null)
+            context.write { eventManager.fireListeners(null) }
         },
         validator = validateModuleName
     ).asSubComponent()

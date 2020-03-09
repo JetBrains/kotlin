@@ -1,19 +1,18 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components
 
 import com.intellij.ui.components.JBTextField
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
-import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.textField
 
 class TextFieldComponent(
-    ideContext: IdeContext,
+    context: Context,
     labelText: String? = null,
     initialValue: String? = null,
     validator: SettingValidator<String>? = null,
     onValueUpdate: (String) -> Unit = {}
 ) : UIComponent<String>(
-    ideContext,
+    context,
     labelText,
     validator,
     onValueUpdate

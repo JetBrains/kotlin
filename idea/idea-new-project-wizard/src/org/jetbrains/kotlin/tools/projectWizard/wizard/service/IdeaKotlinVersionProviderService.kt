@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.tools.projectWizard.core.asNullable
 import org.jetbrains.kotlin.tools.projectWizard.core.compute
 import org.jetbrains.kotlin.tools.projectWizard.core.safe
 import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionProviderService
-import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionProviderServiceImpl
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.runWithProgressBar
 import java.io.BufferedReader

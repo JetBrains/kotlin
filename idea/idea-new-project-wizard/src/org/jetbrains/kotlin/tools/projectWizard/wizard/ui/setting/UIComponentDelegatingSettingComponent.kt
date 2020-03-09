@@ -5,17 +5,17 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting
 
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
-import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.UIComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.valueForSetting
 import javax.swing.JComponent
 
 abstract class UIComponentDelegatingSettingComponent<V : Any, T : SettingType<V>>(
     reference: SettingReference<V, T>,
-    ideContext: IdeContext
-) : SettingComponent<V, T>(reference, ideContext) {
+    context: Context
+) : SettingComponent<V, T>(reference, context) {
     abstract val uiComponent: UIComponent<V>
 
     // As there is one in UIComponent

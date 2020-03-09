@@ -3,12 +3,11 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.SimpleTextAttributes
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settingValidator
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
-import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.awt.event.ItemEvent
 import javax.swing.DefaultComboBoxModel
@@ -16,7 +15,7 @@ import javax.swing.Icon
 import javax.swing.JList
 
 class DropDownComponent<T : DisplayableSettingItem>(
-    ideContext: IdeContext,
+    context: Context,
     initialValues: List<T> = emptyList(),
     labelText: String? = null,
     private val filter: (T) -> Boolean = { true },
@@ -24,7 +23,7 @@ class DropDownComponent<T : DisplayableSettingItem>(
     private val iconProvider: (T) -> Icon? = { null },
     onValueUpdate: (T) -> Unit = {}
 ) : UIComponent<T>(
-    ideContext,
+    context,
     labelText,
     validator,
     onValueUpdate

@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.core.service
 
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 
 interface BuildSystemAvailabilityWizardService : WizardService {

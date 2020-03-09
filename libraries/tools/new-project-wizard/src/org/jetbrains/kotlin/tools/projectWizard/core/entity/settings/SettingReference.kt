@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.tools.projectWizard.core.entity.settings
 
 import org.jetbrains.kotlin.tools.projectWizard.Identificator
 import org.jetbrains.kotlin.tools.projectWizard.core.Plugin
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.path
 import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module

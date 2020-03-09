@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.tools.projectWizard.cli
 
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskResult
-import org.jetbrains.kotlin.tools.projectWizard.core.compute
+import org.jetbrains.kotlin.tools.projectWizard.core.UNIT_SUCCESS
 import org.jetbrains.kotlin.tools.projectWizard.core.computeM
-import org.jetbrains.kotlin.tools.projectWizard.core.context.SettingsWritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
+import org.jetbrains.kotlin.tools.projectWizard.core.map
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
 import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
@@ -34,31 +34,29 @@ class ProjectTemplateBasedTestWizard(
     servicesManager,
     isUnitTestMode = true
 ) {
-    private val settingsWritingContext = SettingsWritingContext(context, servicesManager, isUnitTestMode = true)
 
     override fun apply(
         services: List<WizardService>,
         phases: Set<GenerationPhase>,
         onTaskExecuting: (PipelineTask) -> Unit
-    ): TaskResult<Unit> =
-        computeM {
-            super.apply(services, setOf(GenerationPhase.PREPARE), onTaskExecuting).ensure()
-            with(settingsWritingContext) {
-                applyProjectTemplate(projectTemplate)
-                BuildSystemPlugin::type.reference.setValue(buildSystem.buildSystemType)
-                StructurePlugin::projectPath.reference.setValue(projectDirectory)
-                StructurePlugin::name.reference.setValue(projectTemplate.id)
-                StructurePlugin::groupId.reference.setValue(GROUP_ID)
-                StructurePlugin::artifactId.reference.setValue(ARTIFACT_ID)
-                applyAdditionalSettingsFromYaml().ensure()
-            }
-
-            super.apply(services, phases, onTaskExecuting)
+    ): TaskResult<Unit> = computeM {
+        super.apply(services, setOf(GenerationPhase.PREPARE), onTaskExecuting).ensure()
+        context.writeSettings {
+            applyProjectTemplate(projectTemplate)
+            BuildSystemPlugin::type.reference.setValue(buildSystem.buildSystemType)
+            StructurePlugin::projectPath.reference.setValue(projectDirectory)
+            StructurePlugin::name.reference.setValue(projectTemplate.id)
+            StructurePlugin::groupId.reference.setValue(GROUP_ID)
+            StructurePlugin::artifactId.reference.setValue(ARTIFACT_ID)
         }
+        applyAdditionalSettingsFromYaml().ensure()
 
-    private fun SettingsWritingContext.applyAdditionalSettingsFromYaml() = compute {
-        if (additionalYamlSettings != null) {
-            val (additionalSettings) = parseYaml(additionalYamlSettings, pluginSettings)
+        super.apply(services, phases, onTaskExecuting)
+    }
+
+    private fun applyAdditionalSettingsFromYaml() = context.writeSettings {
+        if (additionalYamlSettings == null) return@writeSettings UNIT_SUCCESS
+        parseYaml(additionalYamlSettings, pluginSettings).map { additionalSettings ->
             additionalSettings.forEach { (reference, value) -> reference.setValue(value) }
         }
     }

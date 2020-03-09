@@ -1,12 +1,11 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
-import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeWizard
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEditor.ModulesEditorComponent
@@ -17,9 +16,9 @@ import javax.swing.JComponent
 class SecondStepWizardComponent(
     wizard: IdeWizard,
     uiEditorUsagesStats: UiEditorUsageStats
-) : WizardStepComponent(wizard.ideContext) {
+) : WizardStepComponent(wizard.context) {
     private val moduleEditorSubStep =
-        ModulesEditorSubStep(wizard.ideContext, uiEditorUsagesStats, ::onNodeSelected) {
+        ModulesEditorSubStep(wizard.context, uiEditorUsagesStats, ::onNodeSelected) {
             templatesSubStep.selectSettingWithError(it)
         }.asSubComponent()
     private val templatesSubStep = ModuleSettingsSubStep(wizard, uiEditorUsagesStats).asSubComponent()
@@ -36,13 +35,13 @@ class SecondStepWizardComponent(
 
 
 class ModulesEditorSubStep(
-    ideContext: IdeContext,
+    context: Context,
     uiEditorUsagesStats: UiEditorUsageStats,
     onNodeSelected: (data: DisplayableSettingItem?) -> Unit,
     selectSettingWithError: (ValidationResult.ValidationError) -> Unit
-) : SubStep(ideContext) {
+) : SubStep(context) {
     private val moduleSettingComponent = ModulesEditorComponent(
-        ideContext,
+        context,
         uiEditorUsagesStats,
         onNodeSelected,
         selectSettingWithError
@@ -62,9 +61,9 @@ class ModulesEditorSubStep(
 class ModuleSettingsSubStep(
     wizard: IdeWizard,
     uiEditorUsagesStats: UiEditorUsageStats
-) : SubStep(wizard.ideContext) {
-    private val sourcesetSettingsComponent = SourcesetSettingsComponent(wizard.ideContext).asSubComponent()
-    private val moduleSettingsComponent = ModuleSettingsComponent(wizard.ideContext, uiEditorUsagesStats).asSubComponent()
+) : SubStep(wizard.context) {
+    private val sourcesetSettingsComponent = SourcesetSettingsComponent(wizard.context).asSubComponent()
+    private val moduleSettingsComponent = ModuleSettingsComponent(wizard.context, uiEditorUsagesStats).asSubComponent()
     private val nothingSelectedComponent = NothingSelectedComponent().asSubComponent()
 
     private val panel = panel {

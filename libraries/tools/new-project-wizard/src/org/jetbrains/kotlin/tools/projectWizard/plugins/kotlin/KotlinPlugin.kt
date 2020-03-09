@@ -1,15 +1,15 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin
 
 import org.jetbrains.kotlin.tools.projectWizard.Versions
-import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.fold
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionProviderService
-import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionProviderServiceImpl
 import org.jetbrains.kotlin.tools.projectWizard.core.service.kotlinVersionKind
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildFileIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.RepositoryIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.withIrs
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin

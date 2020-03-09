@@ -1,30 +1,30 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui
 
 import com.intellij.ui.components.panels.VerticalLayout
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
-import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.StringSettingComponent
 import javax.swing.Box
 import javax.swing.JSeparator
 import javax.swing.SwingConstants
 
-class PomWizardStepComponent(ideContext: IdeContext) : WizardStepComponent(ideContext) {
+class PomWizardStepComponent(context: Context) : WizardStepComponent(context) {
     private val groupIdComponent = StringSettingComponent(
         StructurePlugin::groupId.reference,
-        ideContext,
+        context,
         showLabel = true
     ).asSubComponent()
 
     private val artifactIdComponent = StringSettingComponent(
         StructurePlugin::artifactId.reference,
-        ideContext,
+        context,
         showLabel = true
     ).asSubComponent()
 
     private val versionComponent = StringSettingComponent(
         StructurePlugin::version.reference,
-        ideContext,
+        context,
         showLabel = true
     ).asSubComponent()
 

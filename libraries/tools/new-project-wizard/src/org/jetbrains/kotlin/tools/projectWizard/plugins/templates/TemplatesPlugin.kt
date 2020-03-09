@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.templates
 
-import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
+
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.Defaults.KOTLIN_DIR
 import org.jetbrains.kotlin.tools.projectWizard.core.Defaults.RESOURCES_DIR

@@ -1,65 +1,58 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard
 
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.core.context.SettingsWritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
-import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingSerializer
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
 import org.jetbrains.kotlin.tools.projectWizard.core.service.SettingSavingWizardService
+import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
 
-abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: ServicesManager, private val isUnitTestMode: Boolean) {
-    val context = Context(createPlugins, EventManager())
-    val valuesReadingContext = ReadingContext(context, servicesManager, isUnitTestMode)
-    private val settingsWritingContext = SettingsWritingContext(context, servicesManager, isUnitTestMode)
-    protected val plugins = context.plugins
-    protected val pluginSettings = plugins.flatMap { it.declaredSettings }.distinctBy { it.path }
+abstract class Wizard(createPlugins: PluginsCreator, servicesManager: ServicesManager, isUnitTestMode: Boolean) {
+    val context = Context(createPlugins, servicesManager, isUnitTestMode)
 
-    inline fun <reified V : Any> settingValue(setting: PluginSettingReference<V, SettingType<V>>): V =
-        with(valuesReadingContext) { setting.settingValue }
-
-    private fun Context.checkAllRequiredSettingPresent(phases: Set<GenerationPhase>): TaskResult<Unit> =
+    private fun checkAllRequiredSettingPresent(phases: Set<GenerationPhase>): TaskResult<Unit> = context.read {
         getUnspecifiedSettings(phases).let { unspecifiedSettings ->
             if (unspecifiedSettings.isEmpty()) UNIT_SUCCESS
             else Failure(RequiredSettingsIsNotPresentError(unspecifiedSettings.map { it.path }))
         }
-
+    }
 
     private fun initNonPluginDefaultValues() {
-        with(settingsWritingContext) {
-            KotlinPlugin::modules.reference.notRequiredSettingValue?.withAllSubModules(includeSourcesets = true)?.forEach { module ->
-                with(module) { initDefaultValuesForSettings() }
-            }
+        context.writeSettings {
+            KotlinPlugin::modules.reference.notRequiredSettingValue
+                ?.withAllSubModules(includeSourcesets = true)
+                ?.forEach { module ->
+                    with(module) { initDefaultValuesForSettings() }
+                }
         }
     }
 
     protected fun initPluginSettingsDefaultValues() {
-        with(settingsWritingContext) {
+        context.writeSettings {
             for (setting in pluginSettings) {
                 setting.reference.setSettingValueToItsDefaultIfItIsNotSetValue()
             }
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun ReadingContext.validate(phases: Set<GenerationPhase>): TaskResult<Unit> =
-        context.settingContext.allPluginSettings.map { setting ->
-            val value = context.settingContext.pluginSettingValue(setting) ?: return@map ValidationResult.OK
+    fun validate(phases: Set<GenerationPhase>): TaskResult<Unit> = context.read {
+        pluginSettings.map { setting ->
+            val value = setting.reference.notRequiredSettingValue ?: return@map ValidationResult.OK
             if (setting.neededAtPhase in phases && setting.isActive(this))
                 (setting.validator as SettingValidator<Any>).validate(this, value)
             else ValidationResult.OK
-        }.fold(ValidationResult.OK, ValidationResult::and).toResult()
+        }.fold().toResult()
+    }
 
-    private fun ReadingContext.saveSettingValues(phases: Set<GenerationPhase>) {
+    private fun saveSettingValues(phases: Set<GenerationPhase>) = context.read {
         for (setting in pluginSettings) {
             if (setting.neededAtPhase !in phases) continue
             if (!setting.isSavable) continue
-            if (!setting.isAvailable(valuesReadingContext)) continue
+            if (!setting.isAvailable(this)) continue
             val serializer = setting.type.serializer as? SettingSerializer.Serializer<Any> ?: continue
             service<SettingSavingWizardService>().saveSettingValue(
                 setting.path,
@@ -75,21 +68,23 @@ abstract class Wizard(createPlugins: PluginsCreator, val servicesManager: Servic
     ): TaskResult<Unit> = computeM {
         initPluginSettingsDefaultValues()
         initNonPluginDefaultValues()
-        context.checkAllRequiredSettingPresent(phases).ensure()
-        val taskRunningContext = WritingContext(context, servicesManager.withServices(services), isUnitTestMode)
-        taskRunningContext.validate(phases).ensure()
-        taskRunningContext.saveSettingValues(phases)
+        checkAllRequiredSettingPresent(phases).ensure()
+        validate(phases).ensure()
+        saveSettingValues(phases)
         val (tasksSorted) = context.sortTasks().map { tasks ->
             tasks.groupBy { it.phase }.toList().sortedBy { it.first }.flatMap { it.second }
         }
-        tasksSorted
-            // We should take only one task of each type as all tasks with the same path are considered to be the same
-            .distinctBy { it.path }
-            .asSequence()
-            .filter { task -> task.phase in phases }
-            .filter { task -> task.isAvailable(taskRunningContext) }
-            .map { task -> onTaskExecuting(task); task.action(taskRunningContext) }
-            .sequenceFailFirst()
-            .ignore()
+
+        context.withAdditionalServices(services).write {
+            tasksSorted
+                // We should take only one task of each type as all tasks with the same path are considered to be the same
+                .distinctBy { it.path }
+                .asSequence()
+                .filter { task -> task.phase in phases }
+                .filter { task -> task.isAvailable(this) }
+                .map { task -> onTaskExecuting(task); task.action(this) }
+                .sequenceFailFirst()
+                .ignore()
+        }
     }
 }
