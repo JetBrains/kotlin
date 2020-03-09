@@ -7,6 +7,7 @@ import com.intellij.injected.editor.EditorWindow;
 import com.intellij.lang.CompositeLanguage;
 import com.intellij.lang.Language;
 import com.intellij.lang.injection.InjectedLanguageManager;
+import com.intellij.largeFilesEditor.actions.LargeFileEditorUtils;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.diagnostic.Logger;
@@ -47,7 +48,7 @@ public class SelectWordHandler extends EditorActionHandler {
       LOG.debug("enter: execute(editor='" + editor + "')");
     }
     Project project = CommonDataKeys.PROJECT.getData(dataContext);
-    if (project == null) {
+    if (project == null || LargeFileEditorUtils.isLargeFileEditor(editor)) {
       if (myOriginalHandler != null) {
         myOriginalHandler.execute(editor, caret, dataContext);
       }
@@ -57,7 +58,8 @@ public class SelectWordHandler extends EditorActionHandler {
 
     TextRange range = selectWord(caret, project);
     if (editor instanceof EditorWindow) {
-      if (range == null || !isInsideEditableInjection((EditorWindow)editor, range, project) || TextRange.from(0, editor.getDocument().getTextLength()).equals(
+      if (range == null || !isInsideEditableInjection((EditorWindow)editor, range, project)
+          || TextRange.from(0, editor.getDocument().getTextLength()).equals(
         new TextRange(caret.getSelectionStart(), caret.getSelectionEnd()))) {
         editor = ((EditorWindow)editor).getDelegate();
         caret = ((InjectedCaret)caret).getDelegate();
@@ -193,9 +195,9 @@ public class SelectWordHandler extends EditorActionHandler {
   private static boolean isLanguageExtension(@NotNull final PsiFile file, @NotNull final PsiElement elementAt) {
     final Language elementLanguage = elementAt.getLanguage();
     if (file.getLanguage() instanceof CompositeLanguage) {
-      CompositeLanguage compositeLanguage = (CompositeLanguage) file.getLanguage();
+      CompositeLanguage compositeLanguage = (CompositeLanguage)file.getLanguage();
       final Language[] extensions = compositeLanguage.getLanguageExtensionsForFile(file);
-      for(Language extension: extensions) {
+      for (Language extension : extensions) {
         if (extension == elementLanguage) {
           return true;
         }
@@ -203,5 +205,4 @@ public class SelectWordHandler extends EditorActionHandler {
     }
     return false;
   }
-
 }

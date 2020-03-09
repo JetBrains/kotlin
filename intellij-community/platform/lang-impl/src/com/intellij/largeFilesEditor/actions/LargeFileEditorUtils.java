@@ -10,7 +10,11 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class Utils {
+public class LargeFileEditorUtils {
+
+  public static boolean isLargeFileEditor(Editor editor) {
+    return tryGetLargeFileEditorManagerFromEditor(editor) != null;
+  }
 
   @Nullable
   static LargeFileEditor tryGetLargeFileEditorManager(AnActionEvent e) {

@@ -18,7 +18,7 @@ public abstract class LfeBaseEditorActionHandler extends EditorActionHandler {
 
   @Override
   protected final void doExecute(@NotNull Editor editor, @Nullable Caret caret, DataContext dataContext) {
-    LargeFileEditor largeFileEditor = Utils.tryGetLargeFileEditorManagerFromEditor(editor);
+    LargeFileEditor largeFileEditor = LargeFileEditorUtils.tryGetLargeFileEditorManagerFromEditor(editor);
     if (largeFileEditor != null) {
       doExecuteInLfe(largeFileEditor, editor, caret, dataContext);
     }
@@ -31,14 +31,12 @@ public abstract class LfeBaseEditorActionHandler extends EditorActionHandler {
 
   @Override
   protected final boolean isEnabledForCaret(@NotNull Editor editor, @NotNull Caret caret, DataContext dataContext) {
-    LargeFileEditor largeFileEditor = Utils.tryGetLargeFileEditorManagerFromEditor(editor);
+    LargeFileEditor largeFileEditor = LargeFileEditorUtils.tryGetLargeFileEditorManagerFromEditor(editor);
     if (largeFileEditor != null) {
       return isEnabledInLfe(largeFileEditor, editor, caret, dataContext);
     }
     else {
-      return originalHandler != null
-             ? originalHandler.isEnabled(editor, caret, dataContext)
-             : false;
+      return originalHandler != null && originalHandler.isEnabled(editor, caret, dataContext);
     }
   }
 
