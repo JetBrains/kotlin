@@ -254,6 +254,7 @@ private val tailrecPhase = makeIrFilePhase<JvmBackendContext>(
     description = "Handle tailrec calls"
 )
 
+
 @Suppress("Reformat")
 private val jvmFilePhases =
         renameAnonymousParametersLowering then
@@ -337,9 +338,9 @@ private val jvmFilePhases =
         initializersCleanupPhase then
         collectionStubMethodLowering then
         functionNVarargBridgePhase then
-        bridgePhase then
         jvmStaticAnnotationPhase then
         staticDefaultFunctionPhase then
+        bridgePhase then
         syntheticAccessorPhase then
 
         jvmArgumentNullabilityAssertions then

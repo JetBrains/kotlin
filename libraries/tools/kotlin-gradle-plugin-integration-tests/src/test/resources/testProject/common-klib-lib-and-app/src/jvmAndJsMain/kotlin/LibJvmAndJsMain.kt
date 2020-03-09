@@ -4,6 +4,7 @@ actual class LibCommonMainExpect : LibCommonMainIface {
     actual fun libCommonMainExpectFun(): Unit {
         println("actualized in jvmAndJsMain")
         libCommonMainTopLevelFun()
+        libCommonMainInternalFun()
     }
 
     fun additionalFunInJvmAndJsActual() {

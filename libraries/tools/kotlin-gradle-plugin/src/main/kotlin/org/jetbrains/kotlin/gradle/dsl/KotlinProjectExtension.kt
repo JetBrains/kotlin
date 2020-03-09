@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.targets.js.calculateJsCompilerType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -101,6 +102,7 @@ open class KotlinJsProjectExtension :
     internal var _target: KotlinJsTargetDsl? = null
         private set
 
+    @Deprecated("Use js() instead", ReplaceWith("js()"))
     override var target: KotlinJsTargetDsl
         get() {
             if (_target == null) {
@@ -114,12 +116,19 @@ open class KotlinJsProjectExtension :
 
     override lateinit var defaultJsCompilerType: KotlinJsCompilerType
 
-    open fun js(
-        compiler: KotlinJsCompilerType = defaultJsCompilerType,
+    private fun jsInternal(
+        compiler: KotlinJsCompilerType? = null,
         body: KotlinJsTargetDsl.() -> Unit
-    ) {
+    ): KotlinJsTargetDsl {
+        if (_target != null) {
+            val previousCompilerType = _target!!.calculateJsCompilerType()
+            check(compiler == null || previousCompilerType == compiler) {
+                "You already registered Kotlin/JS target with another compiler: ${previousCompilerType.lowerName}"
+            }
+        }
+
         if (_target == null) {
-            val target: KotlinJsTargetDsl = when (compiler) {
+            val target: KotlinJsTargetDsl = when (compiler ?: defaultJsCompilerType) {
                 LEGACY -> legacyPreset
                     .also { it.irPreset = null }
                     .createTarget("js")
@@ -145,11 +154,29 @@ open class KotlinJsProjectExtension :
         }
 
         target.run(body)
+
+        return target
     }
 
-    open fun js(
-        body: KotlinJsTargetDsl.() -> Unit
-    ) = js(compiler = defaultJsCompilerType, body = body)
+    fun js(
+        compiler: KotlinJsCompilerType = defaultJsCompilerType,
+        body: KotlinJsTargetDsl.() -> Unit = { }
+    ): KotlinJsTargetDsl = jsInternal(compiler, body)
+
+    fun js(
+        body: KotlinJsTargetDsl.() -> Unit = { }
+    ) = jsInternal(body = body)
+
+    fun js() = js { }
+
+    fun js(compiler: KotlinJsCompilerType, configure: Closure<*>) =
+        js(compiler = compiler) {
+            ConfigureUtil.configure(configure, this)
+        }
+
+    fun js(configure: Closure<*>) = jsInternal {
+        ConfigureUtil.configure(configure, this)
+    }
 
     @Deprecated("Use js instead", ReplaceWith("js(body)"))
     open fun target(body: KotlinJsTargetDsl.() -> Unit) = js(body)

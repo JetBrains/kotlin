@@ -85,6 +85,11 @@ enum class ProjectOpenAction {
 
             refreshGradleProject(projectPath, project)
 
+            assertTrue(
+                ModuleManager.getInstance(project).modules.isNotEmpty(),
+                "Gradle project $projectName at $projectPath has to have at least one module"
+            )
+
             return project
         }
 

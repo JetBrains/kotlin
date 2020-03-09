@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
@@ -265,6 +266,16 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     override fun CapturedTypeMarker.typeParameter(): TypeParameterMarker? {
         require(this is ConeCapturedType)
         return this.constructor.typeParameterMarker
+    }
+
+    override fun CapturedTypeMarker.withNotNullProjection(): KotlinTypeMarker {
+        require(this is ConeCapturedType)
+        return this // TODO
+    }
+
+    override fun CapturedTypeMarker.isProjectionNotNull(): Boolean {
+        require(this is ConeCapturedType)
+        return false // TODO
     }
 
     override fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker {

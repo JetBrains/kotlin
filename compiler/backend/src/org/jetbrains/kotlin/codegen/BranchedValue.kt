@@ -240,8 +240,9 @@ class ObjectCompare(
 
     companion object {
         fun getObjectCompareOpcode(opToken: IElementType): Int = when (opToken) {
-            KtTokens.EQEQEQ -> IF_ACMPNE
-            KtTokens.EXCLEQEQEQ -> IF_ACMPEQ
+            // "==" and "!=" are here because enum values are compared using reference equality.
+            KtTokens.EQEQEQ, KtTokens.EQEQ -> IF_ACMPNE
+            KtTokens.EXCLEQEQEQ, KtTokens.EXCLEQ -> IF_ACMPEQ
             else -> throw UnsupportedOperationException("don't know how to generate this condjump")
         }
     }

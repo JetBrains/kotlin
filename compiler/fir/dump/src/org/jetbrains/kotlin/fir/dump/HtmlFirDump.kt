@@ -23,11 +23,12 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.resolve.directExpansionType
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.FirAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.FirInapplicableCandidateError
+import org.jetbrains.kotlin.fir.resolve.directExpansionType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -648,6 +649,28 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     }
 
+    private fun FlowContent.generate(typeAlias: FirTypeAlias) {
+        inl()
+
+        declarationStatus(typeAlias.status)
+
+        keyword("typealias")
+        ws
+        anchoredName(typeAlias.name, typeAlias.symbol.classId.asString())
+        generateTypeParameters(typeAlias)
+
+        +" = "
+
+        val type = typeAlias.expandedConeType
+        if (type != null) {
+            generate(type as ConeKotlinType)
+        } else {
+            +"<error expanded type>"
+        }
+
+        br
+    }
+
     private fun FlowContent.generate(flexibleType: ConeFlexibleType) {
         if (flexibleType.lowerBound.nullability == ConeNullability.NOT_NULL &&
             flexibleType.upperBound.nullability == ConeNullability.NULLABLE &&
@@ -680,7 +703,9 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                         simpleName(type.lookupTag.name)
                     }
                     +" = "
-                    generate(type.directExpansionType(session) ?: ConeKotlinErrorType("No expansion for type-alias"))
+                    generate(
+                        type.directExpansionType(session)?.fullyExpandedType(session) ?: ConeKotlinErrorType("No expansion for type-alias")
+                    )
                 }
                 else -> {
                     symbolRef(symbol) {
@@ -854,6 +879,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             is FirSimpleFunction -> generate(memberDeclaration)
             is FirProperty -> if (memberDeclaration.isLocal) generate(memberDeclaration as FirVariable<*>) else generate(memberDeclaration)
             is FirConstructor -> generate(memberDeclaration)
+            is FirTypeAlias -> generate(memberDeclaration)
             else -> unsupported(memberDeclaration)
         }
     }

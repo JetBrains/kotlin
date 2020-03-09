@@ -1983,6 +1983,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
+        @TestMetadata("builtinFunctionReferenceOwner.kt")
+        public void testBuiltinFunctionReferenceOwner() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/builtinFunctionReferenceOwner.kt");
+        }
+
         @TestMetadata("classesAreSynthetic.kt")
         public void testClassesAreSynthetic() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/classesAreSynthetic.kt");
@@ -1991,6 +1996,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("nested.kt")
         public void testNested() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/nested.kt");
+        }
+
+        @TestMetadata("optimizedSuperclasses_after.kt")
+        public void testOptimizedSuperclasses_after() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/optimizedSuperclasses_after.kt");
+        }
+
+        @TestMetadata("optimizedSuperclasses_before.kt")
+        public void testOptimizedSuperclasses_before() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/optimizedSuperclasses_before.kt");
         }
 
         @TestMetadata("compiler/testData/codegen/box/callableReference/bound")
@@ -9765,6 +9780,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
+        @TestMetadata("beforeDeclarationContainerOptimization.kt")
+        public void testBeforeDeclarationContainerOptimization() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/beforeDeclarationContainerOptimization.kt");
+        }
+
         @TestMetadata("capturePropertyInClosure.kt")
         public void testCapturePropertyInClosure() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/capturePropertyInClosure.kt");
@@ -10920,6 +10940,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt18731.kt")
         public void testKt18731() throws Exception {
             runTest("compiler/testData/codegen/box/enum/kt18731.kt");
+        }
+
+        @TestMetadata("kt18731_2.kt")
+        public void testKt18731_2() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/kt18731_2.kt");
         }
 
         @TestMetadata("kt20651.kt")
@@ -28113,6 +28138,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/syntheticAccessors/protectedFromLambda.kt");
         }
 
+        @TestMetadata("superCallFromMultipleSubclasses.kt")
+        public void testSuperCallFromMultipleSubclasses() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticAccessors/superCallFromMultipleSubclasses.kt");
+        }
+
         @TestMetadata("syntheticAccessorNames.kt")
         public void testSyntheticAccessorNames() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticAccessors/syntheticAccessorNames.kt");
@@ -28177,6 +28207,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("toArrayAlreadyPresent.kt")
         public void testToArrayAlreadyPresent() throws Exception {
             runTest("compiler/testData/codegen/box/toArray/toArrayAlreadyPresent.kt");
+        }
+
+        @TestMetadata("toArrayFromJava.kt")
+        public void testToArrayFromJava() throws Exception {
+            runTest("compiler/testData/codegen/box/toArray/toArrayFromJava.kt");
         }
 
         @TestMetadata("toArrayShouldBePublic.kt")

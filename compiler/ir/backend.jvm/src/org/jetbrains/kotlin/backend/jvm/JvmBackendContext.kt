@@ -69,13 +69,14 @@ class JvmBackendContext(
     val methodSignatureMapper = MethodSignatureMapper(this)
 
     override val declarationFactory: JvmDeclarationFactory = JvmDeclarationFactory(methodSignatureMapper, state.languageVersionSettings)
-    override val sharedVariablesManager = JvmSharedVariablesManager(state.module, builtIns, irBuiltIns)
 
     override val mapping: Mapping = DefaultMapping()
 
     val psiErrorBuilder = PsiErrorBuilder(psiSourceManager, state.diagnostics)
 
     override val ir = JvmIr(irModuleFragment, this.symbolTable)
+
+    override val sharedVariablesManager = JvmSharedVariablesManager(state.module, ir.symbols, irBuiltIns)
 
     val irIntrinsics by lazy { IrIntrinsicMethods(irBuiltIns, ir.symbols) }
 
@@ -114,22 +115,11 @@ class JvmBackendContext(
 
     val suspendLambdaToOriginalFunctionMap = mutableMapOf<IrFunctionReference, IrFunction>()
     val suspendFunctionOriginalToView = mutableMapOf<IrFunction, IrFunction>()
-    val suspendFunctionOriginalToStub = mutableMapOf<IrFunction, IrFunction>()
     val fakeContinuation: IrExpression = createFakeContinuation(this)
 
     val staticDefaultStubs = mutableMapOf<IrFunctionSymbol, IrFunction>()
 
     val inlineClassReplacements = MemoizedInlineClassReplacements()
-
-    internal fun recordSuspendFunctionView(function: IrFunction, view: IrFunction) {
-        val attribute = function.suspendFunctionOriginal()
-        suspendFunctionOriginalToStub.remove(attribute)
-        suspendFunctionOriginalToView[attribute] = view
-    }
-
-    internal fun recordSuspendFunctionViewStub(function: IrFunction, stub: IrFunction) {
-        suspendFunctionOriginalToStub[function.suspendFunctionOriginal()] = stub
-    }
 
     internal fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
         symbolTable.lazyWrapper.referenceClass(descriptor)

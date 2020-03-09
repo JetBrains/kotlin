@@ -33,11 +33,6 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolveWithStdlib"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
-    @TestMetadata("anonymousInDelegate.kt")
-    public void testAnonymousInDelegate() throws Exception {
-        runTest("compiler/fir/resolve/testData/resolveWithStdlib/anonymousInDelegate.kt");
-    }
-
     @TestMetadata("arrayFilterCapturedType.kt")
     public void testArrayFilterCapturedType() throws Exception {
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/arrayFilterCapturedType.kt");
@@ -63,6 +58,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/classLiteralForParameter.kt");
     }
 
+    @TestMetadata("cloneArray.kt")
+    public void testCloneArray() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolveWithStdlib/cloneArray.kt");
+    }
+
     @TestMetadata("companionLoad.kt")
     public void testCompanionLoad() throws Exception {
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/companionLoad.kt");
@@ -81,16 +81,6 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
     @TestMetadata("concurrentMapOfAliases.kt")
     public void testConcurrentMapOfAliases() throws Exception {
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/concurrentMapOfAliases.kt");
-    }
-
-    @TestMetadata("delegateTypeMismatch.kt")
-    public void testDelegateTypeMismatch() throws Exception {
-        runTest("compiler/fir/resolve/testData/resolveWithStdlib/delegateTypeMismatch.kt");
-    }
-
-    @TestMetadata("delegateWithAnonymousObject.kt")
-    public void testDelegateWithAnonymousObject() throws Exception {
-        runTest("compiler/fir/resolve/testData/resolveWithStdlib/delegateWithAnonymousObject.kt");
     }
 
     @TestMetadata("emptyArray.kt")
@@ -231,16 +221,6 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
     @TestMetadata("runOnIntegerLiteral.kt")
     public void testRunOnIntegerLiteral() throws Exception {
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/runOnIntegerLiteral.kt");
-    }
-
-    @TestMetadata("simpleDelegateProvider.kt")
-    public void testSimpleDelegateProvider() throws Exception {
-        runTest("compiler/fir/resolve/testData/resolveWithStdlib/simpleDelegateProvider.kt");
-    }
-
-    @TestMetadata("simpleDelegatedToMap.kt")
-    public void testSimpleDelegatedToMap() throws Exception {
-        runTest("compiler/fir/resolve/testData/resolveWithStdlib/simpleDelegatedToMap.kt");
     }
 
     @TestMetadata("simpleLazy.kt")
@@ -512,6 +492,49 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         }
     }
 
+    @TestMetadata("compiler/fir/resolve/testData/resolveWithStdlib/delegates")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Delegates extends AbstractFirDiagnosticsWithStdlibTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInDelegates() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolveWithStdlib/delegates"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("anonymousInDelegate.kt")
+        public void testAnonymousInDelegate() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/delegates/anonymousInDelegate.kt");
+        }
+
+        @TestMetadata("delegateTypeMismatch.kt")
+        public void testDelegateTypeMismatch() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/delegates/delegateTypeMismatch.kt");
+        }
+
+        @TestMetadata("delegateWithAnonymousObject.kt")
+        public void testDelegateWithAnonymousObject() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/delegates/delegateWithAnonymousObject.kt");
+        }
+
+        @TestMetadata("propertyWithFunctionalType.kt")
+        public void testPropertyWithFunctionalType() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/delegates/propertyWithFunctionalType.kt");
+        }
+
+        @TestMetadata("simpleDelegateProvider.kt")
+        public void testSimpleDelegateProvider() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/delegates/simpleDelegateProvider.kt");
+        }
+
+        @TestMetadata("simpleDelegatedToMap.kt")
+        public void testSimpleDelegatedToMap() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/delegates/simpleDelegatedToMap.kt");
+        }
+    }
+
     @TestMetadata("compiler/fir/resolve/testData/resolveWithStdlib/inference")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -560,6 +583,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         @TestMetadata("FieldSubstitution.kt")
         public void testFieldSubstitution() throws Exception {
             runTest("compiler/fir/resolve/testData/resolveWithStdlib/j+k/FieldSubstitution.kt");
+        }
+
+        @TestMetadata("flexibleTypeAliases.kt")
+        public void testFlexibleTypeAliases() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/j+k/flexibleTypeAliases.kt");
         }
 
         @TestMetadata("FunctionTypeInJava.kt")
@@ -615,6 +643,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         @TestMetadata("MapEntry.kt")
         public void testMapEntry() throws Exception {
             runTest("compiler/fir/resolve/testData/resolveWithStdlib/j+k/MapEntry.kt");
+        }
+
+        @TestMetadata("mapMerge.kt")
+        public void testMapMerge() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/j+k/mapMerge.kt");
         }
 
         @TestMetadata("MyException.kt")
@@ -688,11 +721,6 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
 
         public void testAllFilesPresentInProblems() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolveWithStdlib/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
-        }
-
-        @TestMetadata("cloneArray.kt")
-        public void testCloneArray() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolveWithStdlib/problems/cloneArray.kt");
         }
 
         @TestMetadata("invokePriority.kt")

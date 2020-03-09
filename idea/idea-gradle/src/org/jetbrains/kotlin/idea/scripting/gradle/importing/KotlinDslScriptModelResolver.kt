@@ -15,6 +15,8 @@ import org.jetbrains.plugins.gradle.model.ClassSetImportModelProvider
 import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider
 
 class KotlinDslScriptModelResolver : KotlinDslScriptModelResolverCommon() {
+    override fun requiresTaskRunning() = true
+
     override fun getModelProvider() = KotlinDslScriptModelProvider()
 
     override fun getProjectsLoadedModelProvider(): ProjectImportModelProvider? {

@@ -42,7 +42,7 @@ public open class Any {
 
 }
 
-public final class Array<T> : R|kotlin/Any| {
+public final class Array<T> : R|kotlin/Any|, R|kotlin/Cloneable| {
     public final operator fun get(index: R|kotlin/Int|): R|T|
 
     public final operator fun iterator(): R|kotlin/collections/Iterator<T>|
@@ -53,6 +53,8 @@ public final class Array<T> : R|kotlin/Any| {
         public get(): R|kotlin/Int|
 
     public constructor<T>(size: R|kotlin/Int|, init: R|(kotlin/Int) -> T|): R|kotlin/Array<T>|
+
+    public final override fun clone(): R|kotlin/Array<T>|
 
 }
 
@@ -76,7 +78,7 @@ public final class Boolean : R|kotlin/Comparable<kotlin/Boolean>| {
 
 }
 
-public final class BooleanArray : R|kotlin/Any| {
+public final class BooleanArray : R|kotlin/Any|, R|kotlin/Cloneable| {
     public final operator fun get(index: R|kotlin/Int|): R|kotlin/Boolean|
 
     public final operator fun iterator(): R|kotlin/collections/BooleanIterator|
@@ -89,6 +91,8 @@ public final class BooleanArray : R|kotlin/Any| {
     public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Boolean|): R|kotlin/BooleanArray|
 
     public constructor(size: R|kotlin/Int|): R|kotlin/BooleanArray|
+
+    public final override fun clone(): R|kotlin/BooleanArray|
 
 }
 
@@ -216,7 +220,7 @@ public final class Byte : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Byte>| {
 
 }
 
-public final class ByteArray : R|kotlin/Any| {
+public final class ByteArray : R|kotlin/Any|, R|kotlin/Cloneable| {
     public final operator fun get(index: R|kotlin/Int|): R|kotlin/Byte|
 
     public final operator fun iterator(): R|kotlin/collections/ByteIterator|
@@ -229,6 +233,8 @@ public final class ByteArray : R|kotlin/Any| {
     public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Byte|): R|kotlin/ByteArray|
 
     public constructor(size: R|kotlin/Int|): R|kotlin/ByteArray|
+
+    public final override fun clone(): R|kotlin/ByteArray|
 
 }
 
@@ -300,7 +306,7 @@ public final class Char : R|kotlin/Comparable<kotlin/Char>| {
 
 }
 
-public final class CharArray : R|kotlin/Any| {
+public final class CharArray : R|kotlin/Any|, R|kotlin/Cloneable| {
     public final operator fun get(index: R|kotlin/Int|): R|kotlin/Char|
 
     public final operator fun iterator(): R|kotlin/collections/CharIterator|
@@ -313,6 +319,8 @@ public final class CharArray : R|kotlin/Any| {
     public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Char|): R|kotlin/CharArray|
 
     public constructor(size: R|kotlin/Int|): R|kotlin/CharArray|
+
+    public final override fun clone(): R|kotlin/CharArray|
 
 }
 
@@ -477,7 +485,7 @@ public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>
 
 }
 
-public final class DoubleArray : R|kotlin/Any| {
+public final class DoubleArray : R|kotlin/Any|, R|kotlin/Cloneable| {
     public final operator fun get(index: R|kotlin/Int|): R|kotlin/Double|
 
     public final operator fun iterator(): R|kotlin/collections/DoubleIterator|
@@ -490,6 +498,8 @@ public final class DoubleArray : R|kotlin/Any| {
     public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Double|): R|kotlin/DoubleArray|
 
     public constructor(size: R|kotlin/Int|): R|kotlin/DoubleArray|
+
+    public final override fun clone(): R|kotlin/DoubleArray|
 
 }
 
@@ -648,7 +658,7 @@ public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>| 
 
 }
 
-public final class FloatArray : R|kotlin/Any| {
+public final class FloatArray : R|kotlin/Any|, R|kotlin/Cloneable| {
     public final operator fun get(index: R|kotlin/Int|): R|kotlin/Float|
 
     public final operator fun iterator(): R|kotlin/collections/FloatIterator|
@@ -661,6 +671,8 @@ public final class FloatArray : R|kotlin/Any| {
     public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Float|): R|kotlin/FloatArray|
 
     public constructor(size: R|kotlin/Int|): R|kotlin/FloatArray|
+
+    public final override fun clone(): R|kotlin/FloatArray|
 
 }
 
@@ -805,7 +817,7 @@ public final class Int : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Int>| {
 
 }
 
-public final class IntArray : R|kotlin/Any| {
+public final class IntArray : R|kotlin/Any|, R|kotlin/Cloneable| {
     public final operator fun get(index: R|kotlin/Int|): R|kotlin/Int|
 
     public final operator fun iterator(): R|kotlin/collections/IntIterator|
@@ -818,6 +830,8 @@ public final class IntArray : R|kotlin/Any| {
     public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Int|): R|kotlin/IntArray|
 
     public constructor(size: R|kotlin/Int|): R|kotlin/IntArray|
+
+    public final override fun clone(): R|kotlin/IntArray|
 
 }
 
@@ -959,7 +973,7 @@ public final class Long : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Long>| {
 
 }
 
-public final class LongArray : R|kotlin/Any| {
+public final class LongArray : R|kotlin/Any|, R|kotlin/Cloneable| {
     public final operator fun get(index: R|kotlin/Int|): R|kotlin/Long|
 
     public final operator fun iterator(): R|kotlin/collections/LongIterator|
@@ -972,6 +986,8 @@ public final class LongArray : R|kotlin/Any| {
     public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Long|): R|kotlin/LongArray|
 
     public constructor(size: R|kotlin/Int|): R|kotlin/LongArray|
+
+    public final override fun clone(): R|kotlin/LongArray|
 
 }
 
@@ -1147,7 +1163,7 @@ public final class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>| 
 
 }
 
-public final class ShortArray : R|kotlin/Any| {
+public final class ShortArray : R|kotlin/Any|, R|kotlin/Cloneable| {
     public final operator fun get(index: R|kotlin/Int|): R|kotlin/Short|
 
     public final operator fun iterator(): R|kotlin/collections/ShortIterator|
@@ -1160,6 +1176,8 @@ public final class ShortArray : R|kotlin/Any| {
     public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Short|): R|kotlin/ShortArray|
 
     public constructor(size: R|kotlin/Int|): R|kotlin/ShortArray|
+
+    public final override fun clone(): R|kotlin/ShortArray|
 
 }
 

@@ -4250,7 +4250,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return StackValue.operation(base.type, base.kotlinType, v -> {
                 base.put(base.type, base.kotlinType, v);
                 v.dup();
-                if (state.getLanguageVersionSettings().getApiVersion().compareTo(ApiVersion.KOTLIN_1_4) >= 0) {
+                if (state.getUnifiedNullChecks()) {
                     v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkNotNull", "(Ljava/lang/Object;)V", false);
                 } else {
                     Label ok = new Label();

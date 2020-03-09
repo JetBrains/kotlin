@@ -82,6 +82,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
             jdkTable.addJdk(internal, testRootDisposable)
             KotlinSdkType.setUpIfNeeded()
         }
+
+        GradleProcessOutputInterceptor.install(testRootDisposable)
     }
 
     protected fun warmUpProject(stats: Stats, vararg filesToHighlight: String, openProject: () -> Project) {

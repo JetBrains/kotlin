@@ -114,16 +114,16 @@ class PropertyReferenceCodegen(
 
         generateConstructor()
 
-        generateMethod("property reference getName", ACC_PUBLIC, method("getName", JAVA_STRING_TYPE)) {
-            aconst(target.name.asString())
-        }
-
-        generateMethod("property reference getSignature", ACC_PUBLIC, method("getSignature", JAVA_STRING_TYPE)) {
-            generateCallableReferenceSignature(this, target, state)
-        }
-
-        generateMethod("property reference getOwner", ACC_PUBLIC, method("getOwner", K_DECLARATION_CONTAINER_TYPE)) {
-            ClosureCodegen.generateCallableReferenceDeclarationContainer(this, target, state)
+        if (!isOptimizedPropertyReferenceSupertype(superAsmType)) {
+            generateMethod("property reference getName", ACC_PUBLIC, method("getName", JAVA_STRING_TYPE)) {
+                aconst(target.name.asString())
+            }
+            generateMethod("property reference getSignature", ACC_PUBLIC, method("getSignature", JAVA_STRING_TYPE)) {
+                generateCallableReferenceSignature(this, target, state)
+            }
+            generateMethod("property reference getOwner", ACC_PUBLIC, method("getOwner", K_DECLARATION_CONTAINER_TYPE)) {
+                ClosureCodegen.generateCallableReferenceDeclarationContainer(this, target, state)
+            }
         }
 
         if (!isLocalDelegatedProperty) {
@@ -136,16 +136,31 @@ class PropertyReferenceCodegen(
             val shouldHaveBoundReferenceReceiver = closure.isForBoundCallableReference()
             val receiverIndexAndFieldInfo = generateClosureFieldsInitializationFromParameters(closure, constructorArgs)
 
-            if (receiverIndexAndFieldInfo == null) {
-                assert(!shouldHaveBoundReferenceReceiver) { "No bound reference receiver in constructor parameters: $constructorArgs" }
-                load(0, OBJECT_TYPE)
-                invokespecial(superAsmType.internalName, "<init>", "()V", false)
-            } else {
+            load(0, OBJECT_TYPE)
+            val superCtorArgTypes = mutableListOf<Type>()
+            if (receiverIndexAndFieldInfo != null) {
                 val (receiverIndex, receiverFieldInfo) = receiverIndexAndFieldInfo
-                load(0, OBJECT_TYPE)
                 loadBoundReferenceReceiverParameter(receiverIndex, receiverFieldInfo.fieldType, receiverFieldInfo.fieldKotlinType)
-                invokespecial(superAsmType.internalName, "<init>", "(Ljava/lang/Object;)V", false)
+                superCtorArgTypes.add(OBJECT_TYPE)
+            } else {
+                assert(!shouldHaveBoundReferenceReceiver) { "No bound reference receiver in constructor parameters: $constructorArgs" }
             }
+
+            if (isOptimizedPropertyReferenceSupertype(superAsmType)) {
+                ClosureCodegen.generateCallableReferenceDeclarationContainerClass(this, target, state)
+                aconst(target.name.asString())
+                generateCallableReferenceSignature(this, target, state)
+                aconst(if (ClosureCodegen.isTopLevelCallableReference(target)) 1 else 0)
+                superCtorArgTypes.add(JAVA_CLASS_TYPE)
+                superCtorArgTypes.add(JAVA_STRING_TYPE)
+                superCtorArgTypes.add(JAVA_STRING_TYPE)
+                superCtorArgTypes.add(Type.INT_TYPE)
+            }
+
+            invokespecial(
+                superAsmType.internalName, "<init>",
+                Type.getMethodDescriptor(Type.VOID_TYPE, *superCtorArgTypes.toTypedArray()), false
+            )
         }
     }
 

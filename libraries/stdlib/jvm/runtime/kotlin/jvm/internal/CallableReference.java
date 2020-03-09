@@ -32,6 +32,18 @@ public abstract class CallableReference implements KCallable, Serializable {
     @SinceKotlin(version = "1.1")
     protected final Object receiver;
 
+    @SinceKotlin(version = "1.4")
+    private final Class owner;
+
+    @SinceKotlin(version = "1.4")
+    private final String name;
+
+    @SinceKotlin(version = "1.4")
+    private final String signature;
+
+    @SinceKotlin(version = "1.4")
+    private final boolean isTopLevel;
+
     @SinceKotlin(version = "1.1")
     public static final Object NO_RECEIVER = NoReceiver.INSTANCE;
 
@@ -50,7 +62,20 @@ public abstract class CallableReference implements KCallable, Serializable {
 
     @SinceKotlin(version = "1.1")
     protected CallableReference(Object receiver) {
+        this(receiver, null, null, null, 0);
+    }
+
+    /**
+     * @param flags Bitmask where bits represent the following flags:<br/>
+     *              <li><ul>0 - the owner of this reference is a package, not a class.</ul></li>
+     */
+    @SinceKotlin(version = "1.4")
+    protected CallableReference(Object receiver, Class owner, String name, String signature, int flags) {
         this.receiver = receiver;
+        this.owner = owner;
+        this.name = name;
+        this.signature = signature;
+        this.isTopLevel = (flags & 1) == 1;
     }
 
     protected abstract KCallable computeReflected();
@@ -79,14 +104,16 @@ public abstract class CallableReference implements KCallable, Serializable {
         return result;
     }
 
-    // The following methods provide the information identifying this callable, which is used by the reflection implementation.
-    // They are supposed to be overridden in each subclass (each anonymous class generated for a callable reference).
+    // The following methods provide the information identifying this callable, which is used by the reflection implementation and
+    // by equals/hashCode/toString. For callable references compiled prior to 1.4, these methods were overridden in each subclass
+    // (each anonymous class generated for a callable reference).
 
     /**
      * @return the class or package where the callable should be located, usually specified on the LHS of the '::' operator
      */
     public KDeclarationContainer getOwner() {
-        throw new AbstractMethodError();
+        return owner == null ? null :
+               isTopLevel ? Reflection.getOrCreateKotlinPackage(owner) : Reflection.getOrCreateKotlinClass(owner);
     }
 
     /**
@@ -94,7 +121,7 @@ public abstract class CallableReference implements KCallable, Serializable {
      */
     @Override
     public String getName() {
-        throw new AbstractMethodError();
+        return name;
     }
 
     /**
@@ -106,7 +133,7 @@ public abstract class CallableReference implements KCallable, Serializable {
      * but only as a unique and unambiguous way to map a function/property descriptor to a string.
      */
     public String getSignature() {
-        throw new AbstractMethodError();
+        return signature;
     }
 
     // The following methods are the delegating implementations of reflection functions. They are called when you're using reflection

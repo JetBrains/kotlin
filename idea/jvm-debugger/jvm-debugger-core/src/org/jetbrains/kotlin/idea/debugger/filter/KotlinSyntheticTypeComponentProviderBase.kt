@@ -52,7 +52,7 @@ abstract class KotlinSyntheticTypeComponentProviderBase : SyntheticTypeComponent
             return true
         }
 
-        // The direct supertype may be PropertyReference0 or something
+        // The direct supertype may be FunctionReferenceImpl, PropertyReference0Impl, MutablePropertyReference0, etc.
         return if (superClassName.startsWith("kotlin.jvm.internal."))
             superClass.isCallableReferenceSyntheticClass()
         else

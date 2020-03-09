@@ -74,7 +74,7 @@ private fun StringBuilder.buildFqNameWithTypeParameters(type: KotlinType, explor
 }
 
 // dedicated to hold unique entries of "fqNameWithTypeParameters"
-private val stringInterner = NonThreadSafeInterner<String>()
+private val stringInterner = Interner<String>()
 
-private val fqNameInterner = NonThreadSafeInterner<FqName>()
-private val nameInterner = NonThreadSafeInterner<Name>()
+private val fqNameInterner = Interner<FqName>()
+private val nameInterner = Interner<Name>()

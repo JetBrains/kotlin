@@ -7,11 +7,8 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.SpecialBridgeMethods
-import org.jetbrains.kotlin.backend.common.lower.flattenStringConcatenationPhase
-import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -35,7 +32,7 @@ private enum class AssertionScope {
 
 private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContext) : FileLoweringPass, IrElementTransformer<AssertionScope> {
 
-    private val isWithUnifiedNullChecks = context.state.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
+    private val isWithUnifiedNullChecks = context.state.unifiedNullChecks
     private val isCallAssertionsDisabled = context.state.isCallAssertionsDisabled
     private val isReceiverAssertionsDisabled = context.state.isReceiverAssertionsDisabled
 

@@ -1,5 +1,26 @@
 package
 
-public fun </*0*/ S : kotlin.Any> foo(/*0*/ x: kotlin.Array<out S?>, /*1*/ y: kotlin.Array<in S?>): kotlin.Unit
-public fun </*0*/ Y : kotlin.Any> inA(/*0*/ x: kotlin.Array<in Y?>): kotlin.Array<Y>
-public fun </*0*/ X : kotlin.Any> outA(/*0*/ x: kotlin.Array<out X?>): kotlin.Array<X>
+public fun </*0*/ S : kotlin.Any> foo1(/*0*/ x: kotlin.Array<out S?>, /*1*/ y: kotlin.Array<in S?>): kotlin.Unit
+public fun </*0*/ S : kotlin.Any> foo2(/*0*/ x: kotlin.Array<out S>, /*1*/ y: kotlin.Array<in S>): kotlin.Unit
+public fun </*0*/ Y : kotlin.Any> inA(/*0*/ x: kotlin.Array<in Y>): kotlin.Array<Y>
+public fun </*0*/ Y : kotlin.Any> inANullable(/*0*/ x: kotlin.Array<in Y?>): kotlin.Array<Y>
+public fun </*0*/ X : kotlin.Any> outA(/*0*/ x: kotlin.Array<out X>): kotlin.Array<X>
+public fun </*0*/ X : kotlin.Any> outANullable(/*0*/ x: kotlin.Array<out X?>): kotlin.Array<X>
+
+public final class A1</*0*/ S : kotlin.Any> {
+    public constructor A1</*0*/ S : kotlin.Any>(/*0*/ x: kotlin.Array<out S?>, /*1*/ y: kotlin.Array<in S?>)
+    public final val xo: kotlin.Array<S>
+    public final val yo: kotlin.Array<S>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class A2</*0*/ S : kotlin.Any> {
+    public constructor A2</*0*/ S : kotlin.Any>(/*0*/ x: kotlin.Array<out S>, /*1*/ y: kotlin.Array<in S>)
+    public final val xo: kotlin.Array<S>
+    public final val yo: kotlin.Array<S>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

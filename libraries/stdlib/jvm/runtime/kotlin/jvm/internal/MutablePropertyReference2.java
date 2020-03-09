@@ -10,8 +10,17 @@ import kotlin.reflect.KCallable;
 import kotlin.reflect.KMutableProperty2;
 import kotlin.reflect.KProperty2;
 
-@SuppressWarnings({"unchecked", "rawtypes", "NullableProblems"})
+@SuppressWarnings({"unchecked", "rawtypes", "NullableProblems", "unused"})
 public abstract class MutablePropertyReference2 extends MutablePropertyReference implements KMutableProperty2 {
+    public MutablePropertyReference2() {
+        super();
+    }
+
+    @SinceKotlin(version = "1.4")
+    public MutablePropertyReference2(Class owner, String name, String signature, int flags) {
+        super(NO_RECEIVER, owner, name, signature, flags);
+    }
+
     @Override
     protected KCallable computeReflected() {
         return Reflection.mutableProperty2(this);

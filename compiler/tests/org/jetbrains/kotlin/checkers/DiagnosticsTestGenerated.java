@@ -10732,6 +10732,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                     runTest("compiler/testData/diagnostics/tests/inference/constraints/constraintOnFunctionLiteral.kt");
                 }
 
+                @TestMetadata("definitelyNotNullTypeInArguments.kt")
+                public void testDefinitelyNotNullTypeInArguments() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/constraints/definitelyNotNullTypeInArguments.kt");
+                }
+
+                @TestMetadata("definitelyNotNullTypeInReturnPosition.kt")
+                public void testDefinitelyNotNullTypeInReturnPosition() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/constraints/definitelyNotNullTypeInReturnPosition.kt");
+                }
+
                 @TestMetadata("definitelyNotNullTypeInvariantPosition.kt")
                 public void testDefinitelyNotNullTypeInvariantPosition() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/constraints/definitelyNotNullTypeInvariantPosition.kt");

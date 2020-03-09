@@ -141,7 +141,7 @@ abstract class DefaultLambda(
                 interfaces: Array<out String>?
             ) {
                 isPropertyReference = superName in PROPERTY_REFERENCE_SUPER_CLASSES
-                isFunctionReference = superName == FUNCTION_REFERENCE.internalName
+                isFunctionReference = superName == FUNCTION_REFERENCE.internalName || superName == FUNCTION_REFERENCE_IMPL.internalName
 
                 super.visit(version, access, name, signature, superName, interfaces)
             }
@@ -204,10 +204,12 @@ abstract class DefaultLambda(
     protected abstract fun mapAsmSignature(sourceCompiler: SourceCompilerForInline): Method
 
     private companion object {
-        val PROPERTY_REFERENCE_SUPER_CLASSES = listOf(
-            PROPERTY_REFERENCE0, PROPERTY_REFERENCE1, PROPERTY_REFERENCE2,
-            MUTABLE_PROPERTY_REFERENCE0, MUTABLE_PROPERTY_REFERENCE1, MUTABLE_PROPERTY_REFERENCE2
-        ).mapTo(HashSet(), Type::getInternalName)
+        val PROPERTY_REFERENCE_SUPER_CLASSES =
+            listOf(
+                PROPERTY_REFERENCE0, PROPERTY_REFERENCE1, PROPERTY_REFERENCE2,
+                MUTABLE_PROPERTY_REFERENCE0, MUTABLE_PROPERTY_REFERENCE1, MUTABLE_PROPERTY_REFERENCE2
+            ).plus(OPTIMIZED_PROPERTY_REFERENCE_SUPERTYPES)
+                .mapTo(HashSet(), Type::getInternalName)
     }
 }
 

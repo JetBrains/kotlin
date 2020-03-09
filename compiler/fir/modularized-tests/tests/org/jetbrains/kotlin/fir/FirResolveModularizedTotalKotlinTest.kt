@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -22,9 +23,6 @@ import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
@@ -36,9 +34,10 @@ private const val FIR_DUMP_PATH = "tmp/firDump"
 private const val FIR_HTML_DUMP_PATH = "tmp/firDump-html"
 const val FIR_LOGS_PATH = "tmp/fir-logs"
 
-private val DUMP_FIR = System.getProperty("fir.bench.dump", "true") == "true"
+private val DUMP_FIR = System.getProperty("fir.bench.dump", "true").toBooleanLenient()!!
 internal val PASSES = System.getProperty("fir.bench.passes")?.toInt() ?: 3
-internal val SEPARATE_PASS_DUMP = System.getProperty("fir.bench.dump.separate_pass", "false") == "true"
+internal val SEPARATE_PASS_DUMP = System.getProperty("fir.bench.dump.separate_pass", "false").toBooleanLenient()!!
+private val APPEND_ERROR_REPORTS = System.getProperty("fir.bench.report.errors.append", "false").toBooleanLenient()!!
 
 class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
@@ -157,7 +156,12 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     }
 
     private fun printErrors(statistics: FirResolveBench.TotalStatistics) {
-        PrintStream(FileOutputStream(reportDir().resolve("errors-$reportDateStr.log"), true)).use(statistics::reportErrors)
+        PrintStream(
+            FileOutputStream(
+                reportDir().resolve("errors-$reportDateStr.log"),
+                APPEND_ERROR_REPORTS
+            )
+        ).use(statistics::reportErrors)
     }
 
     private fun printStatistics(statistics: FirResolveBench.TotalStatistics, header: String) {

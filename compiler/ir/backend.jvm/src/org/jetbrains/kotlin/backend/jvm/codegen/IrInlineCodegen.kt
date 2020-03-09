@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionViewOrStub
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.backend.jvm.ir.isLambda
 import org.jetbrains.kotlin.codegen.inline.*
@@ -222,7 +221,7 @@ class IrExpressionLambdaImpl(
     val function: IrFunction,
     private val typeMapper: IrTypeMapper,
     methodSignatureMapper: MethodSignatureMapper,
-    private val context: JvmBackendContext,
+    context: JvmBackendContext,
     isCrossInline: Boolean,
     override val isBoundCallableReference: Boolean,
     override val isExtensionLambda: Boolean
@@ -248,7 +247,7 @@ class IrExpressionLambdaImpl(
 
     override val capturedVars: List<CapturedParamDesc> = capturedParameters.keys.toList()
 
-    private val loweredMethod = methodSignatureMapper.mapAsmMethod(function.suspendFunctionViewOrStub(context))
+    private val loweredMethod = methodSignatureMapper.mapAsmMethod(function)
 
     val capturedParamsInDesc: List<Type> = if (isBoundCallableReference) {
         loweredMethod.argumentTypes.take(1)
@@ -270,9 +269,7 @@ class IrExpressionLambdaImpl(
 
     override val hasDispatchReceiver: Boolean = false
 
-    override fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor {
-        return function.suspendFunctionViewOrStub(context).descriptor
-    }
+    override fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor = function.descriptor
 
     override fun isCapturedSuspend(desc: CapturedParamDesc, inliningContext: InliningContext): Boolean =
         capturedParameters[desc]?.let { it.isInlineParameter() && it.type.isSuspendFunctionTypeOrSubtype() } == true

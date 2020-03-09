@@ -1,7 +1,7 @@
 fun runNoInline(f: () -> Unit) = f()
 
 fun test() {
-    var x = 0
+    var x = 1
     run {
         run {
             runNoInline {

@@ -55,11 +55,11 @@ abstract class FirAbstractImportingScope(
             when (token) {
                 TowerScopeLevel.Token.Functions -> scope.processFunctionsByName(
                     callableId.callableName,
-                    processor.cast()
+                    processor
                 )
                 TowerScopeLevel.Token.Properties -> scope.processPropertiesByName(
                     callableId.callableName,
-                    processor.cast()
+                    processor
                 )
             }
         } else if (name.isSpecial || name.identifier.isNotEmpty()) {

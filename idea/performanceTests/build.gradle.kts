@@ -21,7 +21,9 @@ dependencies {
     testRuntimeOnly(project(":nj2k:nj2k-services"))
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":idea:kotlin-gradle-tooling"))
-    testRuntimeOnly(project(":idea:idea-gradle-tooling-api"))
+    Platform[193].orLower {
+        testRuntimeOnly(project(":idea:idea-gradle-tooling-api"))
+    }
     testRuntimeOnly(project(":kotlin-gradle-statistics"))
 
     testImplementation(intellijPluginDep("gradle"))
@@ -46,7 +48,9 @@ dependencies {
 
     testCompileOnly(intellijDep())
     testCompileOnly(project(":nj2k"))
-    testCompileOnly(project(":idea:idea-gradle-tooling-api"))
+    Platform[193].orLower {
+        testCompileOnly(project(":idea:idea-gradle-tooling-api"))
+    }
     testCompileOnly(intellijDep()) { includeJars("slf4j-api-1.7.25") }
 }
 

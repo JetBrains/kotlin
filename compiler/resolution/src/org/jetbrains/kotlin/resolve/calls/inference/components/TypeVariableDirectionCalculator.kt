@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
-import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtom
+import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -32,7 +32,7 @@ private typealias Variable = VariableWithConstraints
 
 class TypeVariableDirectionCalculator(
     private val c: VariableFixationFinder.Context,
-    private val postponedKtPrimitives: List<PostponedResolvedAtom>,
+    private val postponedKtPrimitives: List<PostponedResolvedAtomMarker>,
     topLevelType: KotlinTypeMarker
 ) {
     enum class ResolveDirection {

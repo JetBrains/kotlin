@@ -6,7 +6,7 @@ digraph lambdaAsReturnOfLambda_kt {
     subgraph cluster_0 {
         color=red
         0 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-        1 [label="Jump: ^@run lambda@fun <anonymous>(foo: R|ERROR CLASS: No type for parameter|): R|kotlin/Unit| {
+        1 [label="Jump: ^@run lambda@fun <anonymous>(foo: R|kotlin/String|): R|kotlin/Unit| {
     R|/bar|(R|<local>/foo|)
 }
 "];
@@ -44,7 +44,7 @@ digraph lambdaAsReturnOfLambda_kt {
         10 [label="Enter property" style="filled" fillcolor=red];
         11 [label="Postponed enter to lambda"];
         12 [label="Postponed exit from lambda"];
-        13 [label="Function call: R|/run|<R|(ERROR CLASS: No type for parameter) -> kotlin/Unit|>(<L> = run@fun <anonymous>(): R|(ERROR CLASS: No type for parameter) -> kotlin/Unit|)"];
+        13 [label="Function call: R|/run|<R|(kotlin/String) -> kotlin/Unit|>(<L> = run@fun <anonymous>(): R|(kotlin/String) -> kotlin/Unit|)"];
         14 [label="Exit property" style="filled" fillcolor=red];
     }
 

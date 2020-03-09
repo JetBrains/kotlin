@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -28,11 +29,11 @@ import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.mapTypeParameters
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.util.referenceFunction
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi2ir.containsNull
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.psi2ir.findFirstFunction
 import org.jetbrains.kotlin.psi2ir.startOffsetOrUndefined
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
@@ -205,13 +207,23 @@ class DataClassMembersGenerator(
                 .let { context.symbolTable.referenceFunction(it) }
 
 
-        private fun getHashCodeFunction(type: KotlinType, symbolResolve: (FunctionDescriptor) -> IrSimpleFunctionSymbol): IrSimpleFunctionSymbol =
+        private fun MemberScope.findHashCodeFunctionOrNull() =
+            getContributedFunctions(Name.identifier("hashCode"), NoLookupLocation.FROM_BACKEND)
+                .find { it.valueParameters.isEmpty() }
+
+        private fun getHashCodeFunction(
+            type: KotlinType,
+            symbolResolve: (FunctionDescriptor) -> IrSimpleFunctionSymbol
+        ): IrSimpleFunctionSymbol =
             when (val typeConstructorDescriptor = type.constructor.declarationDescriptor) {
                 is ClassDescriptor ->
                     if (KotlinBuiltIns.isArrayOrPrimitiveArray(typeConstructorDescriptor))
                         context.irBuiltIns.dataClassArrayMemberHashCodeSymbol
                     else
-                        symbolResolve(type.memberScope.findFirstFunction("hashCode") { it.valueParameters.isEmpty() })
+                        symbolResolve(
+                            type.memberScope.findHashCodeFunctionOrNull()
+                                ?: context.builtIns.any.unsubstitutedMemberScope.findHashCodeFunctionOrNull()!!
+                        )
 
                 is TypeParameterDescriptor ->
                     getHashCodeFunction(typeConstructorDescriptor.representativeUpperBound, symbolResolve)

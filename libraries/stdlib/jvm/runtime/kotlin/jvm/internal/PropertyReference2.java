@@ -9,8 +9,17 @@ import kotlin.SinceKotlin;
 import kotlin.reflect.KCallable;
 import kotlin.reflect.KProperty2;
 
-@SuppressWarnings({"unchecked", "rawtypes", "NullableProblems"})
+@SuppressWarnings({"unchecked", "rawtypes", "NullableProblems", "unused"})
 public abstract class PropertyReference2 extends PropertyReference implements KProperty2 {
+    public PropertyReference2() {
+        super();
+    }
+
+    @SinceKotlin(version = "1.4")
+    public PropertyReference2(Class owner, String name, String signature, int flags) {
+        super(NO_RECEIVER, owner, name, signature, flags);
+    }
+
     @Override
     protected KCallable computeReflected() {
         return Reflection.property2(this);

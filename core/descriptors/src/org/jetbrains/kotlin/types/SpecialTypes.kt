@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.checker.NullabilityChecker
 import org.jetbrains.kotlin.types.model.DefinitelyNotNullTypeMarker
@@ -149,6 +150,9 @@ fun SimpleType.makeSimpleTypeDefinitelyNotNullOrNotNull(): SimpleType =
     DefinitelyNotNullType.makeDefinitelyNotNull(this)
         ?: makeIntersectionTypeDefinitelyNotNullOrNotNull()
         ?: makeNullableAsSpecified(false)
+
+fun NewCapturedType.withNotNullProjection() =
+    NewCapturedType(captureStatus, constructor, lowerType, annotations, isMarkedNullable, isProjectionNotNull = true)
 
 fun UnwrappedType.makeDefinitelyNotNullOrNotNull(): UnwrappedType =
     DefinitelyNotNullType.makeDefinitelyNotNull(this)

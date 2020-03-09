@@ -3718,6 +3718,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/inlineSuspendContinuation.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("inlineSuspendInMultifileClass.kt")
+        public void testInlineSuspendInMultifileClass() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/suspend/inlineSuspendInMultifileClass.kt");
+        }
+
         @TestMetadata("inlineSuspendOfCrossinlineOrdinary.kt")
         public void testInlineSuspendOfCrossinlineOrdinary_1_2() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfCrossinlineOrdinary.kt", "kotlin.coroutines.experimental");
@@ -3910,6 +3915,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             @TestMetadata("defaultValueCrossinline.kt")
             public void testDefaultValueCrossinline_1_3() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/defaultParameter/defaultValueCrossinline.kt", "kotlin.coroutines");
+            }
+
+            @TestMetadata("defaultValueInClass.kt")
+            public void testDefaultValueInClass() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/defaultParameter/defaultValueInClass.kt");
             }
 
             @TestMetadata("defaultValueInlineFromMultiFileFacade.kt")
@@ -4326,6 +4336,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("superCall.kt")
         public void testSuperCall() throws Exception {
             runTest("compiler/testData/codegen/boxInline/syntheticAccessors/superCall.kt");
+        }
+
+        @TestMetadata("superCallFromMultipleSubclasses.kt")
+        public void testSuperCallFromMultipleSubclasses() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/syntheticAccessors/superCallFromMultipleSubclasses.kt");
         }
 
         @TestMetadata("superProperty.kt")

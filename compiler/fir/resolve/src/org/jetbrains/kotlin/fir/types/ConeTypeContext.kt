@@ -398,6 +398,15 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
         return when (type) {
             is ConeClassLikeType -> type.fullyExpandedType(session)
+            is ConeFlexibleType -> {
+                val lowerBound = prepareType(type.lowerBound)
+                if (lowerBound === type.lowerBound) return type
+
+                ConeFlexibleType(
+                    lowerBound as ConeKotlinType,
+                    prepareType(type.upperBound) as ConeKotlinType
+                )
+            }
             else -> type
         }
     }

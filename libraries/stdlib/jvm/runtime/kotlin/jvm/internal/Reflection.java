@@ -46,6 +46,11 @@ public class Reflection {
         return factory.createKotlinClass(javaClass, internalName);
     }
 
+    @SinceKotlin(version = "1.4")
+    public static KDeclarationContainer getOrCreateKotlinPackage(Class javaClass) {
+        return factory.getOrCreateKotlinPackage(javaClass, "");
+    }
+
     public static KDeclarationContainer getOrCreateKotlinPackage(Class javaClass, String moduleName) {
         return factory.getOrCreateKotlinPackage(javaClass, moduleName);
     }
