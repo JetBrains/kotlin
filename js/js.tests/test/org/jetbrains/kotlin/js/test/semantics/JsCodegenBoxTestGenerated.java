@@ -6583,6 +6583,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/unitTypeReturn/coroutineReturn.kt", "kotlin.coroutines");
             }
 
+            @TestMetadata("interfaceDelegation.kt")
+            public void testInterfaceDelegation() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/unitTypeReturn/interfaceDelegation.kt");
+            }
+
             @TestMetadata("suspendNonLocalReturn.kt")
             public void testSuspendNonLocalReturn_1_3() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/unitTypeReturn/suspendNonLocalReturn.kt", "kotlin.coroutines");
