@@ -84,7 +84,7 @@ fun Project.getFilesToCompile(compile: List<String>, exclude: List<String>): Lis
         project.file(f)
                 .walk()
                 .filter { it.isFile && it.name.endsWith(".kt") && !excludeFiles.contains(it.absolutePath) }
-                .map(File::getAbsolutePath)
+                .map{ it.absolutePath }
                 .asIterable()
     }
 }

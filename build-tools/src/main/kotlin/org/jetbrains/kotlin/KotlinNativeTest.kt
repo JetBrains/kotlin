@@ -152,7 +152,7 @@ open class KonanGTest : KonanTest() {
     override fun run() {
         doBeforeRun?.execute(this)
         runProcess(
-                executor = project.executor::execute,
+                executor = {project.executor.execute(it)},
                 executable = executable,
                 args = arguments
         ).run {
@@ -245,9 +245,9 @@ open class KonanLocalTest : KonanTest() {
         for (i in 1..times) {
             val args = arguments + (multiArguments?.get(i - 1) ?: emptyList())
             output += if (testData != null)
-                runProcessWithInput(project.executor::execute, executable, args, testData!!)
+                runProcessWithInput({project.executor.execute(it)}, executable, args, testData!!)
             else
-                runProcess(project.executor::execute, executable, args)
+                runProcess({project.executor.execute(it)}, executable, args)
         }
         if (compilerMessages) {
             // TODO: as for now it captures output only in the driver task.
