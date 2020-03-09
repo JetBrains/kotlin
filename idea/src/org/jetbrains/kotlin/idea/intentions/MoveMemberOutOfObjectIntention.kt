@@ -25,8 +25,10 @@ import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 
 abstract class MoveMemberOutOfObjectIntention(text: String) :
     SelfTargetingRangeIntention<KtNamedDeclaration>(KtNamedDeclaration::class.java, text) {
@@ -48,22 +50,29 @@ abstract class MoveMemberOutOfObjectIntention(text: String) :
             }
         }
 
-        if (element is KtClassOrObject) {
+        if (element is KtClassOrObject || !element.isPrivate() && destination is KtFile) {
             val moveDescriptor = MoveDeclarationsDescriptor(
                 project,
                 MoveSource(element),
                 KotlinMoveTargetForExistingElement(destination),
                 MoveDeclarationsDelegate.NestedClass()
             )
-            object : CompositeRefactoringRunner(project, MoveKotlinDeclarationsProcessor.REFACTORING_ID) {
+            val compositeRefactoringRunner = object : CompositeRefactoringRunner(project, MoveKotlinDeclarationsProcessor.REFACTORING_ID) {
                 override fun runRefactoring() = MoveKotlinDeclarationsProcessor(moveDescriptor).run()
-                override fun onRefactoringDone() = runWriteAction { deleteClassOrObjectIfEmpty() }
-            }.run()
+                override fun onExit() = runWriteAction { deleteClassOrObjectIfEmpty() }
+            }
+            if (element is KtClassOrObject) {
+                compositeRefactoringRunner.run()
+            } else {
+                val conflicts = MultiMap<PsiElement, String>().apply { addConflicts(element, this) }
+                project.checkConflictsInteractively(conflicts) {
+                    compositeRefactoringRunner.run()
+                }
+            }
             return
         }
 
         val conflicts = MultiMap<PsiElement, String>().apply { addConflicts(element, this) }
-
         project.checkConflictsInteractively(conflicts) {
             runWriteAction {
                 Mover.Default(element, destination)
