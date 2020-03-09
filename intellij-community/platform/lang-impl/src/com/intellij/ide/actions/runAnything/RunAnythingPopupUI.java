@@ -78,7 +78,6 @@ import static java.awt.FlowLayout.RIGHT;
 public class RunAnythingPopupUI extends BigPopupUI {
   public static final int SEARCH_FIELD_COLUMNS = 25;
   public static final Icon UNKNOWN_CONFIGURATION_ICON = AllIcons.Actions.Run_anything;
-  public static final DataKey<Executor> EXECUTOR_KEY = DataKey.create("EXECUTOR_KEY");
   static final String RUN_ANYTHING = "RunAnything";
   public static final KeyStroke DOWN_KEYSTROKE = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0);
   public static final KeyStroke UP_KEYSTROKE = KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0);
@@ -469,7 +468,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
     dataMap.put(CommonDataKeys.PROJECT.getName(), getProject());
     dataMap.put(LangDataKeys.MODULE.getName(), getModule());
     dataMap.put(CommonDataKeys.VIRTUAL_FILE.getName(), getWorkDirectory());
-    dataMap.put(EXECUTOR_KEY.getName(), getExecutor());
+    dataMap.put(RunAnythingAction.EXECUTOR_KEY.getName(), getExecutor());
     dataMap.put(RunAnythingProvider.EXECUTING_CONTEXT.getName(), myChooseContextAction.getSelectedContext());
     return SimpleDataContext.getSimpleContext(dataMap, null);
   }
