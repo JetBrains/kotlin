@@ -17,17 +17,14 @@
 package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.lang.ASTNode
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.codeStyle.PreFormatProcessor
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.nextSiblingOfSameType
-import org.jetbrains.kotlin.psi.psiUtil.prevSiblingOfSameType
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 private class Visitor(var range: TextRange) : KtTreeVisitorVoid() {
@@ -51,30 +48,6 @@ private class Visitor(var range: TextRange) : KtTreeVisitorVoid() {
                 declaration.add(comma)
                 delta += comma.textLength
             }
-
-            val prevEntry = declaration.prevSiblingOfSameType()
-            if (prevEntry != null) {
-                if (declaration.getUserData(IS_ADDED_TRAILING_COMMA) != true) {
-                    if (prevEntry.containsToken(KtTokens.COMMA)) {
-                        declaration.add(comma)
-                        delta += comma.textLength
-                    }
-                    declaration.putUserData(IS_ADDED_TRAILING_COMMA, true)
-                }
-                val semicolon = prevEntry.allChildren.firstOrNull { it.node?.elementType == KtTokens.SEMICOLON }
-                if (semicolon != null) {
-                    (semicolon.prevSibling as? PsiWhiteSpace)?.text?.let {
-                        declaration.add(psiFactory.createWhiteSpace(it))
-                        delta += it.length
-                    }
-                    declaration.add(psiFactory.createSemicolon())
-                    semicolon.delete()
-                }
-                if (!prevEntry.containsToken(KtTokens.COMMA)) {
-                    prevEntry.add(comma)
-                    delta += comma.textLength
-                }
-            }
         } else {
             val lastEntry = klass.declarations.lastIsInstanceOrNull<KtEnumEntry>()
             if (lastEntry != null &&
@@ -95,10 +68,6 @@ private class Visitor(var range: TextRange) : KtTreeVisitorVoid() {
         }
 
         range = TextRange(range.startOffset, range.endOffset + delta)
-    }
-
-    companion object {
-        private val IS_ADDED_TRAILING_COMMA = Key.create<Boolean>("KotlinPreFormatProcessorIsAddedTrailingComma")
     }
 }
 
