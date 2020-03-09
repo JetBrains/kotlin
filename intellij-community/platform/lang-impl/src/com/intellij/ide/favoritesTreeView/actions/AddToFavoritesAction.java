@@ -7,6 +7,7 @@ import com.intellij.ide.favoritesTreeView.FavoritesManager;
 import com.intellij.ide.favoritesTreeView.FavoritesTreeViewPanel;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.ProjectViewNode;
+import com.intellij.ide.projectView.ProjectViewSettings;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.ide.projectView.impl.ModuleGroup;
@@ -61,7 +62,7 @@ public class AddToFavoritesAction extends AnAction implements DumbAware {
 
     Collection<AbstractTreeNode<?>> nodesToAdd = null;
     for (FavoriteNodeProvider provider : FavoriteNodeProvider.EP_NAME.getExtensions(project)) {
-      Collection<AbstractTreeNode<?>> nodes = provider.getFavoriteNodes(dataContext, ViewSettings.DEFAULT);
+      Collection<AbstractTreeNode<?>> nodes = provider.getFavoriteNodes(dataContext, ProjectViewSettings.Immutable.DEFAULT);
       if (nodes != null && !nodes.isEmpty()) {
         nodesToAdd = nodes;
         break;
@@ -71,7 +72,7 @@ public class AddToFavoritesAction extends AnAction implements DumbAware {
     if (nodesToAdd == null) {
       Object elements = collectSelectedElements(dataContext);
       if (elements != null) {
-        nodesToAdd = createNodes(project, moduleContext, elements, inProjectView, ViewSettings.DEFAULT);
+        nodesToAdd = createNodes(project, moduleContext, elements, inProjectView, ProjectViewSettings.Immutable.DEFAULT);
       }
     }
     return nodesToAdd == null ? Collections.emptyList() : nodesToAdd;
