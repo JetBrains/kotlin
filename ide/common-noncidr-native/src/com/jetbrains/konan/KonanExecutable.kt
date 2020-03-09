@@ -1,16 +1,14 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package com.jetbrains.konan
 
 import org.jdom.Element
 import org.jetbrains.kotlin.gradle.KonanArtifactModel
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
-import java.io.Serializable
 
 // corresponds to DSL entity:
 // macosX64("HelloWorld") {
@@ -59,7 +57,7 @@ data class KonanExecutableBase(
 
 class KonanExecutable(
     val base: KonanExecutableBase,
-    val executionTargets: List<IdeaKonanExecutionTarget> = ArrayList()
+    val executionTargets: List<BinaryExecutionTarget> = ArrayList()
 ) : Comparable<KonanExecutable> {
 
     override fun compareTo(other: KonanExecutable): Int {
@@ -77,7 +75,7 @@ class KonanExecutable(
     companion object {
         fun readFromXml(element: Element, projectDir: File): KonanExecutable? {
             val base = KonanExecutableBase.readFromXml(element) ?: return null
-            val executionTargets = IdeaKonanExecutionTarget.fromXml(element, base.name, projectDir)
+            val executionTargets = BinaryExecutionTarget.fromXml(element, base.name, projectDir)
 
             return KonanExecutable(base, executionTargets)
         }

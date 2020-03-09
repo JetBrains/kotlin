@@ -10,50 +10,45 @@ import com.intellij.execution.configurations.RunProfile
 import com.intellij.execution.configurations.RunProfileState
 import com.intellij.execution.executors.DefaultDebugExecutor
 import com.intellij.execution.executors.DefaultRunExecutor
-import com.intellij.execution.runners.DefaultProgramRunner
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.ui.RunContentDescriptor
-import com.intellij.xdebugger.XDebugProcess
-import com.intellij.xdebugger.XDebugSession
-import com.intellij.xdebugger.XDebuggerManager
-import com.intellij.xdebugger.impl.XDebugProcessConfiguratorStarter
-import com.intellij.xdebugger.impl.ui.XDebugSessionData
+import com.intellij.openapi.project.Project
 import com.jetbrains.cidr.execution.CidrCommandLineState
+import com.jetbrains.konan.KonanCommandLineState
+import com.jetbrains.konan.KonanExternalSystemState
+import com.jetbrains.konan.RunnerBase
 import com.jetbrains.mpp.AppleRunConfiguration
+import com.jetbrains.mpp.ProjectWorkspace
 
-class AppleRunner : DefaultProgramRunner() {
+class AppleRunner : RunnerBase() {
 
     override fun getRunnerId(): String = "AppleRunner"
 
-    override fun canRun(executorId: String, profile: RunProfile): Boolean {
-        if (profile !is AppleRunConfiguration) return false
-
-        return when (executorId) {
-            DefaultRunExecutor.EXECUTOR_ID -> profile.selectedDevice is AppleSimulator
-            DefaultDebugExecutor.EXECUTOR_ID -> true
-            else -> false
-        }
+    protected fun canRunIOSApp(executorId: String, profile: AppleRunConfiguration) = when (executorId) {
+        DefaultRunExecutor.EXECUTOR_ID -> profile.selectedDevice is AppleSimulator
+        DefaultDebugExecutor.EXECUTOR_ID -> true
+        else -> false
     }
 
+    override fun getWorkspace(project: Project) = ProjectWorkspace.getInstance(project)
+
+    override fun canRun(executorId: String, profile: RunProfile) = when (profile) {
+        is BinaryRunConfiguration -> canRunBinary(executorId, profile)
+        is AppleRunConfiguration -> canRunIOSApp(executorId, profile)
+        else -> false
+    }
+
+    @Throws(ExecutionException::class)
     override fun doExecute(state: RunProfileState, environment: ExecutionEnvironment): RunContentDescriptor? {
-        if (environment.executor.id == DefaultRunExecutor.EXECUTOR_ID) {
+        if (environment.executor.id != DefaultDebugExecutor.EXECUTOR_ID) {
             return super.doExecute(state, environment)
         }
 
-        if (state !is CidrCommandLineState) {
-            throw ExecutionException("Unsupported RunProfileState: " + state.javaClass)
+        return when (state) {
+            is CidrCommandLineState -> contentDescriptor(environment) { session -> state.startDebugProcess(session) }
+            is KonanCommandLineState -> contentDescriptor(environment) { session -> state.startDebugProcess(session) }
+            is KonanExternalSystemState -> contentDescriptor(environment) { session -> state.startDebugProcess(session, environment) }
+            else -> throw ExecutionException("RunProfileState  ${state.javaClass} is not supported by ${this.javaClass}")
         }
-
-        val session =
-            XDebuggerManager.getInstance(environment.project).startSession(environment, object : XDebugProcessConfiguratorStarter() {
-                override fun configure(session: XDebugSessionData?) {}
-
-                @Throws(ExecutionException::class)
-                override fun start(session: XDebugSession): XDebugProcess {
-                    return state.startDebugProcess(session)
-                }
-            })
-
-        return session.runContentDescriptor
     }
 }

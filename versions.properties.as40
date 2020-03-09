@@ -12,8 +12,8 @@ versions.clion=193.6526
 versions.clion.strict=true
 versions.clion.repo=ijplatform_IjPlatform193_CIDR_CLion_Installers
 
-versions.nativeDebug=192.5728.12
-versions.nativeDebug.repo=ijplatform_IjPlatform192_Idea_InstallersForEapRelease
+versions.nativeDebug=193.6494.35
+versions.nativeDebug.repo=ijplatform_IjPlatform193_Idea_InstallersForEapRelease
 
 versions.LLDB.framework=70
 versions.LLDB.framework.repo=ijplatform_master_CIDR_ExternalTools_LldbOsX

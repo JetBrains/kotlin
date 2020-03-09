@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package com.jetbrains.konan
@@ -14,14 +14,7 @@ import org.jetbrains.kotlin.gradle.KonanArtifactModel
 import java.io.File
 import javax.swing.Icon
 
-class IdeaKonanExecutionTargetProvider : ExecutionTargetProvider() {
-    override fun getTargets(project: Project, ideConfiguration: RunConfiguration): List<ExecutionTarget> {
-        val konanConfiguration = ideConfiguration as? IdeaKonanRunConfiguration ?: return emptyList()
-        return konanConfiguration.executable?.executionTargets ?: emptyList()
-    }
-}
-
-class IdeaKonanExecutionTarget(
+class BinaryExecutionTarget(
     private val executableName: String,
     val isDebug: Boolean,
     val productFile: File,
@@ -30,7 +23,7 @@ class IdeaKonanExecutionTarget(
     override fun getDisplayName() = if (isDebug) "Debug" else "Release"
     override fun getIcon(): Icon? = null
 
-    override fun canRun(configuration: RunConfiguration) = configuration is IdeaKonanRunConfiguration
+    override fun canRun(configuration: RunConfiguration) = configuration is BinaryRunConfigurationBase
 
     fun toXml(projectDir: File): Element {
         val element = Element(XmlExecutionTarget.nodeName)
@@ -41,9 +34,9 @@ class IdeaKonanExecutionTarget(
     }
 
     companion object {
-        fun constructFrom(artifact: KonanArtifactModel, executableName: String): IdeaKonanExecutionTarget? {
+        fun constructFrom(artifact: KonanArtifactModel, executableName: String): BinaryExecutionTarget? {
             with(artifact) {
-                return IdeaKonanExecutionTarget(
+                return BinaryExecutionTarget(
                     executableName,
                     buildTaskPath.contains("debug", ignoreCase = true),
                     file,
@@ -51,15 +44,15 @@ class IdeaKonanExecutionTarget(
             }
         }
 
-        fun fromXml(parentElement: Element, executableName: String, projectDir: File): List<IdeaKonanExecutionTarget> {
-            val result = ArrayList<IdeaKonanExecutionTarget>()
+        fun fromXml(parentElement: Element, executableName: String, projectDir: File): List<BinaryExecutionTarget> {
+            val result = ArrayList<BinaryExecutionTarget>()
             parentElement.getChildren(XmlExecutionTarget.nodeName).forEach { element ->
                 val isDebug = element.getAttribute(XmlExecutionTarget.attributeIsDebug)?.value?.toBoolean() ?: return@forEach
                 val relativeFilePath = element.getAttribute(XmlExecutionTarget.attributeFileName)?.value ?: return@forEach
                 val gradleTask = element.getAttribute(XmlExecutionTarget.attributeGradleTask)?.value ?: return@forEach
 
                 result.add(
-                    IdeaKonanExecutionTarget(
+                    BinaryExecutionTarget(
                         executableName,
                         isDebug,
                         projectDir.resolve(relativeFilePath),

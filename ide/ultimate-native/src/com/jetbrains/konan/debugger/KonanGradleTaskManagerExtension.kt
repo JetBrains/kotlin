@@ -11,8 +11,8 @@ import com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.jetbrains.konan.IdeaKonanWorkspace
-import com.jetbrains.konan.debugger.GradleLLDBDebuggerBackend.Companion.DEBUG_SERVER_ARGS_KEY
-import com.jetbrains.konan.debugger.GradleLLDBDebuggerBackend.Companion.DEBUG_SERVER_PATH_KEY
+import com.jetbrains.konan.debugger.LLDBBackendBase.Companion.DEBUG_SERVER_ARGS_KEY
+import com.jetbrains.konan.debugger.LLDBBackendBase.Companion.DEBUG_SERVER_PATH_KEY
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration

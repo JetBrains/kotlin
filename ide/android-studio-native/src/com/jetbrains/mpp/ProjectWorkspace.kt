@@ -8,6 +8,8 @@ package com.jetbrains.mpp
 import com.intellij.execution.*
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
+import com.jetbrains.konan.TargetListener
+import com.jetbrains.konan.WorkspaceBase
 import com.jetbrains.mpp.execution.Device
 import org.jdom.Element
 
@@ -16,25 +18,28 @@ internal object XCProject {
     const val pathAttributeKey = "PATH"
 }
 
-private class TargetListener(private val workspace: ProjectWorkspace) : ExecutionTargetListener {
+private class DeviceTargetListener(workspace: ProjectWorkspace) : TargetListener(workspace) {
     override fun activeTargetChanged(target: ExecutionTarget) {
-        val configuration = RunManager.getInstance(workspace.project).selectedConfiguration?.configuration ?: return
-        if (configuration !is AppleRunConfiguration) return
-        configuration.selectedDevice = target as? Device
+        super.activeTargetChanged(target)
+
+        (configuration() as? AppleRunConfiguration)?.let {
+            it.selectedDevice = target as? Device
+        }
     }
 }
 
-@State(name = "MPPWorkspace", storages = [(Storage(StoragePathMacros.WORKSPACE_FILE))])
-class ProjectWorkspace(val project: Project) : PersistentStateComponent<Element>, ProjectComponent {
+@State(name = "KotlinMultiplatform", storages = [(Storage(StoragePathMacros.WORKSPACE_FILE))])
+class ProjectWorkspace(project: Project) : WorkspaceBase(project) {
     var xcproject: String? = null
 
     init {
         val connection = project.messageBus.connect()
-        connection.subscribe(ExecutionTargetManager.TOPIC, TargetListener(this))
+        connection.subscribe(ExecutionTargetManager.TOPIC, DeviceTargetListener(this))
     }
 
-    override fun getState(): Element? {
-        val stateElement = Element("state")
+    override fun getState(): Element {
+        val stateElement = super.getState()
+
         val xcElement = Element(XCProject.nodeName)
         xcproject?.let {
             xcElement.setAttribute(XCProject.pathAttributeKey, xcproject)
@@ -45,6 +50,8 @@ class ProjectWorkspace(val project: Project) : PersistentStateComponent<Element>
     }
 
     override fun loadState(stateElement: Element) {
+        super.loadState(stateElement)
+
         val xcElement = stateElement.getChildren(XCProject.nodeName).firstOrNull()
         xcElement?.run {
             xcproject = getAttributeValue(XCProject.pathAttributeKey)
@@ -53,8 +60,7 @@ class ProjectWorkspace(val project: Project) : PersistentStateComponent<Element>
 
     companion object {
         @JvmStatic
-        fun getInstance(project: Project): ProjectWorkspace = project.getComponent(
-            ProjectWorkspace::class.java)
+        fun getInstance(project: Project): ProjectWorkspace = project.getComponent(ProjectWorkspace::class.java)
     }
 }
 

@@ -8,67 +8,35 @@ package com.jetbrains.konan
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.RunProfile
 import com.intellij.execution.configurations.RunProfileState
-import com.intellij.execution.console.ConsoleViewWrapperBase
 import com.intellij.execution.executors.DefaultDebugExecutor
-import com.intellij.execution.executors.DefaultRunExecutor
-import com.intellij.execution.runners.DefaultProgramRunner
 import com.intellij.execution.runners.ExecutionEnvironment
-import com.intellij.execution.ui.ExecutionConsoleEx
 import com.intellij.execution.ui.RunContentDescriptor
-import com.intellij.xdebugger.XDebugProcess
-import com.intellij.xdebugger.XDebugSession
-import com.intellij.xdebugger.XDebuggerManager
-import com.intellij.xdebugger.impl.XDebugProcessConfiguratorStarter
-import com.intellij.xdebugger.impl.ui.XDebugSessionData
+import com.intellij.openapi.project.Project
 
-class IdeaKonanRunner : DefaultProgramRunner() {
+class IdeaKonanRunner : RunnerBase() {
 
     override fun getRunnerId(): String = KonanBundle.message("id.runner")
 
-    override fun canRun(executorId: String, profile: RunProfile): Boolean {
-        if (profile !is IdeaKonanRunConfiguration) return false
-
-        val workspace = IdeaKonanWorkspace.getInstance(profile.project)
-
-        return when (executorId) {
-            DefaultRunExecutor.EXECUTOR_ID -> true
-            DefaultDebugExecutor.EXECUTOR_ID -> workspace.isDebugPossible && profile.selectedTarget?.isDebug ?: false
-            else -> false
-        }
+    override fun getWorkspace(project: Project): WorkspaceBase {
+        return IdeaKonanWorkspace.getInstance(project)
     }
 
-    private fun configureDebugSessionUI(session: XDebugSession) {
-        val consoleView = session.consoleView
-        if (consoleView is ConsoleViewWrapperBase) {
-            val runnerLayoutUi = session.ui
-            if (runnerLayoutUi != null) {
-                (consoleView as ExecutionConsoleEx).buildUi(runnerLayoutUi)
-            }
-        }
+    override fun canRun(executorId: String, profile: RunProfile) = when (profile) {
+        is IdeaKonanRunConfiguration -> canRunBinary(executorId, profile)
+        else -> false
     }
 
     @Throws(ExecutionException::class)
     override fun doExecute(state: RunProfileState, environment: ExecutionEnvironment): RunContentDescriptor? {
-        if (DefaultDebugExecutor.EXECUTOR_ID == environment.executor.id) {
-            if (state !is KonanCommandLineState && state !is KonanExternalSystemState) {
-                throw ExecutionException("Unsupported RunProfileState: " + state.javaClass)
-            }
-
-            val session =
-                XDebuggerManager.getInstance(environment.project).startSession(environment, object : XDebugProcessConfiguratorStarter() {
-                    override fun configure(session: XDebugSessionData?) {}
-
-                    @Throws(ExecutionException::class)
-                    override fun start(session: XDebugSession): XDebugProcess {
-                        if (state is KonanCommandLineState) return state.startDebugProcess(session)
-                        return (state as KonanExternalSystemState).startDebugProcess(session, environment)
-                    }
-                })
-
-            configureDebugSessionUI(session)
-            return session.runContentDescriptor
+        if (environment.executor.id != DefaultDebugExecutor.EXECUTOR_ID) {
+            return super.doExecute(state, environment)
         }
 
-        return super.doExecute(state, environment)
+        return when (state) {
+            is KonanCommandLineState -> contentDescriptor(environment) { session -> state.startDebugProcess(session) }
+            is KonanExternalSystemState -> contentDescriptor(environment) { session -> state.startDebugProcess(session, environment) }
+            else -> throw ExecutionException("RunProfileState  ${state.javaClass} is not supported by ${this.javaClass}")
+        }
     }
+
 }

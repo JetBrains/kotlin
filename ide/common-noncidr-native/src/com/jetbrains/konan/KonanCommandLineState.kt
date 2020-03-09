@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package com.jetbrains.konan
@@ -17,15 +17,16 @@ import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.xdebugger.XDebugProcess
 import com.intellij.xdebugger.XDebugSession
 import com.jetbrains.cidr.execution.TrivialRunParameters
+import com.jetbrains.cidr.execution.debugger.backend.lldb.LLDBDriverConfiguration
 import com.jetbrains.cidr.system.LocalHost
-import com.jetbrains.konan.debugger.KonanLLDBDriverConfiguration
 import com.jetbrains.konan.debugger.KonanLocalDebugProcess
 import java.io.File
 
 class KonanCommandLineState(
     env: ExecutionEnvironment,
-    val configuration: IdeaKonanRunConfiguration,
-    private val runFile: File
+    val configuration: BinaryRunConfigurationBase,
+    private val runFile: File,
+    private val lldbConfiguration: LLDBDriverConfiguration?
 ) : CommandLineState(env) {
     private fun usePty(): Boolean {
         val application = ApplicationManager.getApplication()
@@ -43,12 +44,9 @@ class KonanCommandLineState(
 
     @Throws(ExecutionException::class)
     fun startDebugProcess(session: XDebugSession): XDebugProcess {
-        val lldbHome = IdeaKonanWorkspace.getInstance(configuration.project).lldbHome
-            ?: throw ExecutionException("Debug is impossible without lldb binaries required by Kotlin/Native")
         val installer = KonanLLDBInstaller(runFile, configuration)
-        val lldbConfiguration = KonanLLDBDriverConfiguration(lldbHome)
         val result = KonanLocalDebugProcess(
-            TrivialRunParameters(lldbConfiguration, installer),
+            TrivialRunParameters(lldbConfiguration!!, installer),
             session,
             consoleBuilder,
             DefaultConsoleFiltersProvider()

@@ -50,12 +50,17 @@ val jarTask = (tasks.findByName("jar") as Jar? ?: task<Jar>("jar")).apply {
     val classes = files(Callable {
         val result = files()
         val commonNative = project(":kotlin-ultimate:ide:common-native").tasks.getByName("jar")
+        val noncidrNative = project(":kotlin-ultimate:ide:common-noncidr-native").tasks.getByName("jar")
 
         result.from(zipTree(
             commonNative.outputs.files.singleFile
         ))
 
-        result.builtBy(commonNative)
+        result.from(zipTree(
+            noncidrNative.outputs.files.singleFile
+        ))
+
+        result.builtBy(noncidrNative)
     })
 
     from(classes)

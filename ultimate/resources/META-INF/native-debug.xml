@@ -14,7 +14,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <configurationType implementation="com.jetbrains.konan.IdeaKonanRunConfigurationType"/>
-    <executionTargetProvider implementation="com.jetbrains.konan.IdeaKonanExecutionTargetProvider"/>
+    <executionTargetProvider implementation="com.jetbrains.konan.BinaryExecutionTargetProvider"/>
     <stepsBeforeRunProvider implementation="com.jetbrains.konan.IdeaKonanBuildBeforeRunTaskProvider"/>
     <programRunner implementation="com.jetbrains.konan.IdeaKonanRunner"/>
     <projectTaskRunner implementation="com.jetbrains.konan.IdeaKonanProjectTaskRunner"/>

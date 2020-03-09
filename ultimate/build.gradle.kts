@@ -53,8 +53,9 @@ dependencies {
         Platform[192].orHigher {
             compileOnly(intellijUltimateDep()) { includeJars("platform-util-ui", "platform-core-ui") }
             compileOnly(intellijUltimatePluginDep("java")) { includeJars("java-api", "java-impl") }
-            compile(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
-            compile(project(":kotlin-ultimate:ide:ultimate-native")) { isTransitive = false }
+            compileOnly(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
+            compileOnly(project(":kotlin-ultimate:ide:common-noncidr-native")) { isTransitive = false }
+            compileOnly(project(":kotlin-ultimate:ide:ultimate-native")) { isTransitive = false }
         }
 
         Platform[193].orLower {
@@ -252,6 +253,7 @@ val jar = runtimeJar {
 
     Platform[192].orHigher {
         from(provider { project(":kotlin-ultimate:ide:common-native").mainSourceSet.output })
+        from(provider { project(":kotlin-ultimate:ide:common-noncidr-native").mainSourceSet.output })
         from(provider { project(":kotlin-ultimate:ide:ultimate-native").mainSourceSet.output })
     }
 
