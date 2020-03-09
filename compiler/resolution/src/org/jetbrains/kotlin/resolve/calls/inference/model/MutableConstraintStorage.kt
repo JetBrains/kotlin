@@ -103,33 +103,10 @@ class MutableVariableWithConstraints(
     }
 
     private fun simplifyConstraints(): List<Constraint> {
-        val distinctConstraints = removeDuplicatesFromDeclaredUpperBoundConstraints(mutableConstraints)
-
-        val equalityConstraints = distinctConstraints
+        val equalityConstraints = mutableConstraints
             .filter { it.kind == ConstraintKind.EQUALITY }
             .groupBy { it.typeHashCode }
-        return distinctConstraints.filter { isUsefulConstraint(it, equalityConstraints) }
-    }
-
-    private fun removeDuplicatesFromDeclaredUpperBoundConstraints(constraints: List<Constraint>): MutableList<Constraint> {
-        val currentConstraints = constraints.toMutableList()
-        val iterator = currentConstraints.iterator()
-        while (iterator.hasNext()) {
-            val potentialDuplicate = iterator.next()
-
-            if (potentialDuplicate.position.from !is DeclaredUpperBoundConstraintPosition) continue
-            val hasDuplicate = currentConstraints.any { other ->
-                potentialDuplicate !== other &&
-                        potentialDuplicate.typeHashCode == other.typeHashCode &&
-                        potentialDuplicate.type == other.type &&
-                        potentialDuplicate.kind == other.kind
-            }
-
-            if (hasDuplicate)
-                iterator.remove()
-        }
-
-        return currentConstraints
+        return mutableConstraints.filter { isUsefulConstraint(it, equalityConstraints) }
     }
 
     private fun isUsefulConstraint(constraint: Constraint, equalityConstraints: Map<Int, List<Constraint>>): Boolean {

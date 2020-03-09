@@ -22,5 +22,5 @@ val foofoo: Foo = <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>run<!> {
 val bar: Bar = <!NI;TYPE_MISMATCH!><!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>run<!> {
     val x = foo()
     if (x == null) throw Exception()
-    <!NI;DEBUG_INFO_SMARTCAST, TYPE_MISMATCH!>x<!>
+    <!NI;DEBUG_INFO_SMARTCAST, NI;TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
 }<!>
