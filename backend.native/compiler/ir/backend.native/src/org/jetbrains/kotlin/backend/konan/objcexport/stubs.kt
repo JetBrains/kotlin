@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
 abstract class Stub<out D : DeclarationDescriptor>(val name: String) {
     abstract val descriptor: D?
     open val psi: PsiElement?
         get() = ((descriptor as? DeclarationDescriptorWithSource)?.source as? PsiSourceElement)?.psi
+    open val isValid: Boolean
+        get() = descriptor?.module?.isValid ?: true
 }
 
 abstract class ObjCTopLevel<out D : DeclarationDescriptor>(name: String) : Stub<D>(name)

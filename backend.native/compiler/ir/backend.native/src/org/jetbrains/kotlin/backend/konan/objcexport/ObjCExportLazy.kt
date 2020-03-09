@@ -18,7 +18,10 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
+import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierTypeOrDefault
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DescriptorResolver
@@ -26,7 +29,7 @@ import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
@@ -51,7 +54,7 @@ interface ObjCExportLazy {
 fun createObjCExportLazy(
         configuration: ObjCExportLazy.Configuration,
         warningCollector: ObjCExportWarningCollector,
-        resolveSession: ResolveSession,
+        codeAnalyzer: KotlinCodeAnalyzer,
         typeResolver: TypeResolver,
         descriptorResolver: DescriptorResolver,
         fileScopeProvider: FileScopeProvider,
@@ -60,7 +63,7 @@ fun createObjCExportLazy(
 ): ObjCExportLazy = ObjCExportLazyImpl(
         configuration,
         warningCollector,
-        resolveSession,
+        codeAnalyzer,
         typeResolver,
         descriptorResolver,
         fileScopeProvider,
@@ -71,7 +74,7 @@ fun createObjCExportLazy(
 internal class ObjCExportLazyImpl(
         private val configuration: ObjCExportLazy.Configuration,
         warningCollector: ObjCExportWarningCollector,
-        private val resolveSession: ResolveSession,
+        private val codeAnalyzer: KotlinCodeAnalyzer,
         private val typeResolver: TypeResolver,
         private val descriptorResolver: DescriptorResolver,
         private val fileScopeProvider: FileScopeProvider,
@@ -94,6 +97,9 @@ internal class ObjCExportLazyImpl(
             warningCollector,
             objcGenerics = configuration.objcGenerics
     )
+
+    private val isValid: Boolean
+        get() = codeAnalyzer.moduleDescriptor.isValid
 
     override fun generateBase() = translator.generateBaseDeclarations()
 
@@ -203,7 +209,7 @@ internal class ObjCExportLazyImpl(
     }
 
     private fun resolveDeclaration(ktDeclaration: KtDeclaration): DeclarationDescriptor =
-            resolveSession.resolveToDescriptor(ktDeclaration)
+            codeAnalyzer.resolveToDescriptor(ktDeclaration)
 
     private fun resolve(ktClassOrObject: KtClassOrObject) =
             resolveDeclaration(ktClassOrObject) as ClassDescriptor
@@ -301,6 +307,9 @@ internal class ObjCExportLazyImpl(
     ) : LazyObjCProtocol(name) {
         override val descriptor: ClassDescriptor by lazy { lazy.resolve(psi) }
 
+        override val isValid: Boolean
+            get() = lazy.isValid
+
         override fun computeRealStub(): ObjCProtocol = lazy.translator.translateInterface(descriptor)
     }
 
@@ -313,6 +322,9 @@ internal class ObjCExportLazyImpl(
     ) : LazyObjCInterface(name = name, generics = generics, categoryName = null, attributes = attributes) {
         override val descriptor: ClassDescriptor by lazy { lazy.resolve(psi) }
 
+        override val isValid: Boolean
+            get() = lazy.isValid
+
         override fun computeRealStub(): ObjCInterface = lazy.translator.translateClass(descriptor)
     }
 
@@ -324,6 +336,9 @@ internal class ObjCExportLazyImpl(
     ) : LazyObjCInterface(name = name, generics = emptyList(), categoryName = null, attributes = listOf(OBJC_SUBCLASSING_RESTRICTED)) {
         override val descriptor: ClassDescriptor?
             get() = null
+
+        override val isValid: Boolean
+            get() = lazy.isValid
 
         override val psi: PsiElement?
             get() = null
@@ -347,6 +362,9 @@ internal class ObjCExportLazyImpl(
     ) : LazyObjCInterface(name = name.objCName, generics = emptyList(), categoryName = categoryName, attributes = emptyList()) {
         override val descriptor: ClassDescriptor?
             get() = null
+
+        override val isValid: Boolean
+            get() = lazy.isValid
 
         override val psi: PsiElement?
             get() = null
