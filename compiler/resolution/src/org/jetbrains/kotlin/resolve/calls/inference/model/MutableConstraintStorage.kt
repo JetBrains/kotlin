@@ -9,13 +9,11 @@ import org.jetbrains.kotlin.resolve.calls.inference.trimToSize
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
-import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.typeUtil.unCapture
-import kotlin.collections.ArrayList
-import kotlin.collections.LinkedHashMap
 
 
 class MutableVariableWithConstraints private constructor(
@@ -43,42 +41,43 @@ class MutableVariableWithConstraints private constructor(
 
     private val mutableConstraints = if (constraints == null) ArrayList() else ArrayList(constraints)
 
-    private var simplifiedConstraints: List<Constraint>? = mutableConstraints
+    private var simplifiedConstraints: ArrayList<Constraint>? = mutableConstraints
 
     // return new actual constraint, if this constraint is new
     fun addConstraint(constraint: Constraint): Constraint? {
-        val previousConstraintWithSameType = constraints.filter { oldConstraint ->
-            oldConstraint.typeHashCode == constraint.typeHashCode
-                    && oldConstraint.type == constraint.type
-                    && oldConstraint.isNullabilityConstraint == constraint.isNullabilityConstraint
-        }
 
-        if (previousConstraintWithSameType.any { previous -> newConstraintIsUseless(previous, constraint) })
-            return null
-
-        val addAsEqualityConstraint = previousConstraintWithSameType.any { previous ->
-            when (previous.kind) {
-                ConstraintKind.LOWER -> constraint.kind.isUpper()
-                ConstraintKind.UPPER -> constraint.kind.isLower()
-                ConstraintKind.EQUALITY -> true
+        for (previousConstraint in constraints) {
+            if (previousConstraint.typeHashCode == constraint.typeHashCode
+                && previousConstraint.type == constraint.type
+                && previousConstraint.isNullabilityConstraint == constraint.isNullabilityConstraint
+            ) {
+                if (newConstraintIsUseless(previousConstraint, constraint)) return null
+                val isMatchingForSimplification = when (previousConstraint.kind) {
+                    ConstraintKind.LOWER -> constraint.kind.isUpper()
+                    ConstraintKind.UPPER -> constraint.kind.isLower()
+                    ConstraintKind.EQUALITY -> true
+                }
+                if (isMatchingForSimplification) {
+                    val actualConstraint = Constraint(
+                        ConstraintKind.EQUALITY,
+                        constraint.type,
+                        constraint.position,
+                        constraint.typeHashCode,
+                        derivedFrom = constraint.derivedFrom,
+                        isNullabilityConstraint = false
+                    )
+                    mutableConstraints.add(actualConstraint)
+                    simplifiedConstraints = null
+                    return actualConstraint
+                }
             }
         }
 
-        val actualConstraint = if (addAsEqualityConstraint)
-            Constraint(
-                ConstraintKind.EQUALITY,
-                constraint.type,
-                constraint.position,
-                constraint.typeHashCode,
-                derivedFrom = constraint.derivedFrom,
-                isNullabilityConstraint = false
-            )
-        else
-            constraint
-
-        mutableConstraints.add(actualConstraint)
-        simplifiedConstraints = null
-        return actualConstraint
+        mutableConstraints.add(constraint)
+        if (simplifiedConstraints != null && simplifiedConstraints !== mutableConstraints) {
+            simplifiedConstraints!!.add(constraint)
+        }
+        return constraint
     }
 
     // This method should be used only for transaction in constraint system
@@ -111,13 +110,13 @@ class MutableVariableWithConstraints private constructor(
         }
     }
 
-    private fun List<Constraint>.simplifyConstraints(): List<Constraint> {
+    private fun ArrayList<Constraint>.simplifyConstraints(): ArrayList<Constraint> {
         val equalityConstraints =
             filter { it.kind == ConstraintKind.EQUALITY }
                 .groupBy { it.typeHashCode }
         return when {
             equalityConstraints.isEmpty() -> this
-            else -> filter { isUsefulConstraint(it, equalityConstraints) }
+            else -> filterTo(ArrayList()) { isUsefulConstraint(it, equalityConstraints) }
         }
     }
 
