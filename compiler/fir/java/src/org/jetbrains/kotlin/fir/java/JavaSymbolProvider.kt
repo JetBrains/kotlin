@@ -297,7 +297,9 @@ class JavaSymbolProvider(
                         return firJavaConstructor
                     }
 
-                    if (javaClassDeclaredConstructors.isEmpty() && javaClass.classKind == ClassKind.CLASS) {
+                    if (javaClassDeclaredConstructors.isEmpty()
+                        && javaClass.classKind == ClassKind.CLASS
+                        && javaClass.hasDefaultConstructor()) {
                         addJavaConstructor(isPrimary = true)
                     }
                     for (javaConstructor in javaClassDeclaredConstructors) {
