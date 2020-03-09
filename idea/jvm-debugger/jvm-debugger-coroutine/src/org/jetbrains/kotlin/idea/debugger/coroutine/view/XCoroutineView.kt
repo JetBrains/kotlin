@@ -9,7 +9,6 @@ import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.JavaDebugProcess
 import com.intellij.debugger.engine.JavaExecutionStack
 import com.intellij.debugger.engine.SuspendContextImpl
-import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl
 import com.intellij.ide.CommonActionsManager
@@ -46,12 +45,15 @@ import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineDebuggerContentInfo
 import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineDebuggerContentInfo.Companion.XCOROUTINE_POPUP_ACTION_GROUP
 import org.jetbrains.kotlin.idea.debugger.coroutine.VersionedImplementationProvider
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.*
-import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.*
+import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.ApplicationThreadExecutor
+import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.CoroutineDebugProbesProxy
+import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.LookupContinuation
+import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.ManagerThreadExecutor
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.CreateContentParams
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.CreateContentParamsProvider
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.XDebugSessionListenerProvider
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
-import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
+import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 import java.awt.BorderLayout
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
@@ -363,13 +365,12 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
         return XDebuggerUtil.getInstance().createPosition(classFile, lineNumber)
     }
 
-    private fun executionContext(suspendContext: SuspendContextImpl, frameProxy: StackFrameProxyImpl): ExecutionContext {
-        val evaluationContextImpl = EvaluationContextImpl(suspendContext, frameProxy)
-        return ExecutionContext(evaluationContextImpl, frameProxy)
+    private fun executionContext(suspendContext: SuspendContextImpl, frameProxy: StackFrameProxyImpl): DefaultExecutionContext {
+        return DefaultExecutionContext(suspendContext, frameProxy)
     }
 
     private fun createSyntheticStackFrame(
-        executionContext: ExecutionContext,
+        executionContext: DefaultExecutionContext,
         frame: SuspendCoroutineStackFrameItem
     ): SyntheticStackFrame? {
 

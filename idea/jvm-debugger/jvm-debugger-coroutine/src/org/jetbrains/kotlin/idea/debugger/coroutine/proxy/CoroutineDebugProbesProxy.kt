@@ -13,12 +13,13 @@ import org.jetbrains.kotlin.idea.debugger.coroutine.command.CoroutineBuilder
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoCache
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
+import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 
 class CoroutineDebugProbesProxy(val suspendContext: XSuspendContext) {
     private val log by logger
 
-    private var executionContext: ExecutionContext = executionContext()
+    private var executionContext: DefaultExecutionContext = executionContext()
     // might want to use inner class but also having to monitor order of fields
     private var refs: ProcessReferences = ProcessReferences(executionContext)
 
@@ -185,16 +186,15 @@ class CoroutineDebugProbesProxy(val suspendContext: XSuspendContext) {
     private fun sizeOf(args: ObjectReference): Int =
         (executionContext.invokeMethod(args, refs.sizeRef, emptyList()) as IntegerValue).value()
 
-    private fun executionContext() :  ExecutionContext {
-        val evaluationContextImpl = EvaluationContextImpl(suspendContext as SuspendContextImpl, suspendContext.frameProxy)
-        return ExecutionContext(evaluationContextImpl, suspendContext.frameProxy as StackFrameProxyImpl)
+    private fun executionContext() :  DefaultExecutionContext {
+        return DefaultExecutionContext(suspendContext as SuspendContextImpl, suspendContext.frameProxy)
     }
 
     /**
      * @TODO refactor later
      * Holds ClassTypes, Methods, ObjectReferences and Fields for a particular jvm
      */
-    class ProcessReferences(executionContext: ExecutionContext) {
+    class ProcessReferences(executionContext: DefaultExecutionContext) {
         // kotlinx.coroutines.debug.DebugProbes instance and methods
         val debugProbesClsRef = executionContext.findClass("$DEBUG_PACKAGE.DebugProbes") as ClassType
         val debugProbesImplClsRef = executionContext.findClass("$DEBUG_PACKAGE.internal.DebugProbesImpl") as ClassType

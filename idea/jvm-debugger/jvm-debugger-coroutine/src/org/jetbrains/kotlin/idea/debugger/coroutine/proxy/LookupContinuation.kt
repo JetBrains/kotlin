@@ -6,17 +6,16 @@
 package org.jetbrains.kotlin.idea.debugger.coroutine.proxy
 
 import com.sun.jdi.*
-import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
-import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
+import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 import org.jetbrains.kotlin.idea.debugger.isSubtype
 
-class LookupContinuation(val context: ExecutionContext, val frame: StackTraceElement) {
+class LookupContinuation(val context: DefaultExecutionContext, val frame: StackTraceElement) {
 
     private fun suspendOrInvokeSuspend(method: Method): Boolean =
         "Lkotlin/coroutines/Continuation;)" in method.signature() ||
-        (method.name() == "invokeSuspend" && method.signature() == "(Ljava/lang/Object;)Ljava/lang/Object;") // suspend fun or invokeSuspend
+                (method.name() == "invokeSuspend" && method.signature() == "(Ljava/lang/Object;)Ljava/lang/Object;") // suspend fun or invokeSuspend
 
-    private fun findMethod() : Method {
+    private fun findMethod(): Method {
         val clazz = context.findClass(frame.className) as ClassType
         val method = clazz.methodsByName(frame.methodName).last {
             val loc = it.location().lineNumber()
@@ -75,7 +74,7 @@ class LookupContinuation(val context: ExecutionContext, val frame: StackTraceEle
      * Finds previous Continuation for this Continuation (completion field in BaseContinuationImpl)
      * @return null if given ObjectReference is not a BaseContinuationImpl instance or completion is null
      */
-    private fun getNextFrame(continuation: ObjectReference, context: ExecutionContext): ObjectReference? {
+    private fun getNextFrame(continuation: ObjectReference, context: DefaultExecutionContext): ObjectReference? {
         val type = continuation.type() as ClassType
         if (!type.isSubtype("kotlin.coroutines.jvm.internal.BaseContinuationImpl")) return null
         val next = type.concreteMethodByName("getCompletion", "()Lkotlin/coroutines/Continuation;")

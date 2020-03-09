@@ -19,11 +19,12 @@ import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.SUSPEND_LAMBDA_CLASSES
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineStackFrameItem
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.DefaultCoroutineStackFrameItem
+import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 import org.jetbrains.kotlin.idea.debugger.isSubtype
 import org.jetbrains.kotlin.idea.debugger.safeVisibleVariableByName
 
 class AsyncStackTraceContext(
-    val context: ExecutionContext,
+    val context: DefaultExecutionContext,
     val method: Method
 ) {
     val log by logger
@@ -46,13 +47,12 @@ class AsyncStackTraceContext(
     private fun locateContinuation(): ObjectReference? {
         val continuation: ObjectReference?
         if (isInvokeSuspendMethod(method)) {
-            continuation = context.frameProxy.thisObject() ?: return null
+            continuation = context.frameProxy?.thisObject() ?: return null
             if (!isSuspendLambda(continuation.referenceType()))
                 return null
         } else if (isContinuationProvider(method)) {
-            val frameProxy = context.frameProxy
-            val continuationVariable = frameProxy.safeVisibleVariableByName(CONTINUATION_VARIABLE_NAME) ?: return null
-            continuation = frameProxy.getValue(continuationVariable) as? ObjectReference ?: return null
+            val continuationVariable = context.frameProxy?.safeVisibleVariableByName(CONTINUATION_VARIABLE_NAME) ?: return null
+            continuation = context.frameProxy?.getValue(continuationVariable) as? ObjectReference ?: return null
             context.keepReference(continuation)
         } else {
             continuation = null

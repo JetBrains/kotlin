@@ -13,6 +13,8 @@ import com.sun.jdi.*
 import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineStackFrameItem
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.AsyncStackTraceContext
+import org.jetbrains.kotlin.idea.debugger.evaluate.BaseExecutionContext
+import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 
 class CoroutineAsyncStackTraceProvider : AsyncStackTraceProvider {
@@ -38,8 +40,7 @@ class CoroutineAsyncStackTraceProvider : AsyncStackTraceProvider {
         if (threadReference == null || !threadReference.isSuspended || !canRunEvaluation(suspendContext))
             return defaultResult
 
-        val evaluationContext = EvaluationContextImpl(suspendContext as SuspendContextImpl, frameProxy)
-        val context = ExecutionContext(evaluationContext, frameProxy)
+        val context = DefaultExecutionContext(suspendContext as SuspendContextImpl, frameProxy)
         val astContext = AsyncStackTraceContext(context, method)
         return astContext.getAsyncStackTraceIfAny()
     }

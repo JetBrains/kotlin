@@ -24,7 +24,8 @@ fun getPosition(stackTraceElement: StackTraceElement, project: Project): XSource
         @Suppress("DEPRECATION")
         psiFacade.findClass(
             stackTraceElement.className.substringBefore("$"), // find outer class, for which psi exists TODO
-            GlobalSearchScope.everythingScope(project))
+            GlobalSearchScope.everythingScope(project)
+        )
     }
 
     val classFile = psiClass?.containingFile?.virtualFile

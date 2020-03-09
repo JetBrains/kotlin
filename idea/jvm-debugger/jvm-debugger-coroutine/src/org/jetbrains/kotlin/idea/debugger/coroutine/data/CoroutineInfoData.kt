@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.idea.debugger.coroutine.data
 
-import com.sun.jdi.*
+import com.sun.jdi.ObjectReference
+import com.sun.jdi.ThreadReference
 
 /**
  * Represents state of a coroutine.
