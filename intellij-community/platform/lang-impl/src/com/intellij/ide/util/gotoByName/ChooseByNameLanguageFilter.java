@@ -15,51 +15,38 @@
  */
 package com.intellij.ide.util.gotoByName;
 
-import com.intellij.lang.DependentLanguage;
-import com.intellij.lang.Language;
-import com.intellij.lang.LanguageUtil;
-import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.Collection;
 
 /**
  * @author yole
  */
-public class ChooseByNameLanguageFilter extends ChooseByNameFilter<Language> {
+public class ChooseByNameLanguageFilter extends ChooseByNameFilter<LanguageRef> {
   public ChooseByNameLanguageFilter(@NotNull ChooseByNamePopup popup,
-                                    @NotNull FilteringGotoByModel<Language> languageFilteringGotoByModel,
-                                    @NotNull ChooseByNameFilterConfiguration<Language> languageChooseByNameFilterConfiguration,
+                                    @NotNull FilteringGotoByModel<LanguageRef> languageFilteringGotoByModel,
+                                    @NotNull ChooseByNameFilterConfiguration<LanguageRef> languageChooseByNameFilterConfiguration,
                                     @NotNull Project project) {
     super(popup, languageFilteringGotoByModel, languageChooseByNameFilterConfiguration, project);
   }
 
   @Override
-  protected String textForFilterValue(@NotNull Language value) {
+  protected String textForFilterValue(@NotNull LanguageRef value) {
     return value.getDisplayName();
   }
 
   @Nullable
   @Override
-  protected Icon iconForFilterValue(@NotNull Language value) {
-    final LanguageFileType fileType = value.getAssociatedFileType();
-    return fileType != null ? fileType.getIcon() : null;
+  protected Icon iconForFilterValue(@NotNull LanguageRef value) {
+    return value.getIcon();
   }
 
   @NotNull
   @Override
-  protected Collection<Language> getAllFilterValues() {
-    final Collection<Language> registeredLanguages = Language.getRegisteredLanguages();
-    List<Language> accepted = new ArrayList<>();
-    for (Language language : registeredLanguages) {
-      if (language != Language.ANY && !(language instanceof DependentLanguage)) {
-        accepted.add(language);
-      }
-    }
-    Collections.sort(accepted, LanguageUtil.LANGUAGE_COMPARATOR);
-    return accepted;
+  protected Collection<LanguageRef> getAllFilterValues() {
+    return LanguageRef.forAllLanguages();
   }
 }

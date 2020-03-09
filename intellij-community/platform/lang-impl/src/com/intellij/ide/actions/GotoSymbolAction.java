@@ -50,9 +50,9 @@ public class GotoSymbolAction extends GotoActionBase implements DumbAware {
 
     GotoSymbolModel2 model = new GotoSymbolModel2(project);
     PsiDocumentManager.getInstance(project).commitAllDocuments();
-    showNavigationPopup(e, model, new GotoActionCallback<Language>() {
+    showNavigationPopup(e, model, new GotoActionCallback<LanguageRef>() {
       @Override
-      protected ChooseByNameFilter<Language> createFilter(@NotNull ChooseByNamePopup popup) {
+      protected ChooseByNameFilter<LanguageRef> createFilter(@NotNull ChooseByNamePopup popup) {
         return new ChooseByNameLanguageFilter(popup, model, GotoClassSymbolConfiguration.getInstance(project), project);
       }
 

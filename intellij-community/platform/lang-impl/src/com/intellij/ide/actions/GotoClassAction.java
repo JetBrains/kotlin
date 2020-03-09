@@ -11,7 +11,6 @@ import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.ide.util.gotoByName.*;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
-import com.intellij.lang.Language;
 import com.intellij.lang.LanguageStructureViewBuilder;
 import com.intellij.lang.PsiStructureViewFactory;
 import com.intellij.navigation.AnonymousElementProvider;
@@ -101,9 +100,9 @@ public class GotoClassAction extends GotoActionBase implements DumbAware {
     String pluralKinds = StringUtil.capitalize(
       StringUtil.join(GotoClassPresentationUpdater.getElementKinds(), s -> StringUtil.pluralize(s), "/"));
     String title = IdeBundle.message("go.to.class.toolwindow.title", pluralKinds);
-    showNavigationPopup(e, model, new GotoActionCallback<Language>() {
+    showNavigationPopup(e, model, new GotoActionCallback<LanguageRef>() {
       @Override
-      protected ChooseByNameFilter<Language> createFilter(@NotNull ChooseByNamePopup popup) {
+      protected ChooseByNameFilter<LanguageRef> createFilter(@NotNull ChooseByNamePopup popup) {
         return new ChooseByNameLanguageFilter(popup, model, GotoClassSymbolConfiguration.getInstance(project), project);
       }
 

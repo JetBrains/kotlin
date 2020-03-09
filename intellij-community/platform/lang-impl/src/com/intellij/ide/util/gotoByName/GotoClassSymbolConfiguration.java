@@ -15,7 +15,6 @@
  */
 package com.intellij.ide.util.gotoByName;
 
-import com.intellij.lang.Language;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -26,13 +25,13 @@ import com.intellij.openapi.project.Project;
  * @author yole
  */
 @State(name = "GotoClassSymbolConfiguration", storages = @Storage(StoragePathMacros.WORKSPACE_FILE))
-public class GotoClassSymbolConfiguration extends ChooseByNameFilterConfiguration<Language> {
+public class GotoClassSymbolConfiguration extends ChooseByNameFilterConfiguration<LanguageRef> {
   public static GotoClassSymbolConfiguration getInstance(Project project) {
     return ServiceManager.getService(project, GotoClassSymbolConfiguration.class);
   }
 
   @Override
-  protected String nameForElement(Language type) {
-    return type.getID();
+  protected String nameForElement(LanguageRef type) {
+    return type.getId();
   }
 }

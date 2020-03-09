@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class GotoClassModel2 extends FilteringGotoByModel<Language> {
+public class GotoClassModel2 extends FilteringGotoByModel<LanguageRef> {
   private String[] mySeparators;
 
   public GotoClassModel2(@NotNull Project project) {
@@ -37,18 +37,18 @@ public class GotoClassModel2 extends FilteringGotoByModel<Language> {
   }
 
   @Override
-  protected Language filterValueFor(NavigationItem item) {
-    return item instanceof PsiElement ? ((PsiElement) item).getLanguage() : null;
+  protected LanguageRef filterValueFor(NavigationItem item) {
+    return LanguageRef.forNavigationitem(item);
   }
 
   @Override
-  protected synchronized Collection<Language> getFilterItems() {
-    final Collection<Language> result = super.getFilterItems();
+  protected synchronized Collection<LanguageRef> getFilterItems() {
+    final Collection<LanguageRef> result = super.getFilterItems();
     if (result == null) {
       return null;
     }
-    final Collection<Language> items = new HashSet<>(result);
-    items.add(Language.ANY);
+    final Collection<LanguageRef> items = new HashSet<>(result);
+    items.add(LanguageRef.forLanguage(Language.ANY));
     return items;
   }
 
