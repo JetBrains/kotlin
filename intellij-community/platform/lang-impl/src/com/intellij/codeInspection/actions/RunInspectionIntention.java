@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInspection.actions;
 
@@ -118,18 +118,23 @@ public class RunInspectionIntention implements IntentionAction, HighPriorityActi
   public static InspectionProfileImpl createProfile(@NotNull InspectionToolWrapper toolWrapper,
                                                     @NotNull InspectionManagerEx managerEx,
                                                     @Nullable PsiElement psiElement) {
-    InspectionProfileImpl rootProfile = InspectionProfileManager.getInstance(managerEx.getProject()).getCurrentProfile();
+    final Project project = managerEx.getProject();
+    InspectionProfileImpl rootProfile = InspectionProfileManager.getInstance(project).getCurrentProfile();
     LinkedHashSet<InspectionToolWrapper<?, ?>> allWrappers = new LinkedHashSet<>();
     allWrappers.add(toolWrapper);
-    rootProfile.collectDependentInspections(toolWrapper, allWrappers, managerEx.getProject());
-    List<InspectionToolWrapper<?, ?>> toolWrappers = allWrappers.size() == 1 ? Collections.singletonList(allWrappers.iterator().next()) : new ArrayList<>(allWrappers);
-    InspectionProfileImpl model = InspectionProfileKt.createSimple(toolWrapper.getDisplayName(), managerEx.getProject(), toolWrappers);
+    rootProfile.collectDependentInspections(toolWrapper, allWrappers, project);
+    List<InspectionToolWrapper> toolWrappers = allWrappers.size() == 1 ? Collections.singletonList(allWrappers.iterator().next()) : new ArrayList<>(allWrappers);
+    InspectionProfileImpl model = new InspectionProfileImpl(toolWrapper.getDisplayName(), new InspectionToolsSupplier.Simple(toolWrappers), rootProfile);
+    for (InspectionToolWrapper wrapper : toolWrappers) {
+      model.enableTool(wrapper.getShortName(), project);
+    }
     try {
       Element element = new Element("toCopy");
       for (InspectionToolWrapper wrapper : toolWrappers) {
         wrapper.getTool().writeSettings(element);
-        InspectionToolWrapper tw = psiElement == null ? model.getInspectionTool(wrapper.getShortName(), managerEx.getProject())
+        InspectionToolWrapper tw = psiElement == null ? model.getInspectionTool(wrapper.getShortName(), project)
                                                       : model.getInspectionTool(wrapper.getShortName(), psiElement);
+        assert tw != null;
         tw.getTool().readSettings(element);
       }
     }
