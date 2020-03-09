@@ -134,6 +134,8 @@ class TreeBasedClass(
                     TreeBasedConstructor(constructor as JCTree.JCMethodDecl, compilationUnit, this, javac)
                 }
 
+    override fun hasDefaultConstructor() = !isInterface && constructors.isEmpty()
+
     override val innerClassNames: Collection<Name>
         get() = innerClasses.keys
 
