@@ -37,6 +37,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.ComponentUtil;
@@ -82,12 +84,13 @@ public abstract class AbstractGotoSEContributor implements WeightedSearchEverywh
   private final GlobalSearchScope myEverywhereScope;
   private final GlobalSearchScope myProjectScope;
 
-  protected final PsiElement myPsiContext;
+  protected final SmartPsiElementPointer<PsiElement> myPsiContext;
   protected final List<ScopeDescriptor> myScopeDescriptors = new ArrayList<>();
 
   protected AbstractGotoSEContributor(@NotNull AnActionEvent event) {
     myProject = event.getRequiredData(CommonDataKeys.PROJECT);
-    myPsiContext = GotoActionBase.getPsiContext(event);
+    PsiElement context = GotoActionBase.getPsiContext(event);
+    myPsiContext = context != null ? SmartPointerManager.getInstance(myProject).createSmartPsiElementPointer(context) : null;
     myEverywhereScope = GlobalSearchScope.everythingScope(myProject);
     ScopeChooserCombo.processScopes(
       myProject, event.getDataContext(),
@@ -231,7 +234,7 @@ public abstract class AbstractGotoSEContributor implements WeightedSearchEverywh
       FilteringGotoByModel<?> model = createModel(myProject);
       if (progressIndicator.isCanceled()) return;
 
-      PsiElement context = myPsiContext != null && myPsiContext.isValid() ? myPsiContext : null;
+      PsiElement context = myPsiContext != null ? myPsiContext.getElement() : null;
       ChooseByNamePopup popup = ChooseByNamePopup.createPopup(myProject, model, context);
       try {
         ChooseByNameItemProvider provider = popup.getProvider();
