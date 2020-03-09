@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions;
 
 import com.intellij.featureStatistics.FeatureUsageTracker;
@@ -267,14 +267,14 @@ public class GotoActionAction extends GotoActionBase implements DumbAware {
     }
   }
 
-  public static void openOptionOrPerformAction(@NotNull Object element, String enteredText, @Nullable Project project, Component component) {
+  public static void openOptionOrPerformAction(@NotNull Object element, String enteredText, @Nullable Project project, @Nullable Component component) {
     openOptionOrPerformAction(element, enteredText, project, component, 0);
   }
 
   private static void openOptionOrPerformAction(Object element,
                                                 String enteredText,
                                                 @Nullable Project project,
-                                                Component component,
+                                                @Nullable Component component,
                                                 @JdkConstants.InputEventMask int modifiers) {
     // invoke later to let the Goto Action popup close completely before the action is performed
     // and avoid focus issues if the action shows complicated popups itself
