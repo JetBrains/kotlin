@@ -386,7 +386,10 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
   @Override
   public void filePropertiesChanged(@NotNull final VirtualFile file) {
     ApplicationManager.getApplication().assertReadAccessAllowed();
-    ((FileBasedIndexImpl)FileBasedIndex.getInstance()).requestReindex(file, false);
+    FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
+    if (fileBasedIndex instanceof FileBasedIndexImpl) {
+      ((FileBasedIndexImpl) fileBasedIndex).requestReindex(file, false);
+    }
     for (final Project project : ProjectManager.getInstance().getOpenProjects()) {
       reloadPsi(file, project);
     }

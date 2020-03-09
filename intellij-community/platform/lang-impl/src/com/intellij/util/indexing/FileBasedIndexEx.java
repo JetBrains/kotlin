@@ -51,7 +51,7 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
   public abstract ProjectIndexableFilesFilter projectIndexableFiles(@Nullable Project project);
 
   @ApiStatus.Internal
-  abstract <K, V> UpdatableIndex<K, V, FileContent> getIndex(ID<K, V> indexId);
+  public abstract <K, V> UpdatableIndex<K, V, FileContent> getIndex(ID<K, V> indexId);
 
   @ApiStatus.Internal
   public abstract void waitUntilIndicesAreInitialized();

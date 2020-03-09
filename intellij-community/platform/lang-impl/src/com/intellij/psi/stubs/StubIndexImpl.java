@@ -301,7 +301,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
 
     IdIterator ids = getContainingIds(indexKey, key, project, idFilter, scope);
     PersistentFS fs = PersistentFS.getInstance();
-    IntPredicate accessibleFileFilter = ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getAccessibleFileIdFilter(project);
+    IntPredicate accessibleFileFilter = ((FileBasedIndexEx)FileBasedIndex.getInstance()).getAccessibleFileIdFilter(project);
     // already ensured up-to-date in getContainingIds() method
     try {
       while (ids.hasNext()) {
@@ -450,13 +450,13 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
                                                      final @NotNull Project project,
                                                      @Nullable IdFilter idFilter,
                                                      final @Nullable GlobalSearchScope scope) {
-    final FileBasedIndexImpl fileBasedIndex = (FileBasedIndexImpl)FileBasedIndex.getInstance();
+    final FileBasedIndexEx fileBasedIndex = (FileBasedIndexEx)FileBasedIndex.getInstance();
     ID<Integer, SerializedStubTree> stubUpdatingIndexId = StubUpdatingIndex.INDEX_ID;
     final UpdatableIndex<Key, Void, FileContent> index = getIndex(indexKey);   // wait for initialization to finish
     if (index == null || !fileBasedIndex.ensureUpToDate(stubUpdatingIndexId, project, scope, null)) return IdIterator.EMPTY;
 
     if (idFilter == null) {
-      idFilter = ((FileBasedIndexImpl)FileBasedIndex.getInstance()).projectIndexableFiles(project);
+      idFilter = ((FileBasedIndexEx)FileBasedIndex.getInstance()).projectIndexableFiles(project);
     }
 
     UpdatableIndex<Integer, SerializedStubTree, FileContent> stubUpdatingIndex = fileBasedIndex.getIndex(stubUpdatingIndexId);
@@ -717,7 +717,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
   }
 
   static UpdatableIndex<Integer, SerializedStubTree, FileContent> getStubUpdatingIndex() {
-    return ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getIndex(StubUpdatingIndex.INDEX_ID);
+    return ((FileBasedIndexEx)FileBasedIndex.getInstance()).getIndex(StubUpdatingIndex.INDEX_ID);
   }
 
   private static final class CompositeKey<K> {

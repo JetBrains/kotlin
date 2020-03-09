@@ -276,7 +276,10 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   static class MyShutDownTask implements Runnable {
     @Override
     public void run() {
-      ((FileBasedIndexImpl)FileBasedIndex.getInstance()).performShutdown(false);
+      FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
+      if (fileBasedIndex instanceof FileBasedIndexImpl) {
+        ((FileBasedIndexImpl)fileBasedIndex).performShutdown(false);
+      }
     }
   }
 
