@@ -619,7 +619,7 @@ class LazyJavaClassMemberScope(
 
     private fun createDefaultConstructor(): ClassConstructorDescriptor? {
         val isAnnotation: Boolean = jClass.isAnnotationType
-        if (jClass.isInterface && !isAnnotation)
+        if ((jClass.isInterface || !jClass.hasDefaultConstructor()) && !isAnnotation)
             return null
 
         val classDescriptor = ownerDescriptor

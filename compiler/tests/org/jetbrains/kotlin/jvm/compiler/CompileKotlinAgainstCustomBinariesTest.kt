@@ -458,6 +458,37 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         }
     }
 
+    /* Regression test for KT-37107: compile against .class file without any constructors. */
+    fun testClassfileWithoutConstructors() {
+        compileKotlin("TopLevel.kt", tmpdir, expectedFileName = "TopLevel.txt")
+
+        val inlineFunClass = File(tmpdir.absolutePath, "test/TopLevelKt.class")
+        val cw = ClassWriter(Opcodes.API_VERSION)
+        ClassReader(inlineFunClass.readBytes()).accept(object : ClassVisitor(Opcodes.API_VERSION, cw) {
+            override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? =
+                if (desc == JvmAnnotationNames.METADATA_DESC) null else super.visitAnnotation(desc, visible)
+
+            override fun visitMethod(
+                access: Int,
+                name: String?,
+                descriptor: String?,
+                signature: String?,
+                exceptions: Array<out String>?
+            ): MethodVisitor {
+                assertEquals("foo", name) // test sanity: shouldn't see any constructors, only the "foo" method
+                return super.visitMethod(access, name, descriptor, signature, exceptions)
+            }
+        }, 0)
+
+        assert(inlineFunClass.delete())
+        assert(!inlineFunClass.exists())
+
+        inlineFunClass.writeBytes(cw.toByteArray())
+
+        val (_, exitCode) = compileKotlin("shouldNotCompile.kt", tmpdir, listOf(tmpdir))
+        assertEquals(1, exitCode.code) // double-check that we failed :) output.txt also says so
+    }
+
     fun testReplaceAnnotationClassWithInterface() {
         val library1 = compileLibrary("library-1")
         val usage = compileLibrary("usage", extraClassPath = listOf(library1))
