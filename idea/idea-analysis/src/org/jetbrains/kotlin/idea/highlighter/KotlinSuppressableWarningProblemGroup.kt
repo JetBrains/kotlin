@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import com.intellij.codeInspection.SuppressableProblemGroup
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
 import org.jetbrains.kotlin.idea.quickfix.AnnotationHostKind
 import org.jetbrains.kotlin.idea.quickfix.KotlinSuppressIntentionAction
 import org.jetbrains.kotlin.psi.*
@@ -59,7 +60,10 @@ fun createSuppressWarningActions(element: PsiElement, severity: Severity, suppre
             current is KtExpression && suppressAtStatementAllowed -> {
                 // Add suppress action at first statement
                 if (current.parent is KtBlockExpression || current.parent is KtDestructuringDeclaration) {
-                    val kind = if (current.parent is KtBlockExpression) "statement" else "initializer"
+                    val kind = if (current.parent is KtBlockExpression)
+                        KotlinIdeaAnalysisBundle.message("statement")
+                    else
+                        KotlinIdeaAnalysisBundle.message("initializer")
                     actions.add(
                         KotlinSuppressIntentionAction(current, suppressionKey, AnnotationHostKind(kind, "", true))
                     )
@@ -105,9 +109,13 @@ private object DeclarationKindDetector : KtVisitor<AnnotationHostKind?, Unit?>()
         detect(constructor, "secondary constructor of")
 
     override fun visitObjectDeclaration(d: KtObjectDeclaration, data: Unit?): AnnotationHostKind? {
-        if (d.isCompanion()) return detect(d, "companion object", name = "${d.name} of ${d.getStrictParentOfType<KtClass>()?.name}")
+        if (d.isCompanion()) return detect(
+            d,
+            KotlinIdeaAnalysisBundle.message("companion.object"),
+            name = KotlinIdeaAnalysisBundle.message("0.of.1", d.name.toString(), d.getStrictParentOfType<KtClass>()?.name.toString())
+        )
         if (d.parent is KtObjectLiteralExpression) return null
-        return detect(d, "object")
+        return detect(d, KotlinIdeaAnalysisBundle.message("object"))
     }
 
     private fun detect(
