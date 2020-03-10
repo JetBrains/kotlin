@@ -3,12 +3,10 @@ plugins {
 }
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
-val addCidrDeps: (Project) -> Unit by ultimateTools
 val addIdeaNativeModuleDeps: (Project) -> Unit by ultimateTools
 val cidrUnscrambledJarDir: File? by rootProject.extra
 val intellijBranch: Int by rootProject.extra
 
-addCidrDeps(project)
 addIdeaNativeModuleDeps(project)
 
 // TODO: don't use check for existence of `cidrUnscrambledJarDir` directory,

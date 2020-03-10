@@ -7,6 +7,9 @@ val clionUnscrambledJarDir: File by rootProject.extra
 val isStandaloneBuild: Boolean by rootProject.extra
 val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
+val ultimateTools: Map<String, Any> by rootProject.extensions
+val proprietaryRepositories: Project.() -> Unit by ultimateTools
+
 if (!isStandaloneBuild) {
     repositories {
         if (cacheRedirectorEnabled) {
@@ -15,6 +18,8 @@ if (!isStandaloneBuild) {
         maven("https://jetbrains.bintray.com/markdown")
     }
 }
+
+proprietaryRepositories()
 
 dependencies {
     compile(project(":kotlin-ultimate:ide:common-cidr-native"))

@@ -18,47 +18,25 @@ repositories {
 
 val clionUnscrambledJarArtifact: String by rootProject.extra
 val clionUnscrambledJarDir: File by rootProject.extra
-val clionPlatformDepsOrJavaPluginArtifact: String by rootProject.extra
-val clionPlatformDepsOrJavaPluginDir: File by rootProject.extra
 
 val appcodeUnscrambledJarArtifact: String by rootProject.extra
 val appcodeUnscrambledJarDir: File by rootProject.extra
-val appcodePlatformDepsOrJavaPluginArtifact: String by rootProject.extra
-val appcodePlatformDepsOrJavaPluginDir: File by rootProject.extra
 
 val clionUnscrambledJar: Configuration by configurations.creating
-val clionPlatformDepsZip: Configuration by configurations.creating
-
 val appcodeUnscrambledJar: Configuration by configurations.creating
-val appcodePlatformDepsZip: Configuration by configurations.creating
 
 dependencies {
     clionUnscrambledJar(tc(clionUnscrambledJarArtifact))
-    clionPlatformDepsZip(tc(clionPlatformDepsOrJavaPluginArtifact))
 
     appcodeUnscrambledJar(tc(appcodeUnscrambledJarArtifact))
-    appcodePlatformDepsZip(tc(appcodePlatformDepsOrJavaPluginArtifact))
 }
 
 val downloadCLionUnscrambledJar: Task by downloading(clionUnscrambledJar, clionUnscrambledJarDir)
-val downloadCLionPlatformDeps: Task by downloading(
-        clionPlatformDepsZip,
-        clionPlatformDepsOrJavaPluginDir,
-        pathRemap = { it.substringAfterLast('/') }
-) { zipTree(it.singleFile) }
-
 val downloadAppCodeUnscrambledJar: Task by downloading(appcodeUnscrambledJar, appcodeUnscrambledJarDir)
-val downloadAppCodePlatformDeps: Task by downloading(
-        appcodePlatformDepsZip,
-        appcodePlatformDepsOrJavaPluginDir,
-        pathRemap = { it.substringAfterLast('/') }
-) { zipTree(it.singleFile) }
 
 tasks["build"].dependsOn(
         downloadCLionUnscrambledJar,
-        downloadCLionPlatformDeps,
-        downloadAppCodeUnscrambledJar,
-        downloadAppCodePlatformDeps
+        downloadAppCodeUnscrambledJar
 )
 
 fun Project.downloading(

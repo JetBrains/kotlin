@@ -3,14 +3,14 @@ versions.ideaPluginForCidr=1.4.0-dev-3515
 versions.ideaPluginForCidr.ide=IJ2020.1-1
 versions.ideaPluginForCidr.repo=Kotlin_KotlinDev_Aggregate
 
-versions.appcode=201.5985.25
+versions.appcode=201.6278
 versions.appcode.strict=true
-versions.appcode.repo=ijplatform_master_CIDR_AppCode_PublicInstallers
+versions.appcode.repo=ijplatform_master_CIDR_AppCode_Installers
 versions.xcode-compat=0.2.5
 
-versions.clion=201.5616.31
+versions.clion=201.6276
 versions.clion.strict=true
-versions.clion.repo=ijplatform_master_CIDR_CLion_PublicInstallers
+versions.clion.repo=ijplatform_master_CIDR_CLion_Installers
 
 versions.nativeDebug=193.4099.13
 versions.nativeDebug.repo=ijplatform_master_Idea_InstallersForEapRelease
