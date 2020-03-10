@@ -143,17 +143,7 @@ public class IdentifierHighlighterPass extends TextEditorHighlightingPass {
   private void collectCodeBlockMarkerRanges() {
     PsiElement contextElement = myFile.findElementAt(
       TargetElementUtil.adjustOffset(myFile, myEditor.getDocument(), myEditor.getCaretModel().getOffset()));
-    if (contextElement == null) {
-      return;
-    }
-
-    for (CodeBlockSupportHandler handler : CodeBlockSupportHandler.EP.allForLanguage(contextElement.getLanguage())) {
-      List<TextRange> rangesToHighlight = handler.getCodeBlockMarkerRanges(contextElement);
-      if (!rangesToHighlight.isEmpty()) {
-        myCodeBlockMarkerRanges.addAll(rangesToHighlight);
-        return;
-      }
-    }
+    myCodeBlockMarkerRanges.addAll(CodeBlockSupportHandler.findMarkersRanges(contextElement));
   }
 
   /**
