@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -482,7 +482,12 @@ class BasicCompletionSession(
 
                                 override fun renderElement(presentation: LookupElementPresentation?) {
                                     super.renderElement(presentation)
-                                    presentation?.appendTailText(" for $name in $packageName", true)
+                                    presentation?.appendTailText(
+                                        KotlinIdeaCompletionBundle.message(
+                                            "presentation.tail.for.0.in.1",
+                                            name,
+                                            packageName
+                                        ), true)
                                 }
                             }
                         })
