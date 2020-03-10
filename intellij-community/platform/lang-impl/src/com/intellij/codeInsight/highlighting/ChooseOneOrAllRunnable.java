@@ -62,12 +62,11 @@ public abstract class ChooseOneOrAllRunnable<T extends PsiElement> implements Ru
       String selectAll = CodeInsightBundle.message("highlight.thrown.exceptions.chooser.all.entry");
       model.add(0, selectAll);
 
-      final IPopupChooserBuilder builder = JBPopupFactory.getInstance()
+      IPopupChooserBuilder<Object> builder = JBPopupFactory.getInstance()
         .createPopupChooserBuilder(model)
+        .setRenderer(renderer) // exploit PsiElementListCellRenderer ability to render strings too
         .setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
-        .setRenderer(renderer)
-        .setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
-        .setItemChosenCallback((selectedValue) -> {
+        .setItemChosenCallback(selectedValue -> {
           if (selectedValue.equals(selectAll)) {
             selected(myClasses);
           }

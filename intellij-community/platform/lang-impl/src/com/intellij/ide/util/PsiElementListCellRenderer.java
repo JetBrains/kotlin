@@ -44,7 +44,8 @@ import java.util.regex.Pattern;
 import static com.intellij.openapi.vfs.newvfs.VfsPresentationUtil.getFileBackgroundColor;
 
 @DirtyUI
-public abstract class PsiElementListCellRenderer<T extends PsiElement> extends JPanel implements ListCellRenderer {
+// extends ListCellRenderer<Object> because it can render strings too
+public abstract class PsiElementListCellRenderer<T extends PsiElement> extends JPanel implements ListCellRenderer<Object> {
   private static final Logger LOG = Logger.getInstance(PsiElementListCellRenderer.class);
   private static final String LEFT = BorderLayout.WEST;
   private static final Pattern CONTAINER_PATTERN = Pattern.compile("(\\(in |\\()?([^)]*)(\\))?");

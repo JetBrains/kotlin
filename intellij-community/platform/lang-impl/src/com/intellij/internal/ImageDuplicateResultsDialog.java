@@ -124,24 +124,24 @@ public class ImageDuplicateResultsDialog extends DialogWrapper {
       return null;
     });
 
-    final JBList list = new JBList(new ResourceModules().getModuleNames());
+    JBList<String> list = new JBList<>(new ResourceModules().getModuleNames());
     final NotNullFunction<Object, JComponent> modulesRenderer =
       dom -> new JLabel(dom instanceof Module ? ((Module)dom).getName() : dom.toString(), PlatformIcons.SOURCE_FOLDERS_ICON, SwingConstants.LEFT);
     list.installCellRenderer(modulesRenderer);
     final JPanel modulesPanel = ToolbarDecorator.createDecorator(list)
       .setAddAction(button -> {
         final Module[] all = ModuleManager.getInstance(myProject).getModules();
-        Arrays.sort(all, (o1, o2) -> o1.getName().compareTo(o2.getName()));
-        final JBList modules = new JBList(all);
+        Arrays.sort(all, Comparator.comparing(Module::getName));
+        JBList<Module> modules = new JBList<>(all);
         modules.installCellRenderer(modulesRenderer);
         JBPopupFactory.getInstance().createListPopupBuilder(modules)
           .setTitle("Add Resource Module")
-          .setNamerForFiltering(o -> ((Module)o).getName())
+          .setNamerForFiltering(o -> o.getName())
           .setItemChoosenCallback(() -> {
-            final Object value = modules.getSelectedValue();
-            if (value instanceof Module && !myResourceModules.contains((Module)value)) {
-              myResourceModules.add((Module)value);
-              ((DefaultListModel)list.getModel()).addElement(((Module)value).getName());
+            Module value = modules.getSelectedValue();
+            if (value != null && !myResourceModules.contains(value)) {
+              myResourceModules.add(value);
+              ((DefaultListModel<String>)list.getModel()).addElement(value.getName());
             }
             ((DefaultTreeModel)myTree.getModel()).reload();
             TreeUtil.expandAll(myTree);
@@ -151,7 +151,7 @@ public class ImageDuplicateResultsDialog extends DialogWrapper {
         final Object[] values = list.getSelectedValues();
         for (Object value : values) {
           myResourceModules.remove((String)value);
-          ((DefaultListModel)list.getModel()).removeElement(value);
+          ((DefaultListModel<String>)list.getModel()).removeElement(value);
         }
         ((DefaultTreeModel)myTree.getModel()).reload();
         TreeUtil.expandAll(myTree);

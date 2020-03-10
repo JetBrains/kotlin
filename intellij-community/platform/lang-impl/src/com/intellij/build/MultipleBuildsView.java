@@ -82,17 +82,16 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
     myBuildsList.setModel(new DefaultListModel<>());
     myBuildsList.setFixedCellHeight(UIUtil.LIST_FIXED_CELL_HEIGHT * 2);
     myBuildsList.installCellRenderer(obj -> {
-      AbstractViewManager.BuildInfo buildInfo = (AbstractViewManager.BuildInfo)obj;
       JPanel panel = new JPanel(new BorderLayout());
       SimpleColoredComponent mainComponent = new SimpleColoredComponent();
-      mainComponent.setIcon(buildInfo.getIcon());
-      mainComponent.append(buildInfo.getTitle() + ": ", SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
-      mainComponent.append(buildInfo.message, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      mainComponent.setIcon(obj.getIcon());
+      mainComponent.append(obj.getTitle() + ": ", SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
+      mainComponent.append(obj.message, SimpleTextAttributes.REGULAR_ATTRIBUTES);
       panel.add(mainComponent, BorderLayout.NORTH);
-      if (buildInfo.statusMessage != null) {
+      if (obj.statusMessage != null) {
         SimpleColoredComponent statusComponent = new SimpleColoredComponent();
         statusComponent.setIcon(EmptyIcon.ICON_16);
-        statusComponent.append(buildInfo.statusMessage, SimpleTextAttributes.GRAY_ATTRIBUTES);
+        statusComponent.append(obj.statusMessage, SimpleTextAttributes.GRAY_ATTRIBUTES);
         panel.add(statusComponent, BorderLayout.SOUTH);
       }
       return panel;
