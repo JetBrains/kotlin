@@ -10,21 +10,14 @@ import java.io.IOException;
 
 public final class CachedFileContent extends UserDataHolderBase {
   private final VirtualFile myVirtualFile;
+  private long myLength;
   private byte[] myCachedBytes;
-  private long myCachedLength = -1;
   private long myCachedTimeStamp = -1;
   private Boolean myCachedWritable;
 
   public CachedFileContent(@NotNull VirtualFile virtualFile) {
     myVirtualFile = virtualFile;
-  }
-
-  public byte @NotNull [] getBytesOrEmptyArray() {
-    try {
-      return getBytes();
-    } catch (IOException e) {
-      return ArrayUtilRt.EMPTY_BYTE_ARRAY;
-    }
+    myLength = virtualFile.getLength();
   }
 
   public byte @NotNull [] getBytes() throws IOException {
@@ -43,7 +36,7 @@ public final class CachedFileContent extends UserDataHolderBase {
 
   public void setEmptyContent() {
     myCachedBytes = ArrayUtilRt.EMPTY_BYTE_ARRAY;
-    myCachedLength = 0;
+    myLength = 0;
   }
 
   @NotNull
@@ -52,10 +45,7 @@ public final class CachedFileContent extends UserDataHolderBase {
   }
 
   public long getLength() {
-    if (myCachedLength == -1) {
-      myCachedLength = myVirtualFile.getLength();
-    }
-    return myCachedLength;
+    return myLength;
   }
 
   public long getTimeStamp() {
@@ -70,5 +60,9 @@ public final class CachedFileContent extends UserDataHolderBase {
       myCachedWritable = myVirtualFile.isWritable();
     }
     return myCachedWritable == Boolean.TRUE;
+  }
+
+  public boolean isDirectory() {
+    return myVirtualFile.isDirectory();
   }
 }
