@@ -295,6 +295,9 @@ public class TypeUtils {
         if (FlexibleTypesKt.isFlexible(type) && isNullableType(FlexibleTypesKt.asFlexibleType(type).getUpperBound())) {
             return true;
         }
+        if (SpecialTypesKt.isDefinitelyNotNullType(type)) {
+            return false;
+        }
         if (isTypeParameter(type)) {
             return hasNullableSuperType(type);
         }

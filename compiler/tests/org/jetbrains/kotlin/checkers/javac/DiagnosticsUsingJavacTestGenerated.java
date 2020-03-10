@@ -15239,6 +15239,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/nullableTypes/baseWithNullableUpperBound.kt");
             }
 
+            @TestMetadata("definitelyNotNullWithNullableBound.kt")
+            public void testDefinitelyNotNullWithNullableBound() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/nullableTypes/definitelyNotNullWithNullableBound.kt");
+            }
+
             @TestMetadata("elvisOnUnit.kt")
             public void testElvisOnUnit() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/nullableTypes/elvisOnUnit.kt");
