@@ -9,6 +9,7 @@ org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTes
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryClassUsages, KT-34542, FAIL
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryNestedClassUsages, KT-34542, FAIL
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryObjectUsages, KT-34542, FAIL
+org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testMobile, Leaked SDK
 org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testMobileShared, IDEA-225878
 org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testNative, IDEA-225878
 org.jetbrains.kotlin.gradle.GradleMultiplatformWizardTest.testShared, IDEA-225878
