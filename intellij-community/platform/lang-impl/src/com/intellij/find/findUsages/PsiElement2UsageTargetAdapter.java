@@ -50,13 +50,14 @@ public class PsiElement2UsageTargetAdapter
   private Icon myIcon;
 
   public PsiElement2UsageTargetAdapter(@NotNull PsiElement element, @NotNull FindUsagesOptions options) {
-    myOptions = options;
-    myPointer = SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(element);
-
     if (!(element instanceof NavigationItem)) {
       throw new IllegalArgumentException("Element is not a navigation item: " + element);
     }
-    update(element);
+    myOptions = options;
+    PsiFile file = element.getContainingFile();
+    myPointer = file == null ? SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(element) :
+                SmartPointerManager.getInstance(file.getProject()).createSmartPsiElementPointer(element, file);
+    update(element, file);
   }
 
   public PsiElement2UsageTargetAdapter(@NotNull PsiElement element) {
@@ -108,8 +109,9 @@ public class PsiElement2UsageTargetAdapter
   @Override
   public void findUsages() {
     PsiElement element = getElement();
-    if (element == null) return;
-    ((FindManagerImpl)FindManager.getInstance(element.getProject())).getFindUsagesManager().startFindUsages(element, myOptions);
+    if (element != null) {
+      ((FindManagerImpl)FindManager.getInstance(element.getProject())).getFindUsagesManager().startFindUsages(element, myOptions);
+    }
   }
 
   @Override
@@ -127,7 +129,9 @@ public class PsiElement2UsageTargetAdapter
   public void highlightUsages(@NotNull PsiFile file, @NotNull Editor editor, boolean clearHighlights) {
     PsiElement target = getElement();
 
-    if (file instanceof PsiCompiledFile) file = ((PsiCompiledFile)file).getDecompiledPsiFile();
+    if (file instanceof PsiCompiledFile) {
+      file = ((PsiCompiledFile)file).getDecompiledPsiFile();
+    }
 
     Project project = target.getProject();
     final FindUsagesManager findUsagesManager = ((FindManagerImpl)FindManager.getInstance(project)).getFindUsagesManager();
@@ -226,11 +230,14 @@ public class PsiElement2UsageTargetAdapter
 
   @Override
   public void update() {
-    update(getElement());
+    PsiElement element = getElement();
+    if (element != null) {
+      update(element, element.getContainingFile());
+    }
   }
 
-  private void update(PsiElement element) {
-    if (element != null && element.isValid()) {
+  private void update(@NotNull PsiElement element, PsiFile file) {
+    if (file == null ? element.isValid() : file.isValid()) {
       final ItemPresentation presentation = ((NavigationItem)element).getPresentation();
       myIcon = presentation == null ? null : presentation.getIcon(true);
       myPresentableText = presentation == null ? UsageViewUtil.createNodeText(element) : presentation.getPresentableText();

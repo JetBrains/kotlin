@@ -93,7 +93,7 @@ class MultipleFilesHyperlinkInfo extends HyperlinkInfoBase implements FileHyperl
         .createPopupChooserBuilder(currentFiles)
         .setRenderer(new GotoFileCellRenderer(width))
         .setTitle(ExecutionBundle.message("popup.title.choose.target.file"))
-        .setItemChosenCallback((selectedValue) -> {
+        .setItemChosenCallback(selectedValue -> {
           VirtualFile file = selectedValue.getVirtualFile();
           new OpenFileHyperlinkInfo(myProject, file, myLineNumber, myColumnFinder.applyAsInt(selectedValue)).navigate(project);
         })
