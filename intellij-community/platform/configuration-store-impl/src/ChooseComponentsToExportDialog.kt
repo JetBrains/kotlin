@@ -13,6 +13,7 @@ import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.FieldPanel
 import gnu.trove.THashSet
@@ -66,12 +67,15 @@ private fun addToExistingListElement(item: ExportableItem,
   return file != null
 }
 
-fun chooseSettingsFile(oldPath: String?, parent: Component?, title: String, description: String): Promise<String> {
+fun chooseSettingsFile(oldPath: String?, parent: Component?, title: String, description: String): Promise<VirtualFile> {
   val chooserDescriptor = FileChooserDescriptorFactory.createSingleLocalFileDescriptor()
   chooserDescriptor.description = description
   chooserDescriptor.isHideIgnored = false
   chooserDescriptor.title = title
-  chooserDescriptor.withFileFilter { ConfigImportHelper.isSettingsFile(it) }
+  chooserDescriptor.withFileFilter {
+    ConfigImportHelper.isSettingsFile(it) ||
+    ConfigImportHelper.isConfigDirectory(VfsUtil.virtualToIoFile(it).toPath())
+  }
 
   var initialDir: VirtualFile?
   if (oldPath != null) {
@@ -84,16 +88,11 @@ fun chooseSettingsFile(oldPath: String?, parent: Component?, title: String, desc
   else {
     initialDir = null
   }
-  val result = AsyncPromise<String>()
+  val result = AsyncPromise<VirtualFile>()
   FileChooser.chooseFiles(chooserDescriptor, null, parent, initialDir, object : FileChooser.FileChooserConsumer {
     override fun consume(files: List<VirtualFile>) {
       val file = files[0]
-      if (file.isDirectory) {
-        result.setResult("${file.path}/$DEFAULT_FILE_NAME")
-      }
-      else {
-        result.setResult(file.path)
-      }
+      result.setResult(file)
     }
 
     override fun cancelled() {
@@ -150,7 +149,10 @@ internal class ChooseComponentsToExportDialog(fileToComponents: Map<Path, List<E
   private fun browse() {
     chooseSettingsFile(pathPanel.text, window, ConfigurationStoreBundle.message("title.export.file.location"),
                        ConfigurationStoreBundle.message("prompt.choose.export.settings.file.path"))
-      .onSuccess { path -> pathPanel.text = FileUtil.toSystemDependentName(path) }
+      .onSuccess { file ->
+        val path = if (file.isDirectory) "${file.path}/$DEFAULT_FILE_NAME" else file.path
+        pathPanel.text = FileUtil.toSystemDependentName(path)
+      }
   }
 
   private fun updateControls() {

@@ -8,20 +8,16 @@ import com.intellij.ide.startup.StartupActionScriptManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ApplicationNamesInfo
-import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.application.*
 import com.intellij.openapi.application.ex.ApplicationEx
 import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.showOkCancelDialog
 import com.intellij.openapi.updateSettings.impl.UpdateSettings
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.getParentPath
-import com.intellij.util.io.copy
-import com.intellij.util.io.exists
-import com.intellij.util.io.inputStream
-import com.intellij.util.io.systemIndependentPath
+import com.intellij.util.io.*
 import gnu.trove.THashSet
 import java.io.File
 import java.io.IOException
@@ -42,9 +38,9 @@ open class ImportSettingsAction : AnAction(), DumbAware {
     val component = PlatformDataKeys.CONTEXT_COMPONENT.getData(dataContext)
     chooseSettingsFile(PathManager.getConfigPath(), component, ConfigurationStoreBundle.message("title.import.file.location"), ConfigurationStoreBundle.message("prompt.choose.import.file.path"))
       .onSuccess {
-        val saveFile = Paths.get(it)
+        val saveFile = Paths.get(it.path)
         try {
-          doImport(saveFile)
+          doImport(saveFile, e.project)
         }
         catch (e1: ZipException) {
           Messages.showErrorDialog(
@@ -68,8 +64,17 @@ open class ImportSettingsAction : AnAction(), DumbAware {
   }
 
   protected open fun doImport(saveFile: Path) {
+    doImport(saveFile, null)
+  }
+
+  protected open fun doImport(saveFile: Path, project: Project?) {
     if (!saveFile.exists()) {
       Messages.showErrorDialog(ConfigurationStoreBundle.message("error.cannot.find.file", saveFile), ConfigurationStoreBundle.message("title.file.not.found"))
+      return
+    }
+
+    if (saveFile.isDirectory()) {
+      doImportFromDirectory(saveFile)
       return
     }
 
@@ -93,18 +98,45 @@ open class ImportSettingsAction : AnAction(), DumbAware {
     val tempFile = Paths.get(PathManager.getPluginTempPath()).resolve(saveFile.fileName)
     saveFile.copy(tempFile)
     val filenameFilter = ImportSettingsFilenameFilter(getRelativeNamesToExtract(getMarkedComponents(dialog.exportableComponents)))
-    StartupActionScriptManager.addActionCommands(listOf(
-      StartupActionScriptManager.UnzipCommand(tempFile.toFile(), File(configPath), filenameFilter),
-      StartupActionScriptManager.DeleteCommand(tempFile.toFile())))
+    StartupActionScriptManager.addActionCommands(
+      listOf(
+        StartupActionScriptManager.UnzipCommand(tempFile.toFile(), File(configPath), filenameFilter),
+        StartupActionScriptManager.DeleteCommand(tempFile.toFile())
+      )
+    )
 
     UpdateSettings.getInstance().forceCheckForUpdateAfterRestart()
 
-    val action = IdeBundle.message(if (ApplicationManager.getApplication().isRestartCapable) "ide.restart.action" else "ide.shutdown.action")
-    if (showOkCancelDialog(title = IdeBundle.message("title.restart.needed"),
-                           message = ConfigurationStoreBundle.message("message.settings.imported.successfully", action, ApplicationNamesInfo.getInstance().fullProductName),
-                           okText = IdeBundle.message("ide.restart.action"),
-                           icon = Messages.getQuestionIcon()) == Messages.OK) {
-      (ApplicationManager.getApplication() as ApplicationEx).restart(true)
+    if (confirmRestart(ConfigurationStoreBundle.message("message.settings.imported.successfully", getRestartActionName(),
+                                                        ApplicationNamesInfo.getInstance().fullProductName))) {
+      restart()
+    }
+  }
+
+  private fun restart() {
+    (ApplicationManager.getApplication() as ApplicationEx).restart(true)
+  }
+
+  private fun confirmRestart(message: String): Boolean =
+    (Messages.OK == showOkCancelDialog(
+      title = IdeBundle.message("title.restart.needed"),
+      message = message,
+      okText = getRestartActionName(),
+      icon = Messages.getQuestionIcon()
+    ))
+
+  private fun getRestartActionName(): String =
+    if (ApplicationManager.getApplication().isRestartCapable) IdeBundle.message("ide.restart.action")
+    else IdeBundle.message("ide.shutdown.action")
+
+  private fun doImportFromDirectory(saveFile: Path) {
+    val confirmationMessage =
+      ConfigurationStoreBundle.message("import.settings.confirmation.message", saveFile) + "\n\n" +
+      ConfigurationStoreBundle.message("restore.default.settings.confirmation.message", ConfigImportHelper.getBackupPath())
+
+    if (confirmRestart(confirmationMessage)) {
+      writeCustomConfigMigrationFile(saveFile)
+      restart()
     }
   }
 
