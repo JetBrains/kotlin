@@ -87,24 +87,25 @@ public final class CachedFileContentQueue {
   }
 
   private PreloadState preloadNextContent() {
-    try {
-      if (myLoadedBytesInQueue.get() > MAX_SIZE_OF_BYTES_IN_QUEUE) {
+    if (myLoadedBytesInQueue.get() > MAX_SIZE_OF_BYTES_IN_QUEUE) {
+      try {
         // wait a little for indexer threads to consume content, they will awake us earlier once we can proceed
         synchronized (ourProceedWithLoadingLock) {
           //noinspection WaitNotInLoop
           ourProceedWithLoadingLock.wait(300);
         }
-        myProgressIndicator.checkCanceled();
-        return PreloadState.TOO_MUCH_DATA_PRELOADED;
+      } catch (InterruptedException e) {
+        LOG.error(e);
       }
-    } catch (InterruptedException e) {
-      LOG.error(e);
-    }
-    catch (ProcessCanceledException pce) {
-      return PreloadState.CANCELLED_OR_FINISHED;
+      if (myProgressIndicator.isCanceled()) {
+        return PreloadState.CANCELLED_OR_FINISHED;
+      }
+      return PreloadState.TOO_MUCH_DATA_PRELOADED;
     }
 
-    if (myProgressIndicator.isCanceled()) return PreloadState.CANCELLED_OR_FINISHED;
+    if (myProgressIndicator.isCanceled()) {
+      return PreloadState.CANCELLED_OR_FINISHED;
+    }
     return loadNextContent() ? PreloadState.PRELOADED_SUCCESSFULLY : PreloadState.CANCELLED_OR_FINISHED;
   }
 
@@ -183,20 +184,19 @@ public final class CachedFileContentQueue {
         if (requestingLargeSize) {
           myLargeSizeRequested = true;
         }
-        try {
-          if (myLargeSizeRequested && !requestingLargeSize ||
-              myBytesBeingProcessed + length > Math.max(PROCESSED_FILE_BYTES_THRESHOLD, length)) {
+        if (myLargeSizeRequested && !requestingLargeSize ||
+            myBytesBeingProcessed + length > Math.max(PROCESSED_FILE_BYTES_THRESHOLD, length)) {
+          try {
             myProceedWithProcessingLock.wait(300);
-          }
-          else {
-            myBytesBeingProcessed += length;
-            if (requestingLargeSize) {
-              myLargeSizeRequested = false;
-            }
-            return content;
+          } catch (InterruptedException ignore) {
           }
         }
-        catch (InterruptedException ignore) {
+        else {
+          myBytesBeingProcessed += length;
+          if (requestingLargeSize) {
+            myLargeSizeRequested = false;
+          }
+          return content;
         }
       }
     }
