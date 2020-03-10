@@ -31,7 +31,9 @@ interface TargetConfigurationIR : MultiplatformIR, IrsOwner {
 }
 
 fun TargetConfigurationIR.addWithJavaIntoJvmTarget() = when {
-    this is DefaultTargetConfigurationIR && targetAccess.type == ModuleSubType.jvm ->
+    this is DefaultTargetConfigurationIR
+            && targetAccess.type == ModuleSubType.jvm
+            && irs.none { it is GradleCallIr } ->
         withIrs(GradleCallIr("withJava"))
     else -> this
 }

@@ -36,7 +36,9 @@ object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenc
     override val text = "For Current System"
 
 
-    override fun ReadingContext.createTargetIrs(module: Module): List<BuildSystemIR> {
+    override fun ReadingContext.createTargetIrs(
+        module: Module
+    ): List<BuildSystemIR> {
         val moduleName = module.name
         val variableName = "${moduleName}Target"
 
@@ -71,7 +73,7 @@ object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenc
             +NonDefaultTargetConfigurationIR(
                 variableName = variableName,
                 targetName = moduleName,
-                irs = createInnerTargetIrs(module).toPersistentList()
+                irs = createInnerTargetIrs(this@createTargetIrs, module).toPersistentList()
             )
         }
     }

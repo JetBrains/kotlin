@@ -45,6 +45,11 @@ public class YamlNewWizardProjectImportTestGenerated extends AbstractYamlNewWiza
             runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration/jvmTarget/");
         }
 
+        @TestMetadata("jvmTargetWithJava")
+        public void testJvmTargetWithJava() throws Exception {
+            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration/jvmTargetWithJava/");
+        }
+
         @TestMetadata("kotlinJvm")
         public void testKotlinJvm() throws Exception {
             runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration/kotlinJvm/");
@@ -98,6 +103,11 @@ public class YamlNewWizardProjectImportTestGenerated extends AbstractYamlNewWiza
             runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration/jvmTarget/");
         }
 
+        @TestMetadata("jvmTargetWithJava")
+        public void testJvmTargetWithJava() throws Exception {
+            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration/jvmTargetWithJava/");
+        }
+
         @TestMetadata("kotlinJvm")
         public void testKotlinJvm() throws Exception {
             runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration/kotlinJvm/");
@@ -149,6 +159,11 @@ public class YamlNewWizardProjectImportTestGenerated extends AbstractYamlNewWiza
         @TestMetadata("jvmTarget")
         public void testJvmTarget() throws Exception {
             runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration/jvmTarget/");
+        }
+
+        @TestMetadata("jvmTargetWithJava")
+        public void testJvmTargetWithJava() throws Exception {
+            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration/jvmTargetWithJava/");
         }
 
         @TestMetadata("kotlinJvm")
