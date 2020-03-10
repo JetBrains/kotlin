@@ -260,7 +260,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
                 KtPsiFactory(expression.project).createExpression("($expressionText).toString()")
             }
             runInEdtAndWait {
-                expression.project.executeWriteCommand("Wrap with 'toString()'") {
+                expression.project.executeWriteCommand(KotlinDebuggerEvaluationBundle.message("wrap.with.tostring")) {
                     expression.replace(newExpression)
                 }
             }

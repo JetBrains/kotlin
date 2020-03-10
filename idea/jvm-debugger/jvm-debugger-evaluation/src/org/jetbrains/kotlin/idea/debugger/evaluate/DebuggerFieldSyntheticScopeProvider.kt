@@ -122,7 +122,8 @@ class DebuggerFieldSyntheticScope(val javaSyntheticPropertiesScope: JavaSyntheti
             val type = propertyDescriptor.type
             val sourceElement = propertyDescriptor.source
 
-            consumer[name] = createSyntheticPropertyDescriptor(clazz, type, name.asString(), "Backing field", sourceElement) { state ->
+            consumer[name] = createSyntheticPropertyDescriptor(clazz, type, name.asString(),
+                                                               KotlinDebuggerEvaluationBundle.message("backing.field"), sourceElement) { state ->
                 state.typeMapper.mapType(clazz.defaultType)
             }
         }
@@ -145,7 +146,8 @@ class DebuggerFieldSyntheticScope(val javaSyntheticPropertiesScope: JavaSyntheti
             val type = typeResolver.transformJavaType(field.type, TypeUsage.COMMON.toAttributes()).replaceArgumentsWithStarProjections()
             val sourceElement = javaSourceElementFactory.source(field)
 
-            consumer[fieldName] = createSyntheticPropertyDescriptor(clazz, type, fieldName.asString(), "Java field", sourceElement) {
+            consumer[fieldName] = createSyntheticPropertyDescriptor(clazz, type, fieldName.asString(),
+                                                                    KotlinDebuggerEvaluationBundle.message("java.field"), sourceElement) {
                 Type.getObjectType(ownerClassName)
             }
         }

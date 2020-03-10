@@ -76,7 +76,7 @@ class KotlinFieldBreakpointType :
 
                 val psiClass = JavaPsiFacade.getInstance(project).findClass(className, GlobalSearchScope.allScope(project))
                 if (psiClass !is KtLightClass) {
-                    reportError(project, "Couldn't find '$className' class")
+                    reportError(project, KotlinDebuggerCoreBundle.message("couldn.t.find.0.class", className))
                     return false
                 }
 
