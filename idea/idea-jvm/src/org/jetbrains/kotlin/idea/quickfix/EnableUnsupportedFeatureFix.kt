@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.findApplicableConfigurator
@@ -140,9 +141,11 @@ fun askUpdateRuntime(project: Project, requiredVersion: ApiVersion, librariesToU
     if (!ApplicationManager.getApplication().isUnitTestMode) {
         val rc = Messages.showOkCancelDialog(
             project,
-            "This language feature requires version $requiredVersion or later of the Kotlin runtime library. " +
-                    "Would you like to update the runtime library in your project?",
-            "Update Runtime Library",
+            KotlinJvmBundle.message(
+                "this.language.feature.requires.version.0.or.later.of.the.kotlin.runtime.library.would.you.like.to.update.the.runtime.library.in.your.project",
+                requiredVersion
+            ),
+            KotlinJvmBundle.message("update.runtime.library"),
             Messages.getQuestionIcon()
         )
         if (rc != Messages.OK) return false

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
 import org.jetbrains.kotlin.idea.configuration.getConfigurationPossibilitiesForConfigureNotification
 import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
@@ -27,7 +28,7 @@ class ConfigureKotlinNotification(
     excludeModules: List<Module>,
     val notificationState: ConfigureKotlinNotificationState
 ) : Notification(
-    KotlinConfigurationCheckerComponent.CONFIGURE_NOTIFICATION_GROUP_ID, "Configure Kotlin",
+    KotlinConfigurationCheckerComponent.CONFIGURE_NOTIFICATION_GROUP_ID, KotlinJvmBundle.message("configure.kotlin"),
     notificationState.notificationString,
     NotificationType.WARNING,
     NotificationListener { notification, event ->
@@ -69,7 +70,7 @@ class ConfigureKotlinNotification(
 
             return ConfigureKotlinNotificationState(
                 project.name,
-                "Configure $modulesString in '${project.name}' project<br/> $links",
+                KotlinJvmBundle.message("configure.0.in.1.project.br.2", modulesString, project.name, links),
                 configurableModules.map { it.baseModule.name }
             )
         }

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.internal.makeBackup
@@ -32,6 +21,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vcs.changes.Change
 import com.intellij.util.WaitForProgressToShow
 import com.intellij.util.io.ZipUtil
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import java.io.File
 import java.io.FileOutputStream
@@ -39,7 +29,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.zip.ZipOutputStream
 
-class CreateIncrementalCompilationBackup : AnAction("Create backup for debugging Kotlin incremental compilation") {
+class CreateIncrementalCompilationBackup : AnAction(KotlinJvmBundle.message("create.backup.for.debugging.kotlin.incremental.compilation")) {
     companion object {
         const val BACKUP_DIR_NAME = ".backup"
         const val PATCHES_TO_CREATE = 5
@@ -50,14 +40,16 @@ class CreateIncrementalCompilationBackup : AnAction("Create backup for debugging
         const val ZIP_FRACTION = 1.0 - PATCHES_FRACTION - LOGS_FRACTION - PROJECT_SYSTEM_FRACTION
     }
 
-
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project!!
         val projectBaseDir = File(project.baseDir!!.path)
         val backupDir = File(FileUtil.createTempDirectory("makeBackup", null), BACKUP_DIR_NAME)
 
         ProgressManager.getInstance().run(
-            object : Task.Backgroundable(project, "Creating backup for debugging Kotlin incremental compilation", true) {
+            object : Task.Backgroundable(
+                project,
+                KotlinJvmBundle.message("creating.backup.for.debugging.kotlin.incremental.compilation"), true
+            ) {
                 override fun run(indicator: ProgressIndicator) {
                     createPatches(backupDir, project, indicator)
                     copyLogs(backupDir, indicator)
@@ -94,7 +86,7 @@ class CreateIncrementalCompilationBackup : AnAction("Create backup for debugging
                 if (label != null && label.startsWith(HISTORY_LABEL_PREFIX)) {
                     val patchFile = File(patchesDir, label.removePrefix(HISTORY_LABEL_PREFIX) + ".patch")
 
-                    indicator.text = "Creating patch $patchFile"
+                    indicator.text = KotlinJvmBundle.message("creating.patch.0", patchFile)
                     indicator.fraction = PATCHES_FRACTION * patchesCreated / PATCHES_TO_CREATE
 
                     val differences = revisions[0].getDifferencesWith(rev)!!
@@ -113,7 +105,7 @@ class CreateIncrementalCompilationBackup : AnAction("Create backup for debugging
     }
 
     private fun copyLogs(backupDir: File, indicator: ProgressIndicator) {
-        indicator.text = "Copying logs"
+        indicator.text = KotlinJvmBundle.message("copying.logs")
         indicator.fraction = PATCHES_FRACTION
 
         val logsDir = File(backupDir, "logs")
@@ -123,7 +115,7 @@ class CreateIncrementalCompilationBackup : AnAction("Create backup for debugging
     }
 
     private fun copyProjectSystemDir(backupDir: File, project: Project, indicator: ProgressIndicator) {
-        indicator.text = "Copying project's system dir "
+        indicator.text = KotlinJvmBundle.message("copying.project.s.system.dir")
         indicator.fraction = PATCHES_FRACTION
 
         val projectSystemDir = File(backupDir, "project-system")
@@ -147,7 +139,7 @@ class CreateIncrementalCompilationBackup : AnAction("Create backup for debugging
                         && !(it.name.startsWith("make_backup_") && it.name.endsWith(".zip"))
                     ) {
 
-                        indicator.text = "Scanning project dir: $it"
+                        indicator.text = KotlinJvmBundle.message("scanning.project.dir.0", it)
 
                         files.add(Pair(it, FileUtil.getRelativePath(dir, it)!!))
                         totalBytes += it.length()
@@ -171,7 +163,7 @@ class CreateIncrementalCompilationBackup : AnAction("Create backup for debugging
 
         zos.use {
             for ((file, relativePath) in files) {
-                indicator.text = "Adding file to backup: $relativePath"
+                indicator.text = KotlinJvmBundle.message("adding.file.to.backup.0", relativePath)
                 indicator.fraction = PATCHES_FRACTION + LOGS_FRACTION + processedBytes.toDouble() / totalBytes * ZIP_FRACTION
 
                 ZipUtil.addFileToZip(zos, file, relativePath, null, null)
@@ -186,8 +178,8 @@ class CreateIncrementalCompilationBackup : AnAction("Create backup for debugging
             {
                 RevealFileAction.showDialog(
                     project,
-                    "Successfully created backup " + backupFile.absolutePath,
-                    "Created backup",
+                    KotlinJvmBundle.message("successfully.created.backup.0", backupFile.absolutePath),
+                    KotlinJvmBundle.message("created.backup"),
                     backupFile,
                     null
                 )

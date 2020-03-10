@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.framework
@@ -24,6 +13,7 @@ import com.intellij.platform.ProjectTemplate
 import com.intellij.platform.ProjectTemplatesFactory
 import com.intellij.platform.templates.BuilderBasedTemplate
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 
@@ -46,7 +36,7 @@ class KotlinTemplatesFactory : ProjectTemplatesFactory() {
                 KotlinModuleBuilder(
                     JvmPlatforms.unspecifiedJvmPlatform,
                     "JVM | IDEA",
-                    "Kotlin project with a JVM target based on the IntelliJ IDEA build system",
+                    KotlinJvmBundle.message("kotlin.project.with.a.jvm.target.based.on.the.intellij.idea.build.system"),
                     KotlinIcons.SMALL_LOGO
                 )
             ),
@@ -54,7 +44,7 @@ class KotlinTemplatesFactory : ProjectTemplatesFactory() {
             BuilderBasedTemplate(
                 KotlinModuleBuilder(
                     JsPlatforms.defaultJsPlatform, "JS | IDEA",
-                    "Kotlin project with a JavaScript target based on the IntelliJ IDEA build system",
+                    KotlinJvmBundle.message("kotlin.project.with.a.javascript.target.based.on.the.intellij.idea.build.system"),
                     KotlinIcons.JS
                 )
             )
