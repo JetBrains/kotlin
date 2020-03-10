@@ -1,14 +1,13 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.test.ir.semantics
 
-import org.jetbrains.kotlin.js.test.BasicBoxTest
 import org.jetbrains.kotlin.js.test.BasicIrBoxTest
 
-abstract class AbstractIrBoxJsTest : BasicIrBoxTest(BasicBoxTest.TEST_DATA_DIR_PATH + "box/", "irBox/")
+abstract class AbstractIrBoxJsTest : BasicIrBoxTest(TEST_DATA_DIR_PATH + "box/", "irBox/")
 
 abstract class AbstractIrJsCodegenBoxTest : BasicIrBoxTest(
     "compiler/testData/codegen/box/",
@@ -16,7 +15,7 @@ abstract class AbstractIrJsCodegenBoxTest : BasicIrBoxTest(
 )
 
 abstract class AbstractIrWasmBoxJsTest : BasicIrBoxTest(
-    BasicBoxTest.TEST_DATA_DIR_PATH + "wasmBox/",
+    TEST_DATA_DIR_PATH + "wasmBox/",
     "irWasmBox/"
 )
 
@@ -25,7 +24,7 @@ abstract class BorrowedIrInlineTest(relativePath: String) : BasicIrBoxTest(
     "codegen/irBoxInline/$relativePath"
 ) {
     init {
-        additionalCommonFileDirectories += BasicBoxTest.TEST_DATA_DIR_PATH + relativePath + "/_commonFiles/"
+        additionalCommonFileDirectories += TEST_DATA_DIR_PATH + relativePath + "/_commonFiles/"
     }
 }
 
