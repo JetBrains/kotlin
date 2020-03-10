@@ -4,8 +4,8 @@ package com.intellij.configurationStore.statistic.eventLog
 import com.intellij.configurationStore.jdomSerializer
 import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.fus.FeatureUsageLogger
+import com.intellij.internal.statistic.utils.StatisticsUtil
 import com.intellij.internal.statistic.utils.getPluginInfo
-import com.intellij.internal.statistic.utils.getProjectId
 import com.intellij.openapi.components.ReportValue
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -163,7 +163,7 @@ open class FeatureUsageSettingsEventPrinter(private val recordDefault: Boolean) 
 
   internal fun toHash(project: Project?): String? {
     return project?.let {
-      return getProjectId(project)
+      return StatisticsUtil.getProjectId(project)
     }
   }
 }

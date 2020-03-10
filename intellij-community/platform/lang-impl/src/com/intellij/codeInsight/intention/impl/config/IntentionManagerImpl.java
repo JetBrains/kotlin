@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.intention.impl.config;
 
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.SmartList;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -29,10 +30,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 public final class IntentionManagerImpl extends IntentionManager implements Disposable {
   private static final Logger LOG = Logger.getInstance(IntentionManagerImpl.class);
@@ -213,15 +215,22 @@ public final class IntentionManagerImpl extends IntentionManager implements Disp
     if (checkedForDuplicates) {
       return;
     }
+
     checkedForDuplicates = true;
-    List<String> duplicates = myActions.stream()
-       .collect(Collectors.groupingBy(action -> action instanceof IntentionActionDelegate ? ((IntentionActionDelegate)action).getImplementationClassName() : action.getClass().getName()))
-       .values().stream()
-       .filter(list -> list.size() > 1)
-       .map(dupList -> dupList.size() + " intention duplicates found for " + IntentionActionDelegate.unwrap(dupList.get(0))
-                       + " (" + dupList.get(0).getClass()
-                       + "; plugin " + PluginManager.getPluginOrPlatformByClassName(dupList.get(0).getClass().getName()) + ")")
-       .collect(Collectors.toList());
+    Map<String, List<IntentionAction>> map = new HashMap<>(myActions.size());
+    for (IntentionAction action : myActions) {
+      map.computeIfAbsent(action instanceof IntentionActionDelegate
+                          ? ((IntentionActionDelegate)action).getImplementationClassName()
+                          : action.getClass().getName(), k -> new SmartList<>()).add(action);
+    }
+    List<String> duplicates = new ArrayList<>();
+    for (List<IntentionAction> list : map.values()) {
+      if (list.size() > 1) {
+        duplicates.add(list.size() + " intention duplicates found for " + IntentionActionDelegate.unwrap(list.get(0))
+                       + " (" + list.get(0).getClass()
+                       + "; plugin " + PluginManager.getInstance().getPluginOrPlatformByClassName(list.get(0).getClass().getName()) + ")");
+      }
+    }
 
     if (!duplicates.isEmpty()) {
       throw new IllegalStateException(duplicates.toString());

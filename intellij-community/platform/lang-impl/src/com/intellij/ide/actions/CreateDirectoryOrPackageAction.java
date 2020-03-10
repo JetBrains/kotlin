@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions;
 
 import com.intellij.icons.AllIcons;
@@ -10,7 +10,7 @@ import com.intellij.ide.ui.newItemPopup.NewItemWithTemplatesPopupPanel;
 import com.intellij.ide.util.DirectoryChooserUtil;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
-import com.intellij.internal.statistic.utils.StatisticsUtilKt;
+import com.intellij.internal.statistic.utils.StatisticsUtil;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Experiments;
@@ -336,7 +336,7 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
 
     public void reportToStatistics() {
       Class contributorClass = contributor.getClass();
-      String nameToReport = StatisticsUtilKt.getPluginType(contributorClass).isSafeToReport()
+      String nameToReport = StatisticsUtil.getPluginType(contributorClass).isSafeToReport()
                             ? contributorClass.getSimpleName() : "third.party";
 
       FUCounterUsageLogger.getInstance().logEvent("create.directory.dialog",
@@ -432,36 +432,29 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
             setIcon(value == null ? null : value.icon);
           }
         };
-      myTemplatesList.setCellRenderer(new ListCellRenderer<CompletionItem>() {
-        @Override
-        public Component getListCellRendererComponent(JList<? extends CompletionItem> list,
-                                                      CompletionItem value,
-                                                      int index,
-                                                      boolean isSelected,
-                                                      boolean cellHasFocus) {
-          Component item = itemRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-          JPanel wrapperPanel = new JPanel(new BorderLayout());
-          wrapperPanel.setBackground(UIUtil.getListBackground());
+      myTemplatesList.setCellRenderer((list, value, index, isSelected, cellHasFocus) -> {
+        Component item = itemRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        JPanel wrapperPanel = new JPanel(new BorderLayout());
+        wrapperPanel.setBackground(UIUtil.getListBackground());
 
-          if (index == 0 || value.contributor != list.getModel().getElementAt(index - 1).contributor) {
-            SeparatorWithText separator = new SeparatorWithText() {
-              @Override
-              protected void paintLinePart(Graphics g, int xMin, int xMax, int hGap, int y) {
-              }
-            };
+        if (index == 0 || value.contributor != list.getModel().getElementAt(index - 1).contributor) {
+          SeparatorWithText separator = new SeparatorWithText() {
+            @Override
+            protected void paintLinePart(Graphics g, int xMin, int xMax, int hGap, int y) {
+            }
+          };
 
-            separator.setFont(UIUtil.getLabelFont(UIUtil.FontSize.SMALL));
-            int vGap = UIUtil.DEFAULT_VGAP / 2;
-            separator.setBorder(BorderFactory.createEmptyBorder(vGap * (index == 0 ? 1 : 2), 0, vGap, 0));
+          separator.setFont(UIUtil.getLabelFont(UIUtil.FontSize.SMALL));
+          int vGap = UIUtil.DEFAULT_VGAP / 2;
+          separator.setBorder(BorderFactory.createEmptyBorder(vGap * (index == 0 ? 1 : 2), 0, vGap, 0));
 
-            separator.setCaption(value.contributor.getDescription());
-            separator.setCaptionCentered(false);
+          separator.setCaption(value.contributor.getDescription());
+          separator.setCaptionCentered(false);
 
-            wrapperPanel.add(separator, BorderLayout.NORTH);
-          }
-          wrapperPanel.add(item, BorderLayout.CENTER);
-          return wrapperPanel;
+          wrapperPanel.add(separator, BorderLayout.NORTH);
         }
+        wrapperPanel.add(item, BorderLayout.CENTER);
+        return wrapperPanel;
       });
     }
   }

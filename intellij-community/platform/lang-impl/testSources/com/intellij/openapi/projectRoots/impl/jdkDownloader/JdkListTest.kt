@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.projectRoots.impl.jdkDownloader
 
 import com.fasterxml.jackson.databind.JsonNode
@@ -13,8 +13,8 @@ import org.junit.Test
 
 class JdkListTest {
   private val om = ObjectMapper()
-  private fun buildPredicate(build: String) = JdkPredicate(
-    BuildNumber.fromString(build), "any")
+
+  private fun buildPredicate(build: String) = JdkPredicate(BuildNumber.fromString(build)!!, "any")
 
   @Test
   fun `parse feed v1`() {
@@ -172,8 +172,7 @@ class JdkListTest {
 
   private inline fun assertForEachOS(json: ObjectNode, assert: ListAssert<JdkItem>.() -> Unit) {
     for (osType in listOf("windows", "linux", "macOS")) {
-      val predicate = JdkPredicate(
-        BuildNumber.fromString("201.123"), osType)
+      val predicate = JdkPredicate(BuildNumber.fromString("201.123")!!, osType)
       val data = JdkListParser.parseJdkList(json, predicate)
       assertThat(data)
         .withFailMessage("should have items for $osType")
