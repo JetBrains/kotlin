@@ -316,8 +316,9 @@ class Fir2IrDeclarationStorage(
         val result = anonymousObject.convertWithOffsets { startOffset, endOffset ->
             irSymbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality, visibility) { symbol ->
                 IrClassImpl(
-                    startOffset, endOffset, origin, symbol,
-                    name, anonymousObject.classKind,
+                    startOffset, endOffset, origin, symbol, name,
+                    // NB: for unknown reason, IR uses 'CLASS' kind for simple anonymous objects
+                    anonymousObject.classKind.takeIf { it == ClassKind.ENUM_ENTRY } ?: ClassKind.CLASS,
                     visibility, modality,
                     isCompanion = false, isInner = false, isData = false,
                     isExternal = false, isInline = false, isExpect = false, isFun = false

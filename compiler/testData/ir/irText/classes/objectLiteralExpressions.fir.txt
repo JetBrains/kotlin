@@ -20,12 +20,12 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
     FIELD PROPERTY_BACKING_FIELD name:test1 type:<root>.test1.<no name provided> visibility:private [final,static]
       EXPRESSION_BODY
         BLOCK type=<root>.test1.<no name provided> origin=OBJECT_LITERAL
-          CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
+          CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.test1.<no name provided>
             CONSTRUCTOR visibility:private <> () returnType:kotlin.Any [primary]
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]'
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]'
           CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.test1.<no name provided>' type=<root>.test1.<no name provided> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:<root>.test1.<no name provided>
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
@@ -36,12 +36,12 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
     FIELD PROPERTY_BACKING_FIELD name:test2 type:<root>.test2.<no name provided> visibility:private [final,static]
       EXPRESSION_BODY
         BLOCK type=<root>.test2.<no name provided> origin=OBJECT_LITERAL
-          CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IFoo]
+          CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IFoo]
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.test2.<no name provided>
             CONSTRUCTOR visibility:private <> () returnType:kotlin.Any [primary]
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IFoo]'
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IFoo]'
             FUN name:foo visibility:public modality:FINAL <> ($this:<root>.test2.<no name provided>) returnType:kotlin.Unit
               $this: VALUE_PARAMETER name:<this> type:<root>.test2.<no name provided>
               BLOCK_BODY
@@ -87,12 +87,12 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun test3 (): <root>.Outer.test3.<no name provided> declared in <root>.Outer'
           BLOCK type=<root>.Outer.test3.<no name provided> origin=OBJECT_LITERAL
-            CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.test3.<no name provided>
               CONSTRUCTOR visibility:private <> () returnType:<root>.Outer.Inner [primary]
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer.Inner'
-                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]'
               FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Outer.test3.<no name provided>) returnType:kotlin.Unit
                 $this: VALUE_PARAMETER name:<this> type:<root>.Outer.test3.<no name provided>
                 BLOCK_BODY
@@ -117,12 +117,12 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (): <root>.test4.<no name provided> declared in <root>'
         BLOCK type=<root>.test4.<no name provided> origin=OBJECT_LITERAL
-          CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]
+          CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.test4.<no name provided>
             CONSTRUCTOR visibility:private <> () returnType:<root>.Outer.Inner [primary]
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer.Inner'
-                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]'
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]'
             FUN name:foo visibility:public modality:FINAL <> ($this:<root>.test4.<no name provided>) returnType:kotlin.Unit
               $this: VALUE_PARAMETER name:<this> type:<root>.test4.<no name provided>
               BLOCK_BODY

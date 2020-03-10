@@ -59,12 +59,12 @@ FILE fqName:<root> fileName:/partialSam.kt
     FIELD PROPERTY_BACKING_FIELD name:fsi type:<root>.fsi.<no name provided> visibility:private [final,static]
       EXPRESSION_BODY
         BLOCK type=<root>.fsi.<no name provided> origin=OBJECT_LITERAL
-          CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Fn<kotlin.String, kotlin.Int>]
+          CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Fn<kotlin.String, kotlin.Int>]
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.fsi.<no name provided>
             CONSTRUCTOR visibility:private <> () returnType:kotlin.Any [primary]
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Fn<kotlin.String, kotlin.Int>]'
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Fn<kotlin.String, kotlin.Int>]'
             FUN name:run visibility:public modality:FINAL <> ($this:<root>.fsi.<no name provided>, s:kotlin.String, i:kotlin.Int, t:kotlin.String) returnType:kotlin.Int
               $this: VALUE_PARAMETER name:<this> type:<root>.fsi.<no name provided>
               VALUE_PARAMETER name:s index:0 type:kotlin.String
@@ -83,12 +83,12 @@ FILE fqName:<root> fileName:/partialSam.kt
     FIELD PROPERTY_BACKING_FIELD name:fis type:<root>.fis.<no name provided> visibility:private [final,static]
       EXPRESSION_BODY
         BLOCK type=<root>.fis.<no name provided> origin=OBJECT_LITERAL
-          CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Fn<kotlin.Int, kotlin.String>]
+          CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Fn<kotlin.Int, kotlin.String>]
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.fis.<no name provided>
             CONSTRUCTOR visibility:private <> () returnType:kotlin.Any [primary]
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Fn<kotlin.Int, kotlin.String>]'
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Fn<kotlin.Int, kotlin.String>]'
             FUN name:run visibility:public modality:FINAL <> ($this:<root>.fis.<no name provided>, s:kotlin.String, i:kotlin.Int, t:kotlin.Int) returnType:kotlin.String
               $this: VALUE_PARAMETER name:<this> type:<root>.fis.<no name provided>
               VALUE_PARAMETER name:s index:0 type:kotlin.String

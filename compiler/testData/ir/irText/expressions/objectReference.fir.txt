@@ -111,12 +111,12 @@ FILE fqName:<root> fileName:/objectReference.kt
       FIELD PROPERTY_BACKING_FIELD name:anObject type:<root>.Z.anObject.<no name provided> visibility:private [final]
         EXPRESSION_BODY
           BLOCK type=<root>.Z.anObject.<no name provided> origin=OBJECT_LITERAL
-            CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z.anObject.<no name provided>
               CONSTRUCTOR visibility:private <> () returnType:kotlin.Any [primary]
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]'
               ANONYMOUS_INITIALIZER isStatic=false
                 BLOCK_BODY
                   SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:private' type=kotlin.Unit origin=null

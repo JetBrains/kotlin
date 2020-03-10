@@ -67,13 +67,13 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (): <root>.test.<no name provided> declared in <root>'
         BLOCK type=<root>.test.<no name provided> origin=OBJECT_LITERAL
-          CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner<kotlin.Int>]
+          CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner<kotlin.Int>]
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.test.<no name provided>
             CONSTRUCTOR visibility:private <> () returnType:<root>.Outer.Inner<kotlin.Int> [primary]
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (y: kotlin.Int) [primary] declared in <root>.Outer.Inner'
                   y: CONST Int type=kotlin.Int value=42
-                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner<kotlin.Int>]'
+                INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner<kotlin.Int>]'
             PROPERTY name:xx visibility:public modality:FINAL [val]
               FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.Int visibility:private [final]
                 EXPRESSION_BODY
