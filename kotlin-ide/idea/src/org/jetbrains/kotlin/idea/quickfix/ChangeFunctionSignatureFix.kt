@@ -60,14 +60,14 @@ abstract class ChangeFunctionSignatureFix(
     protected fun getNewArgumentName(argument: ValueArgument, validator: Function1<String, Boolean>): String {
         val expression = KtPsiUtil.deparenthesize(argument.getArgumentExpression())
         val argumentName = argument.getArgumentName()?.asName?.asString()
-            ?: (expression as? KtNameReferenceExpression)?.getReferencedName()?.takeIf { it != "it" && it != "field" }
+            ?: (expression as? KtNameReferenceExpression)?.getReferencedName()?.takeIf { !isSpecialName(it) }
 
         return when {
             argumentName != null -> KotlinNameSuggester.suggestNameByName(argumentName, validator)
             expression != null -> {
                 val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
                 val expressionText = expression.text
-                if (expressionText == "it" || expressionText == "field") {
+                if (isSpecialName(expressionText)) {
                     val type = expression.getType(bindingContext)
                     if (type != null) {
                         return KotlinNameSuggester.suggestNamesByType(type, validator, "param").first()
@@ -77,6 +77,10 @@ abstract class ChangeFunctionSignatureFix(
             }
             else -> KotlinNameSuggester.suggestNameByName("param", validator)
         }
+    }
+
+    private fun isSpecialName(name: String): Boolean {
+        return name == "it" || name == "field"
     }
 
     companion object : KotlinSingleIntentionActionFactoryWithDelegate<KtCallElement, CallableDescriptor>() {
