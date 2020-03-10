@@ -53,9 +53,6 @@ public abstract class HighlightUsagesHandlerBase<T extends PsiElement> {
 
   public void highlightUsages() {
     List<T> targets = getTargets();
-    if (targets == null) {
-      return;
-    }
     selectTargets(targets, targets1 -> {
       computeUsages(targets1);
       performHighlighting();

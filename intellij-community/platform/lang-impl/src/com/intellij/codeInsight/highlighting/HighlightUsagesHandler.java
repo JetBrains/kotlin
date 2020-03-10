@@ -72,7 +72,7 @@ public class HighlightUsagesHandler extends HighlightHandlerBase {
 
     DumbService.getInstance(project).withAlternativeResolveEnabled(() -> {
       UsageTarget[] usageTargets = getUsageTargets(editor, file);
-      if (usageTargets == null) {
+      if (usageTargets.length == 0) {
         handleNoUsageTargets(file, editor, selectionModel, project);
         return;
       }
@@ -84,10 +84,10 @@ public class HighlightUsagesHandler extends HighlightHandlerBase {
     });
   }
 
-  private static UsageTarget @Nullable [] getUsageTargets(@NotNull Editor editor, @NotNull PsiFile file) {
+  private static UsageTarget @NotNull[] getUsageTargets(@NotNull Editor editor, @NotNull PsiFile file) {
     UsageTarget[] usageTargets = UsageTargetUtil.findUsageTargets(editor, file);
 
-    if (usageTargets == null) {
+    if (usageTargets.length == 0) {
       PsiElement targetElement = getTargetElement(editor, file);
       if (targetElement != null && targetElement != file) {
         if (!(targetElement instanceof NavigationItem)) {
@@ -99,7 +99,7 @@ public class HighlightUsagesHandler extends HighlightHandlerBase {
       }
     }
 
-    if (usageTargets == null) {
+    if (usageTargets.length == 0) {
       PsiReference ref = TargetElementUtil.findReference(editor);
 
       if (ref instanceof PsiPolyVariantReference) {
@@ -229,7 +229,7 @@ public class HighlightUsagesHandler extends HighlightHandlerBase {
                                          @NotNull PsiElement element,
                                          @NotNull List<? extends PsiReference> refs,
                                          @NotNull Editor editor,
-                                         PsiFile file,
+                                         @NotNull PsiFile file,
                                          boolean clearHighlights) {
 
     HighlightManager highlightManager = HighlightManager.getInstance(project);
@@ -394,7 +394,7 @@ public class HighlightUsagesHandler extends HighlightHandlerBase {
     return result;
   }
 
-  public static void collectHighlightRanges(@NotNull PsiSymbolReference ref, @NotNull List<TextRange> result) {
+  public static void collectHighlightRanges(@NotNull PsiSymbolReference ref, @NotNull List<? super TextRange> result) {
     for (TextRange relativeRange : ReferenceRange.getRanges(ref)) {
       collectHighlightRanges(ref.getElement(), relativeRange, result);
     }
@@ -402,7 +402,7 @@ public class HighlightUsagesHandler extends HighlightHandlerBase {
 
   public static void collectHighlightRanges(@NotNull PsiElement element,
                                             @NotNull TextRange rangeInElement,
-                                            @NotNull List<TextRange> result) {
+                                            @NotNull List<? super TextRange> result) {
     TextRange range = safeCut(element.getTextRange(), rangeInElement);
     if (range.isEmpty()) return;
     // injection occurs
