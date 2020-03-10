@@ -1,13 +1,13 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.projectRoots.impl.jdkDownloader
 
 import com.google.common.hash.Hashing
 import com.google.common.io.Files
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
@@ -109,40 +109,52 @@ class JdkInstaller {
           .productNameAsUserAgent()
           .saveToFile(downloadFile, indicator)
       }
-      catch (t: IOException) {
-        throw RuntimeException("Failed to download JDK from $url. ${t.message}", t)
+      catch (t: Throwable) {
+        if (t is ControlFlowException) throw t
+        throw RuntimeException("Failed to download ${item.fullPresentationText} from $url. ${t.message}", t)
       }
+
+      val invalidFileMessage = "Check your internet connection and try again later"
 
       val sizeDiff = downloadFile.length() - item.archiveSize
       if (sizeDiff != 0L) {
-        throw RuntimeException("Downloaded JDK distribution has incorrect size, difference is ${sizeDiff.absoluteValue} bytes")
+        throw RuntimeException("The downloaded ${item.fullPresentationText} has incorrect file size,\n" +
+                               "the difference is ${sizeDiff.absoluteValue} bytes.\n" +
+                               invalidFileMessage)
       }
 
       val actualHashCode = Files.asByteSource(downloadFile).hash(Hashing.sha256()).toString()
       if (!actualHashCode.equals(item.sha256, ignoreCase = true)) {
-        throw RuntimeException("SHA-256 checksums does not match. Actual value is $actualHashCode, expected ${item.sha256}")
+        throw RuntimeException("Failed to verify SHA-256 checksum for ${item.fullPresentationText}n\n" +
+                               "The actual value is $actualHashCode,\n" +
+                               "but expected ${item.sha256} was expected\n" +
+                               invalidFileMessage)
       }
 
       indicator?.isIndeterminate = true
       indicator?.text2 = "Unpacking"
 
-      val decompressor = item.packageType.openDecompressor(downloadFile)
-      //handle cancellation via postProcessor (instead of inheritance)
-      decompressor.postprocessor { indicator?.checkCanceled() }
+      try {
+        val decompressor = item.packageType.openDecompressor(downloadFile)
+        //handle cancellation via postProcessor (instead of inheritance)
+        decompressor.postprocessor { indicator?.checkCanceled() }
 
-      val fullMatchPath = item.unpackPrefixFilter.trim('/')
-      if (!fullMatchPath.isBlank()) {
-        decompressor.removePrefixPath(fullMatchPath)
+        val fullMatchPath = item.unpackPrefixFilter.trim('/')
+        if (!fullMatchPath.isBlank()) {
+          decompressor.removePrefixPath(fullMatchPath)
+        }
+        decompressor.extract(targetDir)
+
+        writeMarkerFile(request)
+      } catch (t: Throwable) {
+        if (t is ControlFlowException) throw t
+        throw RuntimeException("Failed to extract ${item.fullPresentationText}. ${t.message}", t)
       }
-      decompressor.extract(targetDir)
-
-      writeMarkerFile(request)
     }
     catch (t: Throwable) {
       //if we were cancelled in the middle or failed, let's clean up
       FileUtil.delete(targetDir)
-      if (t is ProcessCanceledException) throw t
-      if (t is IOException) throw RuntimeException("Failed to extract JDK package", t)
+      if (t is ControlFlowException) throw t
       throw t
     }
     finally {
