@@ -1,43 +1,41 @@
 import org.gradle.api.Task
 
 ({
-    Class kotlinTestClass = null
-    try {
-        kotlinTestClass = Class.forName("org.jetbrains.kotlin.gradle.tasks.KotlinTest")
-    } catch (ClassNotFoundException ex) {
-        // ignore, class not available
+    def isInstance = { Object o, String fqn ->
+        def superClass = o.class
+        while (superClass != Object.class) {
+            if (superClass.canonicalName == fqn) {
+                return true
+            } else {
+                superClass = superClass.superclass
+            }
+        }
+
+        return false
     }
 
-    Class karmaClass = null
-    try {
-        karmaClass = Class.forName("org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma")
-    } catch (ClassNotFoundException ex) {
-        // ignore, class not available
-    }
-
-    def forJsTestTask = { Task task, Closure action ->
+    def forJsBrowserTestTask = { Task task, Closure action ->
         if (
-        kotlinTestClass.isAssignableFrom(task.class)
+        isInstance(task, "org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest")
                 && task.hasProperty('testFramework')
-                && karmaClass != null
-                && karmaClass.isAssignableFrom(task.testFramework.class)
+                && isInstance(task.testFramework, "org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma")
         ) {
             action()
         }
     }
 
-    if (kotlinTestClass != null) {
-        gradle.taskGraph.beforeTask { Task task ->
-            forJsTestTask(task) {
-                if (task.hasProperty('debug')) {
-                    ForkedDebuggerHelper.setupDebugger('%id', task.path, '', '%dispatchPort'.toInteger())
-                    task.debug = true
-                }
+    gradle.taskGraph.beforeTask { Task task ->
+        forJsBrowserTestTask(task) {
+            if (task.hasProperty('debug')) {
+                ForkedDebuggerHelper.setupDebugger('%id', task.path, '', '%dispatchPort'.toInteger())
+                task.debug = true
             }
         }
+    }
 
-        gradle.taskGraph.afterTask { Task task ->
-            forJsTestTask(task) {
+    gradle.taskGraph.afterTask { Task task ->
+        forJsBrowserTestTask(task) {
+            if (task.hasProperty('debug')) {
                 ForkedDebuggerHelper.signalizeFinish('%id', task.path, '%dispatchPort'.toInteger())
             }
         }
