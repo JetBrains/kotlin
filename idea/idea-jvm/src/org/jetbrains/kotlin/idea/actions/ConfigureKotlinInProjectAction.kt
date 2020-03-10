@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.PlatformUtils
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.platform.js.isJs
@@ -24,7 +25,7 @@ abstract class ConfigureKotlinInProjectAction : AnAction() {
 
         val modules = getConfigurableModules(project)
         if (modules.all(::isModuleConfigured)) {
-            Messages.showInfoMessage("All modules with Kotlin files are configured", e.presentation.text!!)
+            Messages.showInfoMessage(KotlinJvmBundle.message("all.modules.with.kotlin.files.are.configured"), e.presentation.text!!)
             return
         }
 
@@ -32,7 +33,10 @@ abstract class ConfigureKotlinInProjectAction : AnAction() {
 
         when {
             configurators.size == 1 -> configurators.first().configure(project, emptyList())
-            configurators.isEmpty() -> Messages.showErrorDialog("There aren't configurators available", e.presentation.text!!)
+            configurators.isEmpty() -> Messages.showErrorDialog(
+                KotlinJvmBundle.message("there.aren.t.configurators.available"),
+                e.presentation.text!!
+            )
             else -> {
                 val configuratorsPopup =
                     KotlinSetupEnvironmentNotificationProvider.createConfiguratorsPopup(project, configurators.toList())

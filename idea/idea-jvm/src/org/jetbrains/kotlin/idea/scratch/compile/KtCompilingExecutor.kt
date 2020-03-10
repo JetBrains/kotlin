@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.scratch.compile
@@ -20,6 +9,7 @@ import com.intellij.execution.process.ProcessOutput
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.scratch.*
@@ -59,14 +49,14 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
             try {
                 AnalyzingUtils.checkForSyntacticErrors(psiFile)
             } catch (e: IllegalArgumentException) {
-                errorOccurs(e.message ?: "Couldn't compile ${psiFile.name}", isFatal = true)
+                errorOccurs(e.message ?: KotlinJvmBundle.message("couldn.t.compile.0", psiFile.name), isFatal = true)
                 return@runReadAction false
             }
 
             val analysisResult = psiFile.analyzeWithAllCompilerChecks()
 
             if (analysisResult.isError()) {
-                errorOccurs(analysisResult.error.message ?: "Couldn't compile ${psiFile.name}", isFatal = true)
+                errorOccurs(analysisResult.error.message ?: KotlinJvmBundle.message("couldn.t.compile.0", psiFile.name), isFatal = true)
                 return@runReadAction false
             }
 
@@ -139,7 +129,10 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
                     val lineWoPrefix = line.removePrefix(KtScratchSourceFileProcessor.GENERATED_OUTPUT_PREFIX)
                     if (isResultEnd(lineWoPrefix)) {
                         val extractedLineInfo = extractLineInfoFrom(lineWoPrefix)
-                            ?: return errorOccurs("Couldn't extract line info from line: $lineWoPrefix", isFatal = true)
+                            ?: return errorOccurs(
+                                KotlinJvmBundle.message("couldn.t.extract.line.info.from.line.0", lineWoPrefix),
+                                isFatal = true
+                            )
                         val (startLine, endLine) = extractedLineInfo
                         val scratchExpression = expressions.findExpression(startLine, endLine)
                         if (scratchExpression == null) {

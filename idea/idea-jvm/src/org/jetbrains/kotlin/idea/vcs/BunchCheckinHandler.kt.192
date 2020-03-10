@@ -23,6 +23,7 @@ import com.intellij.openapi.vcs.ui.RefreshableOnComponent
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.util.PairConsumer
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import java.awt.GridLayout
 import java.io.File
@@ -46,7 +47,7 @@ class BunchFileCheckInHandlerFactory : CheckinHandlerFactory() {
             if (PluginManager.isPluginInstalled(BUNCH_PLUGIN_ID)) return null
             BunchFileUtils.bunchFile(project) ?: return null
 
-            val bunchFilesCheckBox = NonFocusableCheckBox(replaceMnemonicAmpersand("Check &bunch files"))
+            val bunchFilesCheckBox = NonFocusableCheckBox(replaceMnemonicAmpersand(KotlinJvmBundle.message("check.bunch.files")))
             return object : RefreshableOnComponent {
                 override fun getComponent(): JComponent {
                     val panel = JPanel(GridLayout(1, 0))
@@ -98,8 +99,13 @@ class BunchFileCheckInHandlerFactory : CheckinHandlerFactory() {
 
             when (Messages.showYesNoCancelDialog(
                 project,
-                "Several bunch files haven't been updated:\n\n${filePaths.joinToString("\n")}\n\nDo you want to review them before commit?",
-                "Forgotten Bunch Files", "Review", "Commit", CommonBundle.getCancelButtonText(), Messages.getWarningIcon()
+                KotlinJvmBundle.message(
+                    "several.bunch.files.haven.t.been.updated.0.do.you.want.to.review.them.before.commit",
+                    filePaths.joinToString("\n")
+                ),
+                KotlinJvmBundle.message("forgotten.bunch.files"),
+                KotlinJvmBundle.message("review"),
+                KotlinJvmBundle.message("commit"), CommonBundle.getCancelButtonText(), Messages.getWarningIcon()
             )) {
                 YES -> {
                     return ReturnResult.CLOSE_WINDOW

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,6 +23,7 @@ import com.intellij.openapi.vcs.ui.RefreshableOnComponent
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.util.PairConsumer
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import java.awt.GridLayout
 import java.io.File
@@ -32,7 +33,10 @@ import javax.swing.JPanel
 private val BUNCH_PLUGIN_ID = PluginId.getId("org.jetbrains.bunch.tool.idea.plugin")
 
 private var Project.bunchFileCheckEnabled: Boolean
-        by NotNullableUserDataProperty(Key.create("IS_BUNCH_FILE_CHECK_ENABLED_KOTLIN"), !PluginManagerCore.isPluginInstalled(BUNCH_PLUGIN_ID))
+        by NotNullableUserDataProperty(
+            Key.create("IS_BUNCH_FILE_CHECK_ENABLED_KOTLIN"),
+            !PluginManagerCore.isPluginInstalled(BUNCH_PLUGIN_ID)
+        )
 
 class BunchFileCheckInHandlerFactory : CheckinHandlerFactory() {
     override fun createHandler(panel: CheckinProjectPanel, commitContext: CommitContext): CheckinHandler {
@@ -46,7 +50,7 @@ class BunchFileCheckInHandlerFactory : CheckinHandlerFactory() {
             if (PluginManagerCore.isPluginInstalled(BUNCH_PLUGIN_ID)) return null
             BunchFileUtils.bunchFile(project) ?: return null
 
-            val bunchFilesCheckBox = NonFocusableCheckBox(replaceMnemonicAmpersand("Check &bunch files"))
+            val bunchFilesCheckBox = NonFocusableCheckBox(replaceMnemonicAmpersand(KotlinJvmBundle.message("check.bunch.files")))
             return object : RefreshableOnComponent {
                 override fun getComponent(): JComponent {
                     val panel = JPanel(GridLayout(1, 0))
@@ -98,8 +102,13 @@ class BunchFileCheckInHandlerFactory : CheckinHandlerFactory() {
 
             when (Messages.showYesNoCancelDialog(
                 project,
-                "Several bunch files haven't been updated:\n\n${filePaths.joinToString("\n")}\n\nDo you want to review them before commit?",
-                "Forgotten Bunch Files", "Review", "Commit", CommonBundle.getCancelButtonText(), Messages.getWarningIcon()
+                KotlinJvmBundle.message(
+                    "several.bunch.files.haven.t.been.updated.0.do.you.want.to.review.them.before.commit",
+                    filePaths.joinToString("\n")
+                ),
+                KotlinJvmBundle.message("forgotten.bunch.files"),
+                KotlinJvmBundle.message("review"),
+                KotlinJvmBundle.message("commit"), CommonBundle.getCancelButtonText(), Messages.getWarningIcon()
             )) {
                 YES -> {
                     return ReturnResult.CLOSE_WINDOW

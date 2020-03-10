@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.scratch.actions
@@ -21,12 +10,11 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.keymap.KeymapManager
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.project.DumbService
-import com.intellij.task.ProjectTaskContext
 import com.intellij.task.ProjectTaskManager
-import com.intellij.task.ProjectTaskNotification
-import com.intellij.task.ProjectTaskResult
 import org.jetbrains.kotlin.idea.KotlinJvmBundle
-import org.jetbrains.kotlin.idea.scratch.*
+import org.jetbrains.kotlin.idea.scratch.ScratchFile
+import org.jetbrains.kotlin.idea.scratch.SequentialScratchExecutor
+import org.jetbrains.kotlin.idea.scratch.getScratchFileFromSelectedEditor
 import org.jetbrains.kotlin.idea.scratch.printDebugMessage
 import org.jetbrains.kotlin.idea.scratch.LOG as log
 
@@ -63,7 +51,7 @@ class RunScratchAction : ScratchAction(
                         executor.execute()
                     }
                 } catch (ex: Throwable) {
-                    executor.errorOccurs("Exception occurs during Run Scratch Action", ex, true)
+                    executor.errorOccurs(KotlinJvmBundle.message("exception.occurs.during.run.scratch.action"), ex, true)
                 }
             }
 
@@ -77,7 +65,7 @@ class RunScratchAction : ScratchAction(
                 val project = scratchFile.project
                 ProjectTaskManager.getInstance(project).build(module).onSuccess { executionResult ->
                     if (executionResult.isAborted || executionResult.hasErrors()) {
-                        executor.errorOccurs("There were compilation errors in module ${module.name}")
+                        executor.errorOccurs(KotlinJvmBundle.message("there.were.compilation.errors.in.module.0", module.name))
                     }
 
                     if (DumbService.isDumb(project)) {
@@ -102,7 +90,7 @@ class RunScratchAction : ScratchAction(
         if (e.presentation.isEnabled) {
             e.presentation.text = templatePresentation.text
         } else {
-            e.presentation.text = "Other Scratch file execution is in progress"
+            e.presentation.text = KotlinJvmBundle.message("other.scratch.file.execution.is.in.progress")
         }
 
         val project = e.project ?: return

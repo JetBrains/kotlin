@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,6 +14,7 @@ import com.intellij.ide.IdeBundle
 import com.intellij.openapi.roots.ui.configuration.libraries.AddCustomLibraryDialog
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
 import com.intellij.openapi.roots.ui.configuration.libraries.LibraryPresentationManager
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -59,7 +60,7 @@ class FrameworkLibraryValidatorWithDynamicDescription(
     }
 
     override fun check(): ValidationResult {
-        val targetPlatform = getPlatform() ?: return ValidationResult("No target platforms selected")
+        val targetPlatform = getPlatform() ?: return ValidationResult(KotlinJvmBundle.message("no.target.platforms.selected"))
 
         if (checkLibraryIsConfigured(targetPlatform.idePlatformKind)) {
             val conflictingPlatforms = IdePlatformKind.ALL_KINDS
@@ -70,7 +71,12 @@ class FrameworkLibraryValidatorWithDynamicDescription(
 
             if (conflictingPlatforms.isNotEmpty()) {
                 val platformText = conflictingPlatforms.mapTo(LinkedHashSet()) { it.name }.joinToString()
-                return ValidationResult("Libraries for the following platform are also present in the module dependencies: $platformText")
+                return ValidationResult(
+                    KotlinJvmBundle.message(
+                        "libraries.for.the.following.platform.are.also.present.in.the.module.dependencies.0",
+                        platformText
+                    )
+                )
             }
 
             return ValidationResult.OK
