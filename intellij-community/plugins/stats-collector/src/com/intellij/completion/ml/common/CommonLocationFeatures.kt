@@ -11,6 +11,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.PlatformUtils
 
 class CommonLocationFeatures : ContextFeatureProvider {
@@ -36,6 +37,8 @@ class CommonLocationFeatures : ContextFeatureProvider {
       result["dumb_mode"] = MLFeatureValue.binary(true)
     }
 
+    result["is_after_dot"] = MLFeatureValue.binary(isAfterDot(environment.parameters.position))
+
     result.addPsiParents(environment.parameters.position, 10)
     return result
   }
@@ -56,5 +59,10 @@ class CommonLocationFeatures : ContextFeatureProvider {
       this[parentName] = MLFeatureValue.className(curParent::class.java)
       if (curParent is PsiFileSystemItem) return
     }
+  }
+
+  private fun isAfterDot(position: PsiElement) : Boolean {
+    val prev = PsiTreeUtil.prevVisibleLeaf(position)
+    return prev != null && prev.text == "."
   }
 }

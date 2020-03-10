@@ -6,17 +6,6 @@ import com.intellij.stats.storage.factors.LookupStorage
 import junit.framework.TestCase
 
 class CompletionLoggingPsiFeaturesTest: CompletionLoggingTestBase() {
-  fun testParentsPsiIs(vararg expectedParents: String) {
-    val features = LookupStorage.get(lookup)?.contextProvidersResult()!!
-    expectedParents.forEachIndexed() { i, expectedParent ->
-      val actualParent = features.classNameValue("ml_ctx_common_parent_${i + 1}")
-      TestCase.assertEquals("Psi parent features", expectedParent, actualParent)
-    }
-
-    // There are no unchecked parent features
-    TestCase.assertNull(features.classNameValue("ml_ctx_common_parent_${expectedParents.size + 1}"))
-  }
-
   fun `test psi parent feature for position after qualifier`() {
     myFixture.configureByText(JavaFileType.INSTANCE, "public class HelloWorld {\n" +
                                                      "    public static void main(String[] args) {\n" +
@@ -24,11 +13,11 @@ class CompletionLoggingPsiFeaturesTest: CompletionLoggingTestBase() {
                                                      "    }\n" +
                                                      "}")
     myFixture.completeBasic()
-    testParentsPsiIs("com.intellij.psi.impl.source.tree.java.PsiExpressionStatementImpl",
-                     "com.intellij.psi.impl.source.tree.java.PsiCodeBlockImpl",
-                     "com.intellij.psi.impl.source.PsiMethodImpl",
-                     "com.intellij.psi.impl.source.PsiClassImpl",
-                     "com.intellij.psi.impl.source.PsiJavaFileImpl")
+    checkParentsPsiIs("com.intellij.psi.impl.source.tree.java.PsiExpressionStatementImpl",
+                      "com.intellij.psi.impl.source.tree.java.PsiCodeBlockImpl",
+                      "com.intellij.psi.impl.source.PsiMethodImpl",
+                      "com.intellij.psi.impl.source.PsiClassImpl",
+                      "com.intellij.psi.impl.source.PsiJavaFileImpl")
   }
 
   fun `test psi parent feature in if statement`() {
@@ -38,11 +27,11 @@ class CompletionLoggingPsiFeaturesTest: CompletionLoggingTestBase() {
                                                      "    }\n" +
                                                      "}")
     myFixture.completeBasic()
-    testParentsPsiIs("com.intellij.psi.impl.source.tree.java.PsiIfStatementImpl",
-                     "com.intellij.psi.impl.source.tree.java.PsiCodeBlockImpl",
-                     "com.intellij.psi.impl.source.PsiMethodImpl",
-                     "com.intellij.psi.impl.source.PsiClassImpl",
-                     "com.intellij.psi.impl.source.PsiJavaFileImpl")
+    checkParentsPsiIs("com.intellij.psi.impl.source.tree.java.PsiIfStatementImpl",
+                      "com.intellij.psi.impl.source.tree.java.PsiCodeBlockImpl",
+                      "com.intellij.psi.impl.source.PsiMethodImpl",
+                      "com.intellij.psi.impl.source.PsiClassImpl",
+                      "com.intellij.psi.impl.source.PsiJavaFileImpl")
   }
 
   fun `test psi parent feature in arguments context`() {
@@ -54,12 +43,50 @@ class CompletionLoggingPsiFeaturesTest: CompletionLoggingTestBase() {
                                                      "    }\n" +
                                                      "}")
     myFixture.completeBasic()
-    testParentsPsiIs("com.intellij.psi.impl.source.tree.java.PsiExpressionListImpl",
-                     "com.intellij.psi.impl.source.tree.java.PsiMethodCallExpressionImpl",
-                     "com.intellij.psi.impl.source.tree.java.PsiExpressionStatementImpl",
-                     "com.intellij.psi.impl.source.tree.java.PsiCodeBlockImpl",
-                     "com.intellij.psi.impl.source.PsiMethodImpl",
-                     "com.intellij.psi.impl.source.PsiClassImpl",
-                     "com.intellij.psi.impl.source.PsiJavaFileImpl")
+    checkParentsPsiIs("com.intellij.psi.impl.source.tree.java.PsiExpressionListImpl",
+                      "com.intellij.psi.impl.source.tree.java.PsiMethodCallExpressionImpl",
+                      "com.intellij.psi.impl.source.tree.java.PsiExpressionStatementImpl",
+                      "com.intellij.psi.impl.source.tree.java.PsiCodeBlockImpl",
+                      "com.intellij.psi.impl.source.PsiMethodImpl",
+                      "com.intellij.psi.impl.source.PsiClassImpl",
+                      "com.intellij.psi.impl.source.PsiJavaFileImpl")
+  }
+
+  fun `test is after dot true`() {
+    myFixture.configureByText(JavaFileType.INSTANCE, "public class HelloWorld {\n" +
+                                                     "    public static void main(String[] args) {\n" +
+                                                     "        System.out.<caret>\n" +
+                                                     "    }\n" +
+                                                     "}")
+    myFixture.completeBasic()
+    checkHaveFeatures(mapOf("ml_ctx_common_is_after_dot" to true))
+  }
+
+  fun `test is after dot false`() {
+    myFixture.configureByText(JavaFileType.INSTANCE, "public class HelloWorld {\n" +
+                                                     "    public static void main(String[] args) {\n" +
+                                                     "        <caret>\n" +
+                                                     "    }\n" +
+                                                     "}")
+    myFixture.completeBasic()
+    checkHaveFeatures(mapOf("ml_ctx_common_is_after_dot" to false))
+  }
+
+  private fun checkParentsPsiIs(vararg expectedParents: String) {
+    val features = LookupStorage.get(lookup)?.contextProvidersResult()!!
+    expectedParents.forEachIndexed() { i, expectedParent ->
+      val actualParent = features.classNameValue("ml_ctx_common_parent_${i + 1}")
+      TestCase.assertEquals("Psi parent features", expectedParent, actualParent)
+    }
+
+    // There are no unchecked parent features
+    TestCase.assertNull(features.classNameValue("ml_ctx_common_parent_${expectedParents.size + 1}"))
+  }
+
+  private fun checkHaveFeatures(expectedFeatures: Map<String, Any>) {
+    val features = LookupStorage.get(lookup)?.contextProvidersResult()!!
+    expectedFeatures.forEach { fName, fValue ->
+      TestCase.assertTrue(features.binaryValue(fName) == fValue)
+    }
   }
 }
