@@ -1,8 +1,10 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components
 
 import com.intellij.ui.components.JBCheckBox
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
+import java.awt.Font
 
 class CheckboxComponent(
     context: Context,
@@ -12,11 +14,12 @@ class CheckboxComponent(
     onValueUpdate: (Boolean) -> Unit = {}
 ) : UIComponent<Boolean>(
     context,
-    labelText,
-    validator,
-    onValueUpdate
+    labelText = null,
+    validator = validator,
+    onValueUpdate = onValueUpdate
 ) {
     override val uiComponent: JBCheckBox = JBCheckBox(labelText, initialValue ?: false).apply {
+        font = UIUtil.getButtonFont()
         addChangeListener {
             fireValueUpdated(this@apply.isSelected)
         }
