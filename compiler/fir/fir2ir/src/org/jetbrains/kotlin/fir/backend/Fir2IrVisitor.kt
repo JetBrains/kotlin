@@ -597,6 +597,7 @@ class Fir2IrVisitor(
 
     private fun FirQualifiedAccess.findIrReceiver(isDispatch: Boolean): IrExpression? {
         val firReceiver = if (isDispatch) dispatchReceiver else extensionReceiver
+        if (firReceiver is FirResolvedQualifier) return firReceiver.toGetObject()
         return firReceiver.takeIf { it !is FirNoReceiverExpression }?.toIrExpression()
             ?: explicitReceiver?.toIrExpression() // NB: this applies to the situation when call is unresolved
             ?: run {
@@ -1213,20 +1214,29 @@ class Fir2IrVisitor(
     }
 
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: Any?): IrElement {
+        val argument = getClassCall.argument
+        val irType = getClassCall.typeRef.toIrType()
+        val irClassType = argument.typeRef.toIrType()
+        val irClassReferenceSymbol = when (argument) {
+            is FirResolvedReifiedParameterReference -> {
+                declarationStorage.getIrTypeParameterSymbol(argument.symbol, ConversionTypeContext.DEFAULT)
+            }
+            is FirResolvedQualifier -> {
+                val symbol = argument.symbol as? FirClassSymbol
+                    ?: return getClassCall.convertWithOffsets { startOffset, endOffset ->
+                        IrErrorCallExpressionImpl(
+                            startOffset, endOffset, irType, "Resolved qualifier ${argument.render()} does not have correct symbol"
+                        )
+                    }
+                declarationStorage.getIrClassSymbol(symbol)
+            }
+            else -> null
+        }
         return getClassCall.convertWithOffsets { startOffset, endOffset ->
-            val argument = getClassCall.argument
-            val irType = getClassCall.typeRef.toIrType()
-            if (argument is FirResolvedReifiedParameterReference) {
-                IrClassReferenceImpl(
-                    startOffset, endOffset, irType,
-                    declarationStorage.getIrTypeParameterSymbol(argument.symbol, ConversionTypeContext.DEFAULT),
-                    argument.typeRef.toIrType()
-                )
+            if (irClassReferenceSymbol != null) {
+                IrClassReferenceImpl(startOffset, endOffset, irType, irClassReferenceSymbol, irClassType)
             } else {
-                IrGetClassImpl(
-                    startOffset, endOffset, irType,
-                    argument.toIrExpression()
-                )
+                IrGetClassImpl(startOffset, endOffset, irType, argument.toIrExpression())
             }
         }
     }
@@ -1240,25 +1250,26 @@ class Fir2IrVisitor(
         }
     }
 
-    override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: Any?): IrElement {
-        val classSymbol = resolvedQualifier.symbol
-        if (classSymbol != null) {
-            val resultingSymbol = when (val klass = classSymbol.fir) {
-                is FirRegularClass -> {
-                    if (klass.classKind in listOf(ClassKind.OBJECT, ClassKind.ENUM_ENTRY)) classSymbol
-                    else klass.companionObject?.symbol ?: classSymbol
-                }
-                else -> classSymbol
-            }
-            return resolvedQualifier.convertWithOffsets { startOffset, endOffset ->
+    private fun FirResolvedQualifier.toGetObject(): IrExpression {
+        val irType = typeRef.toIrType()
+        val typeRef = typeRef as? FirResolvedTypeRef
+        val classSymbol = (typeRef?.type as? ConeClassLikeType)?.lookupTag?.toSymbol(session)
+        return convertWithOffsets { startOffset, endOffset ->
+            if (classSymbol != null) {
                 IrGetObjectValueImpl(
-                    startOffset, endOffset,
-                    resolvedQualifier.typeRef.toIrType(),
-                    resultingSymbol.toIrSymbol(session, declarationStorage) as IrClassSymbol
+                    startOffset, endOffset, irType,
+                    classSymbol.toIrSymbol(session, declarationStorage) as IrClassSymbol
+                )
+            } else {
+                IrErrorCallExpressionImpl(
+                    startOffset, endOffset, irType, "Resolved qualifier ${render()} does not have correctly resolved type"
                 )
             }
         }
-        return visitElement(resolvedQualifier, data)
+    }
+
+    override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: Any?): IrElement {
+        return resolvedQualifier.toGetObject()
     }
 
     override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: Any?): IrElement {
