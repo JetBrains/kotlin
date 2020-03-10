@@ -13901,6 +13901,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/typeMismatch/parameterTypeMismatch/changeFunctionParameterType4.kt");
             }
 
+            @TestMetadata("changeFunctionParameterTypeWithComment.kt")
+            public void testChangeFunctionParameterTypeWithComment() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/parameterTypeMismatch/changeFunctionParameterTypeWithComment.kt");
+            }
+
             @TestMetadata("changeParameterTypeLongNameRuntime.kt")
             public void testChangeParameterTypeLongNameRuntime() throws Exception {
                 runTest("idea/testData/quickfix/typeMismatch/parameterTypeMismatch/changeParameterTypeLongNameRuntime.kt");
