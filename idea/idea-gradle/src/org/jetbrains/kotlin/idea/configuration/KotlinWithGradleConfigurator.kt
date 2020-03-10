@@ -368,7 +368,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         private fun changeBuildGradle(module: Module, body: (PsiFile) -> PsiElement?): PsiElement? {
             val buildScriptFile = module.getBuildScriptPsiFile()
             if (buildScriptFile != null && canConfigureFile(buildScriptFile)) {
-                return buildScriptFile.project.executeWriteCommand("Change build.gradle configuration", null) {
+                return buildScriptFile.project.executeWriteCommand(KotlinIdeaGradleBundle.message("change.build.gradle.configuration"), null) {
                     body(buildScriptFile)
                 }
             }
