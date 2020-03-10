@@ -698,7 +698,7 @@ public class CommonGradleProjectResolverExtension extends AbstractProjectResolve
 
     String rootProjectPath = ideProject.getData().getLinkedExternalProjectPath();
     try {
-      File rootDir = resolverCtx.getModels().getMainBuild().getBuildIdentifier().getRootDir();
+      File rootDir = gradleModule.getGradleProject().getProjectIdentifier().getBuildIdentifier().getRootDir();
       rootProjectPath = ExternalSystemApiUtil.toCanonicalPath(rootDir.getCanonicalPath());
     }
     catch (IOException e) {
