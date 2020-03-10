@@ -100,7 +100,7 @@ class KotlinPlugin(context: Context) : Plugin(context) {
     }
 
 
-    private fun WritingContext.createBuildFiles(modules: List<Module>): TaskResult<List<BuildFileIR>> =
+    private fun Writer.createBuildFiles(modules: List<Module>): TaskResult<List<BuildFileIR>> =
         with(
             ModulesToIRsConverter(
                 ModuleConfigurationData(

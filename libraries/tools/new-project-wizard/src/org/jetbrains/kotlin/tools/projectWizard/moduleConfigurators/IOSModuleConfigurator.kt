@@ -25,7 +25,7 @@ object IOSSinglePlatformModuleConfigurator :
     override val needCreateBuildFile: Boolean = false
     override val requiresRootBuildFile: Boolean = true
 
-    override fun WritingContext.runArbitraryTask(
+    override fun Writer.runArbitraryTask(
         configurationData: ModuleConfigurationData,
         module: Module,
         modulePath: Path

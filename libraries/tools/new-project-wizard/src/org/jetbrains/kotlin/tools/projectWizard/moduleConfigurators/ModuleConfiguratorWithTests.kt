@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 
-import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSetting
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
@@ -39,12 +39,12 @@ interface ModuleConfiguratorWithTests : ModuleConfiguratorWithSettings {
     fun defaultTestFramework(): KotlinTestFramework
 
     override fun createModuleIRs(
-        readingContext: ReadingContext,
+        reader: Reader,
         configurationData: ModuleConfigurationData,
         module: Module
     ): List<BuildSystemIR> =
         withSettingsOf(module) {
-            with(readingContext) {
+            reader {
                 testFramework.reference.settingValue.dependencyNames.map { dependencyName ->
                     KotlinArbitraryDependencyIR(
                         dependencyName,

@@ -45,7 +45,7 @@ class YamlWizard(
     }
 }
 
-fun ReadingContext.parseYaml(
+fun Reader.parseYaml(
     yaml: String,
     pluginSettings: List<PluginSetting<*, *>>
 ): TaskResult<Map<SettingReference<*, *>, Any>> {

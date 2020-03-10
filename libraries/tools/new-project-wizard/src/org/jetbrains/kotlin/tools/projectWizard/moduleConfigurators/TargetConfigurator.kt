@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 import kotlinx.collections.immutable.toPersistentList
-import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.buildPersistenceList
@@ -23,9 +23,9 @@ interface TargetConfigurator : ModuleConfiguratorWithModuleType {
 
     fun canCoexistsWith(other: List<TargetConfigurator>): Boolean = true
 
-    fun ReadingContext.createTargetIrs(module: Module): List<BuildSystemIR>
+    fun Reader.createTargetIrs(module: Module): List<BuildSystemIR>
     fun createInnerTargetIrs(
-        readingContext: ReadingContext,
+        reader: Reader,
         module: Module
     ): List<BuildSystemIR> = emptyList()
 }
@@ -46,7 +46,7 @@ interface SimpleTargetConfigurator : TargetConfigurator {
     override val suggestedModuleName: String? get() = moduleSubType.name
 
 
-    override fun ReadingContext.createTargetIrs(
+    override fun Reader.createTargetIrs(
         module: Module
     ): List<BuildSystemIR> = buildList {
         +DefaultTargetConfigurationIR(
@@ -72,7 +72,7 @@ object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWit
 
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JS
 
-    override fun ReadingContext.createTargetIrs(
+    override fun Reader.createTargetIrs(
         module: Module
     ): List<BuildSystemIR> = buildList {
         +DefaultTargetConfigurationIR(
@@ -92,7 +92,7 @@ object JsNodeTargetConfigurator : JsTargetConfigurator {
     override val suggestedModuleName = "nodeJs"
 
 
-    override fun ReadingContext.createTargetIrs(
+    override fun Reader.createTargetIrs(
         module: Module
     ): List<BuildSystemIR> = buildList {
         +DefaultTargetConfigurationIR(
@@ -123,10 +123,10 @@ object JvmTargetConfigurator : JvmModuleConfigurator,
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JUNIT4
 
     override fun createInnerTargetIrs(
-        readingContext: ReadingContext,
+        reader: Reader,
         module: Module
     ): List<BuildSystemIR> = buildList {
-        with(readingContext) {
+        reader {
             withSettingsOf(module) {
                 val targetVersionValue = JvmModuleConfigurator.targetJvmVersion.reference.settingValue.value
                 if (buildSystemType.isGradle) {

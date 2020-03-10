@@ -48,15 +48,15 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
         listOf(AndroidPlugin::androidSdkPath.reference)
 
     override fun createBuildFileIRs(
-        readingContext: ReadingContext,
+        reader: Reader,
         configurationData: ModuleConfigurationData,
         module: Module
     ) = buildList<BuildSystemIR> {
-        +GradleOnlyPluginByNameIR(readingContext.createAndroidPlugin(module).pluginName)
+        +GradleOnlyPluginByNameIR(reader.createAndroidPlugin(module).pluginName)
 
         +GradleOnlyPluginByNameIR("kotlin-android-extensions")
         +AndroidConfigIR(
-            when (readingContext.createAndroidPlugin(module)) {
+            when (reader.createAndroidPlugin(module)) {
                 AndroidGradlePlugin.APPLICATION -> module.javaPackage(configurationData.pomIr)
                 AndroidGradlePlugin.LIBRARY -> null
             }
@@ -64,15 +64,15 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
         +createRepositories(configurationData.kotlinVersion).map(::RepositoryIR)
     }
 
-    fun ReadingContext.createAndroidPlugin(module: Module): AndroidGradlePlugin
+    fun Reader.createAndroidPlugin(module: Module): AndroidGradlePlugin
 
-    override fun ReadingContext.createSettingsGradleIRs(module: Module) = buildList<BuildSystemIR> {
+    override fun Reader.createSettingsGradleIRs(module: Module) = buildList<BuildSystemIR> {
         +createRepositories(KotlinPlugin::version.propertyValue).map { PluginManagementRepositoryIR(RepositoryIR(it)) }
         +AndroidResolutionStrategyIR(Versions.GradlePlugins.ANDROID)
     }
 
     override fun createModuleIRs(
-        readingContext: ReadingContext,
+        reader: Reader,
         configurationData: ModuleConfigurationData,
         module: Module
     ): List<BuildSystemIR> =
@@ -128,7 +128,7 @@ object AndroidTargetConfigurator : TargetConfigurator,
     override val moduleSubType = ModuleSubType.android
     override val moduleType = ModuleType.jvm
 
-    override fun ReadingContext.createAndroidPlugin(module: Module): AndroidGradlePlugin =
+    override fun Reader.createAndroidPlugin(module: Module): AndroidGradlePlugin =
         withSettingsOf(module) { androidPlugin.reference.settingValue }
 
     override fun getConfiguratorSettings() = buildList<ModuleConfiguratorSetting<*, *>> {
@@ -136,7 +136,7 @@ object AndroidTargetConfigurator : TargetConfigurator,
         +androidPlugin
     }
 
-    override fun WritingContext.runArbitraryTask(
+    override fun Writer.runArbitraryTask(
         configurationData: ModuleConfigurationData,
         module: Module,
         modulePath: Path

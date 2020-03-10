@@ -68,7 +68,7 @@ class Module(
             else -> "Module"
         }
 
-    fun SettingsWritingContext.initDefaultValuesForSettings() {
+    fun SettingsWriter.initDefaultValuesForSettings() {
         configurator.safeAs<ModuleConfiguratorWithSettings>()?.apply { initDefaultValuesFor(this@Module) }
         template?.apply { initDefaultValuesFor(this@Module) }
     }

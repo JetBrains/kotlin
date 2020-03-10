@@ -126,12 +126,12 @@ val BuildSystemType.isGradle
     get() = this == BuildSystemType.GradleGroovyDsl
             || this == BuildSystemType.GradleKotlinDsl
 
-val ReadingContext.allIRModules
+val Reader.allIRModules
     get() = BuildSystemPlugin::buildFiles.propertyValue.flatMap { buildFile ->
         buildFile.modules.modules
     }
 
-val WritingContext.allModulesPaths
+val Writer.allModulesPaths
     get() = BuildSystemPlugin::buildFiles.propertyValue.flatMap { buildFile ->
         val paths = when (val structure = buildFile.modules) {
             is MultiplatformModulesStructureIR -> listOf(buildFile.directoryPath)
@@ -146,6 +146,6 @@ val WritingContext.allModulesPaths
     }
 
 
-val ReadingContext.buildSystemType: BuildSystemType
+val Reader.buildSystemType: BuildSystemType
     get() = BuildSystemPlugin::type.reference.settingValue
 

@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 import kotlinx.collections.immutable.toPersistentList
-import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
@@ -36,7 +36,7 @@ object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenc
     override val text = "For Current System"
 
 
-    override fun ReadingContext.createTargetIrs(
+    override fun Reader.createTargetIrs(
         module: Module
     ): List<BuildSystemIR> {
         val moduleName = module.name
@@ -79,7 +79,7 @@ object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenc
     }
 
     override fun createBuildFileIRs(
-        readingContext: ReadingContext,
+        reader: Reader,
         configurationData: ModuleConfigurationData,
         module: Module
     ): List<BuildSystemIR> = buildList {

@@ -138,7 +138,7 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
     }
 }
 
-val ReadingContext.settingsGradleBuildFileData
+val Reader.settingsGradleBuildFileData
     get() = when (buildSystemType) {
         BuildSystemType.GradleKotlinDsl ->
             BuildFileData(

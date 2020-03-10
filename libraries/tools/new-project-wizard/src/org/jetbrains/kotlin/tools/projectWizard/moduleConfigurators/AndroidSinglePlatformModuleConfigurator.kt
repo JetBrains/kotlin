@@ -26,11 +26,11 @@ object AndroidSinglePlatformModuleConfigurator :
     override val requiresRootBuildFile: Boolean = true
 
     override fun createBuildFileIRs(
-        readingContext: ReadingContext,
+        reader: Reader,
         configurationData: ModuleConfigurationData,
         module: Module
     ) = buildList<BuildSystemIR> {
-        +super<AndroidModuleConfigurator>.createBuildFileIRs(readingContext, configurationData, module)
+        +super<AndroidModuleConfigurator>.createBuildFileIRs(reader, configurationData, module)
 
         // it is explicitly here instead of by `createKotlinPluginIR` as it should be after `com.android.application`
         +KotlinBuildSystemPluginIR(
@@ -46,11 +46,11 @@ object AndroidSinglePlatformModuleConfigurator :
     }
 
     override fun createModuleIRs(
-        readingContext: ReadingContext,
+        reader: Reader,
         configurationData: ModuleConfigurationData,
         module: Module
     ) = buildList<BuildSystemIR> {
-        +super<AndroidModuleConfigurator>.createModuleIRs(readingContext, configurationData, module)
+        +super<AndroidModuleConfigurator>.createModuleIRs(reader, configurationData, module)
 
         +ArtifactBasedLibraryDependencyIR(
             MavenArtifact(DefaultRepository.GOOGLE, "androidx.appcompat", "appcompat"),
@@ -65,7 +65,7 @@ object AndroidSinglePlatformModuleConfigurator :
         )
     }
 
-    override fun WritingContext.runArbitraryTask(
+    override fun Writer.runArbitraryTask(
         configurationData: ModuleConfigurationData,
         module: Module,
         modulePath: Path
@@ -81,6 +81,6 @@ object AndroidSinglePlatformModuleConfigurator :
         )
     }
 
-    override fun ReadingContext.createAndroidPlugin(module: Module): AndroidGradlePlugin =
+    override fun Reader.createAndroidPlugin(module: Module): AndroidGradlePlugin =
         AndroidGradlePlugin.APPLICATION
 }

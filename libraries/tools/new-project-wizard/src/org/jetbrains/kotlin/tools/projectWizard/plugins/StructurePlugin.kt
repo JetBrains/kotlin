@@ -39,14 +39,14 @@ class StructurePlugin(context: Context) : Plugin(context) {
     }
 }
 
-val ReadingContext.projectPath
+val Reader.projectPath
     get() = StructurePlugin::projectPath.reference.settingValue
 
-val ReadingContext.projectName
+val Reader.projectName
     get() = StructurePlugin::name.reference.settingValue
 
 
-fun WritingContext.pomIR() = PomIR(
+fun Writer.pomIR() = PomIR(
     artifactId = StructurePlugin::artifactId.reference.settingValue,
     groupId = StructurePlugin::groupId.reference.settingValue,
     version = Version.fromString(StructurePlugin::version.reference.settingValue)

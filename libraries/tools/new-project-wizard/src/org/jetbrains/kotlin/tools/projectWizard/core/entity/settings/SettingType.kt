@@ -214,4 +214,4 @@ object PathSettingType : SettingType<Path>() {
     }
 }
 
-typealias DropDownSettingTypeFilter <V> = ReadingContext.(SettingReference<V, DropDownSettingType<V>>, V) -> Boolean
+typealias DropDownSettingTypeFilter <V> = Reader.(SettingReference<V, DropDownSettingType<V>>, V) -> Boolean

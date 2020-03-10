@@ -67,15 +67,15 @@ enum class SourcesetType: DisplayableSettingItem {
 }
 
 
-fun WritingContext.updateBuildFiles(action: (BuildFileIR) -> TaskResult<BuildFileIR>): TaskResult<Unit> =
+fun Writer.updateBuildFiles(action: (BuildFileIR) -> TaskResult<BuildFileIR>): TaskResult<Unit> =
     BuildSystemPlugin::buildFiles.update { buildFiles ->
         buildFiles.mapSequence(action)
     }
 
-fun WritingContext.updateModules(action: (ModuleIR) -> TaskResult<ModuleIR>): TaskResult<Unit> =
+fun Writer.updateModules(action: (ModuleIR) -> TaskResult<ModuleIR>): TaskResult<Unit> =
     updateBuildFiles { buildFile ->
         buildFile.withModulesUpdated { action(it) }
     }
 
-fun WritingContext.forEachModule(action: (ModuleIR) -> TaskResult<Unit>): TaskResult<Unit> =
+fun Writer.forEachModule(action: (ModuleIR) -> TaskResult<Unit>): TaskResult<Unit> =
     updateModules { moduleIR -> action(moduleIR).map { moduleIR } }

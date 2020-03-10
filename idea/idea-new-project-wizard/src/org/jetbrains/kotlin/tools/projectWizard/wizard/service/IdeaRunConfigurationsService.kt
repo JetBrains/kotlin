@@ -10,7 +10,7 @@ import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunCo
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.tools.projectWizard.WizardGradleRunConfiguration
 import org.jetbrains.kotlin.tools.projectWizard.WizardRunConfiguration
-import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 
 import org.jetbrains.kotlin.tools.projectWizard.core.service.RunConfigurationsService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.isBuildSystemAvailable
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemT
 import org.jetbrains.plugins.gradle.service.execution.GradleExternalTaskConfigurationType
 
 class IdeaRunConfigurationsService(private val project: Project) : RunConfigurationsService, IdeaWizardService {
-    override fun ReadingContext.addRunConfigurations(configurations: List<WizardRunConfiguration>) {
+    override fun Reader.addRunConfigurations(configurations: List<WizardRunConfiguration>) {
         configurations.forEach { wizardConfiguration ->
             if (wizardConfiguration is WizardGradleRunConfiguration && isBuildSystemAvailable(BuildSystemType.GradleKotlinDsl)) {
                 addGradleRunConfiguration(wizardConfiguration)

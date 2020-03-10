@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.core.entity.settings
 
 
-import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settingValidator
@@ -17,13 +17,13 @@ abstract class SettingBuilder<V : Any, T : SettingType<V>>(
     private val title: String,
     private val neededAtPhase: GenerationPhase
 ) {
-    var isAvailable: ReadingContext.() -> Boolean = { true }
+    var isAvailable: Reader.() -> Boolean = { true }
     open var defaultValue: SettingDefaultValue<V>? = null
     var isSavable: Boolean = false
     var isRequired: Boolean? = null
 
     fun value(value: V) = SettingDefaultValue.Value(value)
-    fun dynamic(getter: ReadingContext.(SettingReference<V, SettingType<V>>) -> V) =
+    fun dynamic(getter: Reader.(SettingReference<V, SettingType<V>>) -> V) =
         SettingDefaultValue.Dynamic(getter)
 
     protected var validator =
@@ -33,7 +33,7 @@ abstract class SettingBuilder<V : Any, T : SettingType<V>>(
         this.validator = this.validator and validator
     }
 
-    fun validate(validator: ReadingContext.(V) -> ValidationResult) {
+    fun validate(validator: Reader.(V) -> ValidationResult) {
         this.validator = this.validator and settingValidator(
             validator
         )

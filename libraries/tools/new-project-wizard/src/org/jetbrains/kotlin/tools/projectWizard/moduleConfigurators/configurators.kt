@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 
-import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSetting
 import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
@@ -91,7 +91,7 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
 
 
     override fun createBuildFileIRs(
-        readingContext: ReadingContext,
+        reader: Reader,
         configurationData: ModuleConfigurationData,
         module: Module
     ): List<BuildSystemIR> =
@@ -99,7 +99,7 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
             +GradleImportIR("org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
 
             val targetVersionValue = withSettingsOf(module) {
-                with(readingContext) {
+                reader {
                     JvmModuleConfigurator.targetJvmVersion.reference.settingValue.value
                 }
             }

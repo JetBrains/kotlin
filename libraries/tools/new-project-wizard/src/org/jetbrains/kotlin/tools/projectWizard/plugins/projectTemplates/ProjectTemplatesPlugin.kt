@@ -20,7 +20,7 @@ class ProjectTemplatesPlugin(context: Context) : Plugin(context) {
     }
 }
 
-fun SettingsWritingContext.applyProjectTemplate(projectTemplate: ProjectTemplate) {
+fun SettingsWriter.applyProjectTemplate(projectTemplate: ProjectTemplate) {
     projectTemplate.setsValues.forEach { (setting, value) ->
         setting.setValue(value)
     }

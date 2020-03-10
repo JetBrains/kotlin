@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.tools.projectWizard.core.entity.settings
 
 import org.jetbrains.kotlin.tools.projectWizard.core.ActivityCheckerOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.Checker
-import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.Entity
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.EntityWithValue
@@ -58,7 +58,7 @@ class TemplateSetting<out V : Any, out T : SettingType<V>>(
 sealed class SettingDefaultValue<out V : Any> {
     data class Value<V : Any>(val value: V) : SettingDefaultValue<V>()
     data class Dynamic<V : Any>(
-        val getter: ReadingContext.(SettingReference<V, SettingType<V>>) -> V
+        val getter: Reader.(SettingReference<V, SettingType<V>>) -> V
     ) : SettingDefaultValue<V>()
 }
 

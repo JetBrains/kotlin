@@ -75,7 +75,7 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor {
     open val settings: List<TemplateSetting<*, *>> = emptyList()
     open val interceptionPoints: List<InterceptionPoint<Any>> = emptyList()
 
-    fun SettingsWritingContext.initDefaultValuesFor(module: Module) {
+    fun SettingsWriter.initDefaultValuesFor(module: Module) {
         withSettingsOf(module) {
             settings.forEach { setting ->
                 setting.reference.setSettingValueToItsDefaultIfItIsNotSetValue()
@@ -83,10 +83,10 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor {
         }
     }
 
-    open fun WritingContext.getRequiredLibraries(module: ModuleIR): List<DependencyIR> = emptyList()
+    open fun Writer.getRequiredLibraries(module: ModuleIR): List<DependencyIR> = emptyList()
 
     //TODO: use setting reading context
-    open fun WritingContext.getIrsToAddToBuildFile(
+    open fun Writer.getIrsToAddToBuildFile(
         module: ModuleIR
     ): List<BuildSystemIR> = emptyList()
 
@@ -95,13 +95,13 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor {
         targetConfigurationIR: TargetConfigurationIR
     ): TargetConfigurationIR = targetConfigurationIR
 
-    open fun WritingContext.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = emptyList()
+    open fun Writer.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = emptyList()
 
     open fun createInterceptors(module: ModuleIR): List<TemplateInterceptor> = emptyList()
 
-    open fun ReadingContext.createRunConfigurations(module: ModuleIR): List<WizardRunConfiguration> = emptyList()
+    open fun Reader.createRunConfigurations(module: ModuleIR): List<WizardRunConfiguration> = emptyList()
 
-    fun WritingContext.applyToSourceset(
+    fun Writer.applyToSourceset(
         module: ModuleIR
     ): TaskResult<TemplateApplicationResult> {
         val librariesToAdd = getRequiredLibraries(module)
@@ -121,7 +121,7 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor {
         return result.asSuccess()
     }
 
-    fun WritingContext.settingsAsMap(module: Module): Map<String, Any> =
+    fun Writer.settingsAsMap(module: Module): Map<String, Any> =
         withSettingsOf(module) {
             settings.associate { setting ->
                 setting.path to setting.reference.settingValue
@@ -129,7 +129,7 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor {
         } + createDefaultSettings()
 
 
-    private fun WritingContext.createDefaultSettings() = mapOf(
+    private fun Writer.createDefaultSettings() = mapOf(
         "projectName" to StructurePlugin::name.settingValue.capitalize()
     )
 
@@ -257,7 +257,7 @@ fun Template.settings(module: Module) = withSettingsOf(module) {
     settings.map { it.reference }
 }
 
-fun WritingContext.applyTemplateToModule(
+fun Writer.applyTemplateToModule(
     template: Template?,
     module: ModuleIR
 ): TaskResult<TemplateApplicationResult> = when (template) {

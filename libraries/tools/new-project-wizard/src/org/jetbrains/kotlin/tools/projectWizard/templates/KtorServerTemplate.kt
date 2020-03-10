@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.templates
 
 
-import org.jetbrains.kotlin.tools.projectWizard.core.WritingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.Writer
 import org.jetbrains.kotlin.tools.projectWizard.core.asPath
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.TemplateSetting
@@ -29,7 +29,7 @@ class KtorServerTemplate : Template() {
     override val moduleTypes: Set<ModuleType> = setOf(ModuleType.jvm)
     override val id: String = "ktorServer"
 
-    override fun WritingContext.getRequiredLibraries(module: ModuleIR): List<DependencyIR> =
+    override fun Writer.getRequiredLibraries(module: ModuleIR): List<DependencyIR> =
         withSettingsOf(module.originalModule) {
             buildList {
                 +ktorArtifactDependency(serverEngine.reference.settingValue.dependencyName)
@@ -42,7 +42,7 @@ class KtorServerTemplate : Template() {
             }
         }
 
-    override fun WritingContext.getIrsToAddToBuildFile(module: ModuleIR): List<BuildSystemIR> = buildList {
+    override fun Writer.getIrsToAddToBuildFile(module: ModuleIR): List<BuildSystemIR> = buildList {
         +RepositoryIR(Repositories.KTOR_BINTRAY)
         +RepositoryIR(DefaultRepository.JCENTER)
         +runTaskIrs(mainClass = "ServerKt")
@@ -51,7 +51,7 @@ class KtorServerTemplate : Template() {
     override fun updateTargetIr(module: ModuleIR, targetConfigurationIR: TargetConfigurationIR): TargetConfigurationIR =
         targetConfigurationIR.addWithJavaIntoJvmTarget()
 
-    override fun WritingContext.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = listOf(
+    override fun Writer.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = listOf(
         FileTemplateDescriptor("$id/server.kt.vm", "server.kt".asPath()) asSrcOf SourcesetType.main
     )
 

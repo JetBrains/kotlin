@@ -22,19 +22,19 @@ class Context private constructor(
 ) {
     private lateinit var plugins: List<Plugin>
 
-    private val settingWritingContext = SettingsWritingContext()
+    private val settingWritingContext = SettingsWriter()
 
     private val pluginSettings by lazy(LazyThreadSafetyMode.NONE) {
         plugins.flatMap(Plugin::declaredSettings).distinctBy(PluginSetting<*, *>::path)
     }
 
-    fun <T> read(reader: ReadingContext.() -> T): T =
+    fun <T> read(reader: Reader.() -> T): T =
         settingWritingContext.reader()
 
-    fun <T> write(writer: WritingContext.() -> T): T =
+    fun <T> write(writer: Writer.() -> T): T =
         settingWritingContext.writer()
 
-    fun <T> writeSettings(writer: SettingsWritingContext.() -> T): T =
+    fun <T> writeSettings(writer: SettingsWriter.() -> T): T =
         settingWritingContext.writer()
 
 
@@ -133,7 +133,7 @@ class Context private constructor(
         TaskSorter().sort(pipelineLineTasks, dependencyList)
 
 
-    open inner class ReadingContext {
+    open inner class Reader {
         val plugins: List<Plugin>
             get() = this@Context.plugins
 
@@ -185,24 +185,24 @@ class Context private constructor(
         val <V : Any> SettingReference<V, SettingType<V>>.savedOrDefaultValue: V?
             get() = setting.getSavedValueForSetting() ?: when (val defaultValue = setting.defaultValue) {
                 is SettingDefaultValue.Value -> defaultValue.value
-                is SettingDefaultValue.Dynamic<V> -> defaultValue.getter(this@ReadingContext, this)
+                is SettingDefaultValue.Dynamic<V> -> defaultValue.getter(this@Reader, this)
                 null -> null
             }
 
         val <V : Any, T : SettingType<V>> SettingReference<V, T>.setting: Setting<V, T>
             get() = with(this) { getSetting() }
 
-        inline operator fun <T> invoke(reader: ReadingContext.() -> T): T = reader()
+        inline operator fun <T> invoke(reader: Reader.() -> T): T = reader()
     }
 
-    open inner class WritingContext : ReadingContext() {
+    open inner class Writer : Reader() {
         val eventManager: EventManager
             get() = settingContext.eventManager
 
         fun <A, B : Any> Task1Reference<A, B>.execute(value: A): TaskResult<B> {
             @Suppress("UNCHECKED_CAST")
             val task = taskContext.getEntity(this) as Task1<A, B>
-            return task.action(this@WritingContext, value)
+            return task.action(this@Writer, value)
         }
 
         fun <T : Any> PropertyReference<T>.update(
@@ -219,9 +219,12 @@ class Context private constructor(
         fun <T : Any> PropertyReference<List<T>>.addValues(
             values: List<T>
         ): TaskResult<Unit> = update { oldValues -> success(oldValues + values) }
+
+        @JvmName("write")
+        inline operator fun <T> invoke(writer: Writer.() -> T): T = writer()
     }
 
-    open inner class SettingsWritingContext : WritingContext() {
+    open inner class SettingsWriter : Writer() {
         fun <V : Any, T : SettingType<V>> SettingReference<V, T>.setValue(newValue: V) {
             settingContext[this] = newValue
         }
@@ -232,10 +235,13 @@ class Context private constructor(
                 setValue(defaultValue)
             }
         }
+        
+        @JvmName("writeSettings")
+        inline operator fun <T> invoke(writer: SettingsWriter.() -> T): T = writer()
     }
 }
 
-fun ReadingContext.getUnspecifiedSettings(phases: Set<GenerationPhase>): List<AnySetting> {
+fun Reader.getUnspecifiedSettings(phases: Set<GenerationPhase>): List<AnySetting> {
     val required = plugins
         .flatMap { plugin ->
             plugin.declaredSettings.mapNotNull { setting ->
@@ -248,6 +254,6 @@ fun ReadingContext.getUnspecifiedSettings(phases: Set<GenerationPhase>): List<An
 }
 
 
-typealias ReadingContext = Context.ReadingContext
-typealias WritingContext = Context.WritingContext
-typealias SettingsWritingContext = Context.SettingsWritingContext
+typealias Reader = Context.Reader
+typealias Writer = Context.Writer
+typealias SettingsWriter = Context.SettingsWriter

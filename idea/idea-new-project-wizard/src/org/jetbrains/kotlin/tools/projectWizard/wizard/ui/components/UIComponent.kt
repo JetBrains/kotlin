@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
-import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.isSpecificError
@@ -90,7 +90,7 @@ abstract class UIComponent<V : Any>(
     }
 }
 
-fun <V : Any> ReadingContext.valueForSetting(
+fun <V : Any> Reader.valueForSetting(
     uiComponent: UIComponent<V>,
     setting: SettingReference<V, SettingType<V>>
 ): V? = setting.savedOrDefaultValue ?: uiComponent.getUiValue()

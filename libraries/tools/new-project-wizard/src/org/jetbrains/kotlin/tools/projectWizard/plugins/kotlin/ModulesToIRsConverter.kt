@@ -21,7 +21,7 @@ data class ModuleConfigurationData(
     val kotlinVersion: Version,
     val buildSystemType: BuildSystemType,
     val pomIr: PomIR,
-    val writingContext: WritingContext
+    val writer: Writer
 ) {
     val allModules = rootModules.withAllSubModules()
 }
@@ -61,7 +61,7 @@ class ModulesToIRsConverter(
         else -> rootPath / module.name
     }
 
-    fun ReadingContext.createBuildFiles(): TaskResult<List<BuildFileIR>> = with(data) {
+    fun Reader.createBuildFiles(): TaskResult<List<BuildFileIR>> = with(data) {
         val needExplicitRootBuildFile = !needFlattening
         val parentModuleHasTransitivelySpecifiedKotlinVersion = allModules.any { modules ->
             modules.configurator == AndroidSinglePlatformModuleConfigurator
@@ -86,7 +86,7 @@ class ModulesToIRsConverter(
     }
 
 
-    private fun ReadingContext.createBuildFileForModule(
+    private fun Reader.createBuildFileForModule(
         module: Module,
         state: ModulesToIrsState
     ): TaskResult<List<BuildFileIR>> = when (val configurator = module.configurator) {
@@ -95,13 +95,13 @@ class ModulesToIRsConverter(
         else -> Success(emptyList())
     }
 
-    private fun ReadingContext.createSinglePlatformModule(
+    private fun Reader.createSinglePlatformModule(
         module: Module,
         configurator: SinglePlatformModuleConfigurator,
         state: ModulesToIrsState
     ): TaskResult<List<BuildFileIR>> = with(data) {
         val modulePath = calculatePathForModule(module, state.parentPath)
-        writingContext.mutateProjectStructureByModuleConfigurator(module, modulePath)
+        writer.mutateProjectStructureByModuleConfigurator(module, modulePath)
         val buildFileIR = run {
             if (!configurator.needCreateBuildFile) return@run null
             val dependenciesIRs = buildPersistenceList<BuildSystemIR> {
@@ -159,12 +159,12 @@ class ModulesToIRsConverter(
             }
     }
 
-    private fun ReadingContext.createMultiplatformModule(
+    private fun Reader.createMultiplatformModule(
         module: Module,
         state: ModulesToIrsState
     ): TaskResult<List<BuildFileIR>> = with(data) {
         val modulePath = calculatePathForModule(module, state.parentPath)
-        writingContext.mutateProjectStructureByModuleConfigurator(module, modulePath)
+        writer.mutateProjectStructureByModuleConfigurator(module, modulePath)
         val targetIrs = module.subModules.flatMap { subModule ->
             with(subModule.configurator as TargetConfigurator) { createTargetIrs(subModule) }
         }
@@ -189,8 +189,8 @@ class ModulesToIRsConverter(
         ).asSingletonList().asSuccess()
     }
 
-    private fun ReadingContext.createTargetModule(target: Module, modulePath: Path): MultiplatformModuleIR {
-        data.writingContext.mutateProjectStructureByModuleConfigurator(target, modulePath)
+    private fun Reader.createTargetModule(target: Module, modulePath: Path): MultiplatformModuleIR {
+        data.writer.mutateProjectStructureByModuleConfigurator(target, modulePath)
         val sourcesetss = target.sourcesets.map { sourceset ->
             val sourcesetName = target.name + sourceset.sourcesetType.name.capitalize()
             val sourcesetIrs = buildList<BuildSystemIR> {
@@ -226,7 +226,7 @@ class ModulesToIRsConverter(
         )
     }
 
-    private fun WritingContext.mutateProjectStructureByModuleConfigurator(
+    private fun Writer.mutateProjectStructureByModuleConfigurator(
         module: Module,
         modulePath: Path
     ): TaskResult<Unit> = with(module.configurator) {
@@ -239,7 +239,7 @@ class ModulesToIRsConverter(
         }
     }
 
-    private fun ReadingContext.createBuildFileIRs(
+    private fun Reader.createBuildFileIRs(
         module: Module,
         state: ModulesToIrsState
     ) = buildPersistenceList<BuildSystemIR> {

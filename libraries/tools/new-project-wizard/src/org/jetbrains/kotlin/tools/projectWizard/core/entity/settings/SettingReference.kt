@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.tools.projectWizard.core.entity.settings
 
 import org.jetbrains.kotlin.tools.projectWizard.Identificator
 import org.jetbrains.kotlin.tools.projectWizard.core.Plugin
-import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.path
 import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfigurator
@@ -21,7 +21,7 @@ sealed class SettingReference<out V : Any, out T : SettingType<V>> {
     abstract val path: String
     abstract val type: KClass<out T>
 
-    abstract fun ReadingContext.getSetting(): Setting<V, T>
+    abstract fun Reader.getSetting(): Setting<V, T>
 
     final override fun toString() = path
     final override fun equals(other: Any?) = other.safeAs<SettingReference<*, *>>()?.path == path
@@ -40,7 +40,7 @@ data class PluginSettingReference<out V : Any, out T : SettingType<V>>(
     constructor(setting: PluginSetting<V, T>) :
             this(setting.path, setting.type::class as KClass<T>)
 
-    override fun ReadingContext.getSetting(): Setting<V, T> = pluginSetting
+    override fun Reader.getSetting(): Setting<V, T> = pluginSetting
 }
 
 inline val <V : Any, reified T : SettingType<V>> PluginSetting<V, T>.reference: PluginSettingReference<V, T>
@@ -57,7 +57,7 @@ sealed class ModuleConfiguratorSettingReference<V : Any, T : SettingType<V>> : S
     override val type: KClass<out T>
         get() = setting.type::class
 
-    override fun ReadingContext.getSetting(): Setting<V, T> = setting
+    override fun Reader.getSetting(): Setting<V, T> = setting
     abstract val module: Module?
 }
 
@@ -89,7 +89,7 @@ sealed class TemplateSettingReference<V : Any, T : SettingType<V>> : SettingRefe
     override val type: KClass<out T>
         get() = setting.type::class
 
-    override fun ReadingContext.getSetting(): Setting<V, T> = setting
+    override fun Reader.getSetting(): Setting<V, T> = setting
     abstract val module: Module?
 }
 

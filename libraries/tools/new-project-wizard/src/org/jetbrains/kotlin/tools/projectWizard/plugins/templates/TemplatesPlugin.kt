@@ -106,7 +106,7 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
         }
     }
 
-    private fun WritingContext.applyFileTemplatesFromSourceset(
+    private fun Writer.applyFileTemplatesFromSourceset(
         module: ModuleIR,
         templateEngine: TemplateEngine,
         interceptionPointSettings: Map<InterceptionPoint<Any>, Any>
@@ -129,7 +129,7 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
         }.sequenceIgnore()
     }
 
-    private fun WritingContext.defaultSettings(moduleIR: ModuleIR) = mapOf(
+    private fun Writer.defaultSettings(moduleIR: ModuleIR) = mapOf(
         "projectName" to projectName,
         "moduleName" to moduleIR.name
     )

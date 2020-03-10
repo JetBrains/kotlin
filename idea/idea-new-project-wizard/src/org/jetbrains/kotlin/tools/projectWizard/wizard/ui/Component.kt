@@ -2,9 +2,9 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui
 
 
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
-import org.jetbrains.kotlin.tools.projectWizard.core.ReadingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.SettingsWritingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.WritingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
+import org.jetbrains.kotlin.tools.projectWizard.core.SettingsWriter
+import org.jetbrains.kotlin.tools.projectWizard.core.Writer
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSettingPropertyReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
@@ -48,13 +48,13 @@ abstract class DynamicComponent(private val context: Context) : Component() {
         }
     }
 
-    protected fun <T> read(reader: ReadingContext.() -> T): T =
+    protected fun <T> read(reader: Reader.() -> T): T =
         context.read(reader)
 
-    protected fun <T> write(writer: WritingContext.() -> T): T =
+    protected fun <T> write(writer: Writer.() -> T): T =
         context.write(writer)
 
-    protected fun <T> modify(modifier: SettingsWritingContext.() -> T): T =
+    protected fun <T> modify(modifier: SettingsWriter.() -> T): T =
         context.writeSettings(modifier)
 
     open fun onValueUpdated(reference: SettingReference<*, *>?) {}

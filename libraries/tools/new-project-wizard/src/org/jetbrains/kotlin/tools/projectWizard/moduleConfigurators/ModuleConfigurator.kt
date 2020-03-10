@@ -164,7 +164,7 @@ interface ModuleConfiguratorWithSettings : ModuleConfigurator {
     fun getPluginSettings(): List<PluginSettingReference<Any, SettingType<Any>>> = emptyList()
 
 
-    fun SettingsWritingContext.initDefaultValuesFor(module: Module) {
+    fun SettingsWriter.initDefaultValuesFor(module: Module) {
         withSettingsOf(module) {
             getConfiguratorSettings().forEach { setting ->
                 setting.reference.setSettingValueToItsDefaultIfItIsNotSetValue()
@@ -179,7 +179,7 @@ val ModuleConfigurator.settings
         else -> emptyList()
     }
 
-fun ReadingContext.allSettingsOfModuleConfigurator(moduleConfigurator: ModuleConfigurator) = when (moduleConfigurator) {
+fun Reader.allSettingsOfModuleConfigurator(moduleConfigurator: ModuleConfigurator) = when (moduleConfigurator) {
     is ModuleConfiguratorWithSettings -> buildList<Setting<Any, SettingType<Any>>> {
         +moduleConfigurator.getConfiguratorSettings()
         +moduleConfigurator.getPluginSettings().map { it.pluginSetting }
@@ -205,14 +205,14 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
     val requiresRootBuildFile: Boolean get() = false
 
     fun createBuildFileIRs(
-        readingContext: ReadingContext,
+        reader: Reader,
         configurationData: ModuleConfigurationData,
         module: Module
     ): List<BuildSystemIR> =
         emptyList()
 
     fun createModuleIRs(
-        readingContext: ReadingContext,
+        reader: Reader,
         configurationData: ModuleConfigurationData,
         module: Module
     ): List<BuildSystemIR> =
@@ -225,7 +225,7 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
     fun createKotlinPluginIR(configurationData: ModuleConfigurationData, module: Module): KotlinBuildSystemPluginIR? =
         null
 
-    fun WritingContext.runArbitraryTask(
+    fun Writer.runArbitraryTask(
         configurationData: ModuleConfigurationData,
         module: Module,
         modulePath: Path
@@ -276,5 +276,5 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
 }
 
 interface GradleModuleConfigurator : ModuleConfigurator {
-    fun ReadingContext.createSettingsGradleIRs(module: Module): List<BuildSystemIR> = emptyList()
+    fun Reader.createSettingsGradleIRs(module: Module): List<BuildSystemIR> = emptyList()
 }

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.templates
 
 
-import org.jetbrains.kotlin.tools.projectWizard.core.WritingContext
+import org.jetbrains.kotlin.tools.projectWizard.core.Writer
 import org.jetbrains.kotlin.tools.projectWizard.core.asPath
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleIR
@@ -25,7 +25,7 @@ class NativeConsoleApplicationTemplate : Template() {
     override fun updateTargetIr(module: ModuleIR, targetConfigurationIR: TargetConfigurationIR): TargetConfigurationIR =
         targetConfigurationIR.withIrs(NativeTargetInternalIR("main"))
 
-    override fun WritingContext.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = buildList {
+    override fun Writer.getFileTemplates(module: ModuleIR): List<FileTemplateDescriptorWithPath> = buildList {
         +(FileTemplateDescriptor("$id/main.kt.vm", "main.kt".asPath()) asSrcOf SourcesetType.main)
     }
 }
