@@ -14,13 +14,16 @@ internal object DoubleCompanionObject {
     const val MAX_VALUE: Double = 1.7976931348623157E308
 
     @JsName("POSITIVE_INFINITY")
-    const val POSITIVE_INFINITY: Double = 1.0/0.0
+    @Suppress("DIVISION_BY_ZERO")
+    const val POSITIVE_INFINITY: Double = 1.0 / 0.0
 
     @JsName("NEGATIVE_INFINITY")
-    const val NEGATIVE_INFINITY: Double = -1.0/0.0
+    @Suppress("DIVISION_BY_ZERO")
+    const val NEGATIVE_INFINITY: Double = -1.0 / 0.0
 
     @JsName("NaN")
-    const val NaN: Double = -(0.0/0.0)
+    @Suppress("DIVISION_BY_ZERO")
+    const val NaN: Double = -(0.0 / 0.0)
 
     @JsName("SIZE_BYTES")
     const val SIZE_BYTES = 8
@@ -38,13 +41,16 @@ internal  object FloatCompanionObject {
     const val MAX_VALUE: Float = 3.4028235E38F
 
     @JsName("POSITIVE_INFINITY")
-    const val POSITIVE_INFINITY: Float = 1.0F/0.0F
+    @Suppress("DIVISION_BY_ZERO")
+    const val POSITIVE_INFINITY: Float = 1.0F / 0.0F
 
     @JsName("NEGATIVE_INFINITY")
-    const val NEGATIVE_INFINITY: Float = -1.0F/0.0F
+    @Suppress("DIVISION_BY_ZERO")
+    const val NEGATIVE_INFINITY: Float = -1.0F / 0.0F
 
     @JsName("NaN")
-    const val NaN: Float = -(0.0F/0.0F)
+    @Suppress("DIVISION_BY_ZERO")
+    const val NaN: Float = -(0.0F / 0.0F)
 
     @JsName("SIZE_BYTES")
     const val SIZE_BYTES = 4
