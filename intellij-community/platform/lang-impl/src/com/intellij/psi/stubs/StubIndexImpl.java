@@ -188,6 +188,17 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
       else registrationResultSink.registerIndexAsInitiallyBuilt(indexKey);
       if (indexRootHasChildren) FileUtil.deleteWithRenaming(indexRootDir);
       IndexingStamp.rewriteVersion(indexKey, version); // todo snapshots indices
+
+      try {
+        if (needRebuild) {
+          for (FileBasedIndexInfrastructureExtension ex : FileBasedIndexInfrastructureExtension.EP_NAME.getExtensionList()) {
+            ex.onStubIndexVersionChanged(indexKey);
+          }
+        }
+      } catch (Exception e) {
+        LOG.error(e);
+      }
+
     } else {
       registrationResultSink.registerIndexAsUptoDate(indexKey);
     }

@@ -333,6 +333,17 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       File rootDir = IndexInfrastructure.getIndexRootDir(name);
       if (versionFileExisted) FileUtil.deleteWithRenaming(rootDir);
       IndexingStamp.rewriteVersion(name, version);
+
+      try {
+        if (versionFileExisted) {
+          for (FileBasedIndexInfrastructureExtension ex : FileBasedIndexInfrastructureExtension.EP_NAME.getExtensionList()) {
+            ex.onFileBasedIndexVersionChanged(name);
+          }
+        }
+      } catch (Exception e) {
+        LOG.error(e);
+      }
+
     } else {
       registrationStatusSink.registerIndexAsUptoDate(name);
     }

@@ -6,6 +6,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.stubs.StubIndexKey;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,6 +49,23 @@ public interface FileBasedIndexInfrastructureExtension {
   <K, V> UpdatableIndex<K, V, FileContent> combineIndex(@NotNull FileBasedIndexExtension<K, V> indexExtension,
                                                         @NotNull UpdatableIndex<K, V, FileContent> baseIndex);
 
+
+  /**
+   * Notifies the extension to handle that version of existing file based index version has been changed.
+   *
+   * Actually {@link FileBasedIndex} notifies even if index composite version (extension version + implementation version)
+   * is changed {@link FileBasedIndexImpl#getIndexExtensionVersion(FileBasedIndexExtension)}.
+   *
+   * @param indexId that version is updated.
+   */
+  void onFileBasedIndexVersionChanged(@NotNull ID<?, ?> indexId);
+
+  /**
+   * Notifies the extension to handle that version of existing stub index has been changed.
+   *
+   * @param indexId that version is updated.
+   */
+  void onStubIndexVersionChanged(@NotNull StubIndexKey<?, ?> indexId);
 
   /**
    * Executed when IntelliJ is shutting down it's indexes (IDE shutdown or plugin load/unload). It is the best time
