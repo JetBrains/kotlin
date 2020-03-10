@@ -261,11 +261,14 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
             } or mapParser { map, path ->
                 val (id) = map.parseValue<String>(path, "name")
                 val (configurator) = BY_ID[id].toResult { ConfiguratorNotFoundError(id) }
-                val (settingsWithValues) = configurator.settings.mapComputeM { setting ->
-                    val (settingValue) = map[setting.path].toResult { ParseError("No value was found for a key `$path.${setting.path}`") }
-                    val reference = withSettingsOf(moduleIdentificator, configurator) { setting.reference }
-                    setting.type.parse(this, settingValue, setting.path).map { reference to it }
-                }.sequence()
+                val (settingsWithValues) = parseSettingsMap(
+                    path,
+                    map,
+                    configurator.settings.map { setting ->
+                        val reference = withSettingsOf(moduleIdentificator, configurator) { setting.reference }
+                        reference to setting
+                    }
+                )
                 updateState { it.withSettings(settingsWithValues) }
                 configurator
             }

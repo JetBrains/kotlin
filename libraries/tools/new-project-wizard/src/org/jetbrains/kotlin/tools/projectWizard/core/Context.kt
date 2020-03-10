@@ -191,6 +191,8 @@ class Context private constructor(
 
         val <V : Any, T : SettingType<V>> SettingReference<V, T>.setting: Setting<V, T>
             get() = with(this) { getSetting() }
+
+        inline operator fun <T> invoke(reader: ReadingContext.() -> T): T = reader()
     }
 
     open inner class WritingContext : ReadingContext() {

@@ -233,14 +233,17 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor {
         enumSettingImpl(title, neededAtPhase, init) as ReadOnlyProperty<Any, TemplateSetting<E, DropDownSettingType<E>>>
 
     companion object {
-        fun parser(sourcesetIdentificator: Identificator): Parser<Template> = mapParser { map, path ->
+        fun parser(templateId: Identificator): Parser<Template> = mapParser { map, path ->
             val (id) = map.parseValue<String>(path, "id")
             val (template) = state.idToTemplate[id].toResult { TemplateNotFoundError(id) }
-            val (settingsWithValues) = template.settings.mapComputeM { setting ->
-                val (settingValue) = map[setting.path].toResult { ParseError("No value was found for a key `$path.${setting.path}`") }
-                val reference = withSettingsOf(sourcesetIdentificator, template) { setting.reference }
-                setting.type.parse(this, settingValue, setting.path).map { reference to it }
-            }.sequence()
+            val (settingsWithValues) = parseSettingsMap(
+                path,
+                map,
+                template.settings.map { setting ->
+                    val reference = withSettingsOf(templateId, template) { setting.reference }
+                    reference to setting
+                }
+            )
             updateState { it.withSettings(settingsWithValues) }
             template
         } or valueParserM { value, path ->

@@ -114,3 +114,4 @@ inline val <V : Any, reified T : SettingType<V>> PluginSettingPropertyReference<
     get() = PluginSettingReference(this, T::class)
 
 typealias PluginSettingPropertyReference<V, T> = KProperty1<out Plugin, PluginSetting<V, T>>
+
