@@ -1574,6 +1574,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/equalsAndIdentity.kt");
         }
 
+        @TestMetadata("kt37327.kt")
+        public void testKt37327() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/kt37327.kt");
+        }
+
         @TestMetadata("multipleCasts.kt")
         public void testMultipleCasts() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/multipleCasts.kt");
