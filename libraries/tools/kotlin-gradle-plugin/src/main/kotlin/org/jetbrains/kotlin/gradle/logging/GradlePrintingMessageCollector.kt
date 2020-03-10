@@ -12,9 +12,12 @@ import org.jetbrains.kotlin.cli.common.messages.GradleStyleMessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.KotlinLogger
 
-internal class GradlePrintingMessageCollector(val logger: KotlinLogger) :
+internal class GradlePrintingMessageCollector(
+    val logger: KotlinLogger,
+    private val allWarningsAsErrors: Boolean
+) :
     MessageCollector {
-    constructor(logger: Logger) : this(GradleKotlinLogger(logger))
+    constructor(logger: Logger, allWarningsAsErrors: Boolean) : this(GradleKotlinLogger(logger), allWarningsAsErrors)
 
     private var hasErrors = false
 
@@ -38,7 +41,11 @@ internal class GradlePrintingMessageCollector(val logger: KotlinLogger) :
 
             CompilerMessageSeverity.WARNING,
             CompilerMessageSeverity.STRONG_WARNING -> {
-                logger.warn(renderedMessage)
+                if (allWarningsAsErrors) {
+                    logger.error(renderedMessage)
+                } else {
+                    logger.warn(renderedMessage)
+                }
             }
             CompilerMessageSeverity.INFO -> {
                 logger.info(renderedMessage)
