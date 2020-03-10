@@ -32,11 +32,6 @@ internal fun runCommonizerInBulk(
             // no need to commonize, just use the libraries from the distribution
             distributionDir.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
         } else {
-            // naive up-to-date check:
-            // "X.Y.Z-SNAPSHOT" is not enough to uniquely identify the concrete version of Kotlin plugin,
-            // therefore lets assume that it's always not up to date
-            val definitelyNotUpToDate = kotlinVersion.endsWith("SNAPSHOT", ignoreCase = true)
-
             // need stable order of targets for consistency
             val orderedTargets = targets.sortedBy { it.name }
 
@@ -47,7 +42,7 @@ internal fun runCommonizerInBulk(
             }
 
             val destinationDir = baseDestinationDir.resolve(discriminator)
-            if (definitelyNotUpToDate || !destinationDir.isDirectory) {
+            if (!destinationDir.isDirectory) {
                 val parentDir = destinationDir.parentFile
                 parentDir.mkdirs()
 
