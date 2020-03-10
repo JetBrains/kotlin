@@ -68,7 +68,7 @@ class SimplifyAssertNotNullInspection : AbstractApplicabilityBasedInspection<KtC
 
     override fun fixText(element: KtCallExpression): String {
         return if (element.valueArguments.size == 1) {
-            KotlinBundle.message("replace.with.operator")
+            KotlinBundle.message("replace.with.0.operator", "!!")
         } else {
             KotlinBundle.message("replace.with.error")
         }

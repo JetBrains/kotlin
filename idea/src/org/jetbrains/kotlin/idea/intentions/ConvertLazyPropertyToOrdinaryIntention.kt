@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiComment
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.inspections.collections.isCalling
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 
 class ConvertLazyPropertyToOrdinaryIntention : SelfTargetingIntention<KtProperty>(
-    KtProperty::class.java, "Convert to ordinary property"
+    KtProperty::class.java, KotlinBundle.message("convert.to.ordinary.property")
 ) {
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
         val delegateExpression = element.delegate?.expression as? KtCallExpression ?: return false

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.util.PsiPrecedences
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
@@ -17,7 +18,10 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-class SwapBinaryExpressionIntention : SelfTargetingIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Flip binary expression"),
+class SwapBinaryExpressionIntention : SelfTargetingIntention<KtBinaryExpression>(
+    KtBinaryExpression::class.java,
+    KotlinBundle.message("flip.binary.expression")
+),
     LowPriorityAction {
     companion object {
         private val SUPPORTED_OPERATIONS: Set<KtSingleValueToken> by lazy {
@@ -43,7 +47,7 @@ class SwapBinaryExpressionIntention : SelfTargetingIntention<KtBinaryExpression>
         if (operationToken in SUPPORTED_OPERATIONS
             || operationToken == IDENTIFIER && operationTokenText in SUPPORTED_OPERATION_NAMES
         ) {
-            text = "Flip '$operationTokenText'"
+            text = KotlinBundle.message("flip.0", operationTokenText)
             return true
         }
         return false

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.setType
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody>(
-    KtDeclarationWithBody::class.java, "Convert to block body"
+    KtDeclarationWithBody::class.java, KotlinBundle.message("convert.to.block.body")
 ) {
     override fun isApplicableTo(element: KtDeclarationWithBody, caretOffset: Int): Boolean {
         if (element is KtFunctionLiteral || element.hasBlockBody() || !element.hasBody()) return false

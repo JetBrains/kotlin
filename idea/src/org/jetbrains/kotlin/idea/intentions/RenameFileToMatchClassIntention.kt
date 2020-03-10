@@ -11,15 +11,19 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.refactoring.RefactoringSettings
 import com.intellij.refactoring.rename.RenameProcessor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 class RenameFileToMatchClassIntention :
-    SelfTargetingRangeIntention<KtClassOrObject>(KtClassOrObject::class.java, "", "Rename file to match top-level class name") {
+    SelfTargetingRangeIntention<KtClassOrObject>(
+        KtClassOrObject::class.java, "",
+        KotlinBundle.message("rename.file.to.match.top.level.class.name")
+    ) {
     override fun applicabilityRange(element: KtClassOrObject): TextRange? {
         if (!element.isTopLevel()) return null
         val fileName = element.containingKtFile.name
         if (FileUtil.getNameWithoutExtension(fileName) == element.name) return null
-        text = "Rename file to ${element.name}.${FileUtilRt.getExtension(fileName)}"
+        text = KotlinBundle.message("rename.file.to.0.1", element.name.toString(), FileUtilRt.getExtension(fileName))
         return element.nameIdentifier?.textRange
     }
 

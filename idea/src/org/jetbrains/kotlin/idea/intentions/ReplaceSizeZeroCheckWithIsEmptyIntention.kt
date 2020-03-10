@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 class ReplaceSizeZeroCheckWithIsEmptyInspection :
     IntentionBasedInspection<KtBinaryExpression>(ReplaceSizeZeroCheckWithIsEmptyIntention::class)
 
-class ReplaceSizeZeroCheckWithIsEmptyIntention : ReplaceSizeCheckIntention("Replace size zero check with 'isEmpty'") {
+class ReplaceSizeZeroCheckWithIsEmptyIntention : ReplaceSizeCheckIntention(KotlinBundle.message("replace.size.zero.check.with.isempty")) {
 
     override fun getGenerateMethodSymbol() = "isEmpty()"
 

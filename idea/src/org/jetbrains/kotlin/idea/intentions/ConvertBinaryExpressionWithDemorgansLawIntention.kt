@@ -6,19 +6,20 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.util.*
 
 class ConvertBinaryExpressionWithDemorgansLawIntention :
-    SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "DeMorgan Law") {
+    SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(KtBinaryExpression::class.java, KotlinBundle.message("demorgan.law")) {
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {
         val expr = element.parentsWithSelf.takeWhile { it is KtBinaryExpression }.last() as KtBinaryExpression
 
         text = when (expr.operationToken) {
-            KtTokens.ANDAND -> "Replace '&&' with '||'"
-            KtTokens.OROR -> "Replace '||' with '&&'"
+            KtTokens.ANDAND -> KotlinBundle.message("replace.with2")
+            KtTokens.OROR -> KotlinBundle.message("replace.with")
             else -> return false
         }
 

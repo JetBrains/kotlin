@@ -9,6 +9,7 @@ import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -24,7 +25,7 @@ class RemoveEmptyClassBodyInspection :
 }
 
 class RemoveEmptyClassBodyIntention :
-    SelfTargetingOffsetIndependentIntention<KtClassBody>(KtClassBody::class.java, "Redundant empty class body") {
+    SelfTargetingOffsetIndependentIntention<KtClassBody>(KtClassBody::class.java, KotlinBundle.message("redundant.empty.class.body")) {
 
     override fun applyTo(element: KtClassBody, editor: Editor?) {
         val parent = element.parent

@@ -20,6 +20,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.j2k.isInSingleLine
@@ -27,20 +28,19 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 
-class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.java, "Add braces") {
+class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.java, KotlinBundle.message("add.braces")) {
     override fun isApplicableTo(element: KtElement, caretOffset: Int): Boolean {
         val expression = element.getTargetExpression(caretOffset) ?: return false
         if (expression is KtBlockExpression) return false
 
-        val parent = expression.parent
-        return when (parent) {
+        return when (val parent = expression.parent) {
             is KtContainerNode -> {
                 val description = parent.description() ?: return false
-                text = "Add braces to '$description' statement"
+                text = KotlinBundle.message("add.braces.to.0.statement", description)
                 true
             }
             is KtWhenEntry -> {
-                text = "Add braces to 'when' entry"
+                text = KotlinBundle.message("add.braces.to.when.entry")
                 true
             }
             else -> {

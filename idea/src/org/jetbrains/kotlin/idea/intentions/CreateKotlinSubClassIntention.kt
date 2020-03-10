@@ -16,6 +16,7 @@ import com.intellij.psi.JavaDirectoryService
 import com.intellij.refactoring.rename.PsiElementRenameHandler
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
@@ -30,7 +31,10 @@ import org.jetbrains.kotlin.resolve.ModifiersChecker
 
 private const val IMPL_SUFFIX = "Impl"
 
-class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtClass::class.java, "Create Kotlin subclass") {
+class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(
+    KtClass::class.java,
+    KotlinBundle.message("create.kotlin.subclass")
+) {
 
     override fun applicabilityRange(element: KtClass): TextRange? {
         if (element.name == null || element.getParentOfType<KtFunction>(true) != null) {
@@ -43,7 +47,7 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
         val primaryConstructor = element.primaryConstructor
         if (!element.isInterface() && primaryConstructor != null) {
             val constructors = element.secondaryConstructors + primaryConstructor
-            if (constructors.none() {
+            if (constructors.none {
                     !it.isPrivate() &&
                             it.getValueParameters().all { it.hasDefaultValue() }
                 }) {
@@ -53,7 +57,7 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
             }
         }
         text = getImplementTitle(element)
-        return TextRange(element.startOffset, element.getBody()?.lBrace?.startOffset ?: element.endOffset)
+        return TextRange(element.startOffset, element.body?.lBrace?.startOffset ?: element.endOffset)
     }
 
     private fun getImplementTitle(baseClass: KtClass) =

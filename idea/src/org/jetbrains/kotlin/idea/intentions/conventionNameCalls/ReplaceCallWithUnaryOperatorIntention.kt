@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
@@ -31,7 +32,10 @@ import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 class ReplaceCallWithUnaryOperatorIntention :
-    SelfTargetingRangeIntention<KtDotQualifiedExpression>(KtDotQualifiedExpression::class.java, "Replace call with unary operator"),
+    SelfTargetingRangeIntention<KtDotQualifiedExpression>(
+        KtDotQualifiedExpression::class.java,
+        KotlinBundle.message("replace.call.with.unary.operator")
+    ),
     HighPriorityAction {
     override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
         val operation = operation(element.calleeName) ?: return null
@@ -43,7 +47,7 @@ class ReplaceCallWithUnaryOperatorIntention :
 
         if (!element.isReceiverExpressionWithValue()) return null
 
-        text = "Replace with '${operation.value}' operator"
+        text = KotlinBundle.message("replace.with.0.operator", operation.value)
         return call.calleeExpression!!.textRange
     }
 

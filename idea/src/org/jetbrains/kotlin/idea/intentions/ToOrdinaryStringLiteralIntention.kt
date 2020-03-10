@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.collections.isCalling
 import org.jetbrains.kotlin.name.FqName
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class ToOrdinaryStringLiteralIntention : SelfTargetingOffsetIndependentIntention<KtStringTemplateExpression>(
     KtStringTemplateExpression::class.java,
-    "To ordinary string literal"
+    KotlinBundle.message("to.ordinary.string.literal")
 ), LowPriorityAction {
     companion object {
         private val TRIM_INDENT_FUNCTIONS = listOf(FqName("kotlin.text.trimIndent"), FqName("kotlin.text.trimMargin"))

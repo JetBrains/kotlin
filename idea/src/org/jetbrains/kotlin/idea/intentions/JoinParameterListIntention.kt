@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -38,7 +39,7 @@ abstract class AbstractJoinListIntention<TList : KtElement, TElement : KtElement
 class JoinParameterListIntention : AbstractJoinListIntention<KtParameterList, KtParameter>(
     KtParameterList::class.java,
     KtParameter::class.java,
-    "Put parameters on one line"
+    KotlinBundle.message("put.parameters.on.one.line")
 ) {
     override fun isApplicableTo(element: KtParameterList): Boolean {
         if (element.parent is KtFunctionLiteral) return false
@@ -49,5 +50,5 @@ class JoinParameterListIntention : AbstractJoinListIntention<KtParameterList, Kt
 class JoinArgumentListIntention : AbstractJoinListIntention<KtValueArgumentList, KtValueArgument>(
     KtValueArgumentList::class.java,
     KtValueArgument::class.java,
-    "Put arguments on one line"
+    KotlinBundle.message("put.arguments.on.one.line")
 )

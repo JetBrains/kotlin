@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtParameter
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 
 class ConvertVarargParameterToArrayIntention : SelfTargetingIntention<KtParameter>(
-    KtParameter::class.java, "Convert to array parameter"
+    KtParameter::class.java, KotlinBundle.message("convert.to.array.parameter")
 ) {
 
     override fun isApplicableTo(element: KtParameter, caretOffset: Int): Boolean {

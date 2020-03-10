@@ -26,6 +26,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
@@ -43,7 +44,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 
 class ConvertObjectLiteralToClassIntention : SelfTargetingRangeIntention<KtObjectLiteralExpression>(
     KtObjectLiteralExpression::class.java,
-    "Convert object literal to class"
+    KotlinBundle.message("convert.object.literal.to.class")
 ) {
     override fun applicabilityRange(element: KtObjectLiteralExpression) = element.objectDeclaration.getObjectKeyword()?.textRange
 
@@ -68,7 +69,7 @@ class ConvertObjectLiteralToClassIntention : SelfTargetingRangeIntention<KtObjec
         val objectDeclaration = element.objectDeclaration
 
         val containingClass = element.containingClass()
-        val hasMemberReference = containingClass?.getBody()?.allChildren?.any {
+        val hasMemberReference = containingClass?.body?.allChildren?.any {
             (it is KtProperty || it is KtNamedFunction) &&
                     ReferencesSearch.search(it, element.useScope).findFirst() != null
         } ?: false
@@ -78,7 +79,7 @@ class ConvertObjectLiteralToClassIntention : SelfTargetingRangeIntention<KtObjec
             newClass.add(psiFactory.createColon())
             newClass.add(it)
         }
-        objectDeclaration.getBody()?.let {
+        objectDeclaration.body?.let {
             newClass.add(it)
         }
 
@@ -148,7 +149,7 @@ class ConvertObjectLiteralToClassIntention : SelfTargetingRangeIntention<KtObjec
         chooseContainerElementIfNecessary(
             containers,
             editor,
-            if (containers.first() is KtFile) "Select target file" else "Select target code block / file",
+            if (containers.first() is KtFile) KotlinBundle.message("select.target.file") else KotlinBundle.message("select.target.code.block.file"),
             true,
             { it },
             { doApply(editor, element, it) }

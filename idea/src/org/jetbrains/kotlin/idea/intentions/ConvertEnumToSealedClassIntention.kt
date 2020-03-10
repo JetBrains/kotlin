@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleManager
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -18,7 +19,10 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class ConvertEnumToSealedClassIntention : SelfTargetingRangeIntention<KtClass>(KtClass::class.java, "Convert to sealed class") {
+class ConvertEnumToSealedClassIntention : SelfTargetingRangeIntention<KtClass>(
+    KtClass::class.java,
+    KotlinBundle.message("convert.to.sealed.class")
+) {
     override fun applicabilityRange(element: KtClass): TextRange? {
         if (element.getClassKeyword() == null) return null
         val nameIdentifier = element.nameIdentifier ?: return null

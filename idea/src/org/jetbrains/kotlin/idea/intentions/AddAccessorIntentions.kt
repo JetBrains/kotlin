@@ -22,6 +22,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.refactoring.isAbstract
@@ -103,9 +104,9 @@ abstract class AbstractAddAccessorsIntention(
 }
 
 private fun createFamilyName(addGetter: Boolean, addSetter: Boolean): String = when {
-    addGetter && addSetter -> "Add getter and setter"
-    addGetter -> "Add getter"
-    addSetter -> "Add setter"
+    addGetter && addSetter -> KotlinBundle.message("text.add.getter.and.setter")
+    addGetter -> KotlinBundle.message("text.add.getter")
+    addSetter -> KotlinBundle.message("text.add.setter")
     else -> throw AssertionError("At least one from (addGetter, addSetter) should be true")
 }
 

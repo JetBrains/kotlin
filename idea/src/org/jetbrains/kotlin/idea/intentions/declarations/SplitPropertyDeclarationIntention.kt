@@ -8,12 +8,16 @@ package org.jetbrains.kotlin.idea.intentions.declarations
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.splitPropertyDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class SplitPropertyDeclarationIntention : SelfTargetingRangeIntention<KtProperty>(KtProperty::class.java, "Split property declaration"),
+class SplitPropertyDeclarationIntention : SelfTargetingRangeIntention<KtProperty>(
+    KtProperty::class.java,
+    KotlinBundle.message("split.property.declaration")
+),
     LowPriorityAction {
     override fun applicabilityRange(element: KtProperty): TextRange? {
         if (!element.isLocal) return null

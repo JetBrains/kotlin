@@ -11,6 +11,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 
 class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtPrimaryConstructor>(
     KtPrimaryConstructor::class.java,
-    "Convert to secondary constructor"
+    KotlinBundle.message("convert.to.secondary.constructor")
 ) {
     override fun isApplicableTo(element: KtPrimaryConstructor, caretOffset: Int): Boolean {
         val containingClass = element.containingClassOrObject as? KtClass ?: return false

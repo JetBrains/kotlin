@@ -20,6 +20,7 @@ import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
@@ -37,7 +38,7 @@ class RemoveEmptyParenthesesFromLambdaCallInspection : IntentionBasedInspection<
 }
 
 class RemoveEmptyParenthesesFromLambdaCallIntention : SelfTargetingRangeIntention<KtValueArgumentList>(
-    KtValueArgumentList::class.java, "Remove unnecessary parentheses from function call with lambda"
+    KtValueArgumentList::class.java, KotlinBundle.message("remove.unnecessary.parentheses.from.function.call.with.lambda")
 ) {
 
     override fun applicabilityRange(element: KtValueArgumentList): TextRange? {

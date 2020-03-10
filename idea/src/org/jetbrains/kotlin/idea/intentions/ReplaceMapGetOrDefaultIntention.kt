@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.collections.isCalling
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.isNullable
 
 class ReplaceMapGetOrDefaultIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(
-    KtDotQualifiedExpression::class.java, "Replace with indexing and elvis operator"
+    KtDotQualifiedExpression::class.java, KotlinBundle.message("replace.with.indexing.and.elvis.operator")
 ) {
     companion object {
         private val getOrDefaultFqName = FqName("kotlin.collections.Map.getOrDefault")
@@ -34,7 +35,7 @@ class ReplaceMapGetOrDefaultIntention : SelfTargetingRangeIntention<KtDotQualifi
         val context = element.analyze(BodyResolveMode.PARTIAL)
         if (callExpression.getResolvedCall(context)?.isCalling(getOrDefaultFqName) != true) return null
         if (element.receiverExpression.getType(context)?.arguments?.lastOrNull()?.type?.isNullable() == true) return null
-        text = "Replace with ${element.receiverExpression.text}[${firstArg.text}] ?: ${secondArg.text}"
+        text = KotlinBundle.message("replace.with.0.1.2", element.receiverExpression.text, firstArg.text, secondArg.text)
         return calleeExpression.textRange
     }
 

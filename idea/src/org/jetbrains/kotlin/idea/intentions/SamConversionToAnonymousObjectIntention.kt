@@ -11,6 +11,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.replaced
@@ -30,7 +31,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCallExpression>(
-    KtCallExpression::class.java, "Convert to anonymous object"
+    KtCallExpression::class.java, KotlinBundle.message("convert.to.anonymous.object")
 ), LowPriorityAction {
 
     override fun applicabilityRange(element: KtCallExpression): TextRange? {

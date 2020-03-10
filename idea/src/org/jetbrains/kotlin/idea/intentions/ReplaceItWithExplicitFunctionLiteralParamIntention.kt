@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.refactoring.rename.KotlinVariableInplaceRenameHandler
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 class ReplaceItWithExplicitFunctionLiteralParamIntention : SelfTargetingOffsetIndependentIntention<KtNameReferenceExpression>(
-    KtNameReferenceExpression::class.java, "Replace 'it' with explicit parameter"
+    KtNameReferenceExpression::class.java, KotlinBundle.message("replace.it.with.explicit.parameter")
 ) {
     override fun isApplicableTo(element: KtNameReferenceExpression) = isAutoCreatedItUsage(element)
 

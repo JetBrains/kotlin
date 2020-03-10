@@ -20,6 +20,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
@@ -36,7 +37,7 @@ class ConvertToStringTemplateInspection : IntentionBasedInspection<KtBinaryExpre
 
 open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(
     KtBinaryExpression::class.java,
-    "Convert concatenation to template"
+    KotlinBundle.message("convert.concatenation.to.template")
 ) {
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {
         if (!isApplicableToNoParentCheck(element)) return false

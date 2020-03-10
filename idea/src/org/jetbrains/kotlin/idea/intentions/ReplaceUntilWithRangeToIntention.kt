@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
@@ -26,7 +27,10 @@ internal fun KtExpression.getArguments() = when (this) {
     else -> null
 }
 
-class ReplaceUntilWithRangeToIntention : SelfTargetingIntention<KtExpression>(KtExpression::class.java, "Replace with '..' operator") {
+class ReplaceUntilWithRangeToIntention : SelfTargetingIntention<KtExpression>(
+    KtExpression::class.java,
+    KotlinBundle.message("replace.with.0.operator", "..")
+) {
     override fun isApplicableTo(element: KtExpression, caretOffset: Int): Boolean {
         if (element !is KtBinaryExpression && element !is KtDotQualifiedExpression) return false
         val fqName = element.getCallableDescriptor()?.fqNameUnsafe?.asString() ?: return false

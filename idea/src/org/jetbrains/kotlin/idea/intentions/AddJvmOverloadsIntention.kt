@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.idea.util.findAnnotation
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 private val annotationFqName = FqName("kotlin.jvm.JvmOverloads")
 
 class AddJvmOverloadsIntention : SelfTargetingIntention<KtModifierListOwner>(
-    KtModifierListOwner::class.java, "Add '@JvmOverloads' annotation"
+    KtModifierListOwner::class.java, KotlinBundle.message("add.jvmoverloads.annotation")
 ), LowPriorityAction {
 
     override fun isApplicableTo(element: KtModifierListOwner, caretOffset: Int): Boolean {
@@ -31,7 +32,7 @@ class AddJvmOverloadsIntention : SelfTargetingIntention<KtModifierListOwner>(
                     return false
                 }
 
-                "function '${element.name}'" to valueParameterList.parameters
+                KotlinBundle.message("function.0", element.name.toString()) to valueParameterList.parameters
             }
             is KtSecondaryConstructor -> {
                 val constructorKeyword = element.getConstructorKeyword()
@@ -40,7 +41,7 @@ class AddJvmOverloadsIntention : SelfTargetingIntention<KtModifierListOwner>(
                     return false
                 }
 
-                "secondary constructor" to valueParameterList.parameters
+                KotlinBundle.message("text.secondary.constructor") to valueParameterList.parameters
             }
             is KtPrimaryConstructor -> {
                 val parameters = (element.valueParameterList ?: return false).parameters
@@ -51,12 +52,12 @@ class AddJvmOverloadsIntention : SelfTargetingIntention<KtModifierListOwner>(
                     return false
                 }
 
-                "primary constructor" to parameters
+                KotlinBundle.message("text.primary.constructor") to parameters
             }
             else -> return false
         }
 
-        text = "Add '@JvmOverloads' annotation to $targetName"
+        text = KotlinBundle.message("add.jvmoverloads.annotation.to.0", targetName)
 
         return TargetPlatformDetector.getPlatform(element.containingKtFile).isJvm()
                 && parameters.any { it.hasDefaultValue() }

@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 
 class AddUnderscoresToNumericLiteralIntention : SelfTargetingIntention<KtConstantExpression>(
-    KtConstantExpression::class.java, "Add underscores"
+    KtConstantExpression::class.java, KotlinBundle.message("add.underscores")
 ) {
     override fun isApplicableTo(element: KtConstantExpression, caretOffset: Int): Boolean {
         val text = element.text
@@ -31,7 +32,7 @@ class AddUnderscoresToNumericLiteralIntention : SelfTargetingIntention<KtConstan
 }
 
 class RemoveUnderscoresFromNumericLiteralIntention : SelfTargetingIntention<KtConstantExpression>(
-    KtConstantExpression::class.java, "Remove underscores"
+    KtConstantExpression::class.java, KotlinBundle.message("remove.underscores")
 ) {
     override fun isApplicableTo(element: KtConstantExpression, caretOffset: Int): Boolean {
         return element.isNumeric() && element.text.hasUnderscore()

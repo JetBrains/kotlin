@@ -22,6 +22,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.util.runCommandOnAllExpectAndActualDeclaration
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -34,7 +35,7 @@ import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 
 open class ChangeVisibilityModifierIntention protected constructor(
     val modifier: KtModifierKeywordToken
-) : SelfTargetingRangeIntention<KtDeclaration>(KtDeclaration::class.java, "Make ${modifier.value}") {
+) : SelfTargetingRangeIntention<KtDeclaration>(KtDeclaration::class.java, KotlinBundle.message("make.0", modifier.value)) {
     override fun startInWriteAction(): Boolean = false
 
     override fun applicabilityRange(element: KtDeclaration): TextRange? {
@@ -62,7 +63,7 @@ open class ChangeVisibilityModifierIntention protected constructor(
             if (element.isGetter) return null
             if (targetVisibility == Visibilities.PUBLIC) {
                 val explicitVisibility = element.modifierList?.visibilityModifierType()?.value ?: return null
-                text = "Remove '$explicitVisibility' modifier"
+                text = KotlinBundle.message("remove.0.modifier", explicitVisibility)
             } else {
                 val propVisibility = (element.property.toDescriptor() as? DeclarationDescriptorWithVisibility)?.visibility ?: return null
                 if (propVisibility == targetVisibility) return null
@@ -73,7 +74,7 @@ open class ChangeVisibilityModifierIntention protected constructor(
         val defaultRange = noModifierYetApplicabilityRange(element) ?: return null
 
         if (element is KtPrimaryConstructor && defaultRange.isEmpty && element.visibilityModifier() == null) {
-            text = "Make primary constructor ${modifier.value}" // otherwise it may be confusing
+            text = "${KotlinBundle.message("make.primary.constructor.0", modifier.value)}" // otherwise it may be confusing
         }
 
         return if (modifierList != null)
@@ -84,7 +85,7 @@ open class ChangeVisibilityModifierIntention protected constructor(
 
     override fun applyTo(element: KtDeclaration, editor: Editor?) {
         val factory = KtPsiFactory(element)
-        element.runCommandOnAllExpectAndActualDeclaration("Change visibility modifier", writeAction = true) {
+        element.runCommandOnAllExpectAndActualDeclaration(KotlinBundle.message("change.visibility.modifier"), writeAction = true) {
             it.setVisibility(modifier)
             if (it is KtPropertyAccessor) {
                 it.modifierList?.nextSibling?.replace(factory.createWhiteSpace())

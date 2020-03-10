@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.application.options.CodeStyle
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.codeStyle.CodeStyleManager
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtProperty
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class IndentRawStringIntention : SelfTargetingOffsetIndependentIntention<KtStringTemplateExpression>(
-    KtStringTemplateExpression::class.java, "Indent raw string"
+    KtStringTemplateExpression::class.java, KotlinBundle.message("indent.raw.string")
 ) {
 
     override fun isApplicableTo(element: KtStringTemplateExpression): Boolean {

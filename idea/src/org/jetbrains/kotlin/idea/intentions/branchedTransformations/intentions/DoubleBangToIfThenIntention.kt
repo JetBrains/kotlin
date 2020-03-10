@@ -14,6 +14,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDocumentManager
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.ChooseStringExpression
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
@@ -27,7 +28,10 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
 class DoubleBangToIfThenIntention :
-    SelfTargetingRangeIntention<KtPostfixExpression>(KtPostfixExpression::class.java, "Replace '!!' expression with 'if' expression"),
+    SelfTargetingRangeIntention<KtPostfixExpression>(
+        KtPostfixExpression::class.java,
+        KotlinBundle.message("replace.expression.with.if.expression")
+    ),
     LowPriorityAction {
     override fun applicabilityRange(element: KtPostfixExpression): TextRange? {
         return if (element.operationToken == KtTokens.EXCLEXCL && element.baseExpression != null)

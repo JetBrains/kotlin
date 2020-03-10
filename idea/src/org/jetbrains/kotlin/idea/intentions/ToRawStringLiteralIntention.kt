@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.text.StringUtilRt
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class ToRawStringLiteralIntention : SelfTargetingOffsetIndependentIntention<KtStringTemplateExpression>(
     KtStringTemplateExpression::class.java,
-    "To raw string literal"
+    KotlinBundle.message("to.raw.string.literal")
 ), LowPriorityAction {
     override fun isApplicableTo(element: KtStringTemplateExpression): Boolean {
         val text = element.text
