@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.completion.canBeUsedWithoutNameInCall
 import org.jetbrains.kotlin.idea.completion.placedOnItsOwnPositionInCall
@@ -16,7 +17,10 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 
-class RemoveArgumentNameIntention : SelfTargetingRangeIntention<KtValueArgument>(KtValueArgument::class.java, "Remove argument name") {
+class RemoveArgumentNameIntention : SelfTargetingRangeIntention<KtValueArgument>(
+    KtValueArgument::class.java,
+    KotlinBundle.message("remove.argument.name")
+) {
     override fun applicabilityRange(element: KtValueArgument): TextRange? {
         if (!element.isNamed()) return null
         val resolvedCall = element.getStrictParentOfType<KtCallElement>()?.resolveToCall() ?: return null

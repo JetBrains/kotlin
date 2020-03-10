@@ -18,19 +18,23 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
-class ValToObjectIntention : SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Convert to object declaration") {
+class ValToObjectIntention : SelfTargetingIntention<KtProperty>(
+    KtProperty::class.java,
+    KotlinBundle.message("convert.to.object.declaration")
+) {
 
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
         if (element.isVar) return false
         if (!element.isTopLevel) return false
 
         val initializer = element.initializer as? KtObjectLiteralExpression ?: return false
-        if (initializer.objectDeclaration.getBody() == null) return false
+        if (initializer.objectDeclaration.body == null) return false
 
         if (element.getter != null) return false
         if (element.annotationEntries.isNotEmpty()) return false
@@ -44,7 +48,7 @@ class ValToObjectIntention : SelfTargetingIntention<KtProperty>(KtProperty::clas
         val objectLiteral = element.initializer as? KtObjectLiteralExpression ?: return
         val declaration = objectLiteral.objectDeclaration
         val superTypeList = declaration.getSuperTypeList()
-        val body = declaration.getBody() ?: return
+        val body = declaration.body ?: return
 
         val prefix = element.modifierList?.text?.plus(" ") ?: ""
         val superTypesText = superTypeList?.text?.plus(" ") ?: ""

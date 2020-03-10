@@ -9,6 +9,7 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.idea.inspections.findExistingEditor
@@ -44,7 +45,7 @@ class LoopToCallChainInspection : AbstractKotlinInspection() {
 
                 holder.registerProblem(
                     expression.forKeyword,
-                    "Loop can be replaced with stdlib operations",
+                    KotlinBundle.message("loop.can.be.replaced.with.stdlib.operations"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     *fixes.toTypedArray()
                 )
@@ -54,9 +55,9 @@ class LoopToCallChainInspection : AbstractKotlinInspection() {
     class Fix(val lazy: Boolean, val text: String = "") : LocalQuickFix {
         override fun getFamilyName(): String {
             return if (lazy) {
-                "Replace with stdlib operations with use of 'asSequence()'"
+                KotlinBundle.message("loop.to.call.fix.family.name2")
             } else {
-                "Replace with stdlib operations"
+                KotlinBundle.message("loop.to.call.fix.family.name")
             }
         }
 
@@ -82,12 +83,12 @@ class LoopToCallChainInspection : AbstractKotlinInspection() {
 
 class LoopToCallChainIntention : AbstractLoopToCallChainIntention(
     lazy = false,
-    text = "Replace with stdlib operations"
+    text = KotlinBundle.message("replace.with.stdlib.operations")
 )
 
 class LoopToLazyCallChainIntention : AbstractLoopToCallChainIntention(
     lazy = true,
-    text = "Replace with stdlib operations with use of 'asSequence()'"
+    text = KotlinBundle.message("replace.with.stdlib.operations.with.use.of.assequence")
 )
 
 abstract class AbstractLoopToCallChainIntention(
@@ -99,7 +100,7 @@ abstract class AbstractLoopToCallChainIntention(
 ) {
     override fun applicabilityRange(element: KtForExpression): TextRange? {
         val match = match(element, lazy, false)
-        text = if (match != null) "Replace with '${match.transformationMatch.buildPresentation()}'" else defaultText
+        text = if (match != null) KotlinBundle.message("replace.with.0", match.transformationMatch.buildPresentation()) else defaultText
         return if (match != null) element.forKeyword.textRange else null
     }
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -16,7 +17,10 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createDestructuringDeclarationByPattern
 
 class AddMissingDestructuringIntention :
-    SelfTargetingIntention<KtDestructuringDeclaration>(KtDestructuringDeclaration::class.java, "Add missing component") {
+    SelfTargetingIntention<KtDestructuringDeclaration>(
+        KtDestructuringDeclaration::class.java,
+        KotlinBundle.message("add.missing.component")
+    ) {
     override fun isApplicableTo(element: KtDestructuringDeclaration, caretOffset: Int): Boolean {
         val entriesCount = element.entries.size
 

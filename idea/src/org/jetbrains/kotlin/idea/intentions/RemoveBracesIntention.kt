@@ -21,11 +21,12 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.java, "Remove braces") {
+class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.java, KotlinBundle.message("remove.braces")) {
 
     private fun KtElement.findChildBlock() = when (this) {
         is KtBlockExpression -> this
@@ -45,11 +46,11 @@ class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class
                 }
 
                 val description = container.description() ?: return false
-                text = "Remove braces from '$description' statement"
+                text = KotlinBundle.message("remove.braces.from.0.statement", description)
                 return true
             }
             is KtWhenEntry -> {
-                text = "Remove braces from 'when' entry"
+                text = KotlinBundle.message("remove.braces.from.when.entry")
                 return singleStatement !is KtNamedDeclaration
                         && !(singleStatement is KtLambdaExpression && singleStatement.functionLiteral.arrow == null)
             }

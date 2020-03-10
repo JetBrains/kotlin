@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.replaced
@@ -23,7 +24,10 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
-class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfExpression::class.java, "Invert 'if' condition") {
+class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(
+    KtIfExpression::class.java,
+    KotlinBundle.message("invert.if.condition")
+) {
     override fun isApplicableTo(element: KtIfExpression, caretOffset: Int): Boolean {
         if (!element.ifKeyword.textRange.containsOffset(caretOffset)) return false
         return element.condition != null && element.then != null

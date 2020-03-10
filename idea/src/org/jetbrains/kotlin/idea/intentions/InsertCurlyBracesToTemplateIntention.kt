@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.RestoreCaret
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
 class InsertCurlyBracesToTemplateIntention :
     SelfTargetingOffsetIndependentIntention<KtSimpleNameStringTemplateEntry>(
-        KtSimpleNameStringTemplateEntry::class.java, "Insert curly braces around variable"
+        KtSimpleNameStringTemplateEntry::class.java, KotlinBundle.message("insert.curly.braces.around.variable")
     ),
     LowPriorityAction {
 

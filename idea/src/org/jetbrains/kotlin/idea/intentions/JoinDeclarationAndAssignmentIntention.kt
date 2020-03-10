@@ -22,6 +22,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReferenceService
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.canOmitDeclaredType
 import org.jetbrains.kotlin.idea.core.moveCaret
@@ -40,12 +41,12 @@ import org.jetbrains.kotlin.types.TypeUtils
 @Suppress("DEPRECATION")
 class JoinDeclarationAndAssignmentInspection : IntentionBasedInspection<KtProperty>(
     JoinDeclarationAndAssignmentIntention::class,
-    "Can be joined with assignment"
+    KotlinBundle.message("can.be.joined.with.assignment")
 )
 
 class JoinDeclarationAndAssignmentIntention : SelfTargetingRangeIntention<KtProperty>(
     KtProperty::class.java,
-    "Join declaration and assignment"
+    KotlinBundle.message("join.declaration.and.assignment")
 ) {
 
     private fun equalNullableTypes(type1: KotlinType?, type2: KotlinType?): Boolean {

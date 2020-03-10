@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.intentions.loopToCallChain
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.psi.KtBlockExpression
@@ -19,7 +20,7 @@ class UseWithIndexInspection : IntentionBasedInspection<KtForExpression>(UseWith
 
 class UseWithIndexIntention : SelfTargetingRangeIntention<KtForExpression>(
     KtForExpression::class.java,
-    "Use withIndex() instead of manual index increment"
+    KotlinBundle.message("use.withindex.instead.of.manual.index.increment")
 ) {
     override fun applicabilityRange(element: KtForExpression): TextRange? {
         return if (matchIndexToIntroduce(element, reformat = false) != null) element.forKeyword.textRange else null

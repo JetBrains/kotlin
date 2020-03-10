@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
@@ -31,7 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 
 class UnfoldReturnToIfIntention : LowPriorityAction, SelfTargetingRangeIntention<KtReturnExpression>(
-    KtReturnExpression::class.java, "Replace return with 'if' expression"
+    KtReturnExpression::class.java, KotlinBundle.message("replace.return.with.if.expression")
 ) {
     override fun applicabilityRange(element: KtReturnExpression): TextRange? {
         val ifExpression = element.returnedExpression as? KtIfExpression ?: return null

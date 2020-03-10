@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -53,7 +54,7 @@ class DestructureInspection : IntentionBasedInspection<KtDeclaration>(
 
 class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
     KtDeclaration::class.java,
-    "Use destructuring declaration"
+    KotlinBundle.message("use.destructuring.declaration")
 ) {
     override fun applyTo(element: KtDeclaration, editor: Editor?) {
         val (usagesToRemove, removeSelectorInLoopRange) = collectUsagesToRemove(element)!!

@@ -9,6 +9,7 @@ import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
@@ -32,7 +33,10 @@ class RemoveExplicitSuperQualifierInspection : IntentionBasedInspection<KtSuperE
 }
 
 class RemoveExplicitSuperQualifierIntention :
-    SelfTargetingRangeIntention<KtSuperExpression>(KtSuperExpression::class.java, "Remove explicit supertype qualification") {
+    SelfTargetingRangeIntention<KtSuperExpression>(
+        KtSuperExpression::class.java,
+        KotlinBundle.message("remove.explicit.supertype.qualification")
+    ) {
     override fun applicabilityRange(element: KtSuperExpression): TextRange? {
         if (element.superTypeQualifier == null) return null
 

@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 class RemoveConstructorKeywordIntention : SelfTargetingIntention<KtPrimaryConstructor>(
     KtPrimaryConstructor::class.java,
-    "Remove constructor keyword"
+    KotlinBundle.message("remove.constructor.keyword")
 ) {
     override fun applyTo(element: KtPrimaryConstructor, editor: Editor?) {
         element.removeRedundantConstructorKeywordAndSpace()

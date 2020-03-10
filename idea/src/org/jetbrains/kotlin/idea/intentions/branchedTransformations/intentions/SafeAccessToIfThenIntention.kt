@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.ComplexRedundantLetInspection
@@ -36,7 +37,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class SafeAccessToIfThenIntention : SelfTargetingRangeIntention<KtSafeQualifiedExpression>(
     KtSafeQualifiedExpression::class.java,
-    "Replace safe access expression with 'if' expression"
+    KotlinBundle.message("replace.safe.access.expression.with.if.expression")
 ), LowPriorityAction {
     override fun applicabilityRange(element: KtSafeQualifiedExpression): TextRange? {
         if (element.selectorExpression == null) return null

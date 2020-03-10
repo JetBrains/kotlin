@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -18,7 +19,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 
-class MovePropertyToClassBodyIntention : SelfTargetingIntention<KtParameter>(KtParameter::class.java, "Move to class body") {
+class MovePropertyToClassBodyIntention : SelfTargetingIntention<KtParameter>(
+    KtParameter::class.java,
+    KotlinBundle.message("move.to.class.body")
+) {
     override fun isApplicableTo(element: KtParameter, caretOffset: Int): Boolean {
         return element.isPropertyParameter() && (element.ownerFunction as KtPrimaryConstructor).isNotContainedInAnnotation()
     }

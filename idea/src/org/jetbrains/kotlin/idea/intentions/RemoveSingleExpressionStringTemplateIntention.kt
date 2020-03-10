@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.KtExpression
@@ -26,12 +27,12 @@ class RemoveSingleExpressionStringTemplateInspection : IntentionBasedInspection<
         } ?: false
     }
 ) {
-    override val problemText = "Redundant string template"
+    override val problemText = KotlinBundle.message("redundant.string.template")
 }
 
 class RemoveSingleExpressionStringTemplateIntention : SelfTargetingOffsetIndependentIntention<KtStringTemplateExpression>(
     KtStringTemplateExpression::class.java,
-    "Remove single-expression string template"
+    KotlinBundle.message("remove.single.expression.string.template")
 ) {
     override fun isApplicableTo(element: KtStringTemplateExpression) =
         element.singleExpressionOrNull() != null

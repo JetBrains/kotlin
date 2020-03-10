@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contentRange
@@ -28,7 +29,7 @@ import java.util.*
 
 class ConvertToForEachFunctionCallIntention : SelfTargetingIntention<KtForExpression>(
     KtForExpression::class.java,
-    "Replace with a 'forEach' function call"
+    KotlinBundle.message("replace.with.a.foreach.function.call")
 ) {
     override fun isApplicableTo(element: KtForExpression, caretOffset: Int): Boolean {
         val rParen = element.rightParenthesis ?: return false

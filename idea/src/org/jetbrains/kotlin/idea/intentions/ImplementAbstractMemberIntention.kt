@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideImplementMembersHandler
@@ -47,7 +48,7 @@ import java.util.*
 import javax.swing.ListSelectionModel
 
 abstract class ImplementAbstractMemberIntentionBase :
-    SelfTargetingRangeIntention<KtNamedDeclaration>(KtNamedDeclaration::class.java, "", "Implement abstract member") {
+    SelfTargetingRangeIntention<KtNamedDeclaration>(KtNamedDeclaration::class.java, "", KotlinBundle.message("implement.abstract.member")) {
     companion object {
         private val LOG = Logger.getInstance("#${ImplementAbstractMemberIntentionBase::class.java.canonicalName}")
     }
@@ -237,7 +238,7 @@ class ImplementAbstractMemberIntention : ImplementAbstractMemberIntentionBase() 
 class ImplementAbstractMemberAsConstructorParameterIntention : ImplementAbstractMemberIntentionBase() {
     override fun computeText(element: KtNamedDeclaration): String? {
         if (element !is KtProperty) return null
-        return "Implement as constructor parameter"
+        return KotlinBundle.message("implement.as.constructor.parameter")
     }
 
     override fun acceptSubClass(subClassDescriptor: ClassDescriptor, memberDescriptor: CallableMemberDescriptor): Boolean {

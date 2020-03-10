@@ -32,6 +32,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
@@ -51,7 +52,10 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 private val LOG = Logger.getInstance(ConvertMemberToExtensionIntention::class.java)
 
 class ConvertMemberToExtensionIntention :
-    SelfTargetingRangeIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Convert member to extension"),
+    SelfTargetingRangeIntention<KtCallableDeclaration>(
+        KtCallableDeclaration::class.java,
+        KotlinBundle.message("convert.member.to.extension")
+    ),
     LowPriorityAction {
     private fun isApplicable(element: KtCallableDeclaration): Boolean {
         val classBody = element.parent as? KtClassBody ?: return false
@@ -286,7 +290,7 @@ class ConvertMemberToExtensionIntention :
         }
 
         return Messages.showYesNoDialog(
-            "Do you want to make new extension an expected declaration?",
+            KotlinBundle.message("do.you.want.to.make.new.extension.an.expected.declaration"),
             text,
             Messages.getQuestionIcon()
         ) == Messages.YES

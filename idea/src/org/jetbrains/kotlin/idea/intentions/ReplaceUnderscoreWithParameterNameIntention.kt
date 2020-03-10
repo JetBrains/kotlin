@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgument
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ReplaceUnderscoreWithParameterNameIntention : SelfTargetingOffsetIndependentIntention<KtCallableDeclaration>(
     KtCallableDeclaration::class.java,
-    "Replace '_' with parameter name"
+    KotlinBundle.message("replace.with.parameter.name")
 ) {
     override fun isApplicableTo(element: KtCallableDeclaration) =
         element.name == "_" && (element is KtDestructuringDeclarationEntry || element is KtParameter)
