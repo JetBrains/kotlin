@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -294,12 +294,12 @@ class BasicLookupElementFactory(
                 is SyntheticJavaPropertyDescriptor -> {
                     var from = descriptor.getMethod.name.asString() + "()"
                     descriptor.setMethod?.let { from += "/" + it.name.asString() + "()" }
-                    appendTailText(" (from $from)")
+                    appendTailText(KotlinIdeaCompletionBundle.message("presentation.tail.from.0", from))
                     return
                 }
                 else -> {
                     val receiverPresentation = SHORT_NAMES_RENDERER.renderType(extensionReceiver.type)
-                    appendTailText(" for $receiverPresentation")
+                    appendTailText(KotlinIdeaCompletionBundle.message("presentation.tail.for.0", receiverPresentation))
                 }
             }
         }
@@ -323,7 +323,7 @@ class BasicLookupElementFactory(
                     is PackageFragmentDescriptor -> container.fqName.toString()
                     else -> return null
                 }
-                return "in $containerPresentation"
+                return KotlinIdeaCompletionBundle.message("presentation.tail.in.0", containerPresentation)
             }
 
             else -> {
