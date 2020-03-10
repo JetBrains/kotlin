@@ -92,6 +92,11 @@ public class DaemonEditorPopup extends PopupHandler {
                     public void setSelected(@NotNull AnActionEvent e, boolean state) {
                       DaemonCodeAnalyzerSettings.getInstance().setNextErrorActionGoesToErrorsFirst(state);
                     }
+
+                    @Override
+                    public boolean isDumbAware() {
+                      return true;
+                    }
                   }
     );
     gotoGroup.add(new ToggleAction(EditorBundle.message("errors.panel.go.to.next.error.warning.radio")) {
@@ -103,6 +108,11 @@ public class DaemonEditorPopup extends PopupHandler {
                     @Override
                     public void setSelected(@NotNull AnActionEvent e, boolean state) {
                       DaemonCodeAnalyzerSettings.getInstance().setNextErrorActionGoesToErrorsFirst(!state);
+                    }
+
+                    @Override
+                    public boolean isDumbAware() {
+                      return true;
                     }
                   }
     );

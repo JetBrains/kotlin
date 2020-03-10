@@ -61,9 +61,9 @@ class TrafficProgressPanel extends JPanel {
     fakeStatusLargeEnough.errorCount = new int[]{1, 1, 1, 1};
     Project project = trafficLightRenderer.getProject();
     PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-    fakeStatusLargeEnough.passStatuses = new ArrayList<>();
+    fakeStatusLargeEnough.passes = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
-      fakeStatusLargeEnough.passStatuses
+      fakeStatusLargeEnough.passes
         .add(new ProgressableTextEditorHighlightingPass(project, null, DaemonBundle.message("pass.wolf"), psiFile, editor, TextRange.EMPTY_RANGE, false,
                                                         HighlightInfoProcessor.getEmpty()) {
           @Override
@@ -161,7 +161,7 @@ class TrafficProgressPanel extends JPanel {
         rebuildPassesProgress(status);
       }
 
-      for (ProgressableTextEditorHighlightingPass pass : status.passStatuses) {
+      for (ProgressableTextEditorHighlightingPass pass : status.passes) {
         double progress = pass.getProgress();
         Pair<JProgressBar, JLabel> pair = myTrafficLightRenderer.passes.get(pass);
         JProgressBar progressBar = pair.first;
@@ -207,7 +207,7 @@ class TrafficProgressPanel extends JPanel {
     GridBagConstraints c = new GridBagConstraints();
     c.gridy = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
-    for (ProgressableTextEditorHighlightingPass pass : status.passStatuses) {
+    for (ProgressableTextEditorHighlightingPass pass : status.passes) {
       JLabel label = new JLabel(pass.getPresentableName() + ": ");
       label.setHorizontalTextPosition(SwingConstants.RIGHT);
 
