@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.extensions
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -36,5 +37,16 @@ interface IrGenerationExtension : IrExtensionGenerator {
     fun generate(
         moduleFragment: IrModuleFragment,
         pluginContext: IrPluginContext
+    )
+}
+
+// Extension point for plugins which run before any lowerings, but after the Ir has been constructed.
+interface PureIrGenerationExtension {
+    companion object :
+        ProjectExtensionDescriptor<PureIrGenerationExtension>("org.jetbrains.kotlin.pureIrGenerationExtension", PureIrGenerationExtension::class.java)
+
+    fun generate(
+        moduleFragment: IrModuleFragment,
+        context: CommonBackendContext
     )
 }
