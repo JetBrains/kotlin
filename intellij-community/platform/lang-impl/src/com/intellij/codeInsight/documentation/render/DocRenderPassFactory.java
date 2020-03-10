@@ -17,7 +17,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocCommentBase;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.SyntaxTraverser;
 import com.intellij.psi.util.PsiModificationTracker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +40,7 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
   public TextEditorHighlightingPass createHighlightingPass(@NotNull PsiFile file, @NotNull Editor editor) {
     long current = PsiModificationTracker.SERVICE.getInstance(file.getProject()).getModificationCount();
     Long existing = editor.getUserData(MODIFICATION_STAMP);
-    return existing != null && existing == current ? null : new DocRenderPass(editor, file);
+    return editor.getProject() == null || existing != null && existing == current ? null : new DocRenderPass(editor, file);
   }
 
   private static class DocRenderPass extends EditorBoundHighlightingPass {
@@ -64,23 +63,19 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
 
   @NotNull
   public static Items calculateItemsToRender(@NotNull Document document, @NotNull PsiFile psiFile) {
+    boolean enabled = EditorSettingsExternalizable.getInstance().isDocCommentRenderingEnabled();
     Items items = new Items();
-    if (EditorSettingsExternalizable.getInstance().isDocCommentRenderingEnabled()) {
-      SyntaxTraverser.psiTraverser(psiFile).filter(PsiDocCommentBase.class).forEach(comment -> {
-        TextRange range = comment.getTextRange();
-        if (range != null && DocRenderItem.isValidRange(document, range)) {
-          String textToRender = calcText(comment);
-          if (textToRender != null) {
-            items.addItem(new Item(range, textToRender));
-          }
-        }
-      });
-    }
+    DocumentationManager.getProviderFromElement(psiFile).collectDocComments(psiFile, comment -> {
+      TextRange range = comment.getTextRange();
+      if (range != null && DocRenderItem.isValidRange(document, range)) {
+        String textToRender = enabled ? calcText(comment) : null;
+        items.addItem(new Item(range, textToRender));
+      }
+    });
     return items;
   }
 
-  @Nullable
-  private static String calcText(@NotNull PsiDocCommentBase comment) {
+  static @Nullable String calcText(@NotNull PsiDocCommentBase comment) {
     try {
       PsiElement owner = comment.getOwner();
       if (owner == null) return null;
@@ -127,7 +122,7 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
     final TextRange textRange;
     final String textToRender;
 
-    private Item(@NotNull TextRange textRange, @NotNull String textToRender) {
+    private Item(@NotNull TextRange textRange, @Nullable String textToRender) {
       this.textRange = textRange;
       this.textToRender = textToRender;
     }

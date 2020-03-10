@@ -9,6 +9,8 @@ import com.intellij.ide.ui.LafManagerListener;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.event.*;
@@ -22,15 +24,14 @@ import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocCommentBase;
 import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.text.CharArrayUtil;
@@ -87,7 +88,7 @@ class DocRenderItem {
           updated |= item.remove(foldingTasks);
           it.remove();
         }
-        else if (!matchingItem.textToRender.equals(item.textToRender)) {
+        else if (matchingItem.textToRender != null && !matchingItem.textToRender.equals(item.textToRender)) {
           item.textToRender = matchingItem.textToRender;
           itemsToUpdateInlays.add(item);
         }
@@ -178,6 +179,7 @@ class DocRenderItem {
   private DocRenderItem(@NotNull Editor editor, @NotNull TextRange textRange, @Nullable String textToRender) {
     this.editor = editor;
     this.textToRender = textToRender;
+    assert editor.getProject() != null;
     highlighter = editor.getMarkupModel()
       .addRangeHighlighter(textRange.getStartOffset(), textRange.getEndOffset(), 0, null, HighlighterTargetArea.EXACT_RANGE);
     AnAction toggleAction = new ToggleRenderingAction(this);
@@ -234,6 +236,10 @@ class DocRenderItem {
     if (!(editor instanceof EditorEx)) return false;
     FoldingModelEx foldingModel = ((EditorEx)editor).getFoldingModel();
     if (foldRegion == null) {
+      if (textToRender == null && foldingTasks == null) {
+        generateHtmlInBackgroundAndToggle();
+        return false;
+      }
       int inlayOffset = calcInlayOffset();
       inlay = editor.getInlayModel().addBlockElement(inlayOffset, true, true, BlockInlayPriority.DOC_RENDER, new DocRenderer(this));
       if (inlay != null) {
@@ -275,17 +281,25 @@ class DocRenderItem {
     return true;
   }
 
-  PsiElement getOwner() {
-    Project project = editor.getProject();
-    if (project != null && highlighter.isValid()) {
-      PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
+  private void generateHtmlInBackgroundAndToggle() {
+    ReadAction.nonBlocking(() -> {
+      PsiDocCommentBase comment = getComment();
+      String html = comment == null ? null : DocRenderPassFactory.calcText(comment);
+      return html == null ? CodeInsightBundle.message("doc.render.not.available.text") : html;
+    }).withDocumentsCommitted(Objects.requireNonNull(editor.getProject()))
+      .coalesceBy(this)
+      .finishOnUiThread(ModalityState.any(), html -> {
+        textToRender = html;
+        toggle(null);
+      }).submit(AppExecutorUtil.getAppExecutorService());
+  }
+
+  PsiDocCommentBase getComment() {
+    if (highlighter.isValid()) {
+      PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(Objects.requireNonNull(editor.getProject()));
       PsiFile file = psiDocumentManager.getPsiFile(editor.getDocument());
       if (file != null) {
-        PsiDocCommentBase comment = PsiTreeUtil.getParentOfType(file.findElementAt(highlighter.getStartOffset()), PsiDocCommentBase.class,
-                                                                false);
-        if (comment != null) {
-          return comment.getOwner();
-        }
+        return PsiTreeUtil.getParentOfType(file.findElementAt(highlighter.getStartOffset()), PsiDocCommentBase.class, false);
       }
     }
     return null;
@@ -402,6 +416,11 @@ class DocRenderItem {
     @Override
     public AnAction getClickAction() {
       return action;
+    }
+
+    @Override
+    public ActionGroup getPopupMenuActions() {
+      return new DefaultActionGroup(ActionManager.getInstance().getAction(IdeActions.ACTION_TOGGLE_RENDER_DOCS_ON_FILE_OPENING));
     }
   }
 

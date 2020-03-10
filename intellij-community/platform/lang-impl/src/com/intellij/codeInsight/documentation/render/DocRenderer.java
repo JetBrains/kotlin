@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiDocCommentBase;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.ColorUtil;
@@ -225,7 +226,8 @@ class DocRenderer implements EditorCustomElementRenderer {
         location = myPane.modelToView(element.getStartOffset());
       }
       catch (BadLocationException ignored) {}
-      PsiElement owner = myItem.getOwner();
+      PsiDocCommentBase comment = myItem.getComment();
+      PsiElement owner = comment == null ? null : comment.getOwner();
       if (owner != null && location != null) {
         DocumentationManager documentationManager = DocumentationManager.getInstance(project);
         if (QuickDocUtil.getActiveDocComponent(project) == null) {
