@@ -16,29 +16,11 @@
 
 package com.bnorm.power
 
-import kotlin.test.Test
-import kotlin.test.assertTrue
-
 data class Person(
   val firstName: String,
   val lastName: String
-)
-
-class PowerAssertTest {
-  private val people = listOf(Person("John", "Doe"), Person("Jane", "Doe"))
-
-  @Test
-  fun assertTrue() {
-    assertTrue(people.size == 1)
-  }
-
-  @Test
-  fun assert() {
-    assert(people.size == 1)
-  }
-
-  @Test
-  fun require() {
-    require(people.size == 1)
+) {
+  companion object {
+    val UNKNOWN = listOf(Person("John", "Doe"), Person("Jane", "Doe"))
   }
 }
