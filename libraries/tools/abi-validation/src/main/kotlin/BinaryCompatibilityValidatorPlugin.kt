@@ -73,7 +73,9 @@ private fun Project.configureKotlinCompilation(compilation: KotlinCompilation<Ko
     val projectName = project.name
     val apiBuildDir = file(buildDir.resolve(API_DIR))
     val apiBuild = task<KotlinApiBuildTask>("apiBuild") {
-        onlyIf { apiCheckEnabled }
+        onlyIf {
+            apiCheckEnabled && compilation.allKotlinSourceSets.any { it.kotlin.srcDirs.any { it.exists() } }
+        }
         // 'group' is not specified deliberately so it will be hidden from ./gradlew tasks
         description =
             "Builds Kotlin API for 'main' compilations of $projectName. Complementary task and shouldn't be called manually"
