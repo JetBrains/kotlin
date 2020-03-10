@@ -1,7 +1,7 @@
 FILE: foo.kt
     public final fun foo(): R|kotlin/Boolean| {
         object : R|Node<kotlin/Boolean>| {
-            private constructor(): R|kotlin/Any| {
+            private constructor(): R|anonymous| {
                 super<R|kotlin/Any|>()
             }
 

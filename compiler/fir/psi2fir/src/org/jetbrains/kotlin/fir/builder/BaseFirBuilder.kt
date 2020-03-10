@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.addDeclaration
-import org.jetbrains.kotlin.fir.declarations.builder.AbstractFirRegularClassBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.buildErrorFunction
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
+import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
@@ -147,6 +144,13 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 firClass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
                 false
             )
+        }
+    }
+
+    fun T?.toDelegatedSelfType(firObject: FirAnonymousObjectBuilder): FirResolvedTypeRef {
+        return buildResolvedTypeRef {
+            source = this@toDelegatedSelfType?.toFirSourceElement()
+            type = ConeClassLikeTypeImpl(firObject.symbol.toLookupTag(), emptyArray(), false)
         }
     }
 

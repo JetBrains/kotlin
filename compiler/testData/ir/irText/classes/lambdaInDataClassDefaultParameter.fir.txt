@@ -58,7 +58,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
           BLOCK type=<root>.B.<init>.<no name provided> origin=OBJECT_LITERAL
             CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B.<init>.<no name provided>
-              CONSTRUCTOR visibility:private <> () returnType:kotlin.Any [primary]
+              CONSTRUCTOR visibility:private <> () returnType:<root>.B.<init>.<no name provided> [primary]
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
                   INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]'

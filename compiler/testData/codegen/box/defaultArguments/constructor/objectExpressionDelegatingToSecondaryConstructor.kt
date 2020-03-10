@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 
 abstract class O(val value: String) {
     constructor(o: Char = 'O') : this("$o")

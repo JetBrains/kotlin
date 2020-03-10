@@ -30,7 +30,7 @@ FILE: CallBasedInExpressionGenerator.kt
 
         private final fun gen(argument: R|ERROR CLASS: Symbol not found, for `StackValue`|): R|ERROR CLASS: Symbol not found, for `BranchedValue`| {
             ^gen object : R|ERROR CLASS: Symbol not found, for `BranchedValue`| {
-                private constructor(): R|ERROR CLASS: Symbol not found, for `BranchedValue`| {
+                private constructor(): R|anonymous| {
                     super<R|ERROR CLASS: Symbol not found, for `BranchedValue`|>(R|<local>/argument|, Null(null), R|<local>/argument|.<Unresolved name: type>#, <Unresolved name: Opcodes>#.<Unresolved name: IFEQ>#)
                 }
 

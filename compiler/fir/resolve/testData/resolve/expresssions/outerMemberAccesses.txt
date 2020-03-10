@@ -32,7 +32,7 @@ FILE: O.kt
                 public final fun test(): R|kotlin/Unit| {
                     lval x: R|kotlin/Int| = this@R|/O.Derived|.R|/O.Derived.bar|
                     lval o: R|anonymous| = object : R|Wrapper| {
-                        private constructor(): R|Wrapper| {
+                        private constructor(): R|anonymous| {
                             super<R|Wrapper|>(this@R|/O.Derived.Some|.R|/O.Derived.Some.z|)
                         }
 
@@ -41,7 +41,7 @@ FILE: O.kt
                         }
 
                         public final val oo: R|anonymous| = object : R|kotlin/Any| {
-                            private constructor(): R|kotlin/Any| {
+                            private constructor(): R|anonymous| {
                                 super<R|kotlin/Any|>()
                             }
 
@@ -61,7 +61,7 @@ FILE: O.kt
             public final fun test(): R|kotlin/Unit| {
                 lval x: R|kotlin/Int| = this@R|/O.Derived|.R|/O.Derived.bar|
                 lval o: R|anonymous| = object : R|kotlin/Any| {
-                    private constructor(): R|kotlin/Any| {
+                    private constructor(): R|anonymous| {
                         super<R|kotlin/Any|>()
                     }
 
@@ -86,7 +86,7 @@ FILE: O.kt
 
         private final fun gen(): R|kotlin/Any| {
             ^gen object : R|Wrapper| {
-                private constructor(): R|Wrapper| {
+                private constructor(): R|anonymous| {
                     super<R|Wrapper|>(Boolean(true))
                 }
 

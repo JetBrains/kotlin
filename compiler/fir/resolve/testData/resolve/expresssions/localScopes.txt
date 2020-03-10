@@ -23,7 +23,7 @@ FILE: localScopes.kt
         R|<local>/base|.R|/BaseLocal.baz|()
         R|<local>/base|.R|/Bar.foo|()
         lval anonymous: R|anonymous| = object : R|Bar| {
-            private constructor(): R|Bar| {
+            private constructor(): R|anonymous| {
                 super<R|Bar|>()
             }
 

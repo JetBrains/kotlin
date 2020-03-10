@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/partialSam.kt
         BLOCK type=<root>.fsi.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Fn<kotlin.String, kotlin.Int>]
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.fsi.<no name provided>
-            CONSTRUCTOR visibility:private <> () returnType:kotlin.Any [primary]
+            CONSTRUCTOR visibility:private <> () returnType:<root>.fsi.<no name provided> [primary]
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Fn<kotlin.String, kotlin.Int>]'
@@ -85,7 +85,7 @@ FILE fqName:<root> fileName:/partialSam.kt
         BLOCK type=<root>.fis.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Fn<kotlin.Int, kotlin.String>]
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.fis.<no name provided>
-            CONSTRUCTOR visibility:private <> () returnType:kotlin.Any [primary]
+            CONSTRUCTOR visibility:private <> () returnType:<root>.fis.<no name provided> [primary]
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Fn<kotlin.Int, kotlin.String>]'

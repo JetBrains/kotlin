@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
         BLOCK type=<root>.test1.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.test1.<no name provided>
-            CONSTRUCTOR visibility:private <> () returnType:kotlin.Any [primary]
+            CONSTRUCTOR visibility:private <> () returnType:<root>.test1.<no name provided> [primary]
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]'
@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
         BLOCK type=<root>.test2.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IFoo]
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.test2.<no name provided>
-            CONSTRUCTOR visibility:private <> () returnType:kotlin.Any [primary]
+            CONSTRUCTOR visibility:private <> () returnType:<root>.test2.<no name provided> [primary]
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IFoo]'
@@ -89,7 +89,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
           BLOCK type=<root>.Outer.test3.<no name provided> origin=OBJECT_LITERAL
             CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.test3.<no name provided>
-              CONSTRUCTOR visibility:private <> () returnType:<root>.Outer.Inner [primary]
+              CONSTRUCTOR visibility:private <> () returnType:<root>.Outer.test3.<no name provided> [primary]
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer.Inner'
                   INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]'
@@ -119,7 +119,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
         BLOCK type=<root>.test4.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.test4.<no name provided>
-            CONSTRUCTOR visibility:private <> () returnType:<root>.Outer.Inner [primary]
+            CONSTRUCTOR visibility:private <> () returnType:<root>.test4.<no name provided> [primary]
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer.Inner'
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]'

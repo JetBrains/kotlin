@@ -75,7 +75,7 @@ FILE fqName:<root> fileName:/multipleThisReferences.kt
           BLOCK type=<root>.Host.test.<no name provided> origin=OBJECT_LITERAL
             CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host.test.<no name provided>
-              CONSTRUCTOR visibility:private <> () returnType:<root>.Outer.Inner [primary]
+              CONSTRUCTOR visibility:private <> () returnType:<root>.Host.test.<no name provided> [primary]
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.Outer.Inner'
                     x: CONST Int type=kotlin.Int value=42

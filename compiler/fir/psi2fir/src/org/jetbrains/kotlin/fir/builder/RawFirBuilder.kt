@@ -674,9 +674,10 @@ class RawFirBuilder(
                     classKind = ClassKind.OBJECT
                     scopeProvider = baseScopeProvider
                     symbol = FirAnonymousObjectSymbol()
+                    val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this)
                     objectDeclaration.extractAnnotationsTo(this)
-                    objectDeclaration.extractSuperTypeListEntriesTo(this, null, null, ClassKind.CLASS)
-                    typeRef = superTypeRefs.first() // TODO
+                    objectDeclaration.extractSuperTypeListEntriesTo(this, delegatedSelfType, null, ClassKind.CLASS)
+                    typeRef = delegatedSelfType
 
                     for (declaration in objectDeclaration.declarations) {
                         declarations += declaration.toFirDeclaration(
