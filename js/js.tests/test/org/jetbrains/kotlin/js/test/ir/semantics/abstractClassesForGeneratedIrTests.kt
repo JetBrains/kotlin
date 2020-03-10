@@ -19,29 +19,7 @@ abstract class AbstractIrWasmBoxJsTest : BasicIrBoxTest(
     "irWasmBox/"
 )
 
-abstract class BorrowedIrInlineTest(relativePath: String) : BasicIrBoxTest(
-    "compiler/testData/codegen/boxInline/$relativePath",
-    "codegen/irBoxInline/$relativePath"
-) {
-    init {
-        additionalCommonFileDirectories += TEST_DATA_DIR_PATH + relativePath + "/_commonFiles/"
-    }
-}
-
-abstract class AbstractIrNonLocalReturnsTest : BorrowedIrInlineTest("nonLocalReturns/")
-
-abstract class AbstractIrPropertyAccessorsInlineTests : BorrowedIrInlineTest("property/")
-
-abstract class AbstractIrNoInlineTests : BorrowedIrInlineTest("noInline/")
-
-abstract class AbstractIrCallableReferenceInlineTests : BorrowedIrInlineTest("callableReference/")
-
-abstract class AbstractIrEnumValuesInlineTests : BorrowedIrInlineTest("enum/")
-
-abstract class AbstractIrInlineDefaultValuesTests : BorrowedIrInlineTest("defaultValues/")
-
-abstract class AbstractIrInlineSuspendTests : BorrowedIrInlineTest("suspend/")
-
-abstract class AbstractIrJsInlineContractsTests : BorrowedIrInlineTest("contracts/")
-
-abstract class AbstractIrJsInlineMultiModuleTests : BorrowedIrInlineTest("multiModule/")
+abstract class AbstractIrJsCodegenInlineTest : BasicIrBoxTest(
+    "compiler/testData/codegen/boxInline/",
+    "codegen/irBoxInline/"
+)

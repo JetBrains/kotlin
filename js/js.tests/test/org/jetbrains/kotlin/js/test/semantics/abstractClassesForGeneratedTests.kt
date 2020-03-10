@@ -7,33 +7,6 @@ package org.jetbrains.kotlin.js.test.semantics
 
 import org.jetbrains.kotlin.js.test.BasicBoxTest
 
-abstract class BorrowedInlineTest(relativePath: String) : BasicBoxTest(
-    "compiler/testData/codegen/boxInline/$relativePath",
-    "codegen/boxInline/$relativePath"
-) {
-    init {
-        additionalCommonFileDirectories += TEST_DATA_DIR_PATH + relativePath + "/_commonFiles/"
-    }
-}
-
-abstract class AbstractNonLocalReturnsTest : BorrowedInlineTest("nonLocalReturns/")
-
-abstract class AbstractPropertyAccessorsInlineTests : BorrowedInlineTest("property/")
-
-abstract class AbstractNoInlineTests : BorrowedInlineTest("noInline/")
-
-abstract class AbstractCallableReferenceInlineTests : BorrowedInlineTest("callableReference/")
-
-abstract class AbstractEnumValuesInlineTests : BorrowedInlineTest("enum/")
-
-abstract class AbstractInlineDefaultValuesTests : BorrowedInlineTest("defaultValues/")
-
-abstract class AbstractInlineSuspendTests : BorrowedInlineTest("suspend/")
-
-abstract class AbstractJsInlineContractsTests : BorrowedInlineTest("contracts/")
-
-abstract class AbstractJsInlineMultiModuleTests : BorrowedInlineTest("multiModule/")
-
 abstract class AbstractBoxJsTest : BasicBoxTest(
     TEST_DATA_DIR_PATH + "box/",
     "box/"
@@ -44,6 +17,11 @@ abstract class AbstractBoxJsTest : BasicBoxTest(
 abstract class AbstractJsCodegenBoxTest : BasicBoxTest(
     "compiler/testData/codegen/box/",
     "codegen/box/"
+)
+
+abstract class AbstractJsCodegenInlineTest : BasicBoxTest(
+    "compiler/testData/codegen/boxInline",
+    "codegen/boxInline"
 )
 
 abstract class AbstractJsLegacyPrimitiveArraysBoxTest : BasicBoxTest(

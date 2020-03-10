@@ -1,3 +1,5 @@
+// TODO: Reified generics required some design to unify behavior across all backends
+// IGNORE_BACKEND: JS, JS_IR
 // FILE: 1.kt
 // WITH_RUNTIME
 package test
@@ -46,9 +48,6 @@ inline fun failNPE(s: () -> Unit) {
 inline fun failClassCast(s: () -> Unit) {
     try {
         s()
-    }
-    catch (e: TypeCastException) {
-        throw e
     }
     catch (e: ClassCastException) {
         // OK
