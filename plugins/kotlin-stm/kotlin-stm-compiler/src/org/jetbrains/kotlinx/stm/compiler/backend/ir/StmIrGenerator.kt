@@ -51,12 +51,10 @@ val BackendContext.externalSymbols: ReferenceSymbolTable get() = ir.symbols.exte
 interface IrBuilderExtension {
     val compilerContext: IrPluginContext
 
-    val BackendContext.localSymbolTable: SymbolTable
-
     private fun IrDeclarationParent.declareSimpleFunctionWithExternalOverrides(descriptor: FunctionDescriptor): IrSimpleFunction {
         return compilerContext.symbolTable.declareSimpleFunction(startOffset, endOffset, STM_PLUGIN_ORIGIN, descriptor)
             .also { f ->
-                descriptor.overriddenDescriptors.mapTo(f.overriddenSymbols) {
+                f.overriddenSymbols = f.overriddenSymbols + descriptor.overriddenDescriptors.map {
                     compilerContext.symbolTable.referenceSimpleFunction(it.original)
                 }
             }
@@ -81,8 +79,8 @@ interface IrBuilderExtension {
         if (!overwriteValueParameters)
             assert(valueParameters.isEmpty())
         else
-            valueParameters.clear()
-        valueParameters.addAll(descriptor.valueParameters.map { it.irValueParameter() })
+            valueParameters = emptyList()
+        valueParameters = valueParameters + descriptor.valueParameters.map { it.irValueParameter() }
 
         assert(typeParameters.isEmpty())
     }
@@ -163,10 +161,6 @@ internal fun BackendContext.createTypeTranslator(moduleDescriptor: ModuleDescrip
     }
 
 class STMGenerator(override val compilerContext: IrPluginContext) : IrBuilderExtension {
-    private val _table = SymbolTable()
-    override val BackendContext.localSymbolTable: SymbolTable
-        get() = _table
-
 
     fun generateSTMField(irClass: IrClass, field: IrField, initMethod: IrFunctionSymbol, stmSearcherClass: ClassDescriptor) =
         irClass.initField(field) {
