@@ -1,0 +1,5 @@
+@kotlin.Metadata
+public final class ParameterlessMainKt {
+    public final static method main(): void
+    public synthetic final static method main(@org.jetbrains.annotations.NotNull p0: java.lang.String[]): void
+}
