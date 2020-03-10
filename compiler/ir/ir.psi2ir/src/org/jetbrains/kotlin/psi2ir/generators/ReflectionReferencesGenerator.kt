@@ -275,18 +275,24 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             throw AssertionError("Callable reference with adapted arguments expected: ${resolvedCall.call.callElement.text}")
         }
 
+        var shift = 0
         if (resolvedCall.dispatchReceiver is TransientReceiver) {
             // Unbound callable reference 'A::foo', receiver is passed as a first parameter
             val irAdaptedReceiverParameter = irAdapterFun.valueParameters[0]
             irAdapteeCall.dispatchReceiver =
                 IrGetValueImpl(startOffset, endOffset, irAdaptedReceiverParameter.type, irAdaptedReceiverParameter.symbol)
+        } else if (resolvedCall.extensionReceiver is TransientReceiver) {
+            val irAdaptedReceiverParameter = irAdapterFun.valueParameters[0]
+            irAdapteeCall.extensionReceiver =
+                IrGetValueImpl(startOffset, endOffset, irAdaptedReceiverParameter.type, irAdaptedReceiverParameter.symbol)
+            shift = 1
         }
 
         for ((valueParameter, valueArgument) in adaptedArguments) {
             val substitutedValueParameter = resolvedCall.resultingDescriptor.valueParameters[valueParameter.index]
             irAdapteeCall.putValueArgument(
                 valueParameter.index,
-                adaptResolvedValueArgument(startOffset, endOffset, valueArgument, irAdapterFun, substitutedValueParameter)
+                adaptResolvedValueArgument(startOffset, endOffset, valueArgument, irAdapterFun, substitutedValueParameter, shift)
             )
         }
     }
@@ -296,7 +302,8 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         endOffset: Int,
         resolvedValueArgument: ResolvedValueArgument,
         irAdapterFun: IrSimpleFunction,
-        valueParameter: ValueParameterDescriptor
+        valueParameter: ValueParameterDescriptor,
+        shift: Int
     ): IrExpression? {
         return when (resolvedValueArgument) {
             is DefaultValueArgument ->
@@ -306,34 +313,35 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                     startOffset, endOffset,
                     valueParameter.type.toIrType(), valueParameter.varargElementType!!.toIrType(),
                     resolvedValueArgument.arguments.map {
-                        adaptValueArgument(startOffset, endOffset, it, irAdapterFun)
+                        adaptValueArgument(startOffset, endOffset, it, irAdapterFun, shift)
                     }
                 )
             is ExpressionValueArgument -> {
                 val valueArgument = resolvedValueArgument.valueArgument!!
 
-                adaptValueArgument(startOffset, endOffset, valueArgument, irAdapterFun) as IrExpression
+                adaptValueArgument(startOffset, endOffset, valueArgument, irAdapterFun, shift) as IrExpression
             }
             else ->
                 throw AssertionError("Unexpected ResolvedValueArgument: $resolvedValueArgument")
         }
     }
 
-    fun adaptValueArgument(
+    private fun adaptValueArgument(
         startOffset: Int,
         endOffset: Int,
         valueArgument: ValueArgument,
-        irAdapterFun: IrSimpleFunction
+        irAdapterFun: IrSimpleFunction,
+        shift: Int
     ): IrVarargElement =
         when (valueArgument) {
             is FakeImplicitSpreadValueArgumentForCallableReference ->
                 IrSpreadElementImpl(
                     startOffset, endOffset,
-                    adaptValueArgument(startOffset, endOffset, valueArgument.expression, irAdapterFun) as IrExpression
+                    adaptValueArgument(startOffset, endOffset, valueArgument.expression, irAdapterFun, shift) as IrExpression
                 )
 
             is FakePositionalValueArgumentForCallableReference -> {
-                val irAdapterParameter = irAdapterFun.valueParameters[valueArgument.index]
+                val irAdapterParameter = irAdapterFun.valueParameters[valueArgument.index + shift]
                 IrGetValueImpl(startOffset, endOffset, irAdapterParameter.type, irAdapterParameter.symbol)
             }
 

@@ -14860,6 +14860,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class SerializationRegressions extends AbstractLightAnalysisModeTest {
+            @TestMetadata("transitiveClash.kt")
+            public void ignoreTransitiveClash() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/serializationRegressions/transitiveClash.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
@@ -14881,11 +14886,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("innerClassInEnumEntryClass.kt")
             public void testInnerClassInEnumEntryClass() throws Exception {
                 runTest("compiler/testData/codegen/box/ir/serializationRegressions/innerClassInEnumEntryClass.kt");
-            }
-
-            @TestMetadata("transitiveClash.kt")
-            public void testTransitiveClash() throws Exception {
-                runTest("compiler/testData/codegen/box/ir/serializationRegressions/transitiveClash.kt");
             }
 
             @TestMetadata("useImportedMember.kt")
