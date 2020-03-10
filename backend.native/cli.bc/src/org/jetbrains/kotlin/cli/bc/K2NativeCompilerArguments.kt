@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.cli.bc
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.Argument
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.AnalysisFlag
-import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.*
 
 class K2NativeCompilerArguments : CommonCompilerArguments() {
     // First go the options interesting to the general public.
@@ -255,6 +255,17 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
                 if (printIr)
                     phasesToDumpAfter = arrayOf("ALL")
             }
+
+    override fun checkIrSupport(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
+        if (languageVersionSettings.languageVersion < LanguageVersion.KOTLIN_1_4
+                || languageVersionSettings.apiVersion < ApiVersion.KOTLIN_1_4
+        ) {
+            collector.report(
+                    severity = CompilerMessageSeverity.ERROR,
+                    message = "Native backend cannot be used with language or API version below 1.4"
+            )
+        }
+    }
 }
 
 const val EMBED_BITCODE_FLAG = "-Xembed-bitcode"
