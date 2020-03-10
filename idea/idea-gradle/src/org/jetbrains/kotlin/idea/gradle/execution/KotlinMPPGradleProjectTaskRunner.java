@@ -37,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.AsyncPromise;
 import org.jetbrains.concurrency.Promise;
 import org.jetbrains.kotlin.config.KotlinFacetSettings;
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
 import org.jetbrains.kotlin.platform.TargetPlatformKt;
 import org.jetbrains.kotlin.platform.TargetPlatform;
@@ -151,7 +152,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
             else {
                 projectName = projectFile.getName();
             }
-            String executionName = "Build " + projectName;
+            String executionName = KotlinIdeaGradleBundle.message("build.0", projectName);
             settings.setExecutionName(executionName);
             settings.setExternalProjectPath(rootProjectPath);
             settings.setTaskNames(ContainerUtil.collect(ContainerUtil.concat(cleanTasks, buildTasks).iterator()));
