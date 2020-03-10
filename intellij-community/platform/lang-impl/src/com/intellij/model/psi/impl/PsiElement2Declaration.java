@@ -22,7 +22,7 @@ class PsiElement2Declaration implements PsiSymbolDeclaration {
   private final PsiElement myDeclaringElement;
   private final TextRange myDeclarationRange;
 
-  private PsiElement2Declaration(@NotNull PsiElement targetElement, @NotNull PsiElement declaringElement, @NotNull TextRange range) {
+  PsiElement2Declaration(@NotNull PsiElement targetElement, @NotNull PsiElement declaringElement, @NotNull TextRange range) {
     myTargetElement = targetElement;
     myDeclaringElement = declaringElement;
     myDeclarationRange = range;
