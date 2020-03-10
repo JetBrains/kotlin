@@ -66,6 +66,7 @@ projectTest(parallel = true) {
     // do not replace with compile/runtime dependency,
     // because it forces Intellij reindexing after each compiler change
     dependsOn(":kotlin-compiler:dist")
+    dependsOn(":kotlin-stdlib-js-ir:packFullRuntimeKLib")
     workingDir = rootDir
 }
 
