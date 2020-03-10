@@ -29,6 +29,7 @@ import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.psi.PsiDocumentManager
+import org.jetbrains.kotlin.KotlinIdeaReplBundle
 import org.jetbrains.kotlin.console.actions.logError
 import org.jetbrains.kotlin.console.gutter.ConsoleErrorRenderer
 import org.jetbrains.kotlin.console.gutter.ConsoleIndicatorRenderer
@@ -78,12 +79,12 @@ class ReplOutputProcessor(
     fun printBuildInfoWarningIfNeeded() {
         if (ApplicationManager.getApplication().isUnitTestMode) return
         if (runner.previousCompilationFailed) return printWarningMessage(
-            "There were compilation errors in module ${runner.module.name}",
+            KotlinIdeaReplBundle.message("there.were.compilation.errors.in.module.0", runner.module.name),
             false
         )
         if (runner.compilerHelper.moduleIsUpToDate()) return
 
-        val compilerWarningMessage = "You’re running the REPL with outdated classes: "
+        val compilerWarningMessage = KotlinIdeaReplBundle.message("you.re.running.the.repl.with.outdated.classes")
         printWarningMessage(compilerWarningMessage, true)
     }
 

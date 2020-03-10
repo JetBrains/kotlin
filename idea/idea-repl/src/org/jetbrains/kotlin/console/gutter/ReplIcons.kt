@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.console.gutter
 
 import com.intellij.icons.AllIcons
+import org.jetbrains.kotlin.KotlinIdeaReplBundle
 import org.jetbrains.kotlin.idea.KotlinIcons
 import javax.swing.Icon
 
@@ -24,15 +25,23 @@ data class IconWithTooltip(val icon: Icon, val tooltip: String?)
 
 object ReplIcons {
     val BUILD_WARNING_INDICATOR: IconWithTooltip = IconWithTooltip(AllIcons.General.Warning, null)
-    val HISTORY_INDICATOR: IconWithTooltip = IconWithTooltip(AllIcons.Vcs.History, "History of executed commands")
-    val EDITOR_INDICATOR: IconWithTooltip = IconWithTooltip(KotlinIcons.LAUNCH, "Write your commands here")
-    val EDITOR_READLINE_INDICATOR: IconWithTooltip = IconWithTooltip(AllIcons.General.Balloon, "Waiting for input...")
-    val COMMAND_MARKER: IconWithTooltip = IconWithTooltip(AllIcons.RunConfigurations.TestState.Run, "Executed command")
-    val READLINE_MARKER: IconWithTooltip = IconWithTooltip(AllIcons.Debugger.PromptInput, "Input line")
+    val HISTORY_INDICATOR: IconWithTooltip = IconWithTooltip(AllIcons.Vcs.History,
+                                                             KotlinIdeaReplBundle.message("history.of.executed.commands")
+    )
+    val EDITOR_INDICATOR: IconWithTooltip = IconWithTooltip(KotlinIcons.LAUNCH, KotlinIdeaReplBundle.message("write.your.commands.here"))
+    val EDITOR_READLINE_INDICATOR: IconWithTooltip = IconWithTooltip(AllIcons.General.Balloon,
+                                                                     KotlinIdeaReplBundle.message("waiting.for.input")
+    )
+    val COMMAND_MARKER: IconWithTooltip = IconWithTooltip(AllIcons.RunConfigurations.TestState.Run,
+                                                          KotlinIdeaReplBundle.message("executed.command")
+    )
+    val READLINE_MARKER: IconWithTooltip = IconWithTooltip(AllIcons.Debugger.PromptInput, KotlinIdeaReplBundle.message("input.line"))
 
     // command result icons
-    val SYSTEM_HELP: IconWithTooltip = IconWithTooltip(AllIcons.Actions.Help, "System help")
-    val RESULT: IconWithTooltip = IconWithTooltip(AllIcons.Vcs.Equal, "Result")
+    val SYSTEM_HELP: IconWithTooltip = IconWithTooltip(AllIcons.Actions.Help, KotlinIdeaReplBundle.message("system.help"))
+    val RESULT: IconWithTooltip = IconWithTooltip(AllIcons.Vcs.Equal, KotlinIdeaReplBundle.message("result"))
     val COMPILER_ERROR: Icon = AllIcons.General.Error
-    val RUNTIME_EXCEPTION: IconWithTooltip = IconWithTooltip(AllIcons.General.BalloonWarning, "Runtime exception")
+    val RUNTIME_EXCEPTION: IconWithTooltip = IconWithTooltip(AllIcons.General.BalloonWarning,
+                                                             KotlinIdeaReplBundle.message("runtime.exception")
+    )
 }
