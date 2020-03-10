@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode.FORCED_SHORTENING
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
+import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -332,8 +333,14 @@ class BasicCompletionSession(
                     }
                 }
 
-                if (configuration.staticMembers && prefix.isNotEmpty()) {
-                    if (!receiverTypes.isNullOrEmpty()) {
+                if (!receiverTypes.isNullOrEmpty()) {
+                    // N.B.: callable references to member extensions are forbidden
+                    val shouldCompleteExtensionsFromObjects = when (callTypeAndReceiver.callType) {
+                        CallType.DEFAULT, CallType.DOT, CallType.SAFE, CallType.INFIX -> true
+                        else -> false
+                    }
+
+                    if (shouldCompleteExtensionsFromObjects) {
                         staticMembersCompletion.completeObjectMemberExtensionsFromIndices(
                             indicesHelper(false),
                             receiverTypes.map { it.type },
@@ -341,7 +348,9 @@ class BasicCompletionSession(
                             collector
                         )
                     }
+                }
 
+                if (configuration.staticMembers && prefix.isNotEmpty()) {
                     if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
                         staticMembersCompletion.completeFromIndices(indicesHelper(false), collector)
                     }

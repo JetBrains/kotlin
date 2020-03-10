@@ -1,12 +1,14 @@
 class T
 
-object A {
-    fun T.fooExtension() {}
-    val T.fooProperty get() = 10
+class A {
+    companion object {
+        fun T.fooExtension() {}
+        val T.fooProperty get() = 10
+    }
 }
 
 fun usage(t: T) {
-    t.foo<caret>
+    t?.foo<caret>
 }
 
 // EXIST: { lookupString: "fooExtension", itemText: "fooExtension" }
