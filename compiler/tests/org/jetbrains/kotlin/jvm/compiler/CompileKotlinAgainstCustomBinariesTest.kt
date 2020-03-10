@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.codegen.inline.GENERATE_SMAP
 import org.jetbrains.kotlin.codegen.inline.remove
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile
+import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
@@ -663,6 +666,25 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xallow-jvm-ir-dependencies"))
     }
 
+    // If this test fails, then bootstrap compiler most likely should be advanced
+    fun testPreReleaseFlagIsConsistentBetweenBootstrapAndCurrentCompiler() {
+        val bootstrapCompiler = JarFile(PathUtil.kotlinPathsForCompiler.compilerPath)
+        val classFromBootstrapCompiler = bootstrapCompiler.getEntry(LanguageFeature::class.java.name.replace(".", "/") + ".class")
+        checkPreReleaseness(
+            bootstrapCompiler.getInputStream(classFromBootstrapCompiler).readBytes(),
+            KotlinCompilerVersion.isPreRelease()
+        )
+    }
+
+    fun testPreReleaseFlagIsConsistentBetweenStdlibAndCurrentCompiler() {
+        val stdlib = JarFile(PathUtil.kotlinPathsForCompiler.stdlibPath)
+        val classFromStdlib = stdlib.getEntry(KotlinVersion::class.java.name.replace(".", "/") + ".class")
+        checkPreReleaseness(
+            stdlib.getInputStream(classFromStdlib).readBytes(),
+            KotlinCompilerVersion.isPreRelease()
+        )
+    }
+
     companion object {
         // compiler before 1.1.4 version  did not include suspension marks into bytecode.
         private fun stripSuspensionMarksToImitateLegacyCompiler(bytes: ByteArray): Pair<ByteArray, Int> {
@@ -734,11 +756,11 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
             return outputFile
         }
 
-        private fun checkPreReleaseness(file: File, shouldBePreRelease: Boolean) {
+        private fun checkPreReleaseness(classFileBytes: ByteArray, shouldBePreRelease: Boolean) {
             // If there's no "xi" field in the Metadata annotation, it's value is assumed to be 0, i.e. _not_ pre-release
             var isPreRelease = false
 
-            ClassReader(file.readBytes()).accept(object : ClassVisitor(Opcodes.API_VERSION) {
+            ClassReader(classFileBytes).accept(object : ClassVisitor(Opcodes.API_VERSION) {
                 override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
                     if (desc != JvmAnnotationNames.METADATA_DESC) return null
 
@@ -753,6 +775,11 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
             }, 0)
 
             TestCase.assertEquals("Pre-release flag of the class file has incorrect value", shouldBePreRelease, isPreRelease)
+        }
+
+
+        private fun checkPreReleaseness(file: File, shouldBePreRelease: Boolean) {
+            checkPreReleaseness(file.readBytes(), shouldBePreRelease)
         }
     }
 }
