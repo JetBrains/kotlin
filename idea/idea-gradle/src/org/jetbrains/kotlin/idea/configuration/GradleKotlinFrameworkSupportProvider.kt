@@ -212,7 +212,16 @@ abstract class GradleKotlinJSFrameworkSupportProvider(
     ) {
         super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
 
-        buildScriptData.addOther("kotlin.target.$jsSubTargetName { }")
+        buildScriptData.addOther(
+            """
+                kotlin {
+                    target {
+                        $jsSubTargetName { }
+                        produceExecutable()
+                    }
+                }
+            """.trimIndent()
+        )
     }
 
     override fun getPluginId() = KotlinJsGradleModuleConfigurator.KOTLIN_JS
