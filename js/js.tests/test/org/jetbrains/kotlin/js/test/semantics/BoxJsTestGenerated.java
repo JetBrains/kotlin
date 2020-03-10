@@ -6864,6 +6864,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/regression/companionObjectInExternalInterface.kt");
         }
 
+        @TestMetadata("enumEntryInitOrder.kt")
+        public void testEnumEntryInitOrder() throws Exception {
+            runTest("js/js.translator/testData/box/regression/enumEntryInitOrder.kt");
+        }
+
         @TestMetadata("kt2470.kt")
         public void testKt2470() throws Exception {
             runTest("js/js.translator/testData/box/regression/kt2470.kt");
