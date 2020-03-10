@@ -197,11 +197,7 @@ private class UastFakeLightMethod(private val original: KtFunction, containingCl
         return true
     }
 
-    override fun hashCode(): Int {
-        var result = super.hashCode()
-        result = 31 * result + original.hashCode()
-        return result
-    }
+    override fun hashCode(): Int = original.hashCode()
 }
 
 class KotlinUMethodWithFakeLightDelegate(val original: KtFunction, containingLightClass: PsiClass, givenParent: UElement?) :
