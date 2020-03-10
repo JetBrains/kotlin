@@ -747,7 +747,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 labelElement.getReferencedName().equals(loopBlockStackElement.targetLabel.getReferencedName())) {
                 Label label = isBreak ? loopBlockStackElement.breakLabel : loopBlockStackElement.continueLabel;
                 return StackValue.operation(
-                        Type.VOID_TYPE, adapter -> {
+                        Type.VOID_TYPE,
+                        getNothingType(),
+                        adapter -> {
                             PseudoInsnsKt.fixStackAndJump(v, label);
                             v.mark(afterBreakContinueLabel);
                             return Unit.INSTANCE;
@@ -1620,9 +1622,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
     }
 
+    private KotlinType getNothingType() {
+        return state.getModule().getBuiltIns().getNothingType();
+    }
+
     @Override
     public StackValue visitReturnExpression(@NotNull KtReturnExpression expression, StackValue receiver) {
-        return StackValue.operation(Type.VOID_TYPE, adapter -> {
+        return StackValue.operation(Type.VOID_TYPE, getNothingType(), adapter -> {
             KtExpression returnedExpression = expression.getReturnedExpression();
             CallableMemberDescriptor descriptor = getContext().getContextDescriptor();
             NonLocalReturnInfo nonLocalReturn = getNonLocalReturnInfo(descriptor, expression);
@@ -4794,7 +4800,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Override
     public StackValue visitThrowExpression(@NotNull KtThrowExpression expression, StackValue receiver) {
-        return StackValue.operation(Type.VOID_TYPE, adapter -> {
+        return StackValue.operation(Type.VOID_TYPE, getNothingType(), adapter -> {
             gen(expression.getThrownExpression(), JAVA_THROWABLE_TYPE);
             v.athrow();
             return Unit.INSTANCE;
