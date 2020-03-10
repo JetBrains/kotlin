@@ -343,7 +343,18 @@ open class ClassCodegen protected constructor(
     }
 
     fun createLocalClassCodegen(klass: IrClass, parentFunction: IrFunction): ClassCodegen =
-            ClassCodegen(klass, context, this, parentFunction, withinInline = withinInline || parentFunction.isInline)
+        ClassCodegen(klass, context, this, parentFunction, withinInline = withinInline || parentFunction.isInline)
+
+    fun createClassCodegenForLambdaBody(parentClass: IrClass, lambda: IrFunction): ClassCodegen =
+        object : ClassCodegen(parentClass, context, parentFunction = parentFunction, withinInline = withinInline) {
+            override fun createClassBuilder(): ClassBuilder {
+                return object : AbstractClassBuilder() {
+                    override fun getVisitor(): ClassVisitor {
+                        TODO("Expect to be _not_ reached")
+                    }
+                }
+            }
+        }
 
     private fun generateField(field: IrField) {
         if (field.origin == IrDeclarationOrigin.FAKE_OVERRIDE) return
