@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/assignments.kt
       SET_VAR 'var x: kotlin.Int [var] declared in <root>.test1' type=kotlin.Unit origin=null
         CONST Int type=kotlin.Int value=1
       SET_VAR 'var x: kotlin.Int [var] declared in <root>.test1' type=kotlin.Unit origin=null
-        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
           $this: GET_VAR 'var x: kotlin.Int [var] declared in <root>.test1' type=kotlin.Int origin=null
           other: CONST Int type=kotlin.Int value=1
   FUN name:test2 visibility:public modality:FINAL <> (r:<root>.Ref) returnType:kotlin.Unit

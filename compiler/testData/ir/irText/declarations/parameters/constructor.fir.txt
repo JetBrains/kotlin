@@ -187,7 +187,7 @@ FILE fqName:<root> fileName:/constructor.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test4'
           <T>: <none>
-          x: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+          x: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
             $this: GET_VAR 'x: kotlin.Int declared in <root>.Test4.<init>' type=kotlin.Int origin=null
             other: GET_VAR 'y: kotlin.Int declared in <root>.Test4.<init>' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

@@ -68,7 +68,7 @@ FILE fqName:<root> fileName:/qualifiedSuperCalls.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.CBoth
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-bar> (): kotlin.Int declared in <root>.CBoth'
-            CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+            CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
               $this: CALL 'public open fun <get-bar> (): kotlin.Int declared in <root>.ILeft' type=kotlin.Int origin=GET_PROPERTY
                 $this: GET_VAR '<this>: <root>.CBoth declared in <root>.CBoth.<get-bar>' type=<root>.CBoth origin=null
               other: CALL 'public open fun <get-bar> (): kotlin.Int declared in <root>.IRight' type=kotlin.Int origin=GET_PROPERTY

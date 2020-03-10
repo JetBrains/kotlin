@@ -77,7 +77,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
             PROPERTY name:xx visibility:public modality:FINAL [val]
               FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.Int visibility:private [final]
                 EXPRESSION_BODY
-                  CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+                  CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
                     $this: CALL 'public final fun <get-x> (): T of <root>.Outer declared in <root>.Outer' type=kotlin.Int origin=GET_PROPERTY
                       $this: GET_VAR '<this>: <root>.Outer<kotlin.Int> declared in <root>.test' type=<root>.Outer<kotlin.Int> origin=null
                     other: CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.Outer.Inner' type=kotlin.Int origin=GET_PROPERTY

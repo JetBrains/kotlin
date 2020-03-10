@@ -76,7 +76,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
   PROPERTY name:testOK visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:testOK type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=null
+        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
           $this: CALL 'public final fun <get-testO> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
           other: CALL 'public final fun <get-testK> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testOK> visibility:public modality:FINAL <> () returnType:kotlin.String
