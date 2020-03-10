@@ -1657,8 +1657,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             IrConstKind.Int    -> return Int32(value.value as Int).llvm
             IrConstKind.Long   -> return Int64(value.value as Long).llvm
             IrConstKind.String -> return evaluateStringConst(value as IrConst<String>)
-            IrConstKind.Float  -> return LLVMConstRealOfString(floatType, (value.value as Float).toString())!!
-            IrConstKind.Double -> return LLVMConstRealOfString(doubleType, (value.value as Double).toString())!!
+            IrConstKind.Float  -> return Float32(value.value as Float).llvm
+            IrConstKind.Double -> return Float64(value.value as Double).llvm
         }
         TODO(ir2string(value))
     }

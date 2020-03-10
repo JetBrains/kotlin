@@ -2544,6 +2544,10 @@ task concatenation(type: KonanLocalTest) {
     source = "codegen/basics/concatenation.kt"
 }
 
+task const_infinity(type: KonanLocalTest) {
+    source = "codegen/basics/const_infinity.kt"
+}
+
 task lambda1(type: KonanLocalTest) {
     goldValue = "lambda\n"
     source = "codegen/lambda/lambda1.kt"
