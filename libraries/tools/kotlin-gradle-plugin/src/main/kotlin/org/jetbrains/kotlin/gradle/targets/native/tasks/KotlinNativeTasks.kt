@@ -24,13 +24,11 @@ import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
+import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.resolveSingleFileKlib
-import org.jetbrains.kotlin.library.uniqueName
-import org.jetbrains.kotlin.library.unresolvedDependencies
+import org.jetbrains.kotlin.library.*
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
@@ -645,6 +643,12 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
 }
 
 class CacheBuilder(val project: Project, val binary: NativeBinary) {
+
+    private val nativeSingleFileResolveStrategy: SingleFileKlibResolveStrategy
+        get() = CompilerSingleFileKlibResolveAllowingIrProvidersStrategy(
+            listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER)
+        )
+
     private val compilation: KotlinNativeCompilation
         get() = binary.compilation
 
@@ -729,7 +733,11 @@ class CacheBuilder(val project: Project, val binary: NativeBinary) {
         cacheDirectory.mkdirs()
 
         val artifactsLibraries = artifactsToAddToCache
-            .map { resolveSingleFileKlib(org.jetbrains.kotlin.konan.file.File(it.file.absolutePath)) }
+            .map {
+                resolveSingleFileKlib(
+                    org.jetbrains.kotlin.konan.file.File(it.file.absolutePath), strategy = nativeSingleFileResolveStrategy
+                )
+            }
             .associateBy { it.uniqueName }
 
         // Top sort artifacts.
@@ -798,7 +806,10 @@ class CacheBuilder(val project: Project, val binary: NativeBinary) {
         val platformLib = platformLibs[platformLibName] ?: error("$platformLibName is not found in platform libs")
         if (File(rootCacheDirectory, platformLibName.cachedName).exists())
             return
-        for (dependency in resolveSingleFileKlib(org.jetbrains.kotlin.konan.file.File(platformLib.absolutePath)).unresolvedDependencies)
+        val unresolvedDependencies = resolveSingleFileKlib(
+            org.jetbrains.kotlin.konan.file.File(platformLib.absolutePath), strategy = nativeSingleFileResolveStrategy
+        ).unresolvedDependencies
+        for (dependency in unresolvedDependencies)
             ensureCompilerProvidedLibPrecached(dependency.path, platformLibs, visitedLibs)
         project.logger.info("Compiling $platformLibName (${visitedLibs.size}/${platformLibs.size}) to cache")
         val args = mutableListOf(

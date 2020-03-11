@@ -230,10 +230,11 @@ abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
 class SingleKlibComponentResolver(
     klibFile: String,
     knownAbiVersions: List<KotlinAbiVersion>?,
-    logger: Logger
+    logger: Logger,
+    knownIrProviders: List<String>
 ) : KotlinLibraryProperResolverWithAttributes<KotlinLibrary>(
     emptyList(), listOf(klibFile), knownAbiVersions, emptyList(),
-    null, null, false, logger, emptyList()
+    null, null, false, logger, knownIrProviders
 ) {
     override fun libraryComponentBuilder(file: File, isDefault: Boolean) = createKotlinLibraryComponents(file, isDefault)
 }
@@ -244,6 +245,7 @@ class SingleKlibComponentResolver(
  * - searching among user-supplied libraries by "unique_name" that matches the given library name
  * - filtering out pre-1.4 libraries (with the old style layout)
  * - filtering out library components that have different ABI version than the ABI version of the current compiler
+ * - filtering out libraries with non-default ir_provider.
  *
  * If no match found, fails with [Logger#fatal].
  *
@@ -251,5 +253,23 @@ class SingleKlibComponentResolver(
  */
 object CompilerSingleFileKlibResolveStrategy : SingleFileKlibResolveStrategy {
     override fun resolve(libraryFile: File, logger: Logger) =
-        SingleKlibComponentResolver(libraryFile.absolutePath, listOf(KotlinAbiVersion.CURRENT), logger).resolve(libraryFile.absolutePath)
+        SingleKlibComponentResolver(
+            libraryFile.absolutePath, listOf(KotlinAbiVersion.CURRENT), logger, emptyList()
+        ).resolve(libraryFile.absolutePath)
+}
+
+/**
+ * Similar to [CompilerSingleFileKlibResolveStrategy], but doesn't filter out
+ * libraries with [knownIrProviders].
+ */
+// TODO: It looks like a hack because it is.
+//  The reason this strategy exists is that we shouldn't skip Native metadata-based interop libraries
+//  when generating compiler caches.
+class CompilerSingleFileKlibResolveAllowingIrProvidersStrategy(
+    private val knownIrProviders: List<String>
+) : SingleFileKlibResolveStrategy {
+    override fun resolve(libraryFile: File, logger: Logger) =
+        SingleKlibComponentResolver(
+            libraryFile.absolutePath, listOf(KotlinAbiVersion.CURRENT), logger, knownIrProviders
+        ).resolve(libraryFile.absolutePath)
 }

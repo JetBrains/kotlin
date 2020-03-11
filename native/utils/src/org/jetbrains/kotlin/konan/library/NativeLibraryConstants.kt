@@ -13,6 +13,7 @@ const val KONAN_DISTRIBUTION_KLIB_DIR = "klib"
 const val KONAN_DISTRIBUTION_COMMON_LIBS_DIR = "common"
 const val KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR = "platform"
 const val KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR = "commonized"
+const val KLIB_INTEROP_IR_PROVIDER_IDENTIFIER = "kotlin.native.cinterop"
 
 const val KONAN_DISTRIBUTION_SOURCES_DIR = "sources"
 
