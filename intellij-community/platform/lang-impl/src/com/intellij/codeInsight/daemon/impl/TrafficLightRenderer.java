@@ -381,7 +381,8 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   }
 
   @Override
-  public AnalyzerStatus getStatus(Editor editor) {
+  @NotNull
+  public AnalyzerStatus getStatus(@NotNull Editor editor) {
     Color iconTextColor = editor.getColorsScheme().getColor(ICON_TEXT_COLOR);
 
     if (PowerSaveMode.isEnabled()) {
