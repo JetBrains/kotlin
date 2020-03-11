@@ -47,6 +47,7 @@ import com.intellij.ui.TextIcon;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.DeprecatedMethodException;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.storage.HeavyProcessLatch;
 import com.intellij.util.ui.GridBag;
@@ -68,6 +69,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
                                                                           UIUtil.getContextHelpForeground());
 
 
+  @NotNull
   private final Project myProject;
   private final Document myDocument;
   private final DaemonCodeAnalyzerImpl myDaemonCodeAnalyzer;
@@ -95,19 +97,20 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
    * @deprecated Please use the constructor not taking PsiFile parameter: {@link #TrafficLightRenderer(Project, Document)}
    */
   @Deprecated
-  public TrafficLightRenderer(@Nullable Project project, Document document, @SuppressWarnings("unused") PsiFile psiFile) {
+  public TrafficLightRenderer(Project project, Document document, PsiFile psiFile) {
     this(project, document);
+    DeprecatedMethodException.report("Please use TrafficLightRenderer(Project, Document) instead");
   }
 
-  public TrafficLightRenderer(@Nullable Project project, @Nullable Document document) {
+  public TrafficLightRenderer(@NotNull Project project, @Nullable Document document) {
     myProject = project;
-    myDaemonCodeAnalyzer = project == null ? null : (DaemonCodeAnalyzerImpl)DaemonCodeAnalyzer.getInstance(project);
+    myDaemonCodeAnalyzer = (DaemonCodeAnalyzerImpl)DaemonCodeAnalyzer.getInstance(project);
     myDocument = document;
     mySeverityRegistrar = SeverityRegistrar.getSeverityRegistrar(myProject);
 
     refresh(null);
 
-    if (project != null && document != null) {
+    if (document != null) {
       final MarkupModelEx model = (MarkupModelEx)DocumentMarkupModel.forDocument(document, project, true);
       model.addMarkupModelListener(this, new MarkupModelListener() {
         @Override
@@ -129,7 +132,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   }
 
   private PsiFile getPsiFile() {
-    return myProject == null ? null : PsiDocumentManager.getInstance(myProject).getPsiFile(myDocument);
+    return PsiDocumentManager.getInstance(myProject).getPsiFile(myDocument);
   }
 
   @NotNull
@@ -159,7 +162,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   }
 
   public boolean isValid() {
-    return myProject == null || myDocument == null || getPsiFile() != null;
+    return myDocument == null || getPsiFile() != null;
   }
 
   protected static final class DaemonCodeAnalyzerStatus {
@@ -179,8 +182,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       StringBuilder s = new StringBuilder("DS: finished=" + errorAnalyzingFinished);
       s.append("; pass statuses: ").append(passes.size()).append("; ");
       for (ProgressableTextEditorHighlightingPass passStatus : passes) {
-        s.append(
-          String.format("(%s %2.0f%% %b)", passStatus.getPresentableName(), passStatus.getProgress() * 100, passStatus.isFinished()));
+        s.append(String.format("(%s %2.0f%% %b)", passStatus.getPresentableName(), passStatus.getProgress() * 100, passStatus.isFinished()));
       }
       s.append("; error count: ").append(errorCount.length).append(": ").append(new TIntArrayList(errorCount));
       return s.toString();
@@ -196,7 +198,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       status.errorAnalyzingFinished = true;
       return status;
     }
-    if (myProject != null && myProject.isDisposed()) {
+    if (myProject.isDisposed()) {
       status.reasonWhyDisabled = "Project is disposed";
       status.errorAnalyzingFinished = true;
       return status;
@@ -246,11 +248,11 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
     status.errorCount = errorCount.clone();
 
-    status.passes = myDaemonCodeAnalyzer.getPassesToShowProgressFor(myDocument).stream().
-      filter(p -> p instanceof ProgressableTextEditorHighlightingPass).
-      map(p -> (ProgressableTextEditorHighlightingPass)p).
-      filter(p -> StringUtil.isNotEmpty(p.getPresentableName()) && p.getProgress() >= 0).
-      collect(Collectors.toList());
+    status.passes = myDaemonCodeAnalyzer.getPassesToShowProgressFor(myDocument).stream()
+      .filter(p -> p instanceof ProgressableTextEditorHighlightingPass)
+      .map(p -> (ProgressableTextEditorHighlightingPass)p)
+      .filter(p -> StringUtil.isNotEmpty(p.getPresentableName()) && p.getProgress() >= 0)
+      .collect(Collectors.toList());
 
     status.errorAnalyzingFinished = myDaemonCodeAnalyzer.isAllAnalysisFinished(psiFile);
     status.reasonWhySuspended = myDaemonCodeAnalyzer.isUpdateByTimerEnabled() ? null : "Highlighting is paused temporarily";
@@ -263,7 +265,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
                                                     @NotNull SeverityRegistrar severityRegistrar) {
   }
 
-  protected final Project getProject() {
+  protected final @NotNull Project getProject() {
     return myProject;
   }
 
@@ -327,7 +329,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     Icon icon = lastNotNullIndex == -1 ? AllIcons.General.InspectionsOK : mySeverityRegistrar.getRendererIconByIndex(lastNotNullIndex);
 
     if (status.errorAnalyzingFinished) {
-      boolean isDumb = myProject != null && DumbService.isDumb(myProject);
+      boolean isDumb = DumbService.isDumb(myProject);
       if (isDumb) {
         statusLabel = "Shallow analysis completed";
         statusExtraLine = "Complete results will be available after indexing";
@@ -404,7 +406,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       StringBuilder detailsBuilder = new StringBuilder();
 
       if (status.errorAnalyzingFinished) {
-        boolean isDumb = myProject != null && DumbService.isDumb(myProject);
+        boolean isDumb = DumbService.isDumb(myProject);
         if (isDumb) {
           title = "<b>Shallow analysis completed</b>";
           detailsBuilder.append("Complete results will be available after indexing");
@@ -437,7 +439,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         }
       }
 
-      if (statusIcons.size() > 0) {
+      if (!statusIcons.isEmpty()) {
         LayeredIcon statusIcon = new LayeredIcon(statusIcons.size());
         int maxIconHeight = statusIcons.stream().mapToInt(i -> i.getIconHeight()).max().orElse(0);
         for (int i = 0, xShift = 0; i < statusIcons.size(); i += 2) {
@@ -534,7 +536,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     protected List<AnAction> initActions() {
       List<AnAction> result = new ArrayList<>();
       PsiFile psiFile = getPsiFile();
-      if (psiFile != null && myProject != null) { // Configure inspections
+      if (psiFile != null) { // Configure inspections
         result.add(new DumbAwareAction(EditorBundle.message("iw.configure.inspections")) {
           @Override
           public void update(@NotNull AnActionEvent e) {
@@ -555,7 +557,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
       result.add(DaemonEditorPopup.createGotoGroup());
 
-      if (psiFile != null && myProject != null) { // Import popup
+      if (psiFile != null) { // Import popup
         result.add(Separator.create());
         result.add(new ToggleAction(EditorBundle.message("iw.show.import.tooltip")) {
           @Override
@@ -663,12 +665,12 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
     @Override
     public boolean canClosePopup() {
-      if (myAdditionalPanels.size() == 0) {
+      if (myAdditionalPanels.isEmpty()) {
         return true;
       }
-      else if (myAdditionalPanels.stream().allMatch(p -> p.canClose())) {
+      if (myAdditionalPanels.stream().allMatch(p -> p.canClose())) {
         PsiFile psiFile = getPsiFile();
-        if(myAdditionalPanels.stream().filter(p -> p.isModified()).peek(TrafficLightRenderer::applyPanel).count() > 0) {
+        if (myAdditionalPanels.stream().filter(p -> p.isModified()).peek(TrafficLightRenderer::applyPanel).count() > 0) {
           if (psiFile != null) {
             InjectedLanguageManager.getInstance(myProject).dropFileCaches(psiFile);
           }
@@ -676,7 +678,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         }
         return true;
       }
-      else return false;
+      return false;
     }
 
     @Override
