@@ -9,6 +9,10 @@ import com.intellij.codeInsight.completion.ml.MLFeatureValue
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.lang.Language
 import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.impl.source.PsiFieldImpl
+import com.intellij.psi.impl.source.PsiMethodImpl
+import com.intellij.psi.impl.source.PsiParameterImpl
+import com.intellij.psi.impl.source.tree.java.PsiLocalVariableImpl
 import junit.framework.TestCase
 
 class CommonElementLocationFeaturesTest: LightCompletionTestCase() {
@@ -44,6 +48,25 @@ class CommonElementLocationFeaturesTest: LightCompletionTestCase() {
     assertFeaturesEquals(features.getValue("Inner"), MLFeatureValue.float(-7))
 
     assertFalse(features.containsKey("Exception"))
+  }
+
+  fun `test lookup element psi class name`() {
+    val features = calculateFeature("lookup_element_psi_class_name", "Test.java") {
+      """|class Test {
+         |  private int a = 1;
+         |  
+         |  void f(String s) {
+         |    long c = 3;
+         |    System.out.println(<caret>);
+         |  }
+         |}
+      """.trimMargin()
+    }
+
+    assertFeaturesEquals(features.getValue("a"), MLFeatureValue.className(PsiFieldImpl::class.java))
+    assertFeaturesEquals(features.getValue("s"), MLFeatureValue.className(PsiParameterImpl::class.java))
+    assertFeaturesEquals(features.getValue("f"), MLFeatureValue.className(PsiMethodImpl::class.java))
+    assertFeaturesEquals(features.getValue("c"), MLFeatureValue.className(PsiLocalVariableImpl::class.java))
   }
 
   @Suppress("SameParameterValue")

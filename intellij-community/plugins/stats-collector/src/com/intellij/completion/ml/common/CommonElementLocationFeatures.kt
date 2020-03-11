@@ -29,6 +29,10 @@ class CommonElementLocationFeatures : ElementFeatureProvider {
       }
     }
 
+    completionElement?.let {
+      result["item_class"] = MLFeatureValue.className(it::class.java)
+    }
+
     return result
   }
 

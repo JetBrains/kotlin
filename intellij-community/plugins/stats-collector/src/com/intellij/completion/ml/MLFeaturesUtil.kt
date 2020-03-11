@@ -4,6 +4,8 @@ package com.intellij.completion.ml
 import com.intellij.codeInsight.completion.CompletionLocation
 import com.intellij.codeInsight.completion.CompletionService
 import com.intellij.codeInsight.completion.CompletionSorter
+import com.google.common.cache.CacheBuilder
+import com.google.common.cache.CacheLoader
 import com.intellij.codeInsight.completion.ml.MLFeatureValue
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementWeigher
@@ -21,9 +23,17 @@ object MLFeaturesUtil {
     }
   }
 
+  val classNameSafeCache = CacheBuilder
+    .newBuilder()
+    .softValues()
+    .maximumSize(100)
+    .build(object: CacheLoader<Class<*>, String>() {
+      override fun load(clazz: Class<*>) = if (getPluginInfo(clazz).isSafeToReport()) clazz.name else "third.party"
+    })
+
   private fun getClassNameSafe(feature: MLFeatureValue.ClassNameValue): String {
     val clazz = feature.value
-    return if (getPluginInfo(clazz).isSafeToReport()) clazz.name else "third.party"
+    return classNameSafeCache[clazz]
   }
 
   fun addWeighersToNonDefaultSorter(sorter: CompletionSorter, location: CompletionLocation, vararg weigherIds: String): CompletionSorter {
