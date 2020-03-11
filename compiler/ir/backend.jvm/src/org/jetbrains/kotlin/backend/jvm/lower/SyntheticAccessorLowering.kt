@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -54,7 +55,10 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
                 parameter: IrValueParameter,
                 scope: IrDeclaration
             ) {
-                inlineLambdaToCallSite[argument.symbol.owner] = LambdaCallSite(scope, parameter.isCrossinline)
+                // suspendCoroutine and suspendCoroutineUninterceptedOrReturn accept crossinline lambdas to disallow non-local returns,
+                // but these lambdas are effectively inline
+                inlineLambdaToCallSite[argument.symbol.owner] =
+                    LambdaCallSite(scope, parameter.isCrossinline && !callee.isCoroutineIntrinsic())
             }
         }, null)
 
@@ -602,3 +606,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         (name.asString() == "access\$monitorEnter" || name.asString() == "access\$monitorExit") &&
                 context.irIntrinsics.getIntrinsic(symbol) != null
 }
+
+private fun IrFunction.isCoroutineIntrinsic(): Boolean =
+    (name.asString() == "suspendCoroutine" && getPackageFragment()?.fqName == FqName("kotlin.coroutines")) ||
+            (name.asString() == "suspendCoroutineUninterceptedOrReturn" && getPackageFragment()?.fqName == FqName("kotlin.coroutines.intrinsics"))
