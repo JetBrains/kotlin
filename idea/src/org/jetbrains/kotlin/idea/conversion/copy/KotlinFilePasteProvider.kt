@@ -17,6 +17,7 @@ import com.intellij.psi.JavaDirectoryService
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -37,7 +38,7 @@ class KotlinFilePasteProvider : PasteProvider {
 
         @Suppress("UsePropertyAccessSyntax")
         val directory = ideView.getOrChooseDirectory() ?: return
-        project.executeWriteCommand("Create Kotlin file") {
+        project.executeWriteCommand(KotlinBundle.message("create.kotlin.file")) {
             val file = try {
                 directory.createFile(fileName)
             } catch (e: IncorrectOperationException) {

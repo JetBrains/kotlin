@@ -41,7 +41,10 @@ import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.util.*
 
-class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration>(KtNamedDeclaration::class.java, "Create test") {
+class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration>(
+    KtNamedDeclaration::class.java,
+    KotlinBundle.message("create.test")
+) {
     override fun applicabilityRange(element: KtNamedDeclaration): TextRange? {
         if (element.hasExpectModifier() || element.nameIdentifier == null) return null
         if (ModuleUtilCore.findModuleForPsiElement(element) == null) return null
@@ -154,7 +157,10 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                     val generatedFile = generatedClass.containingFile as? PsiJavaFile ?: return@runWhenSmart
 
                     if (generatedClass.language == JavaLanguage.INSTANCE) {
-                        project.executeCommand<Unit>("Convert class '${generatedClass.name}' to Kotlin", this) {
+                        project.executeCommand<Unit>(
+                            KotlinBundle.message("convert.class.0.to.kotlin", generatedClass.name.toString()),
+                            this
+                        ) {
                             runWriteAction {
                                 generatedClass.methods.forEach {
                                     it.throwsList.referenceElements.forEach { referenceElement -> referenceElement.delete() }

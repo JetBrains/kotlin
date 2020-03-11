@@ -16,6 +16,7 @@ import com.intellij.ui.components.JBLabelDecorator
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.UIUtil
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.util.onTextChange
 import java.io.File
 import javax.swing.InputVerifier
@@ -26,9 +27,9 @@ class MoveRefactoringActionDialog(
 ) : DialogWrapper(project, true) {
 
     companion object {
-        const val WINDOW_TITLE = "Move refactoring test"
-        const val COUNT_LABEL_TEXT = "Maximum count of applied refactoring before validity check"
-        const val LOG_FILE_WILL_BE_PLACED_HERE = "Test result log file will be placed here"
+        val WINDOW_TITLE get() = KotlinBundle.message("move.refactoring.test")
+        val COUNT_LABEL_TEXT get() = KotlinBundle.message("maximum.count.of.applied.refactoring.before.validity.check")
+        val LOG_FILE_WILL_BE_PLACED_HERE get() = KotlinBundle.message("test.result.log.file.will.be.placed.here")
 
         const val RECENT_SELECTED_PATH = "org.jetbrains.kotlin.idea.actions.internal.refactoringTesting.RECENT_SELECTED_PATH"
         const val RECENT_SELECTED_RUN_COUNT = "org.jetbrains.kotlin.idea.actions.internal.refactoringTesting.RECENT_SELECTED_RUN_COUNT"

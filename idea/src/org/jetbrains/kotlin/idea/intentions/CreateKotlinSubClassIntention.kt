@@ -60,13 +60,12 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(
         return TextRange(element.startOffset, element.body?.lBrace?.startOffset ?: element.endOffset)
     }
 
-    private fun getImplementTitle(baseClass: KtClass) =
-        when {
-            baseClass.isInterface() -> "Implement interface"
-            baseClass.isAbstract() -> "Implement abstract class"
-            baseClass.isSealed() -> "Implement sealed class"
-            else /* open class */ -> "Create subclass"
-        }
+    private fun getImplementTitle(baseClass: KtClass) = when {
+        baseClass.isInterface() -> KotlinBundle.message("implement.interface")
+        baseClass.isAbstract() -> KotlinBundle.message("implement.abstract.class")
+        baseClass.isSealed() -> KotlinBundle.message("implement.sealed.class")
+        else /* open class */ -> KotlinBundle.message("create.subclass")
+    }
 
     override fun startInWriteAction() = false
 
