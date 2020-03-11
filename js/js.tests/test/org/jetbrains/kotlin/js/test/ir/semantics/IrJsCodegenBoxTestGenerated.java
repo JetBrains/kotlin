@@ -11923,6 +11923,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/ir/serializationRegressions/innerClassInEnumEntryClass.kt");
             }
 
+            @TestMetadata("signatureClash.kt")
+            public void testSignatureClash() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/serializationRegressions/signatureClash.kt");
+            }
+
             @TestMetadata("transitiveClash.kt")
             public void testTransitiveClash() throws Exception {
                 runTest("compiler/testData/codegen/box/ir/serializationRegressions/transitiveClash.kt");
