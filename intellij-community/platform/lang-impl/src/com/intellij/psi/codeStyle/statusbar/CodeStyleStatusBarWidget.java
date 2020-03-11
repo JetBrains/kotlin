@@ -95,7 +95,6 @@ public class CodeStyleStatusBarWidget extends EditorBasedStatusBarPopup implemen
     }
   }
 
-
   @Nullable
   private PsiFile getPsiFile() {
     Editor editor = getEditor();
