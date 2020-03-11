@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 class ReplaceExplicitFunctionLiteralParamWithItIntention : PsiElementBaseIntentionAction() {
-    override fun getFamilyName() = "Replace explicit lambda parameter with 'it'"
+    override fun getFamilyName() = KotlinBundle.message("replace.explicit.lambda.parameter.with.it")
 
     override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {
         val functionLiteral = targetFunctionLiteral(element, editor.caretModel.offset) ?: return false

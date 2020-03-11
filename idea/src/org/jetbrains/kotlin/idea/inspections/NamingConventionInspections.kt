@@ -179,7 +179,7 @@ sealed class NamingConventionInspection(
 }
 
 class ClassNameInspection : NamingConventionInspection(
-    "Class",
+    KotlinBundle.message("class"),
     "[A-Z][A-Za-z\\d]*",
     START_UPPER, NO_UNDERSCORES, NO_BAD_CHARACTERS
 ) {
@@ -197,7 +197,7 @@ class ClassNameInspection : NamingConventionInspection(
 }
 
 class EnumEntryNameInspection : NamingConventionInspection(
-    "Enum entry",
+    KotlinBundle.message("enum.entry"),
     "[A-Z]([A-Za-z\\d]*|[A-Z_\\d]*)",
     START_UPPER, NO_BAD_CHARACTERS_OR_UNDERSCORE
 ) {
@@ -207,7 +207,7 @@ class EnumEntryNameInspection : NamingConventionInspection(
 }
 
 class FunctionNameInspection : NamingConventionInspection(
-    "Function",
+    KotlinBundle.message("function"),
     "[a-z][A-Za-z\\d]*",
     START_LOWER, NO_UNDERSCORES, NO_BAD_CHARACTERS
 ) {
@@ -224,7 +224,7 @@ class FunctionNameInspection : NamingConventionInspection(
 }
 
 class TestFunctionNameInspection : NamingConventionInspection(
-    "Test function",
+    KotlinBundle.message("test.function"),
     "[a-z][A-Za-z_\\d]*",
     START_LOWER
 ) {
@@ -279,30 +279,30 @@ abstract class PropertyNameInspectionBase protected constructor(
 
 class PropertyNameInspection :
     PropertyNameInspectionBase(
-        PropertyKind.NORMAL, "Property", "[a-z][A-Za-z\\d]*",
+        PropertyKind.NORMAL, KotlinBundle.message("property"), "[a-z][A-Za-z\\d]*",
         START_LOWER, NO_UNDERSCORES, NO_BAD_CHARACTERS
     )
 
 class ObjectPropertyNameInspection :
     PropertyNameInspectionBase(
         PropertyKind.OBJECT_OR_TOP_LEVEL,
-        "Object or top-level property",
+        KotlinBundle.message("object.or.top.level.property"),
         "[A-Za-z][_A-Za-z\\d]*",
         NO_START_UNDERSCORE, NO_BAD_CHARACTERS_OR_UNDERSCORE
     )
 
 class PrivatePropertyNameInspection :
     PropertyNameInspectionBase(
-        PropertyKind.PRIVATE, "Private property", "_?[a-z][A-Za-z\\d]*",
+        PropertyKind.PRIVATE, KotlinBundle.message("private.property"), "_?[a-z][A-Za-z\\d]*",
         NO_MIDDLE_UNDERSCORES, NO_BAD_CHARACTERS_OR_UNDERSCORE
     )
 
 class ConstPropertyNameInspection :
-    PropertyNameInspectionBase(PropertyKind.CONST, "Const property", "[A-Z][_A-Z\\d]*")
+    PropertyNameInspectionBase(PropertyKind.CONST, KotlinBundle.message("const.property"), "[A-Z][_A-Z\\d]*")
 
 class LocalVariableNameInspection :
     PropertyNameInspectionBase(
-        PropertyKind.LOCAL, "Local variable", "[a-z][A-Za-z\\d]*",
+        PropertyKind.LOCAL, KotlinBundle.message("local.variable"), "[a-z][A-Za-z\\d]*",
         START_LOWER, NO_UNDERSCORES, NO_BAD_CHARACTERS
     )
 

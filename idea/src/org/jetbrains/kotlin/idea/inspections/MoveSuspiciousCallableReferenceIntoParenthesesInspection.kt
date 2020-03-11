@@ -90,7 +90,7 @@ class MoveSuspiciousCallableReferenceIntoParenthesesInspection : AbstractKotlinI
     }
 
     class MoveIntoParenthesesIntention : ConvertLambdaToReferenceIntention(
-        "Move suspicious callable reference into parentheses '()'"
+        KotlinBundle.message("move.suspicious.callable.reference.into.parentheses")
     ) {
         override fun buildReferenceText(element: KtLambdaExpression): String? {
             val callableReferenceExpression =

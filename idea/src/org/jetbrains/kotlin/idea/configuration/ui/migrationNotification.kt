@@ -70,5 +70,8 @@ private fun StringBuilder.appendBr(line: String) = this.append("$line<br/>")
 private fun StringBuilder.appendIndentBr(line: String) = appendBr("&nbsp;&nbsp;$line")
 
 private const val KOTLIN_MIGRATION_NOTIFICATION_ID = "Kotlin Migration"
-private val KOTLIN_MIGRATION_NOTIFICATION_GROUP =
-    NotificationGroup(KOTLIN_MIGRATION_NOTIFICATION_ID, NotificationDisplayType.STICKY_BALLOON, true)
+private val KOTLIN_MIGRATION_NOTIFICATION_GROUP = NotificationGroup(
+    KOTLIN_MIGRATION_NOTIFICATION_ID,
+    NotificationDisplayType.STICKY_BALLOON,
+    true
+)

@@ -351,7 +351,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
                 showRestoreReferencesDialog(project, referencesPossibleToRestore)
             if (selectedReferencesToRestore.isEmpty()) return@invokeLater
 
-            project.executeWriteCommand("resolve pasted references") {
+            project.executeWriteCommand(KotlinBundle.message("resolve.pasted.references")) {
                 val imported = TreeSet<String>()
                 restoreReferences(selectedReferencesToRestore, file, imported)
 

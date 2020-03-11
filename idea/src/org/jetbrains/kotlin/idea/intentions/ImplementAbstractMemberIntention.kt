@@ -222,8 +222,8 @@ abstract class ImplementAbstractMemberIntentionBase :
 
 class ImplementAbstractMemberIntention : ImplementAbstractMemberIntentionBase() {
     override fun computeText(element: KtNamedDeclaration): String? = when (element) {
-        is KtProperty -> "Implement abstract property"
-        is KtNamedFunction -> "Implement abstract function"
+        is KtProperty -> KotlinBundle.message("implement.abstract.property")
+        is KtNamedFunction -> KotlinBundle.message("implement.abstract.function")
         else -> null
     }
 
