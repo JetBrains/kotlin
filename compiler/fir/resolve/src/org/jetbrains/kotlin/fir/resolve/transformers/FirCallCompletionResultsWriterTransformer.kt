@@ -181,15 +181,16 @@ class FirCallCompletionResultsWriterTransformer(
             else -> {
                 resultType = typeRef.substituteTypeRef(subCandidate)
                 val argumentMapping = subCandidate.argumentMapping
-                val vararg = argumentMapping?.values?.firstOrNull { it.isVararg }
+                val varargParameter = argumentMapping?.values?.firstOrNull { it.isVararg }
                 result.argumentList.transformArguments(this, subCandidate.createArgumentsMapping())
                 with(result.argumentList) call@{
-                    if (vararg != null) {
+                    if (varargParameter != null) {
                         // Create a FirVarargArgumentExpression for the vararg arguments
-                        val varargParameterTypeRef = vararg.returnTypeRef
+                        val varargParameterTypeRef = varargParameter.returnTypeRef
                         val resolvedArrayType = varargParameterTypeRef.substitute(subCandidate)
                         val resolvedElementType = resolvedArrayType.arrayElementType(session)
                         var firstIndex = this@call.arguments.size
+                        val newArgumentMapping = mutableMapOf<FirExpression, FirValueParameter>()
                         val varargArgument = buildVarargArgumentsExpression {
                             varargElementType = varargParameterTypeRef.withReplacedConeType(resolvedElementType)
                             this.typeRef = varargParameterTypeRef.withReplacedConeType(resolvedArrayType)
@@ -198,19 +199,17 @@ class FirCallCompletionResultsWriterTransformer(
                                 if (valueParameter.isVararg) {
                                     firstIndex = min(firstIndex, i)
                                     arguments += arg
+                                } else {
+                                    newArgumentMapping[arg] = valueParameter
                                 }
                             }
                         }
-                        result.replaceArgumentList(
-                            buildArgumentList {
-                                arguments += result.arguments
-                                for (arg in varargArgument.arguments) {
-                                    arguments.remove(arg)
-                                }
-                                arguments.add(firstIndex, varargArgument)
-                            }
-                        )
+                        newArgumentMapping[varargArgument] = varargParameter
+                        subCandidate.argumentMapping = newArgumentMapping
                     }
+                }
+                subCandidate.argumentMapping?.let {
+                    result.replaceArgumentList(FirResolvedArgumentList(it))
                 }
                 result.transformExplicitReceiver(integerApproximator, null)
             }

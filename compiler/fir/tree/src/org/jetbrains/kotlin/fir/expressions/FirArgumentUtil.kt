@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -48,4 +49,17 @@ class FirArraySetArgumentList(
 ) : FirAbstractArgumentList() {
     override val arguments: List<FirExpression>
         get() = indexes + rValue
+}
+
+class FirResolvedArgumentList(
+    val mapping: Map<FirExpression, FirValueParameter>
+) : FirAbstractArgumentList() {
+    override val arguments: List<FirExpression>
+        get() = mapping.keys.toList()
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        for (argument in mapping.keys) {
+            argument.accept(visitor, data)
+        }
+    }
 }

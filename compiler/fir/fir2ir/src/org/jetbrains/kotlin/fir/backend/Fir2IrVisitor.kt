@@ -542,6 +542,20 @@ class Fir2IrVisitor(
                 val argumentsCount = call.arguments.size
                 if (argumentsCount <= valueArgumentsCount) {
                     apply {
+                        val argumentMapping = call.argumentMapping
+                        if (argumentMapping != null && argumentMapping.isNotEmpty()) {
+                            require(call is FirFunctionCall)
+                            val function =
+                                ((call.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirFunctionSymbol<*>)?.fir
+                            val valueParameters = function?.valueParameters
+                            if (valueParameters != null) {
+                                for ((argument, parameter) in argumentMapping) {
+                                    val argumentExpression = argument.toIrExpression()
+                                    putValueArgument(valueParameters.indexOf(parameter), argumentExpression)
+                                }
+                                return this
+                            }
+                        }
                         for ((index, argument) in call.arguments.withIndex()) {
                             val argumentExpression = argument.toIrExpression()
                             putValueArgument(index, argumentExpression)

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
@@ -37,6 +38,9 @@ fun <T> buildConstOrErrorExpression(source: FirSourceElement?, kind: FirConstKin
 inline val FirCall.arguments: List<FirExpression> get() = argumentList.arguments
 
 inline val FirCall.argument: FirExpression get() = argumentList.arguments.first()
+
+inline val FirCall.argumentMapping: Map<FirExpression, FirValueParameter>?
+    get() = (argumentList as? FirResolvedArgumentList)?.mapping
 
 fun FirExpression.toResolvedCallableReference(): FirResolvedNamedReference? {
     return (this as? FirQualifiedAccess)?.calleeReference as? FirResolvedNamedReference

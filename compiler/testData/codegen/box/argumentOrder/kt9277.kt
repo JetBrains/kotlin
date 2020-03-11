@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // KT-9277 Unexpected NullPointerException in an invocaton with named arguments
 
 fun box(): String {

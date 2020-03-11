@@ -25,8 +25,8 @@ FILE fqName:<root> fileName:/callWithReorderedArguments.kt
         a: CALL 'public final fun noReorder1 (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
         b: CALL 'public final fun noReorder2 (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
       CALL 'public final fun foo (a: kotlin.Int, b: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        a: CALL 'public final fun reordered1 (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-        b: CALL 'public final fun reordered2 (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+        a: CALL 'public final fun reordered2 (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+        b: CALL 'public final fun reordered1 (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
       CALL 'public final fun foo (a: kotlin.Int, b: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        a: CONST Int type=kotlin.Int value=1
-        b: CALL 'public final fun reordered2 (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+        a: CALL 'public final fun reordered2 (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+        b: CONST Int type=kotlin.Int value=1

@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/useNextParamInLambda.kt
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
           $this: CALL 'public final fun f (f1: kotlin.Function0<kotlin.String>, f2: kotlin.Function0<kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
-            f1: FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
+            f2: FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'

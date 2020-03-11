@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun <T> T.toPrefixedString(prefix: String = "", suffix: String="") = prefix + this.toString() + suffix
 
 fun box() : String {
