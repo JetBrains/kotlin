@@ -19,6 +19,7 @@ import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.*;
+import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.ex.MarkupModelEx;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.editor.impl.DocumentMarkupModel;
@@ -63,6 +64,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
+  private static final ColorKey ICON_TEXT_COLOR = ColorKey.createColorKey("ActionButton.iconTextForeground",
+                                                                          UIUtil.getContextHelpForeground());
+
+
   private final Project myProject;
   private final Document myDocument;
   private final DaemonCodeAnalyzerImpl myDaemonCodeAnalyzer;
@@ -377,7 +382,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
   @Override
   public AnalyzerStatus getStatus(Editor editor) {
-    Color iconTextColor = editor.getColorsScheme().getDefaultForeground();
+    Color iconTextColor = editor.getColorsScheme().getColor(ICON_TEXT_COLOR);
 
     if (PowerSaveMode.isEnabled()) {
       return new AnalyzerStatus(AllIcons.General.InspectionsPowerSaveMode,
