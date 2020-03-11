@@ -562,7 +562,7 @@ tasks {
             ":compiler:fir:lightTree:test",
             ":compiler:fir:resolve:test",
             ":compiler:fir:fir2ir:test",
-            ":idea:firTest"
+            ":idea:idea-fir:test"
         )
     }
 
@@ -656,7 +656,8 @@ tasks {
             ":idea:jvm-debugger:jvm-debugger-evaluation:test",
             ":idea:jvm-debugger:jvm-debugger-sequence:test",
             ":idea:jvm-debugger:eval4j:test",
-            ":idea:scripting-support:test"
+            ":idea:scripting-support:test",
+            ":idea:idea-fir:test"
         )
     }
 

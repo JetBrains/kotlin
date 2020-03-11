@@ -195,15 +195,6 @@ projectTest(parallel = true) {
     workingDir = rootDir
 }
 
-projectTest("firTest", parallel = true) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    filter {
-        includeTestsMatching("org.jetbrains.kotlin.idea.fir.*")
-        includeTestsMatching("org.jetbrains.kotlin.idea.resolve.FirReferenceResolveTestGenerated")
-    }
-}
-
 configureFormInstrumentation()
 
 testsJar()

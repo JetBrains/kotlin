@@ -81,7 +81,6 @@ import org.jetbrains.kotlin.idea.editor.AbstractMultiLineStringIndentTest
 import org.jetbrains.kotlin.idea.editor.backspaceHandler.AbstractBackspaceHandlerTest
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest
 import org.jetbrains.kotlin.idea.filters.AbstractKotlinExceptionFilterTest
-import org.jetbrains.kotlin.idea.fir.AbstractFirMultiModuleResolveTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyWithLibTest
@@ -246,16 +245,6 @@ fun main(args: Array<String>) {
             model("checker/scripts", extension = "kts")
             model("checker/duplicateJvmSignature")
             model("checker/infos", testMethod = "doTestWithInfos")
-            model("checker/diagnosticsMessage")
-        }
-
-        testClass<AbstractFirPsiCheckerTest> {
-            model("checker", recursive = false)
-            model("checker/regression")
-            model("checker/recovery")
-            model("checker/rendering")
-            model("checker/duplicateJvmSignature")
-            model("checker/infos")
             model("checker/diagnosticsMessage")
         }
 
@@ -500,10 +489,6 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractReferenceResolveTest> {
-            model("resolve/references", pattern = KT_WITHOUT_DOTS_IN_NAME)
-        }
-
-        testClass<AbstractFirReferenceResolveTest> {
             model("resolve/references", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
@@ -864,10 +849,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractScratchLineMarkersTest> {
             model("scratch/lineMarker", testMethod = "doScratchTest", pattern = KT_OR_KTS)
-        }
-
-        testClass<AbstractFirMultiModuleResolveTest> {
-            model("fir/multiModule", recursive = false, extension = null)
         }
     }
 
