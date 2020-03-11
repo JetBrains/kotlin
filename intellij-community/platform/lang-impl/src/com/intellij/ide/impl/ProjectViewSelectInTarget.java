@@ -57,8 +57,9 @@ public abstract class ProjectViewSelectInTarget extends SelectInTargetPsiWrapper
       return ActionCallback.REJECTED;
     }
 
+    String id = ObjectUtils.chooseNotNull(viewId, projectView.getDefaultViewId());
     if (ApplicationManager.getApplication().isUnitTestMode()) {
-      AbstractProjectViewPane pane = projectView.getProjectViewPaneById(ObjectUtils.chooseNotNull(viewId, projectView.getDefaultViewId()));
+      AbstractProjectViewPane pane = projectView.getProjectViewPaneById(id);
       pane.select(toSelect, virtualFile, requestFocus);
       return ActionCallback.DONE;
     }
@@ -74,8 +75,16 @@ public abstract class ProjectViewSelectInTarget extends SelectInTargetPsiWrapper
 
     ActionCallback result = new ActionCallback();
     Runnable runnable = () -> {
-      projectView.changeViewCB(ObjectUtils.chooseNotNull(viewId, projectView.getDefaultViewId()), subviewId)
-        .doWhenProcessed(() -> projectView.selectCB(toSelectSupplier.get(), virtualFile, requestFocus).notify(result));
+      projectView.changeViewCB(id, subviewId).doWhenProcessed(() -> {
+        Object element = toSelectSupplier.get();
+        AbstractProjectViewPane pane = requestFocus ? null : projectView.getProjectViewPaneById(id);
+        if (pane != null && pane.isVisibleAndSelected(element)) {
+          result.setDone();
+        }
+        else {
+          projectView.selectCB(element, virtualFile, requestFocus).notify(result);
+        }
+      });
     };
 
     if (requestFocus) {

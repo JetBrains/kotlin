@@ -851,6 +851,20 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
     return TreeUtil.promiseVisit(myTree, visitor);
   }
 
+  @ApiStatus.Internal
+  public boolean isVisibleAndSelected(Object element) {
+    JTree tree = getTree();
+    if (tree == null) return false;
+    TreePath path = TreeUtil.getSelectedPathIfOne(tree);
+    if (path == null) return false;
+    Rectangle bounds = tree.getPathBounds(path);
+    if (bounds == null) return false;
+    Rectangle visible = tree.getVisibleRect();
+    if (bounds.y < visible.y || bounds.y > visible.y + visible.height - bounds.height) return false;
+    AbstractTreeNode<?> node = TreeUtil.getLastUserObject(AbstractTreeNode.class, path);
+    return node != null && node.canRepresent(element);
+  }
+
   AsyncProjectViewSupport getAsyncSupport() {
     return null;
   }
