@@ -15764,6 +15764,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/jvmField/checkNoAccessors.kt");
         }
 
+        @TestMetadata("clashWithJavaSuperClassField.kt")
+        public void testClashWithJavaSuperClassField() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmField/clashWithJavaSuperClassField.kt");
+        }
+
         @TestMetadata("classFieldReference.kt")
         public void testClassFieldReference() throws Exception {
             runTest("compiler/testData/codegen/box/jvmField/classFieldReference.kt");
