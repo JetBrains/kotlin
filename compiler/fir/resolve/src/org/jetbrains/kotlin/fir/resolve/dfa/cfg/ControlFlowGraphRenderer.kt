@@ -47,7 +47,7 @@ class FirControlFlowGraphRenderVisitor(
         printer
             .println("digraph ${file.name.replace(".", "_")} {")
             .pushIndent()
-            .println("graph [splines=ortho nodesep=3]")
+            .println("graph [nodesep=3]")
             .println("node [shape=box penwidth=2]")
             .println("edge [penwidth=2]")
             .println()
