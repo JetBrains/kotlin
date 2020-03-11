@@ -75,11 +75,16 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
     return items;
   }
 
-  static @Nullable String calcText(@NotNull PsiDocCommentBase comment) {
+  static @NotNull String calcText(@Nullable PsiDocCommentBase comment) {
     try {
-      PsiElement owner = comment.getOwner();
-      if (owner == null) return null;
-      return DocumentationManager.getProviderFromElement(owner).generateRenderedDoc(owner);
+      String text = null;
+      if (comment != null) {
+        PsiElement owner = comment.getOwner();
+        if (owner != null) {
+          text = DocumentationManager.getProviderFromElement(owner).generateRenderedDoc(owner);
+        }
+      }
+      return text == null ? CodeInsightBundle.message("doc.render.not.available.text") : text;
     }
     catch (IndexNotReadyException e) {
       LOG.warn(e);

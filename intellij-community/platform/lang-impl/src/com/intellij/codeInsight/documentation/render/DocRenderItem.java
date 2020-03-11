@@ -283,9 +283,7 @@ class DocRenderItem {
 
   private void generateHtmlInBackgroundAndToggle() {
     ReadAction.nonBlocking(() -> {
-      PsiDocCommentBase comment = getComment();
-      String html = comment == null ? null : DocRenderPassFactory.calcText(comment);
-      return html == null ? CodeInsightBundle.message("doc.render.not.available.text") : html;
+      return DocRenderPassFactory.calcText(getComment());
     }).withDocumentsCommitted(Objects.requireNonNull(editor.getProject()))
       .coalesceBy(this)
       .finishOnUiThread(ModalityState.any(), html -> {
