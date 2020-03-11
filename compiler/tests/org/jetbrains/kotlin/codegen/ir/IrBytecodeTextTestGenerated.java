@@ -2845,6 +2845,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/isCheckForInlineClass.kt");
         }
 
+        @TestMetadata("mangledInlineClassInterfaceImplementation.kt")
+        public void testMangledInlineClassInterfaceImplementation() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/mangledInlineClassInterfaceImplementation.kt");
+        }
+
         @TestMetadata("noActualCallsOfInlineFunctionsOfInlineClass.kt")
         public void testNoActualCallsOfInlineFunctionsOfInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noActualCallsOfInlineFunctionsOfInlineClass.kt");
