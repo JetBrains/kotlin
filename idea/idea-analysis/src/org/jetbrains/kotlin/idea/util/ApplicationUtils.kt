@@ -44,3 +44,9 @@ fun <T> Project.executeCommand(name: String, groupId: Any? = null, command: () -
 }
 
 fun <T> runWithCancellationCheck(block: () -> T): T = block()
+
+inline fun invokeLater(crossinline action: () -> Unit) {
+    ApplicationManager.getApplication().invokeLater { action() }
+}
+
+inline fun isUnitTestMode(): Boolean = ApplicationManager.getApplication().isUnitTestMode
