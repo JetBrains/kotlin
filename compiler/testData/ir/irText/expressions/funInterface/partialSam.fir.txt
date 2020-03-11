@@ -73,7 +73,7 @@ FILE fqName:<root> fileName:/partialSam.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='public final fun run (s: kotlin.String, i: kotlin.Int, t: kotlin.String): kotlin.Int declared in <root>.fsi.<no name provided>'
                   CONST Int type=kotlin.Int value=1
-          CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.fsi.<no name provided>' type=<root>.fsi.<no name provided> origin=null
+          CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.fsi.<no name provided>' type=<root>.fsi.<no name provided> origin=OBJECT_LITERAL
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fsi> visibility:public modality:FINAL <> () returnType:<root>.fsi.<no name provided>
       correspondingProperty: PROPERTY name:fsi visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -97,7 +97,7 @@ FILE fqName:<root> fileName:/partialSam.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='public final fun run (s: kotlin.String, i: kotlin.Int, t: kotlin.Int): kotlin.String declared in <root>.fis.<no name provided>'
                   CONST String type=kotlin.String value=""
-          CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.fis.<no name provided>' type=<root>.fis.<no name provided> origin=null
+          CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.fis.<no name provided>' type=<root>.fis.<no name provided> origin=OBJECT_LITERAL
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fis> visibility:public modality:FINAL <> () returnType:<root>.fis.<no name provided>
       correspondingProperty: PROPERTY name:fis visibility:public modality:FINAL [val]
       BLOCK_BODY

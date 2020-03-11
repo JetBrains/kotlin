@@ -829,7 +829,8 @@ class Fir2IrVisitor(
                         endOffset,
                         anonymousClassType,
                         anonymousClass.constructors.first().symbol,
-                        anonymousClass.typeParameters.size
+                        anonymousClass.typeParameters.size,
+                        origin = IrStatementOrigin.OBJECT_LITERAL
                     )
                 )
             )

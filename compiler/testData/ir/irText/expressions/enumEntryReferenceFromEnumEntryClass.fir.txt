@@ -88,7 +88,7 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
                         value: CONST Int type=kotlin.Int value=1
                       CALL 'public final fun foo (): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=null
                         $this: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z' type=<root>.MyEnum.Z origin=null
-                CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum.Z.anObject.<no name provided>' type=<root>.MyEnum.Z.anObject.<no name provided> origin=null
+                CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum.Z.anObject.<no name provided>' type=<root>.MyEnum.Z.anObject.<no name provided> origin=OBJECT_LITERAL
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-anObject> visibility:public modality:FINAL <> ($this:<root>.MyEnum.Z) returnType:<root>.MyEnum.Z.anObject.<no name provided>
             correspondingProperty: PROPERTY name:anObject visibility:public modality:FINAL [val]
             $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum.Z
