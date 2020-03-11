@@ -31,11 +31,35 @@ import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 
+object ComposeTransforms {
+    const val DEFAULT = 0b0111111
+    const val NONE = 0b0000000
+    const val FRAMED_CLASSES = 0b0000001
+    const val LAMBDA_MEMOIZATION = 0b0000010
+    const val COMPOSER_PARAM = 0b0000100
+    const val INTRINSICS = 0b0001000
+    const val CALLS_AND_EMITS = 0b0010000
+    const val RESTART_GROUPS = 0b0100000
+    const val CONTROL_FLOW_GROUPS = 0b1000000
+}
+
 class ComposeIrGenerationExtension : IrGenerationExtension {
     override fun generate(
         file: IrFile,
         backendContext: BackendContext,
         bindingContext: BindingContext
+    ) = generate(
+        file,
+        backendContext,
+        bindingContext,
+        transforms = ComposeTransforms.DEFAULT
+    )
+
+    fun generate(
+        file: IrFile,
+        backendContext: BackendContext,
+        bindingContext: BindingContext,
+        transforms: Int
     ) {
         // TODO: refactor transformers to work with just BackendContext
         val jvmContext = backendContext as JvmBackendContext
@@ -60,27 +84,39 @@ class ComposeIrGenerationExtension : IrGenerationExtension {
             ComposeResolutionMetadataTransformer(jvmContext).lower(module)
 
             // transform @Model classes
-            FrameIrTransformer(jvmContext).lower(module)
+            if (transforms and ComposeTransforms.FRAMED_CLASSES != 0) {
+                FrameIrTransformer(jvmContext).lower(module)
+            }
 
             // Memoize normal lambdas and wrap composable lambdas
-            ComposerLambdaMemoization(jvmContext, symbolRemapper, bindingTrace).lower(module)
+            if (transforms and ComposeTransforms.LAMBDA_MEMOIZATION != 0) {
+                ComposerLambdaMemoization(jvmContext, symbolRemapper, bindingTrace).lower(module)
+            }
 
             // transform all composable functions to have an extra synthetic composer
             // parameter. this will also transform all types and calls to include the extra
             // parameter.
-            ComposerParamTransformer(jvmContext, symbolRemapper, bindingTrace).lower(module)
+            if (transforms and ComposeTransforms.COMPOSER_PARAM != 0) {
+                ComposerParamTransformer(jvmContext, symbolRemapper, bindingTrace).lower(module)
+            }
 
             // transform calls to the currentComposer to just use the local parameter from the
             // previous transform
-            ComposerIntrinsicTransformer(jvmContext).lower(module)
+            if (transforms and ComposeTransforms.INTRINSICS != 0) {
+                ComposerIntrinsicTransformer(jvmContext).lower(module)
+            }
 
             // transform composable calls and emits into their corresponding calls appealing
             // to the composer
-            ComposableCallTransformer(jvmContext, symbolRemapper, bindingTrace).lower(module)
+            if (transforms and ComposeTransforms.CALLS_AND_EMITS != 0) {
+                ComposableCallTransformer(jvmContext, symbolRemapper, bindingTrace).lower(module)
+            }
 
             // transform composable functions to have restart groups so that they can be
             // recomposed
-            ComposeObservePatcher(jvmContext, symbolRemapper, bindingTrace).lower(module)
+            if (transforms and ComposeTransforms.RESTART_GROUPS != 0) {
+                ComposeObservePatcher(jvmContext, symbolRemapper, bindingTrace).lower(module)
+            }
         }
     }
 }
