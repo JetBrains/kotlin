@@ -7714,6 +7714,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/implement/finalClass.kt");
         }
 
+        @TestMetadata("hasImplementedInPrimaryConstructor.kt")
+        public void testHasImplementedInPrimaryConstructor() throws Exception {
+            runTest("idea/testData/quickfix/implement/hasImplementedInPrimaryConstructor.kt");
+        }
+
+        @TestMetadata("hasImplementedInPrimaryConstructor2.kt")
+        public void testHasImplementedInPrimaryConstructor2() throws Exception {
+            runTest("idea/testData/quickfix/implement/hasImplementedInPrimaryConstructor2.kt");
+        }
+
+        @TestMetadata("hasImplementedInPrimaryConstructor3.kt")
+        public void testHasImplementedInPrimaryConstructor3() throws Exception {
+            runTest("idea/testData/quickfix/implement/hasImplementedInPrimaryConstructor3.kt");
+        }
+
         @TestMetadata("inCompanion.kt")
         public void testInCompanion() throws Exception {
             runTest("idea/testData/quickfix/implement/inCompanion.kt");
