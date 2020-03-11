@@ -82,7 +82,7 @@ public final class NavigationUtil {
 
   @NotNull
   public static <T extends PsiElement> JBPopup getPsiElementPopup(T @NotNull [] elements,
-                                                                  @NotNull final PsiElementListCellRenderer<T> renderer,
+                                                                  @NotNull final PsiElementListCellRenderer<? super T> renderer,
                                                                   final String title,
                                                                   @NotNull final PsiElementProcessor<? super T> processor) {
     return getPsiElementPopup(elements, renderer, title, processor, null);
@@ -90,7 +90,7 @@ public final class NavigationUtil {
 
   @NotNull
   public static <T extends PsiElement> JBPopup getPsiElementPopup(T @NotNull [] elements,
-                                                                  @NotNull final PsiElementListCellRenderer<T> renderer,
+                                                                  @NotNull final PsiElementListCellRenderer<? super T> renderer,
                                                                   @Nullable final String title,
                                                                   @NotNull final PsiElementProcessor<? super T> processor,
                                                                   @Nullable final T initialSelection) {
@@ -117,7 +117,7 @@ public final class NavigationUtil {
     }).createPopup();
 
     if (builder instanceof PopupChooserBuilder) {
-      JScrollPane pane = ((PopupChooserBuilder)builder).getScrollPane();
+      JScrollPane pane = ((PopupChooserBuilder<?>)builder).getScrollPane();
       pane.setBorder(null);
       pane.setViewportBorder(null);
     }
