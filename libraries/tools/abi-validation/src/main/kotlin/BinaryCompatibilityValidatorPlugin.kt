@@ -73,9 +73,8 @@ private fun Project.configureKotlinCompilation(compilation: KotlinCompilation<Ko
     val projectName = project.name
     val apiBuildDir = file(buildDir.resolve(API_DIR))
     val apiBuild = task<KotlinApiBuildTask>("apiBuild") {
-        onlyIf {
-            apiCheckEnabled && compilation.allKotlinSourceSets.any { it.kotlin.srcDirs.any { it.exists() } }
-        }
+        // Do not enable task for empty umbrella modules
+        isEnabled = apiCheckEnabled && compilation.allKotlinSourceSets.any { it.kotlin.srcDirs.any { it.exists() } }
         // 'group' is not specified deliberately so it will be hidden from ./gradlew tasks
         description =
             "Builds Kotlin API for 'main' compilations of $projectName. Complementary task and shouldn't be called manually"
@@ -105,7 +104,7 @@ private fun Project.configureApiTasks(sourceSet: SourceSet) {
     val projectName = project.name
     val apiBuildDir = file(buildDir.resolve(API_DIR))
     val apiBuild = task<KotlinApiBuildTask>("apiBuild") {
-        onlyIf { apiCheckEnabled }
+        isEnabled = apiCheckEnabled
         // 'group' is not specified deliberately so it will be hidden from ./gradlew tasks
         description =
             "Builds Kotlin API for 'main' compilations of $projectName. Complementary task and shouldn't be called manually"
@@ -125,7 +124,7 @@ private fun Project.configureCheckTasks(
     val projectName = project.name
     val apiCheckDir = file(projectDir.resolve(API_DIR))
     val apiCheck = task<ApiCompareCompareTask>("apiCheck") {
-        onlyIf { apiCheckEnabled }
+        isEnabled = apiCheckEnabled && apiBuild.map { it.enabled }.getOrElse(true)
         group = "verification"
         description = "Checks signatures of public API against the golden value in API folder for $projectName"
         projectApiDir = apiCheckDir
@@ -134,7 +133,7 @@ private fun Project.configureCheckTasks(
     }
 
     task<Sync>("apiDump") {
-        onlyIf { apiCheckEnabled }
+        isEnabled = apiCheckEnabled && apiBuild.map { it.enabled }.getOrElse(true)
         group = "other"
         description = "Syncs API from build dir to $API_DIR dir for $projectName"
         from(apiBuildDir)
