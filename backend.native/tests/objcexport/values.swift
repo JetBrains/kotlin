@@ -1233,6 +1233,46 @@ func testGH3825() throws {
     try assertEquals(actual: count, expected: 3)
 }
 
+
+func testMapsExport() throws {
+	// Original reproducer failed in different way for MutableMap (iOS 11) and Map (MacOS 10.14, iOS 13)
+
+    try assertEquals(actual: ValuesKt.mapBoolean2String()[true], expected: "true")
+    try assertEquals(actual: ValuesKt.mapByte2Short()[-1], expected: 2)
+    try assertEquals(actual: ValuesKt.mapShort2Byte()[-2], expected: 1)
+    try assertEquals(actual: ValuesKt.mapInt2Long()[-4], expected: 8)
+    try assertEquals(actual: ValuesKt.mapLong2Long()[-8], expected: 8)
+    try assertEquals(actual: ValuesKt.mapUByte2Boolean()[128], expected: true)
+    try assertEquals(actual: ValuesKt.mapUShort2Byte()[0x8000], expected: 1)
+    try assertEquals(actual: ValuesKt.mapUInt2Long()[0x7FFFFFFF], expected: 7)
+    // the following samples require explicit cast to KotlinUInt or KotlinULong
+    try assertEquals(actual: ValuesKt.mapUInt2Long()[KotlinUInt(0x8000_0000)], expected: 8)
+    _ = ValuesKt.mapULong2Long() as! [KotlinULong: KotlinLong] // test cast
+    var u64: UInt64 = 0x8000_0000_0000_0000
+    try assertEquals(actual: ValuesKt.mapULong2Long()[KotlinULong(value: u64)], expected: 8)
+
+    _ = ValuesKt.mapFloat2Float() as! [KotlinFloat: KotlinFloat] // test cast
+    try assertEquals(actual: ValuesKt.mapFloat2Float()[3.14], expected: 100.0)
+    try assertEquals(actual: ValuesKt.mapDouble2String()[2.718281828459045], expected: "2.718281828459045")
+
+	// test also explicit cast to [:] of primitiva types, e.g. [Int: Int]
+    try assertEquals(actual: (ValuesKt.mutBoolean2String() as! [Bool: String])[true], expected: "true")
+    try assertEquals(actual: (ValuesKt.mutByte2Short() as! [Int8: Int16])[-1], expected: 2)
+    try assertEquals(actual: (ValuesKt.mutShort2Byte() as! [Int16: Int8])[-2], expected: 1)
+    try assertEquals(actual: (ValuesKt.mutInt2Long() as! [Int: Int64])[-4], expected: 8)
+    try assertEquals(actual: (ValuesKt.mutLong2Long() as! [Int64: Int64])[-8], expected: 8)
+
+    try assertEquals(actual: (ValuesKt.mutUByte2Boolean() as! [UInt8: Bool])[128], expected: true)
+    try assertEquals(actual: (ValuesKt.mutUShort2Byte() as! [UInt16: Int8])[0x8000], expected: 1)
+    // the following samples require explicit cast to KotlinUInt or KotlinULong
+    try assertEquals(actual: (ValuesKt.mutUInt2Long() as! [UInt: Int64])[UInt(0x8000_0000)], expected: 8)
+
+    try assertEquals(actual: (ValuesKt.mutULong2Long() as! [UInt64: Int64])[u64], expected: 8)
+
+    try assertEquals(actual: (ValuesKt.mutFloat2Float() as! [Float: Float])[3.14], expected: 100.0)
+    try assertEquals(actual: (ValuesKt.mutDouble2String() as! [Double: String])[2.718281828459045], expected: "2.718281828459045")
+}
+
 // -------- Execution of the test --------
 
 class ValuesTests : SimpleTestProvider {
@@ -1288,6 +1328,7 @@ class ValuesTests : SimpleTestProvider {
         test("TestGH3525", testGH3525)
         test("TestStringConversion", testStringConversion)
         test("TestGH3825", testGH3825)
+        test("TestMapsExport", testMapsExport)
 
         // Stress test, must remain the last one:
         test("TestGH2931", testGH2931)

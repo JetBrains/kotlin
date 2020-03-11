@@ -976,3 +976,28 @@ fun testGH3825(gh3825: GH3825) {
     gh3825.call2({ count += 1 }, false)
     assertEquals(3, count)
 }
+
+fun mapBoolean2String(): Map<Boolean, String> = mapOf(Pair(false, "false"), Pair(true, "true"))
+fun mapByte2Short(): Map<Byte, Short> = mapOf(Pair(-1, 2))
+fun mapShort2Byte(): Map<Short, Byte> = mapOf(Pair(-2, 1))
+fun mapInt2Long(): Map<Int, Long> = mapOf(Pair(-4, 8))
+fun mapLong2Long(): Map<Long, Long> = mapOf(Pair(-8, 8))
+fun mapUByte2Boolean(): Map<UByte, Boolean> = mapOf(Pair(0x80U, true))
+fun mapUShort2Byte(): Map<UShort, Byte> = mapOf(Pair(0x8000U, 1))
+fun mapUInt2Long(): Map<UInt, Long> = mapOf(Pair(0x7FFF_FFFFU, 7), Pair(0x8000_0000U, 8))
+fun mapULong2Long(): Map<ULong, Long> = mapOf(Pair(0x8000_0000_0000_0000UL, 8))
+fun mapFloat2Float(): Map<Float, Float> = mapOf(Pair(3.14f, 100f))
+fun mapDouble2String(): Map<Double, String> = mapOf(Pair(2.718281828459045, "2.718281828459045"))
+
+fun mutBoolean2String(): MutableMap<Boolean, String> = mutableMapOf(Pair(false, "false"), Pair(true, "true"))
+fun mutByte2Short(): MutableMap<Byte, Short> = mutableMapOf(Pair(-1, 2))
+fun mutShort2Byte(): MutableMap<Short, Byte> = mutableMapOf(Pair(-2, 1))
+fun mutInt2Long(): MutableMap<Int, Long> = mutableMapOf(Pair(-4, 8))
+fun mutLong2Long(): MutableMap<Long, Long> = mutableMapOf(Pair(-8, 8))
+fun mutUByte2Boolean(): MutableMap<UByte, Boolean> = mutableMapOf(Pair(128U, true))
+fun mutUShort2Byte(): MutableMap<UShort, Byte> = mutableMapOf(Pair(32768U, 1))
+fun mutUInt2Long(): MutableMap<UInt, Long> = mutableMapOf(Pair(0x8000_0000U, 8))
+fun mutULong2Long(): MutableMap<ULong, Long> = mutableMapOf(Pair(0x8000_0000_0000_0000UL, 8))
+fun mutFloat2Float(): MutableMap<Float, Float> = mutableMapOf(Pair(3.14f, 100f))
+fun mutDouble2String(): MutableMap<Double, String> = mutableMapOf(Pair(2.718281828459045, "2.718281828459045"))
+
