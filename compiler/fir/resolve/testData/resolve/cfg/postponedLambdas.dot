@@ -24,7 +24,7 @@ digraph postponedLambdas_kt {
         }
         8 [label="Postponed exit from lambda"];
         9 [label="Access variable R|<local>/b|"];
-        10 [label="Function call: R|/foo|(vararg(R|<local>/a|, foo@fun <anonymous>(): R|kotlin/String| <kind=UNKNOWN> , R|<local>/b|))"];
+        10 [label="Function call: R|/foo|(...)"];
         11 [label="Exit function test" style="filled" fillcolor=red];
     }
 

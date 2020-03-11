@@ -73,7 +73,7 @@ digraph propertiesAndInitBlocks_kt {
         20 [label="Enter function foo" style="filled" fillcolor=red];
         21 [label="Const: Int(1)"];
         22 [label="Const: Int(1)"];
-        23 [label="Function call: Int(1).R|kotlin/Int.plus|(Int(1))"];
+        23 [label="Function call: Int(1).R|kotlin/Int.plus|(...)"];
         24 [label="Variable declaration: lval c: R|kotlin/Int|"];
         25 [label="Function call: R|java/lang/Exception.Exception|()"];
         26 [label="Throw: throw R|java/lang/Exception.Exception|()"];
@@ -128,7 +128,7 @@ digraph propertiesAndInitBlocks_kt {
             41 [label="Exit function anonymousFunction"];
         }
         42 [label="Postponed exit from lambda"];
-        43 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN> )"];
+        43 [label="Function call: R|/run|(...)"];
         44 [label="Exit property" style="filled" fillcolor=red];
     }
 

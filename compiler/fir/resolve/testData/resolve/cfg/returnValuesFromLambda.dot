@@ -52,7 +52,7 @@ digraph returnValuesFromLambda_kt {
             21 [label="Exit function anonymousFunction"];
         }
         22 [label="Postponed exit from lambda"];
-        23 [label="Function call: R|kotlin/run|<R|A|>(<L> = run@fun <anonymous>(): R|A| <kind=EXACTLY_ONCE> )"];
+        23 [label="Function call: R|kotlin/run|<R|A|>(...)"];
         24 [label="Variable declaration: lval x: R|A|"];
         25 [label="Exit function test_1" style="filled" fillcolor=red];
     }
@@ -94,7 +94,7 @@ digraph returnValuesFromLambda_kt {
             32 [label="Exit function anonymousFunction"];
         }
         33 [label="Postponed exit from lambda"];
-        34 [label="Function call: R|kotlin/run|<R|C|>(<L> = run@fun <anonymous>(): R|C| <kind=EXACTLY_ONCE> )"];
+        34 [label="Function call: R|kotlin/run|<R|C|>(...)"];
         35 [label="Variable declaration: lval x: R|C|"];
         36 [label="Exit function test_2" style="filled" fillcolor=red];
     }
@@ -124,7 +124,7 @@ digraph returnValuesFromLambda_kt {
             42 [label="Exit function anonymousFunction" style="filled" fillcolor=gray];
         }
         43 [label="Postponed exit from lambda"];
-        44 [label="Function call: R|kotlin/run|<R|kotlin/Nothing|>(<L> = run@fun <anonymous>(): R|kotlin/Nothing| <kind=EXACTLY_ONCE> )"];
+        44 [label="Function call: R|kotlin/run|<R|kotlin/Nothing|>(...)"];
         45 [label="Stub" style="filled" fillcolor=gray];
         46 [label="Variable declaration: lval x: R|kotlin/Nothing|" style="filled" fillcolor=gray];
         47 [label="Exit function test_3" style="filled" fillcolor=red];

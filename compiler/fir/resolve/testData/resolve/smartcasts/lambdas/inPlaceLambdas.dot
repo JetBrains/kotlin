@@ -56,7 +56,7 @@ digraph inPlaceLambdas_kt {
                     20 [label="Exit function anonymousFunction"];
                 }
                 21 [label="Postponed exit from lambda"];
-                22 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN> )"];
+                22 [label="Function call: R|/run|(...)"];
                 23 [label="Exit block"];
             }
             24 [label="Exit when branch result"];
@@ -99,7 +99,7 @@ digraph inPlaceLambdas_kt {
             32 [label="Exit function anonymousFunction"];
         }
         33 [label="Postponed exit from lambda"];
-        34 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN> )"];
+        34 [label="Function call: R|/run|(...)"];
         35 [label="Access variable R|<local>/x|"];
         36 [label="Function call: R|<local>/x|.R|/B.bar|()"];
         37 [label="Exit function test_2" style="filled" fillcolor=red];
@@ -147,7 +147,7 @@ digraph inPlaceLambdas_kt {
                     53 [label="Exit function anonymousFunction"];
                 }
                 54 [label="Postponed exit from lambda"];
-                55 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN> )"];
+                55 [label="Function call: R|/run|(...)"];
                 56 [label="Access variable R|<local>/x|"];
                 57 [label="Function call: R|<local>/x|.R|/B.bar|()"];
                 58 [label="Exit block"];

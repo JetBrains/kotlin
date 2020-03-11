@@ -132,6 +132,8 @@ class FirControlFlowGraphRenderVisitor(
     }
 }
 
+private object CfgRenderMode : FirRenderer.RenderMode(renderLambdaBodies = false, renderCallArguments = false)
+
 private fun CFGNode<*>.render(): String =
     buildString {
         append(
@@ -157,26 +159,26 @@ private fun CFGNode<*>.render(): String =
                 is LoopConditionExitNode -> "Exit loop condition"
                 is LoopExitNode -> "Exit ${fir.type()}loop"
 
-                is QualifiedAccessNode -> "Access variable ${fir.calleeReference.render(FirRenderer.RenderMode.DontRenderLambdaBodies)}"
+                is QualifiedAccessNode -> "Access variable ${fir.calleeReference.render(CfgRenderMode)}"
                 is OperatorCallNode -> "Operator ${fir.operation.operator}"
                 is ComparisonExpressionNode -> "Comparison ${fir.operation.operator}"
-                is TypeOperatorCallNode -> "Type operator: \"${fir.render(FirRenderer.RenderMode.DontRenderLambdaBodies)}\""
+                is TypeOperatorCallNode -> "Type operator: \"${fir.render(CfgRenderMode)}\""
                 is JumpNode -> "Jump: ${fir.render()}"
                 is StubNode -> "Stub"
-                is CheckNotNullCallNode -> "Check not null: ${fir.render(FirRenderer.RenderMode.DontRenderLambdaBodies)}"
+                is CheckNotNullCallNode -> "Check not null: ${fir.render(CfgRenderMode)}"
 
                 is ConstExpressionNode -> "Const: ${fir.render()}"
                 is VariableDeclarationNode ->
                     "Variable declaration: ${buildString {
                         FirRenderer(
                             this,
-                            FirRenderer.RenderMode.DontRenderLambdaBodies
+                            CfgRenderMode
                         ).visitCallableDeclaration(fir)
                     }}"
 
-                is VariableAssignmentNode -> "Assignmenet: ${fir.lValue.render(FirRenderer.RenderMode.DontRenderLambdaBodies)}"
-                is FunctionCallNode -> "Function call: ${fir.render(FirRenderer.RenderMode.DontRenderLambdaBodies)}"
-                is ThrowExceptionNode -> "Throw: ${fir.render(FirRenderer.RenderMode.DontRenderLambdaBodies)}"
+                is VariableAssignmentNode -> "Assignmenet: ${fir.lValue.render(CfgRenderMode)}"
+                is FunctionCallNode -> "Function call: ${fir.render(CfgRenderMode)}"
+                is ThrowExceptionNode -> "Throw: ${fir.render(CfgRenderMode)}"
 
                 is TryExpressionEnterNode -> "Try expression enter"
                 is TryMainBlockEnterNode -> "Try main block enter"

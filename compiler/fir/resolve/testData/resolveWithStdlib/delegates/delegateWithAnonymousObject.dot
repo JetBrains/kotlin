@@ -90,7 +90,7 @@ digraph delegateWithAnonymousObject_kt {
         24 [label="Enter function setValue" style="filled" fillcolor=red];
         25 [label="Function call: R|/IssueListView.IssueListView|()"];
         26 [label="Access variable R|<local>/value|"];
-        27 [label="Function call: R|/IssueListView.IssueListView|().R|/IssueListView.updateFrom|(R|<local>/value|)"];
+        27 [label="Function call: R|/IssueListView.IssueListView|().R|/IssueListView.updateFrom|(...)"];
         28 [label="Jump: ^setValue R|/IssueListView.IssueListView|().R|/IssueListView.updateFrom|(R|<local>/value|)"];
         29 [label="Stub" style="filled" fillcolor=gray];
         30 [label="Exit function setValue" style="filled" fillcolor=red];
@@ -109,7 +109,7 @@ digraph delegateWithAnonymousObject_kt {
         31 [label="Enter function getter" style="filled" fillcolor=red];
         32 [label="Access variable D|/IssuesListUserProfile.issueListView|"];
         33 [label="Access variable this@R|/IssuesListUserProfile|"];
-        34 [label="Function call: D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|IssueListView|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|)"];
+        34 [label="Function call: D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|IssueListView|>|(...)"];
         35 [label="Jump: ^ D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|IssueListView|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|)"];
         36 [label="Stub" style="filled" fillcolor=gray];
         37 [label="Exit function getter" style="filled" fillcolor=red];
@@ -129,7 +129,7 @@ digraph delegateWithAnonymousObject_kt {
         39 [label="Access variable D|/IssuesListUserProfile.issueListView|"];
         40 [label="Access variable this@R|/IssuesListUserProfile|"];
         41 [label="Access variable R|<local>/issueListView|"];
-        42 [label="Function call: D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|, R|<local>/issueListView|)"];
+        42 [label="Function call: D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(...)"];
         43 [label="Exit function setter" style="filled" fillcolor=red];
     }
 
@@ -144,14 +144,14 @@ digraph delegateWithAnonymousObject_kt {
         44 [label="Enter property" style="filled" fillcolor=red];
         45 [label="Postponed enter to lambda"];
         46 [label="Postponed exit from lambda"];
-        47 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(<L> = delegate@fun <anonymous>(): R|kotlin/properties/ReadWriteProperty<IssuesListUserProfile, IssueListView>|)"];
+        47 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...)"];
         48 [label="Access variable this@R|/IssuesListUserProfile|"];
         49 [label="Access variable this@R|/IssuesListUserProfile|"];
         50 [label="Access variable this@R|/IssuesListUserProfile|"];
-        51 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(<L> = delegate@fun <anonymous>(): R|kotlin/properties/ReadWriteProperty<IssuesListUserProfile, IssueListView>|).<Unresolved name: provideDelegate>#(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|)"];
+        51 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...).<Unresolved name: provideDelegate>#(...)"];
         52 [label="Postponed enter to lambda"];
         53 [label="Postponed exit from lambda"];
-        54 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(<L> = delegate@fun <anonymous>(): R|kotlin/properties/ReadWriteProperty<IssuesListUserProfile, IssueListView>|)"];
+        54 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...)"];
         55 [label="Exit property" style="filled" fillcolor=red];
     }
 

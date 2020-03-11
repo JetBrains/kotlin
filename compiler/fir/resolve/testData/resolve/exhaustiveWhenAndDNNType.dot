@@ -87,7 +87,7 @@ digraph exhaustiveWhenAndDNNType_kt {
         }
         35 [label="Variable declaration: lval b: R|B|"];
         36 [label="Access variable R|<local>/b|"];
-        37 [label="Function call: R|/takeB|(R|<local>/b|)"];
+        37 [label="Function call: R|/takeB|(...)"];
         38 [label="Exit function test_1" style="filled" fillcolor=red];
     }
 
@@ -164,7 +164,7 @@ digraph exhaustiveWhenAndDNNType_kt {
         }
         64 [label="Variable declaration: lval b: R|B|"];
         65 [label="Access variable R|<local>/b|"];
-        66 [label="Function call: R|/takeB|(R|<local>/b|)"];
+        66 [label="Function call: R|/takeB|(...)"];
         67 [label="Exit function test_2" style="filled" fillcolor=red];
     }
 
@@ -240,7 +240,7 @@ digraph exhaustiveWhenAndDNNType_kt {
         }
         92 [label="Variable declaration: lval b: R|B|"];
         93 [label="Access variable R|<local>/b|"];
-        94 [label="Function call: R|/takeB|(R|<local>/b|)"];
+        94 [label="Function call: R|/takeB|(...)"];
         95 [label="Exit function test_3" style="filled" fillcolor=red];
     }
 

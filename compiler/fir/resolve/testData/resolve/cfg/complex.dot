@@ -72,7 +72,7 @@ digraph complex_kt {
                             27 [label="Enter block"];
                             28 [label="Access variable R|<local>/cause|"];
                             29 [label="Access variable R|<local>/closeException|"];
-                            30 [label="Function call: R|<local>/cause|.R|/addSuppressed|(R|<local>/closeException|)"];
+                            30 [label="Function call: R|<local>/cause|.R|/addSuppressed|(...)"];
                             31 [label="Exit block"];
                         }
                         32 [label="Catch exit"];

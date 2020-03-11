@@ -22,7 +22,7 @@ digraph when_kt {
                 7 [label="Enter when branch condition "];
                 8 [label="Access variable R|<local>/x|"];
                 9 [label="Const: Int(2)"];
-                10 [label="Function call: R|<local>/x|.R|kotlin/Int.rem|(Int(2))"];
+                10 [label="Function call: R|<local>/x|.R|kotlin/Int.rem|(...)"];
                 11 [label="Const: Int(0)"];
                 12 [label="Operator =="];
                 13 [label="Exit when branch condition"];
@@ -32,7 +32,7 @@ digraph when_kt {
                 14 [label="Enter when branch condition "];
                 15 [label="Const: Int(1)"];
                 16 [label="Const: Int(1)"];
-                17 [label="Function call: Int(1).R|kotlin/Int.minus|(Int(1))"];
+                17 [label="Function call: Int(1).R|kotlin/Int.minus|(...)"];
                 18 [label="Const: Int(0)"];
                 19 [label="Operator =="];
                 20 [label="Exit when branch condition"];

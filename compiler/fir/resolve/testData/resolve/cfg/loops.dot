@@ -104,8 +104,8 @@ digraph loops_kt {
         32 [label="Enter function testFor" style="filled" fillcolor=red];
         33 [label="Const: Int(0)"];
         34 [label="Const: Int(5)"];
-        35 [label="Function call: Int(0).R|kotlin/Int.rangeTo|(Int(5))"];
-        36 [label="Function call: Int(0).R|kotlin/Int.rangeTo|(Int(5)).R|kotlin/ranges/IntProgression.iterator|()"];
+        35 [label="Function call: Int(0).R|kotlin/Int.rangeTo|(...)"];
+        36 [label="Function call: Int(0).R|kotlin/Int.rangeTo|(...).R|kotlin/ranges/IntProgression.iterator|()"];
         37 [label="Variable declaration: lval <iterator>: R|kotlin/collections/IntIterator|"];
         subgraph cluster_11 {
             color=blue

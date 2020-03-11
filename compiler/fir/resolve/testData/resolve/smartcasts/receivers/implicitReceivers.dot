@@ -215,18 +215,18 @@ digraph implicitReceivers_kt {
                     79 [label="Exit function anonymousFunction"];
                 }
                 80 [label="Postponed exit from lambda"];
-                81 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/c|, <L> = wc@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE> )"];
+                81 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(...)"];
                 82 [label="Access variable this@R|special/anonymous|"];
                 83 [label="Function call: this@R|special/anonymous|.R|/A.foo|()"];
                 84 [label="Function call: this@R|special/anonymous|.R|/A.foo|()"];
                 85 [label="Exit function anonymousFunction"];
             }
             86 [label="Postponed exit from lambda"];
-            87 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/b|, <L> = wb@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE> )"];
+            87 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(...)"];
             88 [label="Exit function anonymousFunction"];
         }
         89 [label="Postponed exit from lambda"];
-        90 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/a|, <L> = wa@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE> )"];
+        90 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(...)"];
         91 [label="Exit function test_3" style="filled" fillcolor=red];
     }
 

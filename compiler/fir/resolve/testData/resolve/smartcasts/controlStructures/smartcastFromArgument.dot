@@ -72,15 +72,7 @@ digraph smartcastFromArgument_kt {
                     30 [label="Exit when branch result" style="filled" fillcolor=gray];
                     31 [label="Exit when"];
                 }
-                32 [label="Function call: R|/takeA|(when (lval <elvis>: R|A?| = (R|<local>/a| as? R|A|)) {
-    ==($subj$, Null(null)) ->  {
-        ^test Unit
-    }
-    else ->  {
-        R|<local>/<elvis>|
-    }
-}
-)"];
+                32 [label="Function call: R|/takeA|(...)"];
                 33 [label="Exit when branch condition"];
             }
             34 [label="Synthetic else branch"];

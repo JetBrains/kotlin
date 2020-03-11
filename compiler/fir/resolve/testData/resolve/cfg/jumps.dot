@@ -343,7 +343,7 @@ digraph jumps_kt {
             117 [label="Exit function anonymousFunction"];
         }
         118 [label="Postponed exit from lambda"];
-        119 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN> )"];
+        119 [label="Function call: R|/run|(...)"];
         120 [label="Exit function test_6" style="filled" fillcolor=red];
     }
 

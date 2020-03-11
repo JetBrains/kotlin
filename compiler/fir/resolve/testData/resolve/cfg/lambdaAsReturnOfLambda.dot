@@ -23,7 +23,7 @@ digraph lambdaAsReturnOfLambda_kt {
         color=red
         4 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
         5 [label="Access variable R|<local>/foo|"];
-        6 [label="Function call: R|/bar|(R|<local>/foo|)"];
+        6 [label="Function call: R|/bar|(...)"];
         7 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
     }
 
@@ -44,7 +44,7 @@ digraph lambdaAsReturnOfLambda_kt {
         10 [label="Enter property" style="filled" fillcolor=red];
         11 [label="Postponed enter to lambda"];
         12 [label="Postponed exit from lambda"];
-        13 [label="Function call: R|/run|<R|(kotlin/String) -> kotlin/Unit|>(<L> = run@fun <anonymous>(): R|(kotlin/String) -> kotlin/Unit|)"];
+        13 [label="Function call: R|/run|<R|(kotlin/String) -> kotlin/Unit|>(...)"];
         14 [label="Exit property" style="filled" fillcolor=red];
     }
 

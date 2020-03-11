@@ -8,7 +8,7 @@ digraph conditionalEffects_kt {
         0 [label="Enter function test_1" style="filled" fillcolor=red];
         1 [label="Access variable R|<local>/x|"];
         2 [label="Type operator: (R|<local>/x| is R|kotlin/Int|)"];
-        3 [label="Function call: R|kotlin/require|((R|<local>/x| is R|kotlin/Int|))"];
+        3 [label="Function call: R|kotlin/require|(...)"];
         subgraph cluster_1 {
             color=blue
             4 [label="Enter contract"];
@@ -36,7 +36,7 @@ digraph conditionalEffects_kt {
         color=red
         11 [label="Enter function test_2" style="filled" fillcolor=red];
         12 [label="Access variable R|<local>/x|"];
-        13 [label="Function call: R|kotlin/requireNotNull|<R|kotlin/String|>(R|<local>/x|)"];
+        13 [label="Function call: R|kotlin/requireNotNull|<R|kotlin/String|>(...)"];
         subgraph cluster_3 {
             color=blue
             14 [label="Enter contract"];
@@ -67,7 +67,7 @@ digraph conditionalEffects_kt {
         23 [label="Access variable R|<local>/x|"];
         24 [label="Const: Null(null)"];
         25 [label="Operator !="];
-        26 [label="Function call: R|kotlin/require|(!=(R|<local>/x|, Null(null)))"];
+        26 [label="Function call: R|kotlin/require|(...)"];
         subgraph cluster_5 {
             color=blue
             27 [label="Enter contract"];
@@ -109,7 +109,7 @@ digraph conditionalEffects_kt {
             43 [label="Operator !="];
             44 [label="Exit &&"];
         }
-        45 [label="Function call: R|kotlin/require|((R|<local>/x| is R|kotlin/String|) && !=(R|<local>/y|, Null(null)))"];
+        45 [label="Function call: R|kotlin/require|(...)"];
         subgraph cluster_8 {
             color=blue
             46 [label="Enter contract"];
@@ -193,7 +193,7 @@ digraph conditionalEffects_kt {
                 76 [label="Enter block"];
                 77 [label="Access variable R|<local>/x|"];
                 78 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
-                79 [label="Function call: R|kotlin/require|((R|<local>/x| is R|kotlin/String|))"];
+                79 [label="Function call: R|kotlin/require|(...)"];
                 subgraph cluster_16 {
                     color=blue
                     80 [label="Enter contract"];
@@ -266,7 +266,7 @@ digraph conditionalEffects_kt {
                 100 [label="Enter block"];
                 101 [label="Access variable R|<local>/x|"];
                 102 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
-                103 [label="Function call: R|kotlin/require|((R|<local>/x| is R|kotlin/String|))"];
+                103 [label="Function call: R|kotlin/require|(...)"];
                 subgraph cluster_22 {
                     color=blue
                     104 [label="Enter contract"];
@@ -285,7 +285,7 @@ digraph conditionalEffects_kt {
                 113 [label="Enter block"];
                 114 [label="Access variable R|<local>/x|"];
                 115 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
-                116 [label="Function call: R|kotlin/require|((R|<local>/x| is R|kotlin/String|))"];
+                116 [label="Function call: R|kotlin/require|(...)"];
                 subgraph cluster_24 {
                     color=blue
                     117 [label="Enter contract"];
