@@ -13,16 +13,15 @@ import com.intellij.codeInsight.hint.TooltipGroup;
 import com.intellij.codeInsight.hint.TooltipRenderer;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.ide.IdeEventQueue;
-import com.intellij.ide.actions.BaseNavigateToSourceAction;
 import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -919,9 +918,17 @@ public final class EditorMouseHoverPopupManager implements Disposable {
       if (!Registry.is("editor.new.mouse.hover.popups")) {
         return;
       }
-      if (action instanceof HintManagerImpl.ActionToIgnore ||
-          action instanceof ActionGroup ||
-          action instanceof BaseNavigateToSourceAction) return;
+      if (action instanceof HintManagerImpl.ActionToIgnore) {
+        return;
+      }
+      AbstractPopup currentHint = getInstance().getCurrentHint();
+      if (currentHint != null) {
+        Component contextComponent = dataContext.getData(PlatformDataKeys.CONTEXT_COMPONENT);
+        JBPopup contextPopup = PopupUtil.getPopupContainerFor(contextComponent);
+        if (contextPopup == currentHint) {
+          return;
+        }
+      }
       getInstance().cancelProcessingAndCloseHint();
     }
 
