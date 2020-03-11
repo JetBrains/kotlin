@@ -92,6 +92,9 @@ class DocRenderItem {
           item.textToRender = matchingItem.textToRender;
           itemsToUpdateInlays.add(item);
         }
+        else {
+          item.updateIcon();
+        }
       }
       Collection<DocRenderItem> newRenderItems = new ArrayList<>();
       for (DocRenderPassFactory.Item item : itemsToSet) {
@@ -182,8 +185,7 @@ class DocRenderItem {
     assert editor.getProject() != null;
     highlighter = editor.getMarkupModel()
       .addRangeHighlighter(textRange.getStartOffset(), textRange.getEndOffset(), 0, null, HighlighterTargetArea.EXACT_RANGE);
-    AnAction toggleAction = new ToggleRenderingAction(this);
-    highlighter.setGutterIconRenderer(new MyGutterIconRenderer(toggleAction, AllIcons.Gutter.JavadocRead));
+    updateIcon();
   }
 
   private int calcFoldStartOffset() {
@@ -314,6 +316,24 @@ class DocRenderItem {
     });
   }
 
+  private void updateIcon() {
+    boolean iconEnabled = DocRenderDummyLineMarkerProvider.isGutterIconEnabled();
+    boolean iconExists = highlighter.getGutterIconRenderer() != null;
+    if (iconEnabled != iconExists) {
+      if (iconEnabled) {
+        highlighter.setGutterIconRenderer(new MyGutterIconRenderer(AllIcons.Gutter.JavadocRead));
+      }
+      else {
+        highlighter.setGutterIconRenderer(null);
+      }
+      if (inlay != null) inlay.update();
+    }
+  }
+
+  AnAction createToggleAction() {
+    return new ToggleRenderingAction(this);
+  }
+
   private static class MyCaretListener implements CaretListener {
     @Override
     public void caretPositionChanged(@NotNull CaretEvent event) {
@@ -364,12 +384,10 @@ class DocRenderItem {
     }
   }
 
-  static class MyGutterIconRenderer extends GutterIconRenderer implements DumbAware {
-    private final AnAction action;
+  class MyGutterIconRenderer extends GutterIconRenderer implements DumbAware {
     private final Icon icon;
 
-    MyGutterIconRenderer(AnAction action, Icon icon) {
-      this.action = action;
+    MyGutterIconRenderer(Icon icon) {
       this.icon = icon;
     }
 
@@ -413,7 +431,7 @@ class DocRenderItem {
     @Nullable
     @Override
     public AnAction getClickAction() {
-      return action;
+      return createToggleAction();
     }
 
     @Override

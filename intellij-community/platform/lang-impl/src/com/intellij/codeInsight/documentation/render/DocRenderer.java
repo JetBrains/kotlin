@@ -123,7 +123,7 @@ class DocRenderer implements EditorCustomElementRenderer {
 
   @Override
   public GutterIconRenderer calcGutterIconRenderer(@NotNull Inlay inlay) {
-    return new DocRenderItem.MyGutterIconRenderer(getToggleAction(), AllIcons.Gutter.JavadocEdit);
+    return DocRenderDummyLineMarkerProvider.isGutterIconEnabled() ? myItem.new MyGutterIconRenderer(AllIcons.Gutter.JavadocEdit) : null;
   }
 
   @Override
