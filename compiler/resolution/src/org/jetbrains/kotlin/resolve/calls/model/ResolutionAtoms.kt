@@ -109,6 +109,7 @@ class LambdaWithTypeVariableAsExpectedTypeAtom(
 ) : PostponedResolvedAtom() {
     override val inputTypes: Collection<UnwrappedType> get() = listOf(expectedType)
     override val outputType: UnwrappedType? get() = null
+    var isReturnArgumentOfAnotherLambda: Boolean = false
 
     fun setAnalyzed(resolvedLambdaAtom: ResolvedLambdaAtom) {
         setAnalyzedResults(listOf(resolvedLambdaAtom))

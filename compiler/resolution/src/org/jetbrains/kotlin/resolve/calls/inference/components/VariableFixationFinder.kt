@@ -86,6 +86,13 @@ class VariableFixationFinder(
         }
     }
 
+    fun Context.variableHasTrivialOrNonProperConstraints(variable: TypeConstructorMarker): Boolean {
+        return notFixedTypeVariables[variable]?.constraints?.all { constraint ->
+            val isProperConstraint = isProperArgumentConstraint(constraint)
+            isProperConstraint && trivialConstraintTypeInferenceOracle.isNotInterestingConstraint(constraint) || !isProperConstraint
+        } ?: false
+    }
+
     private fun Context.findTypeVariableForFixation(
         allTypeVariables: List<TypeConstructorMarker>,
         postponedArguments: List<PostponedResolvedAtomMarker>,
@@ -118,13 +125,6 @@ class VariableFixationFinder(
             }
         }
         return false
-    }
-
-    private fun Context.variableHasTrivialOrNonProperConstraints(variable: TypeConstructorMarker): Boolean {
-        return notFixedTypeVariables[variable]?.constraints?.all { constraint ->
-            val isProperConstraint = isProperArgumentConstraint(constraint)
-            isProperConstraint && trivialConstraintTypeInferenceOracle.isNotInterestingConstraint(constraint) || !isProperConstraint
-        } ?: false
     }
 
     private fun Context.variableHasProperArgumentConstraints(variable: TypeConstructorMarker): Boolean =

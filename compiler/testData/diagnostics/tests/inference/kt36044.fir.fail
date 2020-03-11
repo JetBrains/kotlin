@@ -1,0 +1,8 @@
+Failures detected in FirBodyResolveTransformerAdapter, file: /kt36044.fir.kt
+Cause: java.lang.RuntimeException: While resolving call R?C|/select|(Char(a), R?C|/map|(<L> = map@fun <anonymous>(): <ERROR TYPE REF: No type for block> {
+    ^ map@fun <implicit>.<anonymous>(): <implicit> {
+        String()
+    }
+
+}
+))

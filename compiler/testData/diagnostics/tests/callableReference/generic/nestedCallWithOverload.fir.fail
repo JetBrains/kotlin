@@ -1,0 +1,8 @@
+Failures detected in FirBodyResolveTransformerAdapter, file: /nestedCallWithOverload.fir.kt
+Cause: java.lang.RuntimeException: While resolving call R?C|/baz|(R?C|/id|(<L> = id@fun <implicit>.<anonymous>(): <implicit> {
+    it#.inv#()
+}
+), R|/id|<R|(kotlin/Int) -> kotlin/Unit|>(<L> = id@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| {
+    Unit
+}
+))
