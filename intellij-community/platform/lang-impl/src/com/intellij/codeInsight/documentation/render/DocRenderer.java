@@ -57,7 +57,6 @@ class DocRenderer implements EditorCustomElementRenderer {
   private static final int LEFT_INSET = 15;
   private static final int RIGHT_INSET = 12;
   private static final int TOP_BOTTOM_INSETS = 4;
-  private static final int LINE_WIDTH = 3;
 
   private static StyleSheet ourCachedStyleSheet;
   private static String ourCachedStyleSheetLaf = "non-existing";
@@ -107,7 +106,7 @@ class DocRenderer implements EditorCustomElementRenderer {
     g.setColor(((EditorEx)inlay.getEditor()).getBackgroundColor());
     g.fillRect(startX, filledStartY, endX - startX, filledHeight);
     g.setColor(inlay.getEditor().getColorsScheme().getColor(DefaultLanguageHighlighterColors.DOC_COMMENT_GUIDE));
-    g.fillRect(startX, filledStartY, scale(LINE_WIDTH), filledHeight);
+    g.fillRect(startX, filledStartY, scale(getLineWidth()), filledHeight);
 
     int topBottomInset = scale(TOP_BOTTOM_INSETS);
     int componentWidth = endX - startX - scale(LEFT_INSET) - scale(RIGHT_INSET);
@@ -119,6 +118,10 @@ class DocRenderer implements EditorCustomElementRenderer {
       component.paint(dg);
       dg.dispose();
     }
+  }
+
+  private static int getLineWidth() {
+    return Registry.intValue("editor.render.doc.comments.line.width", 3);
   }
 
   @Override
