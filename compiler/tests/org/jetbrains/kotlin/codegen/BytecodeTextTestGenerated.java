@@ -4387,6 +4387,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/when/lookupSwitch.kt");
         }
 
+        @TestMetadata("lookupSwitchWithSubjectVal.kt")
+        public void testLookupSwitchWithSubjectVal() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/when/lookupSwitchWithSubjectVal.kt");
+        }
+
         @TestMetadata("noBoxingInDefaultWhenWithSpecialCases.kt")
         public void testNoBoxingInDefaultWhenWithSpecialCases() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/when/noBoxingInDefaultWhenWithSpecialCases.kt");
@@ -4405,6 +4410,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("simpleConstValsInsideWhen.kt")
         public void testSimpleConstValsInsideWhen() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/when/simpleConstValsInsideWhen.kt");
+        }
+
+        @TestMetadata("stringSwitchWithSubjectVal.kt")
+        public void testStringSwitchWithSubjectVal() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/when/stringSwitchWithSubjectVal.kt");
         }
 
         @TestMetadata("subjectValHasLocalVariableSlot.kt")
@@ -4435,6 +4445,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("tableSwitch.kt")
         public void testTableSwitch() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/when/tableSwitch.kt");
+        }
+
+        @TestMetadata("tableSwitchWithSubjectVal.kt")
+        public void testTableSwitchWithSubjectVal() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/when/tableSwitchWithSubjectVal.kt");
         }
 
         @TestMetadata("whenNull.kt")

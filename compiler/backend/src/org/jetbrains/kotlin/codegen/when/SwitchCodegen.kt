@@ -20,7 +20,9 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.*
+import kotlin.collections.ArrayList
 
+@Suppress("MemberVisibilityCanBePrivate")
 abstract class SwitchCodegen(
     @JvmField
     protected val expression: KtWhenExpression,
@@ -36,7 +38,7 @@ abstract class SwitchCodegen(
     protected val subjectExpression = expression.subjectExpression ?: throw AssertionError("No subject expression: ${expression.text}")
 
     protected val subjectKotlinType = WhenChecker.whenSubjectTypeWithoutSmartCasts(expression, bindingContext)
-            ?: throw AssertionError("No subject type: ${expression}")
+        ?: throw AssertionError("No subject type: $expression")
 
     @JvmField
     protected val subjectType = subjectType ?: codegen.asmType(subjectKotlinType)
@@ -64,6 +66,8 @@ abstract class SwitchCodegen(
      * Generates bytecode for entire when expression
      */
     open fun generate() {
+        val frameMapAtStart = codegen.frameMap.mark()
+
         prepareConfiguration()
 
         val hasElse = expression.elseExpression != null
@@ -90,8 +94,9 @@ abstract class SwitchCodegen(
         codegen.markLineNumber(expression, isStatement)
         v.mark(endLabel)
 
+        frameMapAtStart.dropTo()
+
         subjectVariableDescriptor?.let {
-            codegen.frameMap.leave(it)
             v.visitLocalVariable(
                 it.name.asString(), subjectType.descriptor, null,
                 beginLabel, endLabel, subjectLocal
@@ -137,7 +142,7 @@ abstract class SwitchCodegen(
     private fun generateSubjectValue() {
         if (subjectVariable != null) {
             val mySubjectVariable = bindingContext[BindingContext.VARIABLE, subjectVariable]
-                    ?: throw AssertionError("Unresolved subject variable: $expression")
+                ?: throw AssertionError("Unresolved subject variable: $expression")
             subjectLocal = codegen.frameMap.enter(mySubjectVariable, subjectType)
             codegen.visitProperty(subjectVariable, null)
             StackValue.local(subjectLocal, subjectType, subjectKotlinType).put(subjectType, subjectKotlinType, codegen.v)
