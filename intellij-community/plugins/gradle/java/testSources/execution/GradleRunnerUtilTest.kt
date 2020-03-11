@@ -7,7 +7,7 @@ import org.junit.Test
 
 class GradleRunnerUtilTest {
   @Test
-  fun `parse comparison message`() {
+  fun `parse comparison message test`() {
     fun check(pattern: String, first: String, second: String) {
       parseComparisonMessage(pattern).let {
         assertEquals(first, it.first)
