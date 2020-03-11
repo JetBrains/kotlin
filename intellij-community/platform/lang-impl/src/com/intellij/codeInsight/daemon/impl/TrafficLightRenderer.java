@@ -94,7 +94,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   private static final JBValue ICON_TEXT_GAP = new JBValue.Float(6);
 
   /**
-   * @deprecated Please use the constructor not taking PsiFile parameter: {@link #TrafficLightRenderer(Project, Document)}
+   * @deprecated Please use {@link #TrafficLightRenderer(Project, Document)} instead
    */
   @Deprecated
   public TrafficLightRenderer(Project project, Document document, PsiFile psiFile) {
@@ -248,11 +248,12 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
     status.errorCount = errorCount.clone();
 
-    status.passes = myDaemonCodeAnalyzer.getPassesToShowProgressFor(myDocument).stream()
-      .filter(p -> p instanceof ProgressableTextEditorHighlightingPass)
-      .map(p -> (ProgressableTextEditorHighlightingPass)p)
-      .filter(p -> StringUtil.isNotEmpty(p.getPresentableName()) && p.getProgress() >= 0)
-      .collect(Collectors.toList());
+    status.passes = ContainerUtil.mapNotNull(myDaemonCodeAnalyzer.getPassesToShowProgressFor(myDocument), pass-> {
+      if (!(pass instanceof ProgressableTextEditorHighlightingPass)) return null;
+      ProgressableTextEditorHighlightingPass p = (ProgressableTextEditorHighlightingPass)pass;
+      if (StringUtil.isEmpty(p.getPresentableName()) || p.getProgress() < 0) return null;
+      return p;
+    });
 
     status.errorAnalyzingFinished = myDaemonCodeAnalyzer.isAllAnalysisFinished(psiFile);
     status.reasonWhySuspended = myDaemonCodeAnalyzer.isUpdateByTimerEnabled() ? null : "Highlighting is paused temporarily";
@@ -397,10 +398,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       Font editorFont = editor.getComponent().getFont();
       Font font = editorFont.deriveFont(Font.PLAIN, editorFont.getSize() - JBUIScale.scale(2));
 
-      int currentSeverityErrors = 0;
-
-      int lastNotNullIndex = ArrayUtil.lastIndexOfNot(status.errorCount, 0);
-      Icon mainIcon = lastNotNullIndex == -1 ? AllIcons.General.InspectionsOK : mySeverityRegistrar.getRendererIconByIndex(lastNotNullIndex);
+      Icon mainIcon = null;
 
       String title;
       StringBuilder detailsBuilder = new StringBuilder();
@@ -419,23 +417,30 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         title = "<b>" + DaemonBundle.message("performing.code.analysis") + "</b>";
       }
 
-      for (int i = lastNotNullIndex; i >= 0; i--) {
-        int count = status.errorCount[i];
+      int currentSeverityErrors = 0;
+      int[] errorCount = status.errorCount;
+      for (int i = errorCount.length-1; i >= 0; i--) {
+        int count = errorCount[i];
         if (count > 0) {
           HighlightSeverity severity = mySeverityRegistrar.getSeverityByIndex(i);
           String name = StringUtil.toLowerCase(severity.getName());
           if (count > 1) {
             name = StringUtil.pluralize(name);
           }
-
-          if (currentSeverityErrors > 0) detailsBuilder.append(", ");
+          if (currentSeverityErrors > 0) {
+            detailsBuilder.append(", ");
+          }
           detailsBuilder.append(count).append(" ").append(name);
           currentSeverityErrors += count;
 
-          statusIcons.add(mySeverityRegistrar.getRendererIconByIndex(i));
-          TextIcon icon = new TextIcon(Integer.toString(status.errorCount[i]), iconTextColor, null, 0);
-          icon.setFont(font);
+          Icon icon = mySeverityRegistrar.getRendererIconByIndex(i);
           statusIcons.add(icon);
+          TextIcon textIcon = new TextIcon(Integer.toString(count), iconTextColor, null, 0);
+          textIcon.setFont(font);
+          statusIcons.add(textIcon);
+          if (mainIcon == null) {
+            mainIcon = icon;
+          }
         }
       }
 
@@ -458,47 +463,45 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
         if (!status.errorAnalyzingFinished) detailsBuilder.append(" found so far");
 
+        if (mainIcon == null) {
+          mainIcon = AllIcons.General.InspectionsOK;
+        }
         AnalyzerStatus result = new AnalyzerStatus(mainIcon, title, detailsBuilder.toString(), this::createUIController).
           withNavigation().
           withExpandedIcon(statusIcon);
 
         //noinspection ConstantConditions
         return status.errorAnalyzingFinished ? result :
-               result.withPasses(ContainerUtil.map(status.passes,
-                                                     p -> new PassWrapper(p.getPresentableName(), p.getProgress(), p.isFinished())));
+               result.withPasses(ContainerUtil.map(status.passes, p -> new PassWrapper(p.getPresentableName(), p.getProgress(), p.isFinished())));
       }
-      else {
-        if (StringUtil.isNotEmpty(status.reasonWhyDisabled)) {
-          TextIcon offIcon = new TextIcon("OFF", iconTextColor, null, 0);
-          offIcon.setFont(font);
+      if (StringUtil.isNotEmpty(status.reasonWhyDisabled)) {
+        TextIcon offIcon = new TextIcon("OFF", iconTextColor, null, 0);
+        offIcon.setFont(font);
 
-          return new AnalyzerStatus(AllIcons.General.InspectionsTrafficOff,
-                                   "<b>No analysis has been performed</b>", status.reasonWhyDisabled, this::createUIController).
-            withExpandedIcon(new LayeredIcon(offIcon));
-        }
-        else if (StringUtil.isNotEmpty(status.reasonWhySuspended)) {
-          TextIcon icon = new TextIcon("Indexing...", iconTextColor, null, 0);
-          icon.setFont(font);
-          return new AnalyzerStatus(AllIcons.General.InspectionsPause,
-                                    "<b>Code analysis has been suspended</b>",
-                                    status.reasonWhySuspended,
-                                    this::createUIController).
-            withExpandedIcon(new LayeredIcon(icon));
-        }
-        else if (status.errorAnalyzingFinished) {
-          return new AnalyzerStatus(AllIcons.General.InspectionsOK, "No problems found",
-                                    detailsBuilder.toString(), this::createUIController);
-        }
-        else {
-          TextIcon icon = new TextIcon("Analyzing...", iconTextColor, null, 0);
-          icon.setFont(font);
-
-          //noinspection ConstantConditions
-          return new AnalyzerStatus(AllIcons.General.InspectionsEye, title, detailsBuilder.toString(), this::createUIController).
-            withExpandedIcon(new LayeredIcon(icon)).
-            withPasses(ContainerUtil.map(status.passes, p -> new PassWrapper(p.getPresentableName(), p.getProgress(), p.isFinished())));
-        }
+        return new AnalyzerStatus(AllIcons.General.InspectionsTrafficOff,
+                                  "<b>No analysis has been performed</b>", status.reasonWhyDisabled, this::createUIController).
+          withExpandedIcon(new LayeredIcon(offIcon));
       }
+      if (StringUtil.isNotEmpty(status.reasonWhySuspended)) {
+        TextIcon icon = new TextIcon("Indexing...", iconTextColor, null, 0);
+        icon.setFont(font);
+        return new AnalyzerStatus(AllIcons.General.InspectionsPause,
+                                  "<b>Code analysis has been suspended</b>",
+                                  status.reasonWhySuspended,
+                                  this::createUIController).
+          withExpandedIcon(new LayeredIcon(icon));
+      }
+      if (status.errorAnalyzingFinished) {
+        return new AnalyzerStatus(AllIcons.General.InspectionsOK, "No problems found",
+                                  detailsBuilder.toString(), this::createUIController);
+      }
+      TextIcon icon = new TextIcon("Analyzing...", iconTextColor, null, 0);
+      icon.setFont(font);
+
+      //noinspection ConstantConditions
+      return new AnalyzerStatus(AllIcons.General.InspectionsEye, title, detailsBuilder.toString(), this::createUIController).
+        withExpandedIcon(new LayeredIcon(icon)).
+        withPasses(ContainerUtil.map(status.passes, p -> new PassWrapper(p.getPresentableName(), p.getProgress(), p.isFinished())));
     }
   }
 
@@ -585,7 +588,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       return result;
     }
 
-    private List<LanguageHighlightLevel> initLevels() {
+    private @NotNull List<LanguageHighlightLevel> initLevels() {
       List<LanguageHighlightLevel> result = new ArrayList<>();
       PsiFile psiFile = getPsiFile();
       if (psiFile != null && !myProject.isDisposed()) {
