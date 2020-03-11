@@ -10639,9 +10639,9 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                     runTest("compiler/testData/diagnostics/tests/inference/completion/basic.kt");
                 }
 
-                @TestMetadata("definetlyNotNullType.kt")
-                public void testDefinetlyNotNullType() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/inference/completion/definetlyNotNullType.kt");
+                @TestMetadata("definitelyNotNullType.kt")
+                public void testDefinitelyNotNullType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/completion/definitelyNotNullType.kt");
                 }
 
                 @TestMetadata("equalityConstraintUpstairs.kt")
