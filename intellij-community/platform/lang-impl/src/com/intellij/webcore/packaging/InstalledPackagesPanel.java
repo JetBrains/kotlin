@@ -81,9 +81,6 @@ public class InstalledPackagesPanel extends JPanel {
         return tableCellRenderer;
       }
     };
-    // Defence from javax.swing.JTable.initializeLocalVars:
-    //     setPreferredScrollableViewportSize(new Dimension(450, 400));
-    myPackagesTable.setPreferredScrollableViewportSize(null);
     myPackagesTable.setStriped(true);
     myPackagesTable.getTableHeader().setReorderingAllowed(false);
     new TableSpeedSearch(myPackagesTable);

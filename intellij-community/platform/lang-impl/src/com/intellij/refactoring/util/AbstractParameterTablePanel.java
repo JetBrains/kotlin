@@ -11,6 +11,7 @@ import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.EditableModel;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.ListTableModel;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +70,8 @@ public abstract class AbstractParameterTablePanel<P extends AbstractVariableData
     myTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     myTable.setCellSelectionEnabled(true);
 
-    myTable.setPreferredScrollableViewportSize(new Dimension(250, myTable.getRowHeight() * 5));
+    myTable.setPreferredScrollableViewportSize(JBUI.size(250, -1));
+    myTable.setVisibleRowCount(5);
     myTable.setShowGrid(false);
     myTable.setIntercellSpacing(new Dimension(0, 0));
     @NonNls final InputMap inputMap = myTable.getInputMap();

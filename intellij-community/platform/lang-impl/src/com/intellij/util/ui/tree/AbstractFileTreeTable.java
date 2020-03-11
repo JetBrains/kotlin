@@ -22,6 +22,7 @@ import com.intellij.ui.treeStructure.treetable.TreeTableCellRenderer;
 import com.intellij.ui.treeStructure.treetable.TreeTableModel;
 import com.intellij.util.IconUtil;
 import com.intellij.util.PlatformIcons;
+import com.intellij.util.ui.JBUI;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,8 +34,8 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class AbstractFileTreeTable<T> extends TreeTable {
   private final MyModel<T> myModel;
@@ -114,7 +115,8 @@ public class AbstractFileTreeTable<T> extends TreeTable {
     getTableHeader().setReorderingAllowed(false);
 
     setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    setPreferredScrollableViewportSize(new Dimension(300, getRowHeight() * 10));
+    setPreferredScrollableViewportSize(JBUI.size(300, -1));
+    setVisibleRowCount(10);
 
     getColumnModel().getColumn(0).setPreferredWidth(280);
     getColumnModel().getColumn(1).setPreferredWidth(60);

@@ -16,6 +16,7 @@ import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ui.EditableModel;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -31,11 +32,14 @@ import java.util.stream.Stream;
 
 class EditVariableDialog extends DialogWrapper {
   private final ArrayList<Variable> myVariables;
-  private JTable myTable;
+  private JBTable myTable;
   private final Editor myEditor;
   private final List<? extends TemplateContextType> myContextTypes;
 
-  EditVariableDialog(Editor editor, Component parent, ArrayList<Variable> variables, List<? extends TemplateContextType> contextTypes) {
+  EditVariableDialog(Editor editor,
+                     Component parent,
+                     ArrayList<Variable> variables,
+                     List<? extends TemplateContextType> contextTypes) {
     super(parent, true);
     myContextTypes = contextTypes;
     myVariables = variables;
@@ -79,7 +83,8 @@ class EditVariableDialog extends DialogWrapper {
     // Create the table
     myTable = new JBTable(dataModel);
     myTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    myTable.setPreferredScrollableViewportSize(new Dimension(500, myTable.getRowHeight() * 8));
+    myTable.setPreferredScrollableViewportSize(JBUI.size(500, -1));
+    myTable.setVisibleRowCount(8);
     myTable.getColumn(names[0]).setPreferredWidth(120);
     myTable.getColumn(names[1]).setPreferredWidth(200);
     myTable.getColumn(names[2]).setPreferredWidth(200);

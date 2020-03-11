@@ -17,6 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
 import com.intellij.ui.table.JBTable;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -304,7 +305,8 @@ public final class ExcludedEntriesConfigurable implements UnnamedConfigurable, N
       myExcludedTable.setEnableAntialiasing(true);
 
       myExcludedTable.getEmptyText().setText(JavaCompilerBundle.message("no.excludes"));
-      myExcludedTable.setPreferredScrollableViewportSize(new Dimension(300, myExcludedTable.getRowHeight() * 6));
+      myExcludedTable.setPreferredScrollableViewportSize(JBUI.size(300, -1));
+      myExcludedTable.setVisibleRowCount(6);
       myExcludedTable.setDefaultRenderer(Boolean.class, new BooleanRenderer());
       myExcludedTable.setDefaultRenderer(Object.class, new MyObjectRenderer());
       myExcludedTable.getColumn(names[0]).setPreferredWidth(350);

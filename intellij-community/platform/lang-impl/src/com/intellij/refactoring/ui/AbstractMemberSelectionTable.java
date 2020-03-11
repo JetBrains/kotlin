@@ -18,6 +18,7 @@ import com.intellij.ui.*;
 import com.intellij.ui.icons.RowIcon;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.EmptyIcon;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,7 +77,8 @@ public abstract class AbstractMemberSelectionTable<T extends PsiElement, M exten
       model.getColumn(ABSTRACT_COLUMN).setCellRenderer(new MyBooleanRenderer<>(this));
     }
 
-    setPreferredScrollableViewportSize(new Dimension(400, getRowHeight() * 12));
+    setPreferredScrollableViewportSize(JBUI.size(400, -1));
+    setVisibleRowCount(12);
     getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     setShowGrid(false);
     setIntercellSpacing(new Dimension(0, 0));

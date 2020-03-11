@@ -18,6 +18,7 @@ import com.intellij.ui.treeStructure.treetable.TreeTableModel;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.ColumnInfo;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -418,7 +419,7 @@ public class ExtractedSettingsDialog extends DialogWrapper {
     titleColumn.setResizable(false);
 
     final Dimension valueSize = new JLabel(ApplicationBundle.message("option.table.sizing.text")).getPreferredSize();
-    treeTable.setPreferredScrollableViewportSize(new Dimension(maxWidth + valueSize.width + 10, 20));
+    treeTable.setPreferredScrollableViewportSize(JBUI.size(maxWidth + valueSize.width + 10, 20));
     treeTable.setBackground(UIUtil.getPanelBackground());
     treeTable.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
 
