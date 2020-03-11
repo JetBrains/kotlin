@@ -12,9 +12,9 @@ class A {
                 val containingDescriptor = declarationDescriptor.getContainingDeclaration()
                 if (containingDescriptor is ClassDescriptor) {
                     return JetBundle.message(
-                        "override.declaration.x.in.y",
-                        DescriptorRenderer.COMPACT.render(declarationDescriptor),
-                        IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(containingDescriptor)
+                            "override.declaration.x.in.y",
+                            DescriptorRenderer.COMPACT.render(declarationDescriptor),
+                            IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(containingDescriptor)
                     )
                 }
             }
