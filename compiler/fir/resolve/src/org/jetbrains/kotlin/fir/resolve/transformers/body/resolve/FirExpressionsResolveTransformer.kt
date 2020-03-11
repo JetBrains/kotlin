@@ -134,7 +134,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 // NB: here we can get raw expression because of dropped qualifiers (see transform callee),
                 // so candidate existence must be checked before calling completion
                 if (transformedCallee is FirQualifiedAccessExpression && transformedCallee.candidate() != null) {
-                    callCompleter.completeCall(transformedCallee, data.expectedType)
+                    callCompleter.completeCall(transformedCallee, data.expectedType).result
                 } else {
                     transformedCallee
                 }
@@ -153,11 +153,12 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             storeTypeFromCallee(functionCall)
         }
         if (functionCall.calleeReference !is FirSimpleNamedReference) return functionCall.compose()
+        dataFlowAnalyzer.enterFunctionCall(functionCall)
         functionCall.annotations.forEach { it.accept(this, data) }
         functionCall.transform<FirFunctionCall, Nothing?>(InvocationKindTransformer, null)
         functionCall.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
         val expectedTypeRef = data.expectedType
-        val completeInference =
+        val (completeInference, callCompleted) =
             try {
                 val initialExplicitReceiver = functionCall.explicitReceiver
                 val resultExpression = callResolver.resolveCallAndSelectCandidate(functionCall)
@@ -167,8 +168,9 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                     callCompleter.completeCall(resultExplicitReceiver, noExpectedType)
                 }
                 val completionResult = callCompleter.completeCall(resultExpression, expectedTypeRef)
-                if (completionResult.typeRef is FirErrorTypeRef) {
-                    completionResult.argumentList.transformArguments(transformer, ResolutionMode.LambdaResolution(null))
+
+                if (completionResult.result.typeRef is FirErrorTypeRef) {
+                    completionResult.result.argumentList.transformArguments(transformer, ResolutionMode.LambdaResolution(null))
                 }
                 completionResult
             } catch (e: ProcessCanceledException) {
@@ -177,7 +179,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 throw RuntimeException("While resolving call ${functionCall.render()}", e)
             }
 
-        dataFlowAnalyzer.exitFunctionCall(completeInference)
+        dataFlowAnalyzer.exitFunctionCall(completeInference, callCompleted)
         return completeInference.compose()
     }
 
@@ -365,16 +367,20 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
 
         checkNotNullCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
 
+        var callCompleted: Boolean = false
         val result = components.syntheticCallGenerator.generateCalleeForCheckNotNullCall(checkNotNullCall)?.let {
-            callCompleter.completeCall(it, data.expectedType)
+            val completionResult = callCompleter.completeCall(it, data.expectedType)
+            callCompleted = completionResult.callCompleted
+            completionResult.result
         } ?: run {
             checkNotNullCall.resultType =
                 buildErrorTypeRef {
                     diagnostic = FirSimpleDiagnostic("Can't resolve !! operator call", DiagnosticKind.InferenceError)
                 }
+            callCompleted = true
             checkNotNullCall
         }
-        dataFlowAnalyzer.exitCheckNotNullCall(result)
+        dataFlowAnalyzer.exitCheckNotNullCall(result, callCompleted)
         return result.compose()
     }
 
@@ -408,7 +414,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         variableAssignment.annotations.forEach { it.accept(this, data) }
         val resolvedAssignment = callResolver.resolveVariableAccessAndSelectCandidate(variableAssignment)
         val result = if (resolvedAssignment is FirVariableAssignment) {
-            val completeAssignment = callCompleter.completeCall(resolvedAssignment, noExpectedType) // TODO: check
+            val completeAssignment = callCompleter.completeCall(resolvedAssignment, noExpectedType).result // TODO: check
             val expectedType = components.typeFromCallee(completeAssignment)
             completeAssignment.transformRValue(transformer, withExpectedType(expectedType))
                 .transformRValue(integerLiteralTypeApproximator, expectedType.coneTypeSafe())
@@ -598,7 +604,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         }
         val result = callResolver.resolveDelegatingConstructorCall(delegatedConstructorCall, symbol, typeArguments)
             ?: return delegatedConstructorCall.compose()
-        return callCompleter.completeCall(result, noExpectedType).compose()
+        return callCompleter.completeCall(result, noExpectedType).result.compose()
     }
 
     // ------------------------------------------------------------------------------------------------

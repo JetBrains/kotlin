@@ -201,38 +201,41 @@ digraph safeCalls_kt {
             76 [label="Stub" style="filled" fillcolor=gray];
             77 [label="Exit function anonymousFunction" style="filled" fillcolor=gray];
         }
-        78 [label="Postponed exit from lambda"];
-        79 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(...)"];
-        80 [label="Exit safe call"];
-        81 [label="Enter safe call"];
-        82 [label="Access variable R|<local>/x|"];
-        83 [label="Function call: R|<local>/x|.R|/A.bool|()"];
-        84 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(...)?.R|/boo|(...)"];
-        85 [label="Exit safe call"];
-        86 [label="Access variable R|<local>/x|"];
-        87 [label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.id]>#()"];
-        88 [label="Exit function test_5" style="filled" fillcolor=red];
+        78 [label="Call arguments union" style="filled" fillcolor=gray];
+        79 [label="Postponed exit from lambda"];
+        80 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(...)" style="filled" fillcolor=gray];
+        81 [label="Exit safe call"];
+        82 [label="Enter safe call"];
+        83 [label="Access variable R|<local>/x|"];
+        84 [label="Function call: R|<local>/x|.R|/A.bool|()"];
+        85 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(...)?.R|/boo|(...)"];
+        86 [label="Exit safe call"];
+        87 [label="Access variable R|<local>/x|"];
+        88 [label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.id]>#()"];
+        89 [label="Exit function test_5" style="filled" fillcolor=red];
     }
 
     70 -> {71};
-    71 -> {72 80};
+    71 -> {72 81};
     72 -> {73};
     73 -> {74};
-    73 -> {78} [color=red];
+    73 -> {79} [color=red];
     74 -> {75};
-    75 -> {88};
+    75 -> {89};
     75 -> {76} [style=dotted];
     76 -> {77} [style=dotted];
-    77 -> {78} [color=green];
-    78 -> {79};
-    79 -> {80};
-    80 -> {81 85};
-    81 -> {82};
+    77 -> {78} [style=dotted];
+    77 -> {79} [color=green];
+    78 -> {80} [style=dotted];
+    79 -> {80} [color=green];
+    80 -> {81} [style=dotted];
+    81 -> {82 86};
     82 -> {83};
     83 -> {84};
     84 -> {85};
     85 -> {86};
     86 -> {87};
     87 -> {88};
+    88 -> {89};
 
 }

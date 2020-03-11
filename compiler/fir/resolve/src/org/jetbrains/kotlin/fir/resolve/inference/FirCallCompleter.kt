@@ -45,7 +45,9 @@ class FirCallCompleter(
     private val inferenceSession
         get() = inferenceComponents.inferenceSession
 
-    fun <T> completeCall(call: T, expectedTypeRef: FirTypeRef?): T
+    data class CompletionResult<T>(val result: T, val callCompleted: Boolean)
+
+    fun <T> completeCall(call: T, expectedTypeRef: FirTypeRef?): CompletionResult<T>
             where T : FirResolvable, T : FirStatement {
         val typeRef = typeFromCallee(call)
         if (typeRef.type is ConeKotlinErrorType) {
@@ -62,10 +64,10 @@ class FirCallCompleter(
                 call
             }
             inferenceSession.addErrorCall(errorCall)
-            return errorCall
+            return CompletionResult(errorCall, true)
         }
 
-        val candidate = call.candidate() ?: return call
+        val candidate = call.candidate() ?: return CompletionResult(call, true)
         val initialSubstitutor = candidate.substitutor
 
         val initialType = initialSubstitutor.substituteOrSelf(typeRef.type)
@@ -101,10 +103,10 @@ class FirCallCompleter(
                         null
                     )
                     inferenceSession.addCompetedCall(completedCall)
-                    completedCall
+                    CompletionResult(completedCall, true)
                 } else {
                     inferenceSession.addPartiallyResolvedCall(call)
-                    call
+                    CompletionResult(call, false)
                 }
             }
 
@@ -114,7 +116,7 @@ class FirCallCompleter(
                 }
                 val approximatedCall = call.transformSingle(integerOperatorsTypeUpdater, null)
                 inferenceSession.addPartiallyResolvedCall(approximatedCall)
-                approximatedCall
+                CompletionResult(approximatedCall, false)
             }
         }
     }

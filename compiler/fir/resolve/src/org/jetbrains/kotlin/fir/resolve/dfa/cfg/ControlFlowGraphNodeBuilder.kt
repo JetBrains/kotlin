@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 
@@ -187,3 +188,6 @@ fun ControlFlowGraphBuilder.createPostponedLambdaEnterNode(fir: FirAnonymousFunc
 
 fun ControlFlowGraphBuilder.createAnonymousObjectExitNode(fir: FirAnonymousObject): AnonymousObjectExitNode =
     AnonymousObjectExitNode(graph, fir, levelCounter, createId())
+
+fun ControlFlowGraphBuilder.createUnionFunctionCallArgumentsNode(fir: FirElement): UnionFunctionCallArgumentsNode =
+    UnionFunctionCallArgumentsNode(graph, fir, levelCounter, createId())

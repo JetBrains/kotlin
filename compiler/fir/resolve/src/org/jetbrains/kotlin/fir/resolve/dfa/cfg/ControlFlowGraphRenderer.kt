@@ -92,13 +92,19 @@ class FirControlFlowGraphRenderVisitor(
                 }
                 val attributes = mutableListOf<String>()
                 attributes += "label=\"${it.render().replace("\"", "")}\""
-                if (it == enterNode || it == exitNode) {
+
+                fun fillColor(color: String) {
                     attributes += "style=\"filled\""
-                    attributes += "fillcolor=red"
+                    attributes += "fillcolor=$color"
+                }
+
+                if (it == enterNode || it == exitNode) {
+                    fillColor("red")
                 }
                 if (it.isDead) {
-                    attributes += "style=\"filled\""
-                    attributes += "fillcolor=gray"
+                    fillColor("gray")
+                } else if (it is UnionFunctionCallArgumentsNode) {
+                    fillColor("yellow")
                 }
                 println(indices.getValue(it), attributes.joinToString(separator = " ", prefix = " [", postfix = "];"))
                 if (it is ExitNodeMarker) {
@@ -217,6 +223,8 @@ private fun CFGNode<*>.render(): String =
                 is PostponedLambdaExitNode -> "Postponed exit from lambda"
 
                 is AnonymousObjectExitNode -> "Exit anonymous object"
+
+                is UnionFunctionCallArgumentsNode -> "Call arguments union"
 
                 else -> TODO(this@render.toString())
             },

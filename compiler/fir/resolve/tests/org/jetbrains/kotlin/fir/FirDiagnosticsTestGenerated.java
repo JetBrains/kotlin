@@ -566,6 +566,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/cfg/emptyWhen.kt");
         }
 
+        @TestMetadata("flowFromInplaceLambda.kt")
+        public void testFlowFromInplaceLambda() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/flowFromInplaceLambda.kt");
+        }
+
         @TestMetadata("initBlock.kt")
         public void testInitBlock() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/cfg/initBlock.kt");
@@ -574,6 +579,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("initBlockAndInPlaceLambda.kt")
         public void testInitBlockAndInPlaceLambda() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/cfg/initBlockAndInPlaceLambda.kt");
+        }
+
+        @TestMetadata("inplaceLambdaInControlFlowExpressions.kt")
+        public void testInplaceLambdaInControlFlowExpressions() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/inplaceLambdaInControlFlowExpressions.kt");
         }
 
         @TestMetadata("jumps.kt")

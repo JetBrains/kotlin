@@ -63,19 +63,19 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
             @Suppress("NAME_SHADOWING")
             var whenExpression = whenExpression.transformSubject(transformer, ResolutionMode.ContextIndependent)
 
-            when {
-                whenExpression.branches.isEmpty() -> {
-                }
+            val callCompleted = when {
+                whenExpression.branches.isEmpty() -> true
                 whenExpression.isOneBranch() -> {
                     whenExpression = whenExpression.transformBranches(transformer, ResolutionMode.ContextIndependent)
                     whenExpression.resultType = whenExpression.branches.first().result.resultType
+                    true
                 }
                 else -> {
                     whenExpression = whenExpression.transformBranches(transformer, ResolutionMode.ContextDependent)
 
                     whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(whenExpression) ?: run {
                         whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
-                        dataFlowAnalyzer.exitWhenExpression(whenExpression)
+                        dataFlowAnalyzer.exitWhenExpression(whenExpression, callCompleted = true)
                         whenExpression.resultType = buildErrorTypeRef {
                             diagnostic = FirSimpleDiagnostic("Can't resolve when expression", DiagnosticKind.InferenceError)
                         }
@@ -83,11 +83,13 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
                     }
 
                     val expectedTypeRef = data.expectedType
-                    whenExpression = callCompleter.completeCall(whenExpression, expectedTypeRef)
+                    val completionResult = callCompleter.completeCall(whenExpression, expectedTypeRef)
+                    whenExpression = completionResult.result
+                    completionResult.callCompleted
                 }
             }
             whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
-            dataFlowAnalyzer.exitWhenExpression(whenExpression)
+            dataFlowAnalyzer.exitWhenExpression(whenExpression, callCompleted)
             whenExpression = whenExpression.replaceReturnTypeIfNotExhaustive()
             whenExpression.compose()
         }
@@ -139,14 +141,18 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         dataFlowAnalyzer.exitTryMainBlock(tryExpression)
         tryExpression.transformCatches(this, ResolutionMode.ContextDependent)
 
+        var callCompleted: Boolean = false
         @Suppress("NAME_SHADOWING")
         var result = syntheticCallGenerator.generateCalleeForTryExpression(tryExpression)?.let {
             val expectedTypeRef = data.expectedType
-            callCompleter.completeCall(it, expectedTypeRef)
+            val completionResult = callCompleter.completeCall(it, expectedTypeRef)
+            callCompleted = completionResult.callCompleted
+            completionResult.result
         } ?: run {
             tryExpression.resultType = buildErrorTypeRef {
                 diagnostic = FirSimpleDiagnostic("Can't resolve try expression", DiagnosticKind.InferenceError)
             }
+            callCompleted = true
             tryExpression
         }
 
@@ -157,7 +163,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         } else {
             result
         }
-        dataFlowAnalyzer.exitTryExpression(result)
+        dataFlowAnalyzer.exitTryExpression(result, callCompleted)
         return result.compose()
     }
 
