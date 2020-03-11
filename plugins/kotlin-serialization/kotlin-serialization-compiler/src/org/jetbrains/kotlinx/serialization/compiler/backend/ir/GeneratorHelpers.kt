@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.AbstractSerialGenerator
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.allSealedSerializableSubclassesFor
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContext
@@ -607,7 +608,7 @@ interface IrBuilderExtension {
                                                 SpecialBuiltins.polymorphicSerializer
                                             ),
                                             module,
-                                            genericType
+                                            (genericType.constructor.declarationDescriptor as TypeParameterDescriptor).representativeUpperBound
                                         )!!
                                     }!!
                                     wrapWithNullableSerializerIfNeeded(module, type, expr, nullableSerClass)
