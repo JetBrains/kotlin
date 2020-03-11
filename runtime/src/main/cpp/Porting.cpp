@@ -115,6 +115,15 @@ void consolePrintf(const char* format, ...) {
   consoleWriteUtf8(buffer, rv);
 }
 
+void consoleErrorf(const char* format, ...) {
+  char buffer[1024];
+  va_list args;
+  va_start(args, format);
+  int rv = vsnprintf_impl(buffer, sizeof(buffer) - 1, format, args);
+  va_end(args);
+  consoleErrorUtf8(buffer, rv);
+}
+
 // Thread execution.
 #if !KONAN_NO_THREADS
 

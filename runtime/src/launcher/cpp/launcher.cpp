@@ -19,6 +19,7 @@
 #include "Runtime.h"
 #include "KString.h"
 #include "Types.h"
+#include "Worker.h"
 
 #ifndef KONAN_ANDROID
 
@@ -55,7 +56,11 @@ extern "C" RUNTIME_USED int Init_and_run_start(int argc, const char** argv, int 
 
   KInt exitStatus = Konan_run_start(argc, argv);
 
-  if (memoryDeInit) Kotlin_deinitRuntimeIfNeeded();
+  if (memoryDeInit) {
+    if (Kotlin_memoryLeakCheckerEnabled())
+      WaitNativeWorkersTermination();
+    Kotlin_deinitRuntimeIfNeeded();
+  }
 
   return exitStatus;
 }

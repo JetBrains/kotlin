@@ -71,6 +71,11 @@ enum JobKind {
   JOB_EXECUTE_AFTER = 3
 };
 
+enum class WorkerKind {
+  kNative,  // Workers created using Worker.start public API.
+  kOther,   // Any other kind of workers.
+};
+
 struct Job {
   enum JobKind kind;
   union {
@@ -106,13 +111,18 @@ typedef KStdOrderedSet<Job, JobCompare> DelayedJobSet;
 
 class Worker {
  public:
-  Worker(KInt id, bool errorReporting, KRef customName) : id_(id), errorReporting_(errorReporting), terminated_(false) {
+  Worker(KInt id, bool errorReporting, KRef customName, WorkerKind kind)
+      : id_(id),
+        kind_(kind),
+        errorReporting_(errorReporting) {
     name_ = customName != nullptr ? CreateStablePointer(customName) : nullptr;
     pthread_mutex_init(&lock_, nullptr);
     pthread_cond_init(&cond_, nullptr);
   }
 
   ~Worker();
+
+  void startEventLoop();
 
   void putJob(Job job, bool toFront);
   void putDelayedJob(Job job);
@@ -135,8 +145,13 @@ class Worker {
 
   KNativePtr name() const { return name_; }
 
+  WorkerKind kind() const { return kind_; }
+
+  pthread_t thread() const { return thread_; }
+
  private:
   KInt id_;
+  WorkerKind kind_;
   KStdDeque<Job> queue_;
   DelayedJobSet delayed_;
   // Stable pointer with worker's name.
@@ -146,7 +161,8 @@ class Worker {
   pthread_cond_t cond_;
   // If errors to be reported on console.
   bool errorReporting_;
-  bool terminated_;
+  bool terminated_ = false;
+  pthread_t thread_ = 0;
 };
 
 #else  // WITH_WORKERS
@@ -240,7 +256,6 @@ class Future {
   pthread_cond_t cond_;
 };
 
-
 class State {
  public:
   State() {
@@ -258,11 +273,11 @@ class State {
     pthread_cond_destroy(&cond_);
   }
 
-  Worker* addWorkerUnlocked(bool errorReporting, KRef customName) {
+  Worker* addWorkerUnlocked(bool errorReporting, KRef customName, WorkerKind kind) {
     Worker* worker = nullptr;
     {
       Locker locker(&lock_);
-      worker = konanConstructInstance<Worker>(nextWorkerId(), errorReporting, customName);
+      worker = konanConstructInstance<Worker>(nextWorkerId(), errorReporting, customName, kind);
       if (worker == nullptr) return nullptr;
       workers_[worker->id()] = worker;
     }
@@ -274,6 +289,10 @@ class State {
     Locker locker(&lock_);
     auto it = workers_.find(id);
     if (it == workers_.end()) return;
+    Worker* worker = it->second;
+    if (worker->kind() == WorkerKind::kNative) {
+      terminating_native_workers_[id] = worker->thread();
+    }
     workers_.erase(it);
   }
 
@@ -432,11 +451,58 @@ class State {
   KInt nextWorkerId() { return currentWorkerId_++; }
   KInt nextFutureId() { return currentFutureId_++; }
 
+  void destroyWorkerThreadDataUnlocked(KInt id) {
+    Locker locker(&lock_);
+    auto it = terminating_native_workers_.find(id);
+    if (it == terminating_native_workers_.end()) return;
+    // If this worker was not joined, detach it to free resources.
+    pthread_detach(it->second);
+    terminating_native_workers_.erase(it);
+  }
+
+  void waitNativeWorkersTerminationUnlocked() {
+    std::vector<pthread_t> threadsToWait;
+    {
+      Locker locker(&lock_);
+
+      checkNativeWorkersLeakLocked();
+
+      for (auto& kvp : terminating_native_workers_) {
+        RuntimeAssert(!pthread_equal(kvp.second, pthread_self()), "Native worker is joining with itself");
+        threadsToWait.push_back(kvp.second);
+      }
+      terminating_native_workers_.clear();
+    }
+
+    for (auto thread : threadsToWait) {
+      pthread_join(thread, nullptr);
+    }
+  }
+
+  void checkNativeWorkersLeakLocked() {
+    size_t remainingNativeWorkers = 0;
+    for (const auto& kvp : workers_) {
+      Worker* worker = kvp.second;
+      if (worker->kind() == WorkerKind::kNative) {
+        ++remainingNativeWorkers;
+      }
+    }
+
+    if (remainingNativeWorkers != 0) {
+      konan::consoleErrorf(
+        "Unfinished workers detected, %lu workers leaked!\n"
+        "Use `Platform.isMemoryLeakCheckerActive = false` to avoid this check.\n",
+        remainingNativeWorkers);
+      konan::abort();
+    }
+  }
+
  private:
   pthread_mutex_t lock_;
   pthread_cond_t cond_;
   KStdUnorderedMap<KInt, Future*> futures_;
   KStdUnorderedMap<KInt, Worker*> workers_;
+  KStdUnorderedMap<KInt, pthread_t> terminating_native_workers_;
   KInt currentWorkerId_;
   KInt currentFutureId_;
   KInt currentVersion_;
@@ -486,28 +552,10 @@ void Future::cancelUnlocked() {
 // Defined in RuntimeUtils.kt.
 extern "C" void ReportUnhandledException(KRef e);
 
-void* workerRoutine(void* argument) {
-  Worker* worker = reinterpret_cast<Worker*>(argument);
-
-  WorkerResume(worker);
-  Kotlin_initRuntimeIfNeeded();
-
-  do {
-    if (worker->processQueueElement(true) == JOB_TERMINATE) break;
-  } while (true);
-
-  // Runtime deinit callback could be called when TLS is already zeroed out, so clear memory
-  // here explicitly. to make sure leak detector properly works.
-  Kotlin_zeroOutTLSGlobals();
-
-  return nullptr;
-}
-
 KInt startWorker(KBoolean errorReporting, KRef customName) {
-  Worker* worker = theState()->addWorkerUnlocked(errorReporting != 0, customName);
+  Worker* worker = theState()->addWorkerUnlocked(errorReporting != 0, customName, WorkerKind::kNative);
   if (worker == nullptr) return -1;
-  pthread_t thread = 0;
-  pthread_create(&thread, nullptr, workerRoutine, worker);
+  worker->startEventLoop();
   return worker->id();
 }
 
@@ -642,10 +690,18 @@ KNativePtr detachObjectGraphInternal(KInt transferMode, KRef producer) {
 
 }  // namespace
 
+KInt GetWorkerId(Worker* worker) {
+#if WITH_WORKERS
+  return worker->id();
+#else
+  return 0;
+#endif  // WITH_WORKERS
+}
+
 Worker* WorkerInit(KBoolean errorReporting) {
 #if WITH_WORKERS
   if (::g_worker != nullptr) return ::g_worker;
-  Worker* worker = theState()->addWorkerUnlocked(errorReporting != 0, nullptr);
+  Worker* worker = theState()->addWorkerUnlocked(errorReporting != 0, nullptr, WorkerKind::kOther);
   ::g_worker = worker;
   return worker;
 #else
@@ -658,6 +714,18 @@ void WorkerDeinit(Worker* worker) {
   ::g_worker = nullptr;
   theState()->destroyWorkerUnlocked(worker);
 #endif  // WITH_WORKERS
+}
+
+void WorkerDestroyThreadDataIfNeeded(KInt id) {
+#if WITH_WORKERS
+  theState()->destroyWorkerThreadDataUnlocked(id);
+#endif
+}
+
+void WaitNativeWorkersTermination() {
+#if WITH_WORKERS
+  theState()->waitNativeWorkersTerminationUnlocked();
+#endif
 }
 
 Worker* WorkerSuspend() {
@@ -712,6 +780,31 @@ Worker::~Worker() {
 
   pthread_mutex_destroy(&lock_);
   pthread_cond_destroy(&cond_);
+}
+
+namespace {
+
+void* workerRoutine(void* argument) {
+  Worker* worker = reinterpret_cast<Worker*>(argument);
+
+  WorkerResume(worker);
+  Kotlin_initRuntimeIfNeeded();
+
+  do {
+    if (worker->processQueueElement(true) == JOB_TERMINATE) break;
+  } while (true);
+
+  // Runtime deinit callback could be called when TLS is already zeroed out, so clear memory
+  // here explicitly. to make sure leak detector properly works.
+  Kotlin_zeroOutTLSGlobals();
+
+  return nullptr;
+}
+
+}  // namespace
+
+void Worker::startEventLoop() {
+  pthread_create(&thread_, nullptr, workerRoutine, this);
 }
 
 void Worker::putJob(Job job, bool toFront) {

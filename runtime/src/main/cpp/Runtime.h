@@ -53,6 +53,8 @@ void AppendToInitializersTail(struct InitNode*);
 // Zero out all Kotlin thread local globals.
 void Kotlin_zeroOutTLSGlobals();
 
+bool Kotlin_memoryLeakCheckerEnabled();
+
 #ifdef __cplusplus
 }
 #endif

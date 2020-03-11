@@ -1029,6 +1029,20 @@ task enumIdentity(type: KonanLocalTest) {
     source = "runtime/workers/enum_identity.kt"
 }
 
+standaloneTest("leakWorker") {
+    source = "runtime/workers/leak_worker.kt"
+    flags = ['-g']
+    expectedExitStatusChecker = { it != 0 }
+    outputChecker = { s -> s.contains("Unfinished workers detected, 1 workers leaked!") }
+}
+
+standaloneTest("leakMemoryWithWorkerTermination") {
+    source = "runtime/workers/leak_memory_with_worker_termination.kt"
+    flags = ['-g']
+    expectedExitStatusChecker = { it != 0 }
+    outputChecker = { s -> s.contains("Memory leaks detected, 1 objects leaked!") }
+}
+
 task superFunCall(type: KonanLocalTest) {
     goldValue = "<fun:C><fun:C1>\n<fun:C><fun:C3>\n"
     source = "codegen/basics/superFunCall.kt"
@@ -2732,6 +2746,13 @@ standaloneTest("cycle_collector") {
     disabled = project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build.
     flags = ['-g']
     source = "runtime/memory/cycle_collector.kt"
+}
+
+standaloneTest("leakMemory") {
+    source = "runtime/memory/leak_memory.kt"
+    flags = ['-g']
+    expectedExitStatusChecker = { it != 0 }
+    outputChecker = { s -> s.contains("Memory leaks detected, 1 objects leaked!") }
 }
 
 standaloneTest("mpp1") {

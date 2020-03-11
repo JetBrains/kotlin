@@ -197,7 +197,10 @@ open class KonanLocalTest : KonanTest() {
     override var testLogger = Logger.SILENT
 
     @Input @Optional
-    var expectedExitStatus = 0
+    var expectedExitStatus: Int? = null
+
+    @Input @Optional
+    var expectedExitStatusChecker: (Int) -> Boolean = { it == (expectedExitStatus ?: 0) }
 
     /**
      * Should this test fail or not.
@@ -266,9 +269,12 @@ open class KonanLocalTest : KonanTest() {
             exitCode + other.exitCode)
 
     private fun ProcessOutput.check() {
-        val exitCodeMismatch = exitCode != expectedExitStatus
+        val exitCodeMismatch = !expectedExitStatusChecker(exitCode)
         if (exitCodeMismatch) {
-            val message = "Expected exit status: $expectedExitStatus, actual: $exitCode"
+            val message = if (expectedExitStatus != null)
+                "Expected exit status: $expectedExitStatus, actual: $exitCode"
+            else
+                "Actual exit status doesn't match with exit status checker: $exitCode"
             check(expectedFail) { """
                     |Test failed. $message
                     |stdout:

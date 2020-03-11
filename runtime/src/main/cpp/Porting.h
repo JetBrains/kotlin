@@ -27,6 +27,7 @@ namespace konan {
 // Console operations.
 void consoleInit();
 void consolePrintf(const char* format, ...);
+void consoleErrorf(const char* format, ...);
 void consoleWriteUtf8(const void* utf8, uint32_t sizeBytes);
 void consoleErrorUtf8(const void* utf8, uint32_t sizeBytes);
 // Negative return value denotes that read wasn't successful.

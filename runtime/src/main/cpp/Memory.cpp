@@ -114,7 +114,6 @@ FrameOverlay exportFrameOverlay;
 volatile int allocCount = 0;
 volatile int aliveMemoryStatesCount = 0;
 
-KBoolean g_checkLeaks = KonanNeedDebugInfo;
 KBoolean g_hasCyclicCollector = true;
 
 // TODO: can we pass this variable as an explicit argument?
@@ -1752,11 +1751,13 @@ void deinitMemory(MemoryState* memoryState) {
   atomicAdd(&pendingDeinit, 1);
 #if USE_GC
   bool lastMemoryState = atomicAdd(&aliveMemoryStatesCount, -1) == 0;
-  bool checkLeaks = g_checkLeaks && lastMemoryState;
+  bool checkLeaks = Kotlin_memoryLeakCheckerEnabled() && lastMemoryState;
   if (lastMemoryState) {
    garbageCollect(memoryState, true);
 #if USE_CYCLIC_GC
    // If there are other pending deinits (rare situation) - just skip the leak checker.
+   // This may happen when there're several threads with Kotlin runtimes created
+   // by foreign code, and that code stops those threads simultaneously.
    if (atomicGet(&pendingDeinit) > 1) {
      checkLeaks = false;
    }
@@ -1789,11 +1790,9 @@ void deinitMemory(MemoryState* memoryState) {
 #else
 #if USE_GC
   if (IsStrictMemoryModel && allocCount > 0 && checkLeaks) {
-    char buf[1024];
-    konan::snprintf(buf, sizeof(buf),
+    konan::consoleErrorf(
         "Memory leaks detected, %d objects leaked!\n"
         "Use `Platform.isMemoryLeakCheckerActive = false` to avoid this check.\n", allocCount);
-    konan::consoleErrorUtf8(buf, konan::strnlen(buf, sizeof(buf)));
     konan::abort();
   }
 #endif  // USE_GC
@@ -3008,14 +3007,6 @@ void EnsureNeverFrozen(ObjHeader* object) {
 
 void Kotlin_Any_share(ObjHeader* obj) {
   shareAny(obj);
-}
-
-KBoolean Konan_Platform_getMemoryLeakChecker() {
-  return g_checkLeaks;
-}
-
-void Konan_Platform_setMemoryLeakChecker(KBoolean value) {
-  g_checkLeaks = value;
 }
 
 void AddTLSRecord(MemoryState* memory, void** key, int size) {
