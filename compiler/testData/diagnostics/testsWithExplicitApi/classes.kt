@@ -39,10 +39,8 @@ public data class FooData(val i: Int, val s: String)
 <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>data class FooData2<!>(val i: Int, val s: String)
 
 public class WithNested {
-    <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>
-    class Nested<!> {}
-    <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>
-    inner class Inner<!> {}
+    <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>class Nested<!> {}
+    <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>inner class Inner<!> {}
 }
 
 <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>enum class Foo<!> { A, B }
