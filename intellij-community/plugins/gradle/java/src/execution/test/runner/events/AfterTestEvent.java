@@ -23,8 +23,7 @@ import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.execution.test.runner.GradleTestsExecutionConsole;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import static org.jetbrains.plugins.gradle.execution.GradleRunnerUtil.parseComparisonMessage;
 
 /**
  * @author Vladislav.Soroka
@@ -70,24 +69,7 @@ public class AfterTestEvent extends AbstractTestEvent {
           testProxy.setTestComparisonFailed(exceptionMsg, stackTrace, actualText, expectedText, filePath, actualFilePath, true);
         }
         else {
-          Couple<String> comparisonPair =
-            parseComparisonMessage(exceptionMsg, "\nExpected: is \"(.*)\"\n\\s*got: \"(.*)\"\n");
-          if (comparisonPair == null) {
-            comparisonPair = parseComparisonMessage(exceptionMsg, "\nExpected: is \"(.*)\"\n\\s*but: was \"(.*)\"");
-          }
-          if (comparisonPair == null) {
-            comparisonPair = parseComparisonMessage(exceptionMsg, "\nExpected: (.*)\n\\s*got: (.*)");
-          }
-          if (comparisonPair == null) {
-            comparisonPair = parseComparisonMessage(exceptionMsg, "\\s*expected same:<(.*)> was not:<(.*)>");
-          }
-          if (comparisonPair == null) {
-            comparisonPair = parseComparisonMessage(exceptionMsg, ".*\\s*expected:<(.*)> but was:<(.*)>");
-          }
-          if (comparisonPair == null) {
-            comparisonPair = parseComparisonMessage(exceptionMsg, "\nExpected: \"(.*)\"\n\\s*but: was \"(.*)\"");
-          }
-
+          Couple<String> comparisonPair = parseComparisonMessage(exceptionMsg);
           if (comparisonPair != null) {
             testProxy.setTestComparisonFailed(exceptionMsg, stackTrace, comparisonPair.second, comparisonPair.first);
           }
@@ -106,13 +88,5 @@ public class AfterTestEvent extends AbstractTestEvent {
     }
 
     getResultsViewer().onTestFinished(testProxy);
-  }
-
-  private static Couple<String> parseComparisonMessage(String message, final String regex) {
-    final Matcher matcher = Pattern.compile(regex, Pattern.DOTALL | Pattern.CASE_INSENSITIVE).matcher(message);
-    if (matcher.matches()) {
-      return Couple.of(matcher.group(1).replaceAll("\\\\n", "\n"), matcher.group(2).replaceAll("\\\\n", "\n"));
-    }
-    return null;
   }
 }
