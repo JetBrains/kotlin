@@ -610,7 +610,7 @@ class ControlFlowGraphBuilder {
         return node
     }
 
-    fun enterFunctionCall(functionCall: FirFunctionCall) {
+    fun enterCall(call: FirCall) {
         levelCounter++
     }
 
@@ -624,6 +624,14 @@ class ControlFlowGraphBuilder {
         } else {
             addNewSimpleNode(node, preferredKind = kind)
         }
+        return node to unionNode
+    }
+
+    fun exitDelegatedConstructorCall(call: FirDelegatedConstructorCall, callCompleted: Boolean): Pair<DelegatedConstructorCallNode, UnionFunctionCallArgumentsNode?> {
+        levelCounter--
+        val node = createDelegatedConstructorCallNode(call)
+        val (kind, unionNode) = processUnionOfArguments(node, callCompleted)
+        addNewSimpleNode(node, preferredKind = kind)
         return node to unionNode
     }
 

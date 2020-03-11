@@ -184,6 +184,7 @@ private fun CFGNode<*>.render(): String =
 
                 is VariableAssignmentNode -> "Assignmenet: ${fir.lValue.render(CfgRenderMode)}"
                 is FunctionCallNode -> "Function call: ${fir.render(CfgRenderMode)}"
+                is DelegatedConstructorCallNode -> "Delegated constructor call: ${fir.render(CfgRenderMode)}"
                 is ThrowExceptionNode -> "Throw: ${fir.render(CfgRenderMode)}"
 
                 is TryExpressionEnterNode -> "Try expression enter"

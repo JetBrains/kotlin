@@ -22,9 +22,11 @@ digraph initBlockAndInPlaceLambda_kt {
     subgraph cluster_2 {
         color=red
         4 [label="Enter function <init>" style="filled" fillcolor=red];
-        5 [label="Exit function <init>" style="filled" fillcolor=red];
+        5 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        6 [label="Exit function <init>" style="filled" fillcolor=red];
     }
 
     4 -> {5};
+    5 -> {6};
 
 }

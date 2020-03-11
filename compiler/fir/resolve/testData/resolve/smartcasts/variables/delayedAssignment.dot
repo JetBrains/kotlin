@@ -6,79 +6,80 @@ digraph delayedAssignment_kt {
     subgraph cluster_0 {
         color=red
         0 [label="Enter function <init>" style="filled" fillcolor=red];
-        1 [label="Exit function <init>" style="filled" fillcolor=red];
+        1 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        2 [label="Exit function <init>" style="filled" fillcolor=red];
     }
 
     0 -> {1};
+    1 -> {2};
 
     subgraph cluster_1 {
         color=red
-        2 [label="Enter function foo" style="filled" fillcolor=red];
-        3 [label="Exit function foo" style="filled" fillcolor=red];
+        3 [label="Enter function foo" style="filled" fillcolor=red];
+        4 [label="Exit function foo" style="filled" fillcolor=red];
     }
 
-    2 -> {3};
+    3 -> {4};
 
     subgraph cluster_2 {
         color=red
-        4 [label="Enter function test" style="filled" fillcolor=red];
-        5 [label="Variable declaration: lval a: R|A?|"];
+        5 [label="Enter function test" style="filled" fillcolor=red];
+        6 [label="Variable declaration: lval a: R|A?|"];
         subgraph cluster_3 {
             color=blue
-            6 [label="Enter when"];
+            7 [label="Enter when"];
             subgraph cluster_4 {
                 color=blue
-                7 [label="Enter when branch condition "];
-                8 [label="Access variable R|<local>/b|"];
-                9 [label="Exit when branch condition"];
+                8 [label="Enter when branch condition "];
+                9 [label="Access variable R|<local>/b|"];
+                10 [label="Exit when branch condition"];
             }
             subgraph cluster_5 {
                 color=blue
-                10 [label="Enter when branch condition else"];
-                11 [label="Exit when branch condition"];
+                11 [label="Enter when branch condition else"];
+                12 [label="Exit when branch condition"];
             }
-            12 [label="Enter when branch result"];
+            13 [label="Enter when branch result"];
             subgraph cluster_6 {
                 color=blue
-                13 [label="Enter block"];
-                14 [label="Const: Null(null)"];
-                15 [label="Assignmenet: R|<local>/a|"];
-                16 [label="Exit block"];
+                14 [label="Enter block"];
+                15 [label="Const: Null(null)"];
+                16 [label="Assignmenet: R|<local>/a|"];
+                17 [label="Exit block"];
             }
-            17 [label="Exit when branch result"];
-            18 [label="Enter when branch result"];
+            18 [label="Exit when branch result"];
+            19 [label="Enter when branch result"];
             subgraph cluster_7 {
                 color=blue
-                19 [label="Enter block"];
-                20 [label="Function call: R|/A.A|()"];
-                21 [label="Assignmenet: R|<local>/a|"];
-                22 [label="Access variable R|<local>/a|"];
-                23 [label="Function call: R|<local>/a|.R|/A.foo|()"];
-                24 [label="Exit block"];
+                20 [label="Enter block"];
+                21 [label="Function call: R|/A.A|()"];
+                22 [label="Assignmenet: R|<local>/a|"];
+                23 [label="Access variable R|<local>/a|"];
+                24 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+                25 [label="Exit block"];
             }
-            25 [label="Exit when branch result"];
-            26 [label="Exit when"];
+            26 [label="Exit when branch result"];
+            27 [label="Exit when"];
         }
-        27 [label="Access variable R|<local>/a|"];
-        28 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
-        29 [label="Exit function test" style="filled" fillcolor=red];
+        28 [label="Access variable R|<local>/a|"];
+        29 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+        30 [label="Exit function test" style="filled" fillcolor=red];
     }
 
-    4 -> {5};
     5 -> {6};
     6 -> {7};
     7 -> {8};
     8 -> {9};
-    9 -> {18 10};
-    10 -> {11};
+    9 -> {10};
+    10 -> {19 11};
     11 -> {12};
     12 -> {13};
     13 -> {14};
     14 -> {15};
     15 -> {16};
     16 -> {17};
-    17 -> {26};
-    18 -> {19};
+    17 -> {18};
+    18 -> {27};
     19 -> {20};
     20 -> {21};
     21 -> {22};
@@ -89,5 +90,6 @@ digraph delayedAssignment_kt {
     26 -> {27};
     27 -> {28};
     28 -> {29};
+    29 -> {30};
 
 }

@@ -606,6 +606,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/cfg/loops.kt");
         }
 
+        @TestMetadata("postponedLambdaInConstructor.kt")
+        public void testPostponedLambdaInConstructor() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/postponedLambdaInConstructor.kt");
+        }
+
         @TestMetadata("postponedLambdas.kt")
         public void testPostponedLambdas() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/cfg/postponedLambdas.kt");

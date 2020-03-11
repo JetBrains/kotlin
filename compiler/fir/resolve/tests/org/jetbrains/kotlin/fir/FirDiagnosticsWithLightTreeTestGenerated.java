@@ -581,6 +581,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/cfg/initBlockAndInPlaceLambda.kt");
         }
 
+        @TestMetadata("inplaceLambdaInControlFlowExpressions.kt")
+        public void testInplaceLambdaInControlFlowExpressions() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/inplaceLambdaInControlFlowExpressions.kt");
+        }
+
         @TestMetadata("jumps.kt")
         public void testJumps() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/cfg/jumps.kt");

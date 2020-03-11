@@ -153,7 +153,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             storeTypeFromCallee(functionCall)
         }
         if (functionCall.calleeReference !is FirSimpleNamedReference) return functionCall.compose()
-        dataFlowAnalyzer.enterFunctionCall(functionCall)
+        dataFlowAnalyzer.enterCall(functionCall)
         functionCall.annotations.forEach { it.accept(this, data) }
         functionCall.transform<FirFunctionCall, Nothing?>(InvocationKindTransformer, null)
         functionCall.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
@@ -574,37 +574,49 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         data: ResolutionMode,
     ): CompositeTransformResult<FirStatement> {
         if (transformer.implicitTypeOnly) return delegatedConstructorCall.compose()
-        delegatedConstructorCall.transformChildren(transformer, ResolutionMode.ContextDependent)
-        val typeArguments: List<FirTypeProjection>
-        val symbol: FirClassSymbol<*> = when (val reference = delegatedConstructorCall.calleeReference) {
-            is FirThisReference -> {
-                typeArguments = emptyList()
-                if (reference.boundSymbol == null) {
-                    implicitReceiverStack.lastDispatchReceiver()?.boundSymbol?.also {
-                        reference.replaceBoundSymbol(it)
-                    } ?: return delegatedConstructorCall.compose()
-                } else {
-                    reference.boundSymbol!! as FirClassSymbol<*>
+        dataFlowAnalyzer.enterCall(delegatedConstructorCall)
+        var callCompleted = true
+        var result = delegatedConstructorCall
+        try {
+            delegatedConstructorCall.transformChildren(transformer, ResolutionMode.ContextDependent)
+            val typeArguments: List<FirTypeProjection>
+            val symbol: FirClassSymbol<*> = when (val reference = delegatedConstructorCall.calleeReference) {
+                is FirThisReference -> {
+                    typeArguments = emptyList()
+                    if (reference.boundSymbol == null) {
+                        implicitReceiverStack.lastDispatchReceiver()?.boundSymbol?.also {
+                            reference.replaceBoundSymbol(it)
+                        } ?: return delegatedConstructorCall.compose()
+                    } else {
+                        reference.boundSymbol!! as FirClassSymbol<*>
+                    }
                 }
+                is FirSuperReference -> {
+                    // TODO: unresolved supertype
+                    val supertype = reference.superTypeRef.coneTypeSafe<ConeClassLikeType>() ?: return delegatedConstructorCall.compose()
+                    typeArguments = supertype.typeArguments.takeIf { it.isNotEmpty() }?.map { it.toFirTypeProjection() } ?: emptyList()
+                    val expandedSupertype = supertype.fullyExpandedType(session)
+                    val lookupTag = expandedSupertype.lookupTag
+                    if (lookupTag is ConeClassLookupTagWithFixedSymbol) {
+                        lookupTag.symbol
+                    } else {
+                        // TODO: support locals
+                        symbolProvider.getSymbolByLookupTag(lookupTag) ?: return delegatedConstructorCall.compose()
+                    } as FirClassSymbol<*>
+                }
+                else -> return delegatedConstructorCall.compose()
             }
-            is FirSuperReference -> {
-                // TODO: unresolved supertype
-                val supertype = reference.superTypeRef.coneTypeSafe<ConeClassLikeType>() ?: return delegatedConstructorCall.compose()
-                typeArguments = supertype.typeArguments.takeIf { it.isNotEmpty() }?.map { it.toFirTypeProjection() } ?: emptyList()
-                val expandedSupertype = supertype.fullyExpandedType(session)
-                val lookupTag = expandedSupertype.lookupTag
-                if (lookupTag is ConeClassLookupTagWithFixedSymbol) {
-                    lookupTag.symbol
-                } else {
-                    // TODO: support locals
-                    symbolProvider.getSymbolByLookupTag(lookupTag) ?: return delegatedConstructorCall.compose()
-                } as FirClassSymbol<*>
-            }
-            else -> return delegatedConstructorCall.compose()
+            val resolvedCall = callResolver.resolveDelegatingConstructorCall(delegatedConstructorCall, symbol, typeArguments)
+                ?: return delegatedConstructorCall.compose()
+
+
+            val completionResult = callCompleter.completeCall(resolvedCall, noExpectedType)
+            result = completionResult.result
+            callCompleted = completionResult.callCompleted
+            return result.compose()
+        } finally {
+            dataFlowAnalyzer.exitDelegatedConstructorCall(result, callCompleted)
         }
-        val result = callResolver.resolveDelegatingConstructorCall(delegatedConstructorCall, symbol, typeArguments)
-            ?: return delegatedConstructorCall.compose()
-        return callCompleter.completeCall(result, noExpectedType).result.compose()
     }
 
     // ------------------------------------------------------------------------------------------------

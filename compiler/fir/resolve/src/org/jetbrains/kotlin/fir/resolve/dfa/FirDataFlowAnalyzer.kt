@@ -576,8 +576,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         exitSafeCall(qualifiedAccessExpression)
     }
 
-    fun enterFunctionCall(functionCall: FirFunctionCall) {
-        graphBuilder.enterFunctionCall(functionCall)
+    fun enterCall(functionCall: FirCall) {
+        graphBuilder.enterCall(functionCall)
     }
 
     fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean) {
@@ -592,6 +592,13 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             exitSafeCall(functionCall)
         }
     }
+
+    fun exitDelegatedConstructorCall(call: FirDelegatedConstructorCall, callCompleted: Boolean) {
+        val (callNode, unionNode) = graphBuilder.exitDelegatedConstructorCall(call, callCompleted)
+        unionNode?.let { unionFlowFromArguments(it) }
+        callNode.mergeIncomingFlow()
+    }
+
 
     private fun unionFlowFromArguments(node: UnionFunctionCallArgumentsNode) {
         node.flow = logicSystem.unionFlow(node.previousNodes.map { it.flow }).also {

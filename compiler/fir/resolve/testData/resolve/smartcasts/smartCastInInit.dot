@@ -31,25 +31,27 @@ digraph smartCastInInit_kt {
     subgraph cluster_2 {
         color=red
         8 [label="Enter function <init>" style="filled" fillcolor=red];
-        9 [label="Exit function <init>" style="filled" fillcolor=red];
+        9 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        10 [label="Exit function <init>" style="filled" fillcolor=red];
     }
 
     8 -> {9};
+    9 -> {10};
 
     subgraph cluster_3 {
         color=red
-        10 [label="Enter function getter" style="filled" fillcolor=red];
-        11 [label="Exit function getter" style="filled" fillcolor=red];
+        11 [label="Enter function getter" style="filled" fillcolor=red];
+        12 [label="Exit function getter" style="filled" fillcolor=red];
     }
 
-    10 -> {11};
+    11 -> {12};
 
     subgraph cluster_4 {
         color=red
-        12 [label="Enter property" style="filled" fillcolor=red];
-        13 [label="Exit property" style="filled" fillcolor=red];
+        13 [label="Enter property" style="filled" fillcolor=red];
+        14 [label="Exit property" style="filled" fillcolor=red];
     }
 
-    12 -> {13};
+    13 -> {14};
 
 }

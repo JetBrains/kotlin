@@ -111,6 +111,9 @@ fun ControlFlowGraphBuilder.createLoopBlockExitNode(fir: FirLoop): LoopBlockExit
 fun ControlFlowGraphBuilder.createFunctionCallNode(fir: FirFunctionCall): FunctionCallNode =
     FunctionCallNode(graph, fir, levelCounter, createId())
 
+fun ControlFlowGraphBuilder.createDelegatedConstructorCallNode(fir: FirDelegatedConstructorCall): DelegatedConstructorCallNode =
+    DelegatedConstructorCallNode(graph, fir, levelCounter, createId())
+
 fun ControlFlowGraphBuilder.createVariableAssignmentNode(fir: FirVariableAssignment): VariableAssignmentNode =
     VariableAssignmentNode(graph, fir, levelCounter, createId())
 

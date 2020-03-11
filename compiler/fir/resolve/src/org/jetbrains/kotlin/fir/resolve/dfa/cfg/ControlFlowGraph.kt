@@ -208,6 +208,13 @@ class FunctionCallNode(
     level: Int, id: Int
 ) : CFGNode<FirFunctionCall>(owner, level, id)
 
+class DelegatedConstructorCallNode(
+    owner: ControlFlowGraph,
+    override val fir: FirDelegatedConstructorCall,
+    level: Int,
+    id: Int
+) : CFGNode<FirDelegatedConstructorCall>(owner, level, id)
+
 class ThrowExceptionNode(
     owner: ControlFlowGraph,
     override val fir: FirThrowExpression,
