@@ -302,6 +302,7 @@ internal class KonanSymbols(
                 .singleOrNull {
                     it.valueParameters.isEmpty()
                             && it.extensionReceiverParameter?.type?.constructor?.declarationDescriptor == descriptor
+                            && it.extensionReceiverParameter?.type?.isMarkedNullable == false
                             && !it.isExpect
                 } ?: error(descriptor.toString())
         return symbolTable.referenceSimpleFunction(functionDescriptor)
