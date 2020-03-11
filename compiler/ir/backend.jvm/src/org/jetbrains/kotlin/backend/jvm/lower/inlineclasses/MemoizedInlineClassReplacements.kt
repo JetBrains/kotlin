@@ -124,7 +124,7 @@ class MemoizedInlineClassReplacements {
         }
     }
 
-    private fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
+    internal fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, function.origin) {
             require(function.dispatchReceiverParameter != null && function is IrSimpleFunction)
             val newValueParameters = ArrayList<IrValueParameter>()
