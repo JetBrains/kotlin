@@ -168,7 +168,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 }
                 val completionResult = callCompleter.completeCall(resultExpression, expectedTypeRef)
                 if (completionResult.typeRef is FirErrorTypeRef) {
-                    completionResult.transformArguments(transformer, ResolutionMode.LambdaResolution(null))
+                    completionResult.argumentList.transformArguments(transformer, ResolutionMode.LambdaResolution(null))
                 }
                 completionResult
             } catch (e: ProcessCanceledException) {
@@ -238,13 +238,13 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
 
             operatorCall.annotations.forEach { it.accept(this, data) }
             @Suppress("NAME_SHADOWING")
-            val operatorCall = operatorCall.transformArguments(this, ResolutionMode.ContextIndependent)
+            operatorCall.argumentList.transformArguments(this, ResolutionMode.ContextIndependent)
             val (leftArgument, rightArgument) = operatorCall.arguments
 
             fun createFunctionCall(name: Name) = buildFunctionCall {
                 source = operatorCall.source
                 explicitReceiver = leftArgument
-                arguments += rightArgument
+                argumentList = buildUnaryArgumentList(rightArgument)
                 calleeReference = buildSimpleNamedReference {
                     source = operatorCall.source
                     this.name = name
@@ -279,7 +279,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                                 lhsReference!!
                             else
                                 buildErrorNamedReference {
-                                    source = operatorCall.arguments.first().source
+                                    source = operatorCall.argument.source
                                     diagnostic = FirVariableExpectedError()
                                 }
                         }
@@ -314,8 +314,8 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         typeOperatorCall: FirTypeOperatorCall,
         data: ResolutionMode,
     ): CompositeTransformResult<FirStatement> {
-        val resolved = (transformExpression(typeOperatorCall, data).single as FirTypeOperatorCall)
-            .transformArguments(integerLiteralTypeApproximator, null)
+        val resolved = transformExpression(typeOperatorCall, data).single as FirTypeOperatorCall
+        resolved.argumentList.transformArguments(integerLiteralTypeApproximator, null)
         val conversionTypeRef = resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument)
         resolved.transformChildren(object : FirDefaultTransformer<Nothing?>() {
             override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
@@ -363,7 +363,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             return checkNotNullCall.compose()
         }
 
-        checkNotNullCall.transformArguments(transformer, ResolutionMode.ContextDependent)
+        checkNotNullCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
 
         val result = components.syntheticCallGenerator.generateCalleeForCheckNotNullCall(checkNotNullCall)?.let {
             callCompleter.completeCall(it, data.expectedType)
@@ -535,11 +535,11 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
 
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         dataFlowAnalyzer.enterAnnotationCall(annotationCall)
-        return (annotationCall.transformChildren(transformer, data) as FirAnnotationCall)
-//            TODO: it's temporary incorrect solution until we design resolve and completion for annotation calls
-            .transformArguments(integerLiteralTypeApproximator, null).also {
-                dataFlowAnalyzer.exitAnnotationCall(it)
-            }.compose()
+        return (annotationCall.transformChildren(transformer, data) as FirAnnotationCall).also {
+            // TODO: it's temporary incorrect solution until we design resolve and completion for annotation calls
+            it.argumentList.transformArguments(integerLiteralTypeApproximator, null)
+            dataFlowAnalyzer.exitAnnotationCall(it)
+        }.compose()
     }
 
     private fun ConeTypeProjection.toFirTypeProjection(): FirTypeProjection = when (this) {

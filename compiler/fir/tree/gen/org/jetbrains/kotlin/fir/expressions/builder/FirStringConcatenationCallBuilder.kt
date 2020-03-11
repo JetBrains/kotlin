@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
@@ -28,13 +28,13 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirStringConcatenationCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: FirSourceElement? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override val arguments: MutableList<FirExpression> = mutableListOf()
+    override lateinit var argumentList: FirArgumentList
 
     override fun build(): FirStringConcatenationCall {
         return FirStringConcatenationCallImpl(
             source,
             annotations,
-            arguments,
+            argumentList,
         )
     }
 
@@ -48,7 +48,7 @@ class FirStringConcatenationCallBuilder : FirCallBuilder, FirAnnotationContainer
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildStringConcatenationCall(init: FirStringConcatenationCallBuilder.() -> Unit = {}): FirStringConcatenationCall {
+inline fun buildStringConcatenationCall(init: FirStringConcatenationCallBuilder.() -> Unit): FirStringConcatenationCall {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }

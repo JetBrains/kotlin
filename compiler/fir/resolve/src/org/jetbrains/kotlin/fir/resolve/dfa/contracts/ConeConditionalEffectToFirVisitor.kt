@@ -69,8 +69,7 @@ private object ConeConditionalEffectToFirVisitor : ConeContractDescriptionVisito
             } else {
                 FirOperation.EQ
             }
-            arguments += argument
-            arguments += createConstNull()
+            argumentList = buildBinaryArgumentList(argument, createConstNull())
         }
     }
 

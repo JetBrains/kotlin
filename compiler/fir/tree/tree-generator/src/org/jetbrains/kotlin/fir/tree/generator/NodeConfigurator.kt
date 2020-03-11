@@ -105,8 +105,12 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +annotations
         }
 
-        call.configure {
+        argumentList.configure {
             +arguments.withTransform()
+        }
+
+        call.configure {
+            +field(argumentList, withReplace = true)
         }
 
         block.configure {

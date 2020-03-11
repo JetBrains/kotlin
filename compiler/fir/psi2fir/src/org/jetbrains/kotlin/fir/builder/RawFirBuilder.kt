@@ -369,16 +369,19 @@ class RawFirBuilder(
         }
 
         private fun KtCallElement.extractArgumentsTo(container: FirCallBuilder) {
-            for (argument in this.valueArguments) {
-                val argumentExpression = argument.toFirExpression()
-                container.arguments += when (argument) {
-                    is KtLambdaArgument -> buildLambdaArgumentExpression {
-                        source = argument.toFirSourceElement()
-                        expression = argumentExpression
+            val argumentList = buildArgumentList {
+                for (argument in valueArguments) {
+                    val argumentExpression = argument.toFirExpression()
+                    arguments += when (argument) {
+                        is KtLambdaArgument -> buildLambdaArgumentExpression {
+                            source = argument.toFirSourceElement()
+                            expression = argumentExpression
+                        }
+                        else -> argumentExpression
                     }
-                    else -> argumentExpression
                 }
             }
+            container.argumentList = argumentList
         }
 
         private fun KtClassOrObject.extractSuperTypeListEntriesTo(
@@ -1388,7 +1391,7 @@ class RawFirBuilder(
                         name = conventionCallName ?: expression.operationReference.getReferencedNameAsName()
                     }
                     explicitReceiver = leftArgument
-                    arguments += rightArgument
+                    argumentList = buildUnaryArgumentList(rightArgument)
                 }
             } else {
                 val firOperation = operationToken.toFirOperation()
@@ -1400,8 +1403,7 @@ class RawFirBuilder(
                     buildOperatorCall {
                         this.source = source
                         operation = firOperation
-                        arguments += leftArgument
-                        arguments += rightArgument
+                        argumentList = buildBinaryArgumentList(leftArgument, rightArgument)
                     }
                 }
             }
@@ -1412,7 +1414,7 @@ class RawFirBuilder(
                 source = expression.toFirSourceElement()
                 operation = expression.operationReference.getReferencedNameElementType().toFirOperation()
                 conversionTypeRef = expression.right.toFirOrErrorType()
-                arguments += expression.left.toFirExpression("No left operand")
+                argumentList = buildUnaryArgumentList(expression.left.toFirExpression("No left operand"))
             }
         }
 
@@ -1421,7 +1423,7 @@ class RawFirBuilder(
                 source = expression.toFirSourceElement()
                 operation = if (expression.isNegated) FirOperation.NOT_IS else FirOperation.IS
                 conversionTypeRef = expression.typeReference.toFirOrErrorType()
-                arguments += expression.leftHandSide.toFirExpression("No left operand")
+                argumentList = buildUnaryArgumentList(expression.leftHandSide.toFirExpression("No left operand"))
             }
         }
 
@@ -1433,7 +1435,7 @@ class RawFirBuilder(
                 operationToken == EXCLEXCL -> {
                     buildCheckNotNullCall {
                         source = expression.toFirSourceElement()
-                        arguments += argument.toFirExpression("No operand")
+                        argumentList = buildUnaryArgumentList(argument.toFirExpression("No operand"))
                     }
                 }
                 conventionCallName != null -> {
@@ -1457,7 +1459,7 @@ class RawFirBuilder(
                     buildOperatorCall {
                         source = expression.toFirSourceElement()
                         operation = operationToken.toFirOperation()
-                        arguments += argument.toFirExpression("No operand")
+                        argumentList = buildUnaryArgumentList(argument.toFirExpression("No operand"))
                     }
                 }
             }
@@ -1534,11 +1536,13 @@ class RawFirBuilder(
                     }
                 }
                 explicitReceiver = arrayExpression.toFirExpression("No array expression")
-                for (indexExpression in expression.indexExpressions) {
-                    arguments += indexExpression.toFirExpression("Incorrect index expression")
-                }
-                if (getArgument != null) {
-                    arguments += getArgument
+                argumentList = buildArgumentList {
+                    for (indexExpression in expression.indexExpressions) {
+                        arguments += indexExpression.toFirExpression("Incorrect index expression")
+                    }
+                    if (getArgument != null) {
+                        arguments += getArgument
+                    }
                 }
             }
         }
@@ -1645,7 +1649,7 @@ class RawFirBuilder(
         override fun visitClassLiteralExpression(expression: KtClassLiteralExpression, data: Unit): FirElement {
             return buildGetClassCall {
                 source = expression.toFirSourceElement()
-                arguments += expression.receiverExpression.toFirExpression("No receiver in class literal")
+                argumentList = buildUnaryArgumentList(expression.receiverExpression.toFirExpression("No receiver in class literal"))
             }
         }
 
@@ -1664,8 +1668,10 @@ class RawFirBuilder(
         override fun visitCollectionLiteralExpression(expression: KtCollectionLiteralExpression, data: Unit): FirElement {
             return buildArrayOfCall {
                 source = expression.toFirSourceElement()
-                for (innerExpression in expression.getInnerExpressions()) {
-                    arguments += innerExpression.toFirExpression("Incorrect collection literal argument")
+                argumentList = buildArgumentList {
+                    for (innerExpression in expression.getInnerExpressions()) {
+                        arguments += innerExpression.toFirExpression("Incorrect collection literal argument")
+                    }
                 }
             }
         }

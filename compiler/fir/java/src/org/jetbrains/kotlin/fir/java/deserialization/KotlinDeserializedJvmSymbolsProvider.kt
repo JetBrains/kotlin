@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.createConstant
@@ -223,7 +221,7 @@ class KotlinDeserializedJvmSymbolsProvider(
 
             override fun visitClassLiteral(name: Name, value: ClassLiteralValue) {
                 argumentMap[name] = buildGetClassCall {
-                    arguments += value.toFirClassReferenceExpression()
+                    argumentList = buildUnaryArgumentList(value.toFirClassReferenceExpression())
                 }
             }
 
@@ -249,7 +247,9 @@ class KotlinDeserializedJvmSymbolsProvider(
 
                     override fun visitEnd() {
                         argumentMap[name] = buildArrayOfCall {
-                            arguments += elements
+                            argumentList = buildArgumentList {
+                                arguments += elements
+                            }
                         }
                     }
                 }
@@ -269,11 +269,13 @@ class KotlinDeserializedJvmSymbolsProvider(
             override fun visitEnd() {
                 result += buildAnnotationCall {
                     annotationTypeRef = symbol.toDefaultResolvedTypeRef(annotationClassId)
-                    for ((name, expression) in argumentMap) {
-                        arguments += buildNamedArgumentExpression {
-                            this.expression = expression
-                            this.name = name
-                            isSpread = false
+                    argumentList = buildArgumentList {
+                        for ((name, expression) in argumentMap) {
+                            arguments += buildNamedArgumentExpression {
+                                this.expression = expression
+                                this.name = name
+                                isSpread = false
+                            }
                         }
                     }
                 }

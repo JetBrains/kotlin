@@ -20,7 +20,7 @@ abstract class FirDelegatedConstructorCall : FirPureAbstractElement(), FirResolv
     abstract override val source: FirSourceElement?
     abstract override val calleeReference: FirReference
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val arguments: List<FirExpression>
+    abstract override val argumentList: FirArgumentList
     abstract val constructedTypeRef: FirTypeRef
     abstract val isThis: Boolean
     abstract val isSuper: Boolean
@@ -28,6 +28,4 @@ abstract class FirDelegatedConstructorCall : FirPureAbstractElement(), FirResolv
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDelegatedConstructorCall(this, data)
 
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall
-
-    abstract override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall
 }

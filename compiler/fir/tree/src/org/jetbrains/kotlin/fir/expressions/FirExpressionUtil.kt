@@ -34,7 +34,9 @@ fun <T> buildConstOrErrorExpression(source: FirSourceElement?, kind: FirConstKin
         this.diagnostic = diagnostic
     }
 
-inline val FirCall.argument: FirExpression get() = arguments.first()
+inline val FirCall.arguments: List<FirExpression> get() = argumentList.arguments
+
+inline val FirCall.argument: FirExpression get() = argumentList.arguments.first()
 
 fun FirExpression.toResolvedCallableReference(): FirResolvedNamedReference? {
     return (this as? FirQualifiedAccess)?.calleeReference as? FirResolvedNamedReference

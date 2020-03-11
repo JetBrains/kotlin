@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirDelegatedConstructorCallImpl
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirDelegatedConstructorCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override val arguments: MutableList<FirExpression> = mutableListOf()
+    override var argumentList: FirArgumentList = FirEmptyArgumentList
     lateinit var constructedTypeRef: FirTypeRef
     var isThis: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 
@@ -37,7 +38,7 @@ class FirDelegatedConstructorCallBuilder : FirCallBuilder, FirAnnotationContaine
         return FirDelegatedConstructorCallImpl(
             source,
             annotations,
-            arguments,
+            argumentList,
             constructedTypeRef,
             isThis,
         )

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirOperatorCall
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 internal class FirOperatorCallImpl(
     override val source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
-    override val arguments: MutableList<FirExpression>,
+    override var argumentList: FirArgumentList,
     override val operation: FirOperation,
 ) : FirOperatorCall() {
     override var typeRef: FirTypeRef = if (operation in FirOperation.BOOLEANS) {
@@ -35,22 +35,21 @@ internal class FirOperatorCallImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
-        arguments.forEach { it.accept(visitor, data) }
+        argumentList.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirOperatorCallImpl {
         typeRef = typeRef.transformSingle(transformer, data)
         annotations.transformInplace(transformer, data)
-        transformArguments(transformer, data)
-        return this
-    }
-
-    override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirOperatorCallImpl {
-        arguments.transformInplace(transformer, data)
+        argumentList = argumentList.transformSingle(transformer, data)
         return this
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
+    }
+
+    override fun replaceArgumentList(newArgumentList: FirArgumentList) {
+        argumentList = newArgumentList
     }
 }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirArraySetCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirOperation
@@ -36,6 +37,7 @@ class FirArraySetCallBuilder : FirQualifiedAccessBuilder, FirAnnotationContainer
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
     lateinit var calleeReference: FirReference
+    lateinit var argumentList: FirArgumentList
     lateinit var rValue: FirExpression
     lateinit var operation: FirOperation
     val indexes: MutableList<FirExpression> = mutableListOf()
@@ -50,6 +52,7 @@ class FirArraySetCallBuilder : FirQualifiedAccessBuilder, FirAnnotationContainer
             dispatchReceiver,
             extensionReceiver,
             calleeReference,
+            argumentList,
             rValue,
             operation,
             indexes,

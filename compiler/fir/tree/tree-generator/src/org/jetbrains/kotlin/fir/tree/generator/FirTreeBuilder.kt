@@ -76,6 +76,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val typeProjection = element("TypeProjection", TypeRef)
     val starProjection = element("StarProjection", TypeRef, typeProjection)
     val typeProjectionWithVariance = element("TypeProjectionWithVariance", TypeRef, typeProjection)
+    val argumentList = element("ArgumentList", Expression)
     val call = element("Call", Expression, statement) // TODO: may smth like `CallWithArguments` or `ElementWithArguments`?
     val annotationCall = element("AnnotationCall", Expression, expression, call)
     val operatorCall = element("OperatorCall", Expression, expression, call)

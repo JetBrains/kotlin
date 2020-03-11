@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirStarProjection
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
+import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirCall
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirOperatorCall
@@ -352,6 +353,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     open fun transformTypeProjectionWithVariance(typeProjectionWithVariance: FirTypeProjectionWithVariance, data: D): CompositeTransformResult<FirTypeProjection> {
         return transformElement(typeProjectionWithVariance, data)
+    }
+
+    open fun transformArgumentList(argumentList: FirArgumentList, data: D): CompositeTransformResult<FirArgumentList> {
+        return transformElement(argumentList, data)
     }
 
     open fun transformCall(call: FirCall, data: D): CompositeTransformResult<FirStatement> {
@@ -808,6 +813,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitTypeProjectionWithVariance(typeProjectionWithVariance: FirTypeProjectionWithVariance, data: D): CompositeTransformResult<FirTypeProjection> {
         return transformTypeProjectionWithVariance(typeProjectionWithVariance, data)
+    }
+
+    final override fun visitArgumentList(argumentList: FirArgumentList, data: D): CompositeTransformResult<FirArgumentList> {
+        return transformArgumentList(argumentList, data)
     }
 
     final override fun visitCall(call: FirCall, data: D): CompositeTransformResult<FirStatement> {

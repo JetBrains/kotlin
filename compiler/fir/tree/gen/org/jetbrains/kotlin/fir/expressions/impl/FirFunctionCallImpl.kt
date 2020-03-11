@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
@@ -30,7 +31,7 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
-    override val arguments: MutableList<FirExpression>,
+    override var argumentList: FirArgumentList,
     override var calleeReference: FirNamedReference,
 ) : FirFunctionCall(), FirModifiableQualifiedAccess {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -44,7 +45,7 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
         if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
             extensionReceiver.accept(visitor, data)
         }
-        arguments.forEach { it.accept(visitor, data) }
+        argumentList.accept(visitor, data)
         calleeReference.accept(visitor, data)
     }
 
@@ -59,7 +60,7 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
         if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
             extensionReceiver = extensionReceiver.transformSingle(transformer, data)
         }
-        transformArguments(transformer, data)
+        argumentList = argumentList.transformSingle(transformer, data)
         transformCalleeReference(transformer, data)
         return this
     }
@@ -84,11 +85,6 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirFunctionCallImpl {
-        arguments.transformInplace(transformer, data)
-        return this
-    }
-
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirFunctionCallImpl {
         calleeReference = calleeReference.transformSingle(transformer, data)
         return this
@@ -101,5 +97,9 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
         typeArguments.clear()
         typeArguments.addAll(newTypeArguments)
+    }
+
+    override fun replaceArgumentList(newArgumentList: FirArgumentList) {
+        argumentList = newArgumentList
     }
 }

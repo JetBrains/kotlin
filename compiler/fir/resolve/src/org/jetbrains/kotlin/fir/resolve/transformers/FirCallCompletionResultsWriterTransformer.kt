@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
@@ -175,13 +175,15 @@ class FirCallCompletionResultsWriterTransformer(
                 val expectedType = data?.getExpectedType(functionCall)
                 resultType =
                     typeRef.resolvedTypeFromPrototype(typeRef.coneTypeUnsafe<ConeIntegerLiteralType>().getApproximatedType(expectedType))
-                result.transformArguments(this, expectedType?.toExpectedType()).transformSingle(integerApproximator, expectedType)
+                result.argumentList.transformArguments(this, expectedType?.toExpectedType())
+                result.transformSingle(integerApproximator, expectedType)
             }
             else -> {
                 resultType = typeRef.substituteTypeRef(subCandidate)
                 val vararg = subCandidate.argumentMapping?.values?.firstOrNull { it.isVararg }
-                result.transformArguments(this, subCandidate.createArgumentsMapping()).apply call@{
-                    if (vararg != null && this is FirFunctionCallImpl) {
+                result.argumentList.transformArguments(this, subCandidate.createArgumentsMapping())
+                with(result.argumentList) call@{
+                    if (vararg != null) {
                         // Create a FirVarargArgumentExpression for the vararg arguments
                         val resolvedArrayType = vararg.returnTypeRef.substitute(subCandidate)
                         val resolvedElementType = resolvedArrayType.arrayElementType(session)
@@ -200,12 +202,18 @@ class FirCallCompletionResultsWriterTransformer(
                                 }
                             }
                         }
-                        for (arg in varargArgument.arguments) {
-                            arguments.remove(arg)
-                        }
-                        arguments.add(firstIndex, varargArgument)
+                        result.replaceArgumentList(
+                            buildArgumentList {
+                                arguments += result.arguments
+                                for (arg in varargArgument.arguments) {
+                                    arguments.remove(arg)
+                                }
+                                arguments.add(firstIndex, varargArgument)
+                            }
+                        )
                     }
-                }.transformExplicitReceiver(integerApproximator, null)
+                }
+                result.transformExplicitReceiver(integerApproximator, null)
             }
         }
 
@@ -215,7 +223,7 @@ class FirCallCompletionResultsWriterTransformer(
         if (mode == Mode.DelegatedPropertyCompletion) {
             calleeReference.candidateSymbol.fir.transformSingle(declarationWriter, null)
             val typeUpdater = TypeUpdaterForDelegateArguments()
-            result.transformArguments(typeUpdater, null)
+            result.argumentList.transformArguments(typeUpdater, null)
             result.transformExplicitReceiver(typeUpdater, null)
         }
 
@@ -260,8 +268,8 @@ class FirCallCompletionResultsWriterTransformer(
         val calleeReference =
             delegatedConstructorCall.calleeReference as? FirNamedReferenceWithCandidate ?: return delegatedConstructorCall.compose()
 
-        val result = delegatedConstructorCall.transformArguments(this, calleeReference.candidate.createArgumentsMapping())
-        return result.transformCalleeReference(
+        delegatedConstructorCall.argumentList.transformArguments(this, calleeReference.candidate.createArgumentsMapping())
+        return delegatedConstructorCall.transformCalleeReference(
             StoreCalleeReference,
             buildResolvedNamedReference {
                 source = calleeReference.source

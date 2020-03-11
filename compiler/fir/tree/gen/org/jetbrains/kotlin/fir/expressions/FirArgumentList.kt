@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -14,12 +15,11 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirGetClassCall : FirExpression(), FirCall {
+abstract class FirArgumentList : FirPureAbstractElement(), FirElement {
     abstract override val source: FirSourceElement?
-    abstract override val typeRef: FirTypeRef
-    abstract override val annotations: List<FirAnnotationCall>
-    abstract override val argumentList: FirArgumentList
-    abstract val argument: FirExpression
+    abstract val arguments: List<FirExpression>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitGetClassCall(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitArgumentList(this, data)
+
+    abstract fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentList
 }

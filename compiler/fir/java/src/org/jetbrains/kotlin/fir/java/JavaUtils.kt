@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
-import org.jetbrains.kotlin.fir.expressions.FirConstKind
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
@@ -335,8 +332,10 @@ internal fun JavaAnnotation.toFirAnnotationCall(
         annotationTypeRef = buildResolvedTypeRef {
             type = ConeClassLikeTypeImpl(FirRegularClassSymbol(classId!!).toLookupTag(), emptyArray(), isNullable = false)
         }
-        for (argument in this@toFirAnnotationCall.arguments) {
-            arguments += argument.toFirExpression(session, javaTypeParameterStack)
+        argumentList = buildArgumentList {
+            for (argument in this@toFirAnnotationCall.arguments) {
+                arguments += argument.toFirExpression(session, javaTypeParameterStack)
+            }
         }
     }
 }
@@ -399,8 +398,10 @@ private fun JavaAnnotationArgument.toFirExpression(
             value.createConstant(session)
         }
         is JavaArrayAnnotationArgument -> buildArrayOfCall {
-            for (element in getElements()) {
-                arguments += element.toFirExpression(session, javaTypeParameterStack)
+            argumentList = buildArgumentList {
+                for (element in getElements()) {
+                    arguments += element.toFirExpression(session, javaTypeParameterStack)
+                }
             }
         }
         is JavaEnumValueAnnotationArgument -> {
@@ -428,9 +429,11 @@ private fun JavaAnnotationArgument.toFirExpression(
         }
         is JavaClassObjectAnnotationArgument -> buildGetClassCall {
             val referencedType = getReferencedType()
-            arguments += buildClassReferenceExpression {
-                classTypeRef = referencedType.toFirResolvedTypeRef(session, javaTypeParameterStack)
-            }
+            argumentList = buildUnaryArgumentList(
+                buildClassReferenceExpression {
+                    classTypeRef = referencedType.toFirResolvedTypeRef(session, javaTypeParameterStack)
+                }
+            )
         }
         is JavaAnnotationAsAnnotationArgument -> getAnnotation().toFirAnnotationCall(session, javaTypeParameterStack)
         else -> buildErrorExpression {
@@ -442,8 +445,10 @@ private fun JavaAnnotationArgument.toFirExpression(
 // TODO: use kind here
 private fun <T> List<T>.createArrayOfCall(session: FirSession, @Suppress("UNUSED_PARAMETER") kind: FirConstKind<T>): FirArrayOfCall {
     return buildArrayOfCall {
-        for (element in this@createArrayOfCall) {
-            arguments += element.createConstant(session)
+        argumentList = buildArgumentList {
+            for (element in this@createArrayOfCall) {
+                arguments += element.createConstant(session)
+            }
         }
     }
 }

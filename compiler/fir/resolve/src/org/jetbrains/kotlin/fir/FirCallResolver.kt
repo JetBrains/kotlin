@@ -62,8 +62,10 @@ class FirCallResolver(
         qualifiedResolver.reset()
         @Suppress("NAME_SHADOWING")
         var functionCall = functionCall.transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent)
-            .also { dataFlowAnalyzer.enterQualifiedAccessExpression(functionCall) }
-            .transformArguments(transformer, ResolutionMode.ContextDependent)
+            .also {
+                dataFlowAnalyzer.enterQualifiedAccessExpression(functionCall)
+                functionCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
+            }
 
         var result = collectCandidates(functionCall)
 
@@ -91,7 +93,7 @@ class FirCallResolver(
                 explicitReceiver = candidate.callInfo.explicitReceiver,
                 dispatchReceiver = candidate.dispatchReceiverExpression(),
                 extensionReceiver = candidate.extensionReceiverExpression(),
-                arguments = candidate.callInfo.arguments,
+                argumentList = candidate.callInfo.argumentList,
                 safe = candidate.callInfo.isSafeCall,
             )
         } else {
@@ -110,14 +112,14 @@ class FirCallResolver(
 
     private fun collectCandidates(functionCall: FirFunctionCall): ResolutionResult {
         val explicitReceiver = functionCall.explicitReceiver
-        val arguments = functionCall.arguments
+        val argumentList = functionCall.argumentList
         val typeArguments = functionCall.typeArguments
 
         val info = CallInfo(
             CallKind.Function,
             functionCall.calleeReference.name,
             explicitReceiver,
-            arguments,
+            argumentList,
             functionCall.safe,
             isPotentialQualifierPart = false,
             typeArguments,
@@ -157,7 +159,7 @@ class FirCallResolver(
             CallKind.VariableAccess,
             callee.name,
             qualifiedAccess.explicitReceiver,
-            emptyList(),
+            FirEmptyArgumentList,
             qualifiedAccess.safe,
             qualifiedAccess.explicitReceiver is FirResolvedQualifier && qualifiedResolver.isPotentialQualifierPartPosition(),
             emptyList(),
@@ -307,7 +309,7 @@ class FirCallResolver(
             CallKind.Function,
             className,
             explicitReceiver = null,
-            delegatedConstructorCall.arguments,
+            delegatedConstructorCall.argumentList,
             isSafeCall = false,
             isPotentialQualifierPart = false,
             typeArguments = typeArguments,
@@ -358,7 +360,7 @@ class FirCallResolver(
             CallKind.CallableReference,
             callableReferenceAccess.calleeReference.name,
             callableReferenceAccess.explicitReceiver,
-            emptyList(),
+            FirEmptyArgumentList,
             false,
             isPotentialQualifierPart = false,
             emptyList(),

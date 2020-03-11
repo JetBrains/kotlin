@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.tree.generator
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeImplementationConfigurator
 import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind.Object
 import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind.OpenClass
-import org.jetbrains.kotlin.fir.tree.generator.model.Type
 
 object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() {
     fun configureImplementations() {
@@ -89,10 +88,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(arraySetCall) {
             parents += modifiableQualifiedAccess
-            default("arguments") {
-                value = "indexes + rValue"
-                withGetter = true
-            }
             default("lValue") {
                 value = "calleeReference"
                 customSetter = "calleeReference = value"
@@ -174,7 +169,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(getClassCall) {
             default("argument") {
-                value = "arguments.first()"
+                value = "argumentList.arguments.first()"
                 withGetter = true
             }
         }

@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirArrayOfCallImpl
@@ -28,13 +28,13 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirArrayOfCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: FirSourceElement? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override val arguments: MutableList<FirExpression> = mutableListOf()
+    override lateinit var argumentList: FirArgumentList
 
     override fun build(): FirArrayOfCall {
         return FirArrayOfCallImpl(
             source,
             annotations,
-            arguments,
+            argumentList,
         )
     }
 
@@ -48,7 +48,7 @@ class FirArrayOfCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, Fir
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildArrayOfCall(init: FirArrayOfCallBuilder.() -> Unit = {}): FirArrayOfCall {
+inline fun buildArrayOfCall(init: FirArrayOfCallBuilder.() -> Unit): FirArrayOfCall {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }

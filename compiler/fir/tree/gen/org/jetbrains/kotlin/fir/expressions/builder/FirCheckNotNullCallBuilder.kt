@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirCheckNotNullCallImpl
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -30,7 +30,7 @@ class FirCheckNotNullCallBuilder : FirAnnotationContainerBuilder, FirExpressionB
     override var source: FirSourceElement? = null
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    val arguments: MutableList<FirExpression> = mutableListOf()
+    lateinit var argumentList: FirArgumentList
     var calleeReference: FirReference = FirStubReference
 
     override fun build(): FirCheckNotNullCall {
@@ -38,7 +38,7 @@ class FirCheckNotNullCallBuilder : FirAnnotationContainerBuilder, FirExpressionB
             source,
             typeRef,
             annotations,
-            arguments,
+            argumentList,
             calleeReference,
         )
     }
@@ -46,7 +46,7 @@ class FirCheckNotNullCallBuilder : FirAnnotationContainerBuilder, FirExpressionB
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildCheckNotNullCall(init: FirCheckNotNullCallBuilder.() -> Unit = {}): FirCheckNotNullCall {
+inline fun buildCheckNotNullCall(init: FirCheckNotNullCallBuilder.() -> Unit): FirCheckNotNullCall {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }

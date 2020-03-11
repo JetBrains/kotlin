@@ -14,48 +14,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.*
 
-internal object MapArguments : FirDefaultTransformer<Map<FirElement, FirElement>>() {
-    override fun <E : FirElement> transformElement(element: E, data: Map<FirElement, FirElement>): CompositeTransformResult<E> {
-        return ((data[element] ?: element) as E).compose()
-    }
-
-    override fun transformFunctionCall(
-        functionCall: FirFunctionCall,
-        data: Map<FirElement, FirElement>
-    ): CompositeTransformResult<FirStatement> {
-        return (functionCall.transformArguments(this, data) as FirStatement).compose()
-    }
-
-    override fun transformWrappedArgumentExpression(
-        wrappedArgumentExpression: FirWrappedArgumentExpression,
-        data: Map<FirElement, FirElement>
-    ): CompositeTransformResult<FirStatement> {
-        return (wrappedArgumentExpression.transformChildren(this, data) as FirStatement).compose()
-    }
-
-    override fun transformBlock(block: FirBlock, data: Map<FirElement, FirElement>): CompositeTransformResult<FirStatement> {
-        if (block.statements.isEmpty()) return block.compose()
-        val transformedStatement = block.statements.last().transformSingle(this@MapArguments, data)
-        when (block) {
-            is FirSingleExpressionBlock -> block.statement = transformedStatement
-            // TODO: dirty cast
-            else -> (block.statements as MutableList<FirStatement>)[block.statements.size - 1] = transformedStatement
-        }
-        return block.compose()
-    }
-
-    override fun transformCatch(catch: FirCatch, data: Map<FirElement, FirElement>): CompositeTransformResult<FirCatch> {
-        return catch.transformBlock(this, data).compose()
-    }
-
-    override fun transformWhenBranch(
-        whenBranch: FirWhenBranch,
-        data: Map<FirElement, FirElement>,
-    ): CompositeTransformResult<FirWhenBranch> {
-        return  whenBranch.transformResult(this, data).compose()
-    }
-}
-
 internal object StoreType : FirDefaultTransformer<FirTypeRef>() {
     override fun <E : FirElement> transformElement(element: E, data: FirTypeRef): CompositeTransformResult<E> {
         return element.compose()

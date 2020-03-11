@@ -102,7 +102,8 @@ class IntegerLiteralTypeApproximationTransformer(
             else -> throw IllegalStateException()
         }
 
-        return operatorCall.transformArguments(this, expectedType).compose()
+        operatorCall.argumentList.transformArguments(this, expectedType)
+        return operatorCall.compose()
     }
 
     // TODO: call outside
@@ -110,7 +111,8 @@ class IntegerLiteralTypeApproximationTransformer(
         typeOperatorCall: FirTypeOperatorCall,
         data: ConeKotlinType?
     ): CompositeTransformResult<FirStatement> {
-        return typeOperatorCall.transformArguments(this, null).compose()
+        typeOperatorCall.argumentList.transformArguments(this, null)
+        return typeOperatorCall.compose()
     }
 }
 
@@ -156,7 +158,7 @@ class IntegerOperatorsTypeUpdater(val approximator: IntegerLiteralTypeApproximat
                 else -> throw IllegalStateException()
             }
             else -> {
-                val argumentType = functionCall.arguments.first().typeRef.coneTypeUnsafe<ConeKotlinType>()
+                val argumentType = functionCall.argument.typeRef.coneTypeUnsafe<ConeKotlinType>()
                 // TODO: handle overflow
                 when (argumentType) {
                     is ConeIntegerLiteralType -> {
@@ -208,7 +210,7 @@ private fun FirFunctionCall.toOperatorCall(): FirIntegerOperatorCall {
         explicitReceiver,
         dispatchReceiver,
         extensionReceiver,
-        arguments.toMutableList(),
+        argumentList,
         calleeReference,
     )
 }

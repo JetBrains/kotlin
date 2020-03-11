@@ -53,10 +53,11 @@ class FirCallCompleter(
                 call.resultType = typeRef
             }
             val errorCall = if (call is FirFunctionCall) {
-                call.transformArguments(
+                call.argumentList.transformArguments(
                     transformer,
                     ResolutionMode.WithExpectedType(typeRef.resolvedTypeFromPrototype(session.builtinTypes.nullableAnyType.type))
-                ) as T
+                )
+                call
             } else {
                 call
             }

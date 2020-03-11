@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirConstKind
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -103,7 +101,9 @@ abstract class AbstractAnnotationDeserializer(
                     type = it.constructType(emptyList(), isNullable = false)
                 }
             } ?: buildErrorTypeRef { diagnostic =FirUnresolvedSymbolError(classId) }
-            this.arguments += arguments
+            argumentList = buildArgumentList {
+                this.arguments += arguments
+            }
         }
     }
 
@@ -127,11 +127,13 @@ abstract class AbstractAnnotationDeserializer(
                 val classId = nameResolver.getClassId(value.classId)
                 val lookupTag = ConeClassLikeLookupTagImpl(classId)
                 val referencedType = lookupTag.constructType(emptyArray(), isNullable = false)
-                arguments += buildClassReferenceExpression {
-                    classTypeRef = buildResolvedTypeRef {
-                        type = referencedType
+                argumentList = buildUnaryArgumentList(
+                    buildClassReferenceExpression {
+                        classTypeRef = buildResolvedTypeRef {
+                            type = referencedType
+                        }
                     }
-                }
+                )
             }
             ENUM -> buildFunctionCall {
                 val classId = nameResolver.getClassId(value.classId)

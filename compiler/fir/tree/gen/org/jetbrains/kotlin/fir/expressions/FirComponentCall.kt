@@ -24,7 +24,7 @@ abstract class FirComponentCall : FirFunctionCall() {
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
-    abstract override val arguments: List<FirExpression>
+    abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirNamedReference
     abstract override val explicitReceiver: FirExpression
     abstract val componentIndex: Int
@@ -36,8 +36,6 @@ abstract class FirComponentCall : FirFunctionCall() {
     abstract override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirComponentCall
 
     abstract override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirComponentCall
-
-    abstract override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirComponentCall
 
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirComponentCall
 
