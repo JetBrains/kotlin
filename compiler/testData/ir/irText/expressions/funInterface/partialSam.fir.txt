@@ -108,7 +108,7 @@ FILE fqName:<root> fileName:/partialSam.kt
     BLOCK_BODY
       CALL 'public final fun runConversion (f1: <root>.Fn<kotlin.String, kotlin.Int>, f2: <root>.Fn<kotlin.Int, kotlin.String>): kotlin.Int declared in <root>.J' type=kotlin.Int origin=null
         $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
-        f1: CALL 'public final fun <get-fsi> (): <root>.fsi.<no name provided> declared in <root>' type=<uninitialized parent>.<no name provided> origin=GET_PROPERTY
+        f1: CALL 'public final fun <get-fsi> (): <root>.fsi.<no name provided> declared in <root>' type=<root>.fsi.<no name provided> origin=GET_PROPERTY
         f2: FUN_EXPR type=kotlin.Function3<kotlin.String, kotlin.Int, kotlin.Int, kotlin.String> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (s:kotlin.String, i:kotlin.Int, ti:kotlin.Int) returnType:kotlin.String
             VALUE_PARAMETER name:s index:0 type:kotlin.String
@@ -127,4 +127,4 @@ FILE fqName:<root> fileName:/partialSam.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (s: kotlin.String, i: kotlin.Int, ts: kotlin.String): kotlin.Int declared in <root>.test'
                 CONST Int type=kotlin.Int value=1
-        f2: CALL 'public final fun <get-fis> (): <root>.fis.<no name provided> declared in <root>' type=<uninitialized parent>.<no name provided> origin=GET_PROPERTY
+        f2: CALL 'public final fun <get-fis> (): <root>.fis.<no name provided> declared in <root>' type=<root>.fis.<no name provided> origin=GET_PROPERTY

@@ -20,6 +20,8 @@ class Fir2IrConversionScope {
         return parent
     }
 
+    fun parentFromStack(): IrDeclarationParent = parentStack.last()
+
     fun <T : IrDeclaration> applyParentFromStackTo(declaration: T): T {
         declaration.parent = parentStack.last()
         return declaration

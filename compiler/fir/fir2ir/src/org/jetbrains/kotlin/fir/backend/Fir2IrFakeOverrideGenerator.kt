@@ -43,9 +43,7 @@ class Fir2IrFakeOverrideGenerator(
         firOverriddenSymbol: FirPropertySymbol
     ): IrProperty {
         val firOverriddenProperty = firOverriddenSymbol.fir
-        val overriddenProperty = declarationStorage.getIrProperty(
-            firOverriddenProperty, declarationStorage.findIrParent(firOverriddenProperty)
-        )
+        val overriddenProperty = declarationStorage.getCachedIrProperty(firOverriddenProperty)!!
         getter?.apply {
             overriddenProperty.getter?.symbol?.let { overriddenSymbols = listOf(it) }
         }
@@ -71,7 +69,7 @@ class Fir2IrFakeOverrideGenerator(
                     if (functionSymbol.isFakeOverride) {
                         // Substitution case
                         val baseSymbol = functionSymbol.deepestOverriddenSymbol() as FirNamedFunctionSymbol
-                        val irFunction = declarationStorage.getIrFunction(
+                        val irFunction = declarationStorage.createIrFunction(
                             // TODO: parents for functions and properties should be consistent
                             originalFunction, declarationStorage.findIrParent(baseSymbol.fir), origin = origin
                         )
@@ -89,7 +87,7 @@ class Fir2IrFakeOverrideGenerator(
                         )
                         val fakeOverrideFunction = fakeOverrideSymbol.fir
 
-                        val irFunction = declarationStorage.getIrFunction(
+                        val irFunction = declarationStorage.createIrFunction(
                             fakeOverrideFunction, declarationStorage.findIrParent(originalFunction), origin = origin
                         )
                         val overriddenSymbol = declarationStorage.getIrFunctionSymbol(functionSymbol) as IrSimpleFunctionSymbol
@@ -106,7 +104,7 @@ class Fir2IrFakeOverrideGenerator(
                     if (propertySymbol.isFakeOverride) {
                         // Substitution case
                         val baseSymbol = propertySymbol.deepestOverriddenSymbol() as FirPropertySymbol
-                        val irProperty = declarationStorage.getIrProperty(
+                        val irProperty = declarationStorage.createIrProperty(
                             originalProperty, irParent = this, origin = origin
                         )
                         declarations += irProperty.withProperty {
@@ -119,7 +117,7 @@ class Fir2IrFakeOverrideGenerator(
                         )
                         val fakeOverrideProperty = fakeOverrideSymbol.fir
 
-                        val irProperty = declarationStorage.getIrProperty(
+                        val irProperty = declarationStorage.createIrProperty(
                             fakeOverrideProperty, irParent = this, origin = origin
                         )
                         declarations += irProperty.withProperty {
