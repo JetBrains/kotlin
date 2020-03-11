@@ -484,7 +484,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 rValue = value
                 this.operation = operation
                 indexes += firArrayAccess.arguments
-                argumentList = FirArraySetArgumentList(rValue, indexes)
+                argumentList = buildArraySetArgumentList(rValue, indexes)
             }
             val arrayExpression = this.getChildNodeByType(REFERENCE_EXPRESSION)
             if (arrayExpression != null) {

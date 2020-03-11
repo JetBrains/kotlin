@@ -209,7 +209,7 @@ class FirCallCompletionResultsWriterTransformer(
                     }
                 }
                 subCandidate.argumentMapping?.let {
-                    result.replaceArgumentList(FirResolvedArgumentList(it))
+                    result.replaceArgumentList(buildResolvedArgumentList(it))
                 }
                 result.transformExplicitReceiver(integerApproximator, null)
             }

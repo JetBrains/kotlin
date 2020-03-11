@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.expressions.impl.FirArraySetArgumentList
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 
 fun buildUnaryArgumentList(argument: FirExpression): FirArgumentList = buildArgumentList {
     arguments += argument
@@ -21,45 +19,13 @@ fun buildBinaryArgumentList(left: FirExpression, right: FirExpression): FirArgum
     arguments += right
 }
 
-abstract class FirAbstractArgumentList : FirArgumentList() {
-    override val source: FirSourceElement?
-        get() = null
+fun buildArraySetArgumentList(rValue: FirExpression, indexes: List<FirExpression>): FirArgumentList =
+    FirArraySetArgumentList(rValue, indexes)
 
-    override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentList {
-        return this
-    }
-
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        // DO NOTHING
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        return this
-    }
-}
+fun buildResolvedArgumentList(mapping: Map<FirExpression, FirValueParameter>): FirArgumentList =
+    FirResolvedArgumentList(mapping)
 
 object FirEmptyArgumentList : FirAbstractArgumentList() {
     override val arguments: List<FirExpression>
         get() = emptyList()
-}
-
-class FirArraySetArgumentList(
-    private val rValue: FirExpression,
-    private val indexes: List<FirExpression>
-) : FirAbstractArgumentList() {
-    override val arguments: List<FirExpression>
-        get() = indexes + rValue
-}
-
-class FirResolvedArgumentList(
-    val mapping: Map<FirExpression, FirValueParameter>
-) : FirAbstractArgumentList() {
-    override val arguments: List<FirExpression>
-        get() = mapping.keys.toList()
-
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        for (argument in mapping.keys) {
-            argument.accept(visitor, data)
-        }
-    }
 }
