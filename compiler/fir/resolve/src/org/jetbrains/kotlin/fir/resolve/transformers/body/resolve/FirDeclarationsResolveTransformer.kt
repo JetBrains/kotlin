@@ -161,18 +161,23 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         wrappedDelegateExpression: FirWrappedDelegateExpression,
         data: ResolutionMode,
     ): CompositeTransformResult<FirStatement> {
-        val delegateProvider = wrappedDelegateExpression.delegateProvider.transformSingle(transformer, ResolutionMode.ContextDependent)
-        when (val calleeReference = (delegateProvider as FirResolvable).calleeReference) {
-            is FirResolvedNamedReference -> return delegateProvider.compose()
-            is FirNamedReferenceWithCandidate -> {
-                val candidate = calleeReference.candidate
-                if (!candidate.system.hasContradiction) {
-                    return delegateProvider.compose()
+        dataFlowAnalyzer.enterDelegateExpression()
+        try {
+            val delegateProvider = wrappedDelegateExpression.delegateProvider.transformSingle(transformer, ResolutionMode.ContextDependent)
+            when (val calleeReference = (delegateProvider as FirResolvable).calleeReference) {
+                is FirResolvedNamedReference -> return delegateProvider.compose()
+                is FirNamedReferenceWithCandidate -> {
+                    val candidate = calleeReference.candidate
+                    if (!candidate.system.hasContradiction) {
+                        return delegateProvider.compose()
+                    }
                 }
             }
-        }
 
-        return wrappedDelegateExpression.expression.transform(transformer, ResolutionMode.ContextDependent)
+            return wrappedDelegateExpression.expression.transform(transformer, ResolutionMode.ContextDependent)
+        } finally {
+            dataFlowAnalyzer.exitDelegateExpression()
+        }
     }
 
     private fun transformLocalVariable(variable: FirProperty): CompositeTransformResult<FirProperty> {

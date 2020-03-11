@@ -163,6 +163,16 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         return graph
     }
 
+    // ----------------------------------- Delegate -----------------------------------
+
+    fun enterDelegateExpression() {
+        graphBuilder.enterDelegateExpression()
+    }
+
+    fun exitDelegateExpression() {
+        graphBuilder.exitDelegateExpression()
+    }
+
     // ----------------------------------- Block -----------------------------------
 
     fun enterBlock(block: FirBlock) {

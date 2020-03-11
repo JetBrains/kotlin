@@ -58,6 +58,7 @@ class ControlFlowGraphBuilder {
         private set
 
     private var idCounter: Int = 0
+    private val shouldPassFlowFromInplaceLambda: Stack<Boolean> = stackOf(true)
 
     fun createId(): Int = idCounter++
 
@@ -142,7 +143,7 @@ class ControlFlowGraphBuilder {
             }
             if (postponedExitNode != null) {
                 CFGNode.addEdge(lastNodes.pop(), postponedExitNode, propagateDeadness = true, kind = EdgeKind.Cfg)
-                if (invocationKind == InvocationKind.EXACTLY_ONCE) {
+                if (invocationKind == InvocationKind.EXACTLY_ONCE && shouldPassFlowFromInplaceLambda.top()) {
                     exitsFromCompletedPostponedAnonymousFunctions += postponedExitNode
                 }
             }
@@ -260,6 +261,16 @@ class ControlFlowGraphBuilder {
         exitNodes.pop()
         lexicalScopes.pop()
         return topLevelVariableExitNode to graphs.pop()
+    }
+
+    // ----------------------------------- Delegate -----------------------------------
+
+    fun enterDelegateExpression() {
+        shouldPassFlowFromInplaceLambda.push(false)
+    }
+
+    fun exitDelegateExpression() {
+        shouldPassFlowFromInplaceLambda.pop()
     }
 
     // ----------------------------------- Operator call -----------------------------------
@@ -639,6 +650,7 @@ class ControlFlowGraphBuilder {
         node: CFGNode<*>,
         callCompleted: Boolean
     ): Pair<EdgeKind, UnionFunctionCallArgumentsNode?> {
+        if (!shouldPassFlowFromInplaceLambda.top()) return EdgeKind.Simple to null
         var kind = EdgeKind.Simple
         if (!callCompleted || exitsFromCompletedPostponedAnonymousFunctions.isEmpty()) {
             return EdgeKind.Simple to null
