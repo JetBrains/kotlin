@@ -485,7 +485,10 @@ class ExpressionCodegen(
         !symbol.owner.isSuspend || !irFunction.shouldContainSuspendMarkers() -> false
         // Copy-pasted bytecode blocks are not suspension points.
         symbol.owner.isInline ->
-            symbol.owner.fqNameForIrSerialization == FqName("kotlin.coroutines.intrinsics.IntrinsicsKt.suspendCoroutineUninterceptedOrReturn")
+            symbol.owner.let {
+                it.name.asString() == "suspendCoroutineUninterceptedOrReturn" &&
+                it.getPackageFragment()?.fqName == FqName("kotlin.coroutines.intrinsics")
+            }
         // This includes inline lambdas, but only in functions intended for the inliner; in others, they stay as `f.invoke()`.
         dispatchReceiver.isReadOfInlineLambda() ->
             irFunction.origin != FOR_INLINE_STATE_MACHINE_TEMPLATE && irFunction.origin != FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE &&

@@ -399,6 +399,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         runTest("compiler/testData/codegen/bytecodeText/superFlagInMultiFileFacade.kt");
     }
 
+    @TestMetadata("suspendCoroutineUninterceptedOrReturn.kt")
+    public void testSuspendCoroutineUninterceptedOrReturn() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/suspendCoroutineUninterceptedOrReturn.kt");
+    }
+
     @TestMetadata("topLevelFunWithDefaultArgs.kt")
     public void testTopLevelFunWithDefaultArgs() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/topLevelFunWithDefaultArgs.kt");
