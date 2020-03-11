@@ -77,7 +77,9 @@ data class JdkItem(
   val unpackedSize: Long,
 
   // we should only extract items that has the given prefix removing the prefix
-  val unpackPrefixFilter: String,
+  val packageRootPrefix: String,
+  // the path from the package root to the java home directory (where bin/java is)
+  val packageToBinJavaPrefix: String,
 
   val archiveFileName: String,
   val installFolderName: String,
@@ -274,7 +276,8 @@ object JdkListParser {
                         sha256 = pkg["sha256"]?.asText() ?: continue,
                         archiveSize = pkg["archive_size"]?.asLong() ?: continue,
                         archiveFileName = pkg["archive_file_name"]?.asText() ?: continue,
-                        unpackPrefixFilter = pkg["unpack_prefix_filter"]?.asText() ?: continue,
+                        packageRootPrefix = pkg["package_root_prefix"]?.asText() ?: continue,
+                        packageToBinJavaPrefix = pkg["package_to_java_home_prefix"]?.asText() ?: continue,
 
                         unpackedSize = pkg["unpacked_size"]?.asLong() ?: continue,
                         installFolderName = pkg["install_folder_name"]?.asText() ?: continue,

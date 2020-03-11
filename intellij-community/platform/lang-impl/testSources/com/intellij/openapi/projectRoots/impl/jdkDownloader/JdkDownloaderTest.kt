@@ -1,7 +1,8 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 @file:Suppress("UsePropertyAccessSyntax")
 package com.intellij.openapi.projectRoots.impl.jdkDownloader
 
+import com.intellij.idea.TestFor
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.LightPlatformTestCase
@@ -13,7 +14,8 @@ internal fun jdkItemForTest(url: String,
                             packageType: JdkPackageType,
                             size: Long,
                             sha256: String,
-                            prefix: String = ""): JdkItem {
+                            prefix: String = "",
+                            packageToHomePrefix: String = ""): JdkItem {
   val product = JdkProduct(vendor = "Vendor", product = null, flavour = null)
   return JdkItem(
     product,
@@ -29,7 +31,8 @@ internal fun jdkItemForTest(url: String,
     sha256 = sha256,
     archiveSize = size,
     unpackedSize = 10 * size,
-    unpackPrefixFilter = prefix,
+    packageRootPrefix = prefix,
+    packageToBinJavaPrefix = packageToHomePrefix,
     archiveFileName = url.split("/").last(),
     installFolderName = url.split("/").last().removeSuffix(".tar.gz").removeSuffix(".zip"),
     sharedIndexAliases = listOf()
@@ -53,38 +56,56 @@ class JdkDownloaderTest : LightPlatformTestCase() {
                                        size = 604,
                                        sha256 = "1cf15536c1525f413190fd53243f343511a17e6ce7439ccee4dc86f0d34f9e81")
 
-  fun `test unpacking tar gz`() = testUnpacking(mockTarGZ) { dir ->
-    assertThat(File(dir, "TheApp/FooBar.app/theApp")).isFile()
-    assertThat(File(dir, "TheApp/QPCV/ggg.txt")).isFile()
+  fun `test unpacking tar gz`() = testUnpacking(mockTarGZ) {
+    assertThat(installDir).isEqualTo(javaHome)
+    assertThat(installDir / "TheApp" / "FooBar.app" / "theApp").isFile()
+    assertThat(installDir / "TheApp" / "QPCV" / "ggg.txt").isFile()
   }
 
-  fun `test unpacking tar gz cut dirs`() = testUnpacking(mockTarGZ.copy(unpackPrefixFilter = "TheApp/FooBar.app")) { dir ->
-    assertThat(File(dir, "theApp")).isFile()
-    assertThat(File(dir, "ggg.txt")).doesNotExist()
+  @TestFor(issues = ["IDEA-231609"])
+  fun `test unpacking tar gz with root`() = testUnpacking(
+    mockTarGZ.copy(
+      packageRootPrefix = "TheApp",
+      packageToBinJavaPrefix = "QPCV"
+  )) {
+    assertThat(javaHome / "ggg.txt").isFile()
+
+    assertThat(installDir / "FooBar.app" / "theApp").isFile()
+    assertThat(installDir / "QPCV" / "ggg.txt").isFile()
+  }
+
+  fun `test unpacking tar gz cut dirs`() = testUnpacking(
+    mockTarGZ.copy(packageRootPrefix = "TheApp/FooBar.app")
+  ) {
+    assertThat(installDir).isEqualTo(javaHome)
+    assertThat(installDir / "theApp").isFile()
+    assertThat(installDir / "ggg.txt").doesNotExist()
   }
 
   fun `test unpacking tar gz cut dirs 2`() {
     Assume.assumeTrue(SystemInfo.isMac || SystemInfo.isLinux)
 
-    testUnpacking(mockTarGZ2.copy(unpackPrefixFilter = "this/jdk")) { dir ->
-      assertThat(File(dir, "bin/java")).isFile()
-      assertThat(File(dir, "bin/javac")).isFile()
-      assertThat(File(dir, "file")).isFile()
-      assertThat(File(dir, "bin/symlink").toPath()).isSymbolicLink().hasSameContentAs(File(dir, "file").toPath())
+    testUnpacking(mockTarGZ2.copy(packageRootPrefix = "this/jdk")) {
+      assertThat(installDir / "bin" / "java").isFile()
+      assertThat(installDir / "bin" / "javac").isFile()
+      assertThat(installDir / "file").isFile()
+      assertThat((installDir / "bin" / "symlink").toPath()).isSymbolicLink().hasSameContentAs(File(installDir, "file").toPath())
     }
   }
 
-  fun `test unpacking tar gz cut dirs complex prefix`() = testUnpacking(mockTarGZ.copy(unpackPrefixFilter = "./TheApp/FooBar.app")) { dir ->
-    assertThat(File(dir, "theApp")).isFile()
-    assertThat(File(dir, "ggg.txt")).doesNotExist()
+  fun `test unpacking tar gz cut dirs complex prefix`() = testUnpacking(
+    mockTarGZ.copy(packageRootPrefix = "./TheApp/FooBar.app")
+  ) {
+    assertThat(installDir).isEqualTo(javaHome)
+    assertThat(installDir / "theApp").isFile()
+    assertThat(installDir / "ggg.txt").doesNotExist()
   }
 
   fun `test unpacking tar gz cut dirs and prefix`() = testUnpacking(
-    mockTarGZ.copy(
-      unpackPrefixFilter = "TheApp/FooBar.app")
-  ) { dir ->
-    assertThat(File(dir, "theApp")).isFile()
-    assertThat(File(dir, "ggg.txt")).doesNotExist()
+    mockTarGZ.copy(packageRootPrefix = "TheApp/FooBar.app")
+  ) {
+    assertThat(installDir / "theApp").isFile()
+    assertThat(installDir / "ggg.txt").doesNotExist()
   }
 
   fun `test unpacking targz invalid size`() = expectsException {
@@ -93,9 +114,18 @@ class JdkDownloaderTest : LightPlatformTestCase() {
 
   fun `test unpacking targz invalid checksum`() = expectsException { testUnpacking(mockTarGZ.copy(sha256 = "234234")) }
 
-  fun `test unpacking zip`() = testUnpacking(mockZip) { dir ->
-    assertThat(File(dir, "folder/readme2")).isDirectory()
-    assertThat(File(dir, "folder/file")).isFile()
+  fun `test unpacking zip`() = testUnpacking(mockZip) {
+    assertThat(installDir).isEqualTo(javaHome)
+    assertThat(installDir / "folder" / "readme2").isDirectory()
+    assertThat(installDir / "folder" / "file").isFile()
+  }
+
+  @TestFor(issues = ["IDEA-231609"])
+  fun `test unpacking zip package path`() = testUnpacking(mockZip.copy(packageToBinJavaPrefix = "folder")) {
+    assertThat(javaHome / "readme2").isDirectory()
+    assertThat(javaHome / "file").isFile()
+    assertThat(installDir / "folder" / "readme2").isDirectory()
+    assertThat(installDir / "folder" / "file").isFile()
   }
 
   fun `test unpacking zip invalid size`() = expectsException {
@@ -106,33 +136,48 @@ class JdkDownloaderTest : LightPlatformTestCase() {
 
   fun `test unpacking zip cut dirs and wrong prefix`() = testUnpacking(
     mockZip.copy(
-      unpackPrefixFilter = "wrong")
-  ) { dir ->
-    assertThat(File(dir, "folder/readme2")).doesNotExist()
-    assertThat(File(dir, "folder/file")).doesNotExist()
+      packageRootPrefix = "wrong")
+  ) {
+    assertThat(installDir / "folder/readme2").doesNotExist()
+    assertThat(installDir / "folder/file").doesNotExist()
   }
 
   fun `test unpacking zip cut dirs and prefix`() = testUnpacking(
     mockZip.copy(
-      unpackPrefixFilter = "folder")
-  ) { dir ->
-    assertThat(File(dir, "readme2")).isDirectory()
-    assertThat(File(dir, "file")).isFile()
+      packageRootPrefix = "folder")
+  ) {
+    assertThat(installDir / "readme2").isDirectory()
+    assertThat(installDir / "file").isFile()
   }
 
   fun `test unpacking zip and prefix`() = testUnpacking(
     mockZip.copy(
-      unpackPrefixFilter = "folder/file")
-  ) { dir ->
-    assertThat(File(dir, "readme2")).doesNotExist()
-    assertThat(File(dir, "folder/file")).doesNotExist()
+      packageRootPrefix = "folder/file")
+  ) {
+    assertThat(installDir / "readme2").doesNotExist()
+    assertThat(installDir / "folder" / "file").doesNotExist()
   }
 
-  private fun testUnpacking(item: JdkItem, resultDir: (File) -> Unit = { error("must not reach here") }) {
+  private operator fun File.div(x: String) = File(this, x)
+
+  private fun testUnpacking(item: JdkItem, resultDir: JdkInstallRequest.() -> Unit = { error("must not reach here") }) {
     val dir = createTempDir()
     try {
-      JdkInstaller.getInstance().installJdk(JdkInstallRequest(item, dir), null, null)
-      resultDir(dir)
+      val task = JdkInstaller.getInstance().prepareJdkInstallation(item, dir)
+      JdkInstaller.getInstance().installJdk(task, null, null)
+
+      assertThat(task.installDir).isDirectory()
+      assertThat(task.javaHome).isDirectory()
+
+      assertThat(dir).isEqualTo(task.installDir)
+
+      println("Unpacked files:")
+      dir.walkTopDown().forEach {
+        println("  <install dir>${it.path.removePrefix(dir.path)}")
+      }
+      println()
+
+      task.resultDir()
     }
     finally {
       FileUtil.delete(dir)

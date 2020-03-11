@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.projectRoots.impl.jdkDownloader
 
 import com.intellij.ide.DataManager
@@ -89,7 +89,7 @@ internal interface JdkDownloaderBase {
   fun newDownloadTask(request: JdkInstallRequest, project: Project?): SdkDownloadTask {
     return object : SdkDownloadTask {
       override fun getSuggestedSdkName() = request.item.suggestedSdkName
-      override fun getPlannedHomeDir() = request.targetDir.absolutePath
+      override fun getPlannedHomeDir() = request.javaHome.absolutePath
       override fun getPlannedVersion() = request.item.versionString
       override fun doDownload(indicator: ProgressIndicator) {
         JdkInstaller.getInstance().installJdk(request, indicator, project)

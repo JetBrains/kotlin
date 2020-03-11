@@ -19,10 +19,25 @@ import java.io.IOException
 import java.util.*
 import kotlin.math.absoluteValue
 
-data class JdkInstallRequest(
-  val item: JdkItem,
-  val targetDir: File
-)
+interface JdkInstallRequest {
+  val item: JdkItem
+
+  /**
+   * The path where JDK is installed.
+   * On macOS it is likely (depending on the JDK package)
+   * to contain Contents/Home folders
+   */
+  val installDir: File
+
+  /**
+   * The path on the disk where the installed JDK
+   * would have the bin/java and bin/javac files.
+   *
+   * On macOs this path may differ from the [installDir]
+   * if the JDK package follows the macOS Bundle layout
+   */
+  val javaHome: File
+}
 
 private val JDK_INSTALL_LISTENER_EP_NAME = ExtensionPointName.create<JdkInstallerListener>("com.intellij.jdkDownloader.jdkInstallerListener")
 
@@ -91,13 +106,16 @@ class JdkInstaller {
     return targetDir to null
   }
 
+  /**
+   * @see [JdkInstallRequest.javaHome] for the actual java home, it may not match the [JdkInstallRequest.installDir]
+   */
   fun installJdk(request: JdkInstallRequest, indicator: ProgressIndicator?, project: Project?) {
     JDK_INSTALL_LISTENER_EP_NAME.extensions.forEach { it.onJdkDownloadStarted(request, project) }
 
     val item = request.item
     indicator?.text = "Installing ${item.fullPresentationText}..."
 
-    val targetDir = request.targetDir
+    val targetDir = request.installDir
     val url = Urls.parse(item.url, false) ?: error("Cannot parse download URL: ${item.url}")
     if (!url.scheme.equals("https", ignoreCase = true)) error("URL must use https:// protocol, but was: $url")
 
@@ -139,7 +157,7 @@ class JdkInstaller {
         //handle cancellation via postProcessor (instead of inheritance)
         decompressor.postprocessor { indicator?.checkCanceled() }
 
-        val fullMatchPath = item.unpackPrefixFilter.trim('/')
+        val fullMatchPath = item.packageRootPrefix.trim('/')
         if (!fullMatchPath.isBlank()) {
           decompressor.removePrefixPath(fullMatchPath)
         }
@@ -175,13 +193,27 @@ class JdkInstaller {
       throw IOException("Failed to create home directory: $home")
     }
 
-    val request = JdkInstallRequest(jdkItem, home)
+    val javaHome = when {
+      jdkItem.packageToBinJavaPrefix.isBlank() -> targetPath
+      else -> File(targetPath, jdkItem.packageToBinJavaPrefix).absoluteFile
+    }
+
+    FileUtil.createDirectory(javaHome)
+    if (!javaHome.isDirectory) {
+      throw IOException("Failed to create home directory: $javaHome")
+    }
+
+    val request = object: JdkInstallRequest {
+      override val item = jdkItem
+      override val installDir = targetPath
+      override val javaHome = javaHome
+    }
     writeMarkerFile(request)
     return request
   }
 
   private fun writeMarkerFile(request: JdkInstallRequest) {
-    val markerFile = request.targetDir / "intellij-downloader-info.txt"
+    val markerFile = request.installDir / "intellij-downloader-info.txt"
     markerFile.writeText("Download started on ${Date()}\n${request.item}")
   }
 }
