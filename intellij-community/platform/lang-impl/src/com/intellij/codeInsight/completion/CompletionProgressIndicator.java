@@ -14,6 +14,7 @@ import com.intellij.codeInsight.lookup.*;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.lang.LangBundle;
@@ -776,7 +777,13 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
                                        .filter(StringUtil::isNotEmpty)
                                        .findFirst()
                                        .orElse(LangBundle.message("completion.no.suggestions"));
-    return DumbService.isDumb(getProject()) ? text + CodeInsightBundle.message("completion.incomplete.during.indexing.suffix") : text;
+    return DumbService.isDumb(getProject()) ? text + getIncompleteMessageSuffix(getProject()) : text;
+  }
+
+  private static String getIncompleteMessageSuffix(@NotNull Project project) {
+    return LightEdit.owns(project) ?
+           CodeInsightBundle.message("completion.incomplete.light.edit.suffix") :
+           CodeInsightBundle.message("completion.incomplete.during.indexing.suffix");
   }
 
   private static LightweightHint showErrorHint(Project project, Editor editor, String text) {
