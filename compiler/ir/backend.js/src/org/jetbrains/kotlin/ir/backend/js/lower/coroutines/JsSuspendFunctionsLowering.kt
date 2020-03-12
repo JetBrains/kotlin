@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.explicitParameters
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.DFS
@@ -173,6 +174,8 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
         }
 
         stateMachineFunction.transform(LiveLocalsTransformer(localToPropertyMap, { JsIrBuilder.buildGetValue(thisReceiver) }, unit), null)
+        // TODO find out why some parents are incorrect
+        stateMachineFunction.body!!.patchDeclarationParents(stateMachineFunction)
     }
 
     private fun assignStateIds(entryState: SuspendState, subject: IrVariableSymbol, switch: IrWhen, rootLoop: IrLoop) {

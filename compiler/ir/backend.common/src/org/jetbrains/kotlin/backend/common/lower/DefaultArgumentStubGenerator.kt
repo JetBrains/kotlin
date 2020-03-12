@@ -111,17 +111,17 @@ open class DefaultArgumentStubGenerator(
                         val defaultFlag =
                             irCallOp(this@DefaultArgumentStubGenerator.context.ir.symbols.intAnd, context.irBuiltIns.intType, mask, bit)
 
-                        val expressionBody = valueParameter.defaultValue!!
-                        expressionBody.patchDeclarationParents(newIrFunction)
-                        expressionBody.transformChildrenVoid(object : IrElementTransformerVoid() {
-                            override fun visitGetValue(expression: IrGetValue): IrExpression {
-                                log { "GetValue: ${expression.symbol.owner}" }
-                                val valueSymbol = variables[expression.symbol.owner] ?: return expression
-                                return irGet(valueSymbol)
-                            }
-                        })
+                        val expression = valueParameter.defaultValue!!.expression
+                            .prepareToBeUsedIn(newIrFunction)
+                            .transform(object : IrElementTransformerVoid() {
+                                override fun visitGetValue(expression: IrGetValue): IrExpression {
+                                    log { "GetValue: ${expression.symbol.owner}" }
+                                    val valueSymbol = variables[expression.symbol.owner] ?: return expression
+                                    return irGet(valueSymbol)
+                                }
+                            }, null)
 
-                        selectArgumentOrDefault(defaultFlag, parameter, expressionBody.expression)
+                        selectArgumentOrDefault(defaultFlag, parameter, expression)
                     } else {
                         parameter
                     }
@@ -146,6 +146,28 @@ open class DefaultArgumentStubGenerator(
         }
         return listOf(irFunction, newIrFunction)
     }
+
+    /**
+     * Prepares the default value to be used inside the `function` body by patching the parents.
+     * In K/JS it also copies the expression in order to avoid duplicate declarations after this lowering.
+     *
+     * In K/JVM copying doesn't preserve metadata, so the following case won't work:
+     *
+     * ```
+     *   import kotlin.reflect.jvm.reflect
+     *
+     *   fun foo(x: Function<*> = {}) {
+     *       // Will print "null" if lambda is copied
+     *       println(x.reflect())
+     *   }
+     * ```
+     *
+     * Thus the duplicate declarations during the lowering pipeline is considered to be a lesser evil.
+     */
+    protected open fun IrExpression.prepareToBeUsedIn(function: IrFunction): IrExpression {
+        return patchDeclarationParents(function)
+    }
+
 
     protected open fun IrBlockBodyBuilder.selectArgumentOrDefault(
         defaultFlag: IrExpression,

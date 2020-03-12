@@ -407,12 +407,9 @@ class EnumClassCreateInitializerLowering(val context: JsIrBackendContext) : Decl
 
                     irClass.enumEntries.forEach { entry ->
                         entry.correspondingField?.let { instanceField ->
-                            +irSetField(null, instanceField, entry.initializerExpression!!.expression)
+                            +irSetField(null, instanceField, entry.initializerExpression!!.expression.deepCopyWithSymbols(it))
                         }
                     }
-                }.also {
-                    // entry.initializerExpression can have local declarations
-                    it.acceptVoid(PatchDeclarationParentsVisitor(irClass))
                 }.statements
             }
         }
