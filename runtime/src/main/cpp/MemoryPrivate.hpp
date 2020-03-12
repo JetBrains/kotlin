@@ -36,6 +36,10 @@ void DeinitForeignRef(ObjHeader* object, ForeignRefContext context);
 
 bool IsForeignRefAccessible(ObjHeader* object, ForeignRefContext context);
 
+// Should be used when reference is read from a possibly shared variable,
+// and there's nothing else keeping the object alive.
+void AdoptReferenceFromSharedVariable(ObjHeader* object);
+
 }  // extern "C"
 
 #endif // RUNTIME_MEMORYPRIVATE_HPP

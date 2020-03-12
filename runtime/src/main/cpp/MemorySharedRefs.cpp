@@ -22,6 +22,7 @@ void KRefSharedHolder::init(ObjHeader* obj) {
 
 ObjHeader* KRefSharedHolder::ref() const {
   ensureRefAccessible();
+  AdoptReferenceFromSharedVariable(obj_);
   return obj_;
 }
 
@@ -76,7 +77,8 @@ void BackRefFromAssociatedObject::addRef() {
 
 bool BackRefFromAssociatedObject::tryAddRef() {
   // Suboptimal but simple:
-  ObjHeader* obj = this->ref();
+  this->ensureRefAccessible();
+  ObjHeader* obj = this->obj_;
 
   if (!TryAddHeapRef(obj)) return false;
   this->addRef();
@@ -95,6 +97,12 @@ void BackRefFromAssociatedObject::releaseRef() {
     // From this moment [context] is generally a dangling pointer.
     // This is handled in [IsForeignRefAccessible] and [addRef].
   }
+}
+
+ObjHeader* BackRefFromAssociatedObject::ref() const {
+  ensureRefAccessible();
+  AdoptReferenceFromSharedVariable(obj_);
+  return obj_;
 }
 
 void BackRefFromAssociatedObject::ensureRefAccessible() const {

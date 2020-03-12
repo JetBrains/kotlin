@@ -35,10 +35,7 @@ class BackRefFromAssociatedObject {
 
   void releaseRef();
 
-  ObjHeader* ref() const {
-    ensureRefAccessible();
-    return obj_;
-  }
+  ObjHeader* ref() const;
 
   inline bool permanent() const {
     return obj_->permanent(); // Safe to query from any thread.
