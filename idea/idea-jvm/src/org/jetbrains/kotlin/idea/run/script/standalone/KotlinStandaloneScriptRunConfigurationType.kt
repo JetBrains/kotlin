@@ -5,24 +5,21 @@
 
 package org.jetbrains.kotlin.idea.run.script.standalone
 
-import com.intellij.execution.configurations.*
+import com.intellij.execution.configurations.ConfigurationTypeUtil
+import com.intellij.execution.configurations.RunConfiguration
+import com.intellij.execution.configurations.SimpleConfigurationType
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NotNullLazyValue
 import org.jetbrains.kotlin.idea.KotlinIcons
 
-class KotlinStandaloneScriptRunConfigurationType : ConfigurationTypeBase(
+class KotlinStandaloneScriptRunConfigurationType : SimpleConfigurationType(
     "KotlinStandaloneScriptRunConfigurationType",
     "Kotlin script",
     "Run Kotlin script",
-    KotlinIcons.SMALL_LOGO
+    NotNullLazyValue.createValue { KotlinIcons.SMALL_LOGO }
 ) {
-    init {
-        addFactory(Factory(this))
-    }
-
-    private class Factory(type: ConfigurationType) : ConfigurationFactory(type) {
-        override fun createTemplateConfiguration(project: Project): RunConfiguration {
-            return KotlinStandaloneScriptRunConfiguration(project, this, "")
-        }
+    override fun createTemplateConfiguration(project: Project): RunConfiguration {
+        return KotlinStandaloneScriptRunConfiguration(project, this, "")
     }
 
     companion object {
