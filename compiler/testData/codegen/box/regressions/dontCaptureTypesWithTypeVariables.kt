@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun test(i: Inv<out Any?>) {
     foo(i.superclass())
 }
