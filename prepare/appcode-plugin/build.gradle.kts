@@ -11,24 +11,20 @@ val ijProductBranch: (String) -> Int by ultimateTools
 val disableBuildTasks: Project.(String) -> Unit by ultimateTools
 
 val cidrPluginTools: Map<String, Any> by rootProject.extensions
-val preparePluginXml: (Project, String, String, Boolean, String, Boolean) -> Copy by cidrPluginTools
+val preparePluginXml: (Project, String, String, Boolean, String) -> Copy by cidrPluginTools
 val pluginJar: (Project, Configuration, List<Task>) -> Jar by cidrPluginTools
-val patchedPlatformDepsJar: (Project, File) -> Zip by cidrPluginTools
-val otherPlatformDepsJars: (Project, File) -> Task by cidrPluginTools
 val packageCidrPlugin: (Project, String, File, List<Any>) -> Copy by cidrPluginTools
 val zipCidrPlugin: (Project, Task, File) -> Zip by cidrPluginTools
-val cidrUpdatePluginsXml: (Project, Task, String, File, URL, URL?) -> Task by cidrPluginTools
+val cidrUpdatePluginsXml: (Project, Task, String, File, URL, URL) -> Task by cidrPluginTools
 
 val appcodeVersion: String by rootProject.extra
 val appcodeFriendlyVersion: String by rootProject.extra
 val appcodeVersionStrict: Boolean by rootProject.extra
-val appcodePlatformDepsOrJavaPluginDir: File by rootProject.extra
 val appcodePluginDir: File by rootProject.extra
 val appcodePluginVersionFull: String by rootProject.extra
 val appcodePluginZipPath: File by rootProject.extra
 val appcodeCustomPluginRepoUrl: URL by rootProject.extra
-val appcodeUseJavaPlugin: Boolean by rootProject.extra
-val appcodeJavaPluginDownloadUrl: URL? by rootProject.extra
+val appcodeJavaPluginDownloadUrl: URL by rootProject.extra
 
 val cidrPlugin: Configuration by configurations.creating
 val cidrGradleTooling: Configuration by configurations.creating
@@ -45,19 +41,12 @@ val preparePluginXmlTask: Task = preparePluginXml(
         ":kotlin-ultimate:ide:appcode-native",
         appcodeVersion,
         appcodeVersionStrict,
-        appcodePluginVersionFull,
-        appcodeUseJavaPlugin
+        appcodePluginVersionFull
 )
 
 val pluginJarTask: Task = pluginJar(project, cidrPlugin, listOf(preparePluginXmlTask))
 
-val additionalJars = if (appcodeUseJavaPlugin)
-    listOf(pluginJarTask, cidrGradleTooling)
-else {
-    val patchedPlatformDepsJar: Task = patchedPlatformDepsJar(project, appcodePlatformDepsOrJavaPluginDir)
-    val otherPlatformDepsJars: Task = otherPlatformDepsJars(project, appcodePlatformDepsOrJavaPluginDir)
-    listOf(pluginJarTask, cidrGradleTooling, patchedPlatformDepsJar, otherPlatformDepsJars)
-}
+val additionalJars = listOf(pluginJarTask, cidrGradleTooling)
 
 val appcodePluginTask: Task = packageCidrPlugin(
         project,
@@ -77,7 +66,7 @@ val appcodeUpdatePluginsXmlTask: Task = cidrUpdatePluginsXml(
         appcodeJavaPluginDownloadUrl
 )
 
-if (ijProductBranch(appcodeVersion) < 192)
+if (ijProductBranch(appcodeVersion) < 193)
     disableBuildTasks("Too old AppCode version: $appcodeVersion")
 else
     System.getProperty("os.name")!!.toLowerCase(Locale.US).takeIf { "windows" in it }?.let {

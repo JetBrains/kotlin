@@ -12,7 +12,8 @@ val ultimateTools: Map<String, KFunction<Any>> = listOf<KFunction<Any>>(
     ::addCidrDeps,
     ::addIdeaNativeModuleDeps,
     ::addKotlinGradleToolingDeps,
-    ::handleSymlink
+    ::handleSymlink,
+    ::proprietaryRepositories
 ).map { it.name to it }.toMap()
 
 rootProject.extensions.add("ultimateTools", ultimateTools)
@@ -44,7 +45,6 @@ fun disableBuildTasks(project: Project, reason: String) = with(project) {
 // --------------------------------------------------
 
 val excludesListFromIdeaPlugin: List<String> by rootProject.extra
-val platformDepsJarName: String by rootProject.extra
 val isStandaloneBuild: Boolean by rootProject.extra
 val cidrPluginsEnabled: Boolean? by rootProject.extra
 
@@ -147,49 +147,40 @@ fun addIdeaNativeModuleDepsStandalone(project: Project) = with(project) {
         }
         add("compile", ideaPluginJars)
 
-        // IntelliJ platform (out of CIDR IDE distribution)
-        val cidrIdeDir: String by rootProject.extra
-        val cidrPlatform = fileTree(cidrIdeDir) {
-            include("lib/*.jar")
-            exclude("lib/kotlin*.jar") // because Kotlin should be taken from Kotlin plugin
-            exclude("lib/clion*.jar") // don't take scrambled JARs
-            exclude("lib/appcode*.jar")
-        }
-        add("compile", cidrPlatform)
+        val version = rootProject.extra[if (isStandaloneBuild) "cidrVersion" else "versions.intellijSdk"] as String
 
-        // standard CIDR plugins
-        val cidrPlugins = fileTree(cidrIdeDir) {
-            include("plugins/cidr-*/lib/*.jar")
-            include("plugins/clion-*/lib/*.jar")
-            include("plugins/appcode-*/lib/*.jar")
-            include("plugins/gradle/lib/*.jar")
-        }
-        add("compile", cidrPlugins)
-
-        // Java APIs (private artifact that goes together with CIDR IDEs)
-        val cidrPlatformDepsOrJavaPluginDir: String by rootProject.extra
-        val cidrPlatformDepsOrJavaPlugin = fileTree(cidrPlatformDepsOrJavaPluginDir) {
-            include(platformDepsJarName)
-            javaApiArtifacts.forEach { include("$it*.jar") }
-        }
-        add("compile", cidrPlatformDepsOrJavaPlugin)
+        add("compile", "com.jetbrains.intellij.platform:debugger-impl:$version")
+        add("compile", "com.jetbrains.intellij.platform:indexing-impl:$version")
+        add("compile", "com.jetbrains.intellij.platform:ide-impl:$version")
+        add("compile", "com.jetbrains.intellij.platform:lang-impl:$version")
+        add("compile", "com.jetbrains.intellij.platform:external-system:$version")
+        add("compile", "com.jetbrains.intellij.platform:external-system-impl:$version")
+        add("compile", "com.jetbrains.intellij.gradle:gradle-common:$version")
+        add("compile", "com.jetbrains.intellij.java:java-debugger-impl:$version")
+        add("compile", "com.jetbrains.intellij.java:java-psi-impl:$version")
+        add("compile", "com.jetbrains.intellij.java:java-compiler-impl:$version")
     }
 }
 
-fun addIdeaNativeModuleDeps(project: Project) =
+fun addIdeaNativeModuleDeps(project: Project) {
+    val cidrVersion: String by rootProject.extra
+    with(project) {
+        proprietaryRepositories(project)
+        dependencies {
+            add("compile", "com.jetbrains.intellij.c:c:$cidrVersion") { isTransitive = isStandaloneBuild }
+            add("compile", "com.jetbrains.intellij.cidr:cidr-common:$cidrVersion") { isTransitive = isStandaloneBuild }
+            add("compile", "com.jetbrains.intellij.cidr:cidr-debugger:$cidrVersion") { isTransitive = isStandaloneBuild }
+        }
+    }
     if (isStandaloneBuild) addIdeaNativeModuleDepsStandalone(project) else addIdeaNativeModuleDepsComposite(project)
+}
 
 fun addCidrDeps(project: Project) = with(project) {
-    val cidrUnscrambledJarDir: File? by rootProject.extra
     val nativeDebugPluginDir: File? by rootProject.extra
 
     if (nativeDebugPluginDir?.exists() == true) { // Idea Ultimate build
         dependencies {
             add("compile", fileTree(nativeDebugPluginDir!!) { include("**/*.jar") })
-        }
-    } else if (cidrUnscrambledJarDir?.exists() == true) { // CIDR build
-        dependencies {
-            add("compile", fileTree(cidrUnscrambledJarDir!!) { include("**/*.jar") })
         }
     }
 }
@@ -197,9 +188,6 @@ fun addCidrDeps(project: Project) = with(project) {
 fun addKotlinGradleToolingDepsComposite(project: Project) = with(project) {
     dependencies {
         add("compileOnly", project(":idea:kotlin-gradle-tooling"))
-
-        val ideVersion = rootProject.extra["versions.intellijSdk"] as String
-        add("compileOnly", "kotlin.build:gradle:$ideVersion")
     }
 }
 
@@ -212,19 +200,20 @@ fun addKotlinGradleToolingDepsStandalone(project: Project) = with(project) {
             include("lib/kotlin-stdlib.jar")
         }
         add("compileOnly", kotlinGradleToolingJars)
-
-        // Gradle plugin & Gradle API
-        val cidrIdeDir: String by rootProject.extra
-        val gradlePlugin = fileTree(cidrIdeDir) {
-            include("lib/gradle-api*.jar")
-            include("plugins/gradle/lib/*.jar")
-        }
-        add("compileOnly", gradlePlugin)
     }
 }
 
-fun addKotlinGradleToolingDeps(project: Project) =
+fun addKotlinGradleToolingDeps(project: Project) {
     if (isStandaloneBuild) addKotlinGradleToolingDepsStandalone(project) else addKotlinGradleToolingDepsComposite(project)
+
+    with(project) {
+        proprietaryRepositories(project)
+        dependencies {
+            val version = rootProject.extra[if (isStandaloneBuild) "cidrVersion" else "versions.intellijSdk"] as String
+            add("compileOnly", "com.jetbrains.intellij.gradle:gradle-common:$version")
+        }
+    }
+}
 
 fun handleSymlink(details: FileCopyDetails, targetDir: File): Boolean = with(details) {
     val symlink = file.toPath().firstParentSymlink()
@@ -261,4 +250,12 @@ fun FileCopyDetails.relativeTo(targetDir: File, symlink: java.nio.file.Path): ja
         cur = cur.parent
     }
     return targetDir.toPath().resolve(srcRoot.relativize(symlink))
+}
+
+fun proprietaryRepositories(project: Project) = with(project) {
+    repositories {
+        maven("https://repo.labs.intellij.net/intellij-proprietary-modules")
+        maven("https://cache-redirector.jetbrains.com/jetbrains.bintray.com/intellij-third-party-dependencies/")
+        maven("https://cache-redirector.jetbrains.com/download.jetbrains.com/teamcity-repository")
+    }
 }
