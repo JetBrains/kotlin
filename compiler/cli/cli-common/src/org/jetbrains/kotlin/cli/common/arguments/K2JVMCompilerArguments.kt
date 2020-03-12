@@ -323,6 +323,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var klibLibraries: String? by NullableStringFreezableVar(null)
 
+    @Argument(
+        value = "-Xno-optimized-callable-references",
+        description = "Do not use optimized callable reference superclasses available from 1.4"
+    )
+    var noOptimizedCallableReferences: Boolean by FreezableVar(false)
+
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics

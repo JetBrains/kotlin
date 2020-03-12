@@ -119,4 +119,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> IS_IR_WITH_STABLE_ABI =
             CompilerConfigurationKey.create("Is IR with stable ABI");
+
+    public static final CompilerConfigurationKey<Boolean> NO_OPTIMIZED_CALLABLE_REFERENCES =
+            CompilerConfigurationKey.create("Do not use optimized callable reference superclasses available from 1.4");
 }

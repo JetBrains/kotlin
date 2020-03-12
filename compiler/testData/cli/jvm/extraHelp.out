@@ -50,6 +50,8 @@ where advanced options include:
   -Xno-exception-on-explicit-equals-for-boxed-null
                              Do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type
   -Xno-optimize              Disable optimizations
+  -Xno-optimized-callable-references
+                             Do not use optimized callable reference superclasses available from 1.4
   -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
   -Xno-receiver-assertions   Don't generate not-null assertion for extension receiver arguments of platform types
   -Xno-use-ir                Do not use the IR backend. Useful for a custom-built compiler where IR backend is enabled by default

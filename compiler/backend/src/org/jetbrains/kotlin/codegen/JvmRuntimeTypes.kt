@@ -26,12 +26,17 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 
-class JvmRuntimeTypes(module: ModuleDescriptor, private val languageVersionSettings: LanguageVersionSettings) {
+class JvmRuntimeTypes(
+    module: ModuleDescriptor,
+    private val languageVersionSettings: LanguageVersionSettings,
+    forceNoOptimizedCallableReferences: Boolean
+) {
     private val kotlinJvmInternalPackage = MutablePackageFragmentDescriptor(module, FqName("kotlin.jvm.internal"))
     private val kotlinCoroutinesJvmInternalPackage =
         MutablePackageFragmentDescriptor(module, languageVersionSettings.coroutinesJvmInternalPackageFqName())
 
-    val generateOptimizedCallableReferenceSuperClasses = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
+    val generateOptimizedCallableReferenceSuperClasses =
+        languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4 && !forceNoOptimizedCallableReferences
 
     private fun internal(className: String, packageFragment: PackageFragmentDescriptor = kotlinJvmInternalPackage): Lazy<ClassDescriptor> =
         lazy { createClass(packageFragment, className) }
