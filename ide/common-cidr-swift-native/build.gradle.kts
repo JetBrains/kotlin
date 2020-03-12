@@ -9,7 +9,6 @@ plugins {
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
 val addIdeaNativeModuleDeps: (Project) -> Unit by ultimateTools
-val addCidrSwiftNativeModuleDeps: (Project) -> Unit by ultimateTools
 
 val cidrVersion: String by rootProject.extra
 val kotlinNativeBackendVersion: String by rootProject.extra
@@ -23,7 +22,6 @@ repositories {
 
 dependencies {
     addIdeaNativeModuleDeps(project)
-    addCidrSwiftNativeModuleDeps(project)
     compile(project(":kotlin-ultimate:ide:common-cidr-native"))
     compileOnly("com.jetbrains.intellij.swift:swift:$cidrVersion")
     compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa:$cidrVersion")

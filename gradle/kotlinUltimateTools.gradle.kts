@@ -11,7 +11,6 @@ val ultimateTools: Map<String, KFunction<Any>> = listOf<KFunction<Any>>(
 
     ::addCidrDeps,
     ::addIdeaNativeModuleDeps,
-    ::addCidrSwiftNativeModuleDeps,
     ::addKotlinGradleToolingDeps,
     ::handleSymlink,
     ::proprietaryRepositories
@@ -174,32 +173,6 @@ fun addIdeaNativeModuleDeps(project: Project) {
         }
     }
     if (isStandaloneBuild) addIdeaNativeModuleDepsStandalone(project) else addIdeaNativeModuleDepsComposite(project)
-}
-
-fun addCidrSwiftNativeModuleDepsComposite(project: Project) = with(project) {
-    dependencies {
-        val ijPlatformDependencies = listOf(
-            "trove4j", "external-system-rt",
-            "objenesis-${rootProject.extra["versions.jar.objenesis"]}",
-            "kryo-${rootProject.extra["versions.jar.kryo"]}"
-        )
-
-        val (ideName, ideVersion) = guessIDEParams()
-        add("compileOnly", "kotlin.build:$ideName:$ideVersion") {
-            ijPlatformDependencies.forEach { jarName ->
-                artifact {
-                    name = jarName
-                    type = "jar"
-                    extension = "jar"
-                }
-            }
-            isTransitive = false
-        }
-    }
-}
-
-fun addCidrSwiftNativeModuleDeps(project: Project) {
-    if (!isStandaloneBuild) addCidrSwiftNativeModuleDepsComposite(project)
 }
 
 fun addCidrDeps(project: Project) = with(project) {
