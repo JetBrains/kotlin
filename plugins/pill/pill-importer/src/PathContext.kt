@@ -8,50 +8,121 @@ package org.jetbrains.kotlin.pill
 import org.gradle.api.Project
 import java.io.File
 
-private val USER_HOME_DIR_PATH = System.getProperty("user.home").withSlash()
+private val USER_HOME_DIR_PATH = System.getProperty("user.home").withoutSlash()
+private val MAVEN_REPOSITORY_PATH = File(USER_HOME_DIR_PATH, ".m2/repository").absolutePath
 
-private fun replacePrefix(path: String, prefix: String, variableName: String): String {
-    if (path.startsWith(prefix)) {
-        return "$" + variableName + "$/" + path.drop(prefix.length)
+private const val VAR_USER_HOME = "USER_HOME"
+private const val VAR_MAVEN_REPOSITORY = "MAVEN_REPOSITORY"
+private const val VAR_PROJECT_DIR = "PROJECT_DIR"
+private const val VAR_MODULE_DIR = "MODULE_DIR"
+
+private fun String.applyVariable(variableName: String, value: String): String {
+    val variableText = "$$variableName$"
+    return when {
+        this == value -> variableText
+        startsWith("$value/") -> variableText + "/" + this.drop(value.length + 1)
+        else -> this
     }
-
-    return path
 }
 
-private fun simplifyUserHomeDirPath(path: String): String {
-    return replacePrefix(path, USER_HOME_DIR_PATH, "USER_HOME")
+private fun String.substituteVariable(variableName: String, value: String): String {
+    val variableText = "$$variableName$"
+    return when {
+        this == variableText -> value
+        this.startsWith("$variableText/") -> value + "/" + this.drop(variableText.length + 1)
+        else -> this
+    }
+}
+
+private fun String.applyUserHomeDirPath(): String {
+    return this.applyVariable(VAR_USER_HOME, USER_HOME_DIR_PATH)
+}
+
+private fun String.applyMavenRepositoryPath(): String {
+    return this.applyVariable(VAR_MAVEN_REPOSITORY, MAVEN_REPOSITORY_PATH)
+}
+
+private fun String.applyProjectDir(projectDir: File): String {
+    return this.applyVariable(VAR_PROJECT_DIR, projectDir.absolutePath)
+}
+
+private fun String.applyModuleDir(projectDir: File, moduleFile: File): String {
+    val file = File(this)
+    if (!file.startsWith(projectDir)) {
+        return this
+    }
+
+    return '$' + VAR_MODULE_DIR + "$/" + file.toRelativeString(moduleFile.parentFile)
+}
+
+private fun String.substituteUserHome(): String {
+    return this.substituteVariable(VAR_USER_HOME, USER_HOME_DIR_PATH)
+}
+
+private fun String.substituteMavenRepository(): String {
+    return this.substituteVariable(VAR_MAVEN_REPOSITORY, MAVEN_REPOSITORY_PATH)
+}
+
+private fun String.substituteProject(projectDir: File): String {
+    return this.substituteVariable(VAR_PROJECT_DIR, projectDir.absolutePath)
+}
+
+private fun String.substituteModule(moduleFile: File): String {
+    return this.substituteVariable(VAR_MODULE_DIR, moduleFile.parentFile.absolutePath)
 }
 
 interface PathContext {
-    operator fun invoke(file: File): String
+    /** Replaces paths with path variables (/home/user -> USER_HOME). */
+    fun substituteWithVariables(file: File): String
 
-    fun url(file: File): Pair<String, String> {
-        val path = when {
-            file.isFile && file.extension.toLowerCase() == "jar" -> "jar://" + this(file) + "!/"
-            else -> "file://" + this(file)
-        }
+    /** Replaces path variables with actual paths (USER_HOME -> /home/user). */
+    fun substituteWithValues(path: String): String
+}
 
-        return Pair("url", path)
+fun PathContext.getUrlWithVariables(file: File): String {
+    val path = this.substituteWithVariables(file)
+    return when {
+        file.isFile && file.extension.toLowerCase() == "jar" -> "jar://$path!/"
+        else -> "file://$path"
     }
 }
 
-class ProjectContext private constructor(private val projectDir: File) : PathContext {
+class ProjectContext(private val projectDir: File) : PathContext {
     constructor(project: PProject) : this(project.rootDirectory)
     constructor(project: Project) : this(project.projectDir)
 
-    override fun invoke(file: File): String {
-        return simplifyUserHomeDirPath(replacePrefix(file.absolutePath, projectDir.absolutePath.withSlash(), "PROJECT_DIR"))
+    override fun substituteWithValues(path: String): String {
+        return path
+            .substituteProject(projectDir)
+            .substituteMavenRepository()
+            .substituteUserHome()
+    }
+
+    override fun substituteWithVariables(file: File): String {
+        return file.absolutePath
+            .applyProjectDir(projectDir)
+            .applyMavenRepositoryPath()
+            .applyUserHomeDirPath()
     }
 }
 
-class ModuleContext(private val project: PProject, val module: PModule) : PathContext {
-    override fun invoke(file: File): String {
-        if (!file.startsWith(project.rootDirectory)) {
-            return simplifyUserHomeDirPath(file.absolutePath)
-        }
+class ModuleContext(private val projectDir: File, private val moduleFile: File) : PathContext {
+    constructor(project: PProject, module: PModule) : this(project.rootDirectory, module.moduleFile)
 
-        return "\$MODULE_DIR\$/" + file.toRelativeString(module.moduleFile.parentFile)
+    override fun substituteWithValues(path: String): String {
+        return path
+            .substituteModule(moduleFile)
+            .substituteProject(projectDir)
+            .substituteUserHome()
+            .substituteMavenRepository()
+    }
+
+    override fun substituteWithVariables(file: File): String {
+        return file.absolutePath
+            .applyModuleDir(projectDir, moduleFile)
+            .applyMavenRepositoryPath()
+            .applyUserHomeDirPath()
     }
 }
 
-fun String.withSlash() = if (this.endsWith("/")) this else ("$this/")
+fun String.withoutSlash() = if (this.endsWith("/")) this.dropLast(1) else this

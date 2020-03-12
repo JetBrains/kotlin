@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.pill
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.kotlin.dsl.extra
+import org.jetbrains.kotlin.pill.combo.Combo
 import shadow.org.jdom2.input.SAXBuilder
 import shadow.org.jdom2.*
 import shadow.org.jdom2.output.Format
@@ -29,7 +30,8 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
             ":kotlin-test:kotlin-test-jvm",
             ":kotlin-test:kotlin-test-junit",
             ":kotlin-script-runtime",
-            ":kotlin-serialization"
+            ":kotlin-serialization",
+            ":kotlin-coroutines-experimental-compat"
         )
 
         private val IGNORED_LIBRARIES = listOf(
@@ -128,6 +130,15 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
         setOptionsForDefaultJunitRunConfiguration(rootProject)
 
         files.forEach { it.write() }
+
+        val comboOptionValue = System.getProperty("pill.combo", "").toUpperCase()
+        if (comboOptionValue.isNotEmpty()) {
+            val combo = Combo.values().firstOrNull { it.name == comboOptionValue }
+                ?: error("Unsupported combo option value, supported values are: " + Combo.values().map { it.name.toLowerCase() })
+
+            val generator = combo.createGenerator(rootProject.projectDir, rootProject.logger)
+            generator.generate()
+        }
     }
 
     fun unpill() {
@@ -322,7 +333,7 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
 
             if (paths == null) {
                 val projectDir = rootProject.projectDir
-                if (projectDir.isParent(root) && LIB_DIRECTORIES.none { File(projectDir, it).isParent(root) }) {
+                if (root.startsWith(projectDir) && LIB_DIRECTORIES.none { root.startsWith(File(projectDir, it)) }) {
                     rootProject.logger.warn("Paths not found for root: ${root.absolutePath}")
                     return emptyList()
                 }
@@ -349,16 +360,6 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
             }
 
             return result
-        }
-
-        private fun File.isParent(child: File): Boolean {
-            var parent = child.parentFile ?: return false
-            while (true) {
-                if (parent == this) {
-                    return true
-                }
-                parent = parent.parentFile ?: return false
-            }
         }
     }
 

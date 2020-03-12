@@ -12,6 +12,8 @@ pill {
 }
 
 dependencies {
+    compile("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
+
     compileOnly(kotlin("stdlib", embeddedKotlinVersion))
     compileOnly(gradleApi())
     compileOnly(gradleKotlinDsl())
@@ -25,7 +27,9 @@ sourceSets {
 
 fun runPillTask(taskName: String) {
     val jarFile = configurations.archives.artifacts.single { it.type == "jar" }.file
-    val cl = URLClassLoader(arrayOf(jarFile.toURI().toURL()), (object {}).javaClass.classLoader)
+    val compileDependencies = configurations.compile.resolve().toTypedArray()
+    val classpath = listOf(jarFile, *compileDependencies).map { it.toURI().toURL() }.toTypedArray()
+    val cl = URLClassLoader(classpath, (object {}).javaClass.classLoader)
 
     val pillImporterClass = Class.forName("org.jetbrains.kotlin.pill.PillImporter", true, cl)
     val runMethod = pillImporterClass.declaredMethods.single { it.name == "run" }

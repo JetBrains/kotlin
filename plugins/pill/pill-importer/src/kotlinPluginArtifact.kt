@@ -15,7 +15,7 @@ class PArtifact(val artifactName: String, private val outputDir: File, private v
     fun render(context: PathContext) = xml("component", "name" to "ArtifactManager") {
         xml("artifact", "name" to artifactName) {
             xml("output-path") {
-                raw(context(outputDir))
+                raw(context.substituteWithVariables(outputDir))
             }
 
             add(contents.renderRecursively(context))
@@ -65,7 +65,7 @@ sealed class ArtifactElement {
 
     data class FileCopy(val source: File, val outputFileName: String? = null) : ArtifactElement() {
         override fun render(context: PathContext): XmlNode {
-            val args = mutableListOf("id" to "file-copy", "path" to context(source))
+            val args = mutableListOf("id" to "file-copy", "path" to context.substituteWithVariables(source))
             if (outputFileName != null) {
                 args += "output-file-name" to outputFileName
             }
@@ -75,7 +75,7 @@ sealed class ArtifactElement {
     }
 
     data class DirectoryCopy(val source: File) : ArtifactElement() {
-        override fun render(context: PathContext) = xml("element", "id" to "dir-copy", "path" to context(source))
+        override fun render(context: PathContext) = xml("element", "id" to "dir-copy", "path" to context.substituteWithVariables(source))
     }
 
     data class ProjectLibrary(val name: String) : ArtifactElement() {
@@ -84,7 +84,7 @@ sealed class ArtifactElement {
 
     data class ExtractedDirectory(val archive: File, val pathInJar: String = "/") : ArtifactElement() {
         override fun render(context: PathContext) =
-            xml("element", "id" to "extracted-dir", "path" to context(archive), "path-in-jar" to pathInJar)
+            xml("element", "id" to "extracted-dir", "path" to context.substituteWithVariables(archive), "path-in-jar" to pathInJar)
     }
 }
 
