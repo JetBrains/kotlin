@@ -1,8 +1,9 @@
-// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.file.exclude;
 
 import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.FileTypes;
@@ -26,7 +27,7 @@ import java.util.Collection;
  *
  * @author Rustam Vishnyakov
  */
-// cannot be as light as service because EnforcedPlainText.xml is not included into all products
+@Service
 public final class EnforcedPlainTextFileTypeManager {
   // optimization: manual arrays to optimize iteration
   private Collection/*<VirtualFile>*/[] explicitlyMarkedSets = new Collection[0];
@@ -53,7 +54,7 @@ public final class EnforcedPlainTextFileTypeManager {
     });
   }
 
-  public static @Nullable EnforcedPlainTextFileTypeManager getInstance() {
+  public static EnforcedPlainTextFileTypeManager getInstance() {
     return ApplicationManager.getApplication().getService(EnforcedPlainTextFileTypeManager.class);
   }
 

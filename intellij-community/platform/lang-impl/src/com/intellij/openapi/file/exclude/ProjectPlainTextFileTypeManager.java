@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @State(name = "ProjectPlainTextFileTypeManager")
 public class ProjectPlainTextFileTypeManager extends PersistentFileSetManager {
+
   public static ProjectPlainTextFileTypeManager getInstance(@NotNull Project project) {
     return project.getService(ProjectPlainTextFileTypeManager.class);
   }

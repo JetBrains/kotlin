@@ -3,7 +3,7 @@ package com.intellij.openapi.file.exclude.ui;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.file.exclude.EnforcedPlainTextFileTypeFactory;
+import com.intellij.openapi.file.exclude.EnforcedPlainTextFileType;
 import com.intellij.openapi.file.exclude.EnforcedPlainTextFileTypeManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -21,8 +21,8 @@ public class MarkAsPlainTextAction extends DumbAwareAction {
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     Project project = e.getProject();
+    if (project == null) return;
     EnforcedPlainTextFileTypeManager typeManager = EnforcedPlainTextFileTypeManager.getInstance();
-    if (project == null || typeManager == null) return;
     JBIterable<VirtualFile> selectedFiles =
       JBIterable.of(e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY))
               .filter(file -> isApplicableFor(file) && !typeManager.isMarkedAsPlainText(file));
@@ -33,12 +33,11 @@ public class MarkAsPlainTextAction extends DumbAwareAction {
   public void update(@NotNull AnActionEvent e) {
     EnforcedPlainTextFileTypeManager typeManager = EnforcedPlainTextFileTypeManager.getInstance();
     JBIterable<VirtualFile> selectedFiles =
-      typeManager == null ? JBIterable.empty() :
       JBIterable.of(e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY))
         .filter(file -> isApplicableFor(file) && !typeManager.isMarkedAsPlainText(file));
     boolean enabled = e.getProject() != null && !selectedFiles.isEmpty();
     e.getPresentation().setEnabledAndVisible(enabled);
-    e.getPresentation().setIcon(EnforcedPlainTextFileTypeFactory.getEnforcedPlainTextIcon());
+    e.getPresentation().setIcon(EnforcedPlainTextFileType.INSTANCE.getIcon());
   }
     
 }

@@ -26,8 +26,8 @@ public class MarkAsOriginalTypeAction extends DumbAwareAction {
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     Project project = e.getProject();
+    if (project == null) return;
     EnforcedPlainTextFileTypeManager typeManager = EnforcedPlainTextFileTypeManager.getInstance();
-    if (project == null || typeManager == null) return;
     JBIterable<VirtualFile> selectedFiles =
       JBIterable.of(e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY))
         .filter(file -> isApplicableFor(file) && typeManager.isMarkedAsPlainText(file));
@@ -38,7 +38,6 @@ public class MarkAsOriginalTypeAction extends DumbAwareAction {
   public void update(@NotNull AnActionEvent e) {
     EnforcedPlainTextFileTypeManager typeManager = EnforcedPlainTextFileTypeManager.getInstance();
     JBIterable<VirtualFile> selectedFiles =
-      typeManager == null ? JBIterable.empty() :
       JBIterable.of(e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY))
         .filter(file -> isApplicableFor(file) && typeManager.isMarkedAsPlainText(file));
     FileTypeManager fileTypeManager = FileTypeManager.getInstance();
