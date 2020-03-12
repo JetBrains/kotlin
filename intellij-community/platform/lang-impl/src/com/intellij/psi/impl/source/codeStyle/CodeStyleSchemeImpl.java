@@ -20,6 +20,7 @@ public class CodeStyleSchemeImpl extends ExternalizableSchemeAdapter implements 
   private String myParentSchemeName;
   private final boolean myIsDefault;
   private volatile CodeStyleSettings myCodeStyleSettings;
+  private long myLastModificationCount;
 
   private final Object lock = new Object();
 
@@ -105,7 +106,14 @@ public class CodeStyleSchemeImpl extends ExternalizableSchemeAdapter implements 
   @Override
   public SchemeState getSchemeState() {
     synchronized (lock) {
-      return myDataHolder == null ? SchemeState.POSSIBLY_CHANGED : SchemeState.UNCHANGED;
+      if (myDataHolder == null) {
+        final long currModificationCount = myCodeStyleSettings.getModificationTracker().getModificationCount();
+        if (myLastModificationCount != currModificationCount) {
+          myLastModificationCount = currModificationCount;
+          return SchemeState.POSSIBLY_CHANGED;
+        }
+      }
+      return SchemeState.UNCHANGED;
     }
   }
 
