@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -34,8 +35,8 @@ internal val collectionStubMethodLowering = makeIrFilePhase(
     description = "Generate Collection stub methods"
 )
 
-private class CollectionStubMethodLowering(val context: JvmBackendContext) : ClassLoweringPass {
-    private val methodSignatureMapper = context.methodSignatureMapper
+internal class CollectionStubMethodLowering(val context: JvmBackendContext) : ClassLoweringPass {
+    private val collectionStubComputer = context.collectionStubComputer
 
     override fun lower(irClass: IrClass) {
         if (irClass.isInterface) {
@@ -48,12 +49,12 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
         // We don't need to generate stub for existing methods, but for FAKE_OVERRIDE methods with ABSTRACT modality,
         // it means an abstract function in superclass that is not implemented yet,
         // stub generation is still needed to avoid invocation error.
-        val existingMethodSignatures = irClass.functions.filterNot {
+        val existingMethodsBySignature = irClass.functions.filterNot {
             it.modality == Modality.ABSTRACT && it.origin == IrDeclarationOrigin.FAKE_OVERRIDE
         }.associateBy { it.toSignature() }
 
         for (member in methodStubsToGenerate) {
-            val existingMethod = existingMethodSignatures[member.toSignature()]
+            val existingMethod = existingMethodsBySignature[member.toSignature()]
             if (existingMethod != null) {
                 // In the case that we find a defined method that matches the stub signature, we add the overridden symbols to that
                 // defined method, so that bridge lowering can still generate correct bridge for that method
@@ -64,7 +65,7 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
         }
     }
 
-    private fun IrSimpleFunction.toSignature(): String = methodSignatureMapper.mapAsmMethod(this).toString()
+    private fun IrSimpleFunction.toSignature(): String = collectionStubComputer.getSignature(this)
 
     private fun createStubMethod(
         function: IrSimpleFunction, irClass: IrClass, substitutionMap: Map<IrTypeParameterSymbol, IrType>
@@ -136,15 +137,58 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
         return mutableClass.typeParameters.map { it.symbol }.zip(readOnlyClassTypeArguments).toMap()
     }
 
-    private inner class StubsForCollectionClass(
+    // Compute stubs that should be generated, compare based on signature
+    private fun generateRelevantStubMethods(irClass: IrClass): Set<IrSimpleFunction> {
+        val ourStubsForCollectionClasses = collectionStubComputer.stubsForCollectionClasses(irClass)
+        val superStubClasses = irClass.superClass?.superClassChain?.map { superClass ->
+            collectionStubComputer.stubsForCollectionClasses(superClass).map { it.readOnlyClass }
+        }?.fold(emptySet<IrClassSymbol>(), { a, b -> a union b }) ?: emptySet()
+
+        // do a second filtering to ensure only most relevant classes are included.
+        val redundantClasses = ourStubsForCollectionClasses.filter { (readOnlyClass) ->
+            ourStubsForCollectionClasses.any { readOnlyClass != it.readOnlyClass && it.readOnlyClass.isSubtypeOfClass(readOnlyClass) }
+        }.map { it.readOnlyClass }
+
+        // perform type substitution and type erasure here
+        return ourStubsForCollectionClasses.filter { (readOnlyClass) ->
+            readOnlyClass !in redundantClasses && readOnlyClass !in superStubClasses
+        }.flatMap { (readOnlyClass, mutableClass, mutableOnlyMethods) ->
+            val substitutionMap = computeSubstitutionMap(readOnlyClass.owner, mutableClass.owner, irClass)
+            mutableOnlyMethods.map { function ->
+                createStubMethod(function, irClass, substitutionMap)
+            }
+        }.toHashSet()
+    }
+
+    private fun Collection<IrType>.findMostSpecificTypeForClass(classifier: IrClassSymbol): IrType {
+        val types = this.filter { it.classifierOrNull == classifier }
+        if (types.isEmpty()) error("No supertype of $classifier in $this")
+        if (types.size == 1) return types.first()
+        // Find the first type in the list such that it's a subtype of every other type in that list
+        return types.first { type ->
+            types.all { other -> type.isSubtypeOfClass(other.classOrNull!!) }
+        }
+    }
+
+    private val IrClass.superClass: IrClass?
+        get() = superTypes.mapNotNull { it.getClass() }.singleOrNull { !it.isJvmInterface }
+
+    private val IrClass.superClassChain: Sequence<IrClass>
+        get() = generateSequence(this) { it.superClass }
+}
+
+internal class CollectionStubComputer(val context: JvmBackendContext) {
+    fun getSignature(irFunction: IrSimpleFunction): String = context.methodSignatureMapper.mapAsmMethod(irFunction).toString()
+
+    inner class StubsForCollectionClass(
         val readOnlyClass: IrClassSymbol,
         val mutableClass: IrClassSymbol
     ) {
         val mutableOnlyMethods: Collection<IrSimpleFunction> by lazy {
-            val readOnlyMethodSignatures = readOnlyClass.functions.map { it.owner.toSignature() }.toHashSet()
+            val readOnlyMethodSignatures = readOnlyClass.functions.map { getSignature(it.owner) }.toHashSet()
             mutableClass.functions
                 .map { it.owner }
-                .filter { it.toSignature() !in readOnlyMethodSignatures }
+                .filter { getSignature(it) !in readOnlyMethodSignatures }
                 .toHashSet()
         }
 
@@ -170,62 +214,16 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
         }
     }
 
-    // Compute stubs that should be generated, compare based on signature
-    private fun generateRelevantStubMethods(irClass: IrClass): Set<IrSimpleFunction> {
-        val ourStubsForCollectionClasses = stubsForCollectionClasses(irClass)
-        val superStubClasses = irClass.superClass?.superClassChain?.map { superClass ->
-            stubsForCollectionClasses(superClass).map { it.readOnlyClass }
-        }?.fold(emptySet<IrClassSymbol>(), { a, b -> a union b }) ?: emptySet()
-
-        // do a second filtering to ensure only most relevant classes are included.
-        val redundantClasses = ourStubsForCollectionClasses.filter { (readOnlyClass) ->
-            ourStubsForCollectionClasses.any { readOnlyClass != it.readOnlyClass && it.readOnlyClass.isSubtypeOfClass(readOnlyClass) }
-        }.map { it.readOnlyClass }
-
-        // perform type substitution and type erasure here
-        return ourStubsForCollectionClasses.filter { (readOnlyClass) ->
-            readOnlyClass !in redundantClasses && readOnlyClass !in superStubClasses
-        }.flatMap { (readOnlyClass, mutableClass, mutableOnlyMethods) ->
-            val substitutionMap = computeSubstitutionMap(readOnlyClass.owner, mutableClass.owner, irClass)
-            mutableOnlyMethods.map { function ->
-                createStubMethod(function, irClass, substitutionMap)
-            }
-        }.toHashSet()
-    }
-
-    fun IrClass.comesFromJava() = origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
-
-    private fun Collection<IrType>.findMostSpecificTypeForClass(classifier: IrClassSymbol): IrType {
-        val types = this.filter { it.classifierOrNull == classifier }
-        if (types.isEmpty()) error("No supertype of $classifier in $this")
-        if (types.size == 1) return types.first()
-        // Find the first type in the list such that it's a subtype of every other type in that list
-        return types.first { type ->
-            types.all { other -> type.isSubtypeOfClass(other.classOrNull!!) }
-        }
-    }
-
     private val stubsCache = mutableMapOf<IrClass, Collection<StubsForCollectionClass>>()
 
-    private fun stubsForCollectionClasses(irClass: IrClass): Collection<StubsForCollectionClass> =
+    fun stubsForCollectionClasses(irClass: IrClass): Collection<StubsForCollectionClass> =
         stubsCache.getOrPut(irClass) {
             if (irClass.comesFromJava()) emptySet()
             else preComputedStubs.filter { (readOnlyClass, mutableClass) ->
-                irClass.superTypes.any { supertypeSymbol ->
-                    val supertype = supertypeSymbol.classOrNull?.owner
-                    // We need to generate stub methods for following 2 cases:
-                    // current class's direct super type is a java class or kotlin interface, and is an subtype of an immutable collection
-                    supertype != null
-                            && (supertype.comesFromJava() || supertype.isInterface)
-                            && supertypeSymbol.isSubtypeOfClass(readOnlyClass)
-                            && !irClass.symbol.isSubtypeOfClass(mutableClass)
-                }
+                !irClass.symbol.isSubtypeOfClass(mutableClass) &&
+                        irClass.superTypes.any { it.isSubtypeOfClass(readOnlyClass) }
             }
         }
 
-    private val IrClass.superClass: IrClass?
-        get() = superTypes.mapNotNull { (it as? IrSimpleType)?.classifier?.owner as? IrClass }.singleOrNull { !it.isInterface }
-
-    private val IrClass.superClassChain: Sequence<IrClass>
-        get() = generateSequence(this) { it.superClass }
+    private fun IrClass.comesFromJava() = origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
 }
