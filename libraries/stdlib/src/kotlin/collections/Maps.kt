@@ -9,6 +9,7 @@
 
 package kotlin.collections
 
+import kotlin.collections.builders.MapBuilder
 import kotlin.contracts.*
 
 private object EmptyMap : Map<Any?, Nothing>, Serializable {
@@ -139,7 +140,7 @@ public fun <K, V> linkedMapOf(vararg pairs: Pair<K, V>): LinkedHashMap<K, V> = p
 @kotlin.internal.InlineOnly
 public inline fun <K, V> buildMap(@BuilderInference builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    return LinkedHashMap<K, V>().apply(builderAction)
+    return MapBuilder<K, V>().apply(builderAction).build()
 }
 
 /**
@@ -162,8 +163,7 @@ public inline fun <K, V> buildMap(@BuilderInference builderAction: MutableMap<K,
 @kotlin.internal.InlineOnly
 public inline fun <K, V> buildMap(capacity: Int, @BuilderInference builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    checkBuilderCapacity(capacity)
-    return LinkedHashMap<K, V>(mapCapacity(capacity)).apply(builderAction)
+    return MapBuilder<K, V>(capacity).apply(builderAction).build()
 }
 
 /**

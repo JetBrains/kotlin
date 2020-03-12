@@ -10,6 +10,7 @@
 package kotlin.collections
 
 import kotlin.contracts.*
+import kotlin.collections.builders.*
 
 internal object EmptySet : Set<Nothing>, Serializable {
     private const val serialVersionUID: Long = 3406603774387020532
@@ -125,7 +126,7 @@ public fun <T : Any> setOfNotNull(vararg elements: T?): Set<T> {
 @kotlin.internal.InlineOnly
 public inline fun <E> buildSet(@BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    return LinkedHashSet<E>().apply(builderAction)
+    return SetBuilder<E>().apply(builderAction).build()
 }
 
 /**
@@ -148,8 +149,7 @@ public inline fun <E> buildSet(@BuilderInference builderAction: MutableSet<E>.()
 @kotlin.internal.InlineOnly
 public inline fun <E> buildSet(capacity: Int, @BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    checkBuilderCapacity(capacity)
-    return LinkedHashSet<E>(mapCapacity(capacity)).apply(builderAction)
+    return SetBuilder<E>(capacity).apply(builderAction).build()
 }
 
 
