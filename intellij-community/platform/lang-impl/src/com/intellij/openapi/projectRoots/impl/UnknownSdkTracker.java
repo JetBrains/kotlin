@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.projectRoots.impl;
 
 import com.intellij.openapi.Disposable;
@@ -59,7 +59,7 @@ public class UnknownSdkTracker {
   }
 
   public void updateUnknownSdks() {
-    myUpdateQueue.run(new Update("update") {
+    myUpdateQueue.queue(new Update("update") {
       @Override
       public void run() {
         if (!Registry.is("unknown.sdk") || !UnknownSdkResolver.EP_NAME.hasAnyExtensions()) {
