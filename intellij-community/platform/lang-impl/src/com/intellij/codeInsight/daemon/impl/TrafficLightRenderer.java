@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.daemon.impl;
 
+import com.intellij.analysis.problemsView.inspection.ProblemsViewToolWindowFactory;
 import com.intellij.codeInsight.daemon.DaemonBundle;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.impl.analysis.FileHighlightingSetting;
@@ -461,7 +462,9 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
           xShift += icon.getIconWidth() + ICON_TEXT_GAP.get();
         }
 
-        if (!status.errorAnalyzingFinished) detailsBuilder.append(" found so far");
+        if (!status.errorAnalyzingFinished) {
+          detailsBuilder.append(" found so far");
+        }
 
         if (mainIcon == null) {
           mainIcon = AllIcons.General.InspectionsOK;
@@ -692,6 +695,11 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     @Override
     public boolean enableToolbar() {
       return true;
+    }
+
+    @Override
+    public void openProblemsView() {
+      ProblemsViewToolWindowFactory.wakeup(getProject(), true);
     }
   }
 

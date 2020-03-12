@@ -21,7 +21,7 @@ public class ProblemsViewToolWindowFactory implements ToolWindowFactory, DumbAwa
       @Override
       public void afterValueChanged(@NotNull RegistryValue value) {
         for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-          wakeup(project, value);
+          wakeup(project, value.asBoolean());
         }
       }
     }, ApplicationManager.getApplication());
@@ -42,7 +42,7 @@ public class ProblemsViewToolWindowFactory implements ToolWindowFactory, DumbAwa
     //((ToolWindowEx)toolWindow).setTitleActions(new AnalysisServerFeedbackAction());
 
     RegistryValue value = readRegistryValue();
-    wakeup(project, value);
+    wakeup(project, value.asBoolean());
   }
 
   @NotNull
@@ -50,8 +50,7 @@ public class ProblemsViewToolWindowFactory implements ToolWindowFactory, DumbAwa
     return Registry.get("highlighting.showProblemsView");
   }
 
-  private static void wakeup(@NotNull Project project, @NotNull RegistryValue value) {
-    boolean activate = value.asBoolean();
+  public static void wakeup(@NotNull Project project, boolean activate) {
     ToolWindow toolWindow = InspectionProblemsView.getInstance(project).getToolWindow();
     toolWindow.setAvailable(activate, null);
     if (activate) {
