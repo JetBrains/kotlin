@@ -64,16 +64,6 @@ abstract class AbstractMoveLeftRightTest : AbstractCodeMoverTest() {
 
 @Suppress("DEPRECATION")
 abstract class AbstractCodeMoverTest : KotlinLightCodeInsightTestCase() {
-    override fun setUp() {
-        super.setUp()
-        ApplicationManager.getApplication().isScriptChangesNotifierDisabled = true
-    }
-
-    override fun tearDown() {
-        ApplicationManager.getApplication().isScriptChangesNotifierDisabled = false
-        super.tearDown()
-    }
-
     protected fun doTest(
         path: String,
         trailingComma: Boolean = false,

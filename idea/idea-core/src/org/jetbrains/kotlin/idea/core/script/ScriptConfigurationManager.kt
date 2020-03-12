@@ -166,8 +166,9 @@ interface ScriptConfigurationManager {
         }
 
         @TestOnly
-        fun updateScriptDependenciesSynchronously(file: PsiFile, project: Project) {
-            (getInstance(project) as AbstractScriptConfigurationManager).updateScriptDependenciesSynchronously(file)
+        fun updateScriptDependenciesSynchronously(file: PsiFile) {
+            // TODO: review the usages of this method
+            (getInstance(file.project) as AbstractScriptConfigurationManager).updateScriptDependenciesSynchronously(file)
         }
 
         @TestOnly

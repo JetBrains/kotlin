@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.script
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.JavaModuleType
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companion.updateScriptDependenciesSynchronously
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
-import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -148,7 +146,6 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
 
     override fun setUp() {
         super.setUp()
-        ApplicationManager.getApplication().isScriptChangesNotifierDisabled = true
 
         settings = KotlinScriptingSettings.getInstance(project).state
 
@@ -164,8 +161,6 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     }
 
     override fun tearDown() {
-        ApplicationManager.getApplication().isScriptChangesNotifierDisabled = false
-
         System.setProperty("kotlin.script.classpath", oldScripClasspath ?: "")
 
         settings?.let {
@@ -292,7 +287,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     }
 
     protected open fun loadScriptConfigurationSynchronously(script: VirtualFile) {
-        updateScriptDependenciesSynchronously(myFile, project)
+        updateScriptDependenciesSynchronously(myFile)
 
         // This is needed because updateScriptDependencies invalidates psiFile that was stored in myFile field
         VfsUtil.markDirtyAndRefresh(false, true, true, project.baseDir)
