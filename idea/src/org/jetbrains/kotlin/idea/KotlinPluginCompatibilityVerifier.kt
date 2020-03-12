@@ -24,7 +24,7 @@ object KotlinPluginCompatibilityVerifier {
     }
 }
 
-internal data class KotlinPluginVersion(
+data class KotlinPluginVersion(
     val kotlinVersion: String, // 1.2.3
     val status: String, // release, eap, rc
     val buildNumber: String, // 53
@@ -45,7 +45,7 @@ internal data class KotlinPluginVersion(
     override fun toString() = "$kotlinVersion for $platformVersion"
 }
 
-internal data class PlatformVersion(val platform: Platform, val version: String /* 3.1 or 2017.3 */) {
+data class PlatformVersion(val platform: Platform, val version: String /* 3.1 or 2017.3 */) {
     companion object {
         fun parse(platformString: String): PlatformVersion? {
             for (platform in Platform.values()) {
@@ -76,3 +76,15 @@ internal data class PlatformVersion(val platform: Platform, val version: String 
 
     override fun toString() = platform.presentableText + " " + version
 }
+
+val KotlinPluginVersion.isSnapshot: Boolean
+    get() = status == "SNAPSHOT"
+
+val KotlinPluginVersion.majorVersion: String
+    get() = kotlinVersion.split(".").first()
+
+val KotlinPluginVersion.minorVersion: String
+    get() = kotlinVersion.split(".")[1]
+
+val KotlinPluginVersion.patchVersion: String
+    get() = kotlinVersion.split(".").last()
