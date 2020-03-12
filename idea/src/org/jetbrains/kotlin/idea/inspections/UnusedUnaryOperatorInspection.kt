@@ -15,8 +15,11 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPrefixExpression
 import org.jetbrains.kotlin.psi.prefixExpressionVisitor
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -27,6 +30,8 @@ class UnusedUnaryOperatorInspection : AbstractKotlinInspection() {
         val operationToken = prefix.operationToken
         if (operationToken != KtTokens.PLUS && operationToken != KtTokens.MINUS) return
 
+        // ISSUE: KT-37447
+        if (prefix.isInAnnotationEntry) return
         val context = prefix.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
         if (prefix.isUsedAsExpression(context)) return
         val operatorDescriptor = prefix.operationReference.getResolvedCall(context)?.resultingDescriptor as? DeclarationDescriptor ?: return
@@ -53,3 +58,6 @@ class UnusedUnaryOperatorInspection : AbstractKotlinInspection() {
         }
     }
 }
+
+private val KtPrefixExpression.isInAnnotationEntry: Boolean
+    get() = parentsWithSelf.takeWhile { it is KtExpression }.last().parent?.parent?.parent is KtAnnotationEntry
