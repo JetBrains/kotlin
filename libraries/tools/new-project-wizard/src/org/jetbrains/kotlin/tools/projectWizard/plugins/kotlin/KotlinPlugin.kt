@@ -112,8 +112,7 @@ class KotlinPlugin(context: Context) : Plugin(context) {
                     StructurePlugin::name.settingValue,
                     KotlinPlugin::version.propertyValue,
                     buildSystemType,
-                    pomIR(),
-                    this
+                    pomIR()
                 )
             )
         ) { createBuildFiles() }
