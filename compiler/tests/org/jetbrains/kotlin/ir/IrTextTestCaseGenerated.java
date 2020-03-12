@@ -1876,6 +1876,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/types/genericFunWithStar.kt");
         }
 
+        @TestMetadata("genericDelegatedDeepProperty.kt")
+        public void testGenericDelegatedDeepProperty() throws Exception {
+            runTest("compiler/testData/ir/irText/types/genericDelegatedDeepProperty.kt");
+        }
+
         @TestMetadata("genericPropertyReferenceType.kt")
         public void testGenericPropertyReferenceType() throws Exception {
             runTest("compiler/testData/ir/irText/types/genericPropertyReferenceType.kt");

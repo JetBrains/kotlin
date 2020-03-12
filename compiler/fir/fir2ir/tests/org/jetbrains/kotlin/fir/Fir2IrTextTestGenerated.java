@@ -1872,6 +1872,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/types/coercionToUnitInLambdaReturnValue.kt");
         }
 
+        @TestMetadata("genericDelegatedDeepProperty.kt")
+        public void testGenericDelegatedDeepProperty() throws Exception {
+            runTest("compiler/testData/ir/irText/types/genericDelegatedDeepProperty.kt");
+        }
+
         @TestMetadata("genericFunWithStar.kt")
         public void testGenericFunWithStar() throws Exception {
             runTest("compiler/testData/ir/irText/types/genericFunWithStar.kt");

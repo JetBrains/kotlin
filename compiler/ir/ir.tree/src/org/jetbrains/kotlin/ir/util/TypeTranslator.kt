@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
+import java.util.*
 
 class TypeTranslator(
     private val symbolTable: ReferenceSymbolTable,
@@ -30,6 +32,8 @@ class TypeTranslator(
     private val typeParametersResolver: TypeParametersResolver = ScopedTypeParametersResolver(),
     private val enterTableScope: Boolean = false
 ) {
+
+    private val erasureStack = Stack<PropertyDescriptor>()
 
     private val typeApproximatorForNI = TypeApproximator(builtIns)
     lateinit var constantValueGenerator: ConstantValueGenerator
@@ -45,6 +49,15 @@ class TypeTranslator(
         typeParametersResolver.leaveTypeParameterScope()
         if (enterTableScope) {
             symbolTable.leaveScope(irElement.descriptor)
+        }
+    }
+
+    fun <T> withTypeErasure(propertyDescriptor: PropertyDescriptor, b: () -> T): T {
+        try {
+            erasureStack.push(propertyDescriptor)
+            return b()
+        } finally {
+            erasureStack.pop()
         }
     }
 
@@ -80,6 +93,17 @@ class TypeTranslator(
         val ktTypeDescriptor = ktTypeConstructor.declarationDescriptor
             ?: throw AssertionError("No descriptor for type $approximatedType")
 
+        if (erasureStack.isNotEmpty()) {
+            if (ktTypeDescriptor is TypeParameterDescriptor) {
+                if (ktTypeDescriptor.containingDeclaration in erasureStack) {
+                    // This hack is about type parameter leak in case of generic delegated property
+                    // Such code has to be prohibited since LV 1.5
+                    // For more details see commit message or KT-24643
+                    return approximateUpperBounds(ktTypeDescriptor.upperBounds, variance)
+                }
+            }
+        }
+
         return IrSimpleTypeBuilder().apply {
             this.kotlinType = flexibleApproximatedType
             this.hasQuestionMark = approximatedType.isMarkedNullable
@@ -101,6 +125,11 @@ class TypeTranslator(
                     throw AssertionError("Unexpected type descriptor $ktTypeDescriptor :: ${ktTypeDescriptor::class}")
             }
         }.buildTypeProjection()
+    }
+
+    private fun approximateUpperBounds(upperBounds: Collection<KotlinType>, variance: Variance): IrTypeProjection {
+        val commonSupertype = CommonSupertypes.commonSupertype(upperBounds)
+        return translateType(approximate(commonSupertype.replaceArgumentsWithStarProjections()), variance)
     }
 
     private fun SimpleType.toIrTypeAbbreviation(): IrTypeAbbreviation {
