@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.openapi.vfs.VirtualFileWithId;
 import com.intellij.openapi.vfs.newvfs.impl.VirtualFileSystemEntry;
+import com.intellij.psi.search.FileTypeIndex;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -28,11 +29,10 @@ class UnindexedFilesFinder implements VirtualFileFilter {
   private final Collection<FileBasedIndexInfrastructureExtension.FileIndexingStatusProcessor> myStateProcessors;
 
   UnindexedFilesFinder(@NotNull Project project,
-                       @NotNull FileBasedIndexImpl fileBasedIndex,
-                       @NotNull UpdatableIndex<FileType, Void, FileContent> fileTypeIndex) {
+                       @NotNull FileBasedIndexImpl fileBasedIndex) {
     myProject = project;
     myFileBasedIndex = fileBasedIndex;
-    myFileTypeIndex = fileTypeIndex;
+    myFileTypeIndex = fileBasedIndex.getIndex(FileTypeIndex.NAME);
 
     myStateProcessors = FileBasedIndexInfrastructureExtension
       .EP_NAME

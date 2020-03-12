@@ -7,7 +7,6 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.impl.ProgressSuspender;
@@ -23,7 +22,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.RefreshQueue;
-import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.util.containers.ConcurrentBitSet;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.roots.IndexableFilesProvider;
@@ -142,8 +140,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
     indicator.setIndeterminate(true);
     indicator.setText(IdeBundle.message("progress.indexing.scanning"));
 
-    UpdatableIndex<FileType, Void, FileContent> fileTypeIndex = myIndex.getIndex(FileTypeIndex.NAME);
-    VirtualFileFilter unindexedFileFilter = new UnindexedFilesFinder(project, myIndex, fileTypeIndex);
+    VirtualFileFilter unindexedFileFilter = new UnindexedFilesFinder(project, myIndex);
 
     Map<IndexableFilesProvider, List<VirtualFile>> providerToFiles = new IdentityHashMap<>();
     ConcurrentBitSet visitedFileSet = new ConcurrentBitSet();
