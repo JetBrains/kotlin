@@ -55,7 +55,7 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
                 }
                 if ((receiverReference as? KtClass)?.isEnum() == true
                     && expressionForAnalyze.getParentOfTypesAndPredicate(true, KtClass::class.java) { it.isEnum() } != receiverReference
-                    && expressionForAnalyze.isEnumStaticMethodCall()
+                    && (expressionForAnalyze.isEnumStaticMethodCall() || expressionForAnalyze.isCompanionObjectReference())
                 ) return
 
                 val context = originalExpression.analyze()
@@ -86,6 +86,9 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
         }
 
     private fun KtDotQualifiedExpression.isEnumStaticMethodCall() = callExpression?.calleeExpression?.text in ENUM_STATIC_METHODS
+
+    private fun KtDotQualifiedExpression.isCompanionObjectReference() =
+        (selectorExpression?.referenceExpression()?.mainReference?.resolve() as? KtObjectDeclaration)?.isCompanion() == true
 }
 
 private tailrec fun KtDotQualifiedExpression.firstExpressionWithoutReceiver(): KtDotQualifiedExpression? = if (hasNotReceiver())
