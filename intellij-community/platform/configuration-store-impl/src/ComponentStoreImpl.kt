@@ -42,7 +42,6 @@ import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.annotations.CalledInAwt
 import org.jetbrains.annotations.TestOnly
 import java.io.IOException
-import java.lang.UnsupportedOperationException
 import java.nio.file.Paths
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -397,7 +396,7 @@ abstract class ComponentStoreImpl : IComponentStore {
   }
 
   protected open fun getReadOnlyStorage(componentClass: Class<Any>, stateClass: Class<Any>, configurationSchemaKey: String): StateStorage {
-    throw UnsupportedOperationException()
+    throw UnsupportedOperationException("PersistentStateComponent without State annotation not supported (store=$this, componentClass=${componentClass.name}, stateClass=${stateClass.classes})")
   }
 
   private fun doInitComponent(info: ComponentInfo, component: PersistentStateComponent<Any>, changedStorages: Set<StateStorage>?, reloadData: ThreeState): Boolean {
