@@ -57,6 +57,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.psi.search.LocalSearchScope;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.reference.SoftReference;
 import com.intellij.ui.*;
@@ -1092,6 +1094,11 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       VirtualFile vfile = file == null ? null : file.getVirtualFile();
 
       if (vfile == null) return null;
+
+      SearchScope scope = element.getUseScope();
+      if (scope instanceof LocalSearchScope) {
+        return null;
+      }
 
       ProjectFileIndex fileIndex = ProjectRootManager.getInstance(element.getProject()).getFileIndex();
       Module module = fileIndex.getModuleForFile(vfile);
