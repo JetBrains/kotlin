@@ -18,28 +18,20 @@ public class PsiSymbolServiceImpl implements PsiSymbolService {
   @NotNull
   @Override
   public Symbol asSymbol(@NotNull PsiElement element) {
-    if (element instanceof Symbol) {
-      return (Symbol)element;
-    }
-    else {
-      // consider all PsiElements obtained from references (or other APIs) as Symbols,
-      // because that's what usually was meant
-      return new Psi2Symbol(element);
-    }
+    // consider all PsiElements obtained from references (or other APIs) as Symbols,
+    // because that's what usually was meant
+    return new Psi2Symbol(element);
   }
 
   @Contract(pure = true)
   @Nullable
   @Override
   public PsiElement extractElementFromSymbol(@NotNull Symbol symbol) {
-    if (symbol instanceof PsiElement) {
-      return (PsiElement)symbol;
-    }
-    else if (symbol instanceof Psi2Symbol) {
+    if (symbol instanceof Psi2Symbol) {
       return ((Psi2Symbol)symbol).getElement();
     }
     else {
-      // If the Symbol is brand new (not based on some PsiElement, not related to LightElement or PomTarget),
+      // If the Symbol is brand new,
       // then the client should implement proper Symbol-based APIs,
       // hence we consider brand new Symbol implementations as inapplicable for old APIs
       return null;
