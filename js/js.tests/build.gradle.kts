@@ -39,7 +39,6 @@ dependencies {
     testCompileOnly(intellijDep()) { includeJars("idea", "idea_rt", "util") }
     testCompile(project(":compiler:backend.js"))
     testCompile(project(":compiler:backend.wasm"))
-    testCompile(project(":kotlin-stdlib-js-ir"))
     testCompile(project(":js:js.translator"))
     testCompile(project(":js:js.serializer"))
     testCompile(project(":js:js.dce"))
@@ -103,9 +102,12 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
     dependsOn(":dist")
     if (jsEnabled) dependsOn(testJsRuntime)
     if (jsIrEnabled) {
-        dependsOn(":kotlin-stdlib-js-ir:generateFullRuntimeKLib")
-        dependsOn(":kotlin-stdlib-js-ir:generateReducedRuntimeKLib")
-        dependsOn(":kotlin-stdlib-js-ir:generateKotlinTestKLib")
+        dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
+        systemProperty("kotlin.js.full.stdlib.path", "libraries/stdlib/js-ir/build/classes/kotlin/js/main")
+        dependsOn(":kotlin-stdlib-js-ir-minimal-for-test:compileKotlinJs")
+        systemProperty("kotlin.js.reduced.stdlib.path", "libraries/stdlib/js-ir-minimal-for-test/build/classes/kotlin/js/main")
+        dependsOn(":kotlin-test:kotlin-test-js-ir:compileKotlinJs")
+        systemProperty("kotlin.js.kotlin.test.path", "libraries/kotlin.test/js-ir/build/classes/kotlin/js/main")
     }
 
     exclude("org/jetbrains/kotlin/js/test/wasm/semantics/*")
@@ -228,9 +230,12 @@ val unzipJsShell by task<Copy> {
 
 projectTest("wasmTest", true) {
     dependsOn(unzipJsShell)
-    dependsOn(":kotlin-stdlib-js-ir:generateWasmRuntimeKLib")
     include("org/jetbrains/kotlin/js/test/wasm/semantics/*")
     val jsShellExecutablePath = File(unzipJsShell.get().destinationDir, "js").absolutePath
     systemProperty("javascript.engine.path.SpiderMonkey", jsShellExecutablePath)
+
+    dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
+    systemProperty("kotlin.wasm.stdlib.path", "libraries/stdlib/wasm/build/classes/kotlin/js/main")
+
     setUpBoxTests()
 }

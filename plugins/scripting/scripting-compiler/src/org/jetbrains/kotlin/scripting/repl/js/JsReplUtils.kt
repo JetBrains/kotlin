@@ -149,7 +149,7 @@ fun createCompileResult(lineId: LineId, code: String): ReplCompileResult.Compile
 
 class DependencyLoader {
     // TODO: this should be taken from CompilerConfiguration
-    private val commonPath = "libraries/stdlib/js-ir/build/fullRuntime/klib"
+    private val commonPath = "libraries/stdlib/js-ir/build/classes/kotlin/js/main/"
     private val mappedNamesPath = "$commonPath/mappedNames.txt"
     private val scriptDependencyBinaryPath = "$commonPath/scriptDependencyBinary.js"
 

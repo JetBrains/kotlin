@@ -29,6 +29,7 @@ class CodeConformanceTest : TestCase() {
         private val SOURCES_BUNCH_FILE_PATTERN = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.js)(\\.\\w+)?")
         private const val MAX_STEPS_COUNT = 100
         private val EXCLUDED_FILES_AND_DIRS = listOf(
+            "build/js",
             "buildSrc",
             "compiler/fir/lightTree/testData",
             "compiler/testData/psi/kdoc",
@@ -48,6 +49,8 @@ class CodeConformanceTest : TestCase() {
             "libraries/reflect/build",
             "libraries/stdlib/js-ir/.gradle",
             "libraries/stdlib/js-ir/build",
+            "libraries/stdlib/js-ir-minimal-for-test/.gradle",
+            "libraries/stdlib/js-ir-minimal-for-test/build",
             "libraries/stdlib/js-v1/.gradle",
             "libraries/stdlib/js-v1/build",
             "libraries/tools/binary-compatibility-validator/src/main/kotlin/org.jetbrains.kotlin.tools",
@@ -67,6 +70,7 @@ class CodeConformanceTest : TestCase() {
         ).map(::File)
 
         private val COPYRIGHT_EXCLUDED_FILES_AND_DIRS = listOf(
+            "build",
             "buildSrc/prepare-deps/build",
             "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
             "dependencies",
@@ -83,6 +87,8 @@ class CodeConformanceTest : TestCase() {
             "libraries/stdlib/js-ir/build",
             "libraries/stdlib/js-ir/build/",
             "libraries/stdlib/js-ir/runtime/longjs.kt",
+            "libraries/stdlib/js-ir-minimal-for-test/.gradle",
+            "libraries/stdlib/js-ir-minimal-for-test/build",
             "libraries/stdlib/js-v1/.gradle",
             "libraries/stdlib/js-v1/build",
             "libraries/stdlib/js-v1/node_modules",

@@ -37,7 +37,7 @@ import java.io.File
 import java.lang.Boolean.getBoolean
 
 private val wasmRuntimeKlib =
-    loadKlib("libraries/stdlib/js-ir/build/wasmRuntime/klib")
+    loadKlib(System.getProperty("kotlin.wasm.stdlib.path"))
 
 abstract class BasicWasmBoxTest(
     private val pathToTestDir: String,

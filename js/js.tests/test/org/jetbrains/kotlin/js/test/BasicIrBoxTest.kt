@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
 import java.lang.Boolean.getBoolean
 
-private val fullRuntimeKlib = "libraries/stdlib/js-ir/build/fullRuntime/klib"
-private val defaultRuntimeKlib = "libraries/stdlib/js-ir/build/reducedRuntime/klib"
-private val kotlinTestKLib = "libraries/stdlib/js-ir/build/kotlin.test/klib"
+private val fullRuntimeKlib: String = System.getProperty("kotlin.js.full.stdlib.path")
+private val defaultRuntimeKlib = System.getProperty("kotlin.js.reduced.stdlib.path")
+private val kotlinTestKLib = System.getProperty("kotlin.js.kotlin.test.path")
 
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
