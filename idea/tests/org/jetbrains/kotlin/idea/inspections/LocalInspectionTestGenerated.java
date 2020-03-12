@@ -13308,6 +13308,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/unusedUnaryOperator"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
+        @TestMetadata("annotation.kt")
+        public void testAnnotation() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedUnaryOperator/annotation.kt");
+        }
+
+        @TestMetadata("annotation2.kt")
+        public void testAnnotation2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedUnaryOperator/annotation2.kt");
+        }
+
+        @TestMetadata("annotation3.kt")
+        public void testAnnotation3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedUnaryOperator/annotation3.kt");
+        }
+
         @TestMetadata("basic.kt")
         public void testBasic() throws Exception {
             runTest("idea/testData/inspectionsLocal/unusedUnaryOperator/basic.kt");
@@ -13316,6 +13331,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("basic2.kt")
         public void testBasic2() throws Exception {
             runTest("idea/testData/inspectionsLocal/unusedUnaryOperator/basic2.kt");
+        }
+
+        @TestMetadata("namedParameter.kt")
+        public void testNamedParameter() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedUnaryOperator/namedParameter.kt");
         }
 
         @TestMetadata("usedAsExpression.kt")
