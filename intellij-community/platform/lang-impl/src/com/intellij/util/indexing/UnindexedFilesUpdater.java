@@ -193,7 +193,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
       });
     }
     else {
-      VirtualFileManager.getInstance().syncRefresh();
+      ApplicationManager.getApplication().invokeAndWait(() -> VirtualFileManager.getInstance().syncRefresh());
     }
   }
 
