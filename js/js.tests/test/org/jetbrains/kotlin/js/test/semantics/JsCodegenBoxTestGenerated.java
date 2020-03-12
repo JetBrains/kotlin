@@ -12002,6 +12002,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             public void testUseImportedMember() throws Exception {
                 runTest("compiler/testData/codegen/box/ir/serializationRegressions/useImportedMember.kt");
             }
+
+            @TestMetadata("varAsFunctionCall.kt")
+            public void testVarAsFunctionCall() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/serializationRegressions/varAsFunctionCall.kt");
+            }
         }
     }
 

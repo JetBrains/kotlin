@@ -9592,6 +9592,21 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/defaultArguments/function/funInTraitChain.kt");
             }
 
+            @TestMetadata("kt15971.kt")
+            public void ignoreKt15971() throws Exception {
+                runTest("compiler/testData/codegen/box/defaultArguments/function/kt15971.kt");
+            }
+
+            @TestMetadata("kt15971_2.kt")
+            public void ignoreKt15971_2() throws Exception {
+                runTest("compiler/testData/codegen/box/defaultArguments/function/kt15971_2.kt");
+            }
+
+            @TestMetadata("kt15971_3.kt")
+            public void ignoreKt15971_3() throws Exception {
+                runTest("compiler/testData/codegen/box/defaultArguments/function/kt15971_3.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
@@ -9678,6 +9693,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("innerExtentionFunctionManyArgs.kt")
             public void testInnerExtentionFunctionManyArgs() throws Exception {
                 runTest("compiler/testData/codegen/box/defaultArguments/function/innerExtentionFunctionManyArgs.kt");
+            }
+
+            @TestMetadata("kt36188.kt")
+            public void testKt36188() throws Exception {
+                runTest("compiler/testData/codegen/box/defaultArguments/function/kt36188.kt");
+            }
+
+            @TestMetadata("kt36188_2.kt")
+            public void testKt36188_2() throws Exception {
+                runTest("compiler/testData/codegen/box/defaultArguments/function/kt36188_2.kt");
             }
 
             @TestMetadata("kt5232.kt")
@@ -14897,6 +14922,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             public void testUseImportedMember() throws Exception {
                 runTest("compiler/testData/codegen/box/ir/serializationRegressions/useImportedMember.kt");
             }
+
+            @TestMetadata("varAsFunctionCall.kt")
+            public void testVarAsFunctionCall() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/serializationRegressions/varAsFunctionCall.kt");
+            }
         }
     }
 
@@ -19396,9 +19426,19 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/primitiveTypes/number.kt");
         }
 
+        @TestMetadata("numberEqualsHashCodeToString.kt")
+        public void testNumberEqualsHashCodeToString() throws Exception {
+            runTest("compiler/testData/codegen/box/primitiveTypes/numberEqualsHashCodeToString.kt");
+        }
+
         @TestMetadata("rangeTo.kt")
         public void testRangeTo() throws Exception {
             runTest("compiler/testData/codegen/box/primitiveTypes/rangeTo.kt");
+        }
+
+        @TestMetadata("stringEqualsHashCodeToString.kt")
+        public void testStringEqualsHashCodeToString() throws Exception {
+            runTest("compiler/testData/codegen/box/primitiveTypes/stringEqualsHashCodeToString.kt");
         }
 
         @TestMetadata("substituteIntForGeneric.kt")
@@ -21961,6 +22001,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("kt35004.kt")
             public void testKt35004() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/unsigned/kt35004.kt");
+            }
+
+            @TestMetadata("kt36953.kt")
+            public void testKt36953() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/unsigned/kt36953.kt");
+            }
+
+            @TestMetadata("kt36953_continue.kt")
+            public void testKt36953_continue() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/unsigned/kt36953_continue.kt");
             }
 
             @TestMetadata("compiler/testData/codegen/box/ranges/unsigned/expression")
