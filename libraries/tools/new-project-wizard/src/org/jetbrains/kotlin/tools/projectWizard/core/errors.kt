@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
 import java.io.IOException
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 
 abstract class Error {
     abstract val message: String
@@ -56,3 +57,8 @@ data class ValidationError(val validationMessage: String) : Error() {
 }
 
 data class ProjectImportingError(override val message: String) : Error()
+
+data class InvalidModuleDependencyError(val from: Module, val to: Module) : Error() {
+    override val message: String
+        get() = "Invalid module dependency from module ${from.name} to ${to.name}"
+}

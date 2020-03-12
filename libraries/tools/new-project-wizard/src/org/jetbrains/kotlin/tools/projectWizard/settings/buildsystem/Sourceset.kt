@@ -11,8 +11,22 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemP
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 
 inline class ModulePath(val parts: List<String>) {
+    constructor(path: String) : this(path.trim().split('.'))
+
     fun asString(separator: String = ".") = parts.joinToString(separator)
     override fun toString(): String = asString()
+
+    companion object {
+        val parser = valueParser { value, path ->
+            val (stringPath) = value.parseAs<String>(path)
+            ModulePath(stringPath)
+        }
+    }
+}
+
+fun ModulePath.considerSingleRootModuleMode(isSingleRootMode: Boolean) = when {
+    isSingleRootMode && parts.size > 1 -> ModulePath(parts.subList(1, parts.size))
+    else -> this
 }
 
 
@@ -55,7 +69,7 @@ class Sourceset(
 }
 
 @Suppress("EnumEntryName")
-enum class SourcesetType: DisplayableSettingItem {
+enum class SourcesetType : DisplayableSettingItem {
     main, test;
 
     override val text: String

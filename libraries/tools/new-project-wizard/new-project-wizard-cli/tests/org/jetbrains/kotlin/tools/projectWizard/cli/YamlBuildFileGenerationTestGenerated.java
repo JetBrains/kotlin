@@ -48,6 +48,16 @@ public class YamlBuildFileGenerationTestGenerated extends AbstractYamlBuildFileG
         runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration/jvmTargetWithJava/");
     }
 
+    @TestMetadata("jvmToJvmDependency")
+    public void testJvmToJvmDependency() throws Exception {
+        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration/jvmToJvmDependency/");
+    }
+
+    @TestMetadata("jvmToJvmDependencyWithSingleRoot")
+    public void testJvmToJvmDependencyWithSingleRoot() throws Exception {
+        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration/jvmToJvmDependencyWithSingleRoot/");
+    }
+
     @TestMetadata("kotlinJvm")
     public void testKotlinJvm() throws Exception {
         runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration/kotlinJvm/");

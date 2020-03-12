@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinBuildSystemPluginIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.RawGradleIR
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
@@ -30,7 +30,7 @@ object JsSingleplatformModuleConfigurator : JSConfigurator, ModuleConfiguratorWi
 
     override val canContainSubModules = false
 
-    override fun createKotlinPluginIR(configurationData: ModuleConfigurationData, module: Module): KotlinBuildSystemPluginIR? =
+    override fun createKotlinPluginIR(configurationData: ModulesToIrConversionData, module: Module): KotlinBuildSystemPluginIR? =
         KotlinBuildSystemPluginIR(
             KotlinBuildSystemPluginIR.Type.js,
             version = configurationData.kotlinVersion
@@ -38,7 +38,7 @@ object JsSingleplatformModuleConfigurator : JSConfigurator, ModuleConfiguratorWi
 
     override fun createBuildFileIRs(
         reader: Reader,
-        configurationData: ModuleConfigurationData,
+        configurationData: ModulesToIrConversionData,
         module: Module
     ): List<BuildSystemIR> = buildList {
         +RawGradleIR {

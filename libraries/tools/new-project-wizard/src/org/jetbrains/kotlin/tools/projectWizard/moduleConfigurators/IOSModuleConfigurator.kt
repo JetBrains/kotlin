@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
@@ -26,7 +26,7 @@ object IOSSinglePlatformModuleConfigurator :
     override val requiresRootBuildFile: Boolean = true
 
     override fun Writer.runArbitraryTask(
-        configurationData: ModuleConfigurationData,
+        configurationData: ModulesToIrConversionData,
         module: Module,
         modulePath: Path
     ): TaskResult<Unit> {

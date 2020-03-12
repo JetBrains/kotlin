@@ -23,7 +23,6 @@ fun <V> inValidatorContext(validator: Reader.(V) -> SettingValidator<V>) =
     }
 
 
-
 object StringValidators {
     fun shouldNotBeBlank(name: String) = settingValidator { value: String ->
         if (value.isBlank()) ValidationResult.ValidationError("${name.capitalize()} should not be blank ")
@@ -69,6 +68,9 @@ sealed class ValidationResult {
     companion object {
         fun create(condition: Boolean, message: String) =
             if (condition) OK else ValidationError(message)
+
+        inline fun create(condition: Boolean, message: () -> String) =
+            if (condition) OK else ValidationError(message())
     }
 }
 

@@ -11,10 +11,7 @@ import com.intellij.openapi.projectRoots.SimpleJavaSdkType
 import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.PlatformTestCase
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
-import org.jetbrains.kotlin.tools.projectWizard.cli.BuildSystem
-import org.jetbrains.kotlin.tools.projectWizard.cli.TestWizardService
-import org.jetbrains.kotlin.tools.projectWizard.cli.assertSuccess
-import org.jetbrains.kotlin.tools.projectWizard.cli.isGradle
+import org.jetbrains.kotlin.tools.projectWizard.cli.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.Services
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
@@ -64,7 +61,7 @@ abstract class AbstractNewWizardProjectImportTest : PlatformTestCase() {
     private fun doTest(directoryPath: String, buildSystem: BuildSystem) {
         val directory = Paths.get(directoryPath)
 
-        val parameters = ProjectImportingTestParameters.fromTestDataOrDefault(directory)
+        val parameters = DefaultTestParameters.fromTestDataOrDefault(directory)
         if (!parameters.runForMaven && buildSystem == BuildSystem.MAVEN) return
 
         val tempDirectory = Files.createTempDirectory(null)

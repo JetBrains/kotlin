@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import java.nio.file.Path
 
-data class ModuleConfigurationData(
+data class ModulesToIrConversionData(
     val rootModules: List<Module>,
     val projectPath: Path,
     val projectName: String,
@@ -24,6 +24,9 @@ data class ModuleConfigurationData(
     val writer: Writer
 ) {
     val allModules = rootModules.withAllSubModules()
+    val isSingleRootModuleMode = rootModules.size == 1
+
+    val moduleByPath = rootModules.withAllSubModules(includeSourcesets = true).associateBy(Module::path)
 }
 
 private data class ModulesToIrsState(
@@ -38,9 +41,8 @@ private fun ModulesToIrsState.stateForSubModule(currentModulePath: Path) =
     )
 
 class ModulesToIRsConverter(
-    val data: ModuleConfigurationData
+    val data: ModulesToIrConversionData
 ) {
-    private val isSingleRootModuleMode = data.rootModules.size == 1
 
     // TODO get rid of mutable state
     private val rootBuildFileIrs = mutableListOf<BuildSystemIR>()
@@ -53,7 +55,7 @@ class ModulesToIRsConverter(
             if ( // We want to have root build file for android or ios projects
                 data.allModules.any { it.configurator.requiresRootBuildFile }
             ) return false
-            return isSingleRootModuleMode
+            return data.isSingleRootModuleMode
         }
 
     private fun calculatePathForModule(module: Module, rootPath: Path) = when {
@@ -99,22 +101,26 @@ class ModulesToIRsConverter(
         module: Module,
         configurator: SinglePlatformModuleConfigurator,
         state: ModulesToIrsState
-    ): TaskResult<List<BuildFileIR>> = with(data) {
+    ): TaskResult<List<BuildFileIR>> = computeM {
         val modulePath = calculatePathForModule(module, state.parentPath)
-        writer.mutateProjectStructureByModuleConfigurator(module, modulePath)
+        val (moduleDependencies) = module.dependencies.mapCompute { dependency ->
+            val to = data.moduleByPath.getValue(dependency.path)
+            val (dependencyType) = ModuleDependencyType.getPossibleDependencyType(module, to)
+                .toResult { InvalidModuleDependencyError(module, to) }
+            dependencyType.createDependencyIrs(module, to, data)
+        }.sequence()
+        data.writer.mutateProjectStructureByModuleConfigurator(module, modulePath)
         val buildFileIR = run {
             if (!configurator.needCreateBuildFile) return@run null
             val dependenciesIRs = buildPersistenceList<BuildSystemIR> {
-                +module.sourcesets.flatMap { sourceset ->
-                    sourceset.dependencies.map { it.toIR(sourceset.sourcesetType.toDependencyType()) }
-                }
+                +moduleDependencies
                 with(configurator) { +createModuleIRs(this@createSinglePlatformModule, data, module) }
                 addIfNotNull(
                     configurator.createStdlibType(data, module)?.let { stdlibType ->
                         KotlinStdlibDependencyIR(
                             type = stdlibType,
                             isInMppModule = false,
-                            version = kotlinVersion,
+                            version = data.kotlinVersion,
                             dependencyType = DependencyType.MAIN
                         )
                     }
@@ -122,7 +128,7 @@ class ModulesToIRsConverter(
             }
 
             val moduleIr = SingleplatformModuleIR(
-                if (modulePath == projectPath) projectName else module.name,
+                if (modulePath == data.projectPath) data.projectName else module.name,
                 modulePath,
                 dependenciesIRs,
                 module.template,
@@ -131,7 +137,7 @@ class ModulesToIRsConverter(
                     SingleplatformSourcesetIR(
                         sourceset.sourcesetType,
                         modulePath / Defaults.SRC_DIR / sourceset.sourcesetType.name,
-                        sourceset.dependencies.map { it.toIR(sourceset.sourcesetType.toDependencyType()) }.toPersistentList(),
+                        persistentListOf(),
                         sourceset
                     )
                 }
@@ -143,17 +149,17 @@ class ModulesToIRsConverter(
                     moduleIr,
                     persistentListOf()
                 ),
-                pomIr.copy(artifactId = module.name),
+                data.pomIr.copy(artifactId = module.name),
                 createBuildFileIRs(module, state)
             )
         }
 
-        return module.subModules.mapSequence { subModule ->
-            createBuildFileForModule(
-                subModule,
-                state.stateForSubModule(modulePath)
-            )
-        }.map { it.flatten() }
+        module.subModules.mapSequence { subModule ->
+                createBuildFileForModule(
+                    subModule,
+                    state.stateForSubModule(modulePath)
+                )
+            }.map { it.flatten() }
             .map { children ->
                 buildFileIR?.let { children + it } ?: children
             }
@@ -194,7 +200,6 @@ class ModulesToIRsConverter(
         val sourcesetss = target.sourcesets.map { sourceset ->
             val sourcesetName = target.name + sourceset.sourcesetType.name.capitalize()
             val sourcesetIrs = buildList<BuildSystemIR> {
-                +sourceset.dependencies.map { it.toIR(sourceset.sourcesetType.toDependencyType()) }
                 if (sourceset.sourcesetType == SourcesetType.main) {
                     addIfNotNull(
                         target.configurator.createStdlibType(data, target)?.let { stdlibType ->
@@ -256,22 +261,5 @@ class ModulesToIRsConverter(
             }
         addIfNotNull(kotlinPlugin)
         +with(module.configurator) { createBuildFileIRs(this@createBuildFileIRs, data, module) }
-    }
-
-    private fun SourcesetDependency.toIR(type: DependencyType): DependencyIR = with(data) {
-        val path = when (this@toIR) {
-            is ModuleBasedSourcesetDependency -> module.path
-            is PathBasedSourcesetDependency -> path
-        }
-        val modulePomIr = when (this@toIR) {
-            is ModuleBasedSourcesetDependency -> pomIr.copy(artifactId = module.name)
-            is PathBasedSourcesetDependency -> pomIr.copy(artifactId = path.parts.last())
-        }
-        return when {
-            isSingleRootModuleMode
-                    && path.parts.singleOrNull() == rootModules.single().name
-                    && buildSystemType.isGradle -> GradleRootProjectDependencyIR(type)
-            else -> ModuleDependencyIR(path, modulePomIr, type)
-        }
     }
 }

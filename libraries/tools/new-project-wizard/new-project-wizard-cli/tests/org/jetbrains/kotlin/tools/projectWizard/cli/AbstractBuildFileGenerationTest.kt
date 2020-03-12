@@ -19,12 +19,17 @@ abstract class AbstractBuildFileGenerationTest : UsefulTestCase() {
 
     fun doTest(directoryPath: String) {
         val directory = Paths.get(directoryPath)
-        val expectedDirectory = expectedDirectory(directory)
 
-        for (buildSystem in BuildSystem.values()) {
-            if (Files.exists(expectedDirectory / buildSystem.buildFileName)) {
-                doTest(directory, buildSystem)
-            }
+        val testParameters = DefaultTestParameters.fromTestDataOrDefault(directory)
+
+        val buildSystemsToRunFor = listOfNotNull(
+            BuildSystem.GRADLE_KOTLIN_DSL,
+            BuildSystem.GRADLE_GROOVY_DSL,
+            if (testParameters.runForMaven) BuildSystem.MAVEN else null
+        )
+
+        for (buildSystem in buildSystemsToRunFor) {
+            doTest(directory, buildSystem)
         }
     }
 
@@ -36,7 +41,7 @@ abstract class AbstractBuildFileGenerationTest : UsefulTestCase() {
 
         val expectedDirectory = expectedDirectory(directory)
 
-        compareFiles(
+        compareFilesAndGenerateMissing(
             expectedDirectory.allBuildFiles(buildSystem), expectedDirectory,
             tempDirectory.allBuildFiles(buildSystem), tempDirectory
         )

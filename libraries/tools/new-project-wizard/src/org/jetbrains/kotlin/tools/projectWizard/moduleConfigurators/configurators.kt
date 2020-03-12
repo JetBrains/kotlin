@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.maven.MavenProper
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
@@ -59,7 +59,7 @@ object MppModuleConfigurator : ModuleConfigurator {
     override val text = "Multiplatform"
     override val canContainSubModules = true
 
-    override fun createKotlinPluginIR(configurationData: ModuleConfigurationData, module: Module): KotlinBuildSystemPluginIR? =
+    override fun createKotlinPluginIR(configurationData: ModulesToIrConversionData, module: Module): KotlinBuildSystemPluginIR? =
         KotlinBuildSystemPluginIR(
             KotlinBuildSystemPluginIR.Type.multiplatform,
             version = configurationData.kotlinVersion
@@ -83,7 +83,7 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
 
     override val canContainSubModules = true
 
-    override fun createKotlinPluginIR(configurationData: ModuleConfigurationData, module: Module): KotlinBuildSystemPluginIR? =
+    override fun createKotlinPluginIR(configurationData: ModulesToIrConversionData, module: Module): KotlinBuildSystemPluginIR? =
         KotlinBuildSystemPluginIR(
             KotlinBuildSystemPluginIR.Type.jvm,
             version = configurationData.kotlinVersion
@@ -92,7 +92,7 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
 
     override fun createBuildFileIRs(
         reader: Reader,
-        configurationData: ModuleConfigurationData,
+        configurationData: ModulesToIrConversionData,
         module: Module
     ): List<BuildSystemIR> =
         buildList {

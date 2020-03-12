@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyType
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinArbitraryDependencyIR
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
@@ -40,7 +40,7 @@ interface ModuleConfiguratorWithTests : ModuleConfiguratorWithSettings {
 
     override fun createModuleIRs(
         reader: Reader,
-        configurationData: ModuleConfigurationData,
+        configurationData: ModulesToIrConversionData,
         module: Module
     ): List<BuildSystemIR> =
         withSettingsOf(module) {

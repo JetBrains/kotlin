@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem
 
+import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.kotlin.tools.projectWizard.GeneratedIdentificator
 import org.jetbrains.kotlin.tools.projectWizard.Identificator
 import org.jetbrains.kotlin.tools.projectWizard.IdentificatorOwner
@@ -33,6 +34,7 @@ class Module(
     var template: Template?,
     val sourcesets: List<Sourceset>,
     subModules: List<Module>,
+    val dependencies: MutableList<ModuleReference> = mutableListOf(),
     var parent: Module? = null,
     override val identificator: Identificator = GeneratedIdentificator(name)
 ) : DisplayableSettingItem, Validatable<Module>, IdentificatorOwner {
@@ -86,7 +88,16 @@ class Module(
             }.nullableValue()
             val sourcesets = listOf(Sourceset(SourcesetType.main), Sourceset(SourcesetType.test))
             val (submodules) = map.parseValue(this, path, "subModules", listParser(Module.parser)) { emptyList() }
-            Module(name, configurator, template, sourcesets, submodules, identificator = identificator)
+            val (dependencies) = map.parseValue(this, path, "dependencies", listParser(ModuleReference.ByPath.parser)) { emptyList() }
+            Module(
+                name,
+                configurator,
+                template,
+                sourcesets,
+                submodules,
+                dependencies = dependencies.toMutableList(),
+                identificator = identificator
+            )
         }
 
         private val moduleNameValidator = settingValidator<Module> { module ->
@@ -137,6 +148,7 @@ val Module.path
         .toList()
         .asReversed()
         .let(::ModulePath)
+
 
 val Sourceset.path
     get() = ModulePath(parent?.path?.parts.orEmpty() + sourcesetType.name)

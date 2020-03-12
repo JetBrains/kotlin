@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinBuildSystemPluginIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.StdlibType
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.correspondingStdlib
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
@@ -206,27 +206,27 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
 
     fun createBuildFileIRs(
         reader: Reader,
-        configurationData: ModuleConfigurationData,
+        configurationData: ModulesToIrConversionData,
         module: Module
     ): List<BuildSystemIR> =
         emptyList()
 
     fun createModuleIRs(
         reader: Reader,
-        configurationData: ModuleConfigurationData,
+        configurationData: ModulesToIrConversionData,
         module: Module
     ): List<BuildSystemIR> =
         emptyList()
 
-    fun createStdlibType(configurationData: ModuleConfigurationData, module: Module): StdlibType? =
+    fun createStdlibType(configurationData: ModulesToIrConversionData, module: Module): StdlibType? =
         safeAs<ModuleConfiguratorWithModuleType>()?.moduleType?.correspondingStdlib()
 
-    fun createRootBuildFileIrs(configurationData: ModuleConfigurationData): List<BuildSystemIR> = emptyList()
-    fun createKotlinPluginIR(configurationData: ModuleConfigurationData, module: Module): KotlinBuildSystemPluginIR? =
+    fun createRootBuildFileIrs(configurationData: ModulesToIrConversionData): List<BuildSystemIR> = emptyList()
+    fun createKotlinPluginIR(configurationData: ModulesToIrConversionData, module: Module): KotlinBuildSystemPluginIR? =
         null
 
     fun Writer.runArbitraryTask(
-        configurationData: ModuleConfigurationData,
+        configurationData: ModulesToIrConversionData,
         module: Module,
         modulePath: Path
     ): TaskResult<Unit> = UNIT_SUCCESS

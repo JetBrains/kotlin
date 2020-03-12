@@ -10,9 +10,11 @@ import org.hamcrest.core.Is
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.tools.projectWizard.core.ExceptionError
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskResult
+import org.jetbrains.kotlin.tools.projectWizard.core.div
 import org.jetbrains.kotlin.tools.projectWizard.core.onFailure
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.junit.Assert.assertThat
+import org.junit.Assert.fail
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.stream.Collectors
@@ -24,17 +26,24 @@ internal fun Path.listFiles(filter: (Path) -> Boolean) =
         Files.isRegularFile(path) && filter(path)
     }.collect(Collectors.toList()).sorted()
 
-internal fun compareFiles(
+internal fun compareFilesAndGenerateMissing(
     expectedFiles: List<Path>, expectedDir: Path,
     actualFiles: List<Path>, actualDir: Path
 ) {
     val expectedFilesSorted = expectedFiles.sorted()
     val actualFilesSorted = actualFiles.sorted()
 
-    assertThat(
-        actualFilesSorted.map { actualDir.relativize(it) },
-        Is.`is`(expectedFilesSorted.map { expectedDir.relativize(it) })
-    )
+    val missingFiles =
+        actualFiles.map(actualDir::relativize).toSet() - expectedFiles.map(expectedDir::relativize).toSet()
+
+    if (missingFiles.isNotEmpty()) {
+        missingFiles.forEach { missingFile ->
+            val targetFile = expectedDir / missingFile
+            Files.createDirectories(targetFile.parent)
+            Files.copy(actualDir / missingFile, targetFile)
+        }
+        fail("The following files was missed: $missingFiles and thus was generated")
+    }
 
     for ((actualFile, expectedFile) in actualFilesSorted zip expectedFilesSorted) {
         KotlinTestUtils.assertEqualsToFile(expectedFile.toFile(), actualFile.readFile())

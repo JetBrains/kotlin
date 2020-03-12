@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.AndroidPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
@@ -49,7 +49,7 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
 
     override fun createBuildFileIRs(
         reader: Reader,
-        configurationData: ModuleConfigurationData,
+        configurationData: ModulesToIrConversionData,
         module: Module
     ) = buildList<BuildSystemIR> {
         +GradleOnlyPluginByNameIR(reader.createAndroidPlugin(module).pluginName)
@@ -73,7 +73,7 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
 
     override fun createModuleIRs(
         reader: Reader,
-        configurationData: ModuleConfigurationData,
+        configurationData: ModulesToIrConversionData,
         module: Module
     ): List<BuildSystemIR> =
         buildList {
@@ -85,7 +85,7 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
         }
 
 
-    override fun createStdlibType(configurationData: ModuleConfigurationData, module: Module): StdlibType? =
+    override fun createStdlibType(configurationData: ModulesToIrConversionData, module: Module): StdlibType? =
         StdlibType.StdlibJdk7
 
     object FileTemplateDescriptors {
@@ -137,7 +137,7 @@ object AndroidTargetConfigurator : TargetConfigurator,
     }
 
     override fun Writer.runArbitraryTask(
-        configurationData: ModuleConfigurationData,
+        configurationData: ModulesToIrConversionData,
         module: Module,
         modulePath: Path
     ): TaskResult<Unit> = computeM {

@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.fold
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settingValidator
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionProviderService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.kotlinVersionKind
@@ -57,6 +58,8 @@ class KotlinPlugin(context: Context) : Plugin(context) {
                 )
             }.fold()
         }
+
+        validate(moduleDependenciesValidator)
     }
 
 
@@ -103,7 +106,7 @@ class KotlinPlugin(context: Context) : Plugin(context) {
     private fun Writer.createBuildFiles(modules: List<Module>): TaskResult<List<BuildFileIR>> =
         with(
             ModulesToIRsConverter(
-                ModuleConfigurationData(
+                ModulesToIrConversionData(
                     modules,
                     projectPath,
                     StructurePlugin::name.settingValue,
@@ -120,6 +123,19 @@ class KotlinPlugin(context: Context) : Plugin(context) {
         // TODO update default versions
         private val DEFAULT_VERSION = Version.fromString("1.3.61")
 
+        private val moduleDependenciesValidator = settingValidator<List<Module>> { modules ->
+            val allModules = modules.withAllSubModules(includeSourcesets = true).toSet()
+            val allModulePaths = allModules.map(Module::path).toSet()
+            allModules.flatMap { module ->
+                module.dependencies.map { dependency ->
+                    val isValidModule = when (dependency) {
+                        is ModuleReference.ByPath -> dependency.path in allModulePaths
+                        is ModuleReference.ByModule -> dependency.module in allModules
+                    }
+                    ValidationResult.create(isValidModule) { "Invalid module dependency $dependency of module ${module.path}" }
+                }
+            }.fold()
+        }
     }
 }
 

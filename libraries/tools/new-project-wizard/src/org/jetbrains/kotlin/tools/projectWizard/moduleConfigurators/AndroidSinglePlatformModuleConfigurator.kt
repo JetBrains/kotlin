@@ -5,7 +5,7 @@ package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
@@ -27,7 +27,7 @@ object AndroidSinglePlatformModuleConfigurator :
 
     override fun createBuildFileIRs(
         reader: Reader,
-        configurationData: ModuleConfigurationData,
+        configurationData: ModulesToIrConversionData,
         module: Module
     ) = buildList<BuildSystemIR> {
         +super<AndroidModuleConfigurator>.createBuildFileIRs(reader, configurationData, module)
@@ -47,7 +47,7 @@ object AndroidSinglePlatformModuleConfigurator :
 
     override fun createModuleIRs(
         reader: Reader,
-        configurationData: ModuleConfigurationData,
+        configurationData: ModulesToIrConversionData,
         module: Module
     ) = buildList<BuildSystemIR> {
         +super<AndroidModuleConfigurator>.createModuleIRs(reader, configurationData, module)
@@ -66,7 +66,7 @@ object AndroidSinglePlatformModuleConfigurator :
     }
 
     override fun Writer.runArbitraryTask(
-        configurationData: ModuleConfigurationData,
+        configurationData: ModulesToIrConversionData,
         module: Module,
         modulePath: Path
     ): TaskResult<Unit> = computeM {
