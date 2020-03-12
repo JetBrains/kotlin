@@ -20,11 +20,8 @@ fun hasKotlinNativeRuntimeInScope(module: Module): Boolean = module.project.runR
     hasKotlinNativeMetadataFile(module.project, LibraryKindSearchScope(module, scope, NativeLibraryKind))
 }
 
-private val KOTLIN_NATIVE_FQ_NAMES = listOf(
-    "kotlin.native",
-    "konan.native" // Keep "konan.native" for backward compatibility with older versions of Kotlin/Native.
-).map { FqName(it) }
+private val KOTLIN_NATIVE_FQ_NAME = FqName("kotlin.native")
 
 fun hasKotlinNativeMetadataFile(project: Project, scope: GlobalSearchScope): Boolean = project.runReadActionInSmartMode {
-    KOTLIN_NATIVE_FQ_NAMES.any { KotlinNativeMetaFileIndex.hasSomethingInPackage(it, scope) }
+    KotlinNativeMetaFileIndex.hasSomethingInPackage(KOTLIN_NATIVE_FQ_NAME, scope)
 }
