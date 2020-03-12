@@ -145,7 +145,7 @@ public class CodeStyleSchemesPanel extends SimpleSchemesPanel<CodeStyleScheme> {
     myBottomPanel.add(myBottomLabel);
     LinkLabel<Object> disableHyperLink = new LinkLabel<>(LangBundle.message("action.link.disable"), null, new LinkListener<Object>() {
       @Override
-      public void linkSelected(LinkLabel aSource, Object aLinkData) {
+      public void linkSelected(LinkLabel<Object> aSource, Object aLinkData) {
         disableOverriding();
       }
     });

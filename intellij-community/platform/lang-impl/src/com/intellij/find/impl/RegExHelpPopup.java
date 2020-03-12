@@ -94,7 +94,7 @@ public class RegExHelpPopup extends JPanel {
     return new LinkLabel<>(title, null, new LinkListener<Object>() {
 
       @Override
-      public void linkSelected(LinkLabel aSource, Object aLinkData) {
+      public void linkSelected(LinkLabel<Object> aSource, Object aLinkData) {
         FindUtil.triggerRegexHelpClicked(place);
         action.run();
       }
