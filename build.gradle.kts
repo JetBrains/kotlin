@@ -40,6 +40,7 @@ if (kotlinBuildProperties.buildScanServer != null) {
 }
 
 plugins {
+    base
     idea
     id("jps-compatible")
     id("org.jetbrains.gradle.plugin.idea-ext")
@@ -481,7 +482,7 @@ val ideaPlugin by task<Task> {
 }
 
 tasks {
-    register("clean") {
+    named("clean") {
         doLast {
             delete("$buildDir/repo")
             delete(distDir)
@@ -729,7 +730,7 @@ tasks {
         }
     }
 
-    register("check") {
+    named("check") {
         dependsOn("test")
     }
 }

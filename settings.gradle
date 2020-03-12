@@ -336,6 +336,7 @@ if (buildProperties.inJpsBuildIdeaSync) {
             ":kotlin-stdlib-common",
             ":kotlin-stdlib",
             ":kotlin-stdlib-js",
+            ":kotlin-stdlib-js-ir-new",
             ":kotlin-stdlib-jdk7",
             ":kotlin-stdlib-jdk8",
             ":kotlin-stdlib:samples",
@@ -346,11 +347,13 @@ if (buildProperties.inJpsBuildIdeaSync) {
             ":include:kotlin-stdlib-common-sources",
 
             ":kotlin-test:kotlin-test-js",
+            ":kotlin-test:kotlin-test-js-ir",
             ":kotlin-test:kotlin-test-js:kotlin-test-js-it"
 
     project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
     project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib/jvm" as File
     project(':kotlin-stdlib-js').projectDir = "$rootDir/libraries/stdlib/js-v1" as File
+    project(':kotlin-stdlib-js-ir-new').projectDir = "$rootDir/libraries/stdlib/js-ir-new" as File
     project(':kotlin-stdlib-jdk7').projectDir = "$rootDir/libraries/stdlib/jdk7" as File
     project(':kotlin-stdlib-jdk8').projectDir = "$rootDir/libraries/stdlib/jdk8" as File
     project(':kotlin-stdlib:samples').projectDir = "$rootDir/libraries/stdlib/samples" as File
@@ -360,6 +363,7 @@ if (buildProperties.inJpsBuildIdeaSync) {
     project(':tools:kotlin-stdlib-gen').projectDir = "$rootDir/libraries/tools/kotlin-stdlib-gen" as File
 
     project(':kotlin-test:kotlin-test-js').projectDir = "$rootDir/libraries/kotlin.test/js" as File
+    project(':kotlin-test:kotlin-test-js-ir').projectDir = "$rootDir/libraries/kotlin.test/js-ir" as File
     project(':kotlin-test:kotlin-test-js:kotlin-test-js-it').projectDir = "$rootDir/libraries/kotlin.test/js/it" as File
 }
 
