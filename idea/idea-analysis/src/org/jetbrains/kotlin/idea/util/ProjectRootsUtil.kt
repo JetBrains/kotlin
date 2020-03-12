@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.KotlinModuleFileType
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
 import org.jetbrains.kotlin.idea.decompiler.js.KotlinJavaScriptMetaFileType
+import org.jetbrains.kotlin.idea.klib.KlibMetaFileType
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import kotlin.script.experimental.api.ScriptAcceptedLocation
@@ -50,6 +51,7 @@ class JavaClassBinary : KotlinBinaryExtension(JavaClassFileType.INSTANCE)
 class KotlinBuiltInBinary : KotlinBinaryExtension(KotlinBuiltInFileType)
 class KotlinModuleBinary : KotlinBinaryExtension(KotlinModuleFileType.INSTANCE)
 class KotlinJsMetaBinary : KotlinBinaryExtension(KotlinJavaScriptMetaFileType)
+class KlibMetaBinary : KotlinBinaryExtension(KlibMetaFileType)
 
 fun FileType.isKotlinBinary(): Boolean = this in KotlinBinaryExtension.kotlinBinaries
 

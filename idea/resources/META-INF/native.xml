@@ -26,7 +26,7 @@
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <binaryExtension implementation="org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeMetaBinary"/>
+        <binaryExtension implementation="org.jetbrains.kotlin.idea.util.KlibMetaBinary"/>
         <idePlatformKind implementation="org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind"/>
         <idePlatformKindTooling implementation="org.jetbrains.kotlin.ide.konan.NativeIdePlatformKindTooling"/>
         <idePlatformKindResolution implementation="org.jetbrains.kotlin.ide.konan.NativePlatformKindResolution"/>

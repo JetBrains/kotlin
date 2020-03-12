@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 
-abstract class AbstractKlibLibraryInfo(project: Project, library: Library, protected val libraryRoot: String) : LibraryInfo(project, library) {
+abstract class AbstractKlibLibraryInfo(project: Project, library: Library, val libraryRoot: String) : LibraryInfo(project, library) {
 
     val resolvedKotlinLibrary = resolveSingleFileKlib(
         libraryFile = File(libraryRoot),

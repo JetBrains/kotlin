@@ -131,7 +131,7 @@ class CompositeResolverForModuleFactory(
         var klibMetadataProvider: PackageFragmentProvider? = null
 
         if (moduleInfo is CommonKlibLibraryInfo && moduleInfo.compatibilityInfo.isCompatible) {
-            val library = moduleInfo.commonLibrary
+            val library = moduleInfo.resolvedKotlinLibrary
             val languageVersionSettings = container.get<LanguageVersionSettings>()
 
             val packageFragmentNames = parseModuleHeader(library.moduleHeaderData).packageFragmentNameList
