@@ -35,7 +35,7 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="ed72" class="com.intellij.util.ui.Table" binding="myTable" custom-create="true">
+                  <component id="ed72" class="com.intellij.ui.table.JBTable" binding="myTable" custom-create="true">
                     <constraints/>
                     <properties/>
                   </component>
