@@ -1246,6 +1246,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/thisOfGenericOuterClass.kt");
         }
 
+        @TestMetadata("thisRefToObjectInNestedClassConstructorCall.kt")
+        public void testThisRefToObjectInNestedClassConstructorCall() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/thisRefToObjectInNestedClassConstructorCall.kt");
+        }
+
         @TestMetadata("thisReferenceBeforeClassDeclared.kt")
         public void testThisReferenceBeforeClassDeclared() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/thisReferenceBeforeClassDeclared.kt");
