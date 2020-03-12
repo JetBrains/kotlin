@@ -27,6 +27,7 @@ const val NOENDORSEDLIBS = "no-endorsed-libs"
 const val PURGE_USER_LIBS = "Xpurge-user-libs"
 const val TEMP_DIR = "Xtemporary-files-dir"
 const val NOPACK = "nopack"
+const val COMPILE_SOURCES = "Xcompile-source"
 
 // TODO: unify camel and snake cases.
 // Possible solution is to accept both cases
@@ -103,6 +104,16 @@ class CInteropArguments(argParser: ArgParser =
     val linkerOption = argParser.option(ArgType.String, "linker-option",
             description = "additional linker option").multiple()
     val linker by argParser.option(ArgType.String, description = "use specified linker")
+
+    val compileSource by argParser.option(ArgType.String,
+            fullName = COMPILE_SOURCES,
+            description = "additional C/C++ sources to be compiled into resulting library"
+    ).multiple()
+
+    val sourceCompileOptions by argParser.option(ArgType.String,
+            fullName = "Xsource-compiler-option",
+            description = "compiler options for sources provided via -$COMPILE_SOURCES"
+    ).multiple()
 }
 
 class JSInteropArguments(argParser: ArgParser = ArgParser("jsinterop",

@@ -34,6 +34,8 @@ class ToolConfig(userProvidedTargetName: String?, flavor: KotlinPlatform) {
 
     private val platform = platformManager.platform(target)
 
+    val clang = platform.clang
+
     val substitutions = defaultTargetSubstitutions(target)
 
     fun downloadDependencies() = platform.downloadDependencies()
