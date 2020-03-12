@@ -48,7 +48,7 @@ Options:
 
     @Test
     fun testHelpForSubcommands() {
-        class Summary: Subcommand("summary") {
+        class Summary: Subcommand("summary", "Get summary information") {
             val exec by option(ArgType.Choice(listOf("samples", "geomean")),
                     description = "Execution time way of calculation").default("geomean")
             val execSamples by option(ArgType.String, "exec-samples",
@@ -95,6 +95,48 @@ Options:
     --codesize-samples -> Samples used for code size metric (value 'all' allows use all samples) { String }
     --codesize-normalize -> File with golden results which should be used for normalization { String }
     --user, -u -> User access information for authorization { String }
+    --help, -h -> Usage info 
+""".trimIndent()
+        assertEquals(expectedOutput, helpOutput)
+    }
+
+    @Test
+    fun testHelpMessageWithSubcommands() {
+        abstract class CommonOptions(name: String, actionDescription: String): Subcommand(name, actionDescription) {
+            val numbers by argument(ArgType.Int, "numbers", description = "Numbers").vararg()
+        }
+        class Summary: CommonOptions("summary", "Calculate summary") {
+            val invert by option(ArgType.Boolean, "invert", "i", "Invert results")
+            var result: Int = 0
+
+            override fun execute() {
+                result = numbers.sum()
+                result = invert?.let { -1 * result } ?: result
+            }
+        }
+
+        class Subtraction : CommonOptions("sub", "Calculate subtraction") {
+            var result: Int = 0
+
+            override fun execute() {
+                result = numbers.map { -it }.sum()
+            }
+        }
+
+        val summaryAction = Summary()
+        val subtractionAction = Subtraction()
+        val argParser = ArgParser("testParser")
+        argParser.subcommands(summaryAction, subtractionAction)
+        argParser.parse(emptyArray())
+        val helpOutput = argParser.makeUsage().trimIndent()
+        println(helpOutput)
+        val expectedOutput = """
+Usage: testParser options_list
+Subcommands: 
+    summary - Calculate summary
+    sub - Calculate subtraction
+
+Options: 
     --help, -h -> Usage info 
 """.trimIndent()
         assertEquals(expectedOutput, helpOutput)

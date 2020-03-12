@@ -71,11 +71,14 @@ interface ArgumentValueDelegate<T> {
  * Abstract base class for subcommands.
  */
 @ExperimentalCli
-abstract class Subcommand(val name: String): ArgParser(name) {
+abstract class Subcommand(val name: String, val actionDescription: String): ArgParser(name) {
     /**
      * Execute action if subcommand was provided.
      */
     abstract fun execute()
+
+    val helpMessage: String
+        get() = "    $name - $actionDescription\n"
 }
 
 /**
@@ -309,7 +312,7 @@ open class ArgParser(
      *
      * @param message error message.
      */
-     fun printError(message: String): Nothing {
+    fun printError(message: String): Nothing {
         error("$message\n${makeUsage()}")
     }
 
@@ -373,6 +376,7 @@ open class ArgParser(
 
     protected fun parse(args: List<String>): ArgParserResult {
         check(parsingState == null) { "Parsing of command line options can be called only once." }
+
         // Add help option.
         val helpDescriptor = if (useDefaultHelpShortName) OptionDescriptor<Boolean, Boolean>(
             optionFullFormPrefix,
@@ -513,6 +517,13 @@ open class ArgParser(
     internal fun makeUsage(): String {
         val result = StringBuilder()
         result.append("Usage: ${fullCommandName.joinToString(" ")} options_list\n")
+        if (subcommands.isNotEmpty()) {
+            result.append("Subcommands: \n")
+            subcommands.forEach { (_, subcommand) ->
+                result.append(subcommand.helpMessage)
+            }
+            result.append("\n")
+        }
         if (arguments.isNotEmpty()) {
             result.append("Arguments: \n")
             arguments.forEach {

@@ -16,7 +16,7 @@ class SubcommandsTests {
     fun testSubcommand() {
         val argParser = ArgParser("testParser")
         val output by argParser.option(ArgType.String, "output", "o", "Output file")
-        class Summary: Subcommand("summary") {
+        class Summary: Subcommand("summary", "Calculate summary") {
             val invert by option(ArgType.Boolean, "invert", "i", "Invert results")
             val addendums by argument(ArgType.Int, "addendums", description = "Addendums").vararg()
             var result: Int = 0
@@ -35,10 +35,10 @@ class SubcommandsTests {
 
     @Test
     fun testCommonOptions() {
-        abstract class CommonOptions(name: String): Subcommand(name) {
+        abstract class CommonOptions(name: String, actionDescription: String): Subcommand(name, actionDescription) {
             val numbers by argument(ArgType.Int, "numbers", description = "Numbers").vararg()
         }
-        class Summary: CommonOptions("summary") {
+        class Summary: CommonOptions("summary", "Calculate summary") {
             val invert by option(ArgType.Boolean, "invert", "i", "Invert results")
             var result: Int = 0
 
@@ -48,7 +48,7 @@ class SubcommandsTests {
             }
         }
 
-        class Subtraction : CommonOptions("sub") {
+        class Subtraction : CommonOptions("sub", "Calculate subtraction") {
             var result: Int = 0
 
             override fun execute() {
@@ -73,7 +73,7 @@ class SubcommandsTests {
     fun testRecursiveSubcommands() {
         val argParser = ArgParser("testParser")
 
-        class Summary: Subcommand("summary") {
+        class Summary: Subcommand("summary", "Calculate summary") {
             val addendums by argument(ArgType.Int, "addendums", description = "Addendums").vararg()
             var result: Int = 0
 
@@ -82,7 +82,7 @@ class SubcommandsTests {
             }
         }
 
-        class Calculation: Subcommand("calc") {
+        class Calculation: Subcommand("calc", "Execute calculation") {
             init {
                 subcommands(Summary())
             }
