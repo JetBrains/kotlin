@@ -62,6 +62,14 @@ def _symbol_loaded_address(name, debugger = lldb.debugger):
         log(lambda: "{} {:#x}".format(name, address))
         return address
 
+def _type_info_by_address(address, debugger = lldb.debugger):
+    target = debugger.GetSelectedTarget()
+    process = target.GetProcess()
+    thread = process.GetSelectedThread()
+    frame = thread.GetSelectedFrame()
+    candidates = list(filter(lambda x: x.GetStartAddress().GetLoadAddress(target) == address, frame.module.symbols))
+    return candidates
+
 def is_instance_of(addr, typeinfo):
     return evaluate("(bool)IsInstance({}, {})".format(addr, typeinfo)).GetValue() == "true"
 
@@ -397,6 +405,33 @@ __TYPES_KONAN_TO_C = {
    'kotlin.Double': ('double', lambda v: v.value)
 }
 
+def type_by_address_command(debugger, command, result, internal_dict):
+    result.AppendMessage("DEBUG: {}".format(command))
+    tokens = command.split()
+    target = debugger.GetSelectedTarget()
+    process = target.GetProcess()
+    thread = process.GetSelectedThread()
+    types = _type_info_by_address(tokens[0])
+    result.AppendMessage("DEBUG: {}".format(types))
+    for t in types:
+        result.AppendMessage("{}: {:#x}".format(t.name, t.GetStartAddress().GetLoadAddress(target)))
+
+def symbol_by_name_command(debugger, command, result, internal_dict):
+    target = debugger.GetSelectedTarget()
+    process = target.GetProcess()
+    thread = process.GetSelectedThread()
+    frame = thread.GetSelectedFrame()
+    tokens = command.split()
+    mask = re.compile(tokens[0])
+    symbols = list(filter(lambda v: mask.match(v.name), frame.GetModule().symbols))
+    visited = list()
+    for symbol in symbols:
+       name = symbol.name
+       if name in visited:
+           continue
+       visited.append(name)
+       result.AppendMessage("{}: {:#x}".format(name, symbol.GetStartAddress().GetLoadAddress(target)))
+
 def konan_globals_command(debugger, command, result, internal_dict):
     target = debugger.GetSelectedTarget()
     process = target.GetProcess()
@@ -450,4 +485,6 @@ def __lldb_init_module(debugger, _):
     debugger.HandleCommand('command script add -f {}.print_this_command print_this'.format(__name__))
     debugger.HandleCommand('command script add -f {}.clear_cache_command clear_kotlin_cache'.format(__name__))
     debugger.HandleCommand('command script add -f {}.type_name_command type_name'.format(__name__))
-    debugger.HandleCommand('command script add -f {}.konan_globals_command konan_globals'.format(__name__))
+    debugger.HandleCommand('command script add -f {}.type_by_address_command type_by_address'.format(__name__))
+    debugger.HandleCommand('command script add -f {}.symbol_by_name_command symbol_by_name'.format(__name__))
+
