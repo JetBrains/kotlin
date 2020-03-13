@@ -59,7 +59,7 @@ def _symbol_loaded_address(name, debugger = lldb.debugger):
     # take first
     for candidate in candidates:
         address = candidate.GetStartAddress().GetLoadAddress(target)
-        log(lambda: "{} {:#x}".format(name, address))
+        log(lambda: "_symbol_loaded_address:{} {:#x}".format(name, address))
         return address
 
 def _type_info_by_address(address, debugger = lldb.debugger):
@@ -71,7 +71,7 @@ def _type_info_by_address(address, debugger = lldb.debugger):
     return candidates
 
 def is_instance_of(addr, typeinfo):
-    return evaluate("(bool)IsInstance({}, {})".format(addr, typeinfo)).GetValue() == "true"
+    return evaluate("(bool)IsInstance({}, {:#x})".format(addr, typeinfo)).GetValue() == "true"
 
 def is_string_or_array(value):
     return evaluate("(int)IsInstance({0}, {1}) ? 1 : ((int)Konan_DebugIsArray({0}) ? 2 : 0)".format(lldb_val_to_ptr(value), _symbol_loaded_address('kclass:kotlin.String'))).unsigned
@@ -114,6 +114,7 @@ def kotlin_object_type_summary(lldb_val, internal_dict = {}):
 
 def select_provider(lldb_val, tip, internal_dict):
     soa = is_string_or_array(lldb_val)
+    log(lambda : "select_provider: {} : {}".format(lldb_val, soa))
     return __FACTORY['string'](lldb_val, tip, internal_dict) if soa == 1 else __FACTORY['array'](lldb_val, tip, internal_dict) if soa == 2 \
         else __FACTORY['object'](lldb_val, tip, internal_dict)
 
