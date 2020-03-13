@@ -3885,9 +3885,19 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
+            @TestMetadata("nonTailCall.kt")
+            public void testNonTailCall() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/callableReference/nonTailCall.kt");
+            }
+
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/suspend/callableReference/simple.kt");
+            }
+
+            @TestMetadata("unitReturn.kt")
+            public void testUnitReturn() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/callableReference/unitReturn.kt");
             }
         }
 

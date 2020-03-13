@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
@@ -78,7 +77,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
         return irBuilder.irBlock(expression, IrStatementOrigin.LAMBDA) {
             val function = buildFun {
                 setSourceRange(expression)
-                origin = JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
+                origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                 name = Name.identifier("stub_for_inline")
                 visibility = Visibilities.LOCAL
                 returnType = field.type
@@ -135,7 +134,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
 
             val function = buildFun {
                 setSourceRange(expression)
-                origin = JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
+                origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                 name = Name.identifier("stub_for_inlining")
                 visibility = Visibilities.LOCAL
                 returnType = referencedFunction.returnType
