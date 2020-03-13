@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
 import com.intellij.notification.Notification
@@ -37,7 +37,8 @@ open class FileBasedStorage(file: Path,
                             provider: StreamProvider? = null) :
   XmlElementStorage(fileSpec, rootElementName, pathMacroManager, roamingType, provider) {
 
-  @Volatile private var cachedVirtualFile: VirtualFile? = null
+  @Volatile
+  private var cachedVirtualFile: VirtualFile? = null
 
   protected var lineSeparator: LineSeparator? = null
   protected var isBlockSavingTheContent = false
@@ -122,7 +123,7 @@ open class FileBasedStorage(file: Path,
             throw e
           }
           catch (e: Throwable) {
-            throw RuntimeException("Cannot write ${file}", e)
+            throw RuntimeException("Cannot write $file", e)
           }
         }
       }
