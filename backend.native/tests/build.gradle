@@ -1030,6 +1030,7 @@ task enumIdentity(type: KonanLocalTest) {
 }
 
 standaloneTest("leakWorker") {
+    disabled = project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build and pthreads.
     source = "runtime/workers/leak_worker.kt"
     flags = ['-g']
     expectedExitStatusChecker = { it != 0 }
@@ -1037,6 +1038,7 @@ standaloneTest("leakWorker") {
 }
 
 standaloneTest("leakMemoryWithWorkerTermination") {
+    disabled = project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build and pthreads.
     source = "runtime/workers/leak_memory_with_worker_termination.kt"
     flags = ['-g']
     expectedExitStatusChecker = { it != 0 }
@@ -2743,6 +2745,7 @@ standaloneTest("memory_only_gc") {
 }
 
 task memory_stable_ref_cross_thread_check(type: KonanLocalTest) {
+    disabled = project.testTarget == 'wasm32' // Needs workers.
     source = "runtime/memory/stable_ref_cross_thread_check.kt"
 }
 
@@ -2753,6 +2756,7 @@ standaloneTest("cycle_collector") {
 }
 
 standaloneTest("leakMemory") {
+    disabled = project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build.
     source = "runtime/memory/leak_memory.kt"
     flags = ['-g']
     expectedExitStatusChecker = { it != 0 }
