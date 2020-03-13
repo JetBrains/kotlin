@@ -1,5 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.IR
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 
 plugins {
     kotlin("multiplatform")
@@ -8,6 +10,14 @@ plugins {
 kotlin {
     js(IR) {
         nodejs()
+    }
+}
+
+// Using custom node version because regression https://bugs.chromium.org/p/v8/issues/detail?id=9546
+// causes test.numbers.DoubleMathTest.powers to fail
+rootProject.plugins.withType<NodeJsRootPlugin> {
+    rootProject.extensions.getByType(NodeJsRootExtension::class.java).apply {
+        nodeVersion = "12.16.1"
     }
 }
 
