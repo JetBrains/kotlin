@@ -174,6 +174,11 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
     buildActions();
   }
 
+  @ApiStatus.Internal
+  public void clearActions() {
+    myActionGroups.clear();
+  }
+
   public static class MatchedValue {
     @NotNull public final Object value;
     @NotNull final String pattern;

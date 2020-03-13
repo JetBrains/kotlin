@@ -172,6 +172,9 @@ public class ActionSearchEverywhereContributor implements SearchEverywhereContri
 
     if (selected instanceof BooleanOptionDescription) {
       final BooleanOptionDescription option = (BooleanOptionDescription)selected;
+      if (selected instanceof BooleanOptionDescription.RequiresRebuild) {
+        myModel.clearActions();           // release references to plugin actions so that the plugin can be unloaded successfully
+      }
       option.setOptionState(!option.isOptionEnabled());
       if (selected instanceof BooleanOptionDescription.RequiresRebuild) {
         myModel.rebuildActions();
