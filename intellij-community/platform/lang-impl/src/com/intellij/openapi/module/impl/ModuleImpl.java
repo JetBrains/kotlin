@@ -55,7 +55,7 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
   public ModuleImpl(@NotNull String name, @NotNull Project project, @Nullable String filePath) {
     super((PlatformComponentManagerImpl)project);
 
-    getPicoContainer().registerComponentInstance(Module.class, this);
+    registerServiceInstance(Module.class, this, PlatformComponentManagerImpl.getFakeCorePluginDescriptor());
 
     myProject = project;
     myModuleScopeProvider = new ModuleScopeProviderImpl(this);
