@@ -133,7 +133,7 @@ class BaseBenchmarkArguments(argParser: ArgParser): BenchmarkArguments(argParser
 
 object BenchmarksRunner {
     fun parse(args: Array<String>, benchmarksListAction: ()->Unit): BenchmarkArguments? {
-        class List: Subcommand("list") {
+        class List: Subcommand("list", "Show list of benchmarks") {
             override fun execute() {
                 benchmarksListAction()
             }

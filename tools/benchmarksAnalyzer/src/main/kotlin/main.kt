@@ -129,7 +129,7 @@ fun mergeReportsWithDetailedFlags(reports: List<BenchmarksReport>) =
         }
 
 fun main(args: Array<String>) {
-    class Summary: Subcommand("summary") {
+    class Summary: Subcommand("summary", "Output summary information") {
         val exec by option(ArgType.Choice(listOf("samples", "geomean")),
                 description = "Execution time way of calculation").default("geomean")
         val execSamples by option(ArgType.String, "exec-samples",
