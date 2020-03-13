@@ -68,11 +68,20 @@ public interface FileBasedIndexInfrastructureExtension {
   void onStubIndexVersionChanged(@NotNull StubIndexKey<?, ?> indexId);
 
   /**
+   * Executed when IntelliJ is open it's indexes (IDE start or plugin load/unload).
+   * All necessarily needed connections and resources should be open here.
+   *
+   * This method and {@link FileBasedIndexInfrastructureExtension#shutdown()} synchronize
+   * lifecycle of an extension with {@link FileBasedIndexImpl}.
+   **/
+  void initialize();
+
+  /**
    * Executed when IntelliJ is shutting down it's indexes (IDE shutdown or plugin load/unload). It is the best time
    * for the component to flush it's state to the disk and close all pending connections.
-   * TODO: Meanwhile, the implementation should be able to re-open necessary connections if
-   * TODO: other methods of the interface are executed after the call to {@link #performShutdown()}
+   *
+   * This method and {@link FileBasedIndexInfrastructureExtension#initialize()} synchronize
+   * lifecycle of an extension with {@link FileBasedIndexImpl}.
    */
-  void performShutdown();
-
+  void shutdown();
 }
