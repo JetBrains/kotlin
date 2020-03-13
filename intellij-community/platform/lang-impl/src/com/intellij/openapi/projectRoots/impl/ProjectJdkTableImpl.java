@@ -7,6 +7,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.components.*;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.*;
@@ -108,6 +110,63 @@ public class ProjectJdkTableImpl extends ProjectJdkTable implements ExportableCo
         }
       }
     });
+    SdkType.EP_NAME.addExtensionPointListener(new ExtensionPointListener<SdkType>() {
+      @Override
+      public void extensionAdded(@NotNull SdkType extension, @NotNull PluginDescriptor pluginDescriptor) {
+        loadSdkType(extension);
+      }
+
+      @Override
+      public void extensionRemoved(@NotNull SdkType extension, @NotNull PluginDescriptor pluginDescriptor) {
+        forgetSdkType(extension);
+      }
+    }, null);
+  }
+
+  private void loadSdkType(@NotNull SdkType newSdkType) {
+    for (Sdk sdk : mySdks) {
+      SdkTypeId sdkType = sdk.getSdkType();
+      if (sdkType instanceof UnknownSdkType && sdkType.getName().equals(newSdkType.getName()) && sdk instanceof ProjectJdkImpl) {
+        WriteAction.run(() -> {
+          Element additionalData = saveSdkAdditionalData(sdk);
+          ((ProjectJdkImpl)sdk).changeType(newSdkType, additionalData);
+        });
+      }
+    }
+  }
+
+  private void forgetSdkType(@NotNull SdkType extension) {
+    Set<Sdk> toRemove = new HashSet<>();
+    for (Sdk sdk : mySdks) {
+      SdkTypeId sdkType = sdk.getSdkType();
+      if (sdkType == extension) {
+        if (sdk instanceof ProjectJdkImpl) {
+          Element additionalDataElement = saveSdkAdditionalData(sdk);
+          ((ProjectJdkImpl)sdk).changeType(UnknownSdkType.getInstance(sdkType.getName()), additionalDataElement);
+        }
+        else {
+          //sdk was dynamically added by a plugin so we can only remove it
+          toRemove.add(sdk);
+        }
+      }
+    }
+    for (Sdk sdk : toRemove) {
+      removeJdk(sdk);
+    }
+  }
+
+  @Nullable
+  private static Element saveSdkAdditionalData(Sdk sdk) {
+    SdkAdditionalData additionalData = sdk.getSdkAdditionalData();
+    Element additionalDataElement;
+    if (additionalData != null) {
+      additionalDataElement = new Element(ProjectJdkImpl.ELEMENT_ADDITIONAL);
+      sdk.getSdkType().saveAdditionalData(additionalData, additionalDataElement);
+    }
+    else {
+      additionalDataElement = null;
+    }
+    return additionalDataElement;
   }
 
   @Override
