@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import com.intellij.openapi.progress.ProcessCanceledException
+import org.jetbrains.kotlin.KtNodeTypes.ARRAY_ACCESS_EXPRESSION
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildVariableAssignment
@@ -43,7 +45,10 @@ import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtArrayAccessExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
     private inline val builtinTypes: BuiltinTypes get() = session.builtinTypes
@@ -270,20 +275,33 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             return when {
                 operatorCallReference == null || (!lhsIsVar && !assignIsError) -> resolvedAssignCall.compose()
                 assignCallReference == null -> {
-                    val assignment =
-                        buildVariableAssignment {
+                    if (leftArgument is FirFunctionCall && leftArgument.calleeReference.source?.psi is KtArrayAccessExpression) {
+                        val setCall = buildFunctionCall {
                             source = operatorCall.source
-                            safe = false
-                            rValue = resolvedOperatorCall
-                            calleeReference = if (lhsIsVar)
-                                lhsReference!!
-                            else
-                                buildErrorNamedReference {
-                                    source = operatorCall.argument.source
-                                    diagnostic = FirVariableExpectedError()
-                                }
+                            calleeReference = buildSimpleNamedReference { name = OperatorNameConventions.SET }
+                            explicitReceiver = leftArgument.explicitReceiver
+                            argumentList = buildArgumentList {
+                                leftArgument.argumentList.arguments.map { arguments += it}
+                                arguments += resolvedOperatorCall
+                            }
                         }
-                    assignment.transform(transformer, ResolutionMode.ContextIndependent)
+                        setCall.transform(transformer, ResolutionMode.ContextIndependent)
+                    } else {
+                        val assignment =
+                            buildVariableAssignment {
+                                source = operatorCall.source
+                                safe = false
+                                rValue = resolvedOperatorCall
+                                calleeReference = if (lhsIsVar)
+                                    lhsReference!!
+                                else
+                                    buildErrorNamedReference {
+                                        source = operatorCall.argument.source
+                                        diagnostic = FirVariableExpectedError()
+                                    }
+                            }
+                        assignment.transform(transformer, ResolutionMode.ContextIndependent)
+                    }
                 }
                 else -> buildErrorExpression {
                     source = operatorCall.source

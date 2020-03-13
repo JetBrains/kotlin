@@ -104,14 +104,31 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
         CONST Int type=kotlin.Int value=42
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      ERROR_CALL 'FirArraySetCall (resolve isn't supported yet)' type=kotlin.Unit
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/set]>#' type=IrErrorType
+        FUNCTION_REFERENCE 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Int> origin=null reflectionTarget=<same>
+        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin' type=kotlin.String origin=null
+          $receiver: ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/get]>#' type=IrErrorType
+            FUNCTION_REFERENCE 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Int> origin=null reflectionTarget=<same>
+          other: CONST Int type=kotlin.Int value=1
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      ERROR_CALL 'FirArraySetCall (resolve isn't supported yet)' type=kotlin.Unit
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/set]>#' type=IrErrorType
+        FUNCTION_REFERENCE 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Int> origin=null reflectionTarget=<same>
+        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin' type=kotlin.String origin=null
+          $receiver: ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/get]>#' type=IrErrorType
+            FUNCTION_REFERENCE 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Int> origin=null reflectionTarget=<same>
+          other: CONST Int type=kotlin.Int value=1
   FUN name:test3 visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
     BLOCK_BODY
-      ERROR_CALL 'FirArraySetCall (resolve isn't supported yet)' type=kotlin.Unit
+      CALL 'public final fun set (i: <root>.IFoo, newValue: kotlin.Int): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=null
+        $receiver: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
+        i: GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.test3' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
+        newValue: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+          $this: CALL 'public final fun get (i: <root>.IFoo): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=null
+            $receiver: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
+            i: GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.test3' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
+          other: CONST Int type=kotlin.Int value=1
   FUN name:test4 visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
     BLOCK_BODY
@@ -119,14 +136,31 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.IFoo
             GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.test4' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
-          then: BLOCK type=kotlin.Unit origin=null
-            ERROR_CALL 'FirArraySetCall (resolve isn't supported yet)' type=kotlin.Unit
+          then: CALL 'public final fun set (i: <root>.IFoo, newValue: kotlin.Int): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=null
+            $receiver: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
+            i: TYPE_OP type=<root>.IFoo origin=IMPLICIT_CAST typeOperand=<root>.IFoo
+              GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.test4' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
+            newValue: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: CALL 'public final fun get (i: <root>.IFoo): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=null
+                $receiver: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
+                i: TYPE_OP type=<root>.IFoo origin=IMPLICIT_CAST typeOperand=<root>.IFoo
+                  GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.test4' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
+              other: CONST Int type=kotlin.Int value=1
   FUN name:test5 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
       TYPE_OP type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=CAST typeOperand=kotlin.Function1<kotlin.Int, kotlin.Unit>
         GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
-      ERROR_CALL 'FirArraySetCall (resolve isn't supported yet)' type=kotlin.Unit
+      CALL 'public final fun set (i: <root>.IFoo, newValue: kotlin.Int): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=null
+        $receiver: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
+        i: TYPE_OP type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<kotlin.Int, kotlin.Unit>
+          GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
+        newValue: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+          $this: CALL 'public final fun get (i: <root>.IFoo): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=null
+            $receiver: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
+            i: TYPE_OP type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<kotlin.Int, kotlin.Unit>
+              GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
+          other: CONST Int type=kotlin.Int value=1
   FUN name:test6 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
@@ -135,4 +169,13 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
       TYPE_OP type=<root>.IFoo origin=CAST typeOperand=<root>.IFoo
         TYPE_OP type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<kotlin.Int, kotlin.Unit>
           GET_VAR 'a: kotlin.Any declared in <root>.test6' type=kotlin.Any origin=null
-      ERROR_CALL 'FirArraySetCall (resolve isn't supported yet)' type=kotlin.Unit
+      CALL 'public final fun set (i: <root>.IFoo, newValue: kotlin.Int): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=null
+        $receiver: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
+        i: TYPE_OP type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<kotlin.Int, kotlin.Unit>
+          GET_VAR 'a: kotlin.Any declared in <root>.test6' type=kotlin.Any origin=null
+        newValue: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+          $this: CALL 'public final fun get (i: <root>.IFoo): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=null
+            $receiver: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
+            i: TYPE_OP type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<kotlin.Int, kotlin.Unit>
+              GET_VAR 'a: kotlin.Any declared in <root>.test6' type=kotlin.Any origin=null
+          other: CONST Int type=kotlin.Int value=1

@@ -40,6 +40,6 @@ fun testMismatchingArities() {
 
     <!UNRESOLVED_REFERENCE!>++<!><!INAPPLICABLE_CANDIDATE!>MismatchingArities2[0]<!>
     <!INAPPLICABLE_CANDIDATE!>MismatchingArities2[0]<!><!UNRESOLVED_REFERENCE!>++<!>
-    MismatchingArities2[0] += 1
+    <!INAPPLICABLE_CANDIDATE!>MismatchingArities2[0]<!> += 1
 }
 

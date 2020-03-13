@@ -67,4 +67,10 @@ FILE fqName:<root> fileName:/kt28456b.kt
   FUN name:testCompoundAssignment visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     BLOCK_BODY
-      ERROR_CALL 'FirArraySetCall (resolve isn't supported yet)' type=kotlin.Unit
+      ERROR_CALL 'Unresolved reference: <Inapplicable(PARAMETER_MAPPING_ERROR): [/set]>#' type=IrErrorType
+        CONST Int type=kotlin.Int value=1
+        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+          $this: CALL 'public final fun get (i: kotlin.Int, a: kotlin.Int, b: kotlin.Int, c: kotlin.Int, d: kotlin.Int): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=null
+            $receiver: GET_VAR 'a: <root>.A declared in <root>.testCompoundAssignment' type=<root>.A origin=null
+            i: CONST Int type=kotlin.Int value=1
+          other: CONST Int type=kotlin.Int value=10

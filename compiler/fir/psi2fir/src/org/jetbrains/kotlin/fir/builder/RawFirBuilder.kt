@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.KtNodeTypes.ARRAY_ACCESS_EXPRESSION
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -1395,7 +1396,8 @@ class RawFirBuilder(
                 }
             } else {
                 val firOperation = operationToken.toFirOperation()
-                if (firOperation in FirOperation.ASSIGNMENTS) {
+                if (firOperation in FirOperation.ASSIGNMENTS &&
+                    (firOperation == FirOperation.ASSIGN || expression.left?.elementType != ARRAY_ACCESS_EXPRESSION)) {
                     return expression.left.generateAssignment(source, rightArgument, firOperation) {
                         (this as KtExpression).toFirExpression("Incorrect expression in assignment: ${expression.text}")
                     }
