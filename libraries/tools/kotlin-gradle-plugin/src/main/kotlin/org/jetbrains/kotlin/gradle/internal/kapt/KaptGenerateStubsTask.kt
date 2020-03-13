@@ -92,7 +92,7 @@ open class KaptGenerateStubsTask : KotlinCompile() {
         args.pluginOptions = (pluginOptionsWithKapt.arguments + args.pluginOptions!!).toTypedArray()
 
         args.verbose = project.hasProperty("kapt.verbose") && project.property("kapt.verbose").toString().toBoolean() == true
-        args.classpathAsList = this.compileClasspath.toList()
+        args.classpathAsList = this.compileClasspath.filter { it.exists() }.toList()
         args.destinationAsFile = this.destinationDir
     }
 
