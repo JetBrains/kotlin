@@ -203,6 +203,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/resolve/testData/resolve/intersectionTypes.kt");
     }
 
+    @TestMetadata("invokeInWhenSubjectVariableInitializer.kt")
+    public void testInvokeInWhenSubjectVariableInitializer() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/invokeInWhenSubjectVariableInitializer.kt");
+    }
+
     @TestMetadata("invokeOfLambdaWithReceiver.kt")
     public void testInvokeOfLambdaWithReceiver() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/invokeOfLambdaWithReceiver.kt");

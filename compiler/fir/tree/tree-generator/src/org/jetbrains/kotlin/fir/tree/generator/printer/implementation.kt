@@ -266,6 +266,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                                 """
                                 |if (subjectVariable != null) {
                                 |            subjectVariable = subjectVariable?.transformSingle(transformer, data)
+                                |            subject = subjectVariable?.initializer
                                 |        } else {
                                 |            subject = subject?.transformSingle(transformer, data)
                                 |        }
