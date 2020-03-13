@@ -167,11 +167,12 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
     FileType fileType = myRecognizedFileType.getSelectedFileType();
     if (!canBeModified(fileType)) return;
 
-    UserFileType ftToEdit = myOriginalToEditedMap.get((UserFileType)fileType);
-    if (ftToEdit == null) ftToEdit = ((UserFileType)fileType).clone();
+    UserFileType userFileType = (UserFileType)fileType;
+    UserFileType ftToEdit = myOriginalToEditedMap.get(userFileType);
+    if (ftToEdit == null) ftToEdit = userFileType.clone();
     @SuppressWarnings("unchecked") TypeEditor editor = new TypeEditor(myRecognizedFileType.myFileTypesList, ftToEdit, FileTypesBundle.message("filetype.edit.existing.title"));
     if (editor.showAndGet()) {
-      myOriginalToEditedMap.put((UserFileType)fileType, ftToEdit);
+      myOriginalToEditedMap.put(userFileType, ftToEdit);
     }
   }
 
@@ -283,7 +284,7 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
   }
 
   @Nullable
-  public FileType findExistingFileType(FileNameMatcher matcher) {
+  private FileType findExistingFileType(@NotNull FileNameMatcher matcher) {
     FileType fileTypeByExtension = myTempPatternsTable.findAssociatedFileType(matcher);
 
     if (fileTypeByExtension != null && fileTypeByExtension != FileTypes.UNKNOWN) {
@@ -314,14 +315,13 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
   }
 
   public static class RecognizedFileTypes extends JPanel {
-    private final JList<FileType> myFileTypesList;
+    private final JList<FileType> myFileTypesList = new JBList<>(new DefaultListModel<>());
     private final MySpeedSearch mySpeedSearch;
     private FileTypeConfigurable myController;
 
     public RecognizedFileTypes() {
       super(new BorderLayout());
 
-      myFileTypesList = new JBList<>(new DefaultListModel<>());
       myFileTypesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       myFileTypesList.setCellRenderer(new FileTypeRenderer(() -> {
         List<FileType> result = new ArrayList<>();
@@ -356,13 +356,13 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
       mySpeedSearch = new MySpeedSearch(myFileTypesList);
     }
 
-    private static class MySpeedSearch extends SpeedSearchBase<JList> {
+    private static class MySpeedSearch extends SpeedSearchBase<JList<FileType>> {
       private final List<Condition<Pair<Object, String>>> myOrderedConverters;
       private FileTypeConfigurable myController;
       private Object myCurrentType;
       private String myExtension;
 
-      private MySpeedSearch(JList component) {
+      private MySpeedSearch(@NotNull JList<FileType> component) {
         super(component);
         myOrderedConverters = Arrays.asList(
           // simple
@@ -374,7 +374,7 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
             return getComparator().matchingFragments(p.second, value) != null;
           },
           // by-extension
-          p -> (p.first instanceof FileType && myCurrentType != null) && myCurrentType.equals(p.first)
+          p -> p.first instanceof FileType && myCurrentType != null && myCurrentType.equals(p.first)
         );
       }
 
@@ -429,20 +429,21 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
       }
     }
 
-    public void attachActions(final FileTypeConfigurable controller) {
+    void attachActions(@NotNull FileTypeConfigurable controller) {
       myController = controller;
       mySpeedSearch.myController = controller;
     }
 
-    public FileType getSelectedFileType() {
+    FileType getSelectedFileType() {
       return myFileTypesList.getSelectedValue();
     }
 
+    @NotNull
     public JComponent getComponent() {
       return this;
     }
 
-    public void setFileTypes(FileType[] types) {
+    public void setFileTypes(FileType @NotNull [] types) {
       DefaultListModel<FileType> listModel = (DefaultListModel<FileType>)myFileTypesList.getModel();
       listModel.clear();
       for (FileType type : types) {
@@ -453,11 +454,7 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
       ScrollingUtil.ensureSelectionExists(myFileTypesList);
     }
 
-    public int getSelectedIndex() {
-      return myFileTypesList.getSelectedIndex();
-    }
-
-    public void selectFileType(FileType fileType) {
+    void selectFileType(FileType fileType) {
       myFileTypesList.setSelectedValue(fileType, true);
       IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(myFileTypesList, true));
     }
@@ -482,15 +479,16 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
                   .setShowLine(false));
     }
 
-    public void attachActions(final FileTypeConfigurable controller) {
+    void attachActions(@NotNull FileTypeConfigurable controller) {
       myController = controller;
     }
 
+    @NotNull
     public JComponent getComponent() {
       return this;
     }
 
-    public void clearList() {
+    void clearList() {
       getListModel().clear();
       myPatternsList.clearSelection();
     }
