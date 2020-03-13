@@ -26,8 +26,6 @@ val cidrPluginTools: Map<String, KFunction<Any>> = listOf<KFunction<Any>>(
         ::preparePluginXml,
 
         ::pluginJar,
-        ::patchedPlatformDepsJar,
-        ::otherPlatformDepsJars,
 
         ::patchFileTemplates,
         ::patchGradleXml
@@ -44,7 +42,6 @@ val pluginXmlPath = "META-INF/plugin.xml"
 val javaPluginId = "com.intellij.kotlinNative.platformDeps"
 
 val excludesListFromIdeaPlugin: List<String> by rootProject.extra
-val platformDepsJarName: String by rootProject.extra
 val isStandaloneBuild: Boolean by rootProject.extra
 
 fun Logger.kotlinInfo(message: () -> String) {
@@ -188,7 +185,7 @@ fun cidrUpdatePluginsXml(
         cidrProductFriendlyVersion: String,
         cidrPluginZipPath: File,
         cidrCustomPluginRepoUrl: URL,
-        javaPluginDownloadUrl: URL?
+        javaPluginDownloadUrl: URL
 ): Task = with(project) {
     task<Task>(guessCidrProductNameFromProject(true) + "UpdatePluginsXml") {
         dependsOn(pluginXmlTask)
@@ -248,11 +245,11 @@ fun cidrUpdatePluginsXml(
                     untilBuild = untilBuild,
                     name = name.first,
                     description = description.first,
-                    dependency = if (javaPluginDownloadUrl != null) javaPluginId else null
+                    dependency = javaPluginId
             )
 
-            val javaPluginDescription = if (javaPluginDownloadUrl != null) {
-                val nameAndDescription = "Kotlin/Native Platform Dependencies for " + guessCidrProductNameFromProject(false)
+            val nameAndDescription = "Kotlin/Native Platform Dependencies for " + guessCidrProductNameFromProject(false)
+            val javaPluginDescription =
                 generatePluginDescription(
                         id = javaPluginId,
                         url = javaPluginDownloadUrl,
@@ -263,8 +260,6 @@ fun cidrUpdatePluginsXml(
                         description = nameAndDescription,
                         dependency = null
                 )
-            } else
-                ""
 
             updatePluginsXmlFile.writeText("""
                     |<plugins>
@@ -448,7 +443,7 @@ fun customPluginRepos(releaseType: ReleaseType, kotlinBuildNumber: String, inden
         )
         ReleaseType.DEV -> listOf(
                 "https://dl.bintray.com/kotlin/kotlin-dev",
-                "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_Compiler),number:$kotlinBuildNumber,branch:default:any/artifacts/content/maven/"
+                "https://buildserver.labs.intellij.net/guestAuth/app/rest/builds/buildType:(id:Kotlin_KotlinDev_Aggregate),number:$kotlinBuildNumber,branch:default:any/artifacts/content/maven/"
         )
         ReleaseType.SNAPSHOT -> listOf(
                 "https://oss.sonatype.org/content/repositories/snapshots"
@@ -459,7 +454,7 @@ fun customPluginRepos(releaseType: ReleaseType, kotlinBuildNumber: String, inden
 }
 
 fun pluginResolutionRules(releaseType: ReleaseType): String = when (releaseType) {
-    ReleaseType.SNAPSHOT -> """
+    ReleaseType.SNAPSHOT, ReleaseType.DEV -> """
         |
         |    resolutionStrategy {
         |        eachPlugin {
@@ -551,15 +546,13 @@ fun preparePluginXml(
         predecessorProjectName: String,
         productVersion: String,
         strictProductVersionLimitation: Boolean,
-        cidrPluginVersionFull: String,
-        useJavaPlugin: Boolean
+        cidrPluginVersionFull: String
 ): Copy = with(project) {
     task<Copy>("preparePluginXml") {
         dependsOn("$predecessorProjectName:assemble")
 
         inputs.property("${project.name}-$name-strictProductVersionLimitation", strictProductVersionLimitation)
         inputs.property("${project.name}-$name-cidrPluginVersionFull", cidrPluginVersionFull)
-        inputs.property("${project.name}-$name-useJavaPlugin", useJavaPlugin)
         outputs.dir("$buildDir/$name")
 
         val predecessorProjectResources: File = project(predecessorProjectName)
@@ -571,15 +564,14 @@ fun preparePluginXml(
         from(predecessorProjectResources) { include(pluginXmlPath) }
         into(outputs.files.singleFile)
 
-        applyCidrVersionRestrictions(productVersion, strictProductVersionLimitation, cidrPluginVersionFull, useJavaPlugin)
+        applyCidrVersionRestrictions(productVersion, strictProductVersionLimitation, cidrPluginVersionFull)
     }
 }
 
 fun Copy.applyCidrVersionRestrictions(
         productVersion: String,
         strictProductVersionLimitation: Boolean,
-        cidrPluginVersionFull: String,
-        useJavaPlugin: Boolean
+        cidrPluginVersionFull: String
 ) {
     val dotsCount = productVersion.count { it == '.' }
     check(dotsCount in 1..2) {
@@ -607,17 +599,10 @@ fun Copy.applyCidrVersionRestrictions(
     } else
         productVersion.substringBefore('.') + ".*"
 
-    val javaPluginDependency = if (useJavaPlugin)
+    val javaPluginDependency =
         """
         |
         |  <depends>$javaPluginId</depends>
-        """.trimMargin().trimStart()
-    else
-        """
-        |  <xi:include href="/META-INF/JavaAnalysisPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
-        |  <xi:include href="/META-INF/JavaIndexingPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
-        |  <xi:include href="/META-INF/JavaPsiPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
-        |  <xi:include href="/META-INF/JavaPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
         """.trimMargin().trimStart()
 
     filter {
@@ -676,62 +661,6 @@ fun pluginJar(
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 }
-
-// Prepare patched "platformDeps" JAR file.
-fun patchedPlatformDepsJar(project: Project, platformDepsDir: File): Zip = with(project) {
-    task<Zip>("patchedPlatformDepsJar") {
-        val productName = guessCidrProductNameFromProject(false)
-        archiveFileName.set("kotlinNative-platformDeps-$productName.jar")
-        destinationDirectory.set(file("$buildDir/$name"))
-
-//        val platformDepsReplacementsDir = file("resources/platformDeps")
-//        val platformDepsReplacements = platformDepsReplacementsDir.walkTopDown()
-//                .filter { it.isFile && it.length() > 0 }
-//                .map { it.relativeTo(platformDepsReplacementsDir).path }
-//                .toList()
-
-//        inputs.property("${project.name}-$name-platformDepsReplacements-amount", platformDepsReplacements.size)
-
-//        platformDepsReplacements.forEach {
-//            from(platformDepsReplacementsDir) { include(it) }
-//        }
-
-        from(zipTree(fileTree(platformDepsDir).matching { include(platformDepsJarName) }.singleFile)) {
-//            exclude(pluginXmlPath)
-//            platformDepsReplacements.forEach { exclude(it) }
-        }
-
-//        patchJavaXmls()
-    }
-}
-
-fun otherPlatformDepsJars(project: Project, platformDepsDir: File): Task = with(project) {
-    task<Task>("otherPlatformDepsJars") {
-        val otherPlatformDepsJars = fileTree(platformDepsDir) {
-            include("*.jar")
-            exclude(platformDepsJarName)
-        }.files
-
-        inputs.files(otherPlatformDepsJars)
-        outputs.files(otherPlatformDepsJars)
-    }
-}
-
-fun Zip.patchJavaXmls() {
-    val javaPsiXmlPath = "META-INF/JavaPsiPlugin.xml"
-    val javaPluginXmlPath = "META-INF/JavaPlugin.xml"
-
-    val fileToMarkers = mapOf(
-            javaPsiXmlPath to listOf("implementation=\"org.jetbrains.uast.java.JavaUastLanguagePlugin\""),
-            javaPluginXmlPath to listOf(
-                    "implementation=\"com.intellij.spi.SPIFileTypeFactory\"",
-                    "implementationClass=\"com.intellij.lang.java.JavaDocumentationProvider\""
-            )
-    )
-
-    commentXmlFiles(fileToMarkers)
-}
-
 
 // --------------------------------------------------
 // CIDR plugin patches:

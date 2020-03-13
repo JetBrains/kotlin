@@ -40,48 +40,22 @@ fun externalDepsDir(depsProjectName: String, suffix: String): File =
 val clionVersion: String by rootProject.extra(rootProject.extra["versions.clion"] as String)
 val clionVersionStrict: Boolean by rootProject.extra(rootProject.extra["versions.clion.strict"].toBoolean())
 val clionFriendlyVersion: String by rootProject.extra(cidrProductFriendlyVersion("CLion", clionVersion))
-val clionUseJavaPlugin: Boolean by rootProject.extra(ijProductBranch(clionVersion) >= 192)
 val clionRepo: String = rootProject.extra["versions.clion.repo"] as String
 val clionUnscrambledJarArtifact: String by rootProject.extra("$clionRepo:$clionVersion:unscrambled/clion.jar")
 val clionUnscrambledJarDir: File by rootProject.extra(externalDepsDir("kotlin-native-platform-deps", "clion-unscrambled-$clionVersion"))
-val clionPlatformDepsOrJavaPluginArtifact: String by rootProject.extra(
-        "$clionRepo:$clionVersion:CL-plugins/${platformDepsArtifactName(clionUseJavaPlugin, clionVersion)}"
-)
-val clionPlatformDepsOrJavaPluginDir: File by rootProject.extra(
-        externalDepsDir(
-                "kotlin-native-platform-deps",
-                if (clionUseJavaPlugin) "clion-java-plugin-$clionVersion" else "clion-platform-deps-$clionVersion"
-        )
-)
-val clionJavaPluginDownloadUrl: URL? by rootProject.extra(
-        if (clionUseJavaPlugin)
+val clionJavaPluginDownloadUrl: URL by rootProject.extra(
             URL("https://buildserver.labs.intellij.net/guestAuth/repository/download/$clionRepo/$clionVersion/CL-plugins/java.zip")
-        else
-            null
 )
 
 val kotlinNativeBackendVersion: String by rootProject.extra(rootProject.extra["versions.kotlinNativeBackend"] as String)
 val appcodeVersion: String by rootProject.extra(rootProject.extra["versions.appcode"] as String)
 val appcodeVersionStrict: Boolean by rootProject.extra(rootProject.extra["versions.appcode.strict"].toBoolean())
 val appcodeFriendlyVersion: String by rootProject.extra(cidrProductFriendlyVersion("AppCode", appcodeVersion))
-val appcodeUseJavaPlugin: Boolean by rootProject.extra(ijProductBranch(appcodeVersion) >= 192)
 val appcodeRepo: String = rootProject.extra["versions.appcode.repo"] as String
 val appcodeUnscrambledJarArtifact: String by rootProject.extra("$appcodeRepo:$appcodeVersion:unscrambled/appcode.jar")
 val appcodeUnscrambledJarDir: File by rootProject.extra(externalDepsDir("kotlin-native-platform-deps", "appcode-unscrambled-$appcodeVersion"))
-val appcodePlatformDepsOrJavaPluginArtifact: String by rootProject.extra(
-        "$appcodeRepo:$appcodeVersion:OC-plugins/${platformDepsArtifactName(appcodeUseJavaPlugin, appcodeVersion)}"
-)
-val appcodePlatformDepsOrJavaPluginDir: File by rootProject.extra(
-        externalDepsDir(
-                "kotlin-native-platform-deps",
-                if (appcodeUseJavaPlugin) "appcode-java-plugin-$appcodeVersion" else "appcode-platform-deps-$appcodeVersion"
-        )
-)
-val appcodeJavaPluginDownloadUrl: URL? by rootProject.extra(
-        if (appcodeUseJavaPlugin)
+val appcodeJavaPluginDownloadUrl: URL by rootProject.extra(
             URL("https://buildserver.labs.intellij.net/guestAuth/repository/download/$appcodeRepo/$appcodeVersion/OC-plugins/java.zip")
-        else
-            null
 )
 val xCodeCompatPluginVersion by rootProject.extra(rootProject.extra["versions.xcode-compat"] as String)
 
@@ -137,15 +111,9 @@ val cidrVersion: String by rootProject.extra(if (useAppCodeForCommon) appcodeVer
 
 if (isStandaloneBuild) { // setup additional properties that are required only when running in standalone mode:
     if (useAppCodeForCommon) {
-        val cidrIdeDir: File by rootProject.extra(externalDepsDir("cidr", "appcode-$appcodeVersion"))
-        val cidrIdeArtifact: String by rootProject.extra("$appcodeRepo:$appcodeVersion:AppCode-$appcodeVersion.sit")
-        val cidrPlatformDepsOrJavaPluginDir: File by rootProject.extra(appcodePlatformDepsOrJavaPluginDir)
         val cidrUnscrambledJarDir: File by rootProject.extra(appcodeUnscrambledJarDir)
     }
     else {
-        val cidrIdeDir: File by rootProject.extra(externalDepsDir("cidr", "clion-$clionVersion"))
-        val cidrIdeArtifact: String by rootProject.extra("$clionRepo:$clionVersion:CLion-$clionVersion.tar.gz")
-        val cidrPlatformDepsOrJavaPluginDir: File by rootProject.extra(clionPlatformDepsOrJavaPluginDir)
         val cidrUnscrambledJarDir: File by rootProject.extra(clionUnscrambledJarDir)
     }
 
@@ -206,7 +174,6 @@ val mobilePluginZipPath: File by rootProject.extra(
 )
 val mobileCustomPluginRepoUrl: URL by rootProject.extra(cidrCustomPluginRepoUrl("clionPluginRepoUrl", clionPluginZipPath))
 
-val platformDepsJarName: String by rootProject.extra("kotlinNative-platformDeps.jar")
 val excludesListFromIdeaPlugin: List<String> by rootProject.extra(listOf(
         "lib/android-*.jar", // no need Android stuff
         "lib/kapt3-*.jar", // no annotation processing
@@ -249,8 +216,5 @@ fun cidrCustomPluginRepoUrl(repoUrlPropertyName: String, cidrPluginZipPath: File
         findProperty(repoUrlPropertyName)?.let {
             with (it.toString()) { URL(if (endsWith('/')) this else "$this/") }
         } ?: cidrPluginZipPath.parentFile.toURI().toURL()
-
-fun platformDepsArtifactName(useJavaPlugin: Boolean, productVersion: String): String =
-        if (useJavaPlugin) "java.zip" else "kotlinNative-platformDeps-$productVersion.zip"
 
 fun Any?.toBoolean(): Boolean = parseBoolean(this?.toString())

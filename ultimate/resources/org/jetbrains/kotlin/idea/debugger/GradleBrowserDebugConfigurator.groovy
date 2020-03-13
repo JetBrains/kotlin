@@ -1,26 +1,26 @@
 import org.gradle.api.Task
 
 ({
-    def doIfInstance = { Task task, String fqn, Closure action ->
-        def taskSuperClass = task.class
-        while (taskSuperClass != Object.class) {
-            if (taskSuperClass.canonicalName == fqn) {
-                action()
-
-                return
+    def isInstance = { Object o, String fqn ->
+        def superClass = o.class
+        while (superClass != Object.class) {
+            if (superClass.canonicalName == fqn) {
+                return true
             } else {
-                taskSuperClass = taskSuperClass.superclass
+                superClass = superClass.superclass
             }
         }
-    }
 
-    def forJsTestTask = { Task task, Closure action ->
-        doIfInstance(task, "org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest", action)
+        return false
     }
 
     def forJsBrowserTestTask = { Task task, Closure action ->
-        if (task.name.toLowerCase().contains("browser".toLowerCase())) {
-            forJsTestTask(task, action)
+        if (
+        isInstance(task, "org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest")
+                && task.hasProperty('testFramework')
+                && isInstance(task.testFramework, "org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma")
+        ) {
+            action()
         }
     }
 

@@ -33,7 +33,7 @@ class KotlinNativeIdeInitializer {
             "com.intellij.diagram" // Java plugin specific
         )
 
-        val PLUGINS_TO_UNREGISTER_RUN_CONFIGURATIONS = setOf(
+        val JAVA_PLUGIN_IDS = setOf(
             "com.intellij.kotlinNative.platformDeps", // Platform Deps (Java)
             "com.intellij.java" // Java
         )
@@ -54,9 +54,9 @@ class KotlinNativeIdeInitializer {
         unregisterExtensionsByClass(ProjectTaskRunner.EP_NAME, JpsProjectTaskRunner::class.java)
 
         // Disable run configurations provided by Java plugin
-        unregisterExtensionsFromPlugins(ConfigurationType.CONFIGURATION_TYPE_EP, PLUGINS_TO_UNREGISTER_RUN_CONFIGURATIONS)
-        unregisterExtensionsFromPlugins(RunConfigurationProducer.EP_NAME, PLUGINS_TO_UNREGISTER_RUN_CONFIGURATIONS)
-        unregisterExtensionsFromPlugins(ProgramRunner.PROGRAM_RUNNER_EP, PLUGINS_TO_UNREGISTER_RUN_CONFIGURATIONS)
+        unregisterExtensionsFromPlugins(ConfigurationType.CONFIGURATION_TYPE_EP, JAVA_PLUGIN_IDS)
+        unregisterExtensionsFromPlugins(RunConfigurationProducer.EP_NAME, JAVA_PLUGIN_IDS)
+        unregisterExtensionsFromPlugins(ProgramRunner.PROGRAM_RUNNER_EP, JAVA_PLUGIN_IDS)
     }
 
     private fun <T : Any> unregisterExtensionsByClass(

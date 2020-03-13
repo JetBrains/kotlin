@@ -5,11 +5,13 @@
 
 package org.jetbrains.konan.internal
 
+import com.intellij.codeInspection.InspectionEP
 import com.intellij.codeInspection.LocalInspectionEP
 import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.execution.configurations.ConfigurationType
 import com.intellij.execution.runners.ProgramRunner
 import com.intellij.ide.util.TipAndTrickBean
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.ExtensionPoint
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
@@ -27,13 +29,15 @@ import java.util.function.Predicate
 class KotlinNativeIdeInitializer {
 
     private companion object {
+        val LOG = Logger.getInstance(KotlinNativeIdeInitializer::class.java)
+
         val PLUGINS_TO_UNREGISTER_TIP_AND_TRICKS = setOf(
             KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString, // all tips & tricks that come from the main Kotlin plugin
             "org.intellij.intelliLang", // Java plugin specific
             "com.intellij.diagram" // Java plugin specific
         )
 
-        val PLUGINS_TO_UNREGISTER_RUN_CONFIGURATIONS = setOf(
+        val JAVA_PLUGIN_IDS = setOf(
             "com.intellij.kotlinNative.platformDeps", // Platform Deps (Java)
             "com.intellij.java" // Java
         )
@@ -54,9 +58,9 @@ class KotlinNativeIdeInitializer {
         unregisterExtensionsByClass(ProjectTaskRunner.EP_NAME, JpsProjectTaskRunner::class.java)
 
         // Disable run configurations provided by Java plugin
-        unregisterExtensionsFromPlugins(ConfigurationType.CONFIGURATION_TYPE_EP, PLUGINS_TO_UNREGISTER_RUN_CONFIGURATIONS)
-        unregisterExtensionsFromPlugins(RunConfigurationProducer.EP_NAME, PLUGINS_TO_UNREGISTER_RUN_CONFIGURATIONS)
-        unregisterExtensionsFromPlugins(ProgramRunner.PROGRAM_RUNNER_EP, PLUGINS_TO_UNREGISTER_RUN_CONFIGURATIONS)
+        unregisterExtensionsFromPlugins(ConfigurationType.CONFIGURATION_TYPE_EP, JAVA_PLUGIN_IDS)
+        unregisterExtensionsFromPlugins(RunConfigurationProducer.EP_NAME, JAVA_PLUGIN_IDS)
+        unregisterExtensionsFromPlugins(ProgramRunner.PROGRAM_RUNNER_EP, JAVA_PLUGIN_IDS)
     }
 
     private fun <T : Any> unregisterExtensionsByClass(
@@ -84,24 +88,30 @@ class KotlinNativeIdeInitializer {
         extensionPoint: ExtensionPoint<T>,
         predicate: (String, ExtensionComponentAdapter) -> Boolean
     ) {
-        val negatedPredicate = predicate.negate()
-        extensionPoint.unregisterExtensions(negatedPredicate, false)
+        extensionPoint.unregisterExtensions(predicate.wrap(extensionPoint.name), false)
     }
 
     // TODO: drop this method as it forces all extensions to instantiate and then unregisters some of them.
     @Suppress("DEPRECATION")
-    private fun <T : Any> unregisterExtensionInstances(
-        extensionPointName: ExtensionPointName<T>,
-        predicate: (T) -> Boolean
+    private fun <T : InspectionEP> unregisterExtensionInstances(
+            extensionPointName: ExtensionPointName<T>,
+            predicate: (T) -> Boolean
     ) {
         val extensionPoint = Extensions.getRootArea().getExtensionPoint(extensionPointName)
-        val negatedPredicate = predicate.negate()
-        extensionPoint.unregisterExtensions(negatedPredicate)
+        extensionPoint.unregisterExtensions(predicate.wrap(extensionPointName.name))
     }
 
-    private fun <T : Any> ((T) -> Boolean).negate(): Predicate<T> =
-        Predicate<T> { extension -> this(extension) }.negate()
+    private fun <T : InspectionEP> ((T) -> Boolean).wrap(extensionPointName: String) =
+        Predicate<T> { extension ->
+            this(extension).also { result ->
+                if (result) LOG.warn("unregistering extension $extensionPointName, ${extension::class.java}, ${extension.pluginDescriptor}")
+            }
+        }.negate()
 
-    private fun ((String, ExtensionComponentAdapter) -> Boolean).negate(): BiPredicate<String, ExtensionComponentAdapter> =
-        BiPredicate<String, ExtensionComponentAdapter> { className, adapter -> this(className, adapter) }.negate()
+    private fun ((String, ExtensionComponentAdapter) -> Boolean).wrap(extensionPointName: String) =
+        BiPredicate<String, ExtensionComponentAdapter> { className, adapter ->
+            this(className, adapter).also { result ->
+                if (result) LOG.warn("unregistering extension $extensionPointName, $className, ${adapter.pluginDescriptor}")
+            }
+        }.negate()
 }
