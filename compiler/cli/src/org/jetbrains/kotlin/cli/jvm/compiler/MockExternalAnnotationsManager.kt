@@ -22,6 +22,7 @@ import com.intellij.psi.*
 
 class MockExternalAnnotationsManager : ExternalAnnotationsManager() {
     override fun chooseAnnotationsPlace(element: PsiElement): AnnotationPlace = AnnotationPlace.NOWHERE
+    override fun chooseAnnotationsPlaceNoUi(element: PsiElement): AnnotationPlace = AnnotationPlace.NOWHERE
 
     override fun isExternalAnnotationWritable(listOwner: PsiModifierListOwner, annotationFQN: String): Boolean = false
     override fun isExternalAnnotation(annotation: PsiAnnotation): Boolean = false

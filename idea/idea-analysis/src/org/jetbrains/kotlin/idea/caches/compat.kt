@@ -9,6 +9,6 @@ import com.intellij.psi.PsiMethod
 import com.intellij.util.Processor
 
 // BUNCH 193
-typealias StringProcessor = Processor<String>
-typealias PsiMethodProcessor = Processor<PsiMethod>
+typealias StringProcessor = Processor<in String>
+typealias PsiMethodProcessor = Processor<in PsiMethod>
 

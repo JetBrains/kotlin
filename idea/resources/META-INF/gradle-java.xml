@@ -9,7 +9,6 @@
         <kotlinDslFrameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.KotlinDslGradleKotlinJSBrowserFrameworkSupportProvider"/>
         <kotlinDslFrameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.KotlinDslGradleKotlinJSNodeFrameworkSupportProvider"/>
         <pluginDescriptions implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradlePluginDescription"/>
-        <projectResolve implementation="org.jetbrains.kotlin.idea.configuration.KotlinNonJvmGutterConfigurator" />
         <projectResolve implementation="org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModelResolver" order="first"/>
         <projectResolve implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectResolverExtension" order="first"/>
         <projectResolve implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleCoroutineDebugProjectResolver" order="last"/>
