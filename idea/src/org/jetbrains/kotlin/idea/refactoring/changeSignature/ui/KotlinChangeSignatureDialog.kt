@@ -461,7 +461,7 @@ class KotlinChangeSignatureDialog(
 
 
         private fun KtTypeCodeFragment.createCopy() =
-            KtPsiFactory(this).createTypeCodeFragment(text, this)
+            KtPsiFactory(this).createTypeCodeFragment(text, this.context)
 
         fun PsiCodeFragment?.getTypeInfo(isCovariant: Boolean, forPreview: Boolean, reanalyse: Boolean = false): KotlinTypeInfo {
             if (this !is KtTypeCodeFragment) return KotlinTypeInfo(isCovariant)
