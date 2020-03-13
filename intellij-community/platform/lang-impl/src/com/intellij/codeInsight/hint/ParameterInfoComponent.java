@@ -383,30 +383,37 @@ public class ParameterInfoComponent extends JPanel {
   }
 
   private class OneElementComponent extends JPanel {
-    private OneLineComponent[] myOneLineComponents;
 
     OneElementComponent() {
       super(new GridBagLayout());
       setOpaque(true);
-      myOneLineComponents = new OneLineComponent[0]; //TODO ???
     }
 
     @Override
     public String toString() {
-      boolean highlighted = myOneLineComponents.length > 0 && !BACKGROUND.equals(myOneLineComponents[0].getBackground());
-      String text = Stream.of(myOneLineComponents).filter(Objects::nonNull).map(Object::toString).collect(Collectors.joining());
+      boolean highlighted = getComponentCount() > 0 && !BACKGROUND.equals(getComponent(0).getBackground());
+      String text = Stream.of(getComponents()).map(Object::toString).collect(Collectors.joining());
       return highlighted ? '[' + text + ']' : text;
     }
 
+    private OneLineComponent getOneLineComponent(int index) {
+      for (int i = getComponentCount(); i <= index; i++) {
+        add(new OneLineComponent(),
+            new GridBagConstraints(0, i, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, JBUI.emptyInsets(), 0, 0));
+      }
+      return (OneLineComponent)getComponent(index);
+    }
+
+    private void trimComponents(int count) {
+      for (int i = getComponentCount() - 1; i >= count; i--) {
+        remove(i);
+      }
+    }
+
     private void setup(String htmlText, Color background) {
-      removeAll();
       setBackground(background);
-      myOneLineComponents = new OneLineComponent[1];
-      myOneLineComponents[0] = new OneLineComponent();
-      myOneLineComponents[0].doSetup(htmlText, background);
-      add(myOneLineComponents[0], new GridBagConstraints(0,0,1,1,1,0,
-                                                         GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                                                         new Insets(0,0,0,0),0,0));
+      getOneLineComponent(0).doSetup(htmlText, background);
+      trimComponents(1);
     }
 
     private String setup(String text,
@@ -418,15 +425,12 @@ public class ParameterInfoComponent extends JPanel {
                          boolean isDisabledBeforeHighlight,
                          Color background) {
       StringBuilder buf = new StringBuilder(text.length());
-      removeAll();
       setBackground(background);
 
       String[] lines = UIUtil.splitText(text, getFontMetrics(BOLD_FONT),
                                         // disable splitting by width, to avoid depending on platform's font in tests
                                         ApplicationManager.getApplication().isUnitTestMode() ? Integer.MAX_VALUE : myWidthLimit,
                                         ',');
-
-      myOneLineComponents = new OneLineComponent[lines.length];
 
       int lineOffset = 0;
 
@@ -435,8 +439,7 @@ public class ParameterInfoComponent extends JPanel {
 
       for (int i = 0; i < lines.length; i++) {
         String line = lines[i];
-
-        myOneLineComponents[i] = new OneLineComponent();
+        OneLineComponent component = getOneLineComponent(i);
 
         TextRange lRange = new TextRange(lineOffset, lineOffset + line.length());
         TextRange hr = highlightingRange == null ? null : lRange.intersection(highlightingRange);
@@ -447,18 +450,12 @@ public class ParameterInfoComponent extends JPanel {
         String after = hr == null ? "" : escapeString(line.substring(hr.getEndOffset()), escapeFunction);
 
         TextRange escapedHighlightingRange = in.isEmpty() ? null : TextRange.create(before.length(), before.length() + in.length());
-        buf.append(myOneLineComponents[i].setup(before + in + after, isDisabled, strikeout, background, escapedHighlightingRange));
+        buf.append(component.setup(before + in + after, isDisabled, strikeout, background, escapedHighlightingRange,
+                                   isDisabledBeforeHighlight && (highlightStartOffset < 0 || highlightEndOffset > lineOffset)));
 
-        if (isDisabledBeforeHighlight) {
-          if (highlightStartOffset < 0 || highlightEndOffset > lineOffset) {
-            myOneLineComponents[i].setDisabledBeforeHighlight();
-          }
-        }
-
-        add(myOneLineComponents[i], new GridBagConstraints(0,i,1,1,1,0,GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL,new Insets(0,0,0,0),0,0));
-
-        lineOffset += line.length();
+         lineOffset += line.length();
       }
+      trimComponents(lines.length);
       return buf.toString();
     }
 
@@ -473,17 +470,12 @@ public class ParameterInfoComponent extends JPanel {
                         final EnumSet<ParameterInfoUIContextEx.Flag>[] flags,
                         final Color background) {
       StringBuilder buf = new StringBuilder();
-      removeAll();
       setBackground(background);
       int index = 0;
       int curOffset = 0;
-      final ArrayList<OneLineComponent> components = new ArrayList<>();
       final List<Integer> startOffsets = new ArrayList<>();
       final List<Integer> endOffsets = new ArrayList<>();
-
-
       TreeMap<TextRange, ParameterInfoUIContextEx.Flag> flagsMap = new TreeMap<>(TEXT_RANGE_COMPARATOR);
-
       StringBuilder fullLine = new StringBuilder();
       StringBuilder line = new StringBuilder();
       for (int i = 0; i < texts.length; i++) {
@@ -509,33 +501,26 @@ public class ParameterInfoComponent extends JPanel {
 
         curOffset += paramText.length();
         if (line.length() >= 50) {
-          final OneLineComponent component = new OneLineComponent();
+          OneLineComponent component = getOneLineComponent(index);
           buf.append(component.setup(escapeString(line.toString(), escapeFunction), flagsMap, background));
-          add(component, new GridBagConstraints(0, index, 1, 1, 1, 0, GridBagConstraints.WEST,
-                                                                 GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
           index += 1;
           flagsMap.clear();
           curOffset = 0;
           line = new StringBuilder();
-          components.add(component);
         }
       }
       ParameterInfoController.SignatureItem item = new ParameterInfoController.SignatureItem(fullLine.toString(), false, false,
                                                                                              startOffsets, endOffsets);
       result.signatures.add(item);
-      final OneLineComponent component = new OneLineComponent();
+      OneLineComponent component = getOneLineComponent(index);
       buf.append(component.setup(escapeString(line.toString(), escapeFunction), flagsMap, background));
-      add(component, new GridBagConstraints(0, index, 1, 1, 1, 0, GridBagConstraints.WEST,
-                                            GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-      components.add(component);
-      myOneLineComponents = components.toArray(new OneLineComponent[0]);
+      trimComponents(index + 1);
       return buf.toString();
     }
   }
 
   private class OneLineComponent extends JPanel {
     JLabel myLabel = new JLabel("", SwingConstants.LEFT);
-    private boolean isDisabledBeforeHighlight = false;
 
     private OneLineComponent(){
       super(new GridBagLayout());
@@ -545,8 +530,7 @@ public class ParameterInfoComponent extends JPanel {
       if (myRequestFocus)
         myLabel.setFocusable(true);
 
-      add(myLabel, new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                          new Insets(0, 0, 0, 0), 0, 0));
+      add(myLabel, new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, JBUI.emptyInsets(), 0, 0));
     }
 
     @Override
@@ -557,10 +541,12 @@ public class ParameterInfoComponent extends JPanel {
     private String setup(String text,
                          boolean isDisabled,
                          boolean isStrikeout,
-                         Color background, @Nullable TextRange range) {
+                         Color background,
+                         @Nullable TextRange highlightRange,
+                         boolean disableBeforeHighlight) {
       TreeMap<TextRange, ParameterInfoUIContextEx.Flag> flagsMap = new TreeMap<>(TEXT_RANGE_COMPARATOR);
-      if (range != null) {
-        flagsMap.put(range, ParameterInfoUIContextEx.Flag.HIGHLIGHT);
+      if (highlightRange != null) {
+        flagsMap.put(highlightRange, ParameterInfoUIContextEx.Flag.HIGHLIGHT);
       }
       if (isDisabled) {
         flagsMap.put(TextRange.create(0, text.length()), ParameterInfoUIContextEx.Flag.DISABLE);
@@ -568,11 +554,14 @@ public class ParameterInfoComponent extends JPanel {
       if (isStrikeout) {
         flagsMap.put(TextRange.create(0, text.length()), ParameterInfoUIContextEx.Flag.STRIKEOUT);
       }
+      if (disableBeforeHighlight) {
+        flagsMap.put(new TextRange(0, highlightRange == null ? text.length() : highlightRange.getStartOffset()),
+                     ParameterInfoUIContextEx.Flag.DISABLE);
+      }
       return setup(text, flagsMap, background);
     }
 
     // flagsMap is supposed to use TEXT_RANGE_COMPARATOR
-    // the map can be modified inside the method!
     private String setup(@NotNull String text, @NotNull TreeMap<TextRange, ParameterInfoUIContextEx.Flag> flagsMap,
                          @NotNull Color background) {
       if (flagsMap.isEmpty()) {
@@ -595,17 +584,7 @@ public class ParameterInfoComponent extends JPanel {
     }
 
     // flagsMap is supposed to use TEXT_RANGE_COMPARATOR
-    // the map can be modified inside the method!
     private String buildLabelText(@NotNull final String text, @NotNull final TreeMap<TextRange, ParameterInfoUIContextEx.Flag> flagsMap) {
-      if (isDisabledBeforeHighlight) {
-        TextRange firstHighlightedRange = null;
-        for (Map.Entry<TextRange, ParameterInfoUIContextEx.Flag> entry : flagsMap.entrySet()) {
-          if (entry.getValue() == ParameterInfoUIContextEx.Flag.HIGHLIGHT) firstHighlightedRange = entry.getKey();
-        }
-        flagsMap.put(new TextRange(0, firstHighlightedRange == null ? text.length() : firstHighlightedRange.getStartOffset()),
-                     ParameterInfoUIContextEx.Flag.DISABLE);
-      }
-
       final StringBuilder labelText = new StringBuilder(text);
       final Map<Integer, Integer> faultMap = new HashMap<>();
 
@@ -633,10 +612,6 @@ public class ParameterInfoComponent extends JPanel {
         faultMap.put(startOffset, tag.length());
       }
       return labelText.toString();
-    }
-
-    public void setDisabledBeforeHighlight() {
-      isDisabledBeforeHighlight = true;
     }
   }
 
