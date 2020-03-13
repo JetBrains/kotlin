@@ -347,13 +347,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
 
       toSelect.add(new TreePath(registerTemplate(template).getPath()));
     }
-
-    myTree.getSelectionModel().clearSelection();
-    for (TreePath path : toSelect) {
-      myTree.expandPath(path.getParentPath());
-      myTree.addSelectionPath(path);
-      myTree.scrollRowToVisible(myTree.getRowForPath(path));
-    }
+    TreeUtil.selectPaths(myTree, toSelect);
   }
 
   @Nullable
@@ -895,11 +889,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
   }
 
   private void setSelectedNode(DefaultMutableTreeNode node) {
-    TreePath path = new TreePath(node.getPath());
-    myTree.expandPath(path.getParentPath());
-    int row = myTree.getRowForPath(path);
-    myTree.setSelectionRow(row);
-    myTree.scrollRowToVisible(row);
+    TreeUtil.selectPath(myTree, new TreePath(node.getPath()));
   }
 
   private void removeNodeFromParent(DefaultMutableTreeNode node) {
