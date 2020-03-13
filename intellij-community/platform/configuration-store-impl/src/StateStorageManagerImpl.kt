@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
 import com.intellij.openapi.Disposable
@@ -66,7 +66,7 @@ open class StateStorageManagerImpl(private val rootTagName: String,
     else -> ThreeState.UNSURE // unsure because depends on stream provider state
   }
 
-  open fun getFileBasedStorageConfiguration(fileSpec: String): FileBasedStorageConfiguration = defaultFileBasedStorageConfiguration
+  open fun getFileBasedStorageConfiguration(fileSpec: String) = defaultFileBasedStorageConfiguration
 
   protected open val isUseXmlProlog: Boolean
     get() = true
@@ -176,7 +176,7 @@ open class StateStorageManagerImpl(private val rootTagName: String,
 
   private fun computeStorageKey(storageClass: Class<out StateStorage>, normalizedCollapsedPath: String, collapsedPath: String, storageCreator: StorageCreator?): String {
     if (storageClass != StateStorage::class.java) {
-      return storageClass.name!!
+      return storageClass.name
     }
     if (normalizedCollapsedPath.isEmpty()) {
       throw Exception("Normalized path is empty, raw path '$collapsedPath'")
@@ -353,7 +353,7 @@ open class StateStorageManagerImpl(private val rootTagName: String,
     storageLock.write {
       val storage = getOrCreateStorage(collapseMacros(path), RoamingType.DEFAULT) as FileBasedStorage
 
-      val file = storage.virtualFile
+      val file = storage.getVirtualFile(StateStorageOperation.WRITE)
       try {
         if (file != null) {
           file.rename(storage, newName)

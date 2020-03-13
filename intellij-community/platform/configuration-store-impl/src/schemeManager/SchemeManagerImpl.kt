@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore.schemeManager
 
 import com.intellij.concurrency.ConcurrentCollectionFactory
@@ -8,6 +8,7 @@ import com.intellij.ide.ui.laf.TempUIThemeBasedLookAndFeelInfo
 import com.intellij.openapi.application.ex.DecodeDefaultsUtil
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.RoamingType
+import com.intellij.openapi.components.StateStorageOperation
 import com.intellij.openapi.components.impl.stores.FileStorageCoreUtil
 import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.diagnostic.runAndLogException
@@ -141,7 +142,7 @@ class SchemeManagerImpl<T : Any, MUTABLE_SCHEME : T>(val fileSpec: String,
         LOG.assertTrue(oldInfo == null)
         val oldScheme = schemeListManager.readOnlyExternalizableSchemes.put(schemeKey, scheme)
         if (oldScheme != null) {
-          LOG.warn("Duplicated scheme ${schemeKey} - old: $oldScheme, new $scheme")
+          LOG.warn("Duplicated scheme $schemeKey - old: $oldScheme, new $scheme")
         }
         schemes.add(scheme)
         if (requestor is UITheme) {
@@ -218,7 +219,7 @@ class SchemeManagerImpl<T : Any, MUTABLE_SCHEME : T>(val fileSpec: String,
           }
         }
         else {
-          for (file in virtualDirectory?.children ?: VirtualFile.EMPTY_ARRAY) {
+          for (file in getVirtualDirectory(StateStorageOperation.READ)?.children ?: VirtualFile.EMPTY_ARRAY) {
             catchAndLog({ file.path }) {
               if (canRead(file.nameSequence)) {
                 schemeLoader.loadScheme(file.name, null, file.contentsToByteArray())
@@ -347,7 +348,7 @@ class SchemeManagerImpl<T : Any, MUTABLE_SCHEME : T>(val fileSpec: String,
     LOG.info("Remove scheme directory ${ioDirectory.fileName}")
 
     if (isUseVfs) {
-      val dir = virtualDirectory
+      val dir = getVirtualDirectory(StateStorageOperation.WRITE)
       cachedVirtualDirectory = null
       if (dir != null) {
         runWriteAction {
@@ -381,7 +382,7 @@ class SchemeManagerImpl<T : Any, MUTABLE_SCHEME : T>(val fileSpec: String,
       fileNameWithoutExtension = nameGenerator.generateUniqueName(schemeNameToFileName(processor.getSchemeKey(scheme)))
     }
 
-    val fileName = fileNameWithoutExtension!! + schemeExtension
+    val fileName = fileNameWithoutExtension + schemeExtension
     // file will be overwritten, so, we don't need to delete it
     filesToDelete.remove(fileName)
 
@@ -417,7 +418,7 @@ class SchemeManagerImpl<T : Any, MUTABLE_SCHEME : T>(val fileSpec: String,
     if (providerPath == null) {
       if (isUseVfs) {
         var file: VirtualFile? = null
-        var dir = virtualDirectory
+        var dir = getVirtualDirectory(StateStorageOperation.WRITE)
         if (dir == null || !dir.isValid) {
           dir = createDir(ioDirectory, this)
           cachedVirtualDirectory = dir
@@ -530,7 +531,7 @@ class SchemeManagerImpl<T : Any, MUTABLE_SCHEME : T>(val fileSpec: String,
     LOG.debug { "Delete scheme files: ${filesToDelete.joinToString()}" }
 
     if (isUseVfs) {
-      virtualDirectory?.let { virtualDir ->
+      getVirtualDirectory(StateStorageOperation.WRITE)?.let { virtualDir ->
         val childrenToDelete = virtualDir.children.filter { filesToDelete.contains(it.name) }
         if (childrenToDelete.isNotEmpty()) {
           runWriteAction {
@@ -548,19 +549,18 @@ class SchemeManagerImpl<T : Any, MUTABLE_SCHEME : T>(val fileSpec: String,
     }
   }
 
-  internal val virtualDirectory: VirtualFile?
-    get() {
-      var result = cachedVirtualDirectory
-      if (result == null) {
-        val path = ioDirectory.systemIndependentPath
-        result = when (virtualFileResolver) {
-          null -> LocalFileSystem.getInstance().findFileByPath(path)
-          else -> virtualFileResolver.resolveVirtualFile(path)
-        }
-        cachedVirtualDirectory = result
+  internal fun getVirtualDirectory(reasonOperation: StateStorageOperation): VirtualFile? {
+    var result = cachedVirtualDirectory
+    if (result == null) {
+      val path = ioDirectory.systemIndependentPath
+      result = when (virtualFileResolver) {
+        null -> LocalFileSystem.getInstance().findFileByPath(path)
+        else -> virtualFileResolver.resolveVirtualFile(path, reasonOperation)
       }
-      return result
+      cachedVirtualDirectory = result
     }
+    return result
+  }
 
   override fun setSchemes(newSchemes: List<T>, newCurrentScheme: T?, removeCondition: Predicate<T>?) {
     schemeListManager.setSchemes(newSchemes, newCurrentScheme, removeCondition)

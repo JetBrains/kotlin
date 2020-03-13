@@ -1,9 +1,10 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore.schemeManager
 
 import com.intellij.configurationStore.LOG
 import com.intellij.configurationStore.StoreReloadManager
 import com.intellij.configurationStore.StoreReloadManagerImpl
+import com.intellij.openapi.components.StateStorageOperation
 import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
@@ -82,7 +83,7 @@ internal class SchemeFileTracker(private val schemeManager: SchemeManagerImpl<An
       return
     }
     LOG.debug { "DIR DELETED ${file.path}" }
-    if (file == schemeManager.virtualDirectory) {
+    if (file == schemeManager.getVirtualDirectory(StateStorageOperation.READ)) {
       list.add(RemoveAllSchemes())
     }
   }
@@ -92,7 +93,7 @@ internal class SchemeFileTracker(private val schemeManager: SchemeManagerImpl<An
       return
     }
 
-    val dir = schemeManager.virtualDirectory
+    val dir = schemeManager.getVirtualDirectory(StateStorageOperation.READ)
     val virtualFile = event.file
     if (virtualFile != dir) {
       return
@@ -124,7 +125,7 @@ private data class AddScheme(override val file: VirtualFile) : SchemeChangeEvent
     val existingScheme = schemeManager.findSchemeByName(readSchemeKey) ?: return
     if (schemeManager.schemeListManager.readOnlyExternalizableSchemes.get(
         schemeManager.processor.getSchemeKey(existingScheme)) !== existingScheme) {
-      LOG.warn("Ignore incorrect VFS create scheme event: schema ${readSchemeKey} is already exists")
+      LOG.warn("Ignore incorrect VFS create scheme event: schema $readSchemeKey is already exists")
       return
     }
   }

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
 import com.intellij.ProjectTopics
@@ -9,6 +9,7 @@ import com.intellij.openapi.application.impl.coroutineDispatchingContext
 import com.intellij.openapi.application.impl.inWriteAction
 import com.intellij.openapi.command.impl.UndoManagerImpl
 import com.intellij.openapi.command.undo.UndoManager
+import com.intellij.openapi.components.StateStorageOperation
 import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.components.stateStore
 import com.intellij.openapi.module.Module
@@ -160,7 +161,7 @@ internal class ModuleStoreRenameTest {
     saveProjectState()
     val storage = module.storage
     val oldFile = storage.file
-    val parentVirtualDir = storage.virtualFile!!.parent
+    val parentVirtualDir = storage.getVirtualFile(StateStorageOperation.WRITE)!!.parent
     withContext(AppUIExecutor.onUiThread().inWriteAction().coroutineDispatchingContext()) {
       parentVirtualDir.rename(null, UUID.randomUUID().toString())
     }
@@ -184,7 +185,7 @@ internal class ModuleStoreRenameTest {
   fun `rename module source root`() = runBlocking<Unit>(AppUIExecutor.onUiThread().coroutineDispatchingContext()) {
     saveProjectState()
     val storage = module.storage
-    val parentVirtualDir = storage.virtualFile!!.parent
+    val parentVirtualDir = storage.getVirtualFile(StateStorageOperation.WRITE)!!.parent
     val src = VfsTestUtil.createDir(parentVirtualDir, "foo")
     withContext(AppUIExecutor.onUiThread().inWriteAction().coroutineDispatchingContext()) {
       PsiTestUtil.addSourceContentToRoots(module, src, false)

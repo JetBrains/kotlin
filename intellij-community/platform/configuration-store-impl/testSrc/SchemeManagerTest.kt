@@ -1,9 +1,10 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
 import com.intellij.configurationStore.schemeManager.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.RoamingType
+import com.intellij.openapi.components.StateStorageOperation
 import com.intellij.openapi.options.ExternalizableScheme
 import com.intellij.openapi.options.SchemeManagerFactory
 import com.intellij.openapi.util.Disposer
@@ -574,9 +575,9 @@ internal class SchemeManagerTest {
     try {
       val requestedPaths = linkedSetOf<String>()
       val schemeManager = SchemeManagerImpl(FILE_SPEC, TestSchemeProcessor(), null, dir, fileChangeSubscriber = null, virtualFileResolver = object: VirtualFileResolver {
-        override fun resolveVirtualFile(path: String): VirtualFile? {
+        override fun resolveVirtualFile(path: String, reasonOperation: StateStorageOperation): VirtualFile? {
           requestedPaths.add(PathUtil.getFileName(path))
-          return super.resolveVirtualFile(path)
+          return super.resolveVirtualFile(path, reasonOperation)
         }
       })
 
