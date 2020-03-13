@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem
 
 
-
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
@@ -111,9 +110,9 @@ data class BuildFileData(
 )
 
 enum class BuildSystemType(override val text: String) : DisplayableSettingItem {
-    GradleKotlinDsl("Gradle (Kotlin DSL)"),
-    GradleGroovyDsl("Gradle (Groovy DSL)"),
-        Jps("IDEA Build System"),
+    GradleKotlinDsl("Gradle Kotlin"),
+    GradleGroovyDsl("Gradle Groovy"),
+    Jps("IntelliJ"),
     Maven("Maven")
 
     ;

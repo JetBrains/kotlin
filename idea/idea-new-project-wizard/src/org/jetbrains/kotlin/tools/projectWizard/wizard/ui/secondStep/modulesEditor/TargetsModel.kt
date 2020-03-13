@@ -13,7 +13,7 @@ class TargetsModel(
     private val tree: ModulesEditorTree,
     private val value: KMutableProperty0<List<Module>?>,
     private val context: Context,
-    private val uiEditorUsagesStats: UiEditorUsageStats
+    private val uiEditorUsagesStats: UiEditorUsageStats?
 ) {
     private val root get() = tree.model.root as DefaultMutableTreeNode
 
@@ -63,7 +63,7 @@ class TargetsModel(
     }
 
     fun add(module: Module) {
-        uiEditorUsagesStats.modulesCreated++
+        uiEditorUsagesStats?.modulesCreated?.inc()
         addToTheTree(module, modifyValue = true, parent = tree.selectedNode ?: root)
         context.writeSettings {
             module.apply { initDefaultValuesForSettings() }
@@ -80,7 +80,7 @@ class TargetsModel(
 
     fun removeSelected() {
         val selectedNode = tree.selectedNode?.takeIf { it.userObject is Module } ?: return
-        uiEditorUsagesStats.modulesRemoved++
+        uiEditorUsagesStats?.modulesRemoved?.inc()
         when (val parent = selectedNode.parent.safeAs<DefaultMutableTreeNode>()?.userObject) {
             ModulesEditorTree.PROJECT_USER_OBJECT -> {
                 val index = selectedNode.parent.getIndex(selectedNode)

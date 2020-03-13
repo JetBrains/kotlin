@@ -17,10 +17,11 @@ import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JComponent
 
-
 class ModulesEditorComponent(
     context: Context,
-    uiEditorUsagesStats: UiEditorUsageStats,
+    uiEditorUsagesStats: UiEditorUsageStats?,
+    needBorder: Boolean,
+    editable: Boolean,
     oneEntrySelected: (data: DisplayableSettingItem?) -> Unit,
     selectSettingWithError: (ValidationResult.ValidationError) -> Unit
 ) : SettingComponent<List<Module>, ListSettingType<Module>>(KotlinPlugin::modules.reference, context) {
@@ -45,23 +46,29 @@ class ModulesEditorComponent(
 
     override fun onInit() {
         super.onInit()
+        updateModel()
+    }
+
+    fun updateModel() {
         model.update()
     }
 
     private val moduleCreator = NewModuleCreator()
 
-    private val toolbarDecorator = ModulesEditorToolbarDecorator(
+    private val toolbarDecorator = if (editable) ModulesEditorToolbarDecorator(
         tree = tree,
         moduleCreator = moduleCreator,
         model = model,
         getModules = { value ?: emptyList() },
         isMultiplatformProject = { KotlinPlugin::projectKind.value != ProjectKind.Singleplatform }
-    )
+    ) else null
 
     override val component: JComponent by lazy(LazyThreadSafetyMode.NONE) {
         panel {
-            border = BorderFactory.createLineBorder(JBColor.border())
-            add(toolbarDecorator.createToolPanel(), BorderLayout.CENTER)
+            if (needBorder) {
+                border = BorderFactory.createLineBorder(JBColor.border())
+            }
+            add(if (editable) toolbarDecorator!!.createToolPanel() else tree, BorderLayout.CENTER)
             add(validationIndicator, BorderLayout.SOUTH)
         }
     }

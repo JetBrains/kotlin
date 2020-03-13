@@ -37,7 +37,7 @@ class ProjectTemplateSettingComponent(
     override val component: JComponent = panel {
         add(list, BorderLayout.CENTER)
         add(
-            templateDescriptionComponent.component.withBorder(JBUI.Borders.emptyTop(5)),
+            templateDescriptionComponent.component.addBorder(JBUI.Borders.emptyTop(5)),
             BorderLayout.SOUTH
         )
     }

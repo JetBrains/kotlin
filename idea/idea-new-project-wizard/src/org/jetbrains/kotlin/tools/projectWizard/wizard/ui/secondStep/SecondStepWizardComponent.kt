@@ -43,8 +43,10 @@ class ModulesEditorSubStep(
     private val moduleSettingComponent = ModulesEditorComponent(
         context,
         uiEditorUsagesStats,
-        onNodeSelected,
-        selectSettingWithError
+        needBorder = true,
+        editable = true,
+        oneEntrySelected = onNodeSelected,
+        selectSettingWithError = selectSettingWithError
     ).asSubComponent()
 
     override fun buildContent(): JComponent = panel {

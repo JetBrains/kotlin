@@ -12,6 +12,7 @@ import com.intellij.ui.*
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.UIUtil
+import com.intellij.util.ui.components.BorderLayoutPanel
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.tools.projectWizard.core.Failure
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfigurator
@@ -39,6 +40,9 @@ internal inline fun label(text: String, bold: Boolean = false, init: JBLabel.() 
 }
 
 inline fun panel(layout: LayoutManager = BorderLayout(), init: JPanel.() -> Unit = {}) = JPanel(layout).apply(init)
+
+inline fun borderPanel(init: BorderLayoutPanel.() -> Unit = {}) = BorderLayoutPanel().apply(init)
+
 
 fun textField(defaultValue: String?, onUpdated: (value: String) -> Unit) =
     JBTextField(defaultValue)
@@ -172,7 +176,7 @@ fun <C : JComponent> C.bordered(
     )
 }
 
-fun <C : JComponent> C.withBorder(border: Border): C = apply {
+fun <C : JComponent> C.addBorder(border: Border): C = apply {
     this.border = BorderFactory.createCompoundBorder(border, this.border)
 }
 
