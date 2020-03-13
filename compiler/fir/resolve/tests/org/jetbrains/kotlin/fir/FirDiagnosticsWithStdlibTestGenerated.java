@@ -88,6 +88,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/emptyArray.kt");
     }
 
+    @TestMetadata("enumValuesDeserialized.kt")
+    public void testEnumValuesDeserialized() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolveWithStdlib/enumValuesDeserialized.kt");
+    }
+
     @TestMetadata("exception.kt")
     public void testException() throws Exception {
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/exception.kt");

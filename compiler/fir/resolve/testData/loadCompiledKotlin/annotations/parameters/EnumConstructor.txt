@@ -17,4 +17,11 @@ public final enum class E : R|kotlin/Enum<test/E>| {
 
     private constructor(x: R|kotlin/String|, y: R|kotlin/Int|): R|test/E|
 
+    public final static fun values(): R|kotlin/Array<test/E>| {
+    }
+
+    public final static fun valueOf(value: R|kotlin/String|): R|test/E| {
+    }
+
 }
+

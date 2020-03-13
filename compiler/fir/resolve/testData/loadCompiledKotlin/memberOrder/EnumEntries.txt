@@ -9,5 +9,11 @@ public final enum class E : R|kotlin/Enum<test/E>| {
     public final static enum entry SIX: R|test/E|
     public final static enum entry SEVEN: R|test/E|
     public final static enum entry EIGHT: R|test/E|
+    public final static fun values(): R|kotlin/Array<test/E>| {
+    }
+
+    public final static fun valueOf(value: R|kotlin/String|): R|test/E| {
+    }
+
 }
 

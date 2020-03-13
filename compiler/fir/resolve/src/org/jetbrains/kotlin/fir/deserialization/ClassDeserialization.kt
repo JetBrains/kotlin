@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
@@ -14,6 +15,8 @@ import org.jetbrains.kotlin.fir.declarations.addDeclarations
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.generateValueOfFunction
+import org.jetbrains.kotlin.fir.generateValuesFunction
 import org.jetbrains.kotlin.fir.resolve.impl.FirClonableSymbolProvider.Companion.CLONE
 import org.jetbrains.kotlin.fir.resolve.impl.FirClonableSymbolProvider.Companion.CLONABLE_CLASS_ID
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
@@ -129,6 +132,11 @@ fun deserializeClassToSymbol(
                 property
             }
         )
+
+        if (classKind == ClassKind.ENUM_CLASS) {
+            generateValuesFunction(session, classId.packageFqName, classId.relativeClassName)
+            generateValueOfFunction(session, classId.packageFqName, classId.relativeClassName)
+        }
 
         if (isSealed) {
             classProto.sealedSubclassFqNameList.mapTo((this as FirSealedClassBuilder).inheritors) {

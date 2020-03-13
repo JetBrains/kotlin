@@ -364,6 +364,12 @@ public final enum class DeprecationLevel : R|kotlin/Enum<kotlin/DeprecationLevel
     public final static enum entry WARNING: R|kotlin/DeprecationLevel|
     public final static enum entry ERROR: R|kotlin/DeprecationLevel|
     public final static enum entry HIDDEN: R|kotlin/DeprecationLevel|
+    public final static fun values(): R|kotlin/Array<kotlin/DeprecationLevel>| {
+    }
+
+    public final static fun valueOf(value: R|kotlin/String|): R|kotlin/DeprecationLevel| {
+    }
+
 }
 
 public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>| {
