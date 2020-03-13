@@ -14,11 +14,11 @@ inline fun getB(): Int {
 }
 
 // LINENUMBERS
-// TestKt.box():4
-// TestKt.box():13
-// TestKt.box():5
-// TestKt.getA():10
-// TestKt.box():5
-// TestKt.box():7
-// TestKt.box():13
-// TestKt.box():7
+// test.kt:4
+// test.kt:13
+// test.kt:5
+// test.kt:10
+// test.kt:5
+// test.kt:7
+// test.kt:13
+// test.kt:7
