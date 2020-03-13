@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.impl;
 
 import com.intellij.codeInsight.CodeInsightSettings;
@@ -348,38 +348,20 @@ public class TemplateState implements Disposable {
     LOG.assertTrue(!myStarted, "Already started");
     myStarted = true;
 
-    final PsiFile file = getPsiFile();
-    myTemplate = substituteTemplate(file, myEditor.getCaretModel().getOffset(), template);
+    PsiFile file = getPsiFile();
+    myTemplate = substituteTemplate(Objects.requireNonNull(file), myEditor.getCaretModel().getOffset(), template);
 
     myProcessor = processor;
 
-    DocumentReference[] refs = myDocument != null
-                               ? new DocumentReference[]{DocumentReferenceManager.getInstance().create(myDocument)}
-                               : null;
-    UndoManager.getInstance(myProject).undoableActionPerformed(new BasicUndoableAction(refs) {
-      @Override
-      public void undo() {
-        if (!isDisposed()) {
-          fireTemplateCancelled();
-          LookupManager.getInstance(myProject).hideActiveLookup();
-          int oldVar = myCurrentVariableNumber;
-          setCurrentVariableNumber(-1);
-          currentVariableChanged(oldVar);
-        }
-      }
+    MyBasicUndoableAction undoableAction = new MyBasicUndoableAction(this, myDocument);
+    UndoManager.getInstance(myProject).undoableActionPerformed(undoableAction);
+    Disposer.register(this, undoableAction);
 
-      @Override
-      public void redo() {
-        //TODO:
-        // throw new UnexpectedUndoException("Not implemented");
-      }
-    });
     myTemplateIndented = false;
     myCurrentVariableNumber = -1;
     mySegments = new TemplateSegments(myEditor);
     myPrevTemplate = myTemplate;
 
-    //myArgument = argument;
     myPredefinedVariableValues = predefinedVarValues;
 
     if (myTemplate.isInline()) {
@@ -731,7 +713,7 @@ public class TemplateState implements Disposable {
 
     fixOverlappedSegments(myCurrentSegmentNumber);
 
-    WriteCommandAction.runWriteCommandAction(myProject, () -> {
+    WriteCommandAction.runWriteCommandAction(myProject, null, null, () -> {
       if (isDisposed()) {
         return;
       }
@@ -1259,10 +1241,8 @@ public class TemplateState implements Disposable {
     if (segmentHighlighter != null) {
       final int segmentNumber = getCurrentSegmentNumber();
       RangeHighlighter newSegmentHighlighter = getSegmentHighlighter(segmentNumber, toSelect, false);
-      if (newSegmentHighlighter != null) {
-        segmentHighlighter.dispose();
-        myTabStopHighlighters.set(myCurrentVariableNumber, newSegmentHighlighter);
-      }
+      segmentHighlighter.dispose();
+      myTabStopHighlighters.set(myCurrentVariableNumber, newSegmentHighlighter);
     }
   }
 
@@ -1451,5 +1431,35 @@ public class TemplateState implements Disposable {
 
   public Editor getEditor() {
     return myEditor;
+  }
+
+  private static class MyBasicUndoableAction extends BasicUndoableAction implements Disposable {
+    @Nullable
+    private TemplateState myTemplateState;
+
+    private MyBasicUndoableAction(@NotNull TemplateState templateState, @Nullable Document document) {
+      super(document != null ? new DocumentReference[]{DocumentReferenceManager.getInstance().create(document)} : null);
+      myTemplateState = templateState;
+    }
+
+    @Override
+    public void undo() {
+      if (myTemplateState != null) {
+        myTemplateState.fireTemplateCancelled();
+        LookupManager.getInstance(myTemplateState.myProject).hideActiveLookup();
+        int oldVar = myTemplateState.getCurrentVariableNumber();
+        myTemplateState.setCurrentVariableNumber(-1);
+        myTemplateState.currentVariableChanged(oldVar);
+      }
+    }
+
+    @Override
+    public void redo() {
+    }
+
+    @Override
+    public void dispose() {
+      myTemplateState = null;
+    }
   }
 }
