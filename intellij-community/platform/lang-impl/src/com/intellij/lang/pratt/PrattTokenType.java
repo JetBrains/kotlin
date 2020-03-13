@@ -15,12 +15,12 @@
  */
 package com.intellij.lang.pratt;
 
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.Language;
-import com.intellij.psi.PsiBundle;
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.NonNls;
 
 /**
  * @author peter
@@ -35,7 +35,7 @@ public class PrattTokenType extends IElementType {
 
   @NotNull
   public String getExpectedText(final PrattBuilder builder) {
-    return PsiBundle.message("0.expected", toString());
+    return LangBundle.message("0.expected", toString());
   }
 
 }
