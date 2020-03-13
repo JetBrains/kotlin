@@ -12,15 +12,15 @@ fun foo(n :Int ) : Int {
 }
 
 // LINENUMBERS
-// TestKt.box():3
-// TestKt.box():4
-// TestKt.foo(int):8
-// TestKt.foo(int):11
-// TestKt.foo(int):8
-// TestKt.foo(int):11
-// TestKt.foo(int):8
-// TestKt.foo(int):9
-// TestKt.foo(int):11
-// TestKt.foo(int):11
-// TestKt.box():4
-// TestKt.box():5
+// test.kt:3
+// test.kt:4
+// test.kt:8
+// test.kt:11
+// test.kt:8
+// test.kt:11
+// test.kt:8
+// test.kt:9
+// test.kt:11
+// test.kt:11
+// test.kt:4
+// test.kt:5

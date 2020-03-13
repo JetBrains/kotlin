@@ -56,7 +56,8 @@ abstract class AbstractSteppingTest : AbstractDebugTest() {
             .joinToString("\n")
         val actualLineNumbers = loggedItems
             .map { event ->
-                "${(event as LocatableEvent).location().method()}:${event.location().lineNumber()}"
+                val location = (event as LocatableEvent).location()
+                "${location.sourceName()}:${location.lineNumber()}"
             }
         TestCase.assertEquals(expectedLineNumbers, actualLineNumbers.joinToString("\n"))
     }
