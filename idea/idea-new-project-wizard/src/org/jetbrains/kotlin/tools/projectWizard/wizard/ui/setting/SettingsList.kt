@@ -1,14 +1,13 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting
 
-import com.intellij.ui.components.panels.VerticalLayout
+import com.intellij.ui.layout.panel
+import com.intellij.util.ui.components.BorderLayoutPanel
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.isSpecificError
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.PanelWithStatusText
-import javax.swing.JComponent
 
 interface ErrorAwareComponent {
     fun findComponentWithError(error: ValidationResult.ValidationError): FocusableComponent?
@@ -18,16 +17,15 @@ class SettingsList(
     settings: List<SettingReference<*, *>>,
     private val context: Context
 ) : DynamicComponent(context), ErrorAwareComponent {
-    private val panel = PanelWithStatusText(VerticalLayout(5), "This module has no settings to configure")
+    private val ui = BorderLayoutPanel()
 
-    var settingComponents: List<SettingComponent<*, *>> = emptyList()
-        private set
+    private var settingComponents: List<SettingComponent<*, *>> = emptyList()
 
     init {
         setSettings(settings)
     }
 
-    override val component: JComponent = panel
+    override val component get() = ui
 
     override fun onInit() {
         super.onInit()
@@ -35,12 +33,18 @@ class SettingsList(
     }
 
     fun setSettings(settings: List<SettingReference<*, *>>) {
-        panel.isStatusTextVisible = settings.isEmpty()
-        panel.removeAll()
+        ui.removeAll()
         settingComponents = settings.map { setting ->
-            DefaultSettingComponent.create(setting, context)
+            DefaultSettingComponent.create(setting, context, needLabel = false)
         }
-        settingComponents.forEach { setting -> setting.onInit(); panel.add(setting.component) }
+        ui.addToCenter(panel {
+            settingComponents.forEach { settingComponent ->
+                settingComponent.onInit()
+                row(settingComponent.setting.title + ":") {
+                    settingComponent.component(growX)
+                }
+            }
+        })
     }
 
     override fun findComponentWithError(error: ValidationResult.ValidationError) = read {

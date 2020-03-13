@@ -1,8 +1,10 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard
 
+import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.projectWizard.ProjectSettingsStep
 import com.intellij.ide.util.projectWizard.*
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.module.ModifiableModuleModel
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleType
@@ -20,14 +22,13 @@ import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.tools.projectWizard.core.Failure
-import org.jetbrains.kotlin.tools.projectWizard.core.Success
+import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
-import org.jetbrains.kotlin.tools.projectWizard.core.isSuccess
-import org.jetbrains.kotlin.tools.projectWizard.core.onFailure
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.Plugins
+import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.wizard.service.IdeaServices
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep.FirstWizardS
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.runWithProgressBar
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.SecondStepWizardComponent
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import java.io.File
 import java.nio.file.Paths
 import javax.swing.JComponent
 import com.intellij.openapi.module.Module as IdeaModule
@@ -117,7 +119,6 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
 
     override fun modifySettingsStep(settingsStep: SettingsStep): ModuleWizardStep {
         updateProjectNameAndPomDate(settingsStep)
-
         return when (wizard.buildSystemType) {
             BuildSystemType.Jps -> {
                 KotlinModuleSettingStep(
@@ -149,8 +150,8 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
             ProjectTemplatesPlugin::template.settingValue.suggestedProjectName.decapitalize()
         }
         settingsStep.moduleNameLocationSettings?.apply {
-            val projectParentDirectory = moduleContentRoot.let { Paths.get(it).parent.toString() }
-            moduleName = ProjectWizardUtil.findNonExistingFileName(projectParentDirectory, suggestedProjectName, "")
+            moduleName = wizard.projectName!!
+            moduleContentRoot = wizard.projectPath!!.toString()
         }
 
         settingsStep.safeAs<ProjectSettingsStep>()?.bindModuleSettings()
@@ -184,7 +185,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
 abstract class WizardStep(protected val wizard: IdeWizard, private val phase: GenerationPhase) : ModuleWizardStep() {
     override fun updateDataModel() = Unit // model is updated on every UI action
     override fun validate(): Boolean =
-        when (val result = wizard.context.read{ with(wizard) { validate(setOf(phase)) } }) {
+        when (val result = wizard.context.read { with(wizard) { validate(setOf(phase)) } }) {
             is Success<*> -> true
             is Failure -> {
                 throw ConfigurationException(result.asHtml(), KotlinNewProjectWizardBundle.message("error.validation"))
@@ -214,6 +215,7 @@ class ModuleNewWizardFirstStep(wizard: IdeWizard) : WizardStep(wizard, Generatio
 
     init {
         runPreparePhase()
+        initDefaultProjectNameAndPathValues()
         component.onInit()
     }
 
@@ -221,6 +223,26 @@ class ModuleNewWizardFirstStep(wizard: IdeWizard) : WizardStep(wizard, Generatio
         wizard.apply(emptyList(), setOf(GenerationPhase.PREPARE)) { task ->
             ProgressManager.getInstance().progressIndicator.text = task.title ?: ""
         }
+    }
+
+    private fun initDefaultProjectNameAndPathValues() {
+        val suggestedProjectParentLocation = suggestProjectLocation()
+        val suggestedProjectName = ProjectWizardUtil.findNonExistingFileName(suggestedProjectParentLocation, "untitled", "")
+        wizard.context.writeSettings {
+            StructurePlugin::name.reference.setValue(suggestedProjectName)
+            StructurePlugin::projectPath.reference.setValue(suggestedProjectParentLocation / suggestedProjectName)
+        }
+    }
+
+    // copied from com.intellij.ide.util.projectWizard.WizardContext.getProjectFileDirectory
+    private fun suggestProjectLocation(): String {
+        val lastProjectLocation = RecentProjectsManager.getInstance().lastProjectCreationLocation
+        if (lastProjectLocation != null) {
+            return lastProjectLocation.replace('/', File.separatorChar)
+        }
+        val userHome = SystemProperties.getUserHome()
+        val productName = ApplicationNamesInfo.getInstance().lowercaseProductName
+        return userHome.replace('/', File.separatorChar) + File.separator + productName.replace(" ", "") + "Projects"
     }
 }
 

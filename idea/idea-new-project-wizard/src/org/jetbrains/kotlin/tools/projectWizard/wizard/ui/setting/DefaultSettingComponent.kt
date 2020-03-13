@@ -23,7 +23,8 @@ object DefaultSettingComponent {
     @Suppress("UNCHECKED_CAST")
     fun <V : Any, T : SettingType<V>> create(
         setting: SettingReference<V, T>,
-        context: Context
+        context: Context,
+        needLabel: Boolean = true
     ): SettingComponent<V, T> = when (setting.type) {
         VersionSettingType::class ->
             VersionSettingComponent(
@@ -33,22 +34,26 @@ object DefaultSettingComponent {
         BooleanSettingType::class ->
             BooleanSettingComponent(
                 setting as SettingReference<Boolean, BooleanSettingType>,
-                context
+                context,
+                needLabel
             ) as SettingComponent<V, T>
         DropDownSettingType::class ->
             DropdownSettingComponent(
                 setting as SettingReference<DisplayableSettingItem, DropDownSettingType<DisplayableSettingItem>>,
-                context
+                context,
+                needLabel
             ) as SettingComponent<V, T>
         StringSettingType::class ->
             StringSettingComponent(
                 setting as SettingReference<String, StringSettingType>,
-                context
+                context,
+                needLabel
             ) as SettingComponent<V, T>
         PathSettingType::class ->
             PathSettingComponent(
                 setting as SettingReference<Path, PathSettingType>,
-                context
+                context,
+                needLabel
             ) as SettingComponent<V, T>
         else -> TODO(setting.type.qualifiedName!!)
     }
@@ -94,7 +99,8 @@ class VersionSettingComponent(
 
 class DropdownSettingComponent(
     reference: SettingReference<DisplayableSettingItem, DropDownSettingType<DisplayableSettingItem>>,
-    context: Context
+    context: Context,
+    needLabel: Boolean = true
 ) : UIComponentDelegatingSettingComponent<DisplayableSettingItem, DropDownSettingType<DisplayableSettingItem>>(
     reference,
     context
@@ -106,14 +112,15 @@ class DropdownSettingComponent(
         filter = { value ->
             context.read { setting.type.filter(this, reference, value) }
         },
-        labelText = setting.title,
+        labelText = setting.title.takeIf { needLabel },
         onValueUpdate = { newValue -> value = newValue }
     ).asSubComponent()
 }
 
 class BooleanSettingComponent(
     reference: SettingReference<Boolean, BooleanSettingType>,
-    context: Context
+    context: Context,
+    needLabel: Boolean = true
 ) : UIComponentDelegatingSettingComponent<Boolean, BooleanSettingType>(
     reference,
     context
@@ -130,7 +137,7 @@ class BooleanSettingComponent(
 class StringSettingComponent(
     reference: SettingReference<String, StringSettingType>,
     context: Context,
-    showLabel: Boolean = true
+    needLabel: Boolean = true
 ) : UIComponentDelegatingSettingComponent<String, StringSettingType>(
     reference,
     context
@@ -138,7 +145,7 @@ class StringSettingComponent(
     override val uiComponent = TextFieldComponent(
         context = context,
         initialValue = null,
-        labelText = if (showLabel) setting.title else null,
+        labelText = setting.title.takeIf { needLabel },
         validator = setting.validator,
         onValueUpdate = { newValue -> value = newValue }
     ).asSubComponent()
@@ -146,14 +153,15 @@ class StringSettingComponent(
 
 class PathSettingComponent(
     reference: SettingReference<Path, PathSettingType>,
-    context: Context
+    context: Context,
+    needLabel: Boolean = true
 ) : UIComponentDelegatingSettingComponent<Path, PathSettingType>(
     reference,
     context
 ) {
     override val uiComponent = PathFieldComponent(
         context = context,
-        labelText = setting.title,
+        labelText = setting.title.takeIf { needLabel },
         validator = settingValidator { path -> setting.validator.validate(this, path) },
         onValueUpdate = { newValue -> value = newValue }
     ).asSubComponent()

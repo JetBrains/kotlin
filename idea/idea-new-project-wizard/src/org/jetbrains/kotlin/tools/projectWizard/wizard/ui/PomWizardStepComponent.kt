@@ -13,19 +13,19 @@ class PomWizardStepComponent(context: Context) : WizardStepComponent(context) {
     private val groupIdComponent = StringSettingComponent(
         StructurePlugin::groupId.reference,
         context,
-        showLabel = true
+        needLabel = true
     ).asSubComponent()
 
     private val artifactIdComponent = StringSettingComponent(
         StructurePlugin::artifactId.reference,
         context,
-        showLabel = true
+        needLabel = true
     ).asSubComponent()
 
     private val versionComponent = StringSettingComponent(
         StructurePlugin::version.reference,
         context,
-        showLabel = true
+        needLabel = true
     ).asSubComponent()
 
 

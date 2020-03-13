@@ -1,15 +1,21 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 
 import TemplateTag
+import com.intellij.ide.plugins.newui.VerticalLayout
 import com.intellij.util.ui.JBUI
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
+import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.applyProjectTemplate
 import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.ProjectTemplate
 import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeWizard
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.PathSettingComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingsList
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.StringSettingComponent
 import java.awt.BorderLayout
 import javax.swing.Box
 import javax.swing.BoxLayout
@@ -17,11 +23,18 @@ import javax.swing.JComponent
 import java.awt.Component as AwtComponent
 
 class FirstWizardStepComponent(wizard: IdeWizard) : WizardStepComponent(wizard.context) {
+    private val nameAndLocationComponent = SettingsList(
+        listOf(
+            StructurePlugin::name.reference,
+            StructurePlugin::projectPath.reference
+        ),
+        wizard.context
+    ).asSubComponent()
     private val buildSystemSubStep = BuildSystemSubStep(wizard.context).asSubComponent()
     private val templatesSubStep = TemplatesSubStep(wizard.context).asSubComponent()
 
     override val component: JComponent = panel {
-        add(templatesSubStep.component, BorderLayout.CENTER)
+        add(nameAndLocationComponent.component, BorderLayout.CENTER)
         add(buildSystemSubStep.component, BorderLayout.SOUTH)
     }
 }
