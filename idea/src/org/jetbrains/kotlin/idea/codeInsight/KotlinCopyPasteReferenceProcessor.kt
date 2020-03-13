@@ -435,7 +435,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
                 return@nonBlocking findReferencesToRestore(file, indicator, sourceFileBasedReferences, referencesByRange)
             }
                 .withDocumentsCommitted(project)
-                .cancelWith(indicator)
+                //.cancelWith(indicator)
                 .submit(AppExecutorUtil.getAppExecutorService())
         )
     }
