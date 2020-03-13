@@ -1,0 +1,93 @@
+FILE: referenceToExtension.kt
+    public final class GenericTest : R|kotlin/Any| {
+        public constructor(): R|GenericTest| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class A<T> : R|kotlin/Any| {
+            public constructor<T>(): R|GenericTest.A<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final class B<T> : R|kotlin/Any| {
+            public constructor<T>(): R|GenericTest.B<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val memberVal: R|GenericTest.A<T>| = R|/GenericTest.A.A|<R|T|>()
+                public get(): R|GenericTest.A<T>|
+
+            public final fun memberFun(): R|GenericTest.A<T>| {
+                ^memberFun R|/GenericTest.A.A|<R|T|>()
+            }
+
+        }
+
+        public final val <T> R|GenericTest.B<T>|.extensionVal: R|GenericTest.A<T>|
+            public get(): R|GenericTest.A<T>| {
+                ^ R|/GenericTest.A.A|<R|T|>()
+            }
+
+        public final fun <T> R|GenericTest.B<T>|.extensionFun(): R|GenericTest.A<T>| {
+            ^extensionFun R|/GenericTest.A.A|<R|T|>()
+        }
+
+        public final fun test_1(): R|kotlin/Unit| {
+            lval memberValRef: R|kotlin/reflect/KProperty1<GenericTest.B<*>, GenericTest.A<kotlin/Any?>>| = Q|GenericTest.B|::R|FakeOverride</GenericTest.B.memberVal: R|GenericTest.A<kotlin/Any?>|>|
+            lval memberFunRef: R|kotlin/reflect/KFunction1<GenericTest.B<*>, GenericTest.A<kotlin/Any?>>| = Q|GenericTest.B|::R|FakeOverride</GenericTest.B.memberFun: R|GenericTest.A<kotlin/Any?>|>|
+        }
+
+        public final fun test_2(): R|kotlin/Unit| {
+            lval extensionValRef: <ERROR TYPE REF: No result type for initializer> = Q|GenericTest.B|::<Unresolved name: extensionVal>#
+            lval extensionFunRef: <ERROR TYPE REF: No result type for initializer> = Q|GenericTest.B|::<Unresolved name: extensionFun>#
+        }
+
+    }
+    public final class NoGenericTest : R|kotlin/Any| {
+        public constructor(): R|NoGenericTest| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class A : R|kotlin/Any| {
+            public constructor(): R|NoGenericTest.A| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final class B : R|kotlin/Any| {
+            public constructor(): R|NoGenericTest.B| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val memberVal: R|NoGenericTest.A| = R|/NoGenericTest.A.A|()
+                public get(): R|NoGenericTest.A|
+
+            public final fun memberFun(): R|NoGenericTest.A| {
+                ^memberFun R|/NoGenericTest.A.A|()
+            }
+
+        }
+
+        public final val R|NoGenericTest.B|.extensionVal: R|NoGenericTest.A|
+            public get(): R|NoGenericTest.A| {
+                ^ R|/NoGenericTest.A.A|()
+            }
+
+        public final fun R|NoGenericTest.B|.extensionFun(): R|NoGenericTest.A| {
+            ^extensionFun R|/NoGenericTest.A.A|()
+        }
+
+        public final fun test_1(): R|kotlin/Unit| {
+            lval extensionValRef: <ERROR TYPE REF: No result type for initializer> = Q|NoGenericTest.B|::<Unresolved name: extensionVal>#
+            lval extensionFunRef: <ERROR TYPE REF: No result type for initializer> = Q|NoGenericTest.B|::<Unresolved name: extensionFun>#
+        }
+
+        public final fun test_2(): R|kotlin/Unit| {
+            lval memberValRef: R|kotlin/reflect/KProperty1<NoGenericTest.B, NoGenericTest.A>| = Q|NoGenericTest.B|::R|/NoGenericTest.B.memberVal|
+            lval memberFunRef: R|kotlin/reflect/KFunction1<NoGenericTest.B, NoGenericTest.A>| = Q|NoGenericTest.B|::R|/NoGenericTest.B.memberFun|
+        }
+
+    }
