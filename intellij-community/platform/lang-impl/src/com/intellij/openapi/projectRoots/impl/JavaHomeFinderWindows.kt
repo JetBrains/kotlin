@@ -3,6 +3,8 @@
 
 package com.intellij.openapi.projectRoots.impl
 
+import com.intellij.openapi.util.Bitness
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.WindowsRegistryUtil
 import java.io.File
 import java.util.*
@@ -18,6 +20,12 @@ class JavaHomeFinderWindows : JavaHomeFinderBasic {
 
     private val javaHomePattern = Regex("""^\s+JavaHome\s+REG_SZ\s+(\S.+\S)\s*$""", setOf(MULTILINE, IGNORE_CASE))
 
+    /**
+     * Whether the OS is 64-bit. Don't mix with JRE.
+     * SIC! it's not the same as [SystemInfo.is64Bit].
+     */
+    private val os64bit: Boolean = !System.getenv("ProgramFiles(x86)").isNullOrBlank()
+
     fun gatherHomePaths(text: CharSequence): Set<String> {
       val paths = TreeSet<String>()
       var m: MatchResult? = javaHomePattern.find(text)
@@ -27,6 +35,7 @@ class JavaHomeFinderWindows : JavaHomeFinderBasic {
       }
       return paths
     }
+
   }
 
   constructor(forceEmbeddedJava: Boolean) : super(forceEmbeddedJava) {
@@ -34,11 +43,26 @@ class JavaHomeFinderWindows : JavaHomeFinderBasic {
   }
 
   private fun findAllLocations(): Set<String> {
-    return readRegisteredLocations() + guessPossibleLocations()
+    val paths = mutableSetOf<String>()
+    if (os64bit && SystemInfo.isWin7OrNewer) {
+      paths.addAll(readRegisteredLocations(Bitness.x64))
+      paths.addAll(readRegisteredLocations(Bitness.x32))
+    }
+    else {
+      paths.addAll(readRegisteredLocations(null))
+    }
+    paths.addAll(guessPossibleLocations())
+    return paths
   }
 
-  private fun readRegisteredLocations(): Set<String> {
-    val registryLines: CharSequence? = WindowsRegistryUtil.readRegistry(regCommand)
+  private fun readRegisteredLocations(b: Bitness?): Set<String> {
+    val cmd =
+      when (b) {
+        null -> regCommand
+        Bitness.x32 -> "$regCommand /reg:32"
+        Bitness.x64 -> "$regCommand /reg:64"
+      }
+    val registryLines: CharSequence? = WindowsRegistryUtil.readRegistry(cmd)
     registryLines ?: return emptySet()
     val paths = gatherHomePaths(registryLines)
     return paths
