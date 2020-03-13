@@ -1417,6 +1417,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/problems/callableReferencesAndDefaultParameters.kt");
         }
 
+        @TestMetadata("complexLambdaWithTypeVariableAsExpectedType.kt")
+        public void testComplexLambdaWithTypeVariableAsExpectedType() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/complexLambdaWithTypeVariableAsExpectedType.kt");
+        }
+
         @TestMetadata("definitelyNotNullAndOriginalType.kt")
         public void testDefinitelyNotNullAndOriginalType() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/definitelyNotNullAndOriginalType.kt");

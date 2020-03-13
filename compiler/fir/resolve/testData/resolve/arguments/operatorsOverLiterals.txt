@@ -68,7 +68,7 @@ FILE: operatorsOverLiterals.kt
             ^ Int(1)
         }
         )
-        Int(1).R|<local>/plus|(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
+        Int(1).R|kotlin/Int.plus|(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
             ^ Int(1)
         }
         ))
