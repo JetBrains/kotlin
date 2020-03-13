@@ -39,9 +39,6 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
             it.name.asString().removeSuffix("Protocol")
         }
 
-        val bodySize =
-                LLVMStoreSizeOfType(llvmTargetData, context.llvmDeclarations.forClass(irClass).bodyType).toInt()
-
         val exportedClassName = selectExportedClassName(irClass)
         val className = exportedClassName ?: selectInternalClassName(irClass)
 
@@ -60,7 +57,6 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
                 staticData.placeGlobalConstArray("", runtime.objCMethodDescription, classMethods),
                 Int32(classMethods.size),
 
-                Int32(bodySize),
                 objCLLvmDeclarations.bodyOffsetGlobal.pointer,
 
                 irClass.typeInfoPtr,
@@ -134,6 +130,10 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
                         it.llvmFunction
                 )
             }
+
+    companion object {
+        const val createdClassFieldIndex = 11
+    }
 }
 
 internal fun CodeGenerator.kotlinObjCClassInfo(irClass: IrClass): LLVMValueRef {

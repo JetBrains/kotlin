@@ -1655,14 +1655,6 @@ void garbageCollect() {
 
 #endif  // USE_GC
 
-void deinitInstanceBody(const TypeInfo* typeInfo, void* body) {
-  for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
-    ObjHeader** location = reinterpret_cast<ObjHeader**>(
-        reinterpret_cast<uintptr_t>(body) + typeInfo->objOffsets_[index]);
-    ZeroHeapRef(location);
-  }
-}
-
 ForeignRefManager* initLocalForeignRef(ObjHeader* object) {
   if (!IsStrictMemoryModel) return nullptr;
 
@@ -2743,10 +2735,6 @@ void ReleaseHeapRefStrict(const ObjHeader* object) {
 }
 void ReleaseHeapRefRelaxed(const ObjHeader* object) {
   releaseHeapRef<false>(const_cast<ObjHeader*>(object));
-}
-
-void DeinitInstanceBody(const TypeInfo* typeInfo, void* body) {
-  deinitInstanceBody(typeInfo, body);
 }
 
 ForeignRefContext InitLocalForeignRef(ObjHeader* object) {

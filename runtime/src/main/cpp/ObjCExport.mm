@@ -639,19 +639,26 @@ static const TypeInfo* createTypeInfo(
   const KStdOrderedMap<ClassId, KStdVector<VTableElement>>& interfaceVTables,
   const InterfaceTableRecord* superItable,
   int superItableSize,
-  bool itableEqualsSuper
+  bool itableEqualsSuper,
+  const TypeInfo* fieldsInfo
 ) {
   TypeInfo* result = (TypeInfo*)konanAllocMemory(sizeof(TypeInfo) + vtable.size() * sizeof(void*));
   result->typeInfo_ = result;
 
   result->flags_ = TF_OBJC_DYNAMIC;
 
-  result->instanceSize_ = superType->instanceSize_;
   result->superType_ = superType;
-  result->objOffsets_ = superType->objOffsets_;
-  result->objOffsetsCount_ = superType->objOffsetsCount_; // So TF_IMMUTABLE can also be inherited:
-  if ((superType->flags_ & TF_IMMUTABLE) != 0) {
-    result->flags_ |= TF_IMMUTABLE;
+  if (fieldsInfo == nullptr) {
+    result->instanceSize_ = superType->instanceSize_;
+    result->objOffsets_ = superType->objOffsets_;
+    result->objOffsetsCount_ = superType->objOffsetsCount_; // So TF_IMMUTABLE can also be inherited:
+    if ((superType->flags_ & TF_IMMUTABLE) != 0) {
+      result->flags_ |= TF_IMMUTABLE;
+    }
+  } else {
+    result->instanceSize_ = fieldsInfo->instanceSize_;
+    result->objOffsets_ = fieldsInfo->objOffsets_;
+    result->objOffsetsCount_ = fieldsInfo->objOffsetsCount_;
   }
 
   result->classId_ = superType->classId_;
@@ -793,7 +800,7 @@ static void throwIfCantBeOverridden(Class clazz, const KotlinToObjCMethodAdapter
   }
 }
 
-static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType) {
+static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, const TypeInfo* fieldsInfo) {
   Class superClass = class_getSuperclass(clazz);
 
   KStdUnorderedSet<SEL> definedSelectors;
@@ -931,7 +938,8 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType) {
   // TODO: consider forbidding the class being abstract.
 
   const TypeInfo* result = createTypeInfo(superType, addedInterfaces, vtable, methodTable,
-                                          interfaceVTables, superITable, superITableSize, itableEqualsSuper);
+                                          interfaceVTables, superITable, superITableSize, itableEqualsSuper,
+                                          fieldsInfo);
 
   // TODO: it will probably never be requested, since such a class can't be instantiated in Kotlin.
   result->writableInfo_->objCExport.objCClass = clazz;
@@ -956,11 +964,20 @@ static const TypeInfo* getOrCreateTypeInfo(Class clazz) {
 
   result = Kotlin_ObjCExport_getAssociatedTypeInfo(clazz); // double-checking.
   if (result == nullptr) {
-    result = createTypeInfo(clazz, superType);
+    result = createTypeInfo(clazz, superType, nullptr);
     setAssociatedTypeInfo(clazz, result);
   }
 
   return result;
+}
+
+const TypeInfo* Kotlin_ObjCExport_createTypeInfoWithKotlinFieldsFrom(Class clazz, const TypeInfo* fieldsInfo) {
+  Class superClass = class_getSuperclass(clazz);
+  RuntimeCheck(superClass != nullptr, "");
+
+  const TypeInfo* superType = getOrCreateTypeInfo(superClass);
+
+  return createTypeInfo(clazz, superType, fieldsInfo);
 }
 
 static SimpleMutex classCreationMutex;

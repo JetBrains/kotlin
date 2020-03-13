@@ -273,3 +273,16 @@ struct MyStruct myStruct = {11, 12, 13, 14};
 @interface FooMangled : NSObject<Proto>
 //- (void) CompanionS;  // mangleSimple does not support this: it may clash after mangling
 @end;
+
+
+@class DeallocListener;
+
+@interface DeallocExecutor : NSObject
+@property DeallocListener* deallocListener;
+@end;
+
+@interface DeallocListener : NSObject
+@property (weak) DeallocExecutor* deallocExecutor;
+@property BOOL deallocated;
+-(BOOL)deallocExecutorIsNil;
+@end;

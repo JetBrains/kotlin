@@ -4,6 +4,7 @@
 #if KONAN_OBJC_INTEROP
 
 #import <objc/runtime.h>
+#import <Foundation/NSString.h>
 
 #import "Types.h"
 #import "Memory.h"

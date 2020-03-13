@@ -1614,27 +1614,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         val typePtr = pointerType(fieldInfo.classBodyType)
 
-        val bodyPtr = getObjectBodyPtr(value.parentAsClass, thisPtr)
-
-        val typedBodyPtr = functionGenerationContext.bitcast(typePtr, bodyPtr)
+        val typedBodyPtr = functionGenerationContext.bitcast(typePtr, thisPtr)
         val fieldPtr = LLVMBuildStructGEP(functionGenerationContext.builder, typedBodyPtr, fieldInfo.index, "")
         return fieldPtr!!
-    }
-
-    private fun getObjectBodyPtr(irClass: IrClass, objectPtr: LLVMValueRef): LLVMValueRef {
-        return if (irClass.isObjCClass()) {
-            assert(irClass.isKotlinObjCClass())
-
-            val objCPtr = callDirect(context.ir.symbols.interopObjCObjectRawValueGetter.owner,
-                    listOf(objectPtr), Lifetime.IRRELEVANT)
-
-            val objCDeclarations = context.llvmDeclarations.forClass(irClass).objCDeclarations!!
-            val bodyOffset = functionGenerationContext.load(objCDeclarations.bodyOffsetGlobal.llvmGlobal)
-
-            functionGenerationContext.gep(objCPtr, bodyOffset)
-        } else {
-            objectPtr
-        }
     }
 
     //-------------------------------------------------------------------------//

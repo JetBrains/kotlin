@@ -262,8 +262,8 @@ fun IrDeclaration.findTopLevelDeclaration(): IrDeclaration = when {
 
 internal val IrClass.isFrozen: Boolean
     get() = annotations.hasAnnotation(KonanFqNames.frozen) ||
-            // RTTI is used for non-reference type box or Objective-C object wrapper:
-            !this.defaultType.binaryTypeIsReference() || this.isObjCClass()
+            // RTTI is used for non-reference type box:
+            !this.defaultType.binaryTypeIsReference()
 
 fun IrConstructorCall.getAnnotationStringValue() = (getValueArgument(0) as? IrConst<String>)?.value
 

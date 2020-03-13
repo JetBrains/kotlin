@@ -23,10 +23,11 @@
 #include <cstdint>
 
 #include "Memory.h"
-#include "MemoryPrivate.hpp"
+#include "MemorySharedRefs.hpp"
 
 #include "Natives.h"
 #include "ObjCInterop.h"
+#include "ObjCExportPrivate.h"
 #include "Types.h"
 #include "Utils.h"
 
@@ -39,9 +40,7 @@ const char* Kotlin_ObjCInterop_getUniquePrefix() {
   return result;
 }
 
-extern "C" {
-
-Class Kotlin_Interop_getObjCClass(const char* name);
+extern "C" id objc_msgSendSuper2(struct objc_super *super, SEL op, ...);
 
 struct KotlinClassData {
   const TypeInfo* typeInfo;
@@ -52,6 +51,70 @@ static inline struct KotlinClassData* GetKotlinClassData(Class clazz) {
   void* ivars = object_getIndexedIvars(reinterpret_cast<id>(clazz));
   return static_cast<struct KotlinClassData*>(ivars);
 }
+
+namespace {
+
+BackRefFromAssociatedObject* getBackRef(id obj, KotlinClassData* classData) {
+  void* body = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(obj) + classData->bodyOffset);
+  return reinterpret_cast<BackRefFromAssociatedObject*>(body);
+}
+
+BackRefFromAssociatedObject* getBackRef(id obj) {
+  // TODO: suboptimal; consider specializing methods for each class.
+  auto* classData = GetKotlinClassData(object_getClass(obj));
+  return getBackRef(obj, classData);
+}
+
+OBJ_GETTER(toKotlinImp, id self, SEL _cmd) {
+  RETURN_OBJ(getBackRef(self)->ref());
+}
+
+id allocWithZoneImp(Class self, SEL _cmd, void* zone) {
+  // [super allocWithZone:zone]
+  struct objc_super s = {(id)self, object_getClass((id)self)};
+  auto messenger = reinterpret_cast<id (*) (struct objc_super*, SEL _cmd, void* zone)>(objc_msgSendSuper2);
+  id result = messenger(&s, _cmd, zone);
+
+  auto* classData = GetKotlinClassData(self); // TODO: suboptimal; consider specializing.
+  auto* typeInfo = classData->typeInfo;
+  ObjHolder holder;
+  auto kotlinObj = AllocInstanceWithAssociatedObject(typeInfo, result, holder.slot());
+
+  getBackRef(result, classData)->initAndAddRef(kotlinObj);
+
+  return result;
+}
+
+id retainImp(id self, SEL _cmd) {
+  getBackRef(self)->addRef();
+  return self;
+}
+
+BOOL _tryRetainImp(id self, SEL _cmd) {
+  // TODO: [tryAddRef] currently works only on the owner thread for non-shared objects;
+  // this is a regression for instances of Kotlin subclasses of Obj-C classes:
+  // loading a reference to such an object from Obj-C weak reference now fails on "wrong" thread
+  // unless the object is frozen.
+  return getBackRef(self)->tryAddRef();
+}
+
+void releaseImp(id self, SEL _cmd) {
+  getBackRef(self)->releaseRef();
+}
+
+void releaseAsAssociatedObjectImp(id self, SEL _cmd) {
+  // [super release]
+  Class clazz = object_getClass(self);
+  struct objc_super s = {self, clazz};
+  auto messenger = reinterpret_cast<void (*) (struct objc_super*, SEL _cmd)>(objc_msgSendSuper2);
+  messenger(&s, @selector(release));
+}
+
+}
+
+extern "C" {
+
+Class Kotlin_Interop_getObjCClass(const char* name);
 
 static inline void SetKotlinTypeInfo(Class clazz, const TypeInfo* typeInfo) {
   GetKotlinClassData(clazz)->typeInfo = typeInfo;
@@ -67,39 +130,22 @@ RUNTIME_NOTHROW const TypeInfo* GetObjCKotlinTypeInfo(ObjHeader* obj) {
   return GetKotlinClassData(clazz)->typeInfo;
 }
 
-id objc_msgSendSuper2(struct objc_super *super, SEL op, ...);
 
-static void DeallocImp(id self, SEL _cmd) {
-  // TODO: doesn't support overriding Kotlin classes.
-  Class clazz = object_getClass(self);
-  RuntimeAssert(clazz != nullptr, "Must not be null");
-
-  struct KotlinClassData* classData = GetKotlinClassData(clazz);
-  void* body = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(self) + classData->bodyOffset);
-
-  const TypeInfo* typeInfo = classData->typeInfo;
-  DeinitInstanceBody(typeInfo, body);
-
-  // Call super.dealloc:
-  struct objc_super s = {self, clazz};
-  auto messenger = reinterpret_cast<void (*) (struct objc_super*, SEL _cmd)>(objc_msgSendSuper2);
-  messenger(&s, _cmd);
-}
-
-static void AddDeallocMethod(Class clazz) {
+static void AddNSObjectOverride(bool isClassMethod, Class clazz, SEL selector, void* imp) {
   Class nsObjectClass = Kotlin_Interop_getObjCClass("NSObject");
 
-  SEL deallocSelector = sel_registerName("dealloc");
-  Method nsObjectDeallocMethod = class_getInstanceMethod(nsObjectClass, deallocSelector);
-  RuntimeAssert(nsObjectDeallocMethod != nullptr, "[NSObject dealloc] method not found");
+  Method nsObjectMethod = class_getInstanceMethod(
+      isClassMethod ? object_getClass((id)nsObjectClass) : nsObjectClass, selector);
+  RuntimeCheck(nsObjectMethod != nullptr, "NSObject method not found");
 
-  const char* nsObjectDeallocMethodTypeEncoding = method_getTypeEncoding(nsObjectDeallocMethod);
-  RuntimeAssert(nsObjectDeallocMethodTypeEncoding != nullptr, "[NSObject dealloc] method has no encoding provided");
+  const char* nsObjectMethodTypeEncoding = method_getTypeEncoding(nsObjectMethod);
+  RuntimeCheck(nsObjectMethodTypeEncoding != nullptr, "NSObject method has no encoding provided");
 
   // TODO: something of the above can be cached.
 
-  BOOL added = class_addMethod(clazz, deallocSelector, (IMP)DeallocImp, nsObjectDeallocMethodTypeEncoding);
-  RuntimeAssert(added, "Unable to add dealloc method to Objective-C class");
+  BOOL added = class_addMethod(
+      isClassMethod ? object_getClass((id)clazz) : clazz, selector, (IMP)imp, nsObjectMethodTypeEncoding);
+  RuntimeCheck(added, "Unable to add method to Objective-C class");
 }
 
 struct ObjCMethodDescription {
@@ -121,7 +167,6 @@ struct KotlinObjCClassInfo {
   const struct ObjCMethodDescription* classMethods;
   int32_t classMethodsNum;
 
-  int32_t bodySize;
   int32_t* bodyOffset;
 
   const TypeInfo* typeInfo;
@@ -195,17 +240,23 @@ void* CreateKotlinObjCClass(const KotlinObjCClassInfo* info) {
     }
   }
 
-  AddDeallocMethod(newClass);
+  AddNSObjectOverride(false, newClass, Kotlin_ObjCExport_toKotlinSelector, (void*)&toKotlinImp);
+  AddNSObjectOverride(true, newClass, @selector(allocWithZone:), (void*)&allocWithZoneImp);
+  AddNSObjectOverride(false, newClass, @selector(retain), (void*)&retainImp);
+  AddNSObjectOverride(false, newClass, @selector(_tryRetain), (void*)&_tryRetainImp);
+  AddNSObjectOverride(false, newClass, @selector(release), (void*)&releaseImp);
+  AddNSObjectOverride(false, newClass, Kotlin_ObjCExport_releaseAsAssociatedObjectSelector,
+      (void*)&releaseAsAssociatedObjectImp);
 
   AddMethods(newClass, info->instanceMethods, info->instanceMethodsNum);
   AddMethods(newMetaclass, info->classMethods, info->classMethodsNum);
 
-  SetKotlinTypeInfo(newClass, info->typeInfo);
-  SetKotlinTypeInfo(newMetaclass, info->metaTypeInfo);
+  SetKotlinTypeInfo(newClass, Kotlin_ObjCExport_createTypeInfoWithKotlinFieldsFrom(newClass, info->typeInfo));
 
+  int bodySize = sizeof(BackRefFromAssociatedObject);
   char bodyTypeEncoding[16];
-  snprintf(bodyTypeEncoding, sizeof(bodyTypeEncoding), "[%dc]", info->bodySize);
-  BOOL added = class_addIvar(newClass, "kotlinBody", info->bodySize, /* log2(align) = */ 3, bodyTypeEncoding);
+  snprintf(bodyTypeEncoding, sizeof(bodyTypeEncoding), "[%dc]", bodySize);
+  BOOL added = class_addIvar(newClass, "kotlinBody", bodySize, /* log2(align) = */ 3, bodyTypeEncoding);
   RuntimeAssert(added == YES, "Unable to add ivar to Objective-C class");
 
   objc_registerClassPair(newClass);

@@ -25,8 +25,6 @@ bool TryAddHeapRef(const ObjHeader* object);
 
 MODEL_VARIANTS(void, ReleaseHeapRef, const ObjHeader* object);
 
-void DeinitInstanceBody(const TypeInfo* typeInfo, void* body);
-
 void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject);
 
 ForeignRefContext InitLocalForeignRef(ObjHeader* object);
