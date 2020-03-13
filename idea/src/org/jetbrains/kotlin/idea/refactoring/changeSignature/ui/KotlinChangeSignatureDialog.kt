@@ -332,7 +332,7 @@ class KotlinChangeSignatureDialog(
         if (myMethod.canChangeReturnType() == MethodDescriptor.ReadWriteOption.ReadWrite &&
             myReturnTypeCodeFragment.getTypeInfo(isCovariant = true, forPreview = false, reanalyse = true).type == null
         ) {
-            if (Messages.showOkCancelDialog(
+            if (showOkCancelDialog(
                     myProject,
                     KotlinBundle.message("message.text.return.type.cannot.be.resolved",
                         myReturnTypeCodeFragment?.text.toString()
@@ -351,7 +351,7 @@ class KotlinChangeSignatureDialog(
                     KotlinBundle.message("text.parameter.0", item.parameter.name)
                 else
                     KotlinBundle.message("text.receiver")
-                if (Messages.showOkCancelDialog(
+                if (showOkCancelDialog(
                         myProject,
                         KotlinBundle.message("message.type.for.cannot.be.resolved",
                             item.typeCodeFragment.text,
