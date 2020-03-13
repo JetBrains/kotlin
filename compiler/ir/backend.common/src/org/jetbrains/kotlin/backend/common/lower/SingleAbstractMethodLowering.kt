@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
@@ -104,7 +105,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             val inInlineFunctionScope = allScopes.any { scope -> (scope.irElement as? IrFunction)?.isInline ?: false }
             val cache = if (inInlineFunctionScope) inlineCachedImplementations else cachedImplementations
             val implementation = cache.getOrPut(superType) {
-                createObjectProxy(superType, inInlineFunctionScope)
+                createObjectProxy(superType, inInlineFunctionScope, expression)
             }
 
             return if (superType.isNullable() && invokable.type.isNullable()) {
@@ -135,7 +136,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
 
     // Construct a class that wraps an invokable object into an implementation of an interface:
     //     class sam$n(private val invokable: F) : Interface { override fun method(...) = invokable(...) }
-    private fun createObjectProxy(superType: IrType, generatePublicWrapper: Boolean): IrClass {
+    private fun createObjectProxy(superType: IrType, generatePublicWrapper: Boolean, createFor: IrElement): IrClass {
         val superClass = superType.classifierOrFail.owner as IrClass
         // The language documentation prohibits casting lambdas to classes, but if it was allowed,
         // the `irDelegatingConstructorCall` in the constructor below would need to be modified.
@@ -159,6 +160,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             name = wrapperName
             origin = IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION
             visibility = wrapperVisibility
+            setSourceRange(createFor)
         }.apply {
             createImplicitParameterDeclarationWithWrappedDescriptor()
             superTypes += superType
@@ -170,12 +172,14 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             type = wrappedFunctionType
             origin = subclass.origin
             visibility = Visibilities.PRIVATE
+            setSourceRange(createFor)
         }
 
         subclass.addConstructor {
             origin = subclass.origin
             isPrimary = true
             visibility = wrapperVisibility
+            setSourceRange(createFor)
         }.apply {
             val parameter = addValueParameter {
                 name = field.name
@@ -196,6 +200,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             visibility = superMethod.visibility
             origin = subclass.origin
             isSuspend = superMethod.isSuspend
+            setSourceRange(createFor)
         }.apply {
             overriddenSymbols += superMethod.symbol
             dispatchReceiverParameter = subclass.thisReceiver!!.copyTo(this)
