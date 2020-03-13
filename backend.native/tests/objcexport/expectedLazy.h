@@ -1109,6 +1109,13 @@ __attribute__((swift_name("SharedRefs.MutableData")))
 @property int32_t x __attribute__((swift_name("x")));
 @end;
 
+__attribute__((swift_name("TestRememberNewObject")))
+@protocol KtTestRememberNewObject
+@required
+- (id)getObject __attribute__((swift_name("getObject()")));
+- (void)waitForCleanup __attribute__((swift_name("waitForCleanup()")));
+@end;
+
 __attribute__((swift_name("ClassForTypeCheck")))
 @interface KtClassForTypeCheck : KtBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
@@ -1283,6 +1290,7 @@ __attribute__((swift_name("ValuesKt")))
 + (void)error __attribute__((swift_name("error()"))) __attribute__((unavailable("error")));
 + (void)warning __attribute__((swift_name("warning()"))) __attribute__((deprecated("warning")));
 + (void)gc __attribute__((swift_name("gc()")));
++ (void)testRememberNewObjectTest:(id<KtTestRememberNewObject>)test __attribute__((swift_name("testRememberNewObject(test:)")));
 + (BOOL)testClassTypeCheckX:(id)x __attribute__((swift_name("testClassTypeCheck(x:)")));
 + (BOOL)testInterfaceTypeCheckX:(id)x __attribute__((swift_name("testInterfaceTypeCheck(x:)")));
 + (int32_t)testAbstractInterfaceCallX:(id<KtIAbstractInterface>)x __attribute__((swift_name("testAbstractInterfaceCall(x:)")));

@@ -885,6 +885,17 @@ class SharedRefs {
     private val mustBeRemoved = mutableListOf<WeakReference<*>>()
 }
 
+interface TestRememberNewObject {
+    fun getObject(): Any
+    fun waitForCleanup()
+}
+
+fun testRememberNewObject(test: TestRememberNewObject) {
+    val obj = autoreleasepool { test.getObject() }
+    test.waitForCleanup()
+    assertNotEquals("", obj.toString()) // Likely crashes if object is removed.
+}
+
 open class ClassForTypeCheck
 
 fun testClassTypeCheck(x: Any) = x is ClassForTypeCheck

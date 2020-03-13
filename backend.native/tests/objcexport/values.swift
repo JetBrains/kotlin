@@ -913,7 +913,7 @@ class TestSharedRefs {
         DispatchQueue.global().async(execute: getClosure())
     }
 
-    private static func runInNewThread(initializeKotlinRuntime: Bool, block: @escaping () -> Void) {
+    private static func launchInNewThread(initializeKotlinRuntime: Bool, block: @escaping () -> Void) -> pthread_t {
         class Closure {
             static var currentBlock: (() -> Void)? = nil
             static var initializeKotlinRuntime: Bool = false
@@ -934,9 +934,17 @@ class TestSharedRefs {
             return nil
         }, nil)
         try! assertEquals(actual: createCode, expected: 0)
+        return thread!
+    }
 
-        let joinCode = pthread_join(thread!, nil)
+    private static func joinThread(thread: pthread_t) {
+        let joinCode = pthread_join(thread, nil)
         try! assertEquals(actual: joinCode, expected: 0)
+    }
+
+    private static func runInNewThread(initializeKotlinRuntime: Bool, block: @escaping () -> Void) {
+        let thread = launchInNewThread(initializeKotlinRuntime: initializeKotlinRuntime, block: block)
+        joinThread(thread: thread)
     }
 
     private func runInNewThread(initializeKotlinRuntime: Bool, block: @escaping () -> Void) {
@@ -1048,6 +1056,51 @@ class TestSharedRefs {
         try assertTrue(Deinit.weakVar2 === nil)
     }
 
+    func testRememberNewObject(createObject: @escaping (SharedRefs) -> AnyObject) throws {
+
+        class TestImpl : TestRememberNewObject {
+            let cleanupFinishedSemaphore = DispatchSemaphore(value: 0)
+            let threadWaitingForCleanupSemaphore = DispatchSemaphore(value: 0)
+
+            var obj: AnyObject? = nil
+
+            func getObject() -> Any {
+                return obj!
+            }
+
+            func waitForCleanup() {
+                threadWaitingForCleanupSemaphore.signal()
+                cleanupFinishedSemaphore.wait()
+            }
+        }
+
+        let test = TestImpl()
+
+        let refs = SharedRefs()
+        try assertFalse(refs.hasAliveObjects())
+
+        autoreleasepool {
+            test.obj = createObject(refs)
+        }
+
+        try assertTrue(refs.hasAliveObjects())
+
+        let thread = TestSharedRefs.launchInNewThread(initializeKotlinRuntime: false) {
+            ValuesKt.testRememberNewObject(test: test)
+        }
+
+        test.threadWaitingForCleanupSemaphore.wait()
+        test.obj = nil
+        ValuesKt.gc()
+
+        try assertTrue(refs.hasAliveObjects())
+
+        test.cleanupFinishedSemaphore.signal()
+
+        TestSharedRefs.joinThread(thread: thread)
+        try assertFalse(refs.hasAliveObjects())
+    }
+
     func test() throws {
         try testLambdaSimple()
         try testObjectPartialRelease()
@@ -1063,6 +1116,9 @@ class TestSharedRefs {
         try testReferenceOutlivesThread(releaseWithKotlinRuntime: false)
         try testReferenceOutlivesThread(releaseWithKotlinRuntime: true)
         try testMoreWorkBeforeThreadExit()
+
+        try testRememberNewObject(createObject: { $0.createFrozenRegularObject() })
+        try testRememberNewObject(createObject: { $0.createFrozenCollection() })
 
         usleep(300 * 1000)
     }
