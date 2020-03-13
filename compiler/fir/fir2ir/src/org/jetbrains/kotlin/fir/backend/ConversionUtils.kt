@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.AccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -70,28 +69,32 @@ class ConversionTypeContext internal constructor(
     }
 }
 
-fun FirClassifierSymbol<*>.toIrSymbol(
+fun FirClassifierSymbol<*>.toSymbol(
     session: FirSession,
-    declarationStorage: Fir2IrDeclarationStorage,
+    classifierStorage: Fir2IrClassifierStorage,
     typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
 ): IrClassifierSymbol {
     return when (this) {
         is FirTypeParameterSymbol -> {
-            declarationStorage.getIrTypeParameterSymbol(this, typeContext)
+            classifierStorage.getIrTypeParameterSymbol(this, typeContext)
         }
         is FirTypeAliasSymbol -> {
             val typeAlias = fir
             val coneClassLikeType = (typeAlias.expandedTypeRef as FirResolvedTypeRef).type as ConeClassLikeType
-            coneClassLikeType.lookupTag.toSymbol(session)!!.toIrSymbol(session, declarationStorage)
+            coneClassLikeType.lookupTag.toSymbol(session)!!.toSymbol(session, classifierStorage)
         }
         is FirClassSymbol -> {
-            declarationStorage.getIrClassSymbol(this)
+            classifierStorage.getIrClassSymbol(this)
         }
         else -> throw AssertionError("Should not be here: $this")
     }
 }
 
-fun FirReference.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol? {
+fun FirReference.toSymbol(
+    session: FirSession,
+    classifierStorage: Fir2IrClassifierStorage,
+    declarationStorage: Fir2IrDeclarationStorage
+): IrSymbol? {
     return when (this) {
         is FirResolvedNamedReference -> {
             when (val resolvedSymbol = resolvedSymbol) {
@@ -100,15 +103,18 @@ fun FirReference.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbo
                         resolvedSymbol.overriddenSymbol?.takeIf { it.callableId == resolvedSymbol.callableId } ?: resolvedSymbol
                     originalCallableSymbol.toSymbol(declarationStorage)
                 }
+                is FirClassifierSymbol<*> -> {
+                    resolvedSymbol.toSymbol(session, classifierStorage)
+                }
                 else -> {
-                    resolvedSymbol.toSymbol(declarationStorage)
+                    throw AssertionError("Unknown symbol: $resolvedSymbol")
                 }
             }
         }
         is FirThisReference -> {
-            when (val boundSymbol = boundSymbol?.toSymbol(declarationStorage)) {
-                is IrClassSymbol -> boundSymbol.owner.thisReceiver?.symbol
-                is IrFunctionSymbol -> boundSymbol.owner.extensionReceiverParameter?.symbol
+            when (val boundSymbol = boundSymbol) {
+                is FirClassSymbol<*> -> classifierStorage.getIrClassSymbol(boundSymbol).owner.thisReceiver?.symbol
+                is FirFunctionSymbol -> declarationStorage.getIrFunctionSymbol(boundSymbol).owner.extensionReceiverParameter?.symbol
                 else -> null
             }
         }
@@ -116,10 +122,11 @@ fun FirReference.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbo
     }
 }
 
-private fun AbstractFirBasedSymbol<*>.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol? = when (this) {
-    is FirClassSymbol -> declarationStorage.getIrClassSymbol(this)
+private fun FirCallableSymbol<*>.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol? = when (this) {
     is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(this)
-    is FirPropertySymbol -> if (fir.isLocal) declarationStorage.getIrValueSymbol(this) else declarationStorage.getIrPropertyOrFieldSymbol(this)
+    is FirPropertySymbol -> {
+        if (fir.isLocal) declarationStorage.getIrValueSymbol(this) else declarationStorage.getIrPropertyOrFieldSymbol(this)
+    }
     is FirFieldSymbol -> declarationStorage.getIrPropertyOrFieldSymbol(this)
     is FirBackingFieldSymbol -> declarationStorage.getIrBackingFieldSymbol(this)
     is FirDelegateFieldSymbol<*> -> declarationStorage.getIrBackingFieldSymbol(this)

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.types.Variance
 
 class Fir2IrTypeConverter(
     private val session: FirSession,
-    private val declarationStorage: Fir2IrDeclarationStorage,
+    private val classifierStorage: Fir2IrClassifierStorage,
     private val irBuiltIns: IrBuiltIns
 ) {
     lateinit var nothingType: IrType
@@ -49,7 +49,7 @@ class Fir2IrTypeConverter(
             is ConeLookupTagBasedType -> {
                 val irSymbol = getArrayType(this.classId) ?: run {
                     val firSymbol = this.lookupTag.toSymbol(session) ?: return createErrorType()
-                    firSymbol.toIrSymbol(session, declarationStorage, typeContext)
+                    firSymbol.toSymbol(session, classifierStorage, typeContext)
                 }
                 // TODO: annotations
                 IrSimpleTypeImpl(

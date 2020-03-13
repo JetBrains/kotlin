@@ -47,6 +47,7 @@ import java.util.*
 class Fir2IrVisitor(
     private val session: FirSession,
     private val symbolTable: SymbolTable,
+    private val classifierStorage: Fir2IrClassifierStorage,
     private val declarationStorage: Fir2IrDeclarationStorage,
     private val converter: Fir2IrConverter,
     private val typeConverter: Fir2IrTypeConverter,
@@ -95,10 +96,10 @@ class Fir2IrVisitor(
     // ==================================================================================
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Any?): IrElement {
-        val irEnumEntry = declarationStorage.getCachedIrEnumEntry(enumEntry)!!
+        val irEnumEntry = classifierStorage.getCachedIrEnumEntry(enumEntry)!!
         val correspondingClass = irEnumEntry.correspondingClass ?: return irEnumEntry
         declarationStorage.enterScope(irEnumEntry.descriptor)
-        declarationStorage.putEnumEntryClassInScope(enumEntry, correspondingClass)
+        classifierStorage.putEnumEntryClassInScope(enumEntry, correspondingClass)
         converter.processAnonymousObjectMembers(enumEntry.initializer as FirAnonymousObject, correspondingClass)
         conversionScope.withParent(correspondingClass) {
             setClassContent(enumEntry.initializer as FirAnonymousObject)
@@ -150,7 +151,7 @@ class Fir2IrVisitor(
     override fun visitRegularClass(regularClass: FirRegularClass, data: Any?): IrElement {
         if (regularClass.visibility == Visibilities.LOCAL) {
             val irParent = conversionScope.parentFromStack()
-            val irClass = declarationStorage.getCachedIrClass(regularClass)?.apply { this.parent = irParent }
+            val irClass = classifierStorage.getCachedIrClass(regularClass)?.apply { this.parent = irParent }
             if (irClass != null) {
                 converter.processRegisteredLocalClassAndNestedClasses(regularClass, irClass)
                 return conversionScope.withParent(irClass) {
@@ -159,7 +160,7 @@ class Fir2IrVisitor(
             }
             converter.processLocalClassAndNestedClasses(regularClass, irParent)
         }
-        val irClass = declarationStorage.getCachedIrClass(regularClass)!!
+        val irClass = classifierStorage.getCachedIrClass(regularClass)!!
         return conversionScope.withParent(irClass) {
             setClassContent(regularClass)
         }
@@ -168,8 +169,8 @@ class Fir2IrVisitor(
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?): IrElement {
         val irParent = conversionScope.parentFromStack()
         // NB: for implicit types it is possible that anonymous object is already cached
-        val irAnonymousObject = declarationStorage.getCachedIrClass(anonymousObject)?.apply { this.parent = irParent }
-            ?: declarationStorage.createIrAnonymousObject(anonymousObject, irParent = irParent)
+        val irAnonymousObject = classifierStorage.getCachedIrClass(anonymousObject)?.apply { this.parent = irParent }
+            ?: classifierStorage.createIrAnonymousObject(anonymousObject, irParent = irParent)
         converter.processAnonymousObjectMembers(anonymousObject, irAnonymousObject)
         conversionScope.withParent(irAnonymousObject) {
             setClassContent(anonymousObject)
@@ -499,7 +500,7 @@ class Fir2IrVisitor(
 
     private fun FirQualifiedAccess.toIrExpression(typeRef: FirTypeRef): IrExpression {
         val type = typeRef.toIrType()
-        val symbol = calleeReference.toSymbol(declarationStorage)
+        val symbol = calleeReference.toSymbol(session, classifierStorage, declarationStorage)
         return typeRef.convertWithOffsets { startOffset, endOffset ->
             if (calleeReference is FirSuperReference) {
                 if (typeRef !is FirComposedSuperTypeRef) {
@@ -647,7 +648,7 @@ class Fir2IrVisitor(
                     it is FirAnonymousObject || it is FirRegularClass && it.classKind == ClassKind.OBJECT
                 }
                 firClass?.convertWithOffsets { startOffset, endOffset ->
-                    val irClass = declarationStorage.getCachedIrClass(firClass)!!
+                    val irClass = classifierStorage.getCachedIrClass(firClass)!!
                     IrGetObjectValueImpl(startOffset, endOffset, irClass.defaultType, irClass.symbol)
                 }
             }
@@ -715,7 +716,7 @@ class Fir2IrVisitor(
                 it is FirAnonymousObject || it is FirRegularClass && it.classKind == ClassKind.OBJECT
             }
             if (firObject != null) {
-                val irObject = declarationStorage.getCachedIrClass(firObject)!!
+                val irObject = classifierStorage.getCachedIrClass(firObject)!!
                 if (irObject != conversionScope.lastClass()) {
                     return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
                         IrGetObjectValueImpl(startOffset, endOffset, irObject.defaultType, irObject.symbol)
@@ -750,7 +751,7 @@ class Fir2IrVisitor(
     }
 
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: Any?): IrElement {
-        val symbol = callableReferenceAccess.calleeReference.toSymbol(declarationStorage)
+        val symbol = callableReferenceAccess.calleeReference.toSymbol(session, classifierStorage, declarationStorage)
         val type = callableReferenceAccess.typeRef.toIrType()
         return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
             when (symbol) {
@@ -792,7 +793,7 @@ class Fir2IrVisitor(
 
     override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: Any?): IrElement {
         val calleeReference = variableAssignment.calleeReference
-        val symbol = calleeReference.toSymbol(declarationStorage)
+        val symbol = calleeReference.toSymbol(session, classifierStorage, declarationStorage)
         return variableAssignment.convertWithOffsets { startOffset, endOffset ->
             if (symbol != null && symbol.isBound) {
                 when (symbol) {
@@ -1235,7 +1236,7 @@ class Fir2IrVisitor(
         val irClassType = argument.typeRef.toIrType()
         val irClassReferenceSymbol = when (argument) {
             is FirResolvedReifiedParameterReference -> {
-                declarationStorage.getIrTypeParameterSymbol(argument.symbol, ConversionTypeContext.DEFAULT)
+                classifierStorage.getIrTypeParameterSymbol(argument.symbol, ConversionTypeContext.DEFAULT)
             }
             is FirResolvedQualifier -> {
                 val symbol = argument.symbol as? FirClassSymbol
@@ -1244,7 +1245,7 @@ class Fir2IrVisitor(
                             startOffset, endOffset, irType, "Resolved qualifier ${argument.render()} does not have correct symbol"
                         )
                     }
-                declarationStorage.getIrClassSymbol(symbol)
+                classifierStorage.getIrClassSymbol(symbol)
             }
             else -> null
         }
@@ -1274,7 +1275,7 @@ class Fir2IrVisitor(
             if (classSymbol != null) {
                 IrGetObjectValueImpl(
                     startOffset, endOffset, irType,
-                    classSymbol.toIrSymbol(session, declarationStorage) as IrClassSymbol
+                    classSymbol.toSymbol(session, classifierStorage) as IrClassSymbol
                 )
             } else {
                 IrErrorCallExpressionImpl(

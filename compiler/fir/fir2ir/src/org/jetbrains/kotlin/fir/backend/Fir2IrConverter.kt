@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 class Fir2IrConverter(
     private val moduleDescriptor: FirModuleDescriptor,
     private val sourceManager: PsiSourceManager,
+    private val classifierStorage: Fir2IrClassifierStorage,
     private val declarationStorage: Fir2IrDeclarationStorage
 ) {
 
@@ -71,7 +72,7 @@ class Fir2IrConverter(
 
     fun processAnonymousObjectMembers(
         anonymousObject: FirAnonymousObject,
-        irClass: IrClass = declarationStorage.getCachedIrClass(anonymousObject)!!
+        irClass: IrClass = classifierStorage.getCachedIrClass(anonymousObject)!!
     ): IrClass {
         anonymousObject.getPrimaryConstructorIfAny()?.let {
             irClass.declarations += declarationStorage.createIrConstructor(it, irClass)
@@ -89,7 +90,7 @@ class Fir2IrConverter(
 
     private fun processClassMembers(
         regularClass: FirRegularClass,
-        irClass: IrClass = declarationStorage.getCachedIrClass(regularClass)!!
+        irClass: IrClass = classifierStorage.getCachedIrClass(regularClass)!!
     ): IrClass {
         regularClass.getPrimaryConstructorIfAny()?.let {
             irClass.declarations += declarationStorage.createIrConstructor(it, irClass)
@@ -102,7 +103,7 @@ class Fir2IrConverter(
     }
 
     private fun registerClassAndNestedClasses(regularClass: FirRegularClass, parent: IrDeclarationParent): IrClass {
-        val irClass = declarationStorage.registerIrClass(regularClass, parent)
+        val irClass = classifierStorage.registerIrClass(regularClass, parent)
         regularClass.declarations.forEach {
             if (it is FirRegularClass) {
                 registerClassAndNestedClasses(it, irClass)
@@ -112,7 +113,7 @@ class Fir2IrConverter(
     }
 
     private fun processClassAndNestedClassHeaders(regularClass: FirRegularClass) {
-        declarationStorage.processClassHeader(regularClass)
+        classifierStorage.processClassHeader(regularClass)
         regularClass.declarations.forEach {
             if (it is FirRegularClass) {
                 processClassAndNestedClassHeaders(it)
@@ -137,7 +138,7 @@ class Fir2IrConverter(
                 null
             }
             is FirEnumEntry -> {
-                declarationStorage.createIrEnumEntry(declaration, parent as IrClass)
+                classifierStorage.createIrEnumEntry(declaration, parent as IrClass)
             }
             is FirAnonymousInitializer -> {
                 declarationStorage.createIrAnonymousInitializer(declaration, parent as IrClass)
@@ -169,12 +170,16 @@ class Fir2IrConverter(
             val builtIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, signaturer, symbolTable)
             val sourceManager = PsiSourceManager()
             val declarationStorage = Fir2IrDeclarationStorage(session, symbolTable, moduleDescriptor)
-            val typeConverter = Fir2IrTypeConverter(session, declarationStorage, builtIns)
+            val classifierStorage = Fir2IrClassifierStorage(session, symbolTable)
+            val typeConverter = Fir2IrTypeConverter(session, classifierStorage, builtIns)
             declarationStorage.typeConverter = typeConverter
+            classifierStorage.typeConverter = typeConverter
+            declarationStorage.classifierStorage = classifierStorage
+            classifierStorage.declarationStorage = declarationStorage
             typeConverter.initBuiltinTypes()
             val irFiles = mutableListOf<IrFile>()
 
-            val converter = Fir2IrConverter(moduleDescriptor, sourceManager, declarationStorage)
+            val converter = Fir2IrConverter(moduleDescriptor, sourceManager, classifierStorage, declarationStorage)
             for (firFile in firFiles) {
                 converter.registerFileAndClasses(firFile)
             }
@@ -186,7 +191,7 @@ class Fir2IrConverter(
             }
 
             val fir2irVisitor = Fir2IrVisitor(
-                session, symbolTable, declarationStorage, converter, typeConverter, builtIns, fakeOverrideMode
+                session, symbolTable, classifierStorage, declarationStorage, converter, typeConverter, builtIns, fakeOverrideMode
             )
             for (firFile in firFiles) {
                 val irFile = firFile.accept(fir2irVisitor, null) as IrFile
