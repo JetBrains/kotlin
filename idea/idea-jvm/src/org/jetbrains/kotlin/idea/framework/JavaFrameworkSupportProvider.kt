@@ -57,7 +57,7 @@ class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
                 if (isNewProject) {
                     ProjectCodeStyleImporter.apply(module.project, KotlinStyleGuideCodeStyle.INSTANCE)
                 }
-                NewProjectWizardsFUSCollector.log("KotlinJavaFrameworkSupportProvider")
+                NewProjectWizardsFUSCollector.log("Kotlin/JVM", "Java", false)
             }
 
             override fun onFrameworkSelectionChanged(selected: Boolean) {

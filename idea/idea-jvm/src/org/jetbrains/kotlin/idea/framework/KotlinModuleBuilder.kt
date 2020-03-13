@@ -45,7 +45,7 @@ class KotlinModuleBuilder(
     }
 
     override fun setupRootModel(rootModel: ModifiableRootModel) {
-        NewProjectWizardsFUSCollector.log(this.javaClass.simpleName + ": ${this.targetPlatform}")
+        NewProjectWizardsFUSCollector.log(this.builderName, "Kotlin", false)
         super.setupRootModel(rootModel)
         if (!targetPlatform.isJvm()) {
             migrateNonJvmSourceFolders(rootModel)

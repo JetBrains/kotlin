@@ -154,7 +154,7 @@ abstract class GradleKotlinFrameworkSupportProvider(
             ProjectCodeStyleImporter.apply(module.project, KotlinStyleGuideCodeStyle.INSTANCE)
             GradlePropertiesFileFacade.forProject(module.project).addCodeStyleProperty(KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING)
         }
-        NewProjectWizardsFUSCollector.log(this.javaClass.simpleName)
+        NewProjectWizardsFUSCollector.log(this.presentableName, "Gradle", false)
     }
 
     protected open fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder<out PsiFile>, specifyPluginVersionIfNeeded: Boolean) {}
@@ -331,6 +331,7 @@ open class GradleKotlinMPPSourceSetsFrameworkSupportProvider : GradleKotlinMPPFr
         explicitPluginVersion: String?
     ) {
         super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
+        NewProjectWizardsFUSCollector.log(this.presentableName + " as framework", "Gradle", false)
 
         buildScriptData.addOther(
             """kotlin {

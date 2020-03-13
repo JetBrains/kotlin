@@ -106,7 +106,7 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
             GradlePropertiesFileFacade.forProject(module.project).addCodeStyleProperty(KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING)
         }
 
-        NewProjectWizardsFUSCollector.log(this.javaClass.simpleName)
+        NewProjectWizardsFUSCollector.log(this.presentableName, "Gradle", true)
     }
 
     protected abstract fun getOldSyntaxPluginDefinition(): String
