@@ -14,15 +14,13 @@ interface ErrorAwareComponent {
 }
 
 class SettingsList(
-    settings: List<SettingReference<*, *>>,
+    private var settingComponents: List<SettingComponent<*, *>>,
     private val context: Context
 ) : DynamicComponent(context), ErrorAwareComponent {
     private val ui = BorderLayoutPanel()
 
-    private var settingComponents: List<SettingComponent<*, *>> = emptyList()
-
     init {
-        setSettings(settings)
+        setSettingComponents(settingComponents)
     }
 
     override val component get() = ui
@@ -32,11 +30,9 @@ class SettingsList(
         settingComponents.forEach { it.onInit() }
     }
 
-    fun setSettings(settings: List<SettingReference<*, *>>) {
+    private fun setSettingComponents(settingComponents: List<SettingComponent<*, *>>) {
+        this.settingComponents = settingComponents
         ui.removeAll()
-        settingComponents = settings.map { setting ->
-            DefaultSettingComponent.create(setting, context, needLabel = false)
-        }
         ui.addToCenter(panel {
             settingComponents.forEach { settingComponent ->
                 settingComponent.onInit()
@@ -45,6 +41,15 @@ class SettingsList(
                 }
             }
         })
+    }
+
+
+    fun setSettings(settings: List<SettingReference<*, *>>) {
+        setSettingComponents(
+            settings.map { setting ->
+                DefaultSettingComponent.create(setting, context, needLabel = false)
+            }
+        )
     }
 
     override fun findComponentWithError(error: ValidationResult.ValidationError) = read {

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.ProjectTemplate
 
 class ProjectTemplatesPlugin(context: Context) : Plugin(context) {
     val template by dropDownSetting<ProjectTemplate>(
-        "Template",
+        "Project template",
         GenerationPhase.INIT_TEMPLATE,
         parser = valueParserM { _, _ ->
             Failure(ParseError("Project templates is not supported in yaml for now"))

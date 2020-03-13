@@ -31,6 +31,7 @@ import javax.swing.BorderFactory
 import javax.swing.Icon
 import javax.swing.JComponent
 import javax.swing.JPanel
+import javax.swing.border.Border
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
@@ -168,6 +169,10 @@ fun <C : JComponent> C.bordered(
             else -> lineBorder
         }
     )
+}
+
+fun <C : JComponent> C.withBorder(border: Border): C = apply {
+    this.border = BorderFactory.createCompoundBorder(border, this.border)
 }
 
 class TemplateTagUIComponent(tag: TemplateTag) : TagComponent(tag.text) {

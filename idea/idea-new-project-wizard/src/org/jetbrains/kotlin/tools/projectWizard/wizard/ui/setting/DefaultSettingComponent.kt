@@ -59,6 +59,9 @@ object DefaultSettingComponent {
     }
 }
 
+fun <V : Any, T : SettingType<V>> SettingReference<V, T>.createSettingComponent(context: Context) =
+    DefaultSettingComponent.create(this, context, needLabel = false)
+
 class VersionSettingComponent(
     reference: SettingReference<Version, VersionSettingType>,
     context: Context

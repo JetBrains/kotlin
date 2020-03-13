@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import java.nio.file.Paths
 
 class StructurePlugin(context: Context) : Plugin(context) {
-    val projectPath by pathSetting("Root path", GenerationPhase.PROJECT_GENERATION) {
+    val projectPath by pathSetting("Location", GenerationPhase.PROJECT_GENERATION) {
         defaultValue = value(Paths.get("."))
     }
     val name by stringSetting("Name", GenerationPhase.PROJECT_GENERATION)

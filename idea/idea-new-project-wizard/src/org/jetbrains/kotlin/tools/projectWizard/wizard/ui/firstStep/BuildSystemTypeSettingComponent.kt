@@ -24,7 +24,7 @@ class BuildSystemTypeSettingComponent(
     override val uiComponent: DropDownComponent<BuildSystemType> = DropDownComponent(
         context,
         setting.type.values,
-        labelText = "Build System",
+        labelText = null,
         filter = { value -> read { setting.type.filter(this, reference, value) } },
         validator = setting.validator,
         iconProvider = BuildSystemType::icon,
