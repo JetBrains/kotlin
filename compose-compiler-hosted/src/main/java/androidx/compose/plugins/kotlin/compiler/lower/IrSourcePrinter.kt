@@ -605,6 +605,10 @@ private class IrSourcePrinterVisitor(
 
     override fun visitReturn(expression: IrReturn) {
         val value = expression.value
+        // only print the return statement directly if it is not a lambda
+        if (expression.returnTarget.name.asString() != "<anonymous>") {
+            print("return ")
+        }
         if (expression.type.isUnit() || value.type.isUnit()) {
             if (value is IrGetObjectValue) {
                 return
@@ -612,11 +616,7 @@ private class IrSourcePrinterVisitor(
                 value.print()
             }
         } else {
-            // only print the return statement directly if it is not a lambda
-            if (expression.returnTarget.name.asString() != "<anonymous>") {
-                print("return ")
-            }
-            expression.value.print()
+            value.print()
         }
     }
 
