@@ -133,7 +133,7 @@ internal class Linker(val context: Context) {
                 it.execute()
             }
         } catch (e: KonanExternalToolFailure) {
-            context.reportCompilationError("${e.toolName} invocation reported errors")
+            context.reportCompilationError("${e.toolName} invocation reported errors\n${e.message}")
         }
         return executable
     }
