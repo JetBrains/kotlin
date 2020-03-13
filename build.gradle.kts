@@ -362,6 +362,7 @@ allprojects {
         "-Xopt-in=kotlin.RequiresOptIn",
         "-Xread-deserialized-contracts",
         "-Xjvm-default=compatibility",
+        "-Xno-optimized-callable-references",
         "-progressive".takeIf { hasProperty("test.progressive.mode") }
     )
 
