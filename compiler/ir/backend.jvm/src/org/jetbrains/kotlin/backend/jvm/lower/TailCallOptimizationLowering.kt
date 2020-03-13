@@ -46,7 +46,7 @@ private class TailCallOptimizationLowering(private val context: JvmBackendContex
         }, null)
     }
 
-    private fun IrExpression.coerceToUnit() = IrTypeOperatorCallImpl(
+    private fun IrExpression.coerceToUnit() = if (type == context.irBuiltIns.unitType) this else IrTypeOperatorCallImpl(
         startOffset, endOffset, context.irBuiltIns.unitType, IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, context.irBuiltIns.unitType, this
     )
 }
@@ -75,7 +75,7 @@ private class TailCallOptimizationData(val function: IrSimpleFunction) {
     init {
         when (val body = function.body) {
             is IrBlockBody -> body.statements.findTailCall(returnsUnit)?.findCallsOnTailPositionWithoutImmediateReturn()
-            is IrExpressionBody -> body.expression.findCallsOnTailPositionWithoutImmediateReturn()
+            is IrExpressionBody -> body.expression.findCallsOnTailPositionWithoutImmediateReturn(immediateReturn = true)
         }
     }
 }
