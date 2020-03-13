@@ -4,8 +4,10 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.ui.TextBrowseFolderListener
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
+import org.jetbrains.kotlin.tools.projectWizard.core.asPath
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.textField
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.withOnUpdatedListener
 import java.nio.file.Path
 import java.nio.file.Paths
 import javax.swing.JComponent
@@ -22,9 +24,9 @@ class PathFieldComponent(
     validator,
     onValueUpdate
 ) {
-    override val uiComponent: TextFieldWithBrowseButton = TextFieldWithBrowseButton(
-        textField(initialValue?.toString().orEmpty()) { path -> fireValueUpdated(Paths.get(path.trim())) }
-    ).apply {
+    override val uiComponent: TextFieldWithBrowseButton = TextFieldWithBrowseButton().apply {
+        textField.text = initialValue?.toString().orEmpty()
+        textField.withOnUpdatedListener { path -> fireValueUpdated(path.trim().asPath()) }
         addBrowseFolderListener(
             TextBrowseFolderListener(
                 FileChooserDescriptorFactory.createSingleFolderDescriptor(),

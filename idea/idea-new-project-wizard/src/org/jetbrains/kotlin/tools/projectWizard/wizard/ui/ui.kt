@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.UiConstants.GAP_BORDER
 import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import javax.swing.BorderFactory
-import javax.swing.Icon
-import javax.swing.JComponent
-import javax.swing.JPanel
+import javax.swing.*
 import javax.swing.border.Border
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
@@ -43,7 +40,11 @@ internal inline fun label(text: String, bold: Boolean = false, init: JBLabel.() 
 
 inline fun panel(layout: LayoutManager = BorderLayout(), init: JPanel.() -> Unit = {}) = JPanel(layout).apply(init)
 
-fun textField(defaultValue: String?, onUpdated: (value: String) -> Unit) = JBTextField(defaultValue).apply {
+fun textField(defaultValue: String?, onUpdated: (value: String) -> Unit) =
+    JBTextField(defaultValue)
+        .withOnUpdatedListener(onUpdated)
+
+fun <F : JTextField> F.withOnUpdatedListener(onUpdated: (value: String) -> Unit) = apply {
     document.addDocumentListener(object : DocumentListener {
         override fun insertUpdate(e: DocumentEvent?) = onUpdated(this@apply.text)
         override fun removeUpdate(e: DocumentEvent?) = onUpdated(this@apply.text)
