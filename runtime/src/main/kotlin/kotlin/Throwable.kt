@@ -6,6 +6,7 @@
 package kotlin
 
 import kotlin.native.concurrent.freeze
+import kotlin.native.concurrent.isFrozen
 import kotlin.native.internal.ExportForCppRuntime
 import kotlin.native.internal.ExportTypeInfo
 import kotlin.native.internal.NativePtrArray
@@ -75,6 +76,8 @@ public open class Throwable(open val message: String?, open val cause: Throwable
         val s = kClass.qualifiedName ?: kClass.simpleName ?: "Throwable"
         return if (message != null) s + ": " + message.toString() else s
     }
+
+    internal var suppressedExceptionsList: MutableList<Throwable>? = null
 }
 
 @SymbolName("Kotlin_getCurrentStackTrace")
@@ -82,3 +85,30 @@ private external fun getCurrentStackTrace(): NativePtrArray
 
 @SymbolName("Kotlin_getStackTraceStrings")
 private external fun getStackTraceStrings(stackTrace: NativePtrArray): Array<String>
+
+
+/**
+ * Adds the specified exception to the list of exceptions that were
+ * suppressed in order to deliver this exception.
+ *
+ * Does nothing if this [Throwable] is frozen.
+ */
+@SinceKotlin("1.4")
+public actual fun Throwable.addSuppressed(exception: Throwable) {
+    if (this !== exception && !this.isFrozen) {
+        val suppressed = suppressedExceptionsList
+        when {
+            suppressed == null -> suppressedExceptionsList = mutableListOf<Throwable>(exception)
+            suppressed.isFrozen -> suppressedExceptionsList = suppressed.toMutableList().apply { add(exception) }
+            else -> suppressed.add(exception)
+        }
+    }
+}
+
+/**
+ * Returns a list of all exceptions that were suppressed in order to deliver this exception.
+ */
+@SinceKotlin("1.4")
+public actual val Throwable.suppressedExceptions: List<Throwable> get() {
+    return this.suppressedExceptionsList ?: emptyList()
+}
