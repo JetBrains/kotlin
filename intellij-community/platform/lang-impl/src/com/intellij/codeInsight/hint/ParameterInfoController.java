@@ -304,6 +304,10 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
     if (!singleParameterInfo && myKeepOnHintHidden) flags |= HintManager.HIDE_BY_TEXT_CHANGE;
 
     Editor editorToShow = myEditor instanceof EditorWindow ? ((EditorWindow)myEditor).getDelegate() : myEditor;
+
+    //update presentation of descriptors synchronously
+    myComponent.update(mySingleParameterInfo);
+
     // is case of injection we need to calculate position for EditorWindow
     // also we need to show the hint in the main editor because of intention bulb
     HintManagerImpl.getInstanceImpl().showEditorHint(myHint, editorToShow, pos.getFirst(), flags, 0, false, hintHint);
