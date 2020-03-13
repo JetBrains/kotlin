@@ -81,7 +81,7 @@ class ParameterInfoTaskRunnerUtil {
                                                                         AtomicReference<CancellablePromise<?>> promiseRef,
                                                                         int offset,
                                                                         Editor editor) {
-    offset = offset > 0 ? offset : editor.getCaretModel().getOffset() - 1;
+    offset = offset >= 0 ? offset : editor.getCaretModel().getOffset() - 1;
     ParameterInfoController controller = ParameterInfoController.findControllerAtOffset(editor, offset);
 
     AtomicReference<Consumer<Boolean>> stopActionRef = new AtomicReference<>();
