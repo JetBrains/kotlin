@@ -12,5 +12,7 @@ object NewProjectWizardsFUSCollector {
             "group" to group,
             "isKotlinDsl" to isKotlinDsl.toString()
         )
+
+        KotlinFUSLogger.log(FUSEventGroups.NPWizards, "Finished", contextData)
     }
 }
