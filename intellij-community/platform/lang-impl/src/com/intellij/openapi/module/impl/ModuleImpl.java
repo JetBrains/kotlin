@@ -28,7 +28,7 @@ import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointerListener;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.serviceContainer.PlatformComponentManagerImpl;
+import com.intellij.serviceContainer.ComponentManagerImpl;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.Property;
 import gnu.trove.THashMap;
@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx {
+public class ModuleImpl extends ComponentManagerImpl implements ModuleEx {
   private static final Logger LOG = Logger.getInstance(ModuleImpl.class);
 
   @NotNull private final Project myProject;
@@ -53,9 +53,9 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
 
   @ApiStatus.Internal
   public ModuleImpl(@NotNull String name, @NotNull Project project, @Nullable String filePath) {
-    super((PlatformComponentManagerImpl)project);
+    super((ComponentManagerImpl)project);
 
-    registerServiceInstance(Module.class, this, PlatformComponentManagerImpl.getFakeCorePluginDescriptor());
+    registerServiceInstance(Module.class, this, ComponentManagerImpl.getFakeCorePluginDescriptor());
 
     myProject = project;
     myModuleScopeProvider = new ModuleScopeProviderImpl(this);

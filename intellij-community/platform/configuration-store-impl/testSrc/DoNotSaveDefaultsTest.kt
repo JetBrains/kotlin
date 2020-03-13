@@ -8,7 +8,7 @@ import com.intellij.openapi.application.impl.coroutineDispatchingContext
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.stateStore
 import com.intellij.openapi.project.Project
-import com.intellij.serviceContainer.PlatformComponentManagerImpl
+import com.intellij.serviceContainer.ComponentManagerImpl
 import com.intellij.serviceContainer.processAllImplementationClasses
 import com.intellij.testFramework.ApplicationRule
 import com.intellij.testFramework.PlatformTestUtil.useAppConfigDir
@@ -33,23 +33,23 @@ internal class DoNotSaveDefaultsTest {
 
   @Test fun testApp() = useAppConfigDir {
     runBlocking {
-      doTest(ApplicationManager.getApplication() as PlatformComponentManagerImpl)
+      doTest(ApplicationManager.getApplication() as ComponentManagerImpl)
     }
   }
 
   @Test fun testProject() = runBlocking {
     createOrLoadProject(tempDir, directoryBased = false) { project ->
-      doTest(project as PlatformComponentManagerImpl)
+      doTest(project as ComponentManagerImpl)
     }
   }
 
   @Test fun `project - load empty state`() = runBlocking {
     createOrLoadProject(tempDir, directoryBased = false) { project ->
-      doTest(project as PlatformComponentManagerImpl, isTestEmptyState = true)
+      doTest(project as ComponentManagerImpl, isTestEmptyState = true)
     }
   }
 
-  private suspend fun doTest(componentManager: PlatformComponentManagerImpl, isTestEmptyState: Boolean = false) {
+  private suspend fun doTest(componentManager: ComponentManagerImpl, isTestEmptyState: Boolean = false) {
     // wake up (edt, some configurables want read action)
     withContext(AppUIExecutor.onUiThread().coroutineDispatchingContext()) {
       val picoContainer = componentManager.picoContainer

@@ -1,10 +1,10 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.extensions.PluginDescriptor
-import com.intellij.serviceContainer.PlatformComponentManagerImpl
+import com.intellij.serviceContainer.ComponentManagerImpl
 import com.intellij.serviceContainer.processAllImplementationClasses
 import com.intellij.serviceContainer.processComponentInstancesOfType
 import com.intellij.testFramework.ProjectRule
@@ -46,7 +46,7 @@ class DoNotStorePasswordTest {
       true
     }
 
-    val app = ApplicationManager.getApplication() as PlatformComponentManagerImpl
+    val app = ApplicationManager.getApplication() as ComponentManagerImpl
     processAllImplementationClasses(app.picoContainer, processor::test)
     // yes, we don't use default project here to be sure
     processAllImplementationClasses(projectRule.project.picoContainer, processor::test)

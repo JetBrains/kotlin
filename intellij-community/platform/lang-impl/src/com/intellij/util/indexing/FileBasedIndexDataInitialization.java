@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 
-import static com.intellij.serviceContainer.PlatformComponentManagerImplKt.handleComponentError;
+import static com.intellij.serviceContainer.ComponentManagerImplKt.handleComponentError;
 
 class FileBasedIndexDataInitialization extends IndexInfrastructure.DataInitialization<IndexConfiguration> {
   private static final NotificationGroup NOTIFICATIONS = new NotificationGroup("Indexing", NotificationDisplayType.BALLOON, false);
