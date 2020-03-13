@@ -187,7 +187,9 @@ public class DefaultLanguageColorsPage implements RainbowColorSettingsPage, Disp
 
   private static final ColorDescriptor[] COLOR_DESCRIPTORS = {
     new ColorDescriptor(OptionsBundle.message("options.language.defaults.doc.guide"),
-                        DefaultLanguageHighlighterColors.DOC_COMMENT_GUIDE, ColorDescriptor.Kind.FOREGROUND)
+                        DefaultLanguageHighlighterColors.DOC_COMMENT_GUIDE, ColorDescriptor.Kind.FOREGROUND),
+    new ColorDescriptor(OptionsBundle.message("options.language.defaults.doc.link"),
+                        DefaultLanguageHighlighterColors.DOC_COMMENT_LINK, ColorDescriptor.Kind.FOREGROUND)
   };
 
   @Nullable
