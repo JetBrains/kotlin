@@ -541,7 +541,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @Test
-    fun testKt19179() {
+    fun testKt19179andKt37241() {
         val project = Project("kt19179", directoryPrefix = "kapt2")
 
         project.build("build") {
@@ -565,6 +565,9 @@ open class Kapt3IT : Kapt3BaseIT() {
                 ":app:kaptGenerateStubsKotlin",
                 ":app:kaptKotlin"
             )
+
+            // Test for KT-37241, check the that non-existent classpath entry is filtered out:
+            assertNotContains("Classpath entry points to a non-existent location")
         }
 
         project.projectDir.getFileByName("Test.kt").modify { text ->
