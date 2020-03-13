@@ -20,7 +20,6 @@ import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.*;
-import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.ex.MarkupModelEx;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.editor.impl.DocumentMarkupModel;
@@ -43,16 +42,12 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.profile.codeInspection.ui.ErrorsConfigurableProvider;
 import com.intellij.psi.*;
-import com.intellij.ui.LayeredIcon;
-import com.intellij.ui.TextIcon;
-import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.DeprecatedMethodException;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.storage.HeavyProcessLatch;
 import com.intellij.util.ui.GridBag;
-import com.intellij.util.ui.JBValue;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import gnu.trove.TIntArrayList;
@@ -66,10 +61,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
-  private static final ColorKey ICON_TEXT_COLOR = ColorKey.createColorKey("ActionButton.iconTextForeground",
-                                                                          UIUtil.getContextHelpForeground());
-
-
   @NotNull
   private final Project myProject;
   private final Document myDocument;
@@ -91,8 +82,6 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
    * severity index can be obtained via com.intellij.codeInsight.daemon.impl.SeverityRegistrar#getSeverityIdx(com.intellij.lang.annotation.HighlightSeverity)
    */
   protected int[] errorCount;
-
-  private static final JBValue ICON_TEXT_GAP = new JBValue.Float(6);
 
   /**
    * @deprecated Please use {@link #TrafficLightRenderer(Project, Document)} instead
@@ -387,18 +376,13 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   @Override
   @NotNull
   public AnalyzerStatus getStatus(@NotNull Editor editor) {
-    Color iconTextColor = editor.getColorsScheme().getColor(ICON_TEXT_COLOR);
-
     if (PowerSaveMode.isEnabled()) {
       return new AnalyzerStatus(AllIcons.General.InspectionsPowerSaveMode,
                                   "Code analysis is disabled in power save mode", "", this::createUIController);
     }
     else {
       DaemonCodeAnalyzerStatus status = getDaemonCodeAnalyzerStatus(mySeverityRegistrar);
-      List<Icon> statusIcons = new ArrayList<>();
-      Font editorFont = editor.getComponent().getFont();
-      Font font = editorFont.deriveFont(Font.PLAIN, editorFont.getSize() - JBUIScale.scale(2));
-
+      List<StatusItem> statusItems = new ArrayList<>();
       Icon mainIcon = null;
 
       String title;
@@ -435,33 +419,15 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
           currentSeverityErrors += count;
 
           Icon icon = mySeverityRegistrar.getRendererIconByIndex(i);
-          statusIcons.add(icon);
-          TextIcon textIcon = new TextIcon(Integer.toString(count), iconTextColor, null, 0);
-          textIcon.setFont(font);
-          statusIcons.add(textIcon);
+          statusItems.add(new StatusItem(Integer.toString(status.errorCount[i]), icon));
+
           if (mainIcon == null) {
             mainIcon = icon;
           }
         }
       }
 
-      if (!statusIcons.isEmpty()) {
-        LayeredIcon statusIcon = new LayeredIcon(statusIcons.size());
-        int maxIconHeight = statusIcons.stream().mapToInt(i -> i.getIconHeight()).max().orElse(0);
-        for (int i = 0, xShift = 0; i < statusIcons.size(); i += 2) {
-          Icon icon = statusIcons.get(i);
-          int yShift = (maxIconHeight - icon.getIconHeight()) / 2;
-          statusIcon.setIcon(icon, i, xShift, yShift);
-          //noinspection AssignmentToForLoopParameter
-          xShift += icon.getIconWidth();
-
-          icon = statusIcons.get(i + 1);
-          yShift = (maxIconHeight - icon.getIconHeight()) / 2;
-          statusIcon.setIcon(icon, i + 1, xShift, yShift);
-          //noinspection AssignmentToForLoopParameter
-          xShift += icon.getIconWidth() + ICON_TEXT_GAP.get();
-        }
-
+      if (statusItems.size() > 0) {
         if (!status.errorAnalyzingFinished) {
           detailsBuilder.append(" found so far");
         }
@@ -471,39 +437,32 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         }
         AnalyzerStatus result = new AnalyzerStatus(mainIcon, title, detailsBuilder.toString(), this::createUIController).
           withNavigation().
-          withExpandedIcon(statusIcon);
+          withExpandedStatus(statusItems);
 
         //noinspection ConstantConditions
         return status.errorAnalyzingFinished ? result :
                result.withPasses(ContainerUtil.map(status.passes, p -> new PassWrapper(p.getPresentableName(), p.getProgress(), p.isFinished())));
       }
       if (StringUtil.isNotEmpty(status.reasonWhyDisabled)) {
-        TextIcon offIcon = new TextIcon("OFF", iconTextColor, null, 0);
-        offIcon.setFont(font);
-
         return new AnalyzerStatus(AllIcons.General.InspectionsTrafficOff,
-                                  "<b>No analysis has been performed</b>", status.reasonWhyDisabled, this::createUIController).
-          withExpandedIcon(new LayeredIcon(offIcon));
+                                 "<b>No analysis has been performed</b>", status.reasonWhyDisabled, this::createUIController).
+          withExpandedStatus("OFF");
       }
       if (StringUtil.isNotEmpty(status.reasonWhySuspended)) {
-        TextIcon icon = new TextIcon("Indexing...", iconTextColor, null, 0);
-        icon.setFont(font);
         return new AnalyzerStatus(AllIcons.General.InspectionsPause,
                                   "<b>Code analysis has been suspended</b>",
                                   status.reasonWhySuspended,
                                   this::createUIController).
-          withExpandedIcon(new LayeredIcon(icon));
+          withExpandedStatus("Indexing...");
       }
       if (status.errorAnalyzingFinished) {
         return new AnalyzerStatus(AllIcons.General.InspectionsOK, "No problems found",
                                   detailsBuilder.toString(), this::createUIController);
       }
-      TextIcon icon = new TextIcon("Analyzing...", iconTextColor, null, 0);
-      icon.setFont(font);
 
       //noinspection ConstantConditions
       return new AnalyzerStatus(AllIcons.General.InspectionsEye, title, detailsBuilder.toString(), this::createUIController).
-        withExpandedIcon(new LayeredIcon(icon)).
+        withExpandedStatus("Analyzing...").
         withPasses(ContainerUtil.map(status.passes, p -> new PassWrapper(p.getPresentableName(), p.getProgress(), p.isFinished())));
     }
   }
@@ -514,7 +473,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
   }
 
   protected class DefaultUIController implements UIController {
-    private final boolean notInLibrary;
+    private final boolean inLibrary;
     private final List<AnAction> myMenuActions;
     private final List<LanguageHighlightLevel> myLevelsList;
     private final List<HectorComponentPanel> myAdditionalPanels;
@@ -525,12 +484,12 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
         VirtualFile virtualFile = psiFile.getVirtualFile();
         assert virtualFile != null;
-        notInLibrary = !fileIndex.isInLibrary(virtualFile) || fileIndex.isInContent(virtualFile);
+        inLibrary = fileIndex.isInLibrary(virtualFile) && !fileIndex.isInContent(virtualFile);
         myAdditionalPanels = HectorComponentPanelsProvider.EP_NAME.extensions(myProject).
           map(hp -> hp.createConfigurable(psiFile)).filter(p -> p != null).collect(Collectors.toList());
       }
       else {
-        notInLibrary = true;
+        inLibrary = false;
         myAdditionalPanels = Collections.emptyList();
       }
 
@@ -614,7 +573,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     @Override
     @NotNull
     public List<InspectionsLevel> getAvailableLevels() {
-      return notInLibrary ? Arrays.asList(InspectionsLevel.values()) : Arrays.asList(InspectionsLevel.NONE, InspectionsLevel.ERRORS);
+      return inLibrary ? Arrays.asList(InspectionsLevel.NONE, InspectionsLevel.ERRORS): Arrays.asList(InspectionsLevel.values());
     }
 
     @NotNull
