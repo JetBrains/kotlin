@@ -74,6 +74,7 @@ val projectsToShadow by extra(listOf(
         ":compiler:resolution",
         ":compiler:serialization",
         ":compiler:util",
+        ":compiler:config",
         ":compiler:config.jvm",
         ":compiler:compiler.version",
         ":core:util.runtime",
