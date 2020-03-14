@@ -19171,6 +19171,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/reflection/callBy/defaultInSuperInterface.kt");
             }
 
+            @TestMetadata("emptyVarArg.kt")
+            public void testEmptyVarArg() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/emptyVarArg.kt");
+            }
+
             @TestMetadata("extensionFunction.kt")
             public void testExtensionFunction() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/callBy/extensionFunction.kt");
