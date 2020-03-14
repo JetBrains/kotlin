@@ -208,6 +208,7 @@ extra["IntellijCoreDependencies"] =
 
 extra["compilerModules"] = arrayOf(
     ":compiler:util",
+    ":compiler:config.jvm",
     ":compiler:container",
     ":compiler:resolution",
     ":compiler:serialization",
