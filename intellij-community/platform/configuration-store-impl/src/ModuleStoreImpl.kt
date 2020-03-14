@@ -1,10 +1,11 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore
 
 import com.intellij.openapi.components.*
 import com.intellij.openapi.components.impl.stores.ModuleStore
 import com.intellij.openapi.diagnostic.runAndLogException
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.project.isDirectoryBased
 import com.intellij.util.io.exists
 import org.jetbrains.annotations.ApiStatus
@@ -38,8 +39,8 @@ internal open class ModuleStoreImpl(module: Module) : ModuleStoreBase() {
 private class TestModuleStore(module: Module) : ModuleStoreImpl(module) {
   private var moduleComponentLoadPolicy: StateLoadPolicy? = null
 
-  override fun setPath(path: String, isNew: Boolean) {
-    super.setPath(path, isNew)
+  override fun setPath(path: String, virtualFile: VirtualFile?, isNew: Boolean) {
+    super.setPath(path, virtualFile, isNew)
     if (!isNew && Paths.get(path).exists()) {
       moduleComponentLoadPolicy = StateLoadPolicy.LOAD
     }
@@ -57,9 +58,9 @@ abstract class ModuleStoreBase : ChildlessComponentStore(), ModuleStore {
     if (stateSpec.storages.isEmpty()) listOf(MODULE_FILE_STORAGE_ANNOTATION)
     else super.getStorageSpecs(component, stateSpec, operation)
 
-  final override fun setPath(path: String) = setPath(path, false)
+  final override fun setPath(path: String) = setPath(path, null, false)
 
-  override fun setPath(path: String, isNew: Boolean) {
+  override fun setPath(path: String, virtualFile: VirtualFile?, isNew: Boolean) {
     val isMacroAdded = storageManager.addMacro(StoragePathMacros.MODULE_FILE, path)
     // if file not null - update storage
     storageManager.getOrCreateStorage(StoragePathMacros.MODULE_FILE, storageCustomizer = {
@@ -68,7 +69,7 @@ abstract class ModuleStoreBase : ChildlessComponentStore(), ModuleStore {
         return@getOrCreateStorage
       }
 
-      setFile(null, if (isMacroAdded) null else Paths.get(path))
+      setFile(virtualFile, if (isMacroAdded) null else Paths.get(path))
       // ModifiableModuleModel#newModule should always create a new module from scratch
       // https://youtrack.jetbrains.com/issue/IDEA-147530
 

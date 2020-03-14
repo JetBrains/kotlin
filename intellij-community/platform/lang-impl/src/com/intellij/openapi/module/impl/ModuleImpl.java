@@ -6,7 +6,10 @@ import com.intellij.ide.plugins.ContainerDescriptor;
 import com.intellij.ide.plugins.IdeaPluginDescriptorImpl;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.ComponentConfig;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.impl.stores.IComponentStore;
 import com.intellij.openapi.components.impl.stores.ModuleStore;
 import com.intellij.openapi.diagnostic.Logger;
@@ -61,22 +64,22 @@ public class ModuleImpl extends ComponentManagerImpl implements ModuleEx {
     myModuleScopeProvider = new ModuleScopeProviderImpl(this);
 
     myName = name;
-    if (filePath != null) {
+    if (filePath == null) {
+      myImlFilePointer = null;
+    }
+    else {
       myImlFilePointer = VirtualFilePointerManager.getInstance().create(
         VfsUtilCore.pathToUrl(filePath), this,
         new VirtualFilePointerListener() {
           @Override
-          public void validityChanged(VirtualFilePointer @NotNull [] pointers) {
-            VirtualFile file = myImlFilePointer.getFile();
-            if (file != null) {
-              ((ModuleStore)ServiceKt.getStateStore(ModuleImpl.this)).setPath(file.getPath(), false);
+          public void validityChanged(@NotNull VirtualFilePointer @NotNull [] pointers) {
+            VirtualFile virtualFile = myImlFilePointer.getFile();
+            if (virtualFile != null) {
+              ((ModuleStore)getStore()).setPath(virtualFile.getPath(), virtualFile, false);
               ModuleManager.getInstance(myProject).incModificationCount();
             }
           }
         });
-    }
-    else {
-      myImlFilePointer = null;
     }
   }
 
@@ -158,9 +161,12 @@ public class ModuleImpl extends ComponentManagerImpl implements ModuleEx {
   public void rename(@NotNull String newName, boolean notifyStorage) {
     myName = newName;
     if (notifyStorage) {
-      ServiceKt.getStateStore(this).getStorageManager()
-        .rename(StoragePathMacros.MODULE_FILE, newName + ModuleFileType.DOT_DEFAULT_EXTENSION);
+      getStore().getStorageManager().rename(StoragePathMacros.MODULE_FILE, newName + ModuleFileType.DOT_DEFAULT_EXTENSION);
     }
+  }
+
+  private @NotNull IComponentStore getStore() {
+    return Objects.requireNonNull(getService(IComponentStore.class));
   }
 
   @Override
@@ -169,7 +175,7 @@ public class ModuleImpl extends ComponentManagerImpl implements ModuleEx {
     if (!isPersistent()) {
       return "";
     }
-    return ServiceKt.getStateStore(this).getStorageManager().expandMacros(StoragePathMacros.MODULE_FILE);
+    return getStore().getStorageManager().expandMacros(StoragePathMacros.MODULE_FILE);
   }
 
   @Override
