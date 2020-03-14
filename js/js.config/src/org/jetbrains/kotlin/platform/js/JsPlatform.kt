@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.platform.js
 
 import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.toTargetPlatform
 
 abstract class JsPlatform : SimplePlatform("JS") {
     override val oldFashionedDescription: String

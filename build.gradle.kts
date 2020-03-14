@@ -241,6 +241,7 @@ extra["compilerModules"] = arrayOf(
     ":js:js.ast",
     ":js:js.serializer",
     ":js:js.parser",
+    ":js:js.config",
     ":js:js.frontend",
     ":js:js.translator",
     ":js:js.dce",

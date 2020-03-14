@@ -62,6 +62,7 @@ val projectsToShadow by extra(listOf(
         ":js:js.ast",
         ":js:js.frontend",
         ":js:js.parser",
+        ":js:js.config",
         ":js:js.serializer",
         ":js:js.translator",
         ":native:kotlin-native-utils",
