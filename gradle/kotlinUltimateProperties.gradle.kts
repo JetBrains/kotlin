@@ -59,6 +59,8 @@ val appcodeJavaPluginDownloadUrl: URL by rootProject.extra(
 )
 val xCodeCompatPluginVersion by rootProject.extra(rootProject.extra["versions.xcode-compat"] as String)
 
+val cidrVersion: String by rootProject.extra(detectCidrPlatformVersion())
+
 val clionCocoaCommonArtifacts: List<String> by rootProject.extra(
     listOf("$clionRepo:$clionVersion:cocoa-common-binaries/Bridge.framework.tar",
            "$clionRepo:$clionVersion:cocoa-common-binaries/JBDevice.framework.tar",
@@ -106,11 +108,8 @@ val appcodePluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("app
 val mobileMppPluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("mobileMppPlugin/mobile-mpp"))
 val mobilePluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("mobilePlugin/Mobile"))
 
-val useAppCodeForCommon: Boolean by rootProject.extra(findProperty("useAppCodeForCommon").toBoolean())
-val cidrVersion: String by rootProject.extra(if (useAppCodeForCommon) appcodeVersion else clionVersion)
-
 if (isStandaloneBuild) { // setup additional properties that are required only when running in standalone mode:
-    if (useAppCodeForCommon) {
+    if (!rootProject.gradle.startParameter.taskNames.any { it.contains("clion", true) }) {
         val cidrUnscrambledJarDir: File by rootProject.extra(appcodeUnscrambledJarDir)
     }
     else {
@@ -184,6 +183,23 @@ val excludesListFromIdeaPlugin: List<String> by rootProject.extra(listOf(
 fun ijProductBranch(productVersion: String): Int {
     return productVersion.substringBefore(".", productVersion.substringBefore("-"))
         .toIntOrNull() ?: error("Invalid product version format: $productVersion")
+}
+
+fun detectCidrPlatformVersion(): String {
+    val taskNames = rootProject.gradle.startParameter.taskNames
+
+    var count = 0
+    val containsAppCode = taskNames.any { it.contains("appcode", true) }.also { if (it) count += 1 }
+    val containsCLion = taskNames.any { it.contains("clion", true) }.also { if (it) count += 1 }
+    val containsMobile = taskNames.any { it.contains("mobile", true) }.also { if (it) count += 1 }
+    if (count > 1) {
+        throw InvalidUserDataException("Only one CIDR-dependent artifact can be built in a single run to avoid ambiguity of dependencies")
+    }
+    return when {
+        containsAppCode -> appcodeVersion
+        containsCLion -> clionVersion
+        else -> rootProject.extra["versions.cidrPlatform"] as String
+    }
 }
 
 fun cidrProductFriendlyVersion(productName: String, productVersion: String): String {
