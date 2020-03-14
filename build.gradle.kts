@@ -232,6 +232,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:backend",
     ":compiler:plugin-api",
     ":compiler:light-classes",
+    ":compiler:javac-wrapper",
     ":compiler:cli",
     ":compiler:cli-js",
     ":compiler:incremental-compilation-impl",
