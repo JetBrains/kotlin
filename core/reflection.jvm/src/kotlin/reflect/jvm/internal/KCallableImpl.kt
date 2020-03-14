@@ -135,7 +135,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
                     anyOptional = true
                 }
                 parameter.isVararg -> {
-                    arguments.add(emptyArray<Any>())
+                    arguments.add(parameter.type.asArrayType()?.emptyArray())
                 }
                 else -> {
                     throw IllegalArgumentException("No argument provided for a required parameter: $parameter")
@@ -177,7 +177,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
                     args[parameter] ?: throw IllegalArgumentException("Annotation argument value cannot be null ($parameter)")
                 }
                 parameter.isOptional -> null
-                parameter.isVararg -> emptyArray<Any>()
+                parameter.isVararg -> parameter.type.asArrayType()?.emptyArray()
                 else -> throw IllegalArgumentException("No argument provided for a required parameter: $parameter")
             }
         }
