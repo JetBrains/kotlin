@@ -52,3 +52,6 @@ object CommonConfigurationKeys {
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
     get() = get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT)
     set(value) = put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, value)
+
+val LanguageVersionSettings.isTypeRefinementEnabled: Boolean
+    get() = getFlag(AnalysisFlags.useTypeRefinement)

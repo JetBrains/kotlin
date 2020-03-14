@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.config
+package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.ClassId
@@ -11,13 +11,10 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.checker.REFINER_CAPABILITY
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
-import org.jetbrains.kotlin.types.replace
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -138,9 +135,6 @@ class KotlinTypeRefinerImpl(
         return result
     }
 }
-
-val LanguageVersionSettings.isTypeRefinementEnabled: Boolean
-    get() = getFlag(AnalysisFlags.useTypeRefinement)
 
 private val TypeConstructor.allDependentTypeConstructors: Collection<TypeConstructor>
     get() = when (this) {
