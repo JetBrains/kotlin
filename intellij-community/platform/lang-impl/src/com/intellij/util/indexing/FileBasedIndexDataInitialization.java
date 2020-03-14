@@ -105,6 +105,8 @@ class FileBasedIndexDataInitialization extends IndexInfrastructure.DataInitializ
       PersistentIndicesConfiguration.saveConfiguration();
       FileUtil.delete(corruptionMarker);
     }
+
+    FileBasedIndexInfrastructureExtension.EP_NAME.extensions().forEach(ex -> ex.initialize());
   }
 
   @Override
