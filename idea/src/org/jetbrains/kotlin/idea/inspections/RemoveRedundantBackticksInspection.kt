@@ -46,9 +46,8 @@ class RemoveRedundantBackticksInspection : AbstractKotlinInspection() {
         }
     }
 
-    private fun isKeyword(text: String): Boolean {
-        return text == "yield" || text == "_" || (KtTokens.KEYWORDS.types + KtTokens.SOFT_KEYWORDS.types).any { it.toString() == text }
-    }
+    private fun isKeyword(text: String): Boolean =
+        text == "yield" || text.all { it == '_' } || (KtTokens.KEYWORDS.types + KtTokens.SOFT_KEYWORDS.types).any { it.toString() == text }
 
     private fun isRedundantBackticks(node: ASTNode): Boolean {
         val text = node.text
