@@ -1,26 +1,24 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.facet;
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.roots.ProjectModelElement;
 import com.intellij.openapi.roots.ProjectModelExternalSource;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.serialization.facet.FacetManagerState;
 import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer;
 
 @State(name = "External" + JpsFacetSerializer.FACET_MANAGER_COMPONENT_NAME, externalStorageOnly = true)
-public class FacetFromExternalSourcesStorage implements PersistentStateComponent<FacetManagerState>, ProjectModelElement {
+public final class FacetFromExternalSourcesStorage implements PersistentStateComponent<FacetManagerState>, ProjectModelElement {
   private FacetManagerState myState = new FacetManagerState();
   private final Module myModule;
 
-  public static FacetFromExternalSourcesStorage getInstance(Module module) {
-    return ModuleServiceManager.getService(module, FacetFromExternalSourcesStorage.class);
+  public static FacetFromExternalSourcesStorage getInstance(@NotNull Module module) {
+    return module.getService(FacetFromExternalSourcesStorage.class);
   }
 
   public FacetFromExternalSourcesStorage(@NotNull Module module) {
@@ -49,6 +47,6 @@ public class FacetFromExternalSourcesStorage implements PersistentStateComponent
 
   @Override
   public void loadState(@NotNull FacetManagerState state) {
-    XmlSerializerUtil.copyBean(state, myState);
+    myState = state;
   }
 }

@@ -1,19 +1,4 @@
-/*
- * Copyright 2000-2009 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.facet.impl;
 
 import com.intellij.facet.Facet;
@@ -30,14 +15,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class FacetModelImpl extends FacetModelBase implements ModifiableFacetModel {
+public final class FacetModelImpl extends FacetModelBase implements ModifiableFacetModel {
   private static final Logger LOG = Logger.getInstance(FacetModelImpl.class);
   private final List<Facet<?>> myFacets = new ArrayList<>();
   private final Map<Facet<?>, String> myFacet2NewName = new HashMap<>();
   private final FacetManagerImpl myManager;
   private final List<Listener> myListeners = ContainerUtil.createLockFreeCopyOnWriteList();
 
-  public FacetModelImpl(final FacetManagerImpl manager) {
+  public FacetModelImpl(@NotNull FacetManagerImpl manager) {
     myManager = manager;
   }
 
@@ -60,7 +45,7 @@ public class FacetModelImpl extends FacetModelBase implements ModifiableFacetMod
   @Override
   public void addFacet(Facet<?> facet, @Nullable ProjectModelExternalSource externalSource) {
     addFacet(facet);
-    myManager.setExternalSource(facet, externalSource);
+    FacetManagerImpl.setExternalSource(facet, externalSource);
   }
 
   @Override

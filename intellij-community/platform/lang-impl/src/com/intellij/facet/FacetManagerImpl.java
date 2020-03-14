@@ -204,7 +204,7 @@ public final class FacetManagerImpl extends FacetManagerBase implements ModuleCo
   private void doLoadState(@Nullable FacetManagerState state) {
     ModifiableFacetModel model = new FacetModelImpl(this);
     FacetManagerState importedFacetsState = myExternalSourcesStorage.getLoadedState();
-    addFacets(ContainerUtil.concat(state == null ? Collections.emptyList() : state.getFacets(), importedFacetsState.getFacets()), null, model);
+    addFacets(ContainerUtil.concat(state == null ? Collections.emptyList() : state.facets, importedFacetsState.facets), null, model);
     commit(model, false);
   }
 
@@ -230,7 +230,7 @@ public final class FacetManagerImpl extends FacetManagerBase implements ModuleCo
     final Facet<?>[] facets = getSortedFacets();
 
     Map<Facet<?>, List<FacetState>> states = new HashMap<>();
-    states.put(null, managerState.getFacets());
+    states.put(null, managerState.facets);
 
     for (Facet<?> facet : facets) {
       if (!filter.test(facet)) continue;
@@ -395,7 +395,7 @@ public final class FacetManagerImpl extends FacetManagerBase implements ModuleCo
     }
   }
 
-  public void setExternalSource(Facet<?> facet, ProjectModelExternalSource externalSource) {
+  public static void setExternalSource(@NotNull Facet<?> facet, ProjectModelExternalSource externalSource) {
     facet.setExternalSource(externalSource);
   }
 
