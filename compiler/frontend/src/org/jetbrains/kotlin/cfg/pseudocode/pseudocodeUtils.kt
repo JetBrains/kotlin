@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode
 
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.Label
+import org.jetbrains.kotlin.cfg.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind.*
@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ThrowExceptionInst
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -278,10 +277,6 @@ fun Pseudocode.getElementValuesRecursively(element: KtElement): List<PseudoValue
     collectValues()
     return results
 }
-
-val KtElement.containingDeclarationForPseudocode: KtDeclaration?
-    get() = PsiTreeUtil.getParentOfType(this, KtDeclarationWithBody::class.java, KtClassOrObject::class.java, KtScript::class.java)
-            ?: getNonStrictParentOfType<KtProperty>()
 
 fun KtDeclaration.getContainingPseudocode(context: BindingContext): Pseudocode? {
     val enclosingPseudocodeDeclaration = (this as? KtFunctionLiteral)?.let {

@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentsOfType
-import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
+import org.jetbrains.kotlin.cfg.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*

@@ -34,18 +34,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-interface LeakingThisDescriptor {
-    val classOrObject: KtClassOrObject
-
-    data class PropertyIsNull(val property: PropertyDescriptor, override val classOrObject: KtClassOrObject) : LeakingThisDescriptor
-
-    data class NonFinalClass(val klass: ClassDescriptor, override val classOrObject: KtClassOrObject) : LeakingThisDescriptor
-
-    data class NonFinalProperty(val property: PropertyDescriptor, override val classOrObject: KtClassOrObject) : LeakingThisDescriptor
-
-    data class NonFinalFunction(val function: FunctionDescriptor, override val classOrObject: KtClassOrObject) : LeakingThisDescriptor
-}
-
 class ConstructorConsistencyChecker private constructor(
     private val classOrObject: KtClassOrObject,
     private val classDescriptor: ClassDescriptor,

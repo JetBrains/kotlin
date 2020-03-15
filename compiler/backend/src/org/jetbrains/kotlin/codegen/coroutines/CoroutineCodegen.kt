@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.codegen.coroutines
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
-import org.jetbrains.kotlin.cfg.index
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.indexOrMinusOne
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
@@ -263,7 +263,7 @@ class CoroutineCodegenForLambda private constructor(
 
     private fun ParameterDescriptor.isUnused(): Boolean =
         originalSuspendFunctionDescriptor is AnonymousFunctionDescriptor &&
-                bindingContext[BindingContext.SUSPEND_LAMBDA_PARAMETER_USED, originalSuspendFunctionDescriptor to index()] != true
+                bindingContext[BindingContext.SUSPEND_LAMBDA_PARAMETER_USED, originalSuspendFunctionDescriptor to indexOrMinusOne()] != true
 
     private val generateErasedCreate: Boolean = allFunctionParameters().size <= 1
 
