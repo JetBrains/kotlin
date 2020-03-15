@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.resolve.CompilerEnvironment;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -60,6 +61,6 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
 
     @NotNull
     private JsConfig getConfig(CompilerConfiguration configuration) {
-        return new JsConfig(getProject(), configuration);
+        return new JsConfig(getProject(), configuration, CompilerEnvironment.INSTANCE);
     }
 }

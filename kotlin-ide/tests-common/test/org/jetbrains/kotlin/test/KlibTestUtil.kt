@@ -21,14 +21,18 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
-import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
+import org.jetbrains.kotlin.library.KotlinLibraryVersioning
+import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KotlinLibraryLayoutForWriter
 import org.jetbrains.kotlin.library.impl.KotlinLibraryWriterImpl
 import org.jetbrains.kotlin.library.metadata.NativeTypeTransformer
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
+import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.util.DummyLogger
 import java.io.File
@@ -52,11 +56,12 @@ object KlibTestUtil {
             )
 
             CommonResolverForModuleFactory.analyzeFiles(
-                files = environment.getSourceFiles(),
+                environment.getSourceFiles(),
                 moduleName = Name.special("<$libraryName>"),
                 dependOnBuiltIns = true,
-                languageVersionSettings = environment.configuration.languageVersionSettings,
-                targetPlatform = CommonPlatforms.defaultCommonPlatform
+                environment.configuration.languageVersionSettings,
+                CommonPlatforms.defaultCommonPlatform,
+                CompilerEnvironment,
             ) { content ->
                 environment.createPackagePartProvider(content.moduleContentScope)
             }.moduleDescriptor
