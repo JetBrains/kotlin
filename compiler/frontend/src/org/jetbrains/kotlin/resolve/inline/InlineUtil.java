@@ -45,7 +45,7 @@ public class InlineUtil {
     }
 
     public static boolean isInline(@Nullable DeclarationDescriptor descriptor) {
-        return descriptor instanceof FunctionDescriptor && getInlineStrategy((FunctionDescriptor) descriptor).isInline();
+        return descriptor instanceof FunctionDescriptor && ((FunctionDescriptor) descriptor).isInline();
     }
 
     public static boolean hasInlineAccessors(@NotNull PropertyDescriptor propertyDescriptor) {
@@ -72,15 +72,6 @@ public class InlineUtil {
         if (isInline(descriptor)) return true;
         if (descriptor == null) return false;
         return isInlineOrContainingInline(descriptor.getContainingDeclaration());
-    }
-
-    @NotNull
-    private static InlineStrategy getInlineStrategy(@NotNull FunctionDescriptor descriptor) {
-        if (descriptor.isInline()) {
-            return InlineStrategy.AS_FUNCTION;
-        }
-
-        return InlineStrategy.NOT_INLINE;
     }
 
     public static boolean checkNonLocalReturnUsage(

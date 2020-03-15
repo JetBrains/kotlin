@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
-import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
+import org.jetbrains.kotlin.js.backend.ast.metadata.isInline
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.patterns.NamePredicate
@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.BuiltInProper
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
@@ -217,7 +216,7 @@ object ArrayFIF : CompositeFIF() {
             else {
                 JsAstUtils.invokeKotlinFunction(if (type == CHAR) "untypedCharArrayF" else "newArrayF", size, fn)
             }
-            invocation.inlineStrategy = InlineStrategy.IN_PLACE
+            invocation.isInline = true
             val descriptor = callInfo.resolvedCall.resultingDescriptor.original
             val resolvedDescriptor = when (descriptor) {
                 is TypeAliasConstructorDescriptor -> descriptor.underlyingConstructorDescriptor
