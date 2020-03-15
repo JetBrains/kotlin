@@ -138,7 +138,7 @@ public class AutoPopupControllerImpl extends AutoPopupController {
             PsiFile file1 = PsiDocumentManager.getInstance(myProject).getPsiFile(editor.getDocument());
             if (file1 != null) {
               ShowParameterInfoHandler.invoke(myProject, editor, file1, lbraceOffset, highlightedMethod, false,
-                                              true, CodeInsightBundle.message("auto.popup.progress.title"), e -> { });
+                                              true, null, e -> { });
             }
           }
           catch (IndexNotReadyException ignored) { //anything can happen on alarm

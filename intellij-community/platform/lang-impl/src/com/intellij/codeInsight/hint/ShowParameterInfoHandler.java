@@ -70,10 +70,13 @@ public class ShowParameterInfoHandler implements CodeInsightActionHandler {
              .showDumbModeNotification(CodeInsightBundle.message("parameter.info.indexing.mode.not.supported")));
   }
 
+  /**
+   * @param progressTitle null means no loading panel should be shown
+   */
   public static void invoke(final Project project, final Editor editor, PsiFile file,
                             int lbraceOffset, PsiElement highlightedElement,
                             boolean requestFocus, boolean singleParameterHint,
-                            String progressTitle,
+                            @Nullable String progressTitle,
                             Consumer<IndexNotReadyException> indexNotReadyExceptionConsumer) {
     final DumbService dumbService = DumbService.getInstance(project);
 
@@ -154,7 +157,6 @@ public class ShowParameterInfoHandler implements CodeInsightActionHandler {
               }
             },
             progressTitle,
-            initialOffset,
             editor);
   }
 
