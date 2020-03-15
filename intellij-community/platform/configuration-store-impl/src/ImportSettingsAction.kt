@@ -114,7 +114,9 @@ open class ImportSettingsAction : AnAction(), DumbAware {
   }
 
   private fun restart() {
-    (ApplicationManager.getApplication() as ApplicationEx).restart(true)
+    invokeLater {
+      (ApplicationManager.getApplication() as ApplicationEx).restart(true)
+    }
   }
 
   private fun confirmRestart(message: String): Boolean =

@@ -18,7 +18,9 @@ class RestoreDefaultSettingsAction : DumbAwareAction() {
 
     writeCustomConfigMigrationFile(null)
 
-    (ApplicationManager.getApplication() as ApplicationEx).restart(true)
+    invokeLater {
+      (ApplicationManager.getApplication() as ApplicationEx).restart(true)
+    }
   }
 
   private fun confirmRestoreSettings(e: AnActionEvent, backupPath: Path?): Boolean {
