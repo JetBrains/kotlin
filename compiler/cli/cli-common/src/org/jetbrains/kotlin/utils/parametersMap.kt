@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,23 +10,20 @@ import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.jvmErasure
 
 fun tryConstructClassFromStringArgs(clazz: Class<*>, args: List<String>): Any? {
-
-    try {
-        return clazz.getConstructor(Array<String>::class.java).newInstance(args.toTypedArray())
-    }
-    catch (e: NoSuchMethodException) {
+    return try {
+        clazz.getConstructor(Array<String>::class.java).newInstance(args.toTypedArray())
+    } catch (e: NoSuchMethodException) {
         for (ctor in clazz.kotlin.constructors) {
             val mapping = tryCreateCallableMappingFromStringArgs(ctor, args)
             if (mapping != null) {
                 try {
                     return ctor.callBy(mapping)
-                }
-                catch (e: Exception) { // TODO: find the exact exception type thrown then callBy fails
+                } catch (e: Exception) { // TODO: find the exact exception type thrown then callBy fails
                 }
             }
         }
+        null
     }
-    return null
 }
 
 fun tryCreateCallableMapping(callable: KCallable<*>, args: List<Any?>): Map<KParameter, Any?>? =
@@ -60,11 +57,11 @@ fun tryCreateCallableMappingFromNamedArgs(callable: KCallable<*>, args: List<Pai
 private data class NamedArgument<out T>(val name: String?, val value: T?)
 
 private interface ArgsConverter<T> {
-
     sealed class Result {
         object Failure : Result()
         class Success(val v: Any?) : Result()
     }
+
     fun tryConvertSingle(parameter: KParameter, arg: NamedArgument<T>): Result
     fun tryConvertVararg(parameter: KParameter, firstArg: NamedArgument<T>, restArgsIt: Iterator<NamedArgument<T>>): Result
     fun tryConvertTail(parameter: KParameter, firstArg: NamedArgument<T>, restArgsIt: Iterator<NamedArgument<T>>): Result
@@ -72,7 +69,11 @@ private interface ArgsConverter<T> {
 
 private enum class ArgsTraversalState { UNNAMED, NAMED, TAIL }
 
-private fun <T> tryCreateCallableMapping(callable: KCallable<*>, args: Iterator<NamedArgument<T>>, converter: ArgsConverter<T>): Map<KParameter, Any?>? {
+private fun <T> tryCreateCallableMapping(
+    callable: KCallable<*>,
+    args: Iterator<NamedArgument<T>>,
+    converter: ArgsConverter<T>
+): Map<KParameter, Any?>? {
     val res = mutableMapOf<KParameter, Any?>()
     var state = ArgsTraversalState.UNNAMED
     val unboundParams = callable.parameters.toMutableList()
@@ -98,28 +99,24 @@ private fun <T> tryCreateCallableMapping(callable: KCallable<*>, args: Iterator<
                         // if we do not allow to overload on nullability, drop this check
                         return null // failed to match: null for a non-nullable value
                     }
-                    res.put(par, cvtRes.v)
-                }
-                else if (par.type.jvmErasure.java.isArray) {
+                    res[par] = cvtRes.v
+                } else if (par.type.jvmErasure.java.isArray) {
                     // try vararg
                     val cvtVRes = converter.tryConvertVararg(par, arg, argIt)
                     if (cvtVRes is ArgsConverter.Result.Success) {
-                        res.put(par, cvtVRes.v)
-                    }
-                    else return null // failed to match: no suitable param for unnamed arg
-                }
-                else return null // failed to match: no suitable param for unnamed arg
+                        res[par] = cvtVRes.v
+                    } else return null // failed to match: no suitable param for unnamed arg
+                } else return null // failed to match: no suitable param for unnamed arg
             }
             ArgsTraversalState.NAMED -> {
                 assert(arg.name != null)
                 val parIdx = unboundParams.indexOfFirst { it.name == arg.name }.takeIf { it >= 0 }
-                             ?: return null // failed to match: no matching named parameter found
+                    ?: return null // failed to match: no matching named parameter found
                 val par = unboundParams.removeAt(parIdx)
                 val cvtRes = converter.tryConvertSingle(par, arg)
                 if (cvtRes is ArgsConverter.Result.Success) {
-                    res.put(par, cvtRes.v)
-                }
-                else return null // failed to match: cannot convert arg to param's type
+                    res[par] = cvtRes.v
+                } else return null // failed to match: cannot convert arg to param's type
             }
             ArgsTraversalState.TAIL -> {
                 assert(arg.name == null)
@@ -127,9 +124,8 @@ private fun <T> tryCreateCallableMapping(callable: KCallable<*>, args: Iterator<
                 val cvtVRes = converter.tryConvertTail(par, arg, argIt)
                 if (cvtVRes is ArgsConverter.Result.Success) {
                     if (argIt.hasNext()) return null // failed to match: not all tail args are consumed
-                    res.put(par, cvtVRes.v)
-                }
-                else return null // failed to match: no suitable param for tail arg(s)
+                    res[par] = cvtVRes.v
+                } else return null // failed to match: no suitable param for tail arg(s)
             }
         }
     }
@@ -140,12 +136,10 @@ private fun <T> tryCreateCallableMapping(callable: KCallable<*>, args: Iterator<
 }
 
 private fun KType.allowsNulls(): Boolean =
-        isMarkedNullable ||
-        classifier.let { it is KTypeParameter && it.upperBounds.any(KType::allowsNulls) }
+    isMarkedNullable || classifier.let { it is KTypeParameter && it.upperBounds.any(KType::allowsNulls) }
 
 
 private class StringArgsConverter : ArgsConverter<String> {
-
     override fun tryConvertSingle(parameter: KParameter, arg: NamedArgument<String>): ArgsConverter.Result {
         val value = arg.value ?: return ArgsConverter.Result.Success(null)
 
@@ -165,20 +159,23 @@ private class StringArgsConverter : ArgsConverter<String> {
         return if (primitive != null) ArgsConverter.Result.Success(primitive) else ArgsConverter.Result.Failure
     }
 
-    override fun tryConvertVararg(parameter: KParameter, firstArg: NamedArgument<String>, restArgsIt: Iterator<NamedArgument<String>>): ArgsConverter.Result {
-
+    override fun tryConvertVararg(
+        parameter: KParameter,
+        firstArg: NamedArgument<String>,
+        restArgsIt: Iterator<NamedArgument<String>>
+    ): ArgsConverter.Result {
         fun convertPrimitivesArray(type: KType, args: Sequence<String?>): Any? =
-                when (type.classifier) {
-                    IntArray::class -> args.map { it?.toIntOrNull() }
-                    LongArray::class -> args.map { it?.toLongOrNull() }
-                    ShortArray::class -> args.map { it?.toShortOrNull() }
-                    ByteArray::class -> args.map { it?.toByteOrNull() }
-                    CharArray::class -> args.map { it?.singleOrNull() }
-                    FloatArray::class -> args.map { it?.toFloatOrNull() }
-                    DoubleArray::class -> args.map { it?.toDoubleOrNull() }
-                    BooleanArray::class -> args.map { it?.toBoolean() }
-                    else -> null
-                }?.toList()?.takeUnless { null in it }?.toTypedArray()
+            when (type.classifier) {
+                IntArray::class -> args.map { it?.toIntOrNull() }
+                LongArray::class -> args.map { it?.toLongOrNull() }
+                ShortArray::class -> args.map { it?.toShortOrNull() }
+                ByteArray::class -> args.map { it?.toByteOrNull() }
+                CharArray::class -> args.map { it?.singleOrNull() }
+                FloatArray::class -> args.map { it?.toFloatOrNull() }
+                DoubleArray::class -> args.map { it?.toDoubleOrNull() }
+                BooleanArray::class -> args.map { it?.toBoolean() }
+                else -> null
+            }?.toList()?.takeUnless { null in it }?.toTypedArray()
 
         val parameterType = parameter.type
         if (parameterType.jvmErasure.java.isArray) {
@@ -195,8 +192,12 @@ private class StringArgsConverter : ArgsConverter<String> {
         return ArgsConverter.Result.Failure
     }
 
-    override fun tryConvertTail(parameter: KParameter, firstArg: NamedArgument<String>, restArgsIt: Iterator<NamedArgument<String>>): ArgsConverter.Result =
-            tryConvertVararg(parameter, firstArg, restArgsIt)
+    override fun tryConvertTail(
+        parameter: KParameter,
+        firstArg: NamedArgument<String>,
+        restArgsIt: Iterator<NamedArgument<String>>
+    ): ArgsConverter.Result =
+        tryConvertVararg(parameter, firstArg, restArgsIt)
 }
 
 private class AnyArgsConverter : ArgsConverter<Any> {
@@ -205,28 +206,27 @@ private class AnyArgsConverter : ArgsConverter<Any> {
 
         @Suppress("UNCHECKED_CAST")
         fun convertPrimitivesArray(type: KType?, arg: Any?): Any? =
-                when (type?.classifier) {
-                    IntArray::class -> (arg as? Array<Int>)?.toIntArray()
-                    LongArray::class -> (arg as? Array<Long>)?.toLongArray()
-                    ShortArray::class -> (arg as? Array<Short>)?.toShortArray()
-                    ByteArray::class -> (arg as? Array<Byte>)?.toByteArray()
-                    CharArray::class -> (arg as? Array<Char>)?.toCharArray()
-                    FloatArray::class -> (arg as? Array<Float>)?.toFloatArray()
-                    DoubleArray::class -> (arg as? Array<Double>)?.toDoubleArray()
-                    BooleanArray::class -> (arg as? Array<Boolean>)?.toBooleanArray()
-                    else -> null
-                }
+            when (type?.classifier) {
+                IntArray::class -> (arg as? Array<Int>)?.toIntArray()
+                LongArray::class -> (arg as? Array<Long>)?.toLongArray()
+                ShortArray::class -> (arg as? Array<Short>)?.toShortArray()
+                ByteArray::class -> (arg as? Array<Byte>)?.toByteArray()
+                CharArray::class -> (arg as? Array<Char>)?.toCharArray()
+                FloatArray::class -> (arg as? Array<Float>)?.toFloatArray()
+                DoubleArray::class -> (arg as? Array<Double>)?.toDoubleArray()
+                BooleanArray::class -> (arg as? Array<Boolean>)?.toBooleanArray()
+                else -> null
+            }
 
         if (value::class.isSubclassOf(parameter.type.jvmErasure)) return ArgsConverter.Result.Success(value)
 
         return convertPrimitivesArray(parameter.type, value)?.let { ArgsConverter.Result.Success(it) }
-               ?: ArgsConverter.Result.Failure
+            ?: ArgsConverter.Result.Failure
     }
 
     override fun tryConvertVararg(
         parameter: KParameter, firstArg: NamedArgument<Any>, restArgsIt: Iterator<NamedArgument<Any>>
     ): ArgsConverter.Result {
-
         val parameterType = parameter.type
         if (parameterType.jvmErasure.java.isArray) {
             val argsSequence = sequenceOf(firstArg.value) + restArgsIt.asSequence().map { it.value }
@@ -239,8 +239,12 @@ private class AnyArgsConverter : ArgsConverter<Any> {
         return ArgsConverter.Result.Failure
     }
 
-    override fun tryConvertTail(parameter: KParameter, firstArg: NamedArgument<Any>, restArgsIt: Iterator<NamedArgument<Any>>): ArgsConverter.Result =
-            tryConvertSingle(parameter, firstArg)
+    override fun tryConvertTail(
+        parameter: KParameter,
+        firstArg: NamedArgument<Any>,
+        restArgsIt: Iterator<NamedArgument<Any>>
+    ): ArgsConverter.Result =
+        tryConvertSingle(parameter, firstArg)
 }
 
 @Suppress("UNCHECKED_CAST")

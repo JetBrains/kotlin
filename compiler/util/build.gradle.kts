@@ -7,7 +7,6 @@ dependencies {
     api(kotlinStdlib())
     api(project(":compiler:compiler.version"))
 
-    compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
     compileOnly(jpsStandalone()) { includeJars("jps-model") }
