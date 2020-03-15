@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     compile(project(":compiler:resolution"))
+    compile(project(":core:deserialization"))
 }
 
 sourceSets {

@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     compile(project(":compiler:util"))
-    compile(project(":core:deserialization"))
+    compile(project(":core:descriptors"))
     compileOnly(intellijDep()) { includeJars("trove4j") }
 }
 
