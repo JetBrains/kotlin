@@ -3,6 +3,7 @@
 
 package com.intellij.openapi.projectRoots.impl
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Bitness
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.WindowsRegistryUtil
@@ -26,6 +27,9 @@ class JavaHomeFinderWindows : JavaHomeFinderBasic {
      */
     private val os64bit: Boolean = !System.getenv("ProgramFiles(x86)").isNullOrBlank()
 
+    private val logger: Logger = Logger.getInstance(JavaHomeFinderWindows::class.java)
+
+
     fun gatherHomePaths(text: CharSequence): Set<String> {
       val paths = TreeSet<String>()
       var m: MatchResult? = javaHomePattern.find(text)
@@ -39,21 +43,19 @@ class JavaHomeFinderWindows : JavaHomeFinderBasic {
   }
 
   constructor(forceEmbeddedJava: Boolean) : super(forceEmbeddedJava) {
-    registerFinder(this::findAllLocations)
-  }
-
-  private fun findAllLocations(): Set<String> {
-    val paths = mutableSetOf<String>()
     if (os64bit && SystemInfo.isWin7OrNewer) {
-      paths.addAll(readRegisteredLocations(Bitness.x64))
-      paths.addAll(readRegisteredLocations(Bitness.x32))
+      registerFinder(this::readRegisteredLocationsOS64J64)
+      registerFinder(this::readRegisteredLocationsOS64J32)
     }
     else {
-      paths.addAll(readRegisteredLocations(null))
+      registerFinder(this::readRegisteredLocationsOS32J32)
     }
-    paths.addAll(guessPossibleLocations())
-    return paths
+    registerFinder(this::guessPossibleLocations)
   }
+
+  private fun readRegisteredLocationsOS64J64() = readRegisteredLocations(Bitness.x64)
+  private fun readRegisteredLocationsOS64J32() = readRegisteredLocations(Bitness.x32)
+  private fun readRegisteredLocationsOS32J32() = readRegisteredLocations(null)
 
   private fun readRegisteredLocations(b: Bitness?): Set<String> {
     val cmd =
@@ -62,10 +64,16 @@ class JavaHomeFinderWindows : JavaHomeFinderBasic {
         Bitness.x32 -> "$regCommand /reg:32"
         Bitness.x64 -> "$regCommand /reg:64"
       }
-    val registryLines: CharSequence? = WindowsRegistryUtil.readRegistry(cmd)
-    registryLines ?: return emptySet()
-    val paths = gatherHomePaths(registryLines)
-    return paths
+    try {
+      val registryLines: CharSequence? = WindowsRegistryUtil.readRegistry(cmd)
+      registryLines ?: return emptySet()
+      val paths = gatherHomePaths(registryLines)
+      return paths
+    }
+    catch (e: Exception) {
+      logger.warn("Unable to detect registered JDK using the following command: $cmd", e)
+      return emptySet()
+    }
   }
 
   private fun guessPossibleLocations(): Set<String> {
