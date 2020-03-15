@@ -5,15 +5,18 @@
 
 package org.jetbrains.kotlin.config
 
+import org.jetbrains.kotlin.utils.Jsr305State
+import kotlin.reflect.KProperty
+
 object JvmAnalysisFlags {
     @JvmStatic
     val strictMetadataVersionSemantics by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val jsr305 by AnalysisFlag.Delegates.Jsr305StateWarnByDefault
+    val jsr305 by Delegates.Jsr305StateWarnByDefault
 
     @JvmStatic
-    val jvmDefaultMode by AnalysisFlag.Delegates.JvmDefaultModeDisabledByDefault
+    val jvmDefaultMode by Delegates.JvmDefaultModeDisabledByDefault
 
     @JvmStatic
     val inheritMultifileParts by AnalysisFlag.Delegates.Boolean
@@ -26,4 +29,16 @@ object JvmAnalysisFlags {
 
     @JvmStatic
     val irCheckLocalNames by AnalysisFlag.Delegates.Boolean
+
+    private object Delegates {
+        object Jsr305StateWarnByDefault {
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>): AnalysisFlag.Delegate<Jsr305State> =
+                AnalysisFlag.Delegate(property.name, Jsr305State.DEFAULT)
+        }
+
+        object JvmDefaultModeDisabledByDefault {
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>): AnalysisFlag.Delegate<JvmDefaultMode> =
+                AnalysisFlag.Delegate(property.name, JvmDefaultMode.DISABLE)
+        }
+    }
 }
