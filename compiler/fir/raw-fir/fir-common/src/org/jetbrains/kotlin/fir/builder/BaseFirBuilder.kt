@@ -34,9 +34,9 @@ import org.jetbrains.kotlin.lexer.KtTokens.CLOSING_QUOTE
 import org.jetbrains.kotlin.lexer.KtTokens.OPEN_QUOTE
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.parsing.*
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtUnaryExpression
-import org.jetbrains.kotlin.resolve.constants.evaluate.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 //T can be either PsiElement, or LighterASTNode

@@ -11,7 +11,6 @@ val compileOnly by configurations
 runtimeOnly.extendsFrom(compileOnly)
 
 dependencies {
-    compile(project(":compiler:psi"))
     compile(project(":compiler:frontend.common"))
     compile(project(":core:descriptors"))
     compile(project(":compiler:fir:cones"))
