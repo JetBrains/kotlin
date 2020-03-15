@@ -18,7 +18,7 @@ import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
-import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
+import org.jetbrains.kotlin.cfg.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.getContainingPseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
