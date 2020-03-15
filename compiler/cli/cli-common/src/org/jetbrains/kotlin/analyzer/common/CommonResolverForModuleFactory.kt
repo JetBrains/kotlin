@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
@@ -66,18 +65,16 @@ class CommonResolverForModuleFactory(
         override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>,
         private val dependencies: Iterable<ModuleInfo>,
         override val expectedBy: List<ModuleInfo>,
+        override val platform: TargetPlatform,
         private val modulesWhoseInternalsAreVisible: Collection<ModuleInfo>,
         private val dependOnOldBuiltIns: Boolean
     ) : ModuleInfo {
-        override fun dependencies() = listOf(this, *dependencies.toList().toTypedArray() )
+        override fun dependencies() = listOf(this, *dependencies.toList().toTypedArray())
 
         override fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> = modulesWhoseInternalsAreVisible
 
         override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
             if (dependOnOldBuiltIns) ModuleInfo.DependencyOnBuiltIns.LAST else ModuleInfo.DependencyOnBuiltIns.NONE
-
-        override val platform: TargetPlatform
-            get() = CommonPlatforms.defaultCommonPlatform
 
         override val analyzerServices: PlatformDependentAnalyzerServices
             get() = CommonPlatformAnalyzerServices
@@ -98,11 +95,11 @@ class CommonResolverForModuleFactory(
             moduleInfo
         )
 
-        val metadataPartProvider = (platformParameters as CommonAnalysisParameters).metadataPartProviderFactory(moduleContent)
+        val metadataPartProvider = platformParameters.metadataPartProviderFactory(moduleContent)
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
         val container = createContainerToResolveCommonCode(
             moduleContext, trace, declarationProviderFactory, moduleContentScope, targetEnvironment, metadataPartProvider,
-            languageVersionSettings, CommonPlatforms.defaultCommonPlatform, CommonPlatformAnalyzerServices, shouldCheckExpectActual
+            languageVersionSettings, targetPlatform, CommonPlatformAnalyzerServices, shouldCheckExpectActual
         )
 
         val packageFragmentProviders =
@@ -119,6 +116,7 @@ class CommonResolverForModuleFactory(
     companion object {
         fun analyzeFiles(
             files: Collection<KtFile>, moduleName: Name, dependOnBuiltIns: Boolean, languageVersionSettings: LanguageVersionSettings,
+            targetPlatform: TargetPlatform,
             capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
             dependenciesContainer: CommonDependenciesContainer? = null,
             metadataPartProviderFactory: (ModuleContent<ModuleInfo>) -> MetadataPartProvider
@@ -128,6 +126,7 @@ class CommonResolverForModuleFactory(
                 capabilities,
                 dependenciesContainer?.moduleInfos?.toList().orEmpty(),
                 dependenciesContainer?.refinesModuleInfos.orEmpty(),
+                targetPlatform,
                 dependenciesContainer?.friendModuleInfos.orEmpty(),
                 dependOnBuiltIns
             )
@@ -142,7 +141,7 @@ class CommonResolverForModuleFactory(
             val resolverForModuleFactory = CommonResolverForModuleFactory(
                 CommonAnalysisParameters(metadataPartProviderFactory),
                 CompilerEnvironment,
-                CommonPlatforms.defaultCommonPlatform,
+                targetPlatform,
                 shouldCheckExpectActual = false,
                 dependenciesContainer
             )
