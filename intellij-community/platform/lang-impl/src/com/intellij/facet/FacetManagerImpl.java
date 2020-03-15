@@ -161,7 +161,7 @@ public final class FacetManagerImpl extends FacetManagerBase implements ModuleCo
       facet = createFacetFromState(getModule(), type, state, underlyingFacet);
       model.addFacet(facet);
     }
-    addFacets(state.getSubFacets(), facet, model);
+    addFacets(state.subFacets, facet, model);
   }
 
   @ApiStatus.Internal
@@ -223,8 +223,7 @@ public final class FacetManagerImpl extends FacetManagerBase implements ModuleCo
     return facet -> false;
   }
 
-  @NotNull
-  FacetManagerState saveState(Predicate<? super Facet<?>> filter) {
+  @NotNull FacetManagerState saveState(@NotNull Predicate<? super Facet<?>> filter) {
     FacetManagerState managerState = new FacetManagerState();
 
     final Facet<?>[] facets = getSortedFacets();
@@ -240,7 +239,7 @@ public final class FacetManagerImpl extends FacetManagerBase implements ModuleCo
       if (facetState == null) continue;
 
       getOrCreateTargetFacetList(underlyingFacet, states, myModule.getProject()).add(facetState);
-      states.put(facet, facetState.getSubFacets());
+      states.put(facet, facetState.subFacets);
     }
     return managerState;
   }
@@ -265,7 +264,7 @@ public final class FacetManagerImpl extends FacetManagerBase implements ModuleCo
     if (facetStateList == null) {
       FacetState state = createFacetState(underlyingFacet, project);
       getOrCreateTargetFacetList(underlyingFacet.getUnderlyingFacet(), states, project).add(state);
-      facetStateList = state.getSubFacets();
+      facetStateList = state.subFacets;
       states.put(underlyingFacet, facetStateList);
     }
     return facetStateList;

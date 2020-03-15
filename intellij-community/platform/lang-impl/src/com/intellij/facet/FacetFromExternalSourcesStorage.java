@@ -26,8 +26,7 @@ public final class FacetFromExternalSourcesStorage implements PersistentStateCom
   }
 
   @Override
-  @NotNull
-  public FacetManagerState getState() {
+  public @NotNull FacetManagerState getState() {
     myState = ((FacetManagerImpl)FacetManager.getInstance(myModule)).saveState(FacetManagerImpl.getImportedFacetPredicate(myModule.getProject()));
     return myState;
   }
@@ -37,9 +36,8 @@ public final class FacetFromExternalSourcesStorage implements PersistentStateCom
     return myState;
   }
 
-  @Nullable
   @Override
-  public ProjectModelExternalSource getExternalSource() {
+  public @Nullable ProjectModelExternalSource getExternalSource() {
     //If different facets came from different external sources it actually doesn't matter which source is returned from this method,
     // it's enough to return any non-null value to serialize this component into a separate file.
     return ContainerUtil.getFirstItem(((FacetManagerImpl)FacetManager.getInstance(myModule)).getExternalSources());
