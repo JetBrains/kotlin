@@ -100,7 +100,7 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
         }
     }
 
-    private class Declaration(val text: String, val annotations: MutableList<String> = arrayListOf())
+    private class Declaration(val signature: String, val text: String, val annotations: MutableList<String> = arrayListOf())
 
     private val declarationsInsideClass = arrayListOf<Declaration>()
     private val classAnnotations = arrayListOf<String>()
@@ -168,8 +168,8 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
             append(className)
             if (declarationsInsideClass.isNotEmpty()) {
                 append(" {\n")
-                for (declaration in declarationsInsideClass.sortedBy { it.text }) {
-                    append("    ").append(declaration.annotations.joinToString("")).append(declaration.text).append("\n")
+                for (declaration in declarationsInsideClass.sortedBy(Declaration::signature)) {
+                    append("    ", *declaration.annotations.toTypedArray(), declaration.text, "\n")
                 }
                 append("}")
             }
@@ -213,7 +213,11 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
                 }.joinToString()
                 val signatureIfRequired = if (withSignatures) "<$signature> " else ""
                 declarationsInsideClass.add(
-                    Declaration("${signatureIfRequired}method $name($parameterWithAnnotations): $returnType", methodAnnotations)
+                    Declaration(
+                        name + desc,
+                        "${signatureIfRequired}method $name($parameterWithAnnotations): $returnType",
+                        methodAnnotations
+                    )
                 )
                 super.visitEnd()
             }
@@ -236,7 +240,7 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
 
         val type = Type.getType(desc).className
         val fieldSignature = if (withSignatures) "<$signature> " else ""
-        val fieldDeclaration = Declaration("field $fieldSignature$name: $type")
+        val fieldDeclaration = Declaration("$desc $name", "field $fieldSignature$name: $type")
         declarationsInsideClass.add(fieldDeclaration)
         handleModifiers(ModifierTarget.FIELD, access)
         if (access and ACC_VOLATILE != 0) addModifier("volatile", fieldDeclaration.annotations)
@@ -265,6 +269,7 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
         if (!filter.shouldWriteInnerClass(name)) {
             return
         }
-        declarationsInsideClass.add(Declaration("inner class $name"))
+        val declaration = "inner class $name"
+        declarationsInsideClass.add(Declaration(declaration, declaration))
     }
 }

@@ -12,11 +12,11 @@ public interface Foo$Nested {
 
 @kotlin.Metadata
 public final class Foo {
-    private field x: int
-    inner class Foo$Nested
     public method <init>(p0: int): void
+    private field x: int
     public final method bar(): void
     public synthetic deprecated static method getX$annotations(): void
     public final method getX(): int
+    inner class Foo$Nested
     public final method setX(p0: int): void
 }

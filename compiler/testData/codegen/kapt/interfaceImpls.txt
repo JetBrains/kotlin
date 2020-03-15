@@ -1,14 +1,14 @@
 @kotlin.Metadata
 public final class A$DefaultImpls {
-    inner class A$DefaultImpls
     public static method a(p0: A): void
+    inner class A$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface A {
-    inner class A$DefaultImpls
     public abstract method a(): void
     public abstract method b(): void
+    inner class A$DefaultImpls
 }
 
 @kotlin.Metadata

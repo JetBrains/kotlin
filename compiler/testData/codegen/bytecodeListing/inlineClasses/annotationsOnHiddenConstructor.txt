@@ -4,57 +4,57 @@ public annotation class Ann
 
 @kotlin.Metadata
 public final class Sealed$Derived {
-    inner class Sealed$Derived
     private method <init>(p0: int): void
     public synthetic @Ann method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    inner class Sealed$Derived
 }
 
 @kotlin.Metadata
 public final class Sealed$Inner {
-    synthetic final field this$0: Sealed
-    private final field z2: int
-    inner class Sealed$Inner
-    public synthetic @Ann method <init>(p0: Sealed, p1: int, @Ann p2: int, @Ann p3: java.lang.String, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
     private method <init>(p0: Sealed, p1: int, p2: int, p3: java.lang.String): void
+    public synthetic @Ann method <init>(p0: Sealed, p1: int, @Ann p2: int, @Ann p3: java.lang.String, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private final field z2: int
+    synthetic final field this$0: Sealed
     public final method getZ2(): int
+    inner class Sealed$Inner
 }
 
 @kotlin.Metadata
 public abstract class Sealed {
-    private final field z: int
-    inner class Sealed$Derived
-    inner class Sealed$Inner
     private @Ann method <init>(@Ann p0: int): void
     public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private final field z: int
     public final method getZ(): int
+    inner class Sealed$Derived
+    inner class Sealed$Inner
 }
 
 @kotlin.Metadata
 public final class Test$Inner {
-    synthetic final field this$0: Test
-    private final field z2: int
-    inner class Test$Inner
-    public synthetic @Ann method <init>(p0: Test, p1: int, @Ann p2: int, @Ann p3: java.lang.String, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
     private method <init>(p0: Test, p1: int, p2: int, p3: java.lang.String): void
+    public synthetic @Ann method <init>(p0: Test, p1: int, @Ann p2: int, @Ann p3: java.lang.String, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private final field z2: int
+    synthetic final field this$0: Test
     public final method getZ2(): int
+    inner class Test$Inner
 }
 
 @kotlin.Metadata
 public final class Test {
-    private final field z: int
-    inner class Test$Inner
-    public synthetic @Ann method <init>(@Ann p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
     private method <init>(p0: int): void
+    private method <init>(p0: int, p1: int): void
     public synthetic @Ann method <init>(p0: int, @Ann p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     private @Ann method <init>(p0: int, @Ann p1: java.lang.String): void
-    private method <init>(p0: int, p1: int): void
+    public synthetic @Ann method <init>(@Ann p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private final field z: int
     public final method getZ(): int
+    inner class Test$Inner
 }
 
 @kotlin.Metadata
 public final class Z {
-    private final field x: int
     private synthetic method <init>(p0: int): void
+    private final field x: int
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): Z
     public static method constructor-impl(p0: int): int
     public method equals(p0: java.lang.Object): boolean

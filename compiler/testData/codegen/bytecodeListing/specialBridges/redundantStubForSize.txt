@@ -1,7 +1,7 @@
 @kotlin.Metadata
 public class A1 {
-    private final field size: int
     public method <init>(): void
+    private final field size: int
     public method getSize(): int
 }
 
@@ -12,8 +12,8 @@ public final class A2 {
     public method add(p0: java.lang.String): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
-    public method contains(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
     public bridge final method contains(p0: java.lang.Object): boolean
+    public method contains(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public method isEmpty(): boolean
     public @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator

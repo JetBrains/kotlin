@@ -5,8 +5,8 @@ public interface A {
 
 @kotlin.Metadata
 public final class Foo {
-    private final field x: long
     private synthetic method <init>(p0: long): void
+    private final field x: long
     public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: long): Foo
     public static method constructor-impl(p0: long): long
     public method equals(p0: java.lang.Object): boolean
