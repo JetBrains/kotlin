@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -165,7 +166,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         // TODO: in this method at least 3 different compiler configurations are used (original, env.configuration, jsConfig.configuration)
         // Such situation seems a bit buggy...
-        val config = JsConfig(projectJs, configurationJs)
+        val config = JsConfig(projectJs, configurationJs, CompilerEnvironment)
         val outputDir: File = outputFile.parentFile ?: outputFile.absoluteFile.parentFile!!
         try {
             config.configuration.put(JSConfigurationKeys.OUTPUT_DIR, outputDir.canonicalFile)

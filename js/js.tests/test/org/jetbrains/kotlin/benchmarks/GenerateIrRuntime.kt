@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.junit.After
@@ -435,6 +436,7 @@ class GenerateIrRuntime {
                 configuration,
                 emptyList(),
                 friendModuleDescriptors = emptyList(),
+                CompilerEnvironment,
                 thisIsBuiltInsModule = true,
                 customBuiltInsModule = null
             )

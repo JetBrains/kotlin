@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.serialization.AbstractVersionRequirementTest
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -47,13 +48,13 @@ class JsVersionRequirementTest : AbstractVersionRequirementTest() {
         }
         val trace = BindingTraceContext()
         val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(
-            ktFiles, trace, createModule(environment), environment.configuration
+            ktFiles, trace, createModule(environment), environment.configuration, CompilerEnvironment,
         )
 
         // There are INVISIBLE_REFERENCE errors on RequireKotlin and K2JSTranslator refuses to translate the code otherwise
         trace.clearDiagnostics()
 
-        val result = K2JSTranslator(JsConfig(environment.project, environment.configuration)).translate(
+        val result = K2JSTranslator(JsConfig(environment.project, environment.configuration, CompilerEnvironment)).translate(
             object : JsConfig.Reporter() {}, ktFiles, MainCallParameters.noCall(), analysisResult
         ) as TranslationResult.Success
         result.getOutputFiles(File(outputDirectory, "lib.js"), null, null).writeAllTo(outputDirectory)
@@ -62,7 +63,7 @@ class JsVersionRequirementTest : AbstractVersionRequirementTest() {
     override fun loadModule(directory: File): ModuleDescriptor {
         val environment = createEnvironment(extraDependencies = listOf(File(directory, "lib.meta.js")))
         return TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(
-            emptyList(), BindingTraceContext(), createModule(environment), environment.configuration
+            emptyList(), BindingTraceContext(), createModule(environment), environment.configuration, CompilerEnvironment,
         ).moduleDescriptor
     }
 
@@ -85,7 +86,7 @@ class JsVersionRequirementTest : AbstractVersionRequirementTest() {
         )
 
     private fun createModule(environment: KotlinCoreEnvironment): MutableModuleContext {
-        val config = JsConfig(environment.project, environment.configuration)
+        val config = JsConfig(environment.project, environment.configuration, CompilerEnvironment)
         return ContextForNewModule(
             ProjectContext(environment.project, "ProjectContext"),
             Name.special("<test>"), JsPlatformAnalyzerServices.builtIns, JsPlatforms.defaultJsPlatform

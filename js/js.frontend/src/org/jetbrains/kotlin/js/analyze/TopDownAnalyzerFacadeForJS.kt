@@ -46,6 +46,7 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
         configuration: CompilerConfiguration,
         moduleDescriptors: List<ModuleDescriptorImpl>,
         friendModuleDescriptors: List<ModuleDescriptorImpl>,
+        targetEnvironment: TargetEnvironment,
         thisIsBuiltInsModule: Boolean = false,
         customBuiltInsModule: ModuleDescriptorImpl? = null
     ): JsAnalysisResult {
@@ -81,7 +82,7 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
 
         val trace = BindingTraceContext()
         trace.record(MODULE_KIND, context.module, moduleKind)
-        return analyzeFilesWithGivenTrace(files, trace, context, configuration, additionalPackages)
+        return analyzeFilesWithGivenTrace(files, trace, context, configuration, targetEnvironment, additionalPackages)
     }
 
     protected abstract fun loadIncrementalCacheMetadata(
@@ -96,6 +97,7 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
         trace: BindingTrace,
         moduleContext: ModuleContext,
         configuration: CompilerConfiguration,
+        targetEnvironment: TargetEnvironment,
         additionalPackages: List<PackageFragmentProvider> = emptyList()
     ): JsAnalysisResult {
         val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
@@ -110,7 +112,8 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
             languageVersionSettings,
             lookupTracker,
             expectActualTracker,
-            additionalPackages + listOfNotNull(packageFragment)
+            additionalPackages + listOfNotNull(packageFragment),
+            targetEnvironment,
         )
         analyzerForJs.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
         return JsAnalysisResult.success(trace, moduleContext.module)
@@ -169,6 +172,8 @@ object TopDownAnalyzerFacadeForJS : AbstractTopDownAnalyzerFacadeForJS() {
         config: JsConfig
     ): JsAnalysisResult {
         config.init()
-        return analyzeFiles(files, config.project, config.configuration, config.moduleDescriptors, config.friendModuleDescriptors)
+        return analyzeFiles(
+            files, config.project, config.configuration, config.moduleDescriptors, config.friendModuleDescriptors, config.targetEnvironment,
+        )
     }
 }

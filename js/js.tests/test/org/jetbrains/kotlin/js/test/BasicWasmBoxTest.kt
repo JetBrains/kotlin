@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.library.resolver.impl.KotlinResolvedLibraryImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TestFiles
@@ -162,8 +163,9 @@ abstract class BasicWasmBoxTest(
     private fun createConfig(languageVersionSettings: LanguageVersionSettings?): JsConfig {
         val configuration = environment.configuration.copy()
         configuration.put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE)
-        configuration.languageVersionSettings = languageVersionSettings ?: LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE)
-        return JsConfig(project, configuration, null, null)
+        configuration.languageVersionSettings = languageVersionSettings
+            ?: LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE)
+        return JsConfig(project, configuration, CompilerEnvironment, null, null)
     }
 
     private inner class TestFileFactoryImpl : TestFiles.TestFileFactoryNoModules<TestFile>(), Closeable {

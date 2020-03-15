@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.resolve.CompilerEnvironment;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.lang.reflect.Field;
@@ -66,6 +67,6 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
                 LanguageVersionSettingsImpl.DEFAULT.getApiVersion(),
                 Collections.emptyMap(),
                 specificFeatures));
-        return new JsConfig(getProject(), configuration);
+        return new JsConfig(getProject(), configuration, CompilerEnvironment.INSTANCE);
     }
 }

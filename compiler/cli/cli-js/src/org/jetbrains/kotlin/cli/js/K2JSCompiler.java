@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.resolve.CompilerEnvironment;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
 import org.jetbrains.kotlin.utils.*;
 
@@ -235,7 +236,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, FileUtil.getNameWithoutExtension(outputFile));
 
-        JsConfig config = new JsConfig(project, configuration);
+        JsConfig config = new JsConfig(project, configuration, CompilerEnvironment.INSTANCE);
         JsConfig.Reporter reporter = new JsConfig.Reporter() {
             @Override
             public void error(@NotNull String message) {

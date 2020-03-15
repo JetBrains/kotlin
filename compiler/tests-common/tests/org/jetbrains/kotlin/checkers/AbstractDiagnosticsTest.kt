@@ -404,7 +404,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         if (platform.isCommon()) {
             return CommonResolverForModuleFactory.analyzeFiles(
                 files, moduleDescriptor.name, true, languageVersionSettings,
-                CommonPlatforms.defaultCommonPlatform,
+                CommonPlatforms.defaultCommonPlatform, CompilerEnvironment,
                 mapOf(
                     MODULE_FILES to files
                 )

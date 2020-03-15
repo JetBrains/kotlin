@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.js.resolve.MODULE_KIND
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -35,7 +36,7 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractDiagnosticsTest() {
         JsConfig(project, environment.configuration.copy().apply {
             put(CommonConfigurationKeys.MODULE_NAME, KotlinTestUtils.TEST_MODULE_NAME)
             put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB)
-        })
+        }, CompilerEnvironment)
     }
 
     protected val config: JsConfig get() = lazyConfig!!.value
@@ -58,7 +59,9 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractDiagnosticsTest() {
         // TODO: support LANGUAGE directive in JS diagnostic tests
         moduleTrace.record<ModuleDescriptor, ModuleKind>(MODULE_KIND, moduleContext.module, getModuleKind(files))
         config.configuration.languageVersionSettings = languageVersionSettings
-        return TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(files, moduleTrace, moduleContext, config.configuration)
+        return TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(
+            files, moduleTrace, moduleContext, config.configuration, CompilerEnvironment,
+        )
     }
 
     private fun getModuleKind(ktFiles: List<KtFile>): ModuleKind {
