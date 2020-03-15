@@ -156,9 +156,11 @@ fun addIdeaNativeModuleDepsStandalone(project: Project) = with(project) {
         add("compile", "com.jetbrains.intellij.platform:external-system:$version")
         add("compile", "com.jetbrains.intellij.platform:external-system-impl:$version")
         add("compile", "com.jetbrains.intellij.gradle:gradle-common:$version")
+        add("compile", "com.jetbrains.intellij.gradle:gradle-tooling-extension-impl:$version")
         add("compile", "com.jetbrains.intellij.java:java-debugger-impl:$version")
         add("compile", "com.jetbrains.intellij.java:java-psi-impl:$version")
         add("compile", "com.jetbrains.intellij.java:java-compiler-impl:$version")
+        add("compile", "com.jetbrains.intellij.java:java-execution:$version")
     }
 }
 
