@@ -39,6 +39,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 class ParameterInfoTaskRunnerUtil {
+
+  public static final int DEFAULT_PROGRESS_POPUP_DELAY_MS = 1000;
+
   /**
    * @param progressTitle null means no loading panel should be shown
    */
@@ -133,7 +136,7 @@ class ParameterInfoTaskRunnerUtil {
           loadingPanel.startLoading();
           popup.show(popupPosition);
         }
-      }, ModalityState.defaultModalityState(), ProgressWindow.DEFAULT_PROGRESS_DIALOG_POSTPONE_TIME_MILLIS, TimeUnit.MILLISECONDS);
+      }, ModalityState.defaultModalityState(), DEFAULT_PROGRESS_POPUP_DELAY_MS, TimeUnit.MILLISECONDS);
 
       stopActionRef.set((cancel) -> {
         try {
