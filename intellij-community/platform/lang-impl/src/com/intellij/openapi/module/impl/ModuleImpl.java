@@ -16,7 +16,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.module.impl.scopes.ModuleScopeProviderImpl;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
@@ -264,7 +263,7 @@ public class ModuleImpl extends ComponentManagerImpl implements ModuleEx {
   @NotNull
   private DeprecatedModuleOptionManager getOptionManager() {
     //noinspection ConstantConditions
-    return ModuleServiceManager.getService(this, DeprecatedModuleOptionManager.class);
+    return ((Module)this).getService(DeprecatedModuleOptionManager.class);
   }
 
   @Override
