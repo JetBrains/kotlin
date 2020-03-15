@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TestFiles
@@ -158,7 +159,7 @@ abstract class BasicWasmBoxTest(
     }
 
     private inner class TestFileFactoryImpl : TestFiles.TestFileFactoryNoModules<TestFile>(), Closeable {
-        override fun create(fileName: String, text: String, directives: MutableMap<String, String>): TestFile {
+        override fun create(fileName: String, text: String, directives: Directives): TestFile {
             val ktFile = KtPsiFactory(project).createFile(text)
             val boxFunction = ktFile.declarations.find { it is KtNamedFunction && it.name == TEST_FUNCTION }
             if (boxFunction != null) {

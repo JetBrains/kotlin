@@ -525,12 +525,16 @@ public class KotlinTestUtils {
     }
 
     @NotNull
-    public static Map<String, String> parseDirectives(String expectedText) {
-        Map<String, String> directives = new HashMap<>();
+    public static Directives parseDirectives(String expectedText) {
+        return parseDirectives(expectedText, new Directives());
+    }
+
+    @NotNull
+    public static Directives parseDirectives(String expectedText, @NotNull Directives directives) {
         return parseByRegexp(DIRECTIVE_PATTERN, expectedText, directives);
     }
 
-    private static Map<String, String> parseByRegexp(Pattern pattern, String expectedText, Map<String, String> directives) {
+    private static Directives parseByRegexp(Pattern pattern, String expectedText, Directives directives) {
         Matcher directiveMatcher = pattern.matcher(expectedText);
         while (directiveMatcher.find()) {
             String name = directiveMatcher.group(1);
@@ -542,8 +546,8 @@ public class KotlinTestUtils {
     }
 
     @NotNull
-    public static Map<String, String> parseDirectivesAndFlags(String expectedText) {
-        Map<String, String> directiveAndFlags = parseDirectives(expectedText);
+    public static Directives parseDirectivesAndFlags(String expectedText) {
+        Directives directiveAndFlags = parseDirectives(expectedText);
         parseByRegexp(BACKEND_DIRECTIVE_PATTERN, expectedText, directiveAndFlags);
         return directiveAndFlags;
     }
@@ -561,7 +565,7 @@ public class KotlinTestUtils {
         List<String> files = TestFiles.createTestFiles("", content, new TestFiles.TestFileFactoryNoModules<String>() {
             @NotNull
             @Override
-            public String create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
+            public String create(@NotNull String fileName, @NotNull String text, @NotNull Directives directives) {
                 int firstLineEnd = text.indexOf('\n');
                 return StringUtil.trimTrailing(text.substring(firstLineEnd + 1));
             }

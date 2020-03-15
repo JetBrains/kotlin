@@ -42,7 +42,7 @@ object InlineTestUtil {
         assert(notInlinedCalls.isEmpty()) { "All inline methods should be inlined but:\n" + notInlinedCalls.joinToString("\n") }
 
         val skipParameterChecking = files.any {
-            it.directives.containsKey("NO_CHECK_LAMBDA_INLINING")
+            "NO_CHECK_LAMBDA_INLINING" in it.directives
         } || !doLambdaInliningCheck(outputFiles, inlineInfo)
 
         if (!skipParameterChecking) {

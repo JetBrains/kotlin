@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.js.test.utils.LineOutputToStringVisitor
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
-import org.jetbrains.kotlin.test.KotlinBaseTest
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
-import org.jetbrains.kotlin.test.TestFiles
+import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.utils.DFS
 import java.io.ByteArrayOutputStream
 import java.io.Closeable
@@ -140,7 +137,7 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
         private val tmpDir = KotlinTestUtils.tmpDir("js-tests")
         private val defaultModule = TestModule(BasicBoxTest.TEST_MODULE, emptyList(), emptyList())
 
-        override fun createFile(module: TestModule?, fileName: String, text: String, directives: Map<String, String>): TestFile? {
+        override fun createFile(module: TestModule?, fileName: String, text: String, directives: Directives): TestFile? {
             val currentModule = module ?: defaultModule
 
             val temporaryFile = File(tmpDir, "${currentModule.name}/$fileName")
@@ -165,7 +162,7 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
         val files = mutableListOf<TestFile>()
     }
 
-    private class TestFile(val fileName: String, content: String, val module: TestModule, directives: Map<String, String?>) :
+    private class TestFile(val fileName: String, content: String, val module: TestModule, directives: Directives) :
         KotlinBaseTest.TestFile(fileName, content, directives) {
         init {
             module.files += this

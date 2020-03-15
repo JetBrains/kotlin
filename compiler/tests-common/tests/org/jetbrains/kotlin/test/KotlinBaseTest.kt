@@ -73,7 +73,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
     open class TestFile @JvmOverloads constructor(
         @JvmField val name: String,
         @JvmField val content: String,
-        @JvmField val directives: Map<String, String?> = emptyMap()
+        @JvmField val directives: Directives = Directives()
     ) : Comparable<TestFile> {
         override operator fun compareTo(other: TestFile): Int {
             return name.compareTo(other.name)

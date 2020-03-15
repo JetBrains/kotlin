@@ -71,7 +71,7 @@ public class TestFiles {
             commonPrefixOrWholeFile = expectedText;
         }
         else {
-            Map<String, String> allFilesOrCommonPrefixDirectives = parseDirectivesPerFile ? null : parseDirectivesAndFlags(expectedText);
+            Directives allFilesOrCommonPrefixDirectives = parseDirectivesPerFile ? null : parseDirectivesAndFlags(expectedText);
             int processedChars = 0;
             M module = null;
             boolean firstFileProcessed = false;
@@ -190,7 +190,7 @@ public class TestFiles {
     }
 
     public interface TestFileFactory<M, F> {
-        F createFile(@Nullable M module, @NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives);
+        F createFile(@Nullable M module, @NotNull String fileName, @NotNull String text, @NotNull Directives directives);
         M createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends);
     }
 
@@ -200,13 +200,13 @@ public class TestFiles {
                 @Nullable KotlinBaseTest.TestModule module,
                 @NotNull String fileName,
                 @NotNull String text,
-                @NotNull Map<String, String> directives
+                @NotNull Directives directives
         ) {
             return create(fileName, text, directives);
         }
 
         @NotNull
-        public abstract F create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives);
+        public abstract F create(@NotNull String fileName, @NotNull String text, @NotNull Directives directives);
 
         @Override
         public KotlinBaseTest.TestModule createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends) {

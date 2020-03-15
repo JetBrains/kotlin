@@ -20,7 +20,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.Conditions
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.ContainerUtil
@@ -52,10 +51,10 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
+import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinBaseTest
-import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.junit.Assert
 import java.io.File
@@ -83,7 +82,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
     ): TestModule =
         TestModule(name, dependencies, friends)
 
-    override fun createTestFile(module: TestModule?, fileName: String, text: String, directives: Map<String, String?>): TestFile =
+    override fun createTestFile(module: TestModule?, fileName: String, text: String, directives: Directives): TestFile =
         TestFile(module, fileName, text, directives)
 
 
@@ -138,7 +137,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         val module: TestModule?,
         val fileName: String,
         textWithMarkers: String,
-        directives: Map<String, String?>
+        directives: Directives
     ) : KotlinBaseTest.TestFile(fileName, textWithMarkers, directives) {
         val diagnosedRanges: MutableList<DiagnosedRange> = mutableListOf()
         private val diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>> = mutableMapOf()
@@ -411,7 +410,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         val DIAGNOSTIC_IN_TESTDATA_PATTERN = Regex("<!>|<!(.*?(\\(\".*?\"\\)|\\(\\))??)+(?<!<)!>")
 
         fun parseDiagnosticFilterDirective(
-            directiveMap: Map<String, String?>,
+            directiveMap: Directives,
             allowUnderscoreUsage: Boolean
         ): Condition<Diagnostic> {
             val directives = directiveMap[DIAGNOSTICS_DIRECTIVE]
@@ -499,7 +498,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         }
     }
 
-    private fun parseJvmTarget(directiveMap: Map<String, String?>) = directiveMap[JVM_TARGET]?.let { JvmTarget.fromString(it) }
+    private fun parseJvmTarget(directiveMap: Directives) = directiveMap[JVM_TARGET]?.let { JvmTarget.fromString(it) }
 
     protected fun parseModulePlatformByName(moduleName: String): TargetPlatform? {
         val nameSuffix = moduleName.substringAfterLast("-", "").toUpperCase()

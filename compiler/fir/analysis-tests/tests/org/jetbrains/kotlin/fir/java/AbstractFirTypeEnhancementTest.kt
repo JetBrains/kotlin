@@ -105,7 +105,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
         val srcFiles = TestFiles.createTestFiles(
             javaFile.name, FileUtil.loadFile(javaFile, true),
             object : TestFiles.TestFileFactoryNoModules<File>() {
-                override fun create(fileName: String, text: String, directives: Map<String, String>): File {
+                override fun create(fileName: String, text: String, directives: Directives): File {
                     var currentDir = javaFilesDir
                     if ("/" !in fileName) {
                         val packageFqName =

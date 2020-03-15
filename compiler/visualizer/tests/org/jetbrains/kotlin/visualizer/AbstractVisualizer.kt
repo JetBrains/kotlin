@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.visualizer
 
 import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinBaseTest
 import java.io.File
 
@@ -20,7 +21,7 @@ abstract class AbstractVisualizer : KotlinMultiFileTestWithJava<KotlinBaseTest.T
     ): TestModule? = null
 
 
-    override fun createTestFile(module: TestModule?, fileName: String, text: String, directives: Map<String, String?>): TestFile =
+    override fun createTestFile(module: TestModule?, fileName: String, text: String, directives: Directives): TestFile =
         TestFile(fileName, text, directives)
 
 

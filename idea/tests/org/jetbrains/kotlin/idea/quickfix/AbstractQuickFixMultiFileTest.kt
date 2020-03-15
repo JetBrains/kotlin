@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestFiles
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
@@ -113,7 +114,7 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
             "single.kt",
             multiFileText,
             object : TestFiles.TestFileFactoryNoModules<TestFile>() {
-                override fun create(fileName: String, text: String, directives: Map<String, String>): TestFile {
+                override fun create(fileName: String, text: String, directives: Directives): TestFile {
                     val linesWithoutDirectives = text.lines().filter {
                         !it.startsWith("// LANGUAGE_VERSION") && !it.startsWith("// FILE")
                     }

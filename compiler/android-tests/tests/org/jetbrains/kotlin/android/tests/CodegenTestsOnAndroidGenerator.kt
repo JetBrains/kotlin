@@ -242,7 +242,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             file.name,
             expectedText,
             object : TestFiles.TestFileFactoryNoModules<TestFile>() {
-                override fun create(fileName: String, text: String, directives: Map<String, String>): TestFile {
+                override fun create(fileName: String, text: String, directives: Directives): TestFile {
                     return TestFile(fileName, text, directives)
                 }
             }, false,

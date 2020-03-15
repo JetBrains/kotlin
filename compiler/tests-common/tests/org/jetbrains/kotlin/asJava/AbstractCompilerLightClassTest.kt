@@ -19,13 +19,10 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.test.KotlinBaseTest
 import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.util.KotlinFrontEndException
 import org.junit.Assert
 import java.io.File
@@ -57,7 +54,7 @@ abstract class AbstractCompilerLightClassTest : KotlinMultiFileTestWithJava<Kotl
         module: TestModule?,
         fileName: String,
         text: String,
-        directives: Map<String, String?>
+        directives: Directives
     ): TestFile = TestFile(fileName, text, directives)
 
     companion object {

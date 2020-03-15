@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.intellij.testFramework.LightPlatformTestCase
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
@@ -38,7 +37,7 @@ abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotli
 
         val settings = ConverterSettings.defaultSettings.copy()
         val directives = KotlinTestUtils.parseDirectives(javaCode)
-        for ((name, value) in directives) {
+        for ((name, value) in directives.asMapOfSingleValues()) {
             when (name) {
                 "forceNotNullTypes" -> settings.forceNotNullTypes = value.toBoolean()
                 "specifyLocalVariableTypeByDefault" -> settings.specifyLocalVariableTypeByDefault = value.toBoolean()
