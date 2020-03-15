@@ -7,7 +7,7 @@ plugins {
 dependencies {
     api(kotlinStdlib())
     api(project(":compiler:compiler.version"))
-    api(project(":core:deserialization"))
+    api(project(":core:descriptors"))
 
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }

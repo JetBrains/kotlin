@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.utils
@@ -27,9 +16,27 @@ import java.util.zip.ZipException
 import java.util.zip.ZipFile
 
 object JsLibraryUtils {
-    private val LOG = Logger.getInstance(LibraryUtils::class.java)
+    private val LOG = Logger.getInstance(JsLibraryUtils::class.java)
 
     private val META_INF_RESOURCES = "${LibraryUtils.META_INF}resources/"
+
+    // Also used in K2JSCompilerMojo
+    @JvmStatic
+    fun isKotlinJavascriptLibrary(library: File): Boolean =
+        KotlinJavascriptMetadataUtils.loadMetadata(library).isNotEmpty()
+
+    // Also used in K2JSCompilerMojo
+    @Suppress("unused")
+    @JvmStatic
+    fun isKotlinJavascriptIrLibrary(candidate: File): Boolean {
+        return when {
+            isZippedKlib(candidate) -> true
+            FileUtil.isJarOrZip(candidate) -> isZippedKlibInZip(candidate)
+            !File(candidate, "manifest").isFile -> false
+            !File(candidate, "ir").isDirectory -> false
+            else -> true
+        }
+    }
 
     @JvmStatic fun copyJsFilesFromLibraries(libraries: List<String>, outputLibraryJsPath: String, copySourceMap: Boolean = false) {
         for (library in libraries) {
@@ -62,6 +69,19 @@ object JsLibraryUtils {
             }
         }
     }
+
+    private fun isZippedKlibInZip(candidate: File): Boolean {
+        var manifestFound = false
+        var irFound = false
+        for (entry in ZipFile(candidate).entries()) {
+            if (entry.name == "manifest") manifestFound = true
+            if (entry.name == "ir/") irFound = true
+        }
+        return manifestFound && irFound
+    }
+
+    private fun isZippedKlib(candidate: File): Boolean =
+        candidate.extension == "klib"
 
     private fun File.runIfFileExists(relativePath: String, action: (JsLibrary) -> Unit) {
         if (isFile) {

@@ -1,4 +1,3 @@
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -6,7 +5,7 @@ plugins {
 
 dependencies {
     compile(project(":compiler:util"))
-    compile(project(":core:descriptors"))
+    compile(project(":core:deserialization"))
     compileOnly(intellijDep()) { includeJars("trove4j") }
 }
 

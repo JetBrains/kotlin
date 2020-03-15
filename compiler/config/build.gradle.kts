@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":core:descriptors"))
+    api(project(":core:deserialization"))
     api(project(":compiler:util"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
