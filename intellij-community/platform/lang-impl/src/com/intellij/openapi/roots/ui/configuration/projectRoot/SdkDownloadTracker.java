@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.roots.ui.configuration.projectRoot;
 
 import com.google.common.collect.Sets;
@@ -8,11 +8,9 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.PerformInBackgroundOption;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.progress.*;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
+import com.intellij.openapi.progress.util.ProgressIndicatorListenerAdapter;
 import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -21,6 +19,7 @@ import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.wm.ex.ProgressIndicatorEx;
 import com.intellij.util.Consumer;
@@ -99,6 +98,16 @@ public class SdkDownloadTracker implements Disposable {
     PendingDownload pd = new PendingDownload(originalSdk, item);
     pd.configureSdk(originalSdk);
     myPendingTasks.add(pd);
+  }
+
+  /**
+   * Allows to register a callback to cleanup the created SDK object, in a case it was failed to download
+   */
+  public void tryRegisterSdkDownloadFailureHandler(@NotNull Sdk originalSdk,
+                                                   @NotNull Runnable onSdkFailed) {
+    PendingDownload task = findTask(originalSdk);
+    if (task == null) return;
+    task.mySdkFailedHandlers.add(onSdkFailed);
   }
 
   public void startSdkDownloadIfNeeded(@NotNull Sdk sdkFromTable) {
@@ -219,6 +228,7 @@ public class SdkDownloadTracker implements Disposable {
     final PendingDownloadModalityTracker myModalityTracker = new PendingDownloadModalityTracker();
 
     final SynchronizedIdentityHashSet<Sdk> myEditableSdks = new SynchronizedIdentityHashSet<>();
+    final SynchronizedIdentityHashSet<Runnable> mySdkFailedHandlers = new SynchronizedIdentityHashSet<>();
     final SynchronizedIdentityHashSet<Consumer<Boolean>> myCompleteListeners = new SynchronizedIdentityHashSet<>();
     final SynchronizedIdentityHashSet<Disposable> myDisposables = new SynchronizedIdentityHashSet<>();
 
@@ -271,6 +281,14 @@ public class SdkDownloadTracker implements Disposable {
                 action.execute((ProgressIndicatorEx)indicator);
               }
             };
+
+            new ProgressIndicatorListenerAdapter() {
+              @Override
+              public void cancelled() {
+                myProgressIndicator.cancel();
+              }
+            }.installToProgress((ProgressIndicatorEx)indicator);
+
             myProgressIndicator.addStateDelegate(middleMan);
             myProgressIndicator.checkCanceled();
             try {
@@ -282,14 +300,20 @@ public class SdkDownloadTracker implements Disposable {
 
             // make sure VFS has the right image of our SDK to avoid empty SDK from being created
             VfsUtil.markDirtyAndRefresh(false, true, true, new File(myTask.getPlannedHomeDir()));
-
             onSdkDownloadCompleted(false);
           }
-          catch (Exception e) {
+          catch (ProcessCanceledException e) {
+            onSdkDownloadCompleted(true);
+          }
+          catch (Throwable e) {
             if (!myProgressIndicator.isCanceled()) {
               LOG.warn("SDK Download failed. " + e.getMessage(), e);
               myModalityTracker.invokeLater(() -> {
-                Messages.showErrorDialog(e.getMessage(), getTitle());
+                String actualMessage = e.getMessage();
+                if (StringUtil.isEmptyOrSpaces(actualMessage)) {
+                  actualMessage = "Failed to download " + type.getPresentableName();
+                }
+                Messages.showErrorDialog(actualMessage, getTitle());
               });
             }
             onSdkDownloadCompleted(true);
@@ -364,6 +388,9 @@ public class SdkDownloadTracker implements Disposable {
         //collections may change from the callbacks
         myCompleteListeners.copy().forEach(it -> it.consume(succeeded));
         myDisposables.copy().forEach(it -> Disposer.dispose(it));
+        if (!succeeded) {
+          mySdkFailedHandlers.copy().forEach(Runnable::run);
+        }
       });
     }
 

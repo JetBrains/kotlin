@@ -10,6 +10,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.progress.util.ProgressIndicatorBase
+import com.intellij.openapi.progress.util.ProgressIndicatorListenerAdapter
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
@@ -259,10 +260,16 @@ internal class SdkLookupImpl : SdkLookup {
           }
         }
 
+        object: ProgressIndicatorListenerAdapter() {
+          override fun cancelled() {
+            rootProgressIndicator.cancel()
+          }
+        }.installToProgress(indicator as ProgressIndicatorEx)
+
         rootProgressIndicator.addStateDelegate(middleMan)
 
         try {
-          action(indicator)
+          action(rootProgressIndicator)
         } finally {
           rootProgressIndicator.removeStateDelegate(middleMan)
         }

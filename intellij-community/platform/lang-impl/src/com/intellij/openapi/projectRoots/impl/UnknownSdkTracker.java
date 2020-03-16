@@ -198,16 +198,15 @@ public class UnknownSdkTracker {
 
         SdkDownloadTracker downloadTracker = SdkDownloadTracker.getInstance();
         downloadTracker.registerSdkDownload(sdk, task);
+        String targetSdkName = actualSdkName;
         downloadTracker.tryRegisterDownloadingListener(sdk, lifetime, new ProgressIndicatorBase(), success -> {
           Disposer.dispose(lifetime);
+          registerNewSdkInJdkTable(targetSdkName, sdk);
           onCompleted.consume(success ? sdk : null);
         });
 
-        registerNewSdkInJdkTable(actualSdkName, sdk);
         onSdkNameReady.consume(sdk);
-
         downloadTracker.startSdkDownloadIfNeeded(sdk);
-
       } catch (Exception error) {
         LOG.warn("Failed to download " + info.getSdkType().getPresentableName() + " " + fix.getDownloadDescription() + " for " + info + ". " + error.getMessage(), error);
         ApplicationManager.getApplication().invokeLater(() -> {

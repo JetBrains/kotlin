@@ -176,6 +176,12 @@ public class ProjectSdksModel implements SdkModel {
         if (ArrayUtilRt.find(allJdks, projectJdk) == -1) {
           jdkTable.addJdk(projectJdk);
           jdkTable.updateJdk(projectJdk, myProjectSdks.get(projectJdk));
+
+          SdkDownloadTracker.getInstance().tryRegisterSdkDownloadFailureHandler(projectJdk, () -> {
+            ApplicationManager.getApplication().runWriteAction(() -> {
+              ProjectJdkTable.getInstance().removeJdk(projectJdk);
+            });
+          });
         }
       }
     });
@@ -433,6 +439,7 @@ public class ProjectSdksModel implements SdkModel {
     Sdk editableSdk = doAddInternal(sdk, callback);
     if (editableSdk != null) {
       tracker.registerEditableSdk(sdk, editableSdk);
+      tracker.tryRegisterSdkDownloadFailureHandler(sdk, () -> removeSdk(editableSdk));
     }
     tracker.startSdkDownloadIfNeeded(sdk);
   }
