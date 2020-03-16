@@ -1,4 +1,3 @@
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -12,6 +11,7 @@ dependencies {
     compile(project(":core:descriptors.jvm"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
+    compile(project(":compiler:frontend:cfg"))
     compile(project(":compiler:light-classes"))
     compile(project(":compiler:util"))
     compile(project(":idea:ide-common"))

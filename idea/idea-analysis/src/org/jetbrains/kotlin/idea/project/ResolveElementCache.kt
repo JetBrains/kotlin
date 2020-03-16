@@ -15,7 +15,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.cfg.ControlFlowInformationProvider
+import org.jetbrains.kotlin.cfg.ControlFlowInformationProviderImpl
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.SimpleGlobalContext
 import org.jetbrains.kotlin.context.withModule
@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
-import java.util.*
 import java.util.concurrent.ConcurrentMap
 
 class ResolveElementCache(
@@ -647,7 +646,7 @@ class ResolveElementCache(
         forceResolveAnnotationsInside(property)
 
         for (accessor in property.accessors) {
-            ControlFlowInformationProvider(
+            ControlFlowInformationProviderImpl(
                 accessor, trace, accessor.languageVersionSettings, resolveSession.platformDiagnosticSuppressor
             ).checkDeclaration()
         }
@@ -787,7 +786,8 @@ class ResolveElementCache(
             targetPlatform.findAnalyzerServices(file.project),
             file.languageVersionSettings,
             IdeaModuleStructureOracle(),
-            IdeSealedClassInheritorsProvider
+            IdeSealedClassInheritorsProvider,
+            ControlFlowInformationProviderImpl.Factory,
         ).get()
     }
 
@@ -845,4 +845,3 @@ class ResolveElementCache(
         var forceFullAnalysisModeInTests: Boolean = false
     }
 }
-

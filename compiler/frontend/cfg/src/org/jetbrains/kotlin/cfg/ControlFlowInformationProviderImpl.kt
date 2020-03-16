@@ -63,14 +63,13 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class ControlFlowInformationProvider private constructor(
+class ControlFlowInformationProviderImpl private constructor(
     private val subroutine: KtElement,
     private val trace: BindingTrace,
     private val pseudocode: Pseudocode,
     private val languageVersionSettings: LanguageVersionSettings,
     private val diagnosticSuppressor: PlatformDiagnosticSuppressor
-) {
-
+) : ControlFlowInformationProvider {
     private val pseudocodeVariablesData by lazy {
         PseudocodeVariablesData(pseudocode, trace.bindingContext)
     }
@@ -88,14 +87,14 @@ class ControlFlowInformationProvider private constructor(
         diagnosticSuppressor
     )
 
-    fun checkForLocalClassOrObjectMode() {
+    override fun checkForLocalClassOrObjectMode() {
         // Local classes and objects are analyzed twice: when TopDownAnalyzer processes it and as a part of its container.
         // Almost all checks can be done when the container is analyzed
         // except recording initialized variables (this information is needed for DeclarationChecker).
         recordInitializedVariables()
     }
 
-    fun checkDeclaration() {
+    override fun checkDeclaration() {
 
         recordInitializedVariables()
 
@@ -123,7 +122,7 @@ class ControlFlowInformationProvider private constructor(
         checkConstructorConsistency()
     }
 
-    fun checkFunction(expectedReturnType: KotlinType?) {
+    override fun checkFunction(expectedReturnType: KotlinType?) {
         val unreachableCode = collectUnreachableCode()
         reportUnreachableCode(unreachableCode)
 
@@ -235,7 +234,7 @@ class ControlFlowInformationProvider private constructor(
                 val functionDescriptor = trace.bindingContext.get(DECLARATION_TO_DESCRIPTOR, element) as? CallableDescriptor
                 val expectedType = functionDescriptor?.returnType
 
-                val providerForLocalDeclaration = ControlFlowInformationProvider(
+                val providerForLocalDeclaration = ControlFlowInformationProviderImpl(
                     element, trace, localDeclarationInstruction.body, languageVersionSettings, diagnosticSuppressor
                 )
 
@@ -1122,7 +1121,7 @@ class ControlFlowInformationProvider private constructor(
             KtTryExpression::class.java, KtFunction::class.java, KtAnonymousInitializer::class.java
         ) is KtTryExpression
 
-    private fun CallInstruction.isTailCall(subroutine: KtElement = this@ControlFlowInformationProvider.subroutine): Boolean {
+    private fun CallInstruction.isTailCall(subroutine: KtElement = this@ControlFlowInformationProviderImpl.subroutine): Boolean {
         val tailInstructionDetector = TailInstructionDetector(subroutine)
         return traverseFollowingInstructions(
             this,
@@ -1220,6 +1219,16 @@ class ControlFlowInformationProvider private constructor(
         instruction: Instruction,
         map: MutableMap<Instruction, DiagnosticFactory<*>>
     ) : VariableContext(instruction, map)
+
+    object Factory : ControlFlowInformationProvider.Factory {
+        override fun createControlFlowInformationProvider(
+            declaration: KtElement,
+            trace: BindingTrace,
+            languageVersionSettings: LanguageVersionSettings,
+            diagnosticSuppressor: PlatformDiagnosticSuppressor
+        ): ControlFlowInformationProvider =
+            ControlFlowInformationProviderImpl(declaration, trace, languageVersionSettings, diagnosticSuppressor)
+    }
 
     companion object {
         private fun isUsedAsResultOfLambda(usages: List<Instruction>): Boolean {
