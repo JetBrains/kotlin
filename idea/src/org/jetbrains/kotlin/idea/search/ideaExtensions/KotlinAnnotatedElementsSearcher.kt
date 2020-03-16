@@ -65,6 +65,10 @@ class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, Anno
 
                     LightClassUtil.getLightClassPropertyMethods(declaration).all { consumer.process(it) }
                 }
+                is KtPropertyAccessor -> {
+                    val method = LightClassUtil.getLightClassAccessorMethod(declaration)
+                    return@processAnnotatedMembers consumer.process(method)
+                }
                 is KtParameter -> {
                     if (!declaration.toPsiParameters().all { consumer.process(it) }) return@processAnnotatedMembers false
                     LightClassUtil.getLightClassBackingField(declaration)?.let {
