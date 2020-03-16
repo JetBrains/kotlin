@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.addDeclaration
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -42,6 +39,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.resolve.constants.evaluate.*
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 //T can be either PsiElement, or LighterASTNode
 abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Context<T> = Context()) {
@@ -387,6 +385,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             val resultVar = generateTemporaryVariable(this@BaseFirBuilder.baseSession, source, resultName, resultInitializer)
             val assignment = argument.generateAssignment(
                 source,
+                argument,
                 if (prefix && argument.elementType != REFERENCE_EXPRESSION)
                     generateResolvedAccessExpression(source, resultVar)
                 else
@@ -463,48 +462,24 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
     fun T?.generateAssignment(
         baseSource: FirSourceElement?,
-        value: FirExpression,
+        rhs: T?,
+        value: FirExpression, // value is FIR for rhs
         operation: FirOperation,
         convert: T.() -> FirExpression
     ): FirStatement {
         val tokenType = this?.elementType
         if (tokenType == PARENTHESIZED) {
-            return this!!.getExpressionInParentheses().generateAssignment(baseSource, value, operation, convert)
+            return this!!.getExpressionInParentheses().generateAssignment(baseSource, rhs, value, operation, convert)
         }
         if (tokenType == ARRAY_ACCESS_EXPRESSION) {
+            require(this != null)
             if (operation == FirOperation.ASSIGN) {
-                context.arraySetArgument[this!!] = value
+                context.arraySetArgument[this] = value
             }
-            val firArrayAccess = this!!.convert() as FirFunctionCall
-            if (operation == FirOperation.ASSIGN) {
-                return firArrayAccess
-            }
-            val arraySetCallBuilder = FirArraySetCallBuilder().apply {
-                source = baseSource
-                rValue = value
-                this.operation = operation
-                indexes += firArrayAccess.arguments
-                argumentList = buildArraySetArgumentList(rValue, indexes)
-            }
-            val arrayExpression = this.getChildNodeByType(REFERENCE_EXPRESSION)
-            if (arrayExpression != null) {
-                return arraySetCallBuilder.apply {
-                    calleeReference = initializeLValue(arrayExpression) { convert() as? FirQualifiedAccess }
-                }.build()
-            }
-            val psiArrayExpression = firArrayAccess.explicitReceiver?.psi
-            return buildBlock {
-                source = psiArrayExpression?.toFirSourceElement()
-                val name = Name.special("<array-set>")
-                statements += generateTemporaryVariable(
-                    this@BaseFirBuilder.baseSession, this@generateAssignment.getSourceOrNull(), name, firArrayAccess.explicitReceiver!!
-                )
-                statements += arraySetCallBuilder.apply {
-                    calleeReference = buildSimpleNamedReference {
-                        source = psiArrayExpression?.toFirSourceElement()
-                        this.name = name
-                    }
-                }.build()
+            return if (operation == FirOperation.ASSIGN) {
+                this.convert()
+            } else {
+                generateArraySetCall(baseSource, operation, rhs, convert)
             }
         }
 
@@ -528,6 +503,120 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             safe = false
             rValue = value
             calleeReference = initializeLValue(this@generateAssignment) { convert() as? FirQualifiedAccess }
+        }
+    }
+
+    private fun T.generateArraySetCall(
+        baseSource: FirSourceElement?,
+        operation: FirOperation,
+        rhs: T?,
+        convert: T.() -> FirExpression
+    ): FirStatement {
+        return buildArraySetCall {
+            source = baseSource
+            this.operation = operation
+            assignCall = generateAugmentedCallForAugmentedArraySetCall(operation, rhs, convert)
+            setGetBlock = generateSetGetBlockForAugmentedArraySetCall(baseSource, operation, rhs, convert)
+        }
+    }
+
+    private fun T.generateAugmentedCallForAugmentedArraySetCall(
+        operation: FirOperation,
+        rhs: T?,
+        convert: T.() -> FirExpression
+    ): FirFunctionCall {
+        /*
+         * Desugarings of a[x, y] += z to
+         * a.get(x, y).plusAssign(z)
+         */
+        return buildFunctionCall {
+            calleeReference = buildSimpleNamedReference {
+                name = FirOperationNameConventions.ASSIGNMENTS.getValue(operation)
+            }
+            explicitReceiver = convert()
+            argumentList = buildArgumentList {
+                arguments += rhs?.convert() ?: buildErrorExpression(
+                    null,
+                    FirSimpleDiagnostic("No value for array set", DiagnosticKind.Syntax)
+                )
+            }
+        }
+    }
+
+
+    private fun T.generateSetGetBlockForAugmentedArraySetCall(
+        baseSource: FirSourceElement?,
+        operation: FirOperation,
+        rhs: T?,
+        convert: T.() -> FirExpression
+    ): FirBlock {
+        /*
+         * Desugarings of a[x, y] += z to
+         * {
+         *     val tmp_a = a
+         *     val tmp_x = x
+         *     val tmp_y = y
+         *     tmp_a.set(tmp_x, tmp_a.get(tmp_x, tmp_y).plus(z))
+         * }
+         */
+        return buildBlock {
+            val baseCall = convert() as FirFunctionCall
+
+            val arrayVariable = generateTemporaryVariable(
+                baseSession,
+                source = null,
+                "<array>",
+                baseCall.explicitReceiver ?: buildErrorExpression {
+                    source = baseSource
+                    diagnostic = FirSimpleDiagnostic("No receiver for array access", DiagnosticKind.Syntax)
+                }
+            )
+            statements += arrayVariable
+            val indexVariables = baseCall.arguments.mapIndexed { i, index ->
+                generateTemporaryVariable(baseSession, source = null, "<index_$i>", index)
+            }
+            statements += indexVariables
+            statements += buildFunctionCall {
+                source = baseSource
+                explicitReceiver = arrayVariable.toQualifiedAccess()
+                calleeReference = buildSimpleNamedReference {
+                    name = OperatorNameConventions.SET
+                }
+                argumentList = buildArgumentList {
+                    for (indexVariable in indexVariables) {
+                        arguments += indexVariable.toQualifiedAccess()
+                    }
+
+                    val getCall = buildFunctionCall {
+                        explicitReceiver = arrayVariable.toQualifiedAccess()
+                        calleeReference = buildSimpleNamedReference {
+                            name = OperatorNameConventions.GET
+                        }
+                        argumentList = buildArgumentList {
+                            for (indexVariable in indexVariables) {
+                                arguments += indexVariable.toQualifiedAccess()
+                            }
+                        }
+                    }
+
+                    val operatorCall = buildFunctionCall {
+                        calleeReference = buildSimpleNamedReference {
+                            name = FirOperationNameConventions.ASSIGNMENTS_TO_SIMPLE_OPERATOR.getValue(operation)
+                        }
+                        explicitReceiver = getCall
+                        argumentList = buildArgumentList {
+                            arguments += rhs?.convert() ?: buildErrorExpression(
+                                null,
+                                FirSimpleDiagnostic(
+                                    "No value for array set",
+                                    DiagnosticKind.Syntax
+                                )
+                            )
+                        }
+                    }
+                    arguments += operatorCall
+                }
+            }
         }
     }
 
@@ -631,4 +720,10 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         )
     }
 
+    private fun FirVariable<*>.toQualifiedAccess(): FirQualifiedAccessExpression = buildQualifiedAccessExpression {
+        calleeReference = buildResolvedNamedReference {
+            name = this@toQualifiedAccess.name
+            resolvedSymbol = this@toQualifiedAccess.symbol
+        }
+    }
 }

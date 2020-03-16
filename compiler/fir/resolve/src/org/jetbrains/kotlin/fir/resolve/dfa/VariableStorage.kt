@@ -70,7 +70,6 @@ class VariableStorage(val session: FirSession) {
             is FirQualifiedAccessExpression -> originalFir
             is FirWhenSubjectExpression -> originalFir.whenSubject.whenExpression.subject as? FirQualifiedAccessExpression
             is FirVariableAssignment -> originalFir
-            is FirArraySetCall -> originalFir
             else -> null
         }
 

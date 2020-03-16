@@ -23,9 +23,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
-import org.jetbrains.kotlin.fir.resolve.diagnostics.FirOperatorAmbiguityError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.FirTypeMismatchError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.FirVariableExpectedError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
@@ -628,6 +626,63 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         } finally {
             dataFlowAnalyzer.exitDelegatedConstructorCall(result, callCompleted)
         }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    override fun transformArraySetCall(arraySetCall: FirArraySetCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+        assert(arraySetCall.operation in FirOperation.ASSIGNMENTS)
+        assert(arraySetCall.operation != FirOperation.ASSIGN)
+
+        val operatorName = FirOperationNameConventions.ASSIGNMENTS.getValue(arraySetCall.operation)
+
+        val firstCalls = with(arraySetCall.setGetBlock.statements.last() as FirFunctionCall) setCall@{
+            buildList {
+                add(this@setCall)
+                with(arguments.last() as FirFunctionCall) plusCall@{
+                    add(this@plusCall)
+                    add(explicitReceiver as FirFunctionCall)
+                }
+            }
+        }
+        val secondCalls = listOf(
+            arraySetCall.assignCall,
+            arraySetCall.assignCall.explicitReceiver as FirFunctionCall
+        )
+
+        val firstResult = withLocalScopeCleanup {
+            arraySetCall.setGetBlock.transformSingle(transformer, ResolutionMode.ContextIndependent)
+        }
+        val secondResult = arraySetCall.assignCall.transformSingle(transformer, ResolutionMode.ContextIndependent)
+
+        val firstSucceed = firstCalls.all { it.typeRef !is FirErrorTypeRef }
+        val secondSucceed = secondCalls.all { it.typeRef !is FirErrorTypeRef }
+
+        val result: FirStatement = when {
+            firstSucceed && secondSucceed -> {
+                arraySetCall.also {
+                    it.replaceCalleeReference(
+                        buildErrorNamedReference {
+                            // TODO: add better diagnostic
+                            source = arraySetCall.source
+                            diagnostic = FirAmbiguityError(operatorName, emptyList())
+                        }
+                    )
+                }
+            }
+            firstSucceed -> firstResult
+            secondSucceed -> secondResult
+            else -> {
+                arraySetCall.also {
+                    it.replaceCalleeReference(
+                        buildErrorNamedReference {
+                            source = arraySetCall.source
+                            diagnostic = FirUnresolvedNameError(operatorName)
+                        }
+                    )
+                }
+            }
+        }
+        return result.compose()
     }
 
     // ------------------------------------------------------------------------------------------------

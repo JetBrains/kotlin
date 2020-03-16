@@ -169,6 +169,10 @@ open class FirBodyResolveTransformer(
         return expressionsTransformer.transformDelegatedConstructorCall(delegatedConstructorCall, data)
     }
 
+    override fun transformArraySetCall(arraySetCall: FirArraySetCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+        return expressionsTransformer.transformArraySetCall(arraySetCall, data)
+    }
+
     // ------------------------------------- Declarations -------------------------------------
 
     override fun transformDeclaration(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {

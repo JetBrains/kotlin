@@ -856,6 +856,7 @@ class Fir2IrVisitor(
     private fun FirStatement.toIrStatement(): IrStatement? {
         if (this is FirTypeAlias) return null
         if (this is FirUnitExpression) return toIrExpression()
+        if (this is FirBlock) return toIrExpression()
         return accept(this@Fir2IrVisitor, null) as IrStatement
     }
 

@@ -10,16 +10,13 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirArraySetCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
-import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirArraySetCallImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.types.FirTypeProjection
+import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -28,34 +25,22 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 @FirBuilderDsl
-class FirArraySetCallBuilder : FirQualifiedAccessBuilder, FirAnnotationContainerBuilder {
+class FirArraySetCallBuilder : FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override var safe: Boolean = false
-    override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
-    override var explicitReceiver: FirExpression? = null
-    override var dispatchReceiver: FirExpression = FirNoReceiverExpression
-    override var extensionReceiver: FirExpression = FirNoReceiverExpression
-    lateinit var calleeReference: FirReference
-    lateinit var argumentList: FirArgumentList
-    lateinit var rValue: FirExpression
+    lateinit var assignCall: FirFunctionCall
+    lateinit var setGetBlock: FirBlock
     lateinit var operation: FirOperation
-    val indexes: MutableList<FirExpression> = mutableListOf()
+    var calleeReference: FirReference = FirStubReference
 
     override fun build(): FirArraySetCall {
         return FirArraySetCallImpl(
             source,
             annotations,
-            safe,
-            typeArguments,
-            explicitReceiver,
-            dispatchReceiver,
-            extensionReceiver,
-            calleeReference,
-            argumentList,
-            rValue,
+            assignCall,
+            setGetBlock,
             operation,
-            indexes,
+            calleeReference,
         )
     }
 

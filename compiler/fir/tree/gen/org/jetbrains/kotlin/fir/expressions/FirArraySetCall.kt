@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.expressions
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -16,34 +15,15 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirArraySetCall : FirPureAbstractElement(), FirQualifiedAccess, FirCall {
+abstract class FirArraySetCall : FirPureAbstractElement(), FirStatement {
     abstract override val source: FirSourceElement?
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val safe: Boolean
-    abstract override val typeArguments: List<FirTypeProjection>
-    abstract override val explicitReceiver: FirExpression?
-    abstract override val dispatchReceiver: FirExpression
-    abstract override val extensionReceiver: FirExpression
-    abstract override val calleeReference: FirReference
-    abstract override val argumentList: FirArgumentList
-    abstract val rValue: FirExpression
+    abstract val assignCall: FirFunctionCall
+    abstract val setGetBlock: FirBlock
     abstract val operation: FirOperation
-    abstract val lValue: FirReference
-    abstract val indexes: List<FirExpression>
+    abstract val calleeReference: FirReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitArraySetCall(this, data)
 
-    abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirArraySetCall
-
-    abstract override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirArraySetCall
-
-    abstract override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirArraySetCall
-
-    abstract override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirArraySetCall
-
-    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirArraySetCall
-
-    abstract fun <D> transformRValue(transformer: FirTransformer<D>, data: D): FirArraySetCall
-
-    abstract fun <D> transformIndexes(transformer: FirTransformer<D>, data: D): FirArraySetCall
+    abstract fun replaceCalleeReference(newCalleeReference: FirReference)
 }

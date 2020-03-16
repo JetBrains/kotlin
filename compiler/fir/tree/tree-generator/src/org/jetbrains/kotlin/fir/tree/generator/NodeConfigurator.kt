@@ -396,10 +396,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         arraySetCall.configure {
-            +field("rValue", expression).withTransform()
+            +field("assignCall", functionCall)
+            +field("setGetBlock", block)
             +field("operation", operationType)
-            +field("lValue", reference)
-            +fieldList("indexes", expression).withTransform()
+            +field("calleeReference", reference, withReplace = true)
         }
 
         classReferenceExpression.configure {

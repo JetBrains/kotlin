@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
@@ -1000,12 +999,9 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
 
     override fun visitArraySetCall(arraySetCall: FirArraySetCall) {
         arraySetCall.annotations.renderAnnotations()
-        visitQualifiedAccess(arraySetCall)
-        arraySetCall.lValue.accept(this)
-        print("[")
-        arraySetCall.indexes.renderSeparated()
-        print("] ")
-        visitAssignment(arraySetCall.operation, arraySetCall.rValue)
+        print("ArraySet:[")
+        arraySetCall.assignCall.accept(this)
+        print("]")
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall) {

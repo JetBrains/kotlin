@@ -526,6 +526,29 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         }
     }
 
+    @TestMetadata("compiler/fir/resolve/testData/resolve/arrays")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Arrays extends AbstractFirDiagnosticsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInArrays() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/arrays"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("arraySet.kt")
+        public void testArraySet() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arrays/arraySet.kt");
+        }
+
+        @TestMetadata("arraySetWithOperation.kt")
+        public void testArraySetWithOperation() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arrays/arraySetWithOperation.kt");
+        }
+    }
+
     @TestMetadata("compiler/fir/resolve/testData/resolve/builtins")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
