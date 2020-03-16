@@ -9,6 +9,7 @@ import com.intellij.ide.projectView.impl.ProjectRootsUtil;
 import com.intellij.ide.structureView.*;
 import com.intellij.ide.structureView.impl.StructureViewComposite;
 import com.intellij.ide.structureView.newStructureView.StructureViewComponent;
+import com.intellij.lang.LangBundle;
 import com.intellij.lang.PsiStructureViewFactory;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
@@ -373,7 +374,7 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
           return UIUtil.getTreeBackground();
         }
       };
-      panel.getEmptyText().setText("No structure");
+      panel.getEmptyText().setText(LangBundle.message("panel.empty.text.no.structure"));
       createSinglePanel(panel);
     }
 
