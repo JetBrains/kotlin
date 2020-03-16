@@ -75,6 +75,8 @@ FILE fqName:<root> fileName:/kt16904.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1
     CONSTRUCTOR visibility:public <> () returnType:<root>.Test1
       BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.A]'
         CALL 'public final fun plusAssign (x: kotlin.Int): kotlin.Unit [operator] declared in <root>.B' type=kotlin.Unit origin=null
           $this: CALL 'public final fun <get-x> (): <root>.B declared in <root>.A' type=<root>.B origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=null
@@ -84,8 +86,6 @@ FILE fqName:<root> fileName:/kt16904.kt
             $this: CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=null
             other: CONST Int type=kotlin.Int value=42
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.A]'
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:<root>.B [fake_override]
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]

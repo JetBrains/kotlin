@@ -94,31 +94,28 @@ internal class ClassMemberGenerator(
                     valueParameter.setDefaultValue(firValueParameter)
                 }
             }
-            var body = firFunction?.body?.let { visitor.convertToIrBlockBody(it) }
             if (firFunction is FirConstructor && irFunction is IrConstructor && !parentAsClass.isAnnotationClass) {
-                if (body == null) {
-                    body = IrBlockBodyImpl(startOffset, endOffset)
-                }
+                val body = IrBlockBodyImpl(startOffset, endOffset)
                 val delegatedConstructor = firFunction.delegatedConstructor
                 if (delegatedConstructor != null) {
                     val irDelegatingConstructorCall = delegatedConstructor.toIrDelegatingConstructorCall()
-                    body.statements += irDelegatingConstructorCall ?: delegatedConstructor.convertWithOffsets { startOffset, endOffset ->
-                        IrErrorCallExpressionImpl(
-                            startOffset, endOffset, returnType, "Cannot find delegated constructor call"
-                        )
-                    }
+                    body.statements += irDelegatingConstructorCall
                 }
                 if (delegatedConstructor?.isThis == false) {
-                    val irClass = parent as IrClass
-                    body.statements += IrInstanceInitializerCallImpl(
-                        startOffset, endOffset, irClass.symbol, irFunction.constructedClassType
+                    val instanceInitializerCall = IrInstanceInitializerCallImpl(
+                        startOffset, endOffset, (parent as IrClass).symbol, irFunction.constructedClassType
                     )
+                    body.statements += instanceInitializerCall
+                }
+                val regularBody = firFunction.body?.let { visitor.convertToIrBlockBody(it) }
+                if (regularBody != null) {
+                    body.statements += regularBody.statements
                 }
                 if (body.statements.isNotEmpty()) {
                     irFunction.body = body
                 }
             } else if (irFunction !is IrConstructor) {
-                irFunction.body = body
+                irFunction.body = firFunction?.body?.let { visitor.convertToIrBlockBody(it) }
             }
             if (irFunction !is IrConstructor || !irFunction.isPrimary) {
                 // Scope for primary constructor should be left after class declaration
@@ -247,10 +244,14 @@ internal class ClassMemberGenerator(
         return this
     }
 
-    private fun FirDelegatedConstructorCall.toIrDelegatingConstructorCall(): IrCallWithIndexedArgumentsBase? {
+    private fun FirDelegatedConstructorCall.toIrDelegatingConstructorCall(): IrExpressionBase {
         val constructedIrType = constructedTypeRef.toIrType()
         val constructorSymbol = (this.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirConstructorSymbol
-            ?: return null
+            ?: return convertWithOffsets { startOffset, endOffset ->
+                IrErrorCallExpressionImpl(
+                    startOffset, endOffset, constructedIrType, "Cannot find delegated constructor call"
+                )
+            }
         return convertWithOffsets { startOffset, endOffset ->
             val irConstructorSymbol = declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol
             if (constructorSymbol.fir.isFromEnumClass || constructorSymbol.fir.returnTypeRef.isEnum) {
