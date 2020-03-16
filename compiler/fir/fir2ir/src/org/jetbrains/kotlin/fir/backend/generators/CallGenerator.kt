@@ -58,12 +58,12 @@ internal class CallGenerator(
                     }
                 }
             }
-            when {
-                symbol is IrConstructorSymbol -> IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, symbol)
-                symbol is IrSimpleFunctionSymbol -> IrCallImpl(
+            when (symbol) {
+                is IrConstructorSymbol -> IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, symbol)
+                is IrSimpleFunctionSymbol -> IrCallImpl(
                     startOffset, endOffset, type, symbol, origin = qualifiedAccess.calleeReference.statementOrigin()
                 )
-                symbol is IrPropertySymbol && symbol.isBound -> {
+                is IrPropertySymbol -> {
                     val getter = symbol.owner.getter
                     val backingField = symbol.owner.backingField
                     when {
@@ -75,12 +75,12 @@ internal class CallGenerator(
                         )
                     }
                 }
-                symbol is IrFieldSymbol -> IrGetFieldImpl(startOffset, endOffset, symbol, type, origin = IrStatementOrigin.GET_PROPERTY)
-                symbol is IrValueSymbol -> IrGetValueImpl(
+                is IrFieldSymbol -> IrGetFieldImpl(startOffset, endOffset, symbol, type, origin = IrStatementOrigin.GET_PROPERTY)
+                is IrValueSymbol -> IrGetValueImpl(
                     startOffset, endOffset, type, symbol,
                     origin = qualifiedAccess.calleeReference.statementOrigin()
                 )
-                symbol is IrEnumEntrySymbol -> IrGetEnumValueImpl(startOffset, endOffset, type, symbol)
+                is IrEnumEntrySymbol -> IrGetEnumValueImpl(startOffset, endOffset, type, symbol)
                 else -> generateErrorCallExpression(startOffset, endOffset, qualifiedAccess.calleeReference, type)
             }
         }.applyCallArguments(qualifiedAccess as? FirCall).applyTypeArguments(qualifiedAccess).applyReceivers(qualifiedAccess)
@@ -92,32 +92,28 @@ internal class CallGenerator(
         val symbol = calleeReference.toSymbol(session, classifierStorage, declarationStorage)
         val origin = IrStatementOrigin.EQ
         return variableAssignment.convertWithOffsets { startOffset, endOffset ->
-            if (symbol != null && symbol.isBound) {
-                val assignedValue = visitor.convertToIrExpression(variableAssignment.rValue)
-                when (symbol) {
-                    is IrFieldSymbol -> IrSetFieldImpl(startOffset, endOffset, symbol, type, origin).apply {
-                        value = assignedValue
-                    }
-                    is IrPropertySymbol -> {
-                        val irProperty = symbol.owner
-                        val setter = irProperty.setter
-                        val backingField = irProperty.backingField
-                        when {
-                            setter != null -> IrCallImpl(startOffset, endOffset, type, setter.symbol, origin).apply {
-                                putValueArgument(0, assignedValue)
-                            }
-                            backingField != null -> IrSetFieldImpl(startOffset, endOffset, backingField.symbol, type).apply {
-                                // NB: to be consistent with FIR2IR, origin should be null here
-                                value = assignedValue
-                            }
-                            else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
-                        }
-                    }
-                    is IrVariableSymbol -> IrSetVariableImpl(startOffset, endOffset, type, symbol, assignedValue, origin)
-                    else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
+            val assignedValue = visitor.convertToIrExpression(variableAssignment.rValue)
+            when (symbol) {
+                is IrFieldSymbol -> IrSetFieldImpl(startOffset, endOffset, symbol, type, origin).apply {
+                    value = assignedValue
                 }
-            } else {
-                generateErrorCallExpression(startOffset, endOffset, calleeReference)
+                is IrPropertySymbol -> {
+                    val irProperty = symbol.owner
+                    val setter = irProperty.setter
+                    val backingField = irProperty.backingField
+                    when {
+                        setter != null -> IrCallImpl(startOffset, endOffset, type, setter.symbol, origin).apply {
+                            putValueArgument(0, assignedValue)
+                        }
+                        backingField != null -> IrSetFieldImpl(startOffset, endOffset, backingField.symbol, type).apply {
+                            // NB: to be consistent with FIR2IR, origin should be null here
+                            value = assignedValue
+                        }
+                        else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
+                    }
+                }
+                is IrVariableSymbol -> IrSetVariableImpl(startOffset, endOffset, type, symbol, assignedValue, origin)
+                else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
             }
         }.applyReceivers(variableAssignment)
     }
