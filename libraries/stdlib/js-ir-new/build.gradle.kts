@@ -4,6 +4,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.IR
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.Companion.attribute
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations.ATTRIBUTE
+import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations.PUBLIC_VALUE
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_API
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_RUNTIME
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute.Companion.jsCompilerAttribute
@@ -14,6 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 plugins {
     kotlin("multiplatform")
     `maven-publish`
+    signing
 }
 
 apply<plugins.LegacyKotlinJsComponentPlugin>()
@@ -27,7 +30,7 @@ kotlin {
     }
 }
 
-val legacyApiElements by configurations.creating {
+fun Configuration.configureAttributesForLegacy(usage: String) {
     isCanBeResolved = false
     isCanBeConsumed = true
     attributes {
@@ -35,40 +38,33 @@ val legacyApiElements by configurations.creating {
             USAGE_ATTRIBUTE,
             target!!.project.objects.named(
                 Usage::class.java,
-                KOTLIN_API
+                usage
             )
         )
         attribute(attribute, target!!.platformType)
         attribute(jsCompilerAttribute, legacy)
+        attribute(ATTRIBUTE, PUBLIC_VALUE)
     }
+}
+
+val legacyApiElements by configurations.creating {
+    configureAttributesForLegacy(KOTLIN_API)
 }
 
 val legacyRuntimeElements by configurations.creating {
-    isCanBeResolved = false
-    isCanBeConsumed = true
-    attributes {
-        attribute(
-            USAGE_ATTRIBUTE,
-            target!!.project.objects.named(
-                Usage::class.java,
-                KOTLIN_RUNTIME
-            )
-        )
-        attribute(attribute, target!!.platformType)
-        attribute(jsCompilerAttribute, legacy)
-    }
+    configureAttributesForLegacy(KOTLIN_RUNTIME)
 }
 
-val task = tasks.getByPath(":kotlin-stdlib-js:libraryJarWithoutIr")
+val jarWithoutIr = tasks.getByPath(":kotlin-stdlib-js:libraryJarWithoutIr")
 
-val legacyArtifact = artifacts.add(Dependency.ARCHIVES_CONFIGURATION, task, Action<ConfigurablePublishArtifact> {
-    this.builtBy(task)
+val legacyArtifact = artifacts.add(Dependency.ARCHIVES_CONFIGURATION, jarWithoutIr) {
+    this.builtBy(jarWithoutIr)
     this.type = ArtifactTypeDefinition.JAR_TYPE
 
     addJar(legacyApiElements, this)
 
     addJar(legacyRuntimeElements, this)
-})
+}
 
 fun addJar(configuration: Configuration, jarArtifact: PublishArtifact) {
     val publications = configuration.outgoing
@@ -95,10 +91,62 @@ adhocComponent.addVariantsFromConfiguration(configurations.getByName(target!!.ru
     mapToMavenScope("runtime")
 }
 
+val sourcesJar = artifacts.add(Dependency.ARCHIVES_CONFIGURATION, tasks.getByPath(":kotlin-stdlib-js:sourcesJar"))
+val javadocJar = artifacts.add(Dependency.ARCHIVES_CONFIGURATION, tasks.getByPath(":kotlin-stdlib-js:javadocJar"))
+
 publishing {
     publications {
         create<MavenPublication>("jsNew") {
             from(adhocComponent)
+            artifact(sourcesJar)
+            artifact(javadocJar)
+        }
+    }
+}
+
+
+// Disable multiplatform predefined publications
+listOf("js", "kotlinMultiplatform", "metadata")
+    .forEach { name ->
+        tasks.named("generatePomFileFor${name.capitalize()}Publication") {
+            enabled = false
+        }
+        tasks.named("generateMetadataFileFor${name.capitalize()}Publication") {
+            enabled = false
+        }
+        tasks.named("publish${name.capitalize()}PublicationToMavenLocal") {
+            enabled = false
+        }
+    }
+
+publishing {
+    publications.getByName("jsNew") {
+        this as MavenPublication
+        pom {
+            val stdlibJs = findProject(":kotlin-stdlib-js")!!.name
+            name.set("${project.group}:$stdlibJs")
+            artifactId = stdlibJs
+            // optionally artifactId can be defined here
+            description.set(project.description)
+            url.set("https://kotlinlang.org/")
+            licenses {
+                license {
+                    name.set("The Apache License, Version 2.0")
+                    url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                }
+            }
+            scm {
+                url.set("https://github.com/JetBrains/kotlin")
+                connection.set("scm:git:https://github.com/JetBrains/kotlin.git")
+                developerConnection.set("scm:git:https://github.com/JetBrains/kotlin.git")
+            }
+            developers {
+                developer {
+                    name.set("Kotlin Team")
+                    organization.set("JetBrains")
+                    organizationUrl.set("https://www.jetbrains.com")
+                }
+            }
         }
     }
 }
