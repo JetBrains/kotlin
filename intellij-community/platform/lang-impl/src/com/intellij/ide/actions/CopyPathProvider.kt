@@ -122,3 +122,7 @@ class CopyTBXReferenceProvider : CopyPathProvider() {
                                 dataContext: DataContext): String? =
     CopyTBXReferenceAction.createJetBrainsLink(project, elements, editor)
 }
+
+class CopyFileNameProvider : CopyPathProvider() {
+  override fun getPathToElement(project: Project, virtualFile: VirtualFile?, editor: Editor?): String? = virtualFile?.nameWithoutExtension
+}
