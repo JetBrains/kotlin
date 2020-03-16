@@ -67,16 +67,19 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
         transforms: Int,
         source: String,
         expectedTransformed: String,
+        extra: String = "",
         dumpTree: Boolean = false
     ) {
         val files = listOf(
-            sourceFile("Test.kt", source.replace('%', '$'))
+            sourceFile("Test.kt", source.replace('%', '$')),
+            sourceFile("Extra.kt", extra.replace('%', '$'))
         )
         val irModule = generateIrModuleWithJvmResolve(
             files,
             transforms
         )
         val actualTransformed = irModule
+            .files[0]
             .dumpSrc()
             .replace('$', '%')
             .trimIndent()
