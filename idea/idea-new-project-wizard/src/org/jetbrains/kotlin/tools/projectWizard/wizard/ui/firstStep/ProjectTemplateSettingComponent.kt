@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 
+import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
@@ -31,15 +32,12 @@ class ProjectTemplateSettingComponent(
             append(value.title)
         },
         onValueSelected = { value = it }
-    ).bordered(needTopEmptyBorder = false, needInnerEmptyBorder = false, needBottomEmptyBorder = false)
+    ).addBorder(JBUI.Borders.customLine(JBColor.border()))
 
 
-    override val component: JComponent = panel {
-        add(list, BorderLayout.CENTER)
-        add(
-            templateDescriptionComponent.component.addBorder(JBUI.Borders.emptyTop(5)),
-            BorderLayout.SOUTH
-        )
+    override val component: JComponent = borderPanel {
+        addToCenter(borderPanel { addToCenter(list) }.addBorder(JBUI.Borders.empty(0,/*left*/ 3, 0, /*right*/ 3)))
+        addToBottom(templateDescriptionComponent.component.addBorder(JBUI.Borders.empty(/*top*/5,/*left*/ 3, 0, 0)))
     }
 
     private fun applySelectedTemplate() = modify {

@@ -96,7 +96,7 @@ class ModulesEditorTree(
                 append(setting.text)
                 setting.greyText?.let { greyText ->
                     append(" ")
-                    append("($greyText)", SimpleTextAttributes.GRAYED_ATTRIBUTES)
+                    append(greyText, SimpleTextAttributes.GRAYED_ATTRIBUTES)
                 }
             }
         })
