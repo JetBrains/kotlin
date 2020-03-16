@@ -87,7 +87,7 @@ internal class CallGenerator(
     }
 
     fun convertToIrSetCall(variableAssignment: FirVariableAssignment): IrExpression {
-        val type = typeConverter.unitType
+        val type = irBuiltIns.unitType
         val calleeReference = variableAssignment.calleeReference
         val symbol = calleeReference.toSymbol(session, classifierStorage, declarationStorage)
         val origin = IrStatementOrigin.EQ

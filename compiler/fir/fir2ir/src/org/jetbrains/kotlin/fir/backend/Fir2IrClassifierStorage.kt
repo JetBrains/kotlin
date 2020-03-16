@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -243,7 +244,7 @@ class Fir2IrClassifierStorage(
             }
             if (index < 0) {
                 val parent = simpleCachedParameter.parent
-                if (parent !is IrSimpleFunction || parent.returnType == typeConverter.unitType) {
+                if (parent !is IrSimpleFunction || parent.returnType == irBuiltIns.unitType) {
                     return simpleCachedParameter
                 }
             }
@@ -328,6 +329,14 @@ class Fir2IrClassifierStorage(
     fun getIrClassSymbol(firClassSymbol: FirClassSymbol<*>): IrClassSymbol {
         val firClass = firClassSymbol.fir
         getCachedIrClass(firClass)?.let { return symbolTable.referenceClass(it.descriptor) }
+        val builtinClassSymbol = when (firClassSymbol.classId) {
+            StandardClassIds.Any -> irBuiltIns.anyClass
+            else -> null
+        }
+        if (builtinClassSymbol != null && firClass is FirRegularClass) {
+            classCache[firClass] = builtinClassSymbol.owner
+            return symbolTable.referenceClass(builtinClassSymbol.descriptor)
+        }
         // TODO: remove all this code and change to unbound symbol creation
         val irClass = createIrClass(firClass)
         if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.LOCAL) {

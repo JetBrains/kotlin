@@ -40,7 +40,7 @@ class Fir2IrConverter(
         processClassMembers(regularClass, irClass)
     }
 
-    fun registerFileAndClasses(file: FirFile) {
+    fun registerFileAndClasses(file: FirFile): IrFile {
         val irFile = IrFileImpl(
             sourceManager.getOrCreateFileEntry(file.psi as KtFile),
             moduleDescriptor.getPackage(file.packageFqName).fragments.first()
@@ -51,6 +51,7 @@ class Fir2IrConverter(
                 registerClassAndNestedClasses(it, irFile)
             }
         }
+        return irFile
     }
 
     fun processClassHeaders(file: FirFile) {
@@ -175,13 +176,17 @@ class Fir2IrConverter(
             components.declarationStorage = declarationStorage
             components.classifierStorage = classifierStorage
             components.typeConverter = typeConverter
-            typeConverter.initBuiltinTypes()
             val irFiles = mutableListOf<IrFile>()
 
             val converter = Fir2IrConverter(moduleDescriptor, sourceManager, components)
             for (firFile in firFiles) {
-                converter.registerFileAndClasses(firFile)
+                irFiles += converter.registerFileAndClasses(firFile)
             }
+            val irModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns, irFiles)
+            val externalDependenciesGenerator = ExternalDependenciesGenerator(
+                symbolTable, generateTypicalIrProviderList(irModuleFragment.descriptor, builtIns, symbolTable)
+            )
+            externalDependenciesGenerator.generateUnboundSymbolsAsDependencies()
             for (firFile in firFiles) {
                 converter.processClassHeaders(firFile)
             }
@@ -194,22 +199,10 @@ class Fir2IrConverter(
                 val irFile = firFile.accept(fir2irVisitor, null) as IrFile
                 val fileEntry = sourceManager.getOrCreateFileEntry(firFile.psi as KtFile)
                 sourceManager.putFileEntry(irFile, fileEntry)
-                irFiles += irFile
             }
 
-            val irModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns, irFiles)
-            generateUnboundSymbolsAsDependencies(irModuleFragment, symbolTable, builtIns)
+            externalDependenciesGenerator.generateUnboundSymbolsAsDependencies()
             return Fir2IrResult(irModuleFragment, symbolTable, sourceManager)
-        }
-
-        private fun generateUnboundSymbolsAsDependencies(
-            irModule: IrModuleFragment,
-            symbolTable: SymbolTable,
-            builtIns: IrBuiltIns
-        ) {
-            // TODO: provide StubGeneratorExtensions for correct lazy stub IR generation on JVM
-            ExternalDependenciesGenerator(symbolTable, generateTypicalIrProviderList(irModule.descriptor, builtIns, symbolTable))
-                .generateUnboundSymbolsAsDependencies()
         }
     }
 }

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -431,7 +433,7 @@ class Fir2IrDeclarationStorage(
             propertyAccessor?.psi?.endOffset ?: endOffset,
             origin, descriptor
         ) { symbol ->
-            val accessorReturnType = if (isSetter) typeConverter.unitType else propertyType
+            val accessorReturnType = if (isSetter) irBuiltIns.unitType else propertyType
             IrFunctionImpl(
                 startOffset, endOffset, origin, symbol,
                 Name.special("<$prefix-${correspondingProperty.name}>"),
@@ -650,6 +652,16 @@ class Fir2IrDeclarationStorage(
     fun getIrConstructorSymbol(firConstructorSymbol: FirConstructorSymbol): IrConstructorSymbol {
         val firConstructor = firConstructorSymbol.fir
         getCachedIrConstructor(firConstructor)?.let { return symbolTable.referenceConstructor(it.descriptor) }
+        val builtinParent = when (firConstructorSymbol.callableId.classId) {
+            StandardClassIds.Any -> irBuiltIns.anyClass
+            else -> null
+        }
+        if (builtinParent != null) {
+            val constructorSymbol = builtinParent.constructors.first()
+            constructorCache[firConstructor] = constructorSymbol.owner
+            return symbolTable.referenceConstructor(constructorSymbol.descriptor)
+        }
+
         val irParent = findIrParent(firConstructor) as IrClass
         val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
         val irDeclaration = createIrConstructor(firConstructor, irParent, origin = parentOrigin).apply {
