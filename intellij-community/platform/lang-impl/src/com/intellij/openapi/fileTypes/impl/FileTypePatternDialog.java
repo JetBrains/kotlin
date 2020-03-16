@@ -20,30 +20,30 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.TemplateLanguageFileType;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
 import com.intellij.ui.SimpleListCellRenderer;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 /**
  * @author peter
  */
-public class FileTypePatternDialog {
+class FileTypePatternDialog {
   private JTextField myPatternField;
   private JComboBox<Language> myLanguageCombo;
   private JLabel myTemplateDataLanguageButton;
   private JPanel myMainPanel;
 
-  public FileTypePatternDialog(@Nullable String initialPatterns, FileType fileType, Language templateDataLanguage) {
+  FileTypePatternDialog(@Nullable String initialPatterns, FileType fileType, Language templateDataLanguage) {
     myPatternField.setText(initialPatterns);
 
     if (fileType instanceof TemplateLanguageFileType) {
       DefaultComboBoxModel<Language> model = (DefaultComboBoxModel<Language>)myLanguageCombo.getModel();
       model.addElement(null);
       List<Language> languages = TemplateDataLanguageMappings.getTemplateableLanguages();
-      Collections.sort(languages, Comparator.comparing(Language::getID));
+      languages.sort(Comparator.comparing(Language::getID));
       for (Language language : languages) {
         model.addElement(language);
       }
@@ -57,21 +57,24 @@ public class FileTypePatternDialog {
         }
       }));
       myLanguageCombo.setSelectedItem(templateDataLanguage);
-    } else {
+    }
+    else {
       myLanguageCombo.setVisible(false);
       myTemplateDataLanguageButton.setVisible(false);
     }
   }
 
-  public JTextField getPatternField() {
+  @NotNull
+  JTextField getPatternField() {
     return myPatternField;
   }
 
-  public JPanel getMainPanel() {
+  @NotNull
+  JPanel getMainPanel() {
     return myMainPanel;
   }
 
-  public Language getTemplateDataLanguage() {
+  Language getTemplateDataLanguage() {
     return (Language)myLanguageCombo.getSelectedItem();
   }
 }

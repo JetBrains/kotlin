@@ -333,7 +333,7 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
 
       new DoubleClickListener() {
         @Override
-        protected boolean onDoubleClick(MouseEvent e) {
+        protected boolean onDoubleClick(@NotNull MouseEvent e) {
           myController.editFileType();
           return true;
         }
@@ -493,11 +493,12 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
       myPatternsList.clearSelection();
     }
 
+    @NotNull
     private DefaultListModel<String> getListModel() {
       return (DefaultListModel<String>)myPatternsList.getModel();
     }
 
-    public void addPattern(String pattern) {
+    public void addPattern(@NotNull String pattern) {
       getListModel().addElement(pattern);
     }
 
@@ -505,7 +506,7 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
       ScrollingUtil.ensureSelectionExists(myPatternsList);
     }
 
-    public void select(final String pattern) {
+    public void select(@NotNull String pattern) {
       for (int i = 0; i < myPatternsList.getItemsCount(); i++) {
         final String at = myPatternsList.getModel().getElementAt(i);
         final FileNameMatcher matcher = FileTypeManager.parseFromString(at);
@@ -517,7 +518,7 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
     }
 
     public String removeSelected() {
-      String selectedValue = myPatternsList.getSelectedValue();
+      String selectedValue = getSelectedItem();
       if (selectedValue == null) return null;
       ListUtil.removeSelectedItems(myPatternsList);
       return selectedValue;

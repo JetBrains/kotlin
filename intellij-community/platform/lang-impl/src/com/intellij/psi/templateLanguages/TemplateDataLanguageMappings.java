@@ -52,7 +52,7 @@ public class TemplateDataLanguageMappings extends LanguagePerFileMappings<Langua
   }
 
   @Override
-  public List<Language> getAvailableValues() {
+  public @NotNull List<Language> getAvailableValues() {
     return getTemplateableLanguages();
   }
 
@@ -73,7 +73,7 @@ public class TemplateDataLanguageMappings extends LanguagePerFileMappings<Langua
     return file == null? null : TemplateDataLanguagePatterns.getInstance().getTemplateDataLanguageByFileName(file);
   }
 
-  public static List<Language> getTemplateableLanguages() {
+  public static @NotNull List<Language> getTemplateableLanguages() {
     return ContainerUtil.findAll(Language.getRegisteredLanguages(), new Condition<Language>() {
       @Override
       public boolean value(final Language language) {

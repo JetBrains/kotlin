@@ -157,7 +157,7 @@ public class ScratchFileServiceImpl extends ScratchFileService implements Persis
   private static class MyLanguages extends PerFileMappingsBase<Language> {
 
     @Override
-    public List<Language> getAvailableValues() {
+    public @NotNull List<Language> getAvailableValues() {
       return LanguageUtil.getFileLanguages();
     }
 
