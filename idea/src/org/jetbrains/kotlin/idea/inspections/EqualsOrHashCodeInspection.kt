@@ -40,11 +40,11 @@ object DeleteEqualsAndHashCodeFix : LocalQuickFix {
 
 sealed class GenerateEqualsOrHashCodeFix : LocalQuickFix {
     object Equals : GenerateEqualsOrHashCodeFix() {
-        override fun getName() = InspectionsBundle.message("inspection.equals.hashcode.generate.equals.quickfix")
+        override fun getName() = KotlinBundle.message("equals.text")
     }
 
     object HashCode : GenerateEqualsOrHashCodeFix() {
-        override fun getName() = InspectionsBundle.message("inspection.equals.hashcode.generate.hashcode.quickfix")
+        override fun getName() = KotlinBundle.message("hash.code.text")
     }
 
     override fun getFamilyName() = name
