@@ -14,7 +14,7 @@ class CompletionFactorsInitializer : LookupTracker() {
   override fun lookupCreated(lookup: LookupImpl, storage: MutableLookupStorage) {
     if (isUnitTestMode() && !CompletionTrackerInitializer.isEnabledInTests) return
 
-    processUserFactors(lookup, storage)
+    processUserFactors(lookup)
     processSessionFactors(lookup, storage)
   }
 
@@ -25,11 +25,8 @@ class CompletionFactorsInitializer : LookupTracker() {
 
   private fun shouldUseSessionFactors(): Boolean = SessionFactorsUtils.shouldUseSessionFactors()
 
-  private fun processUserFactors(lookup: LookupImpl,
-                                 lookupStorage: MutableLookupStorage) {
+  private fun processUserFactors(lookup: LookupImpl) {
     if (!shouldUseUserFactors()) return
-
-    lookupStorage.initUserFactors(lookup.project)
 
     UserFactorStorage.applyOnBoth(lookup.project, UserFactorDescriptions.COMPLETION_USAGE) {
       it.fireCompletionUsed()

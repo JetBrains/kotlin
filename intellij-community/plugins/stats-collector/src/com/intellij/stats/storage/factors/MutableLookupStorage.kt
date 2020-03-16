@@ -96,10 +96,7 @@ class MutableLookupStorage(
 
   fun initUserFactors(project: Project) {
     ApplicationManager.getApplication().assertIsDispatchThread()
-    if (_userFactors != null) {
-      LOG.error("User factors should be initialized only once")
-    }
-    else {
+    if (_userFactors == null && UserFactorsManager.ENABLE_USER_FACTORS) {
       val userFactorValues = mutableMapOf<String, String>()
       val userFactors = UserFactorsManager.getInstance().getAllFactors()
       val applicationStorage: UserFactorStorage = UserFactorStorage.getInstance()

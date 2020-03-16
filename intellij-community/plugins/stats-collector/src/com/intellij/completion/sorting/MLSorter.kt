@@ -114,6 +114,7 @@ class MLSorter : CompletionFinalSorter() {
 
     val rankingModel = lookupStorage.model
 
+    lookupStorage.initUserFactors(lookup.project)
     val commonSessionFactors = SessionFactorsUtils.updateSessionFactors(lookupStorage, items)
     val contextFactors = lookupStorage.contextFactors
     val features = RankingFeatures(lookupStorage.userFactors, contextFactors, commonSessionFactors)
