@@ -12,7 +12,6 @@ import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.android.sdklib.IAndroidTarget
 import com.android.sdklib.repository.AndroidSdkHandler
 import com.android.sdklib.repository.LoggerProgressIndicatorWrapper
-import com.intellij.openapi.util.Version
 import org.gradle.api.Project
 import org.gradle.api.artifacts.*
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
@@ -70,7 +69,8 @@ object AndroidDependencyResolver {
                 return false
             }
         } ?: return false
-        return Version.parseVersion(version)?.isOrGreaterThan(3, 6) ?: false
+        val versions = version.split('.')
+        return versions[0].toInt() >= 3 && versions[1].toInt() >= 6
     }
 
     fun getAndroidSourceSetDependencies(project: Project): Map<String, List<AndroidDependency>?> {
