@@ -4,13 +4,14 @@ package com.intellij.codeInsight.hints
 import com.intellij.codeInsight.hints.presentation.InlayPresentation
 import com.intellij.codeInsight.hints.presentation.RecursivelyUpdatingRootPresentation
 import com.intellij.codeInsight.hints.presentation.RootInlayPresentation
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.util.SmartList
 import gnu.trove.TIntObjectHashMap
 
 class InlayHintsSinkImpl(val editor: Editor) : InlayHintsSink {
   private val buffer = HintsBuffer()
+  private val document: Document = editor.document
 
   override fun addInlineElement(offset: Int, relatesToPrecedingText: Boolean, presentation: InlayPresentation) {
     addInlineElement(offset, RecursivelyUpdatingRootPresentation(presentation), HorizontalConstraints(0, relatesToPrecedingText))
@@ -26,7 +27,7 @@ class InlayHintsSinkImpl(val editor: Editor) : InlayHintsSink {
                                priority: Int,
                                presentation: InlayPresentation) {
     if (editor.isDisposed) return
-    val line = editor.offsetToLogicalPosition(offset).line
+    val line = document.getLineNumber(offset)
     val root = RecursivelyUpdatingRootPresentation(presentation)
     addBlockElement(line, showAbove, root, BlockConstraints(relatesToPrecedingText, priority)) // TODO here lines are applied
   }
@@ -36,7 +37,7 @@ class InlayHintsSinkImpl(val editor: Editor) : InlayHintsSink {
                                presentation: RootInlayPresentation<*>,
                                constraints: BlockConstraints?) {
     val map = if (showAbove)  buffer.blockAboveHints else buffer.blockBelowHints
-    val offset = editor.logicalPositionToOffset(LogicalPosition(logicalLine, 0))
+    val offset = document.getLineStartOffset(logicalLine)
     map.addCreatingListIfNeeded(offset, BlockConstrainedPresentation(presentation, constraints))
   }
 
