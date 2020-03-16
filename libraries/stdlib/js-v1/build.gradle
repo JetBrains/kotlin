@@ -7,8 +7,6 @@ description = 'Kotlin Standard Library for JS'
 apply plugin: 'kotlin-platform-js'
 apply plugin: 'idea'
 
-configurePublishing(project)
-
 configurations {
     sources
     commonSources
@@ -320,14 +318,6 @@ artifacts {
     compileJs.outputs.files.forEach { artifact ->
         distJs(artifact) { builtBy(compileJs) }
     }
-}
-
-uploadArchives {
-    configuration = configurations.publishedArtifacts
-}
-
-install {
-    configuration = configurations.publishedArtifacts
 }
 
 node {

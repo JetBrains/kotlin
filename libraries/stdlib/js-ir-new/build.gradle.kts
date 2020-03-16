@@ -151,6 +151,46 @@ publishing {
     }
 }
 
+val isSonatypeRelease: Boolean? by project.extra
+
+if (!project.hasProperty("prebuiltJar")) {
+    signing {
+        setRequired((project.properties["signingRequired"] as Boolean?) ?: isSonatypeRelease)
+        sign(publishing.publications["jsNew"])
+    }
+
+    tasks.named("signJsNewPublication") {
+        enabled = signing.isRequired
+    }
+}
+
+val prepareTask = rootProject.tasks.getByName("preparePublication")
+
+publishing {
+    repositories {
+        maven {
+            setUrl(project.provider {
+                val repoUrl = prepareTask.extra["repoUrl"]!! as String?
+                if (repoUrl?.startsWith("file:") != true) {
+                    credentials {
+                        username = prepareTask.extra["username"] as? String
+                        password = prepareTask.extra["password"] as? String
+                    }
+                }
+                repoUrl
+            })
+        }
+    }
+}
+
+tasks.named("publish") {
+    dependsOn(prepareTask)
+}
+
+tasks.register("install") {
+    dependsOn("publishJsNewPublicationToMavenLocal")
+}
+
 // Using custom node version because regression https://bugs.chromium.org/p/v8/issues/detail?id=9546
 // causes test.numbers.DoubleMathTest.powers to fail
 rootProject.plugins.withType<NodeJsRootPlugin> {
