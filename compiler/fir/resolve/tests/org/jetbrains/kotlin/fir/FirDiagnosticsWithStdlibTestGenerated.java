@@ -743,6 +743,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/resolve/testData/resolveWithStdlib/problems/qualifierPriority.kt");
         }
 
+        @TestMetadata("receiverResolutionInLambda.kt")
+        public void testReceiverResolutionInLambda() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/problems/receiverResolutionInLambda.kt");
+        }
+
         @TestMetadata("weakHashMap.kt")
         public void testWeakHashMap() throws Exception {
             runTest("compiler/fir/resolve/testData/resolveWithStdlib/problems/weakHashMap.kt");
