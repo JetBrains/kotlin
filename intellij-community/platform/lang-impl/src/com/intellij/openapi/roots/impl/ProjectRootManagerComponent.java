@@ -2,6 +2,7 @@
 package com.intellij.openapi.roots.impl;
 
 import com.intellij.ProjectTopics;
+import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.*;
 import com.intellij.openapi.components.ProjectComponent;
@@ -175,7 +176,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
     if (ApplicationManager.getApplication().isUnitTestMode() && (!myStartupActivityPerformed || myProject.isDisposed())) {
       return; // in test mode suppress addition to a queue unless project is properly initialized
     }
-    if (myProject.isDefault()) {
+    if (myProject.isDefault() || LightEdit.owns(myProject)) {
       return;
     }
 
