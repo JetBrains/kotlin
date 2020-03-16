@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.AlwaysShownValidationIndicator
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ValidationIndicator
 import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JComponent
@@ -22,8 +22,7 @@ class ModulesEditorComponent(
     uiEditorUsagesStats: UiEditorUsageStats?,
     needBorder: Boolean,
     editable: Boolean,
-    oneEntrySelected: (data: DisplayableSettingItem?) -> Unit,
-    selectSettingWithError: (ValidationResult.ValidationError) -> Unit
+    oneEntrySelected: (data: DisplayableSettingItem?) -> Unit
 ) : SettingComponent<List<Module>, ListSettingType<Module>>(KotlinPlugin::modules.reference, context) {
     private val tree: ModulesEditorTree =
         ModulesEditorTree(
@@ -69,13 +68,8 @@ class ModulesEditorComponent(
                 border = BorderFactory.createLineBorder(JBColor.border())
             }
             add(if (editable) toolbarDecorator!!.createToolPanel() else tree, BorderLayout.CENTER)
-            add(validationIndicator, BorderLayout.SOUTH)
         }
     }
 
-    override val validationIndicator = AlwaysShownValidationIndicator(showText = true) { error ->
-        val module = error.target as? Module ?: return@AlwaysShownValidationIndicator
-        tree.selectModule(module)
-        selectSettingWithError(error)
-    }
+    override val validationIndicator: ValidationIndicator? = null
 }

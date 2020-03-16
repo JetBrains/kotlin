@@ -53,8 +53,7 @@ class ProjectPreviewComponent(context: Context) : DynamicComponent(context) {
         null,
         needBorder = false,
         editable = false,
-        oneEntrySelected = {},
-        selectSettingWithError = {}
+        oneEntrySelected = {}
     ).asSubComponent()
 
     override val component: JComponent = borderPanel {

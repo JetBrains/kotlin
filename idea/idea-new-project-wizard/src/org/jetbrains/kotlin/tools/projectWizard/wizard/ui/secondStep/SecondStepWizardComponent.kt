@@ -16,9 +16,7 @@ class SecondStepWizardComponent(
     uiEditorUsagesStats: UiEditorUsageStats
 ) : WizardStepComponent(wizard.context) {
     private val moduleEditorComponent =
-        ProjectStructureEditorComponent(wizard.context, uiEditorUsagesStats, ::onNodeSelected) {
-            moduleSettingsComponent.selectSettingWithError(it)
-        }.asSubComponent()
+        ProjectStructureEditorComponent(wizard.context, uiEditorUsagesStats, ::onNodeSelected).asSubComponent()
     private val moduleSettingsComponent = ModuleSettingsSubStep(wizard, uiEditorUsagesStats).asSubComponent()
 
     override val component = borderPanel {
@@ -35,16 +33,14 @@ class SecondStepWizardComponent(
 class ProjectStructureEditorComponent(
     context: Context,
     uiEditorUsagesStats: UiEditorUsageStats,
-    onNodeSelected: (data: DisplayableSettingItem?) -> Unit,
-    selectSettingWithError: (ValidationResult.ValidationError) -> Unit
+    onNodeSelected: (data: DisplayableSettingItem?) -> Unit
 ) : DynamicComponent(context) {
     private val moduleSettingComponent = ModulesEditorComponent(
         context,
         uiEditorUsagesStats,
         needBorder = true,
         editable = true,
-        oneEntrySelected = onNodeSelected,
-        selectSettingWithError = selectSettingWithError
+        oneEntrySelected = onNodeSelected
     ).asSubComponent()
 
     override val component = borderPanel {
@@ -71,10 +67,6 @@ class ModuleSettingsSubStep(
             moduleSettingsComponent.module = value as? Module
             changeComponent()
         }
-
-    fun selectSettingWithError(error: ValidationResult.ValidationError) {
-//        moduleSettingsComponent.selectSettingWithError(error)
-    }
 
     private fun changeComponent() {
         panel.removeAll()
