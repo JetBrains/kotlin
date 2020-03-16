@@ -16,6 +16,7 @@ import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Key;
@@ -93,7 +94,7 @@ public class EditorModel {
     editor.getCaretModel().addCaretListener(new CaretListener() {
       @Override
       public void caretPositionChanged(@NotNull CaretEvent event) {
-        fireRealCaretPositionChanged();
+        fireRealCaretPositionChanged(event);
       }
     });
 
@@ -189,13 +190,21 @@ public class EditorModel {
     editor.putUserData(key, value);
   }
 
-  private void fireRealCaretPositionChanged() {
+  private void fireRealCaretPositionChanged(@NotNull CaretEvent event) {
     if (isRealCaretAndSelectionCanAffectOnTarget) {
       reflectRealToTargetCaretPosition();
       isNeedToShowCaret = true;
 
       if (editor.getSelectionModel().getSelectionEnd() == editor.getSelectionModel().getSelectionStart()) {
         targetSelectionState.isExists = false;
+      }
+
+      if (event.getOldPosition().line != event.getNewPosition().line) {
+        IdeDocumentHistory docHistory = IdeDocumentHistory.getInstance(dataProvider.getProject());
+        if (docHistory != null) {
+          docHistory.includeCurrentCommandAsNavigation();
+          docHistory.setCurrentCommandHasMoves();
+        }
       }
 
       requestUpdate();

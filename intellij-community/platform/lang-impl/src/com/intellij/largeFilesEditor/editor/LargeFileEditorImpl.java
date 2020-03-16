@@ -270,7 +270,9 @@ public class LargeFileEditorImpl extends UserDataHolderBase implements LargeFile
       public boolean tryChangeEncoding(@NotNull Charset charset) {
 
         if (fileManager.hasBOM()) {
-          Messages.showWarningDialog(EditorBundle.message("large.file.editor.message.cant.change.encoding.because.it.has.bom.byte.order.mark"), EditorBundle.message("large.file.editor.title.warning"));
+          Messages.showWarningDialog(
+            EditorBundle.message("large.file.editor.message.cant.change.encoding.because.it.has.bom.byte.order.mark"),
+            EditorBundle.message("large.file.editor.title.warning"));
           return false;
         }
 
@@ -307,8 +309,6 @@ public class LargeFileEditorImpl extends UserDataHolderBase implements LargeFile
     DocumentEx doc = new DocumentImpl("", false, false); // restrict "\r\n" line separators
     doc.putUserData(FileDocumentManagerImpl.NOT_RELOADABLE_DOCUMENT_KEY, new Object());  // to protect document from illegal content changes (see usages of the key)
     UndoUtil.disableUndoFor(doc); // disabling Undo-functionality, provided by IDEA
-    FileDocumentManagerImpl
-      .registerDocument(doc, vFile); // this is needed for caret listener in IdeDocumentHistoryImpl to make navigation history work
     return doc;
   }
 
