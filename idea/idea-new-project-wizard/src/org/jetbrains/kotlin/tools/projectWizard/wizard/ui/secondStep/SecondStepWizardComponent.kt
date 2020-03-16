@@ -57,7 +57,8 @@ class ModuleSettingsSubStep(
     wizard: IdeWizard,
     uiEditorUsagesStats: UiEditorUsageStats
 ) : SubStep(wizard.context) {
-    private val moduleSettingsComponent = ModuleSettingsComponent(wizard.context, uiEditorUsagesStats).asSubComponent()
+    private val moduleSettingsComponent =
+        ModuleSettingsComponent(wizard.context, uiEditorUsagesStats).asSubComponent()
     private val nothingSelectedComponent = NothingSelectedComponent().asSubComponent()
 
     private val panel = panel {

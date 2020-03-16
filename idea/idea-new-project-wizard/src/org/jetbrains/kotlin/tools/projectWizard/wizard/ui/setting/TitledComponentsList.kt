@@ -4,7 +4,6 @@ import com.intellij.ui.layout.panel
 import com.intellij.util.ui.components.BorderLayoutPanel
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.isSpecificError
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
@@ -50,7 +49,7 @@ class TitledComponentsList(
     companion object {
         private fun createComponentsPanel(components: List<TitledComponent>) = panel {
             components.forEach { component ->
-                row(component.title?.let { "$it:" }) {
+                row(component.title?.let { "$it:" }.orEmpty()) {
                     component.component(growX)
                 }
             }

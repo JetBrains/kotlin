@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
+import com.intellij.util.ui.JBUI
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
@@ -29,6 +30,7 @@ class ModuleSettingsComponent(
 
     override val component: JComponent = borderPanel {
         addToCenter(settingsList.component)
+        border = JBUI.Borders.empty(20)
     }
 
     var module: Module? = null
