@@ -17,7 +17,7 @@ public abstract class LfeBaseProxyAction extends AnAction {
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    LargeFileEditor largeFileEditor = LargeFileEditorUtils.tryGetLargeFileEditorManager(e);
+    LargeFileEditor largeFileEditor = Utils.tryGetLargeFileEditorManager(e);
     if (largeFileEditor != null) {
       updateForLfe(e, largeFileEditor);
     }
@@ -28,7 +28,7 @@ public abstract class LfeBaseProxyAction extends AnAction {
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    LargeFileEditor largeFileEditor = LargeFileEditorUtils.tryGetLargeFileEditorManager(e);
+    LargeFileEditor largeFileEditor = Utils.tryGetLargeFileEditorManager(e);
     if (largeFileEditor != null) {
       actionPerformedForLfe(e, largeFileEditor);
     }
@@ -39,7 +39,7 @@ public abstract class LfeBaseProxyAction extends AnAction {
 
   @Override
   public void beforeActionPerformedUpdate(@NotNull AnActionEvent e) {
-    LargeFileEditor largeFileEditor = LargeFileEditorUtils.tryGetLargeFileEditorManager(e);
+    LargeFileEditor largeFileEditor = Utils.tryGetLargeFileEditorManager(e);
     if (largeFileEditor != null) {
       updateForLfe(e, largeFileEditor);
     }
