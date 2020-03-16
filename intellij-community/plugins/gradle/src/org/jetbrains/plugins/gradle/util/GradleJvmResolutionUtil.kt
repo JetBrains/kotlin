@@ -15,9 +15,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
-import org.jetbrains.plugins.gradle.startup.GradleProjectSettingsValidator.Companion.JavaHomeValidationStatus.Success
-import org.jetbrains.plugins.gradle.startup.GradleProjectSettingsValidator.Companion.isSupported
-import org.jetbrains.plugins.gradle.startup.GradleProjectSettingsValidator.Companion.validateGradleJavaHome
+import org.jetbrains.plugins.gradle.util.JavaHomeValidationStatus.Success
 
 const val JAVA_HOME = "JAVA_HOME"
 

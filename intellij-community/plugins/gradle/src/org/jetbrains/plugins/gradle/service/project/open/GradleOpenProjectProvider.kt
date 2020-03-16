@@ -28,12 +28,9 @@ import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.startup.GradleUnlinkedProjectProcessor
+import org.jetbrains.plugins.gradle.util.*
 import org.jetbrains.plugins.gradle.util.GradleConstants.BUILD_FILE_EXTENSIONS
 import org.jetbrains.plugins.gradle.util.GradleConstants.SYSTEM_ID
-import org.jetbrains.plugins.gradle.util.GradleEnvironment
-import org.jetbrains.plugins.gradle.util.GradleUtil
-import org.jetbrains.plugins.gradle.util.suggestGradleJvm
-import org.jetbrains.plugins.gradle.util.updateGradleJvm
 
 internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
   override fun isProjectFile(file: VirtualFile): Boolean {
@@ -45,6 +42,7 @@ internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
     val gradleProjectSettings = GradleProjectSettings()
     setupGradleSettings(gradleProjectSettings, projectDirectory, project, projectSdk)
     attachGradleProjectAndRefresh(gradleProjectSettings, project)
+    validateJavaHome(project, projectDirectory, gradleProjectSettings.resolveGradleVersion())
   }
 
   override fun openProject(projectFile: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project? {

@@ -61,6 +61,7 @@ import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData;
 import org.jetbrains.plugins.gradle.settings.DistributionType;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
+import org.jetbrains.plugins.gradle.util.GradleJvmValidationUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -247,6 +248,7 @@ public abstract class AbstractGradleModuleBuilder extends AbstractExternalModule
     GradleProjectSettings projectSettings = getExternalProjectSettings();
     setupGradleSettings(projectSettings, rootProjectPath, project, projectSdk);
     getSystemSettings(project).linkProject(projectSettings);
+    GradleJvmValidationUtil.validateJavaHome(project, rootProjectPath, projectSettings.resolveGradleVersion());
   }
 
   private static AbstractExternalSystemSettings<?, GradleProjectSettings, ?> getSystemSettings(@NotNull Project project) {
