@@ -1,21 +1,11 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.imports
 
+import com.intellij.openapi.progress.ProgressManager
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -95,6 +85,7 @@ class OptimizedImportsBuilder(
             .mapTo(importRules) { ImportRule.Add(it) }
 
         while (true) {
+            ProgressManager.checkCanceled()
             val importRulesBefore = importRules.size
             val result = tryBuildOptimizedImports()
             if (importRules.size == importRulesBefore) return result
@@ -140,6 +131,8 @@ class OptimizedImportsBuilder(
         val classNamesToCheck = HashSet<FqName>()
 
         for (parentFqName in descriptorsByParentFqName.keys) {
+            ProgressManager.checkCanceled()
+
             val starImportPath = ImportPath(parentFqName, true)
             if (starImportPath in importsToGenerate) continue
 
@@ -185,6 +178,8 @@ class OptimizedImportsBuilder(
         for ((names, refs) in references.groupBy { it.dependsOnNames }) {
             if (!areScopeSlicesEqual(originalFileScope, newFileScope, names)) {
                 for (ref in refs) {
+                    ProgressManager.checkCanceled()
+
                     val element = ref.element
                     val bindingContext = element.analyze()
                     val expressionToAnalyze = getExpressionToAnalyze(element) ?: continue
@@ -305,9 +300,13 @@ class OptimizedImportsBuilder(
         return parentsWithSelf
             .map { scope ->
                 names.flatMap { name ->
-                    scope.getContributedFunctions(name, NoLookupLocation.FROM_IDE) +
-                            scope.getContributedVariables(name, NoLookupLocation.FROM_IDE) +
-                            listOfNotNull(scope.getContributedClassifier(name, NoLookupLocation.FROM_IDE))
+                    ProgressManager.checkCanceled()
+                    val contributedFunctions = scope.getContributedFunctions(name, NoLookupLocation.FROM_IDE)
+                    ProgressManager.checkCanceled()
+                    val contributedVariables = scope.getContributedVariables(name, NoLookupLocation.FROM_IDE)
+                    ProgressManager.checkCanceled()
+                    val contributedClassifier = scope.getContributedClassifier(name, NoLookupLocation.FROM_IDE)
+                    contributedFunctions + contributedVariables + listOfNotNull(contributedClassifier)
                 }
             }
             .filter { it.isNotEmpty() }
