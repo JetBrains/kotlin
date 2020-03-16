@@ -85,7 +85,7 @@ object KotlinUsageTypes {
     val COMPANION_OBJECT_ACCESS = UsageType(KotlinBundle.lazyMessage("find.usages.type.companion.object"))
     val EXTENSION_RECEIVER_TYPE = UsageType(KotlinBundle.lazyMessage("find.usages.type.extension.receiver.type"))
     val SUPER_TYPE_QUALIFIER = UsageType(KotlinBundle.lazyMessage("find.usages.type.super.type.qualifier"))
-    val TYPE_ALIAS = UsageType(KotlinBundle.lazyMessage("type.type.alias"))
+    val TYPE_ALIAS = UsageType(KotlinBundle.lazyMessage("find.usages.type.type.alias"))
 
     // functions
     val FUNCTION_CALL = UsageType(KotlinBundle.lazyMessage("find.usages.type.function.call"))
@@ -105,5 +105,5 @@ object KotlinUsageTypes {
 
     // common usage types
     val CALLABLE_REFERENCE = UsageType(KotlinBundle.lazyMessage("find.usages.type.callable.reference"))
-    val NAMED_ARGUMENT = UsageType(KotlinBundle.lazyMessage("type.named.argument"))
+    val NAMED_ARGUMENT = UsageType(KotlinBundle.lazyMessage("find.usages.type.named.argument"))
 }
