@@ -183,6 +183,7 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     myReplaceToolbarWrapper = new NonOpaquePanel(new BorderLayout());
     myReplaceToolbarWrapper.add(replaceToolbarWrapper1, BorderLayout.WEST);
     myReplaceToolbarWrapper.add(replaceToolbarWrapper2, BorderLayout.CENTER);
+    myReplaceToolbarWrapper.setBorder(JBUI.Borders.emptyTop(3));
 
     searchToolbarWrapper1.setHorizontalSizeReferent(replaceToolbarWrapper1);
 
@@ -202,7 +203,7 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     myRightPanel.add(myReplaceToolbarWrapper);
 
     OnePixelSplitter splitter = new OnePixelSplitter(false, .25F);
-    myRightPanel.setBorder(JBUI.Borders.emptyLeft(6));
+    myRightPanel.setBorder(JBUI.Borders.empty(2, 6, 0, 0));
     splitter.setFirstComponent(myLeftPanel);
     splitter.setSecondComponent(myRightPanel);
     splitter.setHonorComponentsMinimumSize(true);
