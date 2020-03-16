@@ -87,7 +87,9 @@ dependencies {
 
     Platform[193].orHigher {
         implementation(commonDep("org.jetbrains.intellij.deps.completion", "completion-ranking-kotlin"))
-        implementation(intellijPluginDep("stats-collector"))
+        Ide.IJ {
+            implementation(intellijPluginDep("stats-collector"))
+        }
     }
 
     compileOnly(commonDep("org.jetbrains", "markdown"))
