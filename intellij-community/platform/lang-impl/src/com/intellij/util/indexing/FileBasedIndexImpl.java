@@ -303,7 +303,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   }
 
   @Override
-  void waitUntilIndicesAreInitialized() {
+  public void waitUntilIndicesAreInitialized() {
     if (myRegisteredIndexes == null) {
       // interrupt all calculation while plugin reload
       throw new ProcessCanceledException();

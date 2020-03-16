@@ -76,7 +76,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
 
   private final StubProcessingHelper myStubProcessingHelper = new StubProcessingHelper();
   private final IndexAccessValidator myAccessValidator = new IndexAccessValidator();
-  @NotNull private CompletableFuture<AsyncState> myStateFuture = new CompletableFuture<>();
+  private volatile CompletableFuture<AsyncState> myStateFuture;
   private volatile AsyncState myState;
   private volatile boolean myInitialized;
 
@@ -102,6 +102,9 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
   private AsyncState getAsyncState() {
     AsyncState state = myState; // memory barrier
     if (state == null) {
+      if (myStateFuture == null) {
+        ((FileBasedIndexImpl)FileBasedIndex.getInstance()).waitUntilIndicesAreInitialized();
+      }
       myState = state = ProgressIndicatorUtils.awaitWithCheckCanceled(myStateFuture);
     }
     return state;
@@ -596,6 +599,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
     assert !myInitialized;
     // ensure that FileBasedIndex task "FileIndexDataInitialization" submitted first
     FileBasedIndex.getInstance();
+    myStateFuture = new CompletableFuture<>();
     Future<AsyncState> future = IndexInfrastructure.submitGenesisTask(new StubIndexInitialization());
 
     if (!IndexInfrastructure.ourDoAsyncIndicesInitialization) {
@@ -620,7 +624,7 @@ public final class StubIndexImpl extends StubIndexEx implements PersistentStateC
 
   private void clearState() {
     myCachedStubIds.clear();
-    myStateFuture = new CompletableFuture<>();
+    myStateFuture = null;
     myState = null;
     myInitialized = false;
     LOG.info("StubIndexExtension-s were unloaded");
