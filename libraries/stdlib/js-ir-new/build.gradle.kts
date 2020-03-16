@@ -87,6 +87,14 @@ adhocComponent.addVariantsFromConfiguration(legacyApiElements) {
     mapToMavenScope("compile")
 }
 
+adhocComponent.addVariantsFromConfiguration(configurations.getByName(target!!.apiElementsConfigurationName)) {
+    mapToMavenScope("compile")
+}
+
+adhocComponent.addVariantsFromConfiguration(configurations.getByName(target!!.runtimeElementsConfigurationName)) {
+    mapToMavenScope("runtime")
+}
+
 publishing {
     publications {
         create<MavenPublication>("jsNew") {
