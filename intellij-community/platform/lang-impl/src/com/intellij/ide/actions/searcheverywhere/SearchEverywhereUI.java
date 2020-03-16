@@ -131,6 +131,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
       namesMap::get, c -> null);
 
     init();
+    getAccessibleContext().setAccessibleName("Search everywhere");
 
     initSearchActions();
 
