@@ -70,7 +70,7 @@ public class PostfixTemplatesCheckboxTree extends CheckboxTree implements Dispos
     Disposer.register(this, () -> getSelectionModel().removeTreeSelectionListener(selectionListener));
     DoubleClickListener doubleClickListener = new DoubleClickListener() {
       @Override
-      protected boolean onDoubleClick(MouseEvent event) {
+      protected boolean onDoubleClick(@NotNull MouseEvent event) {
         TreePath location = getClosestPathForLocation(event.getX(), event.getY());
         return location != null && doubleClick(location.getLastPathComponent());
       }

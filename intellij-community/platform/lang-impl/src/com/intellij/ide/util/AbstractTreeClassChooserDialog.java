@@ -160,7 +160,7 @@ public abstract class AbstractTreeClassChooserDialog<T extends PsiNamedElement> 
 
     new DoubleClickListener() {
       @Override
-      protected boolean onDoubleClick(MouseEvent event) {
+      protected boolean onDoubleClick(@NotNull MouseEvent event) {
         TreePath path = myTree.getPathForLocation(event.getX(), event.getY());
         if (path != null && myTree.isPathSelected(path)) {
           doOKAction();

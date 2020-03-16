@@ -156,7 +156,7 @@ public final class TreeFileChooserDialog extends DialogWrapper implements TreeFi
 
     new DoubleClickListener() {
       @Override
-      protected boolean onDoubleClick(MouseEvent e) {
+      protected boolean onDoubleClick(@NotNull MouseEvent e) {
         final TreePath path = myTree.getPathForLocation(e.getX(), e.getY());
         if (path != null && myTree.isPathSelected(path)) {
           doOKAction();

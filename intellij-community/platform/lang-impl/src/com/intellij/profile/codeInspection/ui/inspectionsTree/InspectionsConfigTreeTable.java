@@ -132,7 +132,7 @@ public class InspectionsConfigTreeTable extends TreeTable {
 
     new DoubleClickListener() {
       @Override
-      protected boolean onDoubleClick(MouseEvent event) {
+      protected boolean onDoubleClick(@NotNull MouseEvent event) {
         final TreePath path = getTree().getPathForRow(getTree().getLeadSelectionRow());
         if (path != null) {
           final InspectionConfigTreeNode node = (InspectionConfigTreeNode)path.getLastPathComponent();

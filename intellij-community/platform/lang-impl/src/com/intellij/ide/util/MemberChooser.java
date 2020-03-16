@@ -365,7 +365,7 @@ public class MemberChooser<T extends ClassMember> extends DialogWrapper implemen
 
     new DoubleClickListener() {
       @Override
-      protected boolean onDoubleClick(MouseEvent e) {
+      protected boolean onDoubleClick(@NotNull MouseEvent e) {
         if (tree.getPathForLocation(e.getX(), e.getY()) != null) {
           doOKAction();
           return true;

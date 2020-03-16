@@ -213,7 +213,7 @@ public class TodoConfigurable implements SearchableConfigurable, Configurable.No
     // double click in "Patterns" table should also start editing of selected pattern
     new DoubleClickListener() {
       @Override
-      protected boolean onDoubleClick(MouseEvent e) {
+      protected boolean onDoubleClick(@NotNull MouseEvent e) {
         editSelectedPattern();
         return true;
       }
@@ -268,7 +268,7 @@ public class TodoConfigurable implements SearchableConfigurable, Configurable.No
 
     new DoubleClickListener() {
       @Override
-      protected boolean onDoubleClick(MouseEvent e) {
+      protected boolean onDoubleClick(@NotNull MouseEvent e) {
         editSelectedFilter();
         return true;
       }
