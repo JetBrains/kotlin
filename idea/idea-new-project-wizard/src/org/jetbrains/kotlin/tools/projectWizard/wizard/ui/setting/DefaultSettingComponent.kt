@@ -128,6 +128,7 @@ class BooleanSettingComponent(
     reference,
     context
 ) {
+    override val title: String? = null
     override val uiComponent = CheckboxComponent(
         context = context,
         labelText = setting.title,

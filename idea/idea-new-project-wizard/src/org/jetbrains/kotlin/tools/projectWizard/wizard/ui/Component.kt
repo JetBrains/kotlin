@@ -60,6 +60,10 @@ abstract class DynamicComponent(private val context: Context) : Component() {
     open fun onValueUpdated(reference: SettingReference<*, *>?) {}
 }
 
+abstract class TitledComponent(context: Context) : DynamicComponent(context) {
+    abstract val title: String?
+}
+
 interface FocusableComponent {
     fun focusOn() {}
 }

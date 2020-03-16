@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.Component
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ErrorAwareComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingsList
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.TitledComponentsList
 import java.awt.*
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -258,12 +258,11 @@ private class TemplateSettingsComponent(
         component.bordered(needTopEmptyBorder = false, needBottomEmptyBorder = false)
     }
 
-    private val settings = SettingsList(emptyList(), context).apply {
+    private val settings = TitledComponentsList(emptyList(), context).apply {
         component.bordered()
     }
 
-    override fun findComponentWithError(error: ValidationResult.ValidationError): SettingComponent<*, *>? =
-        settings.findComponentWithError(error)
+    override fun findComponentWithError(error: ValidationResult.ValidationError): SettingComponent<*, *>? = null
 
 
     fun setTemplate(module: Module, selectedTemplate: Template) {

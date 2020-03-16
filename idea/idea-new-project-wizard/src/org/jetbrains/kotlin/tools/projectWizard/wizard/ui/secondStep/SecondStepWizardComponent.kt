@@ -10,36 +10,34 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeWizard
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEditor.ModulesEditorComponent
 import java.awt.BorderLayout
-import javax.swing.BorderFactory
-import javax.swing.JComponent
 
 class SecondStepWizardComponent(
     wizard: IdeWizard,
     uiEditorUsagesStats: UiEditorUsageStats
 ) : WizardStepComponent(wizard.context) {
-    private val moduleEditorSubStep =
-        ModulesEditorSubStep(wizard.context, uiEditorUsagesStats, ::onNodeSelected) {
-            templatesSubStep.selectSettingWithError(it)
+    private val moduleEditorComponent =
+        ProjectStructureEditorComponent(wizard.context, uiEditorUsagesStats, ::onNodeSelected) {
+            moduleSettingsComponent.selectSettingWithError(it)
         }.asSubComponent()
-    private val templatesSubStep = ModuleSettingsSubStep(wizard, uiEditorUsagesStats).asSubComponent()
+    private val moduleSettingsComponent = ModuleSettingsSubStep(wizard, uiEditorUsagesStats).asSubComponent()
 
-    override val component = splitterFor(
-        moduleEditorSubStep.component,
-        templatesSubStep.component
-    )
+    override val component = borderPanel {
+        addToLeft(moduleEditorComponent.component)
+        addToCenter(moduleSettingsComponent.component)
+    }
 
     private fun onNodeSelected(data: DisplayableSettingItem?) {
-        templatesSubStep.selectedNode = data
+        moduleSettingsComponent.selectedNode = data
     }
 }
 
 
-class ModulesEditorSubStep(
+class ProjectStructureEditorComponent(
     context: Context,
     uiEditorUsagesStats: UiEditorUsageStats,
     onNodeSelected: (data: DisplayableSettingItem?) -> Unit,
     selectSettingWithError: (ValidationResult.ValidationError) -> Unit
-) : SubStep(context) {
+) : DynamicComponent(context) {
     private val moduleSettingComponent = ModulesEditorComponent(
         context,
         uiEditorUsagesStats,
@@ -49,13 +47,8 @@ class ModulesEditorSubStep(
         selectSettingWithError = selectSettingWithError
     ).asSubComponent()
 
-    override fun buildContent(): JComponent = panel {
-        bordered(needInnerEmptyBorder = false, needLineBorder = false)
-        border = BorderFactory.createCompoundBorder(
-            BorderFactory.createEmptyBorder(0, 0, 0, UiConstants.GAP_BORDER_SIZE),
-            border
-        )
-        add(moduleSettingComponent.component, BorderLayout.CENTER)
+    override val component = borderPanel {
+        addToCenter(moduleSettingComponent.component)
     }
 }
 
@@ -64,31 +57,27 @@ class ModuleSettingsSubStep(
     wizard: IdeWizard,
     uiEditorUsagesStats: UiEditorUsageStats
 ) : SubStep(wizard.context) {
-    private val sourcesetSettingsComponent = SourcesetSettingsComponent(wizard.context).asSubComponent()
     private val moduleSettingsComponent = ModuleSettingsComponent(wizard.context, uiEditorUsagesStats).asSubComponent()
     private val nothingSelectedComponent = NothingSelectedComponent().asSubComponent()
 
     private val panel = panel {
-        bordered()
         add(nothingSelectedComponent.component, BorderLayout.CENTER)
     }
 
     var selectedNode: DisplayableSettingItem? = null
         set(value) {
             field = value
-            sourcesetSettingsComponent.sourceset = value as? Sourceset
             moduleSettingsComponent.module = value as? Module
             changeComponent()
         }
 
     fun selectSettingWithError(error: ValidationResult.ValidationError) {
-        moduleSettingsComponent.selectSettingWithError(error)
+//        moduleSettingsComponent.selectSettingWithError(error)
     }
 
     private fun changeComponent() {
         panel.removeAll()
         val component = when (selectedNode) {
-            is Sourceset -> sourcesetSettingsComponent
             is Module -> moduleSettingsComponent
             else -> nothingSelectedComponent
         }

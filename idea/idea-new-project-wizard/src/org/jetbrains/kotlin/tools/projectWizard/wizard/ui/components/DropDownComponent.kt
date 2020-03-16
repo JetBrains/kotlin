@@ -17,6 +17,7 @@ import javax.swing.JList
 class DropDownComponent<T : DisplayableSettingItem>(
     context: Context,
     initialValues: List<T> = emptyList(),
+    initiallySelectedValue: T? = null,
     labelText: String? = null,
     private val filter: (T) -> Boolean = { true },
     private val validator: SettingValidator<T> = settingValidator { ValidationResult.OK },
@@ -29,9 +30,10 @@ class DropDownComponent<T : DisplayableSettingItem>(
     onValueUpdate
 ) {
     @Suppress("UNCHECKED_CAST")
-    override val uiComponent: ComboBox<T> = ComboBox<T>(
+    override val uiComponent: ComboBox<T> = ComboBox(
         initialValues.filter(filter).toTypedArray<DisplayableSettingItem>() as Array<T>
     ).apply {
+        selectedItem = initiallySelectedValue
         renderer = object : ColoredListCellRenderer<T>() {
             override fun customizeCellRenderer(
                 list: JList<out T>,

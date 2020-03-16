@@ -8,55 +8,52 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.isSpecificError
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.TitledComponent
 
 interface ErrorAwareComponent {
     fun findComponentWithError(error: ValidationResult.ValidationError): FocusableComponent?
 }
 
-class SettingsList(
-    private var settingComponents: List<SettingComponent<*, *>>,
+class TitledComponentsList(
+    private var components: List<TitledComponent>,
     private val context: Context
-) : DynamicComponent(context), ErrorAwareComponent {
+) : DynamicComponent(context) {
     private val ui = BorderLayoutPanel()
 
     init {
-        setSettingComponents(settingComponents)
+        ui.addToCenter(createComponentsPanel(components))
     }
 
     override val component get() = ui
 
     override fun onInit() {
         super.onInit()
-        settingComponents.forEach { it.onInit() }
+        components.forEach { it.onInit() }
     }
 
-    private fun setSettingComponents(settingComponents: List<SettingComponent<*, *>>) {
-        this.settingComponents = settingComponents
+    fun setComponents(newComponents: List<TitledComponent>) {
+        this.components = newComponents
         ui.removeAll()
-        ui.addToCenter(panel {
-            settingComponents.forEach { settingComponent ->
-                settingComponent.onInit()
-                row(settingComponent.setting.title + ":") {
-                    settingComponent.component(growX)
-                }
-            }
-        })
+        newComponents.forEach(TitledComponent::onInit)
+        ui.addToCenter(createComponentsPanel(newComponents))
     }
 
 
     fun setSettings(settings: List<SettingReference<*, *>>) {
-        setSettingComponents(
+        setComponents(
             settings.map { setting ->
                 DefaultSettingComponent.create(setting, context, needLabel = false)
             }
         )
     }
 
-    override fun findComponentWithError(error: ValidationResult.ValidationError) = read {
-        settingComponents.firstOrNull { component ->
-            val value = component.value ?: return@firstOrNull false
-            val result = component.setting.validator.validate(this, value)
-            result isSpecificError error
+    companion object {
+        private fun createComponentsPanel(components: List<TitledComponent>) = panel {
+            components.forEach { component ->
+                row(component.title?.let { "$it:" }) {
+                    component.component(growX)
+                }
+            }
         }
     }
 }

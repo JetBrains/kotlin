@@ -1,60 +1,34 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
-import com.intellij.ui.components.JBTabbedPane
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.getConfiguratorSettings
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.moduleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module.Companion.ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
+import org.jetbrains.kotlin.tools.projectWizard.templates.Template
+import org.jetbrains.kotlin.tools.projectWizard.templates.settings
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.TitledComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.borderPanel
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.DropDownComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.TextFieldComponent
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingsList
-import java.awt.BorderLayout
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.TitledComponentsList
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.createSettingComponent
 import javax.swing.JComponent
 
 class ModuleSettingsComponent(
-    context: Context,
+    private val context: Context,
     uiEditorUsagesStats: UiEditorUsageStats
 ) : DynamicComponent(context) {
-    private val validateModuleName =
-        StringValidators.shouldNotBeBlank("Module name") and
-                StringValidators.shouldBeValidIdentifier("Module Name", ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES)
+    private val settingsList = TitledComponentsList(emptyList(), context).asSubComponent()
 
-    private val moduleConfiguratorSettingsList = SettingsList(emptyList(), context).asSubComponent()
-    private val templateComponent = TemplatesComponent(context, uiEditorUsagesStats).asSubComponent()
-
-    private val tabPanel = JBTabbedPane().apply {
-        add("Template", templateComponent.component)
-        add("Module Settings", moduleConfiguratorSettingsList.component)
-    }
-
-    fun selectSettingWithError(error: ValidationResult.ValidationError) {
-        val componentWithError = nameField.findComponentWithError(error)
-            ?: moduleConfiguratorSettingsList.findComponentWithError(error)?.also { tabPanel.selectedIndex = 1 }
-            ?: templateComponent.findComponentWithError(error)?.also { tabPanel.selectedIndex = 0 }
-        componentWithError?.focusOn()
-    }
-
-    private val nameField = TextFieldComponent(
-        context,
-        labelText = "Name",
-        onValueUpdate = { value ->
-            module?.name = value
-            context.write { eventManager.fireListeners(null) }
-        },
-        validator = validateModuleName
-    ).asSubComponent()
-
-
-    override val component: JComponent = panel {
-        add(nameField.component, BorderLayout.NORTH)
-        add(tabPanel, BorderLayout.CENTER)
+    override val component: JComponent = borderPanel {
+        addToCenter(settingsList.component)
     }
 
     var module: Module? = null
@@ -65,13 +39,82 @@ class ModuleSettingsComponent(
             }
         }
 
+    @OptIn(ExperimentalStdlibApi::class)
     private fun updateModule(module: Module) {
-        nameField.updateUiValue(module.name)
-        nameField.component.isVisible = module.kind != ModuleKind.target
-                || module.configurator.moduleType != ModuleType.common
+        val moduleSettingComponents = buildList {
+            add(ModuleNameComponent(context, module))
+            createTemplatesListComponentForModule(module)?.let(::add)
+            addAll(module.getConfiguratorSettings().map { it.createSettingComponent(context) })
+            module.template?.let { template ->
+                addAll(template.settings(module).map { it.createSettingComponent(context) })
+            }
+        }
 
-        moduleConfiguratorSettingsList.setSettings(module.getConfiguratorSettings())
-        templateComponent.module = module
+        settingsList.setComponents(moduleSettingComponents)
+    }
+
+    private fun createTemplatesListComponentForModule(module: Module) =
+        read { availableTemplatesFor(module) }.takeIf { it.isNotEmpty() }?.let { templates ->
+            ModuleTemplateComponent(context, module, templates) {
+                updateModule(module)
+                component.updateUI()
+            }
+        }
+}
+
+private class ModuleNameComponent(context: Context, module: Module) : TitledComponent(context) {
+    override val component: JComponent = TextFieldComponent(
+        context,
+        labelText = null,
+        initialValue = module.name,
+        validator = validateModuleName
+    ) { value ->
+        module.name = value
+        context.write { eventManager.fireListeners(null) }
+    }.component
+
+    override val title: String = "Name"
+
+    companion object {
+        private val validateModuleName =
+            StringValidators.shouldNotBeBlank("Module name") and
+                    StringValidators.shouldBeValidIdentifier("Module Name", ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES)
     }
 }
+
+private class ModuleTemplateComponent(
+    context: Context,
+    module: Module,
+    templates: List<Template>,
+    onTemplateChanged: () -> Unit
+) : TitledComponent(context) {
+    @OptIn(ExperimentalStdlibApi::class)
+    override val component = DropDownComponent(
+        context,
+        initialValues = buildList {
+            add(NoneTemplate)
+            addAll(templates)
+        },
+        initiallySelectedValue = module.template ?: NoneTemplate,
+        labelText = null,
+    ) { value ->
+        module.template = value.takeIf { it != NoneTemplate }
+        onTemplateChanged()
+    }.component
+
+    override val title: String = "Template"
+
+    private object NoneTemplate : Template() {
+        override val title = "None"
+        override val htmlDescription: String = ""
+        override val moduleTypes: Set<ModuleType> = ModuleType.ALL
+        override val id: String = "none"
+    }
+}
+
+fun Reader.availableTemplatesFor(module: Module) =
+    TemplatesPlugin::templates.propertyValue.values.filter { template ->
+        module.configurator.moduleType in template.moduleTypes && template.isApplicableTo(module)
+    }
+
 

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.Project
 import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeWizard
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEditor.ModulesEditorComponent
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingsList
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.TitledComponentsList
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.createSettingComponent
 import javax.swing.JComponent
 
@@ -29,7 +29,7 @@ class ProjectSettingsComponent(context: Context) : DynamicComponent(context) {
     private val projectTemplateComponent = ProjectTemplateSettingComponent(context).asSubComponent()
     private val buildSystemSetting = BuildSystemTypeSettingComponent(context).asSubComponent()
 
-    private val nameAndLocationComponent = SettingsList(
+    private val nameAndLocationComponent = TitledComponentsList(
         listOf(
             StructurePlugin::name.reference.createSettingComponent(context),
             StructurePlugin::projectPath.reference.createSettingComponent(context),
@@ -39,8 +39,10 @@ class ProjectSettingsComponent(context: Context) : DynamicComponent(context) {
         context
     ).asSubComponent()
 
-    override val component: JComponent = nameAndLocationComponent.component.apply {
-        border = JBUI.Borders.empty(10)
+    override val component: JComponent by lazy(LazyThreadSafetyMode.NONE) {
+        nameAndLocationComponent.component.apply {
+            border = JBUI.Borders.empty(10)
+        }
     }
 }
 

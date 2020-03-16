@@ -59,7 +59,7 @@ fun <T> withSettingsOf(
 ): T = function(IdBasedTemplateEnvironment(template, identificator))
 
 
-abstract class Template : SettingsOwner, EntitiesOwnerDescriptor {
+abstract class Template : SettingsOwner, EntitiesOwnerDescriptor, DisplayableSettingItem {
     final override fun <V : Any, T : SettingType<V>> settingDelegate(
         create: (path: String) -> SettingBuilder<V, T>
     ): ReadOnlyProperty<Any, TemplateSetting<V, T>> = cached { name ->
@@ -69,6 +69,8 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor {
     abstract val title: String
     abstract val htmlDescription: String
     abstract val moduleTypes: Set<ModuleType>
+
+    override val text: String get() = title
 
     open fun isApplicableTo(module: Module): Boolean = true
 
@@ -132,6 +134,11 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor {
     private fun Writer.createDefaultSettings() = mapOf(
         "projectName" to StructurePlugin::name.settingValue.capitalize()
     )
+
+    override fun equals(other: Any?): Boolean =
+        other.safeAs<Template>()?.id == id
+
+    override fun hashCode(): Int = id.hashCode()
 
     @Suppress("UNCHECKED_CAST")
     final override fun <V : DisplayableSettingItem> dropDownSetting(
