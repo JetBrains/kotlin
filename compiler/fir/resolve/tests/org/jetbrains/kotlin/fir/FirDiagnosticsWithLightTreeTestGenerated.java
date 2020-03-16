@@ -1935,4 +1935,22 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
         }
     }
+
+    @TestMetadata("compiler/fir/resolve/testData/resolve/visibility")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Visibility extends AbstractFirDiagnosticsWithLightTreeTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInVisibility() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/visibility"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("protectedInCompanion.kt")
+        public void testProtectedInCompanion() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/visibility/protectedInCompanion.kt");
+        }
+    }
 }

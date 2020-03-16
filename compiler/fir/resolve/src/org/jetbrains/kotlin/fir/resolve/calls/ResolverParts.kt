@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -353,6 +352,11 @@ internal object CheckVisibility : CheckerStage() {
         if (classId in visited) return false
         visited += classId
         if (classId.isSame(ownerId)) return true
+
+        fir.companionObject?.let { companion ->
+            if (companion.classId.isSame(ownerId)) return true
+        }
+
         val superTypes = fir.superConeTypes
         for (superType in superTypes) {
             val superTypeSymbol = superType.lookupTag.toSymbol(session) as? FirRegularClassSymbol ?: continue
