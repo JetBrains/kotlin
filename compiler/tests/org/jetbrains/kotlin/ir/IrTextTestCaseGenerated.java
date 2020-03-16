@@ -1871,14 +1871,14 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/types/coercionToUnitInLambdaReturnValue.kt");
         }
 
-        @TestMetadata("genericFunWithStar.kt")
-        public void testGenericFunWithStar() throws Exception {
-            runTest("compiler/testData/ir/irText/types/genericFunWithStar.kt");
-        }
-
         @TestMetadata("genericDelegatedDeepProperty.kt")
         public void testGenericDelegatedDeepProperty() throws Exception {
             runTest("compiler/testData/ir/irText/types/genericDelegatedDeepProperty.kt");
+        }
+
+        @TestMetadata("genericFunWithStar.kt")
+        public void testGenericFunWithStar() throws Exception {
+            runTest("compiler/testData/ir/irText/types/genericFunWithStar.kt");
         }
 
         @TestMetadata("genericPropertyReferenceType.kt")

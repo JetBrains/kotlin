@@ -18951,6 +18951,16 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/ranges/forNullableIntInRangeWithImplicitReceiver.kt");
         }
 
+        @TestMetadata("kt37370.kt")
+        public void testKt37370() throws Exception {
+            runTest("compiler/testData/codegen/box/ranges/kt37370.kt");
+        }
+
+        @TestMetadata("kt37370a.kt")
+        public void testKt37370a() throws Exception {
+            runTest("compiler/testData/codegen/box/ranges/kt37370a.kt");
+        }
+
         @TestMetadata("multiAssignmentIterationOverIntRange.kt")
         public void testMultiAssignmentIterationOverIntRange() throws Exception {
             runTest("compiler/testData/codegen/box/ranges/multiAssignmentIterationOverIntRange.kt");

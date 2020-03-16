@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.inline.isMarkedReturn
 import org.jetbrains.kotlin.codegen.optimization.common.MethodAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
@@ -44,28 +45,43 @@ internal class FixStackAnalyzer(
         const val DEAD_CODE_STACK_SIZE = -1
     }
 
-    private val expectedStackNode = hashMapOf<LabelNode, AbstractInsnNode>()
+    private val loopEntryPointMarkers = hashMapOf<LabelNode, SmartList<AbstractInsnNode>>()
 
     val maxExtraStackSize: Int get() = analyzer.maxExtraStackSize
 
     fun getStackToSpill(location: AbstractInsnNode) = analyzer.spilledStacks[location]
     fun getActualStack(location: AbstractInsnNode) = getFrame(location)?.getStackContent()
     fun getActualStackSize(location: AbstractInsnNode) = getFrame(location)?.stackSizeWithExtra ?: DEAD_CODE_STACK_SIZE
-    fun getExpectedStackSize(location: AbstractInsnNode) = getExpectedStackFrame(location)?.stackSizeWithExtra ?: DEAD_CODE_STACK_SIZE
 
-    private fun getExpectedStackFrame(location: AbstractInsnNode) = getFrame(expectedStackNode[location] ?: location)
+    fun getExpectedStackSize(location: AbstractInsnNode): Int {
+        // We should look for expected stack size at loop entry point markers if available,
+        // otherwise at location itself.
+        val expectedStackSizeNodes = loopEntryPointMarkers[location] ?: listOf(location)
+
+        // Find 1st live node among expected stack size nodes and return corresponding stack size
+        for (node in expectedStackSizeNodes) {
+            val frame = getFrame(node) ?: continue
+            return frame.stackSizeWithExtra
+        }
+
+        // No live nodes found
+        // => loop entry point is unreachable or node itself is unreachable
+        return DEAD_CODE_STACK_SIZE
+    }
+
     private fun getFrame(location: AbstractInsnNode) = analyzer.getFrame(location) as? InternalAnalyzer.FixStackFrame
 
     fun analyze() {
-        preprocess()
+        recordLoopEntryPointMarkers()
         analyzer.analyze()
     }
 
-    private fun preprocess() {
+    private fun recordLoopEntryPointMarkers() {
+        // NB JVM_IR can generate nested loops with same exit labels (see kt37370.kt)
         for (marker in context.fakeAlwaysFalseIfeqMarkers) {
             val next = marker.next
             if (next is JumpInsnNode) {
-                expectedStackNode[next.label] = marker
+                loopEntryPointMarkers.getOrPut(next.label) { SmartList() }.add(marker)
             }
         }
     }

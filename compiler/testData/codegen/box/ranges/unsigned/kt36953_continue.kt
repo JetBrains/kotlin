@@ -1,8 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND: JVM_IR
-// ^ TODO KT-37373
 
 fun testContinue() {
     for (i in 0..1) {
