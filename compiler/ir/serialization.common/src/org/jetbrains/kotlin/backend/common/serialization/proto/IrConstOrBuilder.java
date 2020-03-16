@@ -71,22 +71,30 @@ public interface IrConstOrBuilder extends
   long getLong();
 
   /**
-   * <code>optional float float = 8;</code>
+   * <code>optional fixed32 float_bits = 8;</code>
+   *
+   * <pre>
+   * float/double is stored via fixed 32/64 bit value to avoid raw bit conversion
+   * </pre>
    */
-  boolean hasFloat();
+  boolean hasFloatBits();
   /**
-   * <code>optional float float = 8;</code>
+   * <code>optional fixed32 float_bits = 8;</code>
+   *
+   * <pre>
+   * float/double is stored via fixed 32/64 bit value to avoid raw bit conversion
+   * </pre>
    */
-  float getFloat();
+  int getFloatBits();
 
   /**
-   * <code>optional double double = 9;</code>
+   * <code>optional fixed64 double_bits = 9;</code>
    */
-  boolean hasDouble();
+  boolean hasDoubleBits();
   /**
-   * <code>optional double double = 9;</code>
+   * <code>optional fixed64 double_bits = 9;</code>
    */
-  double getDouble();
+  long getDoubleBits();
 
   /**
    * <code>optional int32 string = 10;</code>
