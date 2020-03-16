@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
@@ -58,7 +59,7 @@ class Fir2IrVisitor(
 
     private val conversionScope = Fir2IrConversionScope()
 
-    private val fakeOverrideGenerator = Fir2IrFakeOverrideGenerator(session, declarationStorage, conversionScope, fakeOverrideMode)
+    private val fakeOverrideGenerator = FakeOverrideGenerator(session, declarationStorage, conversionScope, fakeOverrideMode)
 
     private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }
 
@@ -145,6 +146,7 @@ class Fir2IrVisitor(
     override fun visitRegularClass(regularClass: FirRegularClass, data: Any?): IrElement {
         if (regularClass.visibility == Visibilities.LOCAL) {
             val irParent = conversionScope.parentFromStack()
+            // NB: for implicit types it is possible that local class is already cached
             val irClass = classifierStorage.getCachedIrClass(regularClass)?.apply { this.parent = irParent }
             if (irClass != null) {
                 converter.processRegisteredLocalClassAndNestedClasses(regularClass, irClass)

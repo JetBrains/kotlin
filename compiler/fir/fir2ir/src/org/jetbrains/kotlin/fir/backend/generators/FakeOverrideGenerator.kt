@@ -3,10 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.backend
+package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.collectCallableNamesFromSupertypes
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -23,7 +25,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 
-class Fir2IrFakeOverrideGenerator(
+internal class FakeOverrideGenerator(
     private val session: FirSession,
     private val declarationStorage: Fir2IrDeclarationStorage,
     private val conversionScope: Fir2IrConversionScope,
