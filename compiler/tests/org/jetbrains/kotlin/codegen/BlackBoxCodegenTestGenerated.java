@@ -24036,6 +24036,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/reflection/callBy/emptyVarArg.kt");
             }
 
+            @TestMetadata("emptyVarArgAnnotationConstructor.kt")
+            public void testEmptyVarArgAnnotationConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/emptyVarArgAnnotationConstructor.kt");
+            }
+
             @TestMetadata("extensionFunction.kt")
             public void testExtensionFunction() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/callBy/extensionFunction.kt");
