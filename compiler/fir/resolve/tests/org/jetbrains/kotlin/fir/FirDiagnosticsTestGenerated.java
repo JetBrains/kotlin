@@ -1225,6 +1225,16 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/inference/callableReferenceOnInstance.kt");
         }
 
+        @TestMetadata("callableReferenceToLocalClass.kt")
+        public void testCallableReferenceToLocalClass() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/inference/callableReferenceToLocalClass.kt");
+        }
+
+        @TestMetadata("callableReferencesAndDefaultParameters.kt")
+        public void testCallableReferencesAndDefaultParameters() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/inference/callableReferencesAndDefaultParameters.kt");
+        }
+
         @TestMetadata("capturedTypeForJavaTypeParameter.kt")
         public void testCapturedTypeForJavaTypeParameter() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/inference/capturedTypeForJavaTypeParameter.kt");
@@ -1420,16 +1430,6 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
 
         public void testAllFilesPresentInProblems() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/resolve/testData/resolve/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
-        }
-
-        @TestMetadata("callableReferenceToLocalClass.kt")
-        public void testCallableReferenceToLocalClass() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/callableReferenceToLocalClass.kt");
-        }
-
-        @TestMetadata("callableReferencesAndDefaultParameters.kt")
-        public void testCallableReferencesAndDefaultParameters() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/problems/callableReferencesAndDefaultParameters.kt");
         }
 
         @TestMetadata("complexLambdaWithTypeVariableAsExpectedType.kt")
