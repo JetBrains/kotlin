@@ -46,8 +46,12 @@ interface LazyIrProvider : IrProvider {
     override fun getDeclaration(symbol: IrSymbol): IrLazyDeclarationBase?
 }
 
+interface IrExtensionGenerator {
+    fun declare(symbol: IrSymbol): IrDeclaration? = null
+}
+
 interface IrDeserializer : IrProvider {
-    fun declareForwardDeclarations()
+    fun init(moduleFragment: IrModuleFragment?, extensions: Collection<IrExtensionGenerator>) {}
 }
 
 interface ReferenceSymbolTable {
@@ -845,6 +849,25 @@ open class SymbolTable(val signaturer: IdSignatureComposer) : ReferenceSymbolTab
             }
         }
         return result
+    }
+
+    private inline fun <D : DeclarationDescriptor, IR : IrSymbolOwner, S : IrBindableSymbol<D, IR>> FlatSymbolTable<D, IR, S>.forEachPublicSymbolImpl(
+        block: (IrSymbol) -> Unit
+    ) {
+        idSigToSymbol.forEach { (_, sym) ->
+            assert(sym.isPublicApi)
+            block(sym)
+        }
+    }
+
+    fun forEachPublicSymbol(block: (IrSymbol) -> Unit) {
+        classSymbolTable.forEachPublicSymbolImpl { block(it) }
+        constructorSymbolTable.forEachPublicSymbolImpl { block(it) }
+        simpleFunctionSymbolTable.forEachPublicSymbolImpl { block(it) }
+        propertySymbolTable.forEachPublicSymbolImpl { block(it) }
+        enumEntrySymbolTable.forEachPublicSymbolImpl { block(it) }
+        typeAliasSymbolTable.forEachPublicSymbolImpl { block(it) }
+        fieldSymbolTable.forEachPublicSymbolImpl { block(it) }
     }
 }
 

@@ -52,8 +52,6 @@ class ExternalDependenciesGenerator(
                 assert(symbol.isBound) { "$symbol unbound even after deserialization attempt" }
             }
         } while (unbound.isNotEmpty())
-
-        irProviders.forEach { (it as? IrDeserializer)?.declareForwardDeclarations() }
     }
 }
 

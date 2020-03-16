@@ -43,6 +43,7 @@ class Psi2IrTranslator(
         postprocessingSteps.add(step)
     }
 
+    // NOTE: used only for test purpose
     fun generateModule(
         moduleDescriptor: ModuleDescriptor,
         ktFiles: Collection<KtFile>,
@@ -68,7 +69,8 @@ class Psi2IrTranslator(
         context: GeneratorContext,
         ktFiles: Collection<KtFile>,
         irProviders: List<IrProvider>,
-        expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null
+        expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null,
+        pluginExtensions: Collection<IrExtensionGenerator> = emptyList()
     ): IrModuleFragment {
         val moduleGenerator = ModuleGenerator(context)
         val irModule = moduleGenerator.generateModuleFragmentWithoutDependencies(ktFiles)
@@ -76,8 +78,14 @@ class Psi2IrTranslator(
         irModule.patchDeclarationParents()
         expectDescriptorToSymbol?.let { referenceExpectsForUsedActuals(it, context.symbolTable, irModule) }
         postprocess(context, irModule)
-        // do not generate unbound symbols before postprocessing,
-        // since plugins must work with non-lazy IR
+
+        irProviders.filterIsInstance<IrDeserializer>().forEach { it.init(irModule, pluginExtensions) }
+
+        moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
+
+        postprocessingSteps.forEach { it.invoke(irModule) }
+
+        // TODO: remove it once plugin API improved
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
 
         return irModule
@@ -86,8 +94,6 @@ class Psi2IrTranslator(
     private fun postprocess(context: GeneratorContext, irElement: IrModuleFragment) {
         insertImplicitCasts(irElement, context)
         generateAnnotationsForDeclarations(context, irElement)
-
-        postprocessingSteps.forEach { it(irElement) }
 
         irElement.patchDeclarationParents()
     }

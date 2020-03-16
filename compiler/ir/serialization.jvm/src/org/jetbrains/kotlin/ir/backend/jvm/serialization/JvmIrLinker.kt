@@ -6,51 +6,146 @@
 package org.jetbrains.kotlin.ir.backend.jvm.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.konan.kotlinLibrary
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.backend.common.serialization.*
+import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.descriptors.*
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.IrExtensionGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.library.IrLibrary
+import org.jetbrains.kotlin.load.java.descriptors.*
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
+import org.jetbrains.kotlin.name.Name
 
-class JvmIrLinker(logger: LoggingContext, builtIns: IrBuiltIns, symbolTable: SymbolTable) :
-    KotlinIrLinker(logger, builtIns, symbolTable, emptyList(), null) {
+class JvmIrLinker(currentModule: ModuleDescriptor?, logger: LoggingContext, builtIns: IrBuiltIns, symbolTable: SymbolTable, private val stubGenerator: DeclarationStubGenerator, private val manglerDesc: JvmManglerDesc) :
+    KotlinIrLinker(currentModule, logger, builtIns, symbolTable, emptyList()) {
 
-    override fun handleNoModuleDeserializerFound(idSignature: IdSignature): DeserializationState<*> {
-        // TODO: Implement special java-module deserializer instead of this hack
-        return globalDeserializationState // !!!!!! Wrong, as external references will all have UniqId.NONE
-    }
+    override val functionalInteraceFactory: IrAbstractFunctionFactory = IrFunctionFactory(builtIns, symbolTable)
 
-    override fun reader(moduleDescriptor: ModuleDescriptor, fileIndex: Int, idSigIndex: Int) =
-        moduleDescriptor.kotlinLibrary.irDeclaration(idSigIndex, fileIndex)
+    private val javaName = Name.identifier("java")
 
-    override fun readType(moduleDescriptor: ModuleDescriptor, fileIndex: Int, typeIndex: Int) =
-        moduleDescriptor.kotlinLibrary.type(typeIndex, fileIndex)
-
-    override fun readSignature(moduleDescriptor: ModuleDescriptor, fileIndex: Int, signatureIndex: Int) =
-        moduleDescriptor.kotlinLibrary.signature(signatureIndex, fileIndex)
-
-    override fun readString(moduleDescriptor: ModuleDescriptor, fileIndex: Int, stringIndex: Int) =
-        moduleDescriptor.kotlinLibrary.string(stringIndex, fileIndex)
-
-    override fun readBody(moduleDescriptor: ModuleDescriptor, fileIndex: Int, bodyIndex: Int) =
-        moduleDescriptor.kotlinLibrary.body(bodyIndex, fileIndex)
-
-    override fun readFile(moduleDescriptor: ModuleDescriptor, fileIndex: Int) =
-        moduleDescriptor.kotlinLibrary.file(fileIndex)
-
-    override fun readFileCount(moduleDescriptor: ModuleDescriptor) =
-        moduleDescriptor.kotlinLibrary.fileCount()
-
-    override fun resolveModuleDeserializer(moduleDescriptor: ModuleDescriptor): IrModuleDeserializer? {
-        return deserializersForModules[moduleDescriptor]
-    }
+    override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
+        moduleDescriptor.name.asString() == "<built-ins module>"
 
     // TODO: implement special Java deserializer
-    override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, strategy: DeserializationStrategy): IrModuleDeserializer =
-        JvmModuleDeserializer(moduleDescriptor, strategy)
+    override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary?, strategy: DeserializationStrategy): IrModuleDeserializer {
+        if (klib != null) {
+            assert(moduleDescriptor.getCapability(KlibModuleOrigin.CAPABILITY) != null)
+            return JvmModuleDeserializer(moduleDescriptor, klib, strategy)
+        }
 
-    private inner class JvmModuleDeserializer(moduleDescriptor: ModuleDescriptor, strategy: DeserializationStrategy) :
-        KotlinIrLinker.IrModuleDeserializer(moduleDescriptor, strategy)
+        return MetadataJVMModuleDeserializer(moduleDescriptor, emptyList())
+    }
+
+    private inner class JvmModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, strategy: DeserializationStrategy) :
+        KotlinIrLinker.BasicIrModuleDeserializer(moduleDescriptor, klib, strategy)
+
+    private fun DeclarationDescriptor.isJavaDescriptor(): Boolean {
+        if (this is PackageFragmentDescriptor) {
+            return this is LazyJavaPackageFragment || fqName.startsWith(javaName)
+        }
+
+        return this is JavaClassDescriptor || this is JavaCallableMemberDescriptor || (containingDeclaration?.isJavaDescriptor() == true)
+    }
+
+    private fun DeclarationDescriptor.isCleanDescriptor(): Boolean {
+        if (this is PropertyAccessorDescriptor) return correspondingProperty.isCleanDescriptor()
+        return this is DeserializedDescriptor
+    }
+
+    override fun platformSpecificSymbol(symbol: IrSymbol): Boolean {
+        return symbol.descriptor.isJavaDescriptor()
+    }
+
+    private fun declareJavaFieldStub(symbol: IrFieldSymbol): IrField {
+        return with(stubGenerator) {
+            val old = stubGenerator.unboundSymbolGeneration
+            try {
+                stubGenerator.unboundSymbolGeneration = true
+                generateFieldStub(symbol.descriptor)
+            } finally {
+                stubGenerator.unboundSymbolGeneration = old
+            }
+        }
+    }
+
+
+    override fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>, extensions: Collection<IrExtensionGenerator>): IrModuleDeserializer =
+        JvmCurrentModuleDeserializer(moduleFragment, dependencies, extensions)
+
+    private inner class JvmCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>, extensions: Collection<IrExtensionGenerator>) :
+        CurrentModuleDeserializer(moduleFragment, dependencies, symbolTable, extensions) {
+        override fun declareIrSymbol(symbol: IrSymbol) {
+            val descriptor = symbol.descriptor
+
+            if (descriptor.isJavaDescriptor()) {
+                // Wrap java declaration with lazy ir
+                if (symbol is IrFieldSymbol) {
+                    declareJavaFieldStub(symbol)
+                } else {
+                    stubGenerator.generateMemberStub(descriptor)
+                }
+                return
+            }
+
+            if (descriptor.isCleanDescriptor()) {
+                stubGenerator.generateMemberStub(descriptor)
+                return
+            }
+
+            super.declareIrSymbol(symbol)
+        }
+    }
+
+    private inner class MetadataJVMModuleDeserializer(moduleDescriptor: ModuleDescriptor, dependencies: List<IrModuleDeserializer>) :
+        IrModuleDeserializer(moduleDescriptor) {
+
+        // TODO: implement proper check whether `idSig` belongs to this module
+        override fun contains(idSig: IdSignature): Boolean = true
+
+        private val descriptorFinder = DescriptorByIdSignatureFinder(moduleDescriptor, manglerDesc)
+
+        private fun resolveDescriptor(idSig: IdSignature): DeclarationDescriptor {
+            return descriptorFinder.findDescriptorBySignature(idSig) ?: error("No descriptor found for $idSig")
+        }
+
+        override fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
+            val descriptor = resolveDescriptor(idSig)
+
+            val declaration = stubGenerator.run {
+                when (symbolKind) {
+                    BinarySymbolData.SymbolKind.CLASS_SYMBOL -> generateClassStub(descriptor as ClassDescriptor)
+                    BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> generatePropertyStub(descriptor as PropertyDescriptor)
+                    BinarySymbolData.SymbolKind.FUNCTION_SYMBOL -> generateFunctionStub(descriptor as FunctionDescriptor)
+                    BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> generateConstructorStub(descriptor as ClassConstructorDescriptor)
+                    BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> generateEnumEntryStub(descriptor as ClassDescriptor)
+                    BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL -> generateTypeAliasStub(descriptor as TypeAliasDescriptor)
+                    else -> error("Unexpected type $symbolKind for sig $idSig")
+                }
+            }
+
+            return declaration.symbol
+        }
+
+        override fun declareIrSymbol(symbol: IrSymbol) {
+            assert(symbol.isPublicApi || symbol.descriptor.isJavaDescriptor())
+            if (symbol is IrFieldSymbol) {
+                declareJavaFieldStub(symbol)
+            } else {
+                stubGenerator.generateMemberStub(symbol.descriptor)
+            }
+        }
+
+        override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns, emptyList())
+        override val moduleDependencies: Collection<IrModuleDeserializer> = dependencies
+
+    }
 }
