@@ -71,12 +71,12 @@ public class KotlinFindFunctionUsagesDialog extends FindMethodUsagesDialog {
         if (findWhatPanel != null) {
             Utils.renameCheckbox(
                     findWhatPanel,
-                    FindBundle.message("find.declaration.implementing.methods.checkbox"),
+                    FindBundle.message("find.what.implementing.methods.checkbox"),
                     KotlinBundle.message("find.declaration.implementing.methods.checkbox")
             );
             Utils.renameCheckbox(
                     findWhatPanel,
-                    FindBundle.message("find.declaration.overriding.methods.checkbox"),
+                    FindBundle.message("find.what.overriding.methods.checkbox"),
                     KotlinBundle.message("find.declaration.overriding.methods.checkbox")
             );
         }
@@ -90,7 +90,7 @@ public class KotlinFindFunctionUsagesDialog extends FindMethodUsagesDialog {
 
         if (!Utils.renameCheckbox(
                 optionsPanel,
-                FindBundle.message("find.declaration.include.overloaded.methods.checkbox"),
+                FindBundle.message("find.options.include.overloaded.methods.checkbox"),
                 KotlinBundle.message("find.declaration.include.overloaded.methods.checkbox")
         )) {
             addCheckboxToPanel(
