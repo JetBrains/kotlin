@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.asJava.elements.convertToLightAnnotationMemberValue
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
@@ -32,12 +31,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
 import org.jetbrains.kotlin.resolve.inline.isInlineOnly
-import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_OVERLOADS_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.annotations.STRICTFP_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.annotations.SYNCHRONIZED_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.annotations.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
-import org.jetbrains.kotlin.util.isOrdinaryClass
 
 internal class UltraLightMembersCreator(
     private val containingClass: KtLightClass,
@@ -72,8 +67,8 @@ internal class UltraLightMembersCreator(
         val fieldName = generateUniqueFieldName((variable.name ?: "") + (if (hasDelegate) "\$delegate" else ""), usedPropertyNames)
 
         val visibility = when {
-            variable.hasModifier(KtTokens.PRIVATE_KEYWORD) -> PsiModifier.PRIVATE
-            variable.hasModifier(KtTokens.LATEINIT_KEYWORD) || variable.isConstOrJvmField() -> {
+            variable.hasModifier(PRIVATE_KEYWORD) -> PsiModifier.PRIVATE
+            variable.hasModifier(LATEINIT_KEYWORD) || variable.isConstOrJvmField() -> {
                 val declaration = property?.setter ?: variable
                 declaration.simpleVisibility()
             }
@@ -87,7 +82,7 @@ internal class UltraLightMembersCreator(
             else -> error("Unexpected type of variable: ${variable::class.java}")
         }
 
-        if (!isMutable || variable.hasModifier(KtTokens.CONST_KEYWORD) || hasDelegate) {
+        if (!isMutable || variable.hasModifier(CONST_KEYWORD) || hasDelegate) {
             modifiers.add(PsiModifier.FINAL)
         }
 
@@ -99,8 +94,8 @@ internal class UltraLightMembersCreator(
     }
 
     private fun hasBackingField(property: KtProperty): Boolean {
-        if (property.hasModifier(KtTokens.ABSTRACT_KEYWORD)) return false
-        if (property.hasModifier(KtTokens.LATEINIT_KEYWORD) || property.accessors.isEmpty()) return true
+        if (property.hasModifier(ABSTRACT_KEYWORD)) return false
+        if (property.hasModifier(LATEINIT_KEYWORD) || property.accessors.isEmpty()) return true
 
         val context = LightClassGenerationSupport.getInstance(containingClass.project).analyze(property)
         val descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property)
@@ -282,13 +277,13 @@ internal class UltraLightMembersCreator(
                 if (forcePrivate || declaration.isPrivate() || accessedProperty?.isPrivate() == true) {
                     return name == PsiModifier.PRIVATE
                 }
-                if (declaration.hasModifier(KtTokens.PROTECTED_KEYWORD) || accessedProperty
-                        ?.hasModifier(KtTokens.PROTECTED_KEYWORD) == true
+                if (declaration.hasModifier(PROTECTED_KEYWORD) || accessedProperty
+                        ?.hasModifier(PROTECTED_KEYWORD) == true
                 ) {
                     return name == PsiModifier.PROTECTED
                 }
 
-                if (outerDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
+                if (outerDeclaration.hasModifier(OVERRIDE_KEYWORD)) {
                     when ((outerDeclaration.resolve() as? CallableDescriptor)?.visibility) {
                         Visibilities.PUBLIC -> return name == PsiModifier.PUBLIC
                         Visibilities.PRIVATE -> return name == PsiModifier.PRIVATE
@@ -301,7 +296,7 @@ internal class UltraLightMembersCreator(
 
             return when (name) {
                 PsiModifier.FINAL -> !containingClass.isInterface && outerDeclaration !is KtConstructor<*> && isFinal(outerDeclaration)
-                PsiModifier.ABSTRACT -> containingClass.isInterface || outerDeclaration.hasModifier(KtTokens.ABSTRACT_KEYWORD)
+                PsiModifier.ABSTRACT -> containingClass.isInterface || outerDeclaration.hasModifier(ABSTRACT_KEYWORD)
                 PsiModifier.STATIC -> forceStatic || containingClassIsNamedObject && (outerDeclaration.isJvmStatic(support) || declaration
                     .isJvmStatic(support))
                 PsiModifier.STRICTFP -> declaration is KtFunction && declaration.hasAnnotation(STRICTFP_ANNOTATION_FQ_NAME)
@@ -312,10 +307,10 @@ internal class UltraLightMembersCreator(
         }
 
         private fun KtDeclaration.isPrivate() =
-            hasModifier(KtTokens.PRIVATE_KEYWORD) || this is KtConstructor<*> && containingClassIsSealed || isInlineOnly()
+            hasModifier(PRIVATE_KEYWORD) || this is KtConstructor<*> && containingClassIsSealed || isInlineOnly()
 
         private fun KtDeclaration.isInlineOnly(): Boolean {
-            if (this !is KtCallableDeclaration || !hasModifier(KtTokens.INLINE_KEYWORD)) return false
+            if (this !is KtCallableDeclaration || !hasModifier(INLINE_KEYWORD)) return false
             if (annotationEntries.isEmpty()) return false
 
             val descriptor = resolve() as? CallableMemberDescriptor ?: return false
@@ -378,9 +373,9 @@ internal class UltraLightMembersCreator(
     }
 
     private tailrec fun isInternalNonPublishedApi(declaration: KtDeclaration): Boolean {
-        if (declaration.hasModifier(KtTokens.PRIVATE_KEYWORD) ||
-            declaration.hasModifier(KtTokens.PROTECTED_KEYWORD) ||
-            declaration.hasModifier(KtTokens.PUBLIC_KEYWORD)
+        if (declaration.hasModifier(PRIVATE_KEYWORD) ||
+            declaration.hasModifier(PROTECTED_KEYWORD) ||
+            declaration.hasModifier(PUBLIC_KEYWORD)
         ) {
             return false
         }
@@ -394,12 +389,12 @@ internal class UltraLightMembersCreator(
     private fun KtAnnotated.hasAnnotation(name: FqName) = support.findAnnotation(this, name) != null
 
     private fun isInternal(f: KtDeclaration): Boolean {
-        if (f.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
+        if (f.hasModifier(OVERRIDE_KEYWORD)) {
             val desc = f.resolve()
             return desc is CallableDescriptor &&
                     desc.visibility.effectiveVisibility(desc, false) == EffectiveVisibility.Internal
         }
-        return f.hasModifier(KtTokens.INTERNAL_KEYWORD)
+        return f.hasModifier(INTERNAL_KEYWORD)
     }
 
     fun propertyAccessors(
@@ -419,29 +414,36 @@ internal class UltraLightMembersCreator(
         val ktGetter = (declaration as? KtProperty)?.getter
         val ktSetter = (declaration as? KtProperty)?.setter
 
-        val isPrivate = !forceStatic && declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)
+        val isPrivate = !forceStatic && declaration.hasModifier(PRIVATE_KEYWORD)
         if (isPrivate && declaration !is KtProperty) return emptyList()
 
-        fun needsAccessor(accessor: KtPropertyAccessor?): Boolean {
-            if (!onlyJvmStatic || declaration.isJvmStatic(support) || accessor != null && accessor.isJvmStatic(support)) {
-                if (declaration is KtProperty && declaration.hasDelegate()) {
-                    return true
-                }
-                if (accessor?.hasModifier(KtTokens.PRIVATE_KEYWORD) == true || accessor
-                        ?.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) == true
-                ) {
-                    return false
-                }
-                if (!isPrivate || accessor?.hasBody() == true) {
-                    return true
-                }
+        fun needsAccessor(accessor: KtPropertyAccessor?, type: MethodType): Boolean {
+
+            if (onlyJvmStatic && !declaration.isJvmStatic(support) && !(accessor != null && accessor.isJvmStatic(support)))
+                return false
+
+            if (declaration is KtProperty && declaration.hasDelegate())
+                return true
+
+            if (accessor?.hasModifier(PRIVATE_KEYWORD) == true || accessor?.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) == true)
+                return false
+
+            if (isPrivate && accessor?.hasBody() != true) return false
+
+            if (!declaration.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)) return true
+
+            val annotated = (declaration.resolve() as? PropertyDescriptor) ?: return false
+            val propertyAnnotated = when (type) {
+                MethodType.GETTER -> annotated.getter
+                MethodType.SETTER -> annotated.setter
+                else -> throw NotImplementedError()
             }
-            return false
+            return propertyAnnotated?.hasJvmSyntheticAnnotation() != true
         }
 
         val result = arrayListOf<KtLightMethod>()
 
-        if (needsAccessor(ktGetter)) {
+        if (needsAccessor(ktGetter, MethodType.GETTER)) {
             val auxiliaryOrigin = ktGetter ?: declaration
             val lightMemberOrigin = LightMemberOriginForDeclaration(
                 originalElement = declaration,
@@ -473,7 +475,7 @@ internal class UltraLightMembersCreator(
             result.add(getterMethodResult)
         }
 
-        if (!createAsAnnotationMethod && mutable && needsAccessor(ktSetter)) {
+        if (!createAsAnnotationMethod && mutable && needsAccessor(ktSetter, MethodType.SETTER)) {
             val auxiliaryOrigin = ktSetter ?: declaration
             val lightMemberOrigin = LightMemberOriginForDeclaration(
                 originalElement = declaration,
@@ -521,15 +523,15 @@ internal class UltraLightMembersCreator(
         typeParameters.any { it.hasModifier(REIFIED_KEYWORD) }
 
     private fun KtCallableDeclaration.isConstOrJvmField() =
-        hasModifier(KtTokens.CONST_KEYWORD) || isJvmField()
+        hasModifier(CONST_KEYWORD) || isJvmField()
 
     private fun KtCallableDeclaration.isJvmField() = hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME)
 
     private fun isFinal(declaration: KtDeclaration): Boolean {
-        if (declaration.hasModifier(KtTokens.FINAL_KEYWORD)) return true
+        if (declaration.hasModifier(FINAL_KEYWORD)) return true
         return declaration !is KtPropertyAccessor &&
-                !declaration.hasModifier(KtTokens.OPEN_KEYWORD) &&
-                !declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD) &&
-                !declaration.hasModifier(KtTokens.ABSTRACT_KEYWORD)
+                !declaration.hasModifier(OPEN_KEYWORD) &&
+                !declaration.hasModifier(OVERRIDE_KEYWORD) &&
+                !declaration.hasModifier(ABSTRACT_KEYWORD)
     }
 }
