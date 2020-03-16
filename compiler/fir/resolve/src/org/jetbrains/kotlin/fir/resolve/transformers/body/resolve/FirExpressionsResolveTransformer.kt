@@ -37,10 +37,7 @@ import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
-import org.jetbrains.kotlin.fir.visitors.compose
-import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
@@ -188,7 +185,8 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         val numberOfStatements = block.statements.size
 
         block.transformStatementsIndexed(transformer) { index ->
-            if (index == numberOfStatements - 1) data else ResolutionMode.ContextIndependent
+            val value = if (index == numberOfStatements - 1) data else ResolutionMode.ContextIndependent
+            TransformData.Data(value)
         }
         block.transformAllStatementsExceptLast(integerLiteralTypeApproximator, builtinTypes.intType.type)
         block.transformOtherChildren(transformer, data)

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.TransformData
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.name.ClassId
 
@@ -64,19 +65,23 @@ fun buildErrorExpression(source: FirSourceElement?, diagnostic: FirDiagnostic): 
     }
 }
 
-fun <D : Any> FirBlock.transformStatementsIndexed(transformer: FirTransformer<D>, dataProducer: (Int) -> D?): FirBlock {
+fun <D> FirBlock.transformStatementsIndexed(transformer: FirTransformer<D>, dataProducer: (Int) -> TransformData<D>): FirBlock {
     when (this) {
         is FirBlockImpl -> statements.transformInplace(transformer, dataProducer)
         is FirSingleExpressionBlock -> {
-            dataProducer(0)?.let { transformStatements(transformer, it) }
+            (dataProducer(0) as? TransformData.Data<D>)?.value?.let { transformStatements(transformer, it) }
         }
     }
     return this
 }
 
-fun <D : Any> FirBlock.transformAllStatementsExceptLast(transformer: FirTransformer<D>, data: D): FirBlock {
+fun <D> FirBlock.transformAllStatementsExceptLast(transformer: FirTransformer<D>, data: D): FirBlock {
     val threshold = statements.size - 1
     return transformStatementsIndexed(transformer) { index ->
-        data.takeIf { index < threshold }
+        if (index < threshold) {
+            TransformData.Data(data)
+        } else {
+            TransformData.Nothing
+        }
     }
 }
