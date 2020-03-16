@@ -22,6 +22,6 @@ class KonanProjectDataService : AbstractProjectDataService<KonanModel, Module>()
         project: Project,
         modelsProvider: IdeModifiableModelsProvider
     ) {
-        GradleKonanWorkspace.getInstance(project).update()
+        GradleKonanWorkspace.getInstanceOrNull(project)?.update()
     }
 }

@@ -1,6 +1,6 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
   <xi:include href="/META-INF/KonanOCSwift.xml" xpointer="xpointer(/idea-plugin/*)"/>
-  <xi:include href="/META-INF/KonanDebugger.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/KonanCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <id>com.intellij.kotlin.mobile</id>
   <name>Mobile</name>
