@@ -65,11 +65,13 @@ internal class CallGenerator(
                 )
                 symbol is IrPropertySymbol && symbol.isBound -> {
                     val getter = symbol.owner.getter
-                    if (getter != null) {
-                        IrCallImpl(startOffset, endOffset, type, getter.symbol, origin = IrStatementOrigin.GET_PROPERTY)
-                    } else {
-                        IrErrorCallExpressionImpl(
-                            startOffset, endOffset, type, "No getter found for ${qualifiedAccess.calleeReference.render()}"
+                    val backingField = symbol.owner.backingField
+                    when {
+                        getter != null -> IrCallImpl(startOffset, endOffset, type, getter.symbol, origin = IrStatementOrigin.GET_PROPERTY)
+                        backingField != null -> IrGetFieldImpl(startOffset, endOffset, backingField.symbol, type)
+                        else -> IrErrorCallExpressionImpl(
+                            startOffset, endOffset, type,
+                            description = "No getter or backing field found for ${qualifiedAccess.calleeReference.render()}"
                         )
                     }
                 }
