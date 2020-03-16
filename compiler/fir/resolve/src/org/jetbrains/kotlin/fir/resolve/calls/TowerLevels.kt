@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.withNullability
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 interface TowerScopeLevel {
 
@@ -190,8 +189,11 @@ class ScopeTowerLevel(
             TowerScopeLevel.Token.Properties -> scope.processPropertiesByName(name) { candidate ->
                 empty = false
                 if (candidate.hasConsistentReceivers(extensionReceiver)) {
+                    val dispatchReceiverValue =
+                        if (candidate !is FirBackingFieldSymbol) null
+                        else bodyResolveComponents.implicitReceiverStack.lastDispatchReceiver()
                     processor.consumeCandidate(
-                        candidate as T, dispatchReceiverValue = null,
+                        candidate as T, dispatchReceiverValue,
                         implicitExtensionReceiverValue = extensionReceiver as? ImplicitReceiverValue<*>
                     )
                 }
