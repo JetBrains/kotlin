@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEdi
 import com.intellij.ui.JBColor
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ListSettingType
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
@@ -14,6 +13,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ValidationIndicator
 import java.awt.BorderLayout
+import java.awt.Dimension
 import javax.swing.BorderFactory
 import javax.swing.JComponent
 
@@ -21,7 +21,7 @@ class ModulesEditorComponent(
     context: Context,
     uiEditorUsagesStats: UiEditorUsageStats?,
     needBorder: Boolean,
-    editable: Boolean,
+    private val editable: Boolean,
     oneEntrySelected: (data: DisplayableSettingItem?) -> Unit
 ) : SettingComponent<List<Module>, ListSettingType<Module>>(KotlinPlugin::modules.reference, context) {
     private val tree: ModulesEditorTree =
@@ -67,9 +67,19 @@ class ModulesEditorComponent(
             if (needBorder) {
                 border = BorderFactory.createLineBorder(JBColor.border())
             }
-            add(if (editable) toolbarDecorator!!.createToolPanel() else tree, BorderLayout.CENTER)
+            add(createEditorComponent(), BorderLayout.CENTER)
         }
     }
 
+    private fun createEditorComponent() =
+        if (editable) toolbarDecorator!!.createToolPanel()
+        else tree.apply {
+            preferredSize = Dimension(TREE_WIDTH, tree.height)
+        }
+
     override val validationIndicator: ValidationIndicator? = null
+
+    companion object {
+        private const val TREE_WIDTH = 260
+    }
 }
