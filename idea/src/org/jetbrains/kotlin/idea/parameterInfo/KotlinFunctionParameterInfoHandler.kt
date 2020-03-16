@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.idea.parameterInfo
 import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.lang.parameterInfo.*
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
@@ -30,7 +28,6 @@ import com.intellij.ui.JBColor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
@@ -185,23 +182,12 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         val parameterIndex = getParameterIndex(context, argumentList)
         context.setCurrentParameter(parameterIndex)
 
-        val bindingContext = argumentList.analyze(BodyResolveMode.PARTIAL)
-        val call = findCall(argumentList, bindingContext) ?: return
-        val resolutionFacade = argumentList.getResolutionFacade()
+        runReadAction {
+            val bindingContext = argumentList.analyze(BodyResolveMode.PARTIAL)
+            val call = findCall(argumentList, bindingContext) ?: return@runReadAction
+            val resolutionFacade = argumentList.getResolutionFacade()
 
-        val task = Runnable {
-            runReadAction {
-                context.objectsToView.forEach { resolveCallInfo(it as CallInfo, call, bindingContext, resolutionFacade) }
-            }
-        }
-
-        if (ApplicationManager.getApplication()?.isDispatchThread == true) {
-            ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                task,
-                KotlinBundle.message("hints.progress.calculating.parameter.info"), true, argumentList.project
-            )
-        } else {
-            task.run()
+            context.objectsToView.forEach { resolveCallInfo(it as CallInfo, call, bindingContext, resolutionFacade) }
         }
     }
 
