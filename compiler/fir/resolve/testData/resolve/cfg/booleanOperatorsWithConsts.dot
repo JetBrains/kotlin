@@ -28,7 +28,7 @@ digraph booleanOperatorsWithConsts_kt {
             subgraph cluster_4 {
                 color=blue
                 12 [label="Enter block"];
-                13 [label="Const: IntegerLiteral(1)"];
+                13 [label="Const: Int(1)"];
                 14 [label="Exit block"];
             }
             15 [label="Exit when branch result"];
@@ -80,7 +80,7 @@ digraph booleanOperatorsWithConsts_kt {
             subgraph cluster_9 {
                 color=blue
                 30 [label="Enter block"];
-                31 [label="Const: IntegerLiteral(1)"];
+                31 [label="Const: Int(1)"];
                 32 [label="Exit block"];
             }
             33 [label="Exit when branch result"];
@@ -133,7 +133,7 @@ digraph booleanOperatorsWithConsts_kt {
             subgraph cluster_14 {
                 color=blue
                 48 [label="Enter block"];
-                49 [label="Const: IntegerLiteral(1)"];
+                49 [label="Const: Int(1)"];
                 50 [label="Exit block"];
             }
             51 [label="Exit when branch result"];
@@ -185,7 +185,7 @@ digraph booleanOperatorsWithConsts_kt {
             subgraph cluster_19 {
                 color=blue
                 66 [label="Enter block"];
-                67 [label="Const: IntegerLiteral(1)"];
+                67 [label="Const: Int(1)"];
                 68 [label="Exit block"];
             }
             69 [label="Exit when branch result"];
@@ -238,7 +238,7 @@ digraph booleanOperatorsWithConsts_kt {
             subgraph cluster_24 {
                 color=blue
                 84 [label="Enter block"];
-                85 [label="Const: IntegerLiteral(1)"];
+                85 [label="Const: Int(1)"];
                 86 [label="Exit block"];
             }
             87 [label="Exit when branch result"];
@@ -290,7 +290,7 @@ digraph booleanOperatorsWithConsts_kt {
             subgraph cluster_29 {
                 color=blue
                 102 [label="Enter block"];
-                103 [label="Const: IntegerLiteral(1)"];
+                103 [label="Const: Int(1)"];
                 104 [label="Exit block"];
             }
             105 [label="Exit when branch result"];
@@ -343,7 +343,7 @@ digraph booleanOperatorsWithConsts_kt {
             subgraph cluster_34 {
                 color=blue
                 120 [label="Enter block"];
-                121 [label="Const: IntegerLiteral(1)"];
+                121 [label="Const: Int(1)"];
                 122 [label="Exit block"];
             }
             123 [label="Exit when branch result"];
@@ -395,7 +395,7 @@ digraph booleanOperatorsWithConsts_kt {
             subgraph cluster_39 {
                 color=blue
                 138 [label="Enter block"];
-                139 [label="Const: IntegerLiteral(1)"];
+                139 [label="Const: Int(1)"];
                 140 [label="Exit block"];
             }
             141 [label="Exit when branch result"];

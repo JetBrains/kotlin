@@ -188,7 +188,14 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             val value = if (index == numberOfStatements - 1) data else ResolutionMode.ContextIndependent
             TransformData.Data(value)
         }
-        block.transformAllStatementsExceptLast(integerLiteralTypeApproximator, builtinTypes.intType.type)
+        if (data == ResolutionMode.ContextIndependent) {
+            block.transformStatements(integerLiteralTypeApproximator, null)
+        } else {
+            block.transformAllStatementsExceptLast(
+                integerLiteralTypeApproximator,
+                null
+            )
+        }
         block.transformOtherChildren(transformer, data)
 
         val resultExpression = when (val statement = block.statements.lastOrNull()) {
