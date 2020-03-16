@@ -7,18 +7,17 @@ package org.jetbrains.kotlin.fir.analysis.collectors.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
+import org.jetbrains.kotlin.fir.analysis.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.onSource
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.FirStubDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -62,6 +61,7 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             is FirVariableExpectedError -> Errors.VARIABLE_EXPECTED.onSource(source)
             is FirTypeMismatchError -> FirErrors.TYPE_MISMATCH.onSource(source, diagnostic.expectedType, diagnostic.actualType)
             is FirSimpleDiagnostic -> diagnostic.getFactory().onSource(source)
+            is FirDiagnosticWithParameters1<*> -> diagnostic.getFactory().tryOnSource(source, diagnostic.a)
             is FirStubDiagnostic -> null
             else -> throw IllegalArgumentException("Unsupported diagnostic type: ${diagnostic.javaClass}")
         }
@@ -85,6 +85,23 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             DiagnosticKind.RecursionInImplicitTypes -> FirErrors.RECURSION_IN_IMPLICIT_TYPES
             DiagnosticKind.Java -> FirErrors.ERROR_FROM_JAVA_RESOLUTION
             DiagnosticKind.Other -> FirErrors.OTHER_ERROR
+            else -> throw IllegalArgumentException("Unsupported diagnostic kind: $kind at $javaClass")
         } as DiagnosticFactory0<PsiElement>
+    }
+
+    private fun FirDiagnosticWithParameters1<*>.getFactory(): DiagnosticFactory1<PsiElement, Any?> {
+        @Suppress("UNCHECKED_CAST")
+        return when (kind) {
+            DiagnosticKind.SuperNotAllowed -> Errors.SUPER_IS_NOT_AN_EXPRESSION
+            else -> throw IllegalArgumentException("Unsupported diagnostic kind: $kind at $javaClass")
+        } as DiagnosticFactory1<PsiElement, Any?>
+    }
+
+    private inline fun <reified E : PsiElement, reified A> DiagnosticFactory1<E, A>.tryOnSource(
+        source: FirSourceElement,
+        a: Any?
+    ): ConeDiagnostic? {
+        val aa = a as? A ?: throw IllegalArgumentException("Parameter passed to the factory is of incompatible type!")
+        return onSource(source, aa)
     }
 }

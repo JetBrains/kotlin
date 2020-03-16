@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticWithParameters1
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -1487,6 +1488,13 @@ class RawFirBuilder(
 
                 null -> {
                     buildErrorNamedReference { diagnostic = FirSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax) } to null
+                }
+
+                is KtSuperExpression -> {
+                    buildErrorNamedReference {
+                        source = calleeExpression.toFirSourceElement()
+                        diagnostic = FirDiagnosticWithParameters1("Super cannot be a callee", calleeExpression.text, DiagnosticKind.SuperNotAllowed)
+                    } to null
                 }
 
                 else -> {

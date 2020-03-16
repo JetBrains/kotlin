@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticWithParameters1
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -465,11 +466,15 @@ class ExpressionsConverter(
         val valueArguments = mutableListOf<LighterASTNode>()
         var additionalArgument: FirExpression? = null
         var hasArguments = false
+        var superNode: LighterASTNode? = null
         callSuffix.forEachChildren { child ->
             fun process(node: LighterASTNode) {
                 when (node.tokenType) {
                     REFERENCE_EXPRESSION -> {
                         name = node.asText
+                    }
+                    SUPER_EXPRESSION -> {
+                        superNode = node
                     }
                     PARENTHESIZED -> node.getExpressionInParentheses()?.let { process(it) } ?: run {
                         additionalArgument = getAsFirExpression(node, "Incorrect invoke receiver")
@@ -495,7 +500,16 @@ class ExpressionsConverter(
             additionalArgument != null -> {
                 buildSimpleNamedReference { this.name = OperatorNameConventions.INVOKE } to additionalArgument!!
             }
-            else -> buildErrorNamedReference {diagnostic = FirSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax) } to null
+            superNode != null -> {
+                buildErrorNamedReference {
+                    val node = superNode!!
+                    source = node.toFirSourceElement()
+                    diagnostic = FirDiagnosticWithParameters1("Super cannot be a callee", node.asText, DiagnosticKind.SuperNotAllowed)
+                } to null
+            }
+            else -> buildErrorNamedReference {
+                diagnostic = FirSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax)
+            } to null
         }
 
         val builder: FirQualifiedAccessBuilder = if (hasArguments) {
