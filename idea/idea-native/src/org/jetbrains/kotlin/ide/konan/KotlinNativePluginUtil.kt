@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KotlinLibraryImpl
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
@@ -100,7 +101,7 @@ internal val VirtualFile.isKonanLibraryRoot: Boolean
                 return false
             }
 
-            return manifestProperties.containsKey(KLIB_PROPERTY_UNIQUE_NAME)
+            return manifestProperties.getProperty(KLIB_PROPERTY_BUILTINS_PLATFORM) == BuiltInsPlatform.NATIVE.name
         }
 
         // run check for library root too
