@@ -67,8 +67,15 @@ class JavaHomeFinderWindows : JavaHomeFinderBasic {
     try {
       val registryLines: CharSequence? = WindowsRegistryUtil.readRegistry(cmd)
       registryLines ?: return emptySet()
-      val paths = gatherHomePaths(registryLines)
-      return paths
+      val registeredPaths = gatherHomePaths(registryLines)
+      val folders: MutableSet<File> = TreeSet()
+      for (rp in registeredPaths) {
+        val r = File(rp)
+        val parent: File? = r.parentFile
+        if (parent != null && parent.exists()) folders.add(parent)
+        else if (r.exists()) folders.add(r)
+      }
+      return scanAll(folders, true)
     }
     catch (e: Exception) {
       logger.warn("Unable to detect registered JDK using the following command: $cmd", e)
