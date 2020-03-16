@@ -63,7 +63,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
                 val badRootsInRuntimeLibraries = findBadRootsInRuntimeLibraries(badRuntimeLibraries, badVersionedRoots)
                 val otherBadRootsCount = badVersionedRoots.size - badRootsInRuntimeLibraries.size
 
-                val text = KotlinJvmBundle.message(
+                val text = KotlinJvmBundle.htmlMessage(
                     "html.b.0.choice.0.1.1.some.kotlin.runtime.librar.0.choice.0.1.y.1.ies.b.1.choice.0.1.and.one.other.jar.1.and.1.other.jars.1.choice.0.has.0.have.an.unsupported.binary.format.html",
                     badRuntimeLibraries.size,
                     otherBadRootsCount
@@ -103,7 +103,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
                 when {
                     isPluginOldForAllRoots -> {
                         answer.setText(
-                            KotlinJvmBundle.message(
+                            KotlinJvmBundle.htmlMessage(
                                 "html.kotlin.library.b.0.b.was.compiled.with.a.newer.kotlin.compiler.and.can.t.be.read.please.update.kotlin.plugin.html",
                                 presentableName
                             )
@@ -113,7 +113,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
 
                     isPluginNewForAllRoots ->
                         answer.setText(
-                            KotlinJvmBundle.message(
+                            KotlinJvmBundle.htmlMessage(
                                 "html.kotlin.library.b.0.b.has.outdated.binary.format.and.can.t.be.read.by.current.plugin.please.update.the.library.html",
                                 presentableName
                             )

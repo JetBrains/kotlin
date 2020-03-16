@@ -47,7 +47,7 @@ object ReviewAddedImports {
                 removeImports(project, file, importsToBeDeleted)
                 return
             }
-            val notificationText = KotlinBundle.message("copy.paste.reference.notification", imported.size)
+            val notificationText = KotlinBundle.htmlMessage("copy.paste.reference.notification", imported.size)
             ApplicationManager.getApplication().invokeLater(
                 Runnable {
                     showHint(
