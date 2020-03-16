@@ -156,13 +156,6 @@ abstract class AbstractComposeLowering(
 
     fun KotlinType.toIrType(): IrType = typeTranslator.translateType(this)
 
-    fun IrValueParameter.isComposerParam(): Boolean =
-        (descriptor as? ValueParameterDescriptor)?.isComposerParam() ?: false
-
-    fun ValueParameterDescriptor.isComposerParam(): Boolean =
-        name == KtxNameConventions.COMPOSER_PARAMETER &&
-                type.constructor.declarationDescriptor?.fqNameSafe == ComposeFqNames.Composer
-
     fun IrAnnotationContainer.hasComposableAnnotation(): Boolean {
         return annotations.hasAnnotation(ComposeFqNames.Composable)
     }
@@ -354,3 +347,10 @@ abstract class AbstractComposeLowering(
         }
     }
 }
+
+fun IrValueParameter.isComposerParam(): Boolean =
+    (descriptor as? ValueParameterDescriptor)?.isComposerParam() ?: false
+
+fun ValueParameterDescriptor.isComposerParam(): Boolean =
+    name == KtxNameConventions.COMPOSER_PARAMETER &&
+            type.constructor.declarationDescriptor?.fqNameSafe == ComposeFqNames.Composer

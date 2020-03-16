@@ -946,7 +946,28 @@ private class IrSourcePrinterVisitor(
     }
 
     override fun visitTry(aTry: IrTry) {
-        print("<<TRY>>")
+        println("try {")
+        indented {
+            aTry.tryResult.print()
+        }
+        println()
+        if (aTry.catches.isNotEmpty()) {
+            aTry.catches.forEach {
+                println("} catch() {")
+                indented {
+                    it.print()
+                }
+                println()
+            }
+        }
+        aTry.finallyExpression?.let {
+            println("} finally {")
+            indented {
+                it.print()
+            }
+            println()
+        }
+        println("}")
     }
 
     override fun visitTypeAlias(declaration: IrTypeAlias) {

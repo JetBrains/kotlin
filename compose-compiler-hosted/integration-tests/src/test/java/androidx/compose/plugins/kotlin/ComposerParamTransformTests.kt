@@ -31,6 +31,7 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
             $source
         """.trimIndent(),
         expectedTransformed,
+        "",
         dumpTree
     )
 
