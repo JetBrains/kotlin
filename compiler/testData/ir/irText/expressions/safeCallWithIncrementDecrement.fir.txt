@@ -53,7 +53,10 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
       VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int? [val]
         CALL 'public final fun <get-p> (): kotlin.Int declared in test' type=kotlin.Int? origin=GET_PROPERTY
           $receiver: GET_VAR 'nc: test.C? declared in test.testProperty' type=test.C? origin=null
-      ERROR_CALL 'Unresolved reference: R|test/p|' type=IrErrorType
+      CALL 'public final fun <set-p> (value: kotlin.Int): kotlin.Unit declared in test' type=kotlin.Unit origin=EQ
+        $receiver: GET_VAR 'nc: test.C? declared in test.testProperty' type=test.C? origin=null
+        value: CALL 'public final fun inc (): kotlin.Int? [operator] declared in test' type=kotlin.Int? origin=null
+          $receiver: GET_VAR 'val tmp_0: kotlin.Int? [val] declared in test.testProperty' type=kotlin.Int? origin=null
       GET_VAR 'val tmp_0: kotlin.Int? [val] declared in test.testProperty' type=kotlin.Int? origin=null
   FUN name:testArrayAccess visibility:public modality:FINAL <> (nc:test.C?) returnType:kotlin.Unit
     VALUE_PARAMETER name:nc index:0 type:test.C?

@@ -89,4 +89,8 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
     VALUE_PARAMETER name:value index:0 type:<root>.IdType
     VALUE_PARAMETER name:cv index:1 type:<root>.CInt32VarX
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: R|/value|' type=IrErrorType
+      CALL 'public final fun <set-value> <T_INT> (value: T_INT of <root>.<get-value>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+        <T_INT>: <none>
+        $receiver: GET_VAR 'cv: <root>.CInt32VarX declared in <root>.foo' type=<root>.CInt32VarX origin=null
+        value: CALL 'public final fun <get-value> (): kotlin.Int declared in <root>.IdType' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR 'value: <root>.IdType declared in <root>.foo' type=<root>.IdType origin=null

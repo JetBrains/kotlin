@@ -54,9 +54,9 @@ FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
       $receiver: VALUE_PARAMETER name:<this> type:<root>.C<T of <root>.<get-y>>
       VALUE_PARAMETER name:v index:0 type:T of <root>.<get-y>
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.C visibility:private' type=kotlin.Unit origin=null
-          receiver: ERROR_CALL 'Unresolved reference: this@R|/y|' type=<root>.C<T of <root>.<get-y>>
-          value: GET_VAR 'v: T of <root>.<get-y> declared in <root>.<set-y>' type=T of <root>.<get-y> origin=null
+        CALL 'public final fun <set-x> (<set-?>: T of <root>.C): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=EQ
+          $this: ERROR_CALL 'Unresolved reference: this@R|/y|' type=<root>.C<T of <root>.<get-y>>
+          <set-?>: GET_VAR 'v: T of <root>.<get-y> declared in <root>.<set-y>' type=T of <root>.<get-y> origin=null
   FUN name:use visibility:public modality:FINAL <> (p:kotlin.reflect.KMutableProperty<kotlin.String>) returnType:kotlin.Unit
     VALUE_PARAMETER name:p index:0 type:kotlin.reflect.KMutableProperty<kotlin.String>
     BLOCK_BODY
