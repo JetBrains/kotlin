@@ -359,6 +359,9 @@ private fun KtFile.incOutOfBlockModificationCount() {
  * inBlockModifications is a collection of block elements those have in-block modifications
  */
 private val IN_BLOCK_MODIFICATIONS = Key<MutableCollection<KtElement>>("IN_BLOCK_MODIFICATIONS")
+private val FILE_IN_BLOCK_MODIFICATION_COUNT = Key<Long>("FILE_IN_BLOCK_MODIFICATION_COUNT")
+
+val KtFile.inBlockModificationCount: Long by NotNullableUserDataProperty(FILE_IN_BLOCK_MODIFICATION_COUNT, 0)
 
 val KtFile.inBlockModifications: Collection<KtElement>
     get() {
@@ -371,6 +374,8 @@ private fun KtFile.addInBlockModifiedItem(element: KtElement) {
     synchronized(collection) {
         collection.add(element)
     }
+    val count = getUserData(FILE_IN_BLOCK_MODIFICATION_COUNT) ?: 0
+    putUserData(FILE_IN_BLOCK_MODIFICATION_COUNT, count + 1)
 }
 
 fun KtFile.clearInBlockModifications() {
