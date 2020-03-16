@@ -17,12 +17,13 @@
 package androidx.compose.plugins.kotlin
 
 import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.compose.Composer
-import androidx.ui.core.makeCompositionForTesting
+import androidx.compose.Composition
+import androidx.compose.compositionFor
+import androidx.ui.node.UiComposer
 import org.robolectric.Robolectric
 import org.robolectric.RuntimeEnvironment
 
@@ -67,18 +68,17 @@ class RobolectricComposeTester internal constructor(
         val activity = controller.create().get()
         val root = activity.root
         scheduler.advanceToLastPostedRunnable()
-        val composition = makeCompositionForTesting(root, activity, null)
-        val composeMethod = composition.javaClass.methods.first {
-            if (it.name != "compose") false
-            else {
-                val param = it.parameters.getOrNull(0)
-                param?.type == Function1::class.java
-            }
+
+        val composition = compositionFor(root) { slotTable, recomposer ->
+            UiComposer(activity, root, slotTable, recomposer)
         }
-        composeMethod.invoke(composition, composable)
+        val setContentMethod = Composition::class.java.methods.first { it.name == "setContent" }
+        setContentMethod.isAccessible = true
+        fun setContent() { setContentMethod.invoke(composition, composable) }
+        setContent()
         scheduler.advanceToLastPostedRunnable()
         block(activity)
-        val advanceFn = advance ?: { composition.compose() }
+        val advanceFn = advance ?: { setContent() }
         return ActiveTest(activity, advanceFn)
     }
 }
