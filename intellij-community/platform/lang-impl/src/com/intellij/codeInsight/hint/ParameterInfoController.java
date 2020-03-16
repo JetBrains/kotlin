@@ -146,7 +146,6 @@ public class ParameterInfoController extends UserDataHolderBase implements Dispo
     myProvider = new MyBestLocationPointProvider(editor);
     myLbraceMarker = editor.getDocument().createRangeMarker(lbraceOffset, lbraceOffset);
     myComponent = new ParameterInfoComponent(descriptors, editor, handler, requestFocus, true);
-;
     myHint = createHint();
     myKeepOnHintHidden = !showHint;
     mySingleParameterInfo = !showHint;
