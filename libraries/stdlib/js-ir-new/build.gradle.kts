@@ -1,15 +1,97 @@
+import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
+import org.gradle.api.internal.artifacts.ArtifactAttributes
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.IR
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.Companion.attribute
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_API
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_RUNTIME
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute.Companion.jsCompilerAttribute
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute.legacy
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 
 plugins {
     kotlin("multiplatform")
+    `maven-publish`
 }
 
+apply<plugins.LegacyKotlinJsComponentPlugin>()
+
+
+var target: KotlinTarget? = null
+
 kotlin {
-    js(IR) {
+    target = js(IR) {
         nodejs()
+    }
+}
+
+val legacyApiElements by configurations.creating {
+    isCanBeResolved = false
+    isCanBeConsumed = true
+    attributes {
+        attribute(
+            USAGE_ATTRIBUTE,
+            target!!.project.objects.named(
+                Usage::class.java,
+                KOTLIN_API
+            )
+        )
+        attribute(attribute, target!!.platformType)
+        attribute(jsCompilerAttribute, legacy)
+    }
+}
+
+val legacyRuntimeElements by configurations.creating {
+    isCanBeResolved = false
+    isCanBeConsumed = true
+    attributes {
+        attribute(
+            USAGE_ATTRIBUTE,
+            target!!.project.objects.named(
+                Usage::class.java,
+                KOTLIN_RUNTIME
+            )
+        )
+        attribute(attribute, target!!.platformType)
+        attribute(jsCompilerAttribute, legacy)
+    }
+}
+
+val task = tasks.getByPath(":kotlin-stdlib-js:libraryJarWithoutIr")
+
+val legacyArtifact = artifacts.add(Dependency.ARCHIVES_CONFIGURATION, task, Action<ConfigurablePublishArtifact> {
+    this.builtBy(task)
+    this.type = ArtifactTypeDefinition.JAR_TYPE
+
+    addJar(legacyApiElements, this)
+
+    addJar(legacyRuntimeElements, this)
+})
+
+fun addJar(configuration: Configuration, jarArtifact: PublishArtifact) {
+    val publications = configuration.outgoing
+
+    // Configure an implicit variant
+    publications.artifacts.add(jarArtifact)
+    publications.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, ArtifactTypeDefinition.JAR_TYPE)
+}
+
+val adhocComponent = components.getByName("myAdhocComponent") as AdhocComponentWithVariants
+adhocComponent.addVariantsFromConfiguration(legacyRuntimeElements) {
+    mapToMavenScope("runtime")
+}
+
+adhocComponent.addVariantsFromConfiguration(legacyApiElements) {
+    mapToMavenScope("compile")
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("jsNew") {
+            from(adhocComponent)
+        }
     }
 }
 
