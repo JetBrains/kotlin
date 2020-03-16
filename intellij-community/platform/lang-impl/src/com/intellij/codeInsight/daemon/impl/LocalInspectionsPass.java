@@ -707,18 +707,20 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
     List<LocalInspectionToolWrapper> enabled = new ArrayList<>();
     for (InspectionToolWrapper toolWrapper : toolWrappers) {
       ProgressManager.checkCanceled();
+      if (toolWrapper instanceof LocalInspectionToolWrapper && !isAcceptableLocalTool((LocalInspectionToolWrapper)toolWrapper)) {
+        continue;
+      }
       final HighlightDisplayKey key = HighlightDisplayKey.find(toolWrapper.getShortName());
       if (!profile.isToolEnabled(key, getFile())) continue;
       if (HighlightDisplayLevel.DO_NOT_SHOW.equals(profile.getErrorLevel(key, getFile()))) continue;
-      LocalInspectionToolWrapper wrapper = null;
+      LocalInspectionToolWrapper wrapper;
       if (toolWrapper instanceof LocalInspectionToolWrapper) {
         wrapper = (LocalInspectionToolWrapper)toolWrapper;
       }
-      else if (toolWrapper instanceof GlobalInspectionToolWrapper) {
-        final GlobalInspectionToolWrapper globalInspectionToolWrapper = (GlobalInspectionToolWrapper)toolWrapper;
-        wrapper = globalInspectionToolWrapper.getSharedLocalInspectionToolWrapper();
+      else {
+        wrapper = ((GlobalInspectionToolWrapper)toolWrapper).getSharedLocalInspectionToolWrapper();
+        if (wrapper == null || !isAcceptableLocalTool(wrapper)) continue;
       }
-      if (wrapper == null) continue;
       String language = wrapper.getLanguage();
       if (language != null && Language.findLanguageByID(language) == null) {
         continue; // filter out at least unknown languages
@@ -729,6 +731,10 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
       enabled.add(wrapper);
     }
     return enabled;
+  }
+
+  protected boolean isAcceptableLocalTool(LocalInspectionToolWrapper wrapper) {
+    return true;
   }
 
   private void doInspectInjectedPsi(@NotNull PsiFile injectedPsi,

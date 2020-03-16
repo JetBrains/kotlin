@@ -90,11 +90,15 @@ final class WholeFileLocalInspectionsPassFactory implements TextEditorHighlighti
     ProperTextRange visibleRange = VisibleHighlightingPassFactory.calculateVisibleRange(editor);
     return new LocalInspectionsPass(file, editor.getDocument(), 0, file.getTextLength(), visibleRange, true,
                                     new DefaultHighlightInfoProcessor(), false) {
+      @Override
+      protected boolean isAcceptableLocalTool(LocalInspectionToolWrapper wrapper) {
+        return wrapper.runForWholeFile();
+      }
+
       @NotNull
       @Override
       List<LocalInspectionToolWrapper> getInspectionTools(@NotNull InspectionProfileWrapper profile) {
-        List<LocalInspectionToolWrapper> tools = super.getInspectionTools(profile);
-        List<LocalInspectionToolWrapper> result = ContainerUtil.filter(tools, LocalInspectionToolWrapper::runForWholeFile);
+        List<LocalInspectionToolWrapper> result = super.getInspectionTools(profile);
         if (result.isEmpty()) {
           synchronized (mySkipWholeInspectionsCache) {
             mySkipWholeInspectionsCache.add(file);
