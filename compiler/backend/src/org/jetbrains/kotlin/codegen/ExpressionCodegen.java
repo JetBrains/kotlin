@@ -1023,7 +1023,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull FunctionDescriptor descriptor,
             @NotNull FunctionGenerationStrategy strategy,
             @Nullable SamType samType,
-            @Nullable FunctionDescriptor functionReferenceTarget,
+            @Nullable ResolvedCall<FunctionDescriptor> functionReferenceCall,
             @Nullable StackValue functionReferenceReceiver
     ) {
         ClassBuilder cv = state.getFactory().newVisitor(
@@ -1038,8 +1038,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 descriptor, this, state.getTypeMapper()
         ) : this.context.intoClosure(descriptor, this, typeMapper);
         ClosureCodegen closureCodegen = coroutineCodegen != null ? coroutineCodegen : new ClosureCodegen(
-                state, declaration, samType, closureContext,
-                functionReferenceTarget, strategy, parentCodegen, cv
+                state, declaration, samType, closureContext, functionReferenceCall, strategy, parentCodegen, cv
         );
 
         closureCodegen.generate();
@@ -3261,6 +3260,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public StackValue visitCallableReferenceExpression(@NotNull KtCallableReferenceExpression expression, StackValue data) {
         ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(expression.getCallableReference(), bindingContext);
 
@@ -3274,10 +3274,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     null, false
             );
 
-            return genClosure(
-                    expression, functionDescriptor, strategy, null,
-                    (FunctionDescriptor) resolvedCall.getResultingDescriptor(), receiver
-            );
+            return genClosure(expression, functionDescriptor, strategy, null, (ResolvedCall<FunctionDescriptor>) resolvedCall, receiver);
         }
 
         return generatePropertyReference(
