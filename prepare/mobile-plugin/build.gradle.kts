@@ -1,7 +1,6 @@
 import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
 import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 import org.gradle.jvm.tasks.Jar
-import java.net.URL
 
 plugins {
     kotlin("jvm")
@@ -10,6 +9,7 @@ plugins {
 
 val mobilePluginDir: File by rootProject.extra
 val mobilePluginZipPath: File by rootProject.extra
+val cidrVersion: String by rootProject.extra
 val kotlinNativeBackendVersion: String by rootProject.extra
 
 repositories {
@@ -25,6 +25,9 @@ dependencies {
     runtime(project(":kotlin-ultimate:ide:common-cidr-native")) { isTransitive = false }
     runtime(project(":kotlin-ultimate:ide:common-cidr-swift-native")) { isTransitive = false }
     embedded(project(":kotlin-ultimate:ide:mobile-native")) { isTransitive = false }
+    runtime(project(":kotlin-android-extensions-runtime"))
+    runtime(project(":plugins:android-extensions-compiler"))
+    runtime("com.jetbrains.intellij.android:android-kotlin-extensions-common:$cidrVersion") { isTransitive = false }
     runtime("com.android.tools.ddms:ddmlib:26.0.0") {
         exclude("com.google.guava", "guava")
     }
