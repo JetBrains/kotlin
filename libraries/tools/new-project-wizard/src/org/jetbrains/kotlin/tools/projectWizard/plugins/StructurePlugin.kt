@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.PomIR
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import java.nio.file.Paths
 
@@ -15,7 +16,10 @@ class StructurePlugin(context: Context) : Plugin(context) {
     val projectPath by pathSetting("Location", GenerationPhase.PROJECT_GENERATION) {
         defaultValue = value(Paths.get("."))
     }
-    val name by stringSetting("Name", GenerationPhase.PROJECT_GENERATION)
+    val name by stringSetting("Name", GenerationPhase.PROJECT_GENERATION) {
+        shouldNotBeBlank()
+        validate(StringValidators.shouldBeValidIdentifier("Name", Module.ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES))
+    }
 
     val groupId by stringSetting("Group ID", GenerationPhase.PROJECT_GENERATION) {
         isSavable = true

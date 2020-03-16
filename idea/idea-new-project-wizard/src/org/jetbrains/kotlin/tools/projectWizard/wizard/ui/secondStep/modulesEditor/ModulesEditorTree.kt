@@ -3,23 +3,28 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEdi
 import com.intellij.icons.AllIcons
 import com.intellij.ui.ColoredTreeCellRenderer
 import com.intellij.ui.SimpleTextAttributes
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.treeStructure.Tree
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.path
-import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardBundle
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.borderPanel
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.icon
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import java.awt.Component
+import java.awt.Graphics2D
 import javax.swing.JComponent
+import javax.swing.JLabel
 import javax.swing.JTree
-import javax.swing.tree.DefaultMutableTreeNode
-import javax.swing.tree.DefaultTreeModel
-import javax.swing.tree.TreePath
-import javax.swing.tree.TreeSelectionModel
+import javax.swing.tree.*
 
 class ModulesEditorTree(
     private val onSelected: (DisplayableSettingItem?) -> Unit,
+    context: Context,
+    isTreeEditable: Boolean,
     private val addModule: (JComponent) -> Unit
 ) : Tree(DefaultMutableTreeNode(PROJECT_USER_OBJECT)) {
     val model: DefaultTreeModel get() = super.getModel() as DefaultTreeModel
@@ -64,41 +69,81 @@ class ModulesEditorTree(
         }
 
         emptyText.clear()
-        emptyText.appendText(KotlinNewProjectWizardBundle.message("editor.no.modules.created"))
+        emptyText.appendText("No modules created")
         emptyText.appendSecondaryText(
-            KotlinNewProjectWizardBundle.message("editor.add.module.to.project"),
+            "Add a module to the project",
             SimpleTextAttributes.LINK_PLAIN_ATTRIBUTES
         ) {
             addModule(this)
         }
 
-        setCellRenderer(object : ColoredTreeCellRenderer() {
-            override fun customizeCellRenderer(
-                tree: JTree,
-                value: Any?,
-                selected: Boolean,
-                expanded: Boolean,
-                leaf: Boolean,
-                row: Int,
-                hasFocus: Boolean
-            ) {
-                if (value?.safeAs<DefaultMutableTreeNode>()?.userObject == PROJECT_USER_OBJECT) {
-                    icon = AllIcons.Nodes.Project
-                    append(KotlinNewProjectWizardBundle.message("editor.project"))
-                    return
-                }
-                val setting = (value as? DefaultMutableTreeNode)?.userObject as? DisplayableSettingItem ?: return
-                icon = when (setting) {
-                    is Module -> setting.icon
-                    is Sourceset -> AllIcons.Nodes.Module
-                    else -> null
-                }
-                append(setting.text)
-                setting.greyText?.let { greyText ->
-                    append(" ")
-                    append(greyText, SimpleTextAttributes.GRAYED_ATTRIBUTES)
+        setCellRenderer(CellRenderer(context, renderErrors = isTreeEditable))
+    }
+}
+
+private class CellRenderer(private val context: Context, renderErrors: Boolean) : TreeCellRenderer {
+    override fun getTreeCellRendererComponent(
+        tree: JTree?,
+        value: Any?,
+        selected: Boolean,
+        expanded: Boolean,
+        leaf: Boolean,
+        row: Int,
+        hasFocus: Boolean
+    ): Component {
+        setError(null)
+        val renderedCell = coloredCellRenderer.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus)
+        return borderPanel {
+            addToCenter(renderedCell)
+            addToRight(iconLabel)
+        }
+    }
+
+    private val iconLabel = JBLabel("")
+
+    private fun setError(error: ValidationResult.ValidationError?) {
+        val message = error?.messages?.firstOrNull()
+        if (message == null) {
+            iconLabel.icon = null
+        } else {
+            iconLabel.icon = AllIcons.General.Error
+        }
+    }
+
+    private val coloredCellRenderer = object : ColoredTreeCellRenderer() {
+        override fun customizeCellRenderer(
+            tree: JTree,
+            value: Any?,
+            selected: Boolean,
+            expanded: Boolean,
+            leaf: Boolean,
+            row: Int,
+            hasFocus: Boolean
+        ) {
+            if (value?.safeAs<DefaultMutableTreeNode>()?.userObject == ModulesEditorTree.PROJECT_USER_OBJECT) {
+                icon = AllIcons.Nodes.Project
+                append("Project")
+                return
+            }
+            val setting = (value as? DefaultMutableTreeNode)?.userObject as? DisplayableSettingItem ?: return
+            icon = when (setting) {
+                is Module -> setting.icon
+                is Sourceset -> AllIcons.Nodes.Module
+                else -> null
+            }
+            append(setting.text)
+            setting.greyText?.let { greyText ->
+                append(" ")
+                append(greyText, SimpleTextAttributes.GRAYED_ATTRIBUTES)
+            }
+            if (renderErrors) {
+                if (setting is Module) context.read {
+                    val validationResult = setting.validator.validate(this, setting)
+                    setError(validationResult as? ValidationResult.ValidationError)
+                } else {
+                    setError(null)
                 }
             }
-        })
+        }
     }
 }

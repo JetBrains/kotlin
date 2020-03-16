@@ -1,8 +1,10 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEditor
 
 import com.intellij.ui.JBColor
+import com.intellij.util.ui.JBUI
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ListSettingType
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
@@ -27,6 +29,8 @@ class ModulesEditorComponent(
     private val tree: ModulesEditorTree =
         ModulesEditorTree(
             onSelected = { oneEntrySelected(it) },
+            context = context,
+            isTreeEditable = editable,
             addModule = { component ->
                 val isMppProject = KotlinPlugin::projectKind.value == ProjectKind.Singleplatform
                 moduleCreator.create(
@@ -39,7 +43,9 @@ class ModulesEditorComponent(
                     createModule = model::add
                 )?.showInCenterOf(component)
             }
-        )
+        ).apply {
+            border = JBUI.Borders.emptyRight(10)
+        }
 
     private val model = TargetsModel(tree, ::value, context, uiEditorUsagesStats)
 
@@ -50,6 +56,11 @@ class ModulesEditorComponent(
 
     fun updateModel() {
         model.update()
+    }
+
+    override fun navigateTo(error: ValidationResult.ValidationError) {
+        val targetModule = error.target as? Module ?: return
+        tree.selectModule(targetModule)
     }
 
     private val moduleCreator = NewModuleCreator()

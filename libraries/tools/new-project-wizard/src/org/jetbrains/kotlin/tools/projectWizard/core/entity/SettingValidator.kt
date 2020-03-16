@@ -61,7 +61,7 @@ sealed class ValidationResult {
 
     infix fun and(other: ValidationResult) = when {
         this is OK -> other
-        this is ValidationError && other is ValidationError -> ValidationError(messages + other.messages)
+        this is ValidationError && other is ValidationError -> ValidationError(messages + other.messages, target ?: other.target)
         else -> this
     }
 

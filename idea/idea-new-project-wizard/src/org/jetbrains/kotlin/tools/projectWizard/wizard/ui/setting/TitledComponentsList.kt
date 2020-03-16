@@ -9,10 +9,6 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.TitledComponent
 
-interface ErrorAwareComponent {
-    fun findComponentWithError(error: ValidationResult.ValidationError): FocusableComponent?
-}
-
 class TitledComponentsList(
     private var components: List<TitledComponent>,
     private val context: Context
@@ -24,6 +20,10 @@ class TitledComponentsList(
     }
 
     override val component get() = ui
+
+    override fun navigateTo(error: ValidationResult.ValidationError) {
+        components.forEach { it.navigateTo(error) }
+    }
 
     override fun onInit() {
         super.onInit()

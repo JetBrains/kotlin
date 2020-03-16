@@ -61,11 +61,8 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
     companion object {
         const val MODULE_BUILDER_ID = "kotlin.newProjectWizard.builder"
         private const val DEFAULT_GROUP_ID = "me.user"
-        private val projectNameValidator = StringValidators.shouldBeValidIdentifier(
-            KotlinNewProjectWizardBundle.message("editor.entity.project.name"),
-            setOf('-', '_')
-        )
-        private val INVALID_PROJECT_NAME_MESSAGE = KotlinNewProjectWizardBundle.message("error.invalid.project.name")
+        private val projectNameValidator = StringValidators.shouldBeValidIdentifier("Project name", setOf('-', '_'))
+        private const val INVALID_PROJECT_NAME_MESSAGE = "Invalid project name"
     }
 
     override fun isAvailable(): Boolean = ExperimentalFeatures.NewWizard.isEnabled
@@ -96,7 +93,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
             phases = GenerationPhase.startingFrom(GenerationPhase.FIRST_STEP)
         ).onFailure { errors ->
             val errorMessages = errors.joinToString(separator = "\n") { it.message }
-            Messages.showErrorDialog(project, errorMessages, KotlinNewProjectWizardBundle.message("error.following"))
+            Messages.showErrorDialog(project, errorMessages, "The following errors arose during project generation")
         }.isSuccess
         if (success) {
             val projectCreationStats = ProjectCreationStats(
@@ -186,11 +183,16 @@ abstract class WizardStep(protected val wizard: IdeWizard, private val phase: Ge
     override fun updateDataModel() = Unit // model is updated on every UI action
     override fun validate(): Boolean =
         when (val result = wizard.context.read { with(wizard) { validate(setOf(phase)) } }) {
-            is Success<*> -> true
-            is Failure -> {
-                throw ConfigurationException(result.asHtml(), KotlinNewProjectWizardBundle.message("error.validation"))
+            ValidationResult.OK -> true
+            is ValidationResult.ValidationError -> {
+                handleErrors(result)
+                false
             }
         }
+
+    protected open fun handleErrors(error: ValidationResult.ValidationError) {
+        throw ConfigurationException(error.asHtml(), "Validation Error")
+    }
 }
 
 private class PomWizardStep(
@@ -255,5 +257,9 @@ class ModuleNewWizardSecondStep(
 
     override fun _init() {
         component.onInit()
+    }
+
+    override fun handleErrors(error: ValidationResult.ValidationError) {
+        component.navigateTo(error)
     }
 }

@@ -5,12 +5,13 @@ import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.SettingsWriter
 import org.jetbrains.kotlin.tools.projectWizard.core.Writer
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSettingPropertyReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 
-abstract class Component : Displayable {
+abstract class Component : Displayable, ErrorNavigatable {
     private val subComponents = mutableListOf<Component>()
 
     open fun onInit() {
@@ -19,6 +20,10 @@ abstract class Component : Displayable {
 
     protected fun <C : Component> C.asSubComponent(): C = also {
         this@Component.subComponents += it
+    }
+
+    override fun navigateTo(error: ValidationResult.ValidationError) {
+        subComponents.forEach { it.navigateTo(error) }
     }
 }
 
@@ -66,4 +71,8 @@ abstract class TitledComponent(context: Context) : DynamicComponent(context) {
 
 interface FocusableComponent {
     fun focusOn() {}
+}
+
+interface ErrorNavigatable {
+    fun navigateTo(error: ValidationResult.ValidationError)
 }

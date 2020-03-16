@@ -39,13 +39,13 @@ abstract class Wizard(createPlugins: PluginsCreator, servicesManager: ServicesMa
         }
     }
 
-    fun validate(phases: Set<GenerationPhase>): TaskResult<Unit> = context.read {
+    fun validate(phases: Set<GenerationPhase>): ValidationResult = context.read {
         pluginSettings.map { setting ->
             val value = setting.reference.notRequiredSettingValue ?: return@map ValidationResult.OK
             if (setting.neededAtPhase in phases && setting.isActive(this))
                 (setting.validator as SettingValidator<Any>).validate(this, value)
             else ValidationResult.OK
-        }.fold().toResult()
+        }.fold()
     }
 
     private fun saveSettingValues(phases: Set<GenerationPhase>) = context.read {
@@ -69,7 +69,7 @@ abstract class Wizard(createPlugins: PluginsCreator, servicesManager: ServicesMa
         initPluginSettingsDefaultValues()
         initNonPluginDefaultValues()
         checkAllRequiredSettingPresent(phases).ensure()
-        validate(phases).ensure()
+        validate(phases).toResult().ensure()
         saveSettingValues(phases)
         val (tasksSorted) = context.sortTasks().map { tasks ->
             tasks.groupBy { it.phase }.toList().sortedBy { it.first }.flatMap { it.second }

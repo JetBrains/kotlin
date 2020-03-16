@@ -65,7 +65,7 @@ class ModuleSettingsComponent(
 }
 
 private class ModuleNameComponent(context: Context, module: Module) : TitledComponent(context) {
-    override val component: JComponent = TextFieldComponent(
+    private val textField = TextFieldComponent(
         context,
         labelText = null,
         initialValue = module.name,
@@ -73,7 +73,10 @@ private class ModuleNameComponent(context: Context, module: Module) : TitledComp
     ) { value ->
         module.name = value
         context.write { eventManager.fireListeners(null) }
-    }.component
+    }.asSubComponent()
+
+    override val component: JComponent
+        get() = textField.component
 
     override val title: String = "Name"
 
@@ -91,7 +94,7 @@ private class ModuleTemplateComponent(
     onTemplateChanged: () -> Unit
 ) : TitledComponent(context) {
     @OptIn(ExperimentalStdlibApi::class)
-    override val component = DropDownComponent(
+    private val dropDown = DropDownComponent(
         context,
         initialValues = buildList {
             add(NoneTemplate)
@@ -102,7 +105,10 @@ private class ModuleTemplateComponent(
     ) { value ->
         module.template = value.takeIf { it != NoneTemplate }
         onTemplateChanged()
-    }.component
+    }.asSubComponent()
+
+    override val component: JComponent
+        get() = dropDown.component
 
     override val title: String = "Template"
 

@@ -15,6 +15,7 @@ import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.components.BorderLayoutPanel
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.tools.projectWizard.core.Failure
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.SimpleTargetConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.TargetConfigurator
@@ -69,11 +70,11 @@ internal fun hyperlinkLabel(
 
 internal fun String.asHtml() = "<html><body>$this</body></html>"
 
-fun Failure.asHtml() = when (errors.size) {
+fun ValidationResult.ValidationError.asHtml() = when (messages.size) {
     0 -> ""
-    1 -> errors.single().message
+    1 -> messages.single()
     else -> {
-        val errorsList = errors.joinToString(separator = "") { "<li>${it.message}</li>" }
+        val errorsList = messages.joinToString(separator = "") { "<li>${it}</li>" }
         "<ul>$errorsList</ul>".asHtml()
     }
 }

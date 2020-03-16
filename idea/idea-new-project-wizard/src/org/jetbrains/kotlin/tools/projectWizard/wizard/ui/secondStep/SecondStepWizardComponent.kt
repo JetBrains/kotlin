@@ -24,6 +24,11 @@ class SecondStepWizardComponent(
         addToCenter(moduleSettingsComponent.component)
     }
 
+    override fun navigateTo(error: ValidationResult.ValidationError) {
+        moduleEditorComponent.navigateTo(error)
+        moduleSettingsComponent.navigateTo(error)
+    }
+
     private fun onNodeSelected(data: DisplayableSettingItem?) {
         moduleSettingsComponent.selectedNode = data
     }

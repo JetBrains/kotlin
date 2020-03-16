@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.label
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ErrorAwareComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.IdeaBasedComponentValidator
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -27,7 +26,7 @@ abstract class UIComponent<V : Any>(
     labelText: String? = null,
     private val validator: SettingValidator<V>? = null,
     private val onValueUpdate: (V) -> Unit = {}
-) : DynamicComponent(context), ErrorAwareComponent, FocusableComponent, Disposable {
+) : DynamicComponent(context), FocusableComponent, Disposable {
     private val validationIndicator by lazy(LazyThreadSafetyMode.NONE) {
         if (validator != null)
             IdeaBasedComponentValidator(this, getValidatorTarget())
@@ -83,9 +82,13 @@ abstract class UIComponent<V : Any>(
         uiComponent.requestFocus()
     }
 
-    override fun findComponentWithError(error: ValidationResult.ValidationError): FocusableComponent? = takeIf {
-        read {
+
+    override fun navigateTo(error: ValidationResult.ValidationError) {
+        val errorInThisComponent = read {
             getUiValue()?.let { validator?.validate?.invoke(this, it)?.isSpecificError(error) } == true
+        }
+        if (errorInThisComponent) {
+            focusOn()
         }
     }
 }
