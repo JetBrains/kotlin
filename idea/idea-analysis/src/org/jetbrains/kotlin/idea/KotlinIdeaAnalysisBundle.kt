@@ -17,7 +17,7 @@ object KotlinIdeaAnalysisBundle : AbstractKotlinBundle(BUNDLE) {
 
     @JvmStatic
     fun htmlMessage(@NonNls @PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String =
-        "<html>" + getMessage(key, *params) + "</html>"
+        getMessage(key, *params).withHtml()
 
     @JvmStatic
     fun lazyMessage(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): () -> String = { getMessage(key, *params) }

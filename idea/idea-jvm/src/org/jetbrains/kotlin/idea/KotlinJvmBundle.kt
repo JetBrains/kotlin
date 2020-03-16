@@ -15,4 +15,8 @@ private const val BUNDLE = "messages.KotlinJvmBundle"
 object KotlinJvmBundle : AbstractKotlinBundle(BUNDLE) {
     @JvmStatic
     fun message(@NonNls @PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String = getMessage(key, *params)
+
+    @JvmStatic
+    fun htmlMessage(@NonNls @PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String =
+        getMessage(key, *params).withHtml()
 }

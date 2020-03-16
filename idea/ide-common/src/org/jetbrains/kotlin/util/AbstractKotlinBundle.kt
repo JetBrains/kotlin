@@ -7,4 +7,6 @@ package org.jetbrains.kotlin.util
 
 import com.intellij.AbstractBundle
 
-abstract class AbstractKotlinBundle protected constructor(pathToBundle: String) : AbstractBundle(pathToBundle)
+abstract class AbstractKotlinBundle protected constructor(pathToBundle: String) : AbstractBundle(pathToBundle) {
+    protected fun String.withHtml(): String = "<html>$this</html>"
+}
