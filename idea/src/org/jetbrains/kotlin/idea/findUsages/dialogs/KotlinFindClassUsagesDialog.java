@@ -117,8 +117,8 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
                 KotlinBundle.message("find.declaration.properties.usages.checkbox")
         );
         Utils.removeCheckbox(findWhatPanel, FindBundle.message("find.what.implementing.classes.checkbox"));
-        Utils.removeCheckbox(findWhatPanel, FindBundle.message("find.declaration.derived.interfaces.checkbox"));
-        Utils.removeCheckbox(findWhatPanel, FindBundle.message("find.declaration.derived.classes.checkbox"));
+        Utils.removeCheckbox(findWhatPanel, FindBundle.message("find.what.derived.interfaces.checkbox"));
+        Utils.removeCheckbox(findWhatPanel, FindBundle.message("find.what.derived.classes.checkbox"));
 
         derivedClasses = addCheckboxToPanel(
                 KotlinBundle.message("find.declaration.derived.classes.checkbox"),
