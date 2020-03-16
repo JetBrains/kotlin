@@ -7,11 +7,11 @@ import com.intellij.util.io.DataInputOutputUtil;
 import java.io.*;
 
 class PersistentIndicesConfiguration {
-  private static final int INDICES_CONFIGURATION_VERSION = 1;
+  private static final int BASE_INDICES_CONFIGURATION_VERSION = 1;
 
   static void saveConfiguration() {
     try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(indicesConfigurationFile())))) {
-      DataInputOutputUtil.writeINT(out, INDICES_CONFIGURATION_VERSION);
+      DataInputOutputUtil.writeINT(out, getIndexesConfigurationVersion());
       IndexingStamp.savePersistentIndexStamp(out);
     }
     catch (IOException ignored) {
@@ -20,12 +20,20 @@ class PersistentIndicesConfiguration {
 
   static void loadConfiguration() {
     try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(indicesConfigurationFile())))) {
-      if (DataInputOutputUtil.readINT(in) == INDICES_CONFIGURATION_VERSION) {
+      if (DataInputOutputUtil.readINT(in) == getIndexesConfigurationVersion()) {
         IndexingStamp.initPersistentIndexStamp(in);
       }
     }
     catch (IOException ignored) {
     }
+  }
+
+  private static int getIndexesConfigurationVersion() {
+    int version = BASE_INDICES_CONFIGURATION_VERSION;
+    for (FileBasedIndexInfrastructureExtension ex : FileBasedIndexInfrastructureExtension.EP_NAME.getExtensions()) {
+      version = 31 * version + ex.getVersion();
+    }
+    return version;
   }
 
   private static File indicesConfigurationFile() {

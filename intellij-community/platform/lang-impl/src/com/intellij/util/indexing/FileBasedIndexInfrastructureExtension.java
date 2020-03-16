@@ -84,4 +84,10 @@ public interface FileBasedIndexInfrastructureExtension {
    * lifecycle of an extension with {@link FileBasedIndexImpl}.
    */
   void shutdown();
+
+  /**
+   * When index infrastructure extension change it's version (for example data format has been changed)
+   * all indexed data should be invalidate and full index rebuild will be requested
+   */
+  int getVersion();
 }
