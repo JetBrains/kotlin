@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.idea.PluginStartupComponent;
-import org.jetbrains.kotlin.idea.configuration.KotlinConfigurationBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.facet.DescriptionListCellRenderer;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
 import org.jetbrains.kotlin.idea.project.NewInferenceForIDEAnalysisComponent;
@@ -62,14 +62,14 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
     private static final int MAX_WARNING_SIZE = 75;
 
     static {
-        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_PLAIN, KotlinConfigurationBundle.message("description.plain.put.to.global.scope"));
-        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_AMD, KotlinConfigurationBundle.message("description.amd"));
-        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_COMMONJS, KotlinConfigurationBundle.message("description.commonjs"));
-        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_UMD, KotlinConfigurationBundle.message("description.umd.detect.amd.or.commonjs.if.available.fallback.to.plain"));
+        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_PLAIN, KotlinBundle.message("configuration.description.plain.put.to.global.scope"));
+        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_AMD, KotlinBundle.message("configuration.description.amd"));
+        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_COMMONJS, KotlinBundle.message("configuration.description.commonjs"));
+        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_UMD, KotlinBundle.message("configuration.description.umd.detect.amd.or.commonjs.if.available.fallback.to.plain"));
 
-        soruceMapSourceEmbeddingDescriptions.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER, KotlinConfigurationBundle.message("description.never"));
-        soruceMapSourceEmbeddingDescriptions.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS, KotlinConfigurationBundle.message("description.always"));
-        soruceMapSourceEmbeddingDescriptions.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING, KotlinConfigurationBundle.message("description.when.inlining.a.function.from.other.module.with.embedded.sources"));
+        soruceMapSourceEmbeddingDescriptions.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER, KotlinBundle.message("configuration.description.never"));
+        soruceMapSourceEmbeddingDescriptions.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS, KotlinBundle.message("configuration.description.always"));
+        soruceMapSourceEmbeddingDescriptions.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING, KotlinBundle.message("configuration.description.when.inlining.a.function.from.other.module.with.embedded.sources"));
     }
 
     @Nullable
@@ -188,13 +188,13 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
 
     private void initializeNonCidrSettings(boolean isMultiEditor) {
         setupFileChooser(labelForOutputPrefixFile, outputPrefixFile,
-                         KotlinConfigurationBundle.message("title.kotlin.compiler.js.option.output.prefix.browse.title"),
+                         KotlinBundle.message("configuration.title.kotlin.compiler.js.option.output.prefix.browse.title"),
                          true);
         setupFileChooser(labelForOutputPostfixFile, outputPostfixFile,
-                         KotlinConfigurationBundle.message("title.kotlin.compiler.js.option.output.postfix.browse.title"),
+                         KotlinBundle.message("configuration.title.kotlin.compiler.js.option.output.postfix.browse.title"),
                          true);
         setupFileChooser(labelForOutputDirectory, outputDirectory,
-                         KotlinConfigurationBundle.message("title.choose.output.directory"),
+                         KotlinBundle.message("configuration.title.choose.output.directory"),
                          false);
 
         fillModuleKindList();
@@ -232,12 +232,12 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
         int nameCountToShow = calculateNameCountToShowInWarning(modulesOverridingProjectSettings);
         int allNamesCount = modulesOverridingProjectSettings.size();
         if (nameCountToShow == 0) {
-            return KotlinConfigurationBundle.message("warning.text.modules.override.project.settings", String.valueOf(allNamesCount));
+            return KotlinBundle.message("configuration.warning.text.modules.override.project.settings", String.valueOf(allNamesCount));
         }
 
         StringBuilder builder = new StringBuilder();
         builder.append("<html>");
-        builder.append(KotlinConfigurationBundle.message("warning.text.following.modules.override.project.settings")).append(" ");
+        builder.append(KotlinBundle.message("configuration.warning.text.following.modules.override.project.settings")).append(" ");
         CollectionsKt.joinTo(
                 modulesOverridingProjectSettings.subList(0, nameCountToShow),
                 builder,
@@ -254,7 +254,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
                 }
         );
         if (nameCountToShow < allNamesCount) {
-            builder.append(" ").append(KotlinConfigurationBundle.message("text.and")).append(" ").append(allNamesCount - nameCountToShow).append(" ").append(KotlinConfigurationBundle.message("text.other.s"));
+            builder.append(" ").append(KotlinBundle.message("configuration.text.and")).append(" ").append(allNamesCount - nameCountToShow).append(" ").append(KotlinBundle.message("configuration.text.other.s"));
         }
         return builder.toString();
     }
@@ -627,7 +627,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
     @Nls
     @Override
     public String getDisplayName() {
-        return KotlinConfigurationBundle.message("name.kotlin.compiler");
+        return KotlinBundle.message("configuration.name.kotlin.compiler");
     }
 
     @Nullable
