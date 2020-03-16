@@ -585,6 +585,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/resolve/testData/resolveWithStdlib/j+k/FieldAndGetter.kt");
         }
 
+        @TestMetadata("fieldOverride.kt")
+        public void testFieldOverride() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/j+k/fieldOverride.kt");
+        }
+
         @TestMetadata("FieldSubstitution.kt")
         public void testFieldSubstitution() throws Exception {
             runTest("compiler/fir/resolve/testData/resolveWithStdlib/j+k/FieldSubstitution.kt");
