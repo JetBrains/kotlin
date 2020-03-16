@@ -586,6 +586,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         exitSafeCall(qualifiedAccessExpression)
     }
 
+    fun exitResolvedQualifierNode(resolvedQualifier: FirResolvedQualifier) {
+        graphBuilder.exitResolvedQualifierNode(resolvedQualifier).mergeIncomingFlow()
+    }
+
     fun enterCall(functionCall: FirCall) {
         graphBuilder.enterCall(functionCall)
     }

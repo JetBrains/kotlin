@@ -606,6 +606,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/resolve/testData/resolve/cfg/lambdaAsReturnOfLambda.kt");
         }
 
+        @TestMetadata("lambdaReturningObject.kt")
+        public void testLambdaReturningObject() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/lambdaReturningObject.kt");
+        }
+
         @TestMetadata("lambdas.kt")
         public void testLambdas() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/cfg/lambdas.kt");

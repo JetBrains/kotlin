@@ -39,6 +39,9 @@ fun ControlFlowGraphBuilder.createCheckNotNullCallNode(fir: FirCheckNotNullCall)
 fun ControlFlowGraphBuilder.createQualifiedAccessNode(fir: FirQualifiedAccessExpression): QualifiedAccessNode =
     QualifiedAccessNode(graph, fir, levelCounter, createId())
 
+fun ControlFlowGraphBuilder.createResolvedQualifierNode(fir: FirResolvedQualifier): ResolvedQualifierNode =
+    ResolvedQualifierNode(graph, fir, levelCounter, createId())
+
 fun ControlFlowGraphBuilder.createBlockEnterNode(fir: FirBlock): BlockEnterNode = BlockEnterNode(graph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createBlockExitNode(fir: FirBlock): BlockExitNode = BlockExitNode(graph, fir, levelCounter, createId())

@@ -621,6 +621,10 @@ class ControlFlowGraphBuilder {
         return node
     }
 
+    fun exitResolvedQualifierNode(resolvedQualifier: FirResolvedQualifier): ResolvedQualifierNode {
+        return createResolvedQualifierNode(resolvedQualifier).also(this::addNewSimpleNode)
+    }
+
     fun enterCall(call: FirCall) {
         levelCounter++
     }

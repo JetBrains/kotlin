@@ -202,6 +202,12 @@ class QualifiedAccessNode(
     level: Int, id: Int
 ) : CFGNode<FirQualifiedAccessExpression>(owner, level, id)
 
+class ResolvedQualifierNode(
+    owner: ControlFlowGraph,
+    override val fir: FirResolvedQualifier,
+    level: Int, id: Int
+) : CFGNode<FirResolvedQualifier>(owner, level, id)
+
 class FunctionCallNode(
     owner: ControlFlowGraph,
     override val fir: FirFunctionCall,

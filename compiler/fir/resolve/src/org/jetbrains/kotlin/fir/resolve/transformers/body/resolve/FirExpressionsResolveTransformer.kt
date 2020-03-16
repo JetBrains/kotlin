@@ -137,10 +137,15 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 }
             }
         }
-        if (result is FirQualifiedAccessExpression) {
-            dataFlowAnalyzer.enterQualifiedAccessExpression(result)
-            result = components.transformQualifiedAccessUsingSmartcastInfo(result)
-            dataFlowAnalyzer.exitQualifiedAccessExpression(result)
+        when (result) {
+            is FirQualifiedAccessExpression -> {
+                dataFlowAnalyzer.enterQualifiedAccessExpression(result)
+                result = components.transformQualifiedAccessUsingSmartcastInfo(result)
+                dataFlowAnalyzer.exitQualifiedAccessExpression(result)
+            }
+            is FirResolvedQualifier -> {
+                dataFlowAnalyzer.exitResolvedQualifierNode(result)
+            }
         }
         return result.compose()
     }

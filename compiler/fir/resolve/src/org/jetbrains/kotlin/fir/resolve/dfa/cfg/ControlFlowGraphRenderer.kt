@@ -166,6 +166,7 @@ private fun CFGNode<*>.render(): String =
                 is LoopExitNode -> "Exit ${fir.type()}loop"
 
                 is QualifiedAccessNode -> "Access variable ${fir.calleeReference.render(CfgRenderMode)}"
+                is ResolvedQualifierNode -> "Access qualifier ${fir.classId}"
                 is OperatorCallNode -> "Operator ${fir.operation.operator}"
                 is ComparisonExpressionNode -> "Comparison ${fir.operation.operator}"
                 is TypeOperatorCallNode -> "Type operator: \"${fir.render(CfgRenderMode)}\""
