@@ -323,6 +323,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/analysis-tests/testData/resolve/spreadOperator.kt");
     }
 
+    @TestMetadata("superIsNotAnExpression.kt")
+    public void testSuperIsNotAnExpression() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/superIsNotAnExpression.kt");
+    }
+
     @TestMetadata("syntheticsVsNormalProperties.kt")
     public void testSyntheticsVsNormalProperties() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/syntheticsVsNormalProperties.kt");
