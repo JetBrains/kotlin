@@ -409,6 +409,7 @@ public class SearchTextArea extends JPanel implements PropertyChangeListener/*, 
   private class NewLineAction extends DumbAwareAction {
     NewLineAction() {
       super(FindBundle.message("find.new.line"), null, AllIcons.Actions.SearchNewLine);
+      setShortcutSet(new CustomShortcutSet(NEW_LINE_KEYSTROKE));
       getTemplatePresentation().setHoveredIcon(AllIcons.Actions.SearchNewLineHover);
     }
 
