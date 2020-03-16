@@ -74,7 +74,7 @@ public final class ColorLineMarkerProvider extends LineMarkerProviderDescriptor 
 
               if (Registry.is("ide.new.color.picker")) {
                 RelativePoint relativePoint = new RelativePoint(e.getComponent(), e.getPoint());
-                ColorPicker.showColorPickerPopup(element.getProject(), color, (c, l) -> WriteAction.run(() -> colorProvider.setColorTo(elt, c)), relativePoint);
+                ColorPicker.showColorPickerPopup(element.getProject(), color, (c, l) -> WriteAction.run(() -> colorProvider.setColorTo(elt, c)), relativePoint, true);
               } else {
                 final Color c = ColorChooser.chooseColor(editor.getProject(), editor.getComponent(), "Choose Color", color, true);
                 if (c != null) {
