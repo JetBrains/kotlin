@@ -54,6 +54,8 @@ public class PluginStartupActivity implements StartupActivity.DumbAware {
             registerAdditionalResourceBundleInTests();
         }
 
+        StartupCompatKt.runActivity(project);
+
         registerPathVariable();
         initializeDiagnostics();
 
