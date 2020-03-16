@@ -65,8 +65,7 @@ class JavaHomeFinderWindows : JavaHomeFinderBasic {
         Bitness.x64 -> "$regCommand /reg:64"
       }
     try {
-      val registryLines: CharSequence? = WindowsRegistryUtil.readRegistry(cmd)
-      registryLines ?: return emptySet()
+      val registryLines: CharSequence = WindowsRegistryUtil.readRegistry(cmd)
       val registeredPaths = gatherHomePaths(registryLines)
       val folders: MutableSet<File> = TreeSet()
       for (rp in registeredPaths) {
@@ -76,6 +75,9 @@ class JavaHomeFinderWindows : JavaHomeFinderBasic {
         else if (r.exists()) folders.add(r)
       }
       return scanAll(folders, true)
+    }
+    catch (ie: InterruptedException) {
+      return emptySet()
     }
     catch (e: Exception) {
       logger.warn("Unable to detect registered JDK using the following command: $cmd", e)
