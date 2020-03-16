@@ -119,12 +119,9 @@ class ConstraintIncorporator(
         otherVariable: TypeVariableMarker,
         otherConstraint: Constraint
     ) {
-
-        val baseConstraintType = baseConstraint.type
-
-        val typeForApproximation = when (otherConstraint.kind) {
+        val typeWithSubstitution = when (otherConstraint.kind) {
             ConstraintKind.EQUALITY -> {
-                baseConstraintType.substitute(this, otherVariable, otherConstraint.type)
+                baseConstraint.type.substitute(this, otherVariable, otherConstraint.type)
             }
             ConstraintKind.UPPER -> {
                 val temporaryCapturedType = createCapturedType(
@@ -133,7 +130,7 @@ class ConstraintIncorporator(
                     null,
                     CaptureStatus.FOR_INCORPORATION
                 )
-                baseConstraintType.substitute(this, otherVariable, temporaryCapturedType)
+                baseConstraint.type.substitute(this, otherVariable, temporaryCapturedType)
             }
             ConstraintKind.LOWER -> {
                 val temporaryCapturedType = createCapturedType(
@@ -142,18 +139,23 @@ class ConstraintIncorporator(
                     otherConstraint.type,
                     CaptureStatus.FOR_INCORPORATION
                 )
-
-                baseConstraintType.substitute(this, otherVariable, temporaryCapturedType)
+                baseConstraint.type.substitute(this, otherVariable, temporaryCapturedType)
             }
         }
 
-        if (baseConstraint.kind != ConstraintKind.UPPER) {
-            val generatedConstraintType = approximateCapturedTypes(typeForApproximation, toSuper = false)
-            addNewConstraint(targetVariable, baseConstraint, otherVariable, otherConstraint, generatedConstraintType, isSubtype = true)
-        }
-        if (baseConstraint.kind != ConstraintKind.LOWER) {
-            val generatedConstraintType = approximateCapturedTypes(typeForApproximation, toSuper = true)
-            addNewConstraint(targetVariable, baseConstraint, otherVariable, otherConstraint, generatedConstraintType, isSubtype = false)
+        when (baseConstraint.kind) {
+            ConstraintKind.EQUALITY -> {
+                addNewConstraint(targetVariable, baseConstraint, otherVariable, otherConstraint, typeWithSubstitution, isSubtype = true)
+                addNewConstraint(targetVariable, baseConstraint, otherVariable, otherConstraint, typeWithSubstitution, isSubtype = false)
+            }
+            ConstraintKind.UPPER -> {
+                val generatedConstraintType = approximateCapturedTypes(typeWithSubstitution, toSuper = true)
+                addNewConstraint(targetVariable, baseConstraint, otherVariable, otherConstraint, generatedConstraintType, isSubtype = false)
+            }
+            ConstraintKind.LOWER -> {
+                val generatedConstraintType = approximateCapturedTypes(typeWithSubstitution, toSuper = false)
+                addNewConstraint(targetVariable, baseConstraint, otherVariable, otherConstraint, generatedConstraintType, isSubtype = true)
+            }
         }
     }
 
