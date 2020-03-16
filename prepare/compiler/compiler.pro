@@ -37,14 +37,11 @@
 -dontwarn javax.crypto.**
 -dontwarn java.lang.invoke.MethodHandle
 -dontwarn org.jline.builtins.Nano$Buffer
--dontwarn org.jetbrains.annotations.ReadOnly
--dontwarn org.jetbrains.annotations.Mutable
 -dontwarn com.intellij.util.io.TarUtil
 -dontwarn com.intellij.util.io.Compressor$Tar
 
-# Annotations from intellijCore/annotations.jar that not presented in org.jetbrains.annotations
--dontwarn org.jetbrains.annotations.Async*
--dontwarn org.jetbrains.annotations.Nls$Capitalization
+# Some annotations from intellijCore/annotations.jar are not presented in org.jetbrains.annotations
+-dontwarn org.jetbrains.annotations.*
 
 # Nullability annotations used in Guava
 -dontwarn org.checkerframework.checker.nullness.compatqual.NullableDecl
