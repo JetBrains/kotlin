@@ -93,11 +93,10 @@ internal class CallGenerator(
         val origin = IrStatementOrigin.EQ
         return variableAssignment.convertWithOffsets { startOffset, endOffset ->
             if (symbol != null && symbol.isBound) {
+                val assignedValue = visitor.convertToIrExpression(variableAssignment.rValue)
                 when (symbol) {
-                    is IrFieldSymbol -> IrSetFieldImpl(
-                        startOffset, endOffset, symbol, type, origin
-                    ).apply {
-                        value = visitor.convertToIrExpression(variableAssignment.rValue)
+                    is IrFieldSymbol -> IrSetFieldImpl(startOffset, endOffset, symbol, type, origin).apply {
+                        value = assignedValue
                     }
                     is IrPropertySymbol -> {
                         val irProperty = symbol.owner
@@ -105,21 +104,16 @@ internal class CallGenerator(
                         val backingField = irProperty.backingField
                         when {
                             setter != null -> IrCallImpl(startOffset, endOffset, type, setter.symbol, origin).apply {
-                                putValueArgument(0, visitor.convertToIrExpression(variableAssignment.rValue))
+                                putValueArgument(0, assignedValue)
                             }
                             backingField != null -> IrSetFieldImpl(startOffset, endOffset, backingField.symbol, type).apply {
                                 // NB: to be consistent with FIR2IR, origin should be null here
-                                value = visitor.convertToIrExpression(variableAssignment.rValue)
+                                value = assignedValue
                             }
                             else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
                         }
                     }
-                    is IrVariableSymbol -> {
-                        IrSetVariableImpl(
-                            startOffset, endOffset, type, symbol,
-                            visitor.convertToIrExpression(variableAssignment.rValue), origin
-                        )
-                    }
+                    is IrVariableSymbol -> IrSetVariableImpl(startOffset, endOffset, type, symbol, assignedValue, origin)
                     else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
                 }
             } else {
