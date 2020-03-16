@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -45,15 +44,10 @@ import org.jetbrains.kotlin.psi.*
 import java.util.*
 
 class Fir2IrVisitor(
-    private val session: FirSession,
-    private val symbolTable: SymbolTable,
-    private val classifierStorage: Fir2IrClassifierStorage,
-    private val declarationStorage: Fir2IrDeclarationStorage,
     private val converter: Fir2IrConverter,
-    private val typeConverter: Fir2IrTypeConverter,
-    override val irBuiltIns: IrBuiltIns,
+    private val components: Fir2IrComponents,
     fakeOverrideMode: FakeOverrideMode
-) : FirDefaultVisitor<IrElement, Any?>(), IrGeneratorContextInterface {
+) : Fir2IrComponents by components, FirDefaultVisitor<IrElement, Any?>(), IrGeneratorContextInterface {
     companion object {
         private val NEGATED_OPERATIONS: Set<FirOperation> = EnumSet.of(FirOperation.NOT_EQ, FirOperation.NOT_IDENTITY)
 

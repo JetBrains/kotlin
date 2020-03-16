@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -24,14 +23,12 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.name.Name
 
 class Fir2IrClassifierStorage(
-    session: FirSession,
-    private val irSymbolTable: SymbolTable
-) {
+    private val components: Fir2IrComponents
+) : Fir2IrComponents by components {
     private val firProvider = session.firProvider
 
     private val classCache = mutableMapOf<FirRegularClass, IrClass>()
@@ -44,10 +41,6 @@ class Fir2IrClassifierStorage(
 
     private val localStorage = Fir2IrLocalStorage()
 
-    lateinit var typeConverter: Fir2IrTypeConverter
-
-    lateinit var declarationStorage: Fir2IrDeclarationStorage
-
     private fun FirTypeRef.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType =
         with(typeConverter) { toIrType(typeContext) }
 
@@ -59,7 +52,7 @@ class Fir2IrClassifierStorage(
         endOffset: Int = this.endOffset
     ): IrValueParameter {
         val receiverDescriptor = WrappedReceiverParameterDescriptor()
-        return irSymbolTable.declareValueParameter(
+        return symbolTable.declareValueParameter(
             startOffset, endOffset, thisOrigin, receiverDescriptor, thisType
         ) { symbol ->
             IrValueParameterImpl(
@@ -74,7 +67,7 @@ class Fir2IrClassifierStorage(
     }
 
     private fun IrClass.setThisReceiver() {
-        irSymbolTable.enterScope(descriptor)
+        symbolTable.enterScope(descriptor)
         val typeArguments = this.typeParameters.map {
             IrSimpleTypeImpl(it.symbol, false, emptyList(), emptyList())
         }
@@ -83,7 +76,7 @@ class Fir2IrClassifierStorage(
             thisType = IrSimpleTypeImpl(symbol, false, typeArguments, emptyList()),
             thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
         )
-        irSymbolTable.leaveScope(descriptor)
+        symbolTable.leaveScope(descriptor)
     }
 
     internal fun preCacheTypeParameters(owner: FirTypeParametersOwner) {
@@ -167,7 +160,7 @@ class Fir2IrClassifierStorage(
             regularClass.modality ?: Modality.FINAL
         }
         val irClass = regularClass.convertWithOffsets { startOffset, endOffset ->
-            irSymbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality, visibility) { symbol ->
+            symbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality, visibility) { symbol ->
                 IrClassImpl(
                     startOffset,
                     endOffset,
@@ -210,7 +203,7 @@ class Fir2IrClassifierStorage(
         val origin = IrDeclarationOrigin.DEFINED
         val modality = Modality.FINAL
         val result = anonymousObject.convertWithOffsets { startOffset, endOffset ->
-            irSymbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality, visibility) { symbol ->
+            symbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality, visibility) { symbol ->
                 IrClassImpl(
                     startOffset, endOffset, origin, symbol, name,
                     // NB: for unknown reason, IR uses 'CLASS' kind for simple anonymous objects
@@ -267,7 +260,7 @@ class Fir2IrClassifierStorage(
             val origin = IrDeclarationOrigin.DEFINED
             val irTypeParameter =
                 convertWithOffsets { startOffset, endOffset ->
-                    irSymbolTable.declareGlobalTypeParameter(startOffset, endOffset, origin, descriptor) { symbol ->
+                    symbolTable.declareGlobalTypeParameter(startOffset, endOffset, origin, descriptor) { symbol ->
                         IrTypeParameterImpl(
                             startOffset, endOffset, origin, symbol,
                             name, if (index < 0) 0 else index,
@@ -304,7 +297,7 @@ class Fir2IrClassifierStorage(
         return enumEntry.convertWithOffsets { startOffset, endOffset ->
             val desc = WrappedEnumEntryDescriptor()
             declarationStorage.enterScope(desc)
-            val result = irSymbolTable.declareEnumEntry(startOffset, endOffset, origin, desc) { symbol ->
+            val result = symbolTable.declareEnumEntry(startOffset, endOffset, origin, desc) { symbol ->
                 IrEnumEntryImpl(
                     startOffset, endOffset, origin, symbol, enumEntry.name
                 ).apply {
@@ -334,11 +327,11 @@ class Fir2IrClassifierStorage(
 
     fun getIrClassSymbol(firClassSymbol: FirClassSymbol<*>): IrClassSymbol {
         val firClass = firClassSymbol.fir
-        getCachedIrClass(firClass)?.let { return irSymbolTable.referenceClass(it.descriptor) }
+        getCachedIrClass(firClass)?.let { return symbolTable.referenceClass(it.descriptor) }
         // TODO: remove all this code and change to unbound symbol creation
         val irClass = createIrClass(firClass)
         if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.LOCAL) {
-            return irSymbolTable.referenceClass(irClass.descriptor)
+            return symbolTable.referenceClass(irClass.descriptor)
         }
         val classId = firClassSymbol.classId
         val parentId = classId.outerClassId
@@ -350,7 +343,7 @@ class Fir2IrClassifierStorage(
             declarationStorage.addDeclarationsToExternalClass(firClass as FirRegularClass, irClass)
         }
 
-        return irSymbolTable.referenceClass(irClass.descriptor)
+        return symbolTable.referenceClass(irClass.descriptor)
     }
 
     fun getIrTypeParameterSymbol(
@@ -359,6 +352,6 @@ class Fir2IrClassifierStorage(
     ): IrTypeParameterSymbol {
         // TODO: use cached type parameter here
         val irTypeParameter = getIrTypeParameter(firTypeParameterSymbol.fir, typeContext = typeContext)
-        return irSymbolTable.referenceTypeParameter(irTypeParameter.descriptor)
+        return symbolTable.referenceTypeParameter(irTypeParameter.descriptor)
     }
 }

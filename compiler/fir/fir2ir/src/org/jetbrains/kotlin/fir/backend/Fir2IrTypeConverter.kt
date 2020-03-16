@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
@@ -20,10 +18,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
 class Fir2IrTypeConverter(
-    private val session: FirSession,
-    private val classifierStorage: Fir2IrClassifierStorage,
-    private val irBuiltIns: IrBuiltIns
-) {
+    private val components: Fir2IrComponents
+) : Fir2IrComponents by components {
     lateinit var nothingType: IrType
     lateinit var unitType: IrType
     lateinit var booleanType: IrType

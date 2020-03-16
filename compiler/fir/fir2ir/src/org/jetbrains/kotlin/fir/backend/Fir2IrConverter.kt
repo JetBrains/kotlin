@@ -21,9 +21,8 @@ import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 class Fir2IrConverter(
     private val moduleDescriptor: FirModuleDescriptor,
     private val sourceManager: PsiSourceManager,
-    private val classifierStorage: Fir2IrClassifierStorage,
-    private val declarationStorage: Fir2IrDeclarationStorage
-) {
+    private val components: Fir2IrComponents
+) : Fir2IrComponents by components {
 
     fun processLocalClassAndNestedClasses(regularClass: FirRegularClass, parent: IrDeclarationParent) {
         val irClass = registerClassAndNestedClasses(regularClass, parent)
@@ -169,17 +168,17 @@ class Fir2IrConverter(
             typeTranslator.constantValueGenerator = constantValueGenerator
             val builtIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, signaturer, symbolTable)
             val sourceManager = PsiSourceManager()
-            val declarationStorage = Fir2IrDeclarationStorage(session, symbolTable, moduleDescriptor)
-            val classifierStorage = Fir2IrClassifierStorage(session, symbolTable)
-            val typeConverter = Fir2IrTypeConverter(session, classifierStorage, builtIns)
-            declarationStorage.typeConverter = typeConverter
-            classifierStorage.typeConverter = typeConverter
-            declarationStorage.classifierStorage = classifierStorage
-            classifierStorage.declarationStorage = declarationStorage
+            val components = Fir2IrComponentsStorage(session, symbolTable, builtIns)
+            val declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor)
+            val classifierStorage = Fir2IrClassifierStorage(components)
+            val typeConverter = Fir2IrTypeConverter(components)
+            components.declarationStorage = declarationStorage
+            components.classifierStorage = classifierStorage
+            components.typeConverter = typeConverter
             typeConverter.initBuiltinTypes()
             val irFiles = mutableListOf<IrFile>()
 
-            val converter = Fir2IrConverter(moduleDescriptor, sourceManager, classifierStorage, declarationStorage)
+            val converter = Fir2IrConverter(moduleDescriptor, sourceManager, components)
             for (firFile in firFiles) {
                 converter.registerFileAndClasses(firFile)
             }
@@ -190,9 +189,7 @@ class Fir2IrConverter(
                 converter.processFileAndClassMembers(firFile)
             }
 
-            val fir2irVisitor = Fir2IrVisitor(
-                session, symbolTable, classifierStorage, declarationStorage, converter, typeConverter, builtIns, fakeOverrideMode
-            )
+            val fir2irVisitor = Fir2IrVisitor(converter, components, fakeOverrideMode)
             for (firFile in firFiles) {
                 val irFile = firFile.accept(fir2irVisitor, null) as IrFile
                 val fileEntry = sourceManager.getOrCreateFileEntry(firFile.psi as KtFile)
