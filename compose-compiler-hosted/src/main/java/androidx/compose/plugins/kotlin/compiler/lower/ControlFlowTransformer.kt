@@ -41,11 +41,10 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrBreak
+import org.jetbrains.kotlin.ir.expressions.IrBreakContinue
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.ir.expressions.IrContinue
 import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
 import org.jetbrains.kotlin.ir.expressions.IrElseBranch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -58,13 +57,11 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrElseBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrLoopBase
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhenImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnitOrNullableUnit
@@ -181,12 +178,12 @@ class ControlFlowTransformer(
         val end = { irEndReplaceableGroup() }
 
         transformed = when {
-            transformed.endsWithReturn() -> {
-                scope.pushEndCall(end)
+            transformed.endsWithReturnOrJump() -> {
+                scope.pushEnd(end)
                 prependSimple(start, transformed)
             }
             else -> {
-                scope.pushEndCall(end)
+                scope.pushEnd(end)
                 wrapSimple(start, transformed, end())
             }
         }
@@ -203,10 +200,11 @@ class ControlFlowTransformer(
         return declaration
     }
 
-    private fun IrExpression.endsWithReturn(): Boolean {
+    private fun IrExpression.endsWithReturnOrJump(): Boolean {
         var expr: IrStatement? = this
         while (expr != null) {
             if (expr is IrReturn) return true
+            if (expr is IrBreakContinue) return true
             if (expr !is IrBlock) return false
             expr = expr.statements.lastOrNull()
         }
@@ -341,7 +339,7 @@ class ControlFlowTransformer(
             // start/end call gets executed. as a result, we can just put them both at the top of
             // the group, and we don't have to deal with any of the complicated jump logic that
             // could be inside of the block
-            !scope.hasComposableCalls && !scope.hasReturn -> {
+            !scope.hasComposableCalls && !scope.hasReturn && !scope.hasJump -> {
                 IrBlockImpl(
                     wrapped.startOffset,
                     wrapped.endOffset,
@@ -357,14 +355,14 @@ class ControlFlowTransformer(
             // if the scope ends with a return call, then it will get properly ended if we
             // just push the end call on the scope because of the way returns get transformed in
             // this class. As a result, here we can safely just "prepend" the start call
-            wrapped.endsWithReturn() -> {
-                scope.pushEndCall(end)
+            wrapped.endsWithReturnOrJump() -> {
+                scope.pushEnd(end)
                 prependSimple(start, wrapped)
             }
             // otherwise, we want to push an end call for any early returns/jumps, but also add
             // an end call to the end of the group
             else -> {
-                scope.pushEndCall(end)
+                scope.pushEnd(end)
                 wrapSimple(start, wrapped, end())
             }
         }
@@ -484,33 +482,19 @@ class ControlFlowTransformer(
         }
     }
 
-    private fun encounteredBreak() {
-        loop@ for (scope in scopeStack.asReversed()) {
-            when (scope) {
-                is Scope.FunctionScope -> error("Unexpected Function Scope encountered")
-                is Scope.ClassScope -> error("Unexpected Class Scope encountered")
-                is Scope.LoopScope -> {
-                    scope.markBreak()
-                    break@loop
-                }
-                is Scope.BlockScope -> {
-                    scope.markBreak()
-                }
-            }
-        }
-    }
-
-    private fun encounteredContinue() {
+    private fun encounteredContinue(jump: IrBreakContinue, pushEndCall: (IrExpression) -> Unit) {
         loop@ for (scope in scopeStack.asReversed()) {
             when (scope) {
                 is Scope.FunctionScope -> error("Unexpected Function Scope encountered")
                 is Scope.ClassScope -> error("Unexpected Function Scope encountered")
                 is Scope.LoopScope -> {
-                    scope.markContinue()
-                    break@loop
+                    scope.markJump(pushEndCall)
+                    if (jump.loop == scope.loop) {
+                        break@loop
+                    }
                 }
                 is Scope.BlockScope -> {
-                    scope.markContinue()
+                    scope.markJump(pushEndCall)
                 }
             }
         }
@@ -588,59 +572,54 @@ class ControlFlowTransformer(
         )
     }
 
-    override fun visitBreak(jump: IrBreak): IrExpression {
-        encounteredBreak()
-        return super.visitBreak(jump)
-    }
-
-    override fun visitContinue(jump: IrContinue): IrExpression {
-        encounteredContinue()
-        return super.visitContinue(jump)
+    override fun visitBreakContinue(jump: IrBreakContinue): IrExpression {
+        if (!currentFunctionScope.isComposable()) return super.visitBreakContinue(jump)
+        val endBlock = IrBlockImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            context.irBuiltIns.unitType
+        )
+        encounteredContinue(jump) { endBlock.statements.add(0, it) }
+        return IrBlockImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            jump.type,
+            null,
+            listOf(
+                endBlock,
+                jump
+            )
+        )
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop): IrExpression {
         if (!currentFunctionScope.isComposable()) return super.visitDoWhileLoop(loop)
-        return handleLoop(
-            loop, IrDoWhileLoopImpl(
-                loop.startOffset,
-                loop.endOffset,
-                loop.type,
-                loop.origin
-            )
-        )
+        return handleLoop(loop as IrLoopBase)
     }
 
     override fun visitWhileLoop(loop: IrWhileLoop): IrExpression {
         if (!currentFunctionScope.isComposable()) return super.visitWhileLoop(loop)
-        return handleLoop(
-            loop, IrWhileLoopImpl(
-                loop.startOffset,
-                loop.endOffset,
-                loop.type,
-                loop.origin
-            )
-        )
+        return handleLoop(loop as IrLoopBase)
     }
 
-    private fun handleLoop(loop: IrLoop, transformed: IrLoopBase): IrExpression {
-        withScope(Scope.LoopScope()) {
+    private fun handleLoop(loop: IrLoopBase): IrExpression {
+        withScope(Scope.LoopScope(loop)) {
             val (condScope, condition) = loop.condition.transformWithScope(Scope.BranchScope())
             val (bodyScope, body) = loop.body?.transformWithScope(Scope.BranchScope())
                 ?: null to null
-            transformed.condition = condition
-            transformed.body = body
+            loop.condition = condition
+            loop.body = body
             if (!condScope.hasComposableCalls && bodyScope?.hasComposableCalls != true) {
-                return transformed
+                return loop
             }
-            // TODO: Handle breaks, continues
             if (condScope.hasComposableCalls) {
-                transformed.condition = condition.asReplaceableGroup(condScope)
+                loop.condition = condition.asReplaceableGroup(condScope)
             }
             if (bodyScope?.hasComposableCalls == true) {
-                transformed.body = body?.asReplaceableGroup(bodyScope)
+                loop.body = body?.asReplaceableGroup(bodyScope)
             }
         }
-        return transformed
+        return loop
     }
 
     override fun visitWhen(expression: IrWhen): IrExpression {
@@ -783,12 +762,11 @@ class ControlFlowTransformer(
         }
 
         abstract class BlockScope : Scope() {
-            private val pushEndCalls = mutableListOf<(IrExpression) -> Unit>()
+            private val endCallHandlers = mutableListOf<(IrExpression) -> Unit>()
 
-            fun pushEndCall(end: () -> IrExpression) {
-                // todo: clear out after pushed?
-                pushEndCalls.forEach {
-                    it(end())
+            fun pushEnd(makeEnd: () -> IrExpression) {
+                endCallHandlers.forEach {
+                    it(makeEnd())
                 }
             }
 
@@ -796,31 +774,26 @@ class ControlFlowTransformer(
                 hasComposableCalls = true
             }
 
-            fun markReturn(pushEndCall: (IrExpression) -> Unit) {
-                pushEndCalls.push(pushEndCall)
+            fun markReturn(endCallHandler: (IrExpression) -> Unit) {
+                endCallHandlers.push(endCallHandler)
                 hasReturn = true
             }
 
-            fun markBreak() {
-                hasBreak = true
-            }
-
-            fun markContinue() {
-                hasContinue = true
+            fun markJump(endCallHandler: (IrExpression) -> Unit) {
+                hasJump = true
+                endCallHandlers.push(endCallHandler)
             }
 
             var hasComposableCalls = false
                 private set
             var hasReturn = false
                 private set
-            var hasBreak = false
-                private set
-            var hasContinue = false
+            var hasJump = false
                 private set
         }
 
         class ClassScope : Scope()
-        class LoopScope : BlockScope()
+        class LoopScope(val loop: IrLoop) : BlockScope()
         class WhenScope : BlockScope()
         class BranchScope : BlockScope()
     }

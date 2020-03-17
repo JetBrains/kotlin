@@ -791,4 +791,275 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
             }
         """
     )
+
+    @Test
+    fun testBreakWithCallsAfter(): Unit = controlFlow(
+            """
+            @Composable
+            fun Example(items: Iterator<Int>) {
+                while (items.hasNext()) {
+                    val i = items.next()
+                    if (i == 0) {
+                        break
+                    }
+                    P(i)
+                }
+            }
+        """,
+        """
+            @Composable
+            fun Example(items: Iterator<Int>, %composer: Composer<N>?) {
+              %composer.startReplaceableGroup(2002223143)
+              while (items.hasNext()) {
+                %composer.startReplaceableGroup(2002223207)
+                val i = items.next()
+                if (i == 0) {
+                  %composer.endReplaceableGroup()
+                  break
+                }
+                P(i, %composer)
+                %composer.endReplaceableGroup()
+              }
+              %composer.endReplaceableGroup()
+            }
+        """
+        )
+
+    @Test
+    fun testBreakWithCallsBefore(): Unit = controlFlow(
+        """
+            @Composable
+            fun Example(items: Iterator<Int>) {
+                while (items.hasNext()) {
+                    val i = items.next()
+                    P(i)
+                    if (i == 0) {
+                        break
+                    }
+                }
+            }
+        """,
+        """
+            @Composable
+            fun Example(items: Iterator<Int>, %composer: Composer<N>?) {
+              %composer.startReplaceableGroup(2002223143)
+              while (items.hasNext()) {
+                %composer.startReplaceableGroup(2002223207)
+                val i = items.next()
+                P(i, %composer)
+                if (i == 0) {
+                  %composer.endReplaceableGroup()
+                  break
+                }
+                %composer.endReplaceableGroup()
+              }
+              %composer.endReplaceableGroup()
+            }
+        """
+    )
+
+    @Test
+    fun testBreakWithCallsBeforeAndAfter(): Unit = controlFlow(
+        """
+            @Composable
+            fun Example(items: Iterator<Int>) {
+                while (items.hasNext()) {
+                    val i = items.next()
+                    P(i)
+                    if (i == 0) {
+                        break
+                    }
+                    P(i)
+                }
+            }
+        """,
+        """
+            @Composable
+            fun Example(items: Iterator<Int>, %composer: Composer<N>?) {
+              %composer.startReplaceableGroup(2002223143)
+              while (items.hasNext()) {
+                %composer.startReplaceableGroup(2002223207)
+                val i = items.next()
+                P(i, %composer)
+                if (i == 0) {
+                  %composer.endReplaceableGroup()
+                  break
+                }
+                P(i, %composer)
+                %composer.endReplaceableGroup()
+              }
+              %composer.endReplaceableGroup()
+            }
+        """
+    )
+
+    @Test
+    fun testContinueWithCallsAfter(): Unit = controlFlow(
+        """
+            @Composable
+            fun Example(items: Iterator<Int>) {
+                while (items.hasNext()) {
+                    val i = items.next()
+                    if (i == 0) {
+                        continue
+                    }
+                    P(i)
+                }
+            }
+        """,
+        """
+            @Composable
+            fun Example(items: Iterator<Int>, %composer: Composer<N>?) {
+              %composer.startReplaceableGroup(2002223143)
+              while (items.hasNext()) {
+                %composer.startReplaceableGroup(2002223207)
+                val i = items.next()
+                if (i == 0) {
+                  %composer.endReplaceableGroup()
+                  continue
+                }
+                P(i, %composer)
+                %composer.endReplaceableGroup()
+              }
+              %composer.endReplaceableGroup()
+            }
+        """
+    )
+
+    @Test
+    fun testContinueWithCallsBefore(): Unit = controlFlow(
+        """
+            @Composable
+            fun Example(items: Iterator<Int>) {
+                while (items.hasNext()) {
+                    val i = items.next()
+                    P(i)
+                    if (i == 0) {
+                        continue
+                    }
+                    print(i)
+                }
+            }
+        """,
+        """
+            @Composable
+            fun Example(items: Iterator<Int>, %composer: Composer<N>?) {
+              %composer.startReplaceableGroup(2002223143)
+              while (items.hasNext()) {
+                %composer.startReplaceableGroup(2002223207)
+                val i = items.next()
+                P(i, %composer)
+                if (i == 0) {
+                  %composer.endReplaceableGroup()
+                  continue
+                }
+                print(i)
+                %composer.endReplaceableGroup()
+              }
+              %composer.endReplaceableGroup()
+            }
+        """
+    )
+
+    @Test
+    fun testContinueWithCallsBeforeAndAfter(): Unit = controlFlow(
+        """
+            @Composable
+            fun Example(items: Iterator<Int>) {
+                while (items.hasNext()) {
+                    val i = items.next()
+                    P(i)
+                    if (i == 0) {
+                        continue
+                    }
+                    P(i)
+                }
+            }
+        """,
+        """
+            @Composable
+            fun Example(items: Iterator<Int>, %composer: Composer<N>?) {
+              %composer.startReplaceableGroup(2002223143)
+              while (items.hasNext()) {
+                %composer.startReplaceableGroup(2002223207)
+                val i = items.next()
+                P(i, %composer)
+                if (i == 0) {
+                  %composer.endReplaceableGroup()
+                  continue
+                }
+                P(i, %composer)
+                %composer.endReplaceableGroup()
+              }
+              %composer.endReplaceableGroup()
+            }
+        """
+    )
+
+    @Test
+    fun testNestedLoopsAndBreak(): Unit = controlFlow(
+        """
+            @Composable
+            fun Example(a: Iterator<Int>, b: Iterator<Int>) {
+                a@while (a.hasNext()) {
+                    val x = a.next()
+                    if (x == 0) {
+                        break
+                    }
+                    b@while (b.hasNext()) {
+                        val y = b.next()
+                        if (y == 0) {
+                            break
+                        }
+                        if (y == x) {
+                            break@a
+                        }
+                        if (y == 100) {
+                            return
+                        }
+                        A()
+                    }
+                    A()
+                }
+            }
+        """,
+        """
+            @Composable
+            fun Example(a: Iterator<Int>, b: Iterator<Int>, %composer: Composer<N>?) {
+              %composer.startReplaceableGroup(2002223143)
+              a@while (a.hasNext()) {
+                %composer.startReplaceableGroup(2002223219)
+                val x = a.next()
+                if (x == 0) {
+                  %composer.endReplaceableGroup()
+                  break
+                }
+                b@while (b.hasNext()) {
+                  %composer.startReplaceableGroup(2002223326)
+                  val y = b.next()
+                  if (y == 0) {
+                    %composer.endReplaceableGroup()
+                    break
+                  }
+                  if (y == x) {
+                    %composer.endReplaceableGroup()
+                    %composer.endReplaceableGroup()
+                    break@a
+                  }
+                  if (y == 100) {
+                    %composer.endReplaceableGroup()
+                    %composer.endReplaceableGroup()
+                    %composer.endReplaceableGroup()
+                    return
+                  }
+                  A(%composer)
+                  %composer.endReplaceableGroup()
+                }
+                A(%composer)
+                %composer.endReplaceableGroup()
+              }
+              %composer.endReplaceableGroup()
+            }
+        """
+    )
 }
