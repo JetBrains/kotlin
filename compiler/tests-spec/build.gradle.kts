@@ -31,12 +31,10 @@ val printSpecTestsStatistic by generator("org.jetbrains.kotlin.spec.utils.tasks.
 val remoteRunTests by task<Test> {
     val packagePrefix = "org.jetbrains.kotlin.spec."
     val includeTests = setOf(
-        "checkers.DiagnosticsTestSpecGenerated\$NotLinked\$Contracts*",
-        "checkers.DiagnosticsTestSpecGenerated\$NotLinked\$Annotations*",
-        "checkers.DiagnosticsTestSpecGenerated\$NotLinked\$Local_variables\$Type_parameters*",
-        "checkers.DiagnosticsTestSpecGenerated\$NotLinked\$Dfa*",
-        "codegen.BlackBoxCodegenTestSpecGenerated\$NotLinked\$Annotations\$Type_annotations*",
-        "codegen.BlackBoxCodegenTestSpecGenerated\$NotLinked\$Objects\$Inheritance*"
+        "checkers.DiagnosticsTestSpecGenerated\$NotLinked*",
+        "checkers.DiagnosticsTestSpecGenerated\$Linked*",
+        "codegen.BlackBoxCodegenTestSpecGenerated\$NotLinked*",
+        "codegen.BlackBoxCodegenTestSpecGenerated\$Linked*"
     )
 
     workingDir = rootDir
