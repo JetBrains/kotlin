@@ -22,7 +22,7 @@ class KotlinSuggestedRefactoringAvailability(refactoringSupport: SuggestedRefact
 {
     override fun refineSignaturesWithResolve(state: SuggestedRefactoringState): SuggestedRefactoringState {
         val newDeclaration = state.declaration as? KtCallableDeclaration ?: return state
-        val oldDeclaration = state.createRestoredDeclarationCopy(refactoringSupport) as? KtCallableDeclaration ?: return state
+        val oldDeclaration = state.restoredDeclarationCopy() as? KtCallableDeclaration ?: return state
         oldDeclaration.containingKtFile.forcedModuleInfo = newDeclaration.getModuleInfo()
 
         val descriptorWithOldSignature = oldDeclaration.resolveToDescriptorIfAny() as CallableDescriptor
@@ -67,20 +67,13 @@ class KotlinSuggestedRefactoringAvailability(refactoringSupport: SuggestedRefact
             descriptorWithNewSignature.extensionReceiverParameter?.type
         )
 
-        return state.copy(
-            oldSignature = Signature.create(
-                oldSignature.name,
-                oldReturnType,
-                oldParameters,
-                oldAdditionalData?.copy(receiverType = oldReceiverType)
-            )!!,
-            newSignature = Signature.create(
-                newSignature.name,
-                newReturnType,
-                newParameters,
-                newAdditionalData?.copy(receiverType = newReceiverType)
-            )!!
-        )
+        return state
+            .withOldSignature(
+                Signature.create(oldSignature.name, oldReturnType, oldParameters, oldAdditionalData?.copy(receiverType = oldReceiverType))!!
+            )
+            .withNewSignature(
+                Signature.create(newSignature.name, newReturnType, newParameters, newAdditionalData?.copy(receiverType = newReceiverType))!!
+            )
     }
 
     private fun refineType(
