@@ -90,27 +90,27 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
             .addKind(
                 KotlinBundle.message("action.new.file.dialog.file.title"),
                 KotlinFileType.INSTANCE.icon,
-                KotlinBundle.message("action.new.file.dialog.file.description")
+                "Kotlin File"
             )
             .addKind(
                 KotlinBundle.message("action.new.file.dialog.class.title"),
                 KotlinIcons.CLASS,
-                KotlinBundle.message("action.new.file.dialog.class.description")
+                "Kotlin Class"
             )
             .addKind(
                 KotlinBundle.message("action.new.file.dialog.interface.title"),
                 KotlinIcons.INTERFACE,
-                KotlinBundle.message("action.new.file.dialog.interface.description")
+                "Kotlin Interface"
             )
             .addKind(
                 KotlinBundle.message("action.new.file.dialog.enum.title"),
                 KotlinIcons.ENUM,
-                KotlinBundle.message("action.new.file.dialog.enum.description")
+                "Kotlin Enum"
             )
             .addKind(
                 KotlinBundle.message("action.new.file.dialog.object.title"),
                 KotlinIcons.OBJECT,
-                KotlinBundle.message("action.new.file.dialog.object.description")
+                "Kotlin Object"
             )
 
         builder.setValidator(NameValidator)
@@ -232,7 +232,7 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
 
         fun createFileFromTemplate(name: String, template: FileTemplate, dir: PsiDirectory): PsiFile? {
             val directorySeparators = when (template.name) {
-                KotlinBundle.message("action.new.file.dialog.file.description") -> FILE_SEPARATORS
+                "Kotlin File" -> FILE_SEPARATORS
                 else -> FQNAME_SEPARATORS
             }
             val (className, targetDir) = findOrCreateTarget(dir, name, directorySeparators)

@@ -16,7 +16,7 @@ class NewKotlinWorksheetAction : NewKotlinScriptAction(
     actionName = KotlinBundle.message("action.new.worksheet.name"),
     description = KotlinBundle.message("action.new.worksheet.description"),
     dialogTitle = KotlinBundle.message("action.new.worksheet.dialog.title"),
-    templateName = KotlinBundle.message("action.new.worksheet.template.name")
+    templateName = "Kotlin Worksheet"
 ) {
 
     override fun createFileFromTemplate(name: String, template: FileTemplate, dir: PsiDirectory): PsiFile? {
