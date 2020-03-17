@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.incremental.record
-import org.jetbrains.kotlin.resolve.calls.components.CollectionTypeVariableUsagesInfo.getTypeParameterByVariable
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
@@ -35,20 +34,6 @@ import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-
-internal object CheckInstantiationOfAbstractClass : ResolutionPart() {
-    override fun KotlinResolutionCandidate.process(workIndex: Int) {
-        val candidateDescriptor = resolvedCall.candidateDescriptor
-
-        if (candidateDescriptor is ConstructorDescriptor &&
-            !callComponents.statelessCallbacks.isSuperOrDelegatingConstructorCall(resolvedCall.atom)
-        ) {
-            if (candidateDescriptor.constructedClass.modality == Modality.ABSTRACT) {
-                addDiagnostic(InstantiationOfAbstractClass)
-            }
-        }
-    }
-}
 
 internal object CheckVisibility : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {

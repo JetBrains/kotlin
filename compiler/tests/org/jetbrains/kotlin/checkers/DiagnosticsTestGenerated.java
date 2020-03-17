@@ -1891,6 +1891,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/callableReference/kt35959.kt");
             }
 
+            @TestMetadata("kt37530.kt")
+            public void testKt37530() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/kt37530.kt");
+            }
+
             @TestMetadata("kt7430_wrongClassOnLHS.kt")
             public void testKt7430_wrongClassOnLHS() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/kt7430_wrongClassOnLHS.kt");
@@ -15865,6 +15870,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
             @TestMetadata("defaultParameters.kt")
             public void testDefaultParameters() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/overload/defaultParameters.kt");
+            }
+
+            @TestMetadata("disambiguateByFailedAbstractClassCheck.kt")
+            public void testDisambiguateByFailedAbstractClassCheck() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/overload/disambiguateByFailedAbstractClassCheck.kt");
             }
 
             @TestMetadata("EmptyArgumentListInLambda.kt")
