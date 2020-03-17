@@ -21,7 +21,7 @@ import java.io.File
 
 // KT-29613, KT-29783
 internal class KotlinNativeLibrariesDependencySubstitutor(
-    mppModel: KotlinMPPGradleModel,
+    val mppModel: KotlinMPPGradleModel,
     private val gradleModule: IdeaModule,
     private val resolverCtx: ProjectResolverContext
 ) {

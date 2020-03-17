@@ -513,8 +513,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
             val processedModuleIds = HashSet<String>()
             processCompilations(gradleModule, mppModel, ideModule, resolverCtx) { dataNode, compilation ->
                 if (processedModuleIds.add(getKotlinModuleId(gradleModule, compilation, resolverCtx))) {
-                    val substitutedDependencies =
-                        substitutor.substituteDependencies(compilation.dependencies.mapNotNull { mppModel.dependencyMap[it] })
+                    val substitutedDependencies = substitutor.substituteDependencies(compilation)
                     buildDependencies(
                         resolverCtx,
                         sourceSetMap,
@@ -595,9 +594,9 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                     addDependency(fromDataNode, toDataNode, dependeeSourceSet.isTestModule)
                 }
                 if (processedModuleIds.add(getKotlinModuleId(gradleModule, sourceSet, resolverCtx))) {
-                    val mergedDependencies = LinkedHashSet<KotlinDependency>().apply {
-                        addAll(sourceSet.dependencies.mapNotNull { mppModel.dependencyMap[it] })
-                        dependeeSourceSets.flatMapTo(this) { it.dependencies.mapNotNull { mppModel.dependencyMap[it] } }
+                    val mergedSubstitutedDependencies = LinkedHashSet<KotlinDependency>().apply {
+                        addAll(substitutor.substituteDependencies(sourceSet))
+                        dependeeSourceSets.flatMapTo(this) { substitutor.substituteDependencies(it) }
                         if (mppModel.extraFeatures.isNativeDependencyPropagationEnabled
                             && mppModel.extraFeatures.isHMPPEnabled
                             && sourceSet.actualPlatforms.getSinglePlatform() == KotlinPlatform.NATIVE
@@ -607,14 +606,12 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                             }
                         }
                     }
-                    val substitutedDependencies =
-                        substitutor.substituteDependencies(mergedDependencies)
                     buildDependencies(
                         resolverCtx,
                         sourceSetMap,
                         artifactsMap,
                         fromDataNode,
-                        preprocessDependencies(substitutedDependencies),
+                        preprocessDependencies(mergedSubstitutedDependencies),
                         ideProject
                     )
                     @Suppress("UNCHECKED_CAST")
@@ -622,6 +619,9 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                 }
             }
         }
+
+        private fun KotlinNativeLibrariesDependencySubstitutor.substituteDependencies(kotlinModule: KotlinModule) =
+            substituteDependencies(kotlinModule.dependencies.mapNotNull { mppModel.dependencyMap[it] })
 
         // We can't really commonize native platform libraries yet.
         // But APIs for different targets may be very similar.
