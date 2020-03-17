@@ -43,7 +43,8 @@ private class ArrayConstructorTransformer(
         val clazz = irConstructor.constructedClass.symbol
         return when {
             irConstructor.valueParameters.size != 2 -> null
-            clazz == context.irBuiltIns.arrayClass -> context.ir.symbols.arrayOfNulls // Array<T> has no unary constructor: it can only exist for Array<T?>
+            // Fir2Ir doesn't use the builtin arrayClass symbol but creates a new symbol.
+            clazz.owner.fqNameForIrSerialization == context.irBuiltIns.arrayClass.owner.fqNameForIrSerialization -> context.ir.symbols.arrayOfNulls // Array<T> has no unary constructor: it can only exist for Array<T?>
             context.irBuiltIns.primitiveArrays.contains(clazz) -> clazz.constructors.single { it.owner.valueParameters.size == 1 }
             else -> null
         }
