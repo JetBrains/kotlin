@@ -10278,6 +10278,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/approximateBeforeFixation.kt");
             }
 
+            @TestMetadata("avoidCreatingUselessCapturedTypes.kt")
+            public void testAvoidCreatingUselessCapturedTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/avoidCreatingUselessCapturedTypes.kt");
+            }
+
             @TestMetadata("cannotCaptureInProjection.kt")
             public void testCannotCaptureInProjection() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/cannotCaptureInProjection.kt");
