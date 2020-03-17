@@ -22,6 +22,8 @@ import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_DISABLE_COMPILER_DAEMON
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_ENABLE_PARALLEL_EXECUTION_CHECK
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_HOME
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.CompilerVersion
@@ -152,6 +154,32 @@ internal abstract class KonanCliRunner(
                 spec.environment(environment)
             }
         } else {
+            // TODO: Remove this if once KT-37550 is fixed
+            if (PropertiesProvider(project).nativeEnableParallelExecutionCheck) {
+                System.getProperties().compute(PARALLEL_EXECUTION_GUARD_PROPERTY) { _, value ->
+                    if (value != null) {
+                        throw IllegalStateException(
+                            """
+                            Parallel in-process execution of the Kotlin/Native compiler detected.
+                            
+                            At this moment the parallel execution of several compiler instances in the same process is not supported.
+                            To fix this, you can do one of the following things:
+                            
+                            - Disable in-process execution. To do this, set '$KOTLIN_NATIVE_DISABLE_COMPILER_DAEMON=true' project property.
+
+                            - Disable parallel task execution. To do this, set 'org.gradle.parallel=false' project property.
+                
+                            If you still want to run the compiler in-process in parallel, you may disable this check by setting project
+                            property '$KOTLIN_NATIVE_ENABLE_PARALLEL_EXECUTION_CHECK=false'. Note that in this case the compiler may fail.
+                            
+                            """.trimIndent()
+                        )
+                    }
+                    "true"
+                }
+            }
+
+
             val oldProperties = mutableMapOf<String, String?>()
             additionalSystemProperties.forEach {
                 oldProperties[it.key] = System.getProperty(it.key)
@@ -186,7 +214,16 @@ internal abstract class KonanCliRunner(
                     else System.setProperty(it.key, value)
                 }
             }
+
+            // TODO: Remove once KT-37550 is fixed
+            if (PropertiesProvider(project).nativeEnableParallelExecutionCheck) {
+                System.clearProperty(PARALLEL_EXECUTION_GUARD_PROPERTY)
+            }
         }
+    }
+
+    companion object {
+        private const val PARALLEL_EXECUTION_GUARD_PROPERTY = "org.jetbrains.kotlin.native.compiler.running"
     }
 }
 
