@@ -207,33 +207,33 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
   }
 
   private void editPattern() {
-    final String item = myPatterns.getSelectedItem();
+    String item = myPatterns.getSelectedItem();
     if (item == null) return;
 
     editPattern(item);
   }
 
-  private void editPattern(@Nullable final String item) {
-    final FileType type = myRecognizedFileType.getSelectedFileType();
+  private void editPattern(@Nullable String item) {
+    FileType type = myRecognizedFileType.getSelectedFileType();
     if (type == null) return;
 
-    final String title =
+    String title =
       item == null
       ? FileTypesBundle.message("filetype.edit.add.pattern.title")
       : FileTypesBundle.message("filetype.edit.edit.pattern.title");
 
-    final Language oldLanguage = item == null ? null : myTempTemplateDataLanguages.findAssociatedFileType(item);
-    final FileTypePatternDialog dialog = new FileTypePatternDialog(item, type, oldLanguage);
-    final DialogBuilder builder = new DialogBuilder(myPatterns);
+    Language oldLanguage = item == null ? null : myTempTemplateDataLanguages.findAssociatedFileType(item);
+    FileTypePatternDialog dialog = new FileTypePatternDialog(item, type, oldLanguage);
+    DialogBuilder builder = new DialogBuilder(myPatterns);
     builder.setPreferredFocusComponent(dialog.getPatternField());
     builder.setCenterPanel(dialog.getMainPanel());
     builder.setTitle(title);
     builder.showModal(true);
     if (builder.getDialogWrapper().isOK()) {
-      final String pattern = dialog.getPatternField().getText();
+      String pattern = dialog.getPatternField().getText();
       if (StringUtil.isEmpty(pattern)) return;
 
-      final FileNameMatcher matcher = FileTypeManager.parseFromString(pattern);
+      FileNameMatcher matcher = FileTypeManager.parseFromString(pattern);
       FileType registeredFileType = findExistingFileType(matcher);
       if (registeredFileType != null && registeredFileType != type) {
         if (registeredFileType.isReadOnly()) {
@@ -242,25 +242,24 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
                                      title, Messages.getErrorIcon());
           return;
         }
-        else {
-          if (Messages.OK == Messages.showOkCancelDialog(myPatterns.myPatternsList, FileTypesBundle.message("filetype.edit.add.pattern.exists.message",
+        int ret = Messages.showOkCancelDialog(myPatterns.myPatternsList, FileTypesBundle.message("filetype.edit.add.pattern.exists.message",
                                                                                                registeredFileType.getDescription()),
-                                               FileTypesBundle.message("filetype.edit.add.pattern.exists.title"),
-                                               FileTypesBundle.message("filetype.edit.add.pattern.reassign.button"),
-                                               CommonBundle.getCancelButtonText(), Messages.getQuestionIcon())) {
-            myTempPatternsTable.removeAssociation(matcher, registeredFileType);
-            if (oldLanguage != null) {
-              myTempTemplateDataLanguages.removeAssociation(matcher, oldLanguage);
-            }
+                                            FileTypesBundle.message("filetype.edit.add.pattern.exists.title"),
+                                            FileTypesBundle.message("filetype.edit.add.pattern.reassign.button"),
+                                            CommonBundle.getCancelButtonText(), Messages.getQuestionIcon());
+        if (ret == Messages.OK) {
+          myTempPatternsTable.removeAssociation(matcher, registeredFileType);
+          if (oldLanguage != null) {
+            myTempTemplateDataLanguages.removeAssociation(matcher, oldLanguage);
           }
-          else {
-            return;
-          }
+        }
+        else {
+          return;
         }
       }
 
       if (item != null) {
-        final FileNameMatcher oldMatcher = FileTypeManager.parseFromString(item);
+        FileNameMatcher oldMatcher = FileTypeManager.parseFromString(item);
         myTempPatternsTable.removeAssociation(oldMatcher, type);
         if (oldLanguage != null) {
           myTempTemplateDataLanguages.removeAssociation(oldMatcher, oldLanguage);
@@ -268,10 +267,12 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
       }
       myTempPatternsTable.addAssociation(matcher, type);
       Language language = dialog.getTemplateDataLanguage();
-      if (language != null) myTempTemplateDataLanguages.addAssociation(matcher, language);
+      if (language != null) {
+        myTempTemplateDataLanguages.addAssociation(matcher, language);
+      }
 
       updateExtensionList();
-      final int index = myPatterns.getListModel().indexOf(matcher.getPresentableString());
+      int index = myPatterns.getListModel().indexOf(matcher.getPresentableString());
       if (index >= 0) {
         ScrollingUtil.selectItem(myPatterns.myPatternsList, index);
       }
@@ -344,7 +345,7 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
         .setRemoveAction(button -> myController.removeFileType())
         .setEditAction(button -> myController.editFileType())
         .setEditActionUpdater(e -> {
-          final FileType fileType = getSelectedFileType();
+          FileType fileType = getSelectedFileType();
           return canBeModified(fileType);
         })
         .setRemoveActionUpdater(e -> canBeModified(getSelectedFileType()))
@@ -460,32 +461,28 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
     }
   }
 
-  public static class PatternsPanel extends JPanel {
-    private final JBList<String> myPatternsList;
+  static class PatternsPanel extends JPanel {
+    private final JBList<String> myPatternsList = new JBList<>(new DefaultListModel<>());
     private FileTypeConfigurable myController;
 
-    public PatternsPanel() {
+    PatternsPanel() {
       super(new BorderLayout());
-      myPatternsList = new JBList<>(new DefaultListModel<>());
       myPatternsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       myPatternsList.setCellRenderer(new ExtensionRenderer());
       myPatternsList.getEmptyText().setText(FileTypesBundle.message("filetype.settings.no.patterns"));
 
-      add(ToolbarDecorator.createDecorator(myPatternsList)
-            .setAddAction(button -> myController.addPattern()).setEditAction(button -> myController.editPattern()).setRemoveAction(
-          button -> myController.removePattern()).disableUpDownActions().createPanel(), BorderLayout.CENTER);
+      ToolbarDecorator decorator = ToolbarDecorator.createDecorator(myPatternsList)
+        .setAddAction(__ -> myController.addPattern())
+        .setEditAction(__ -> myController.editPattern())
+        .setRemoveAction(__ -> myController.removePattern())
+        .disableUpDownActions();
+      add(decorator.createPanel(), BorderLayout.CENTER);
 
-      setBorder(IdeBorderFactory.createTitledBorder(FileTypesBundle.message("filetype.registered.patterns.group"), false, TITLE_INSETS)
-                  .setShowLine(false));
+      setBorder(IdeBorderFactory.createTitledBorder(FileTypesBundle.message("filetype.registered.patterns.group"), false, TITLE_INSETS).setShowLine(false));
     }
 
     void attachActions(@NotNull FileTypeConfigurable controller) {
       myController = controller;
-    }
-
-    @NotNull
-    public JComponent getComponent() {
-      return this;
     }
 
     void clearList() {
@@ -498,18 +495,18 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
       return (DefaultListModel<String>)myPatternsList.getModel();
     }
 
-    public void addPattern(@NotNull String pattern) {
+    void addPattern(@NotNull String pattern) {
       getListModel().addElement(pattern);
     }
 
-    public void ensureSelectionExists() {
+    void ensureSelectionExists() {
       ScrollingUtil.ensureSelectionExists(myPatternsList);
     }
 
-    public void select(@NotNull String pattern) {
+    void select(@NotNull String pattern) {
       for (int i = 0; i < myPatternsList.getItemsCount(); i++) {
-        final String at = myPatternsList.getModel().getElementAt(i);
-        final FileNameMatcher matcher = FileTypeManager.parseFromString(at);
+        String at = myPatternsList.getModel().getElementAt(i);
+        FileNameMatcher matcher = FileTypeManager.parseFromString(at);
         if (matcher.acceptsCharSequence(pattern)) {
           ScrollingUtil.selectItem(myPatternsList, i);
           return;
@@ -517,18 +514,14 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
       }
     }
 
-    public String removeSelected() {
+    String removeSelected() {
       String selectedValue = getSelectedItem();
       if (selectedValue == null) return null;
       ListUtil.removeSelectedItems(myPatternsList);
       return selectedValue;
     }
 
-    public String getDefaultExtension() {
-      return getListModel().getElementAt(0);
-    }
-
-    public String getSelectedItem() {
+    String getSelectedItem() {
       return myPatternsList.getSelectedValue();
     }
   }
@@ -540,11 +533,11 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
     private JTextField myIgnoreFilesField;
     private JPanel myIgnorePanel;
 
-    public JComponent getComponent() {
+    JComponent getComponent() {
       return myWholePanel;
     }
 
-    public void dispose() {
+    void dispose() {
       myRecognizedFileType.setFileTypes(FileType.EMPTY_ARRAY);
       myPatterns.clearList();
     }
@@ -560,7 +553,7 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
     private final T myFileType;
     private final SettingsEditor<T> myEditor;
 
-    TypeEditor(Component parent, T fileType, final String title) {
+    TypeEditor(Component parent, T fileType, String title) {
       super(parent, false);
       myFileType = fileType;
       myEditor = fileType.getEditor();
@@ -593,8 +586,8 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
     }
 
     @Override
-    @SuppressWarnings("SpellCheckingInspection")
     protected String getHelpId() {
+      //noinspection SpellCheckingInspection
       return "reference.dialogs.newfiletype";
     }
   }
