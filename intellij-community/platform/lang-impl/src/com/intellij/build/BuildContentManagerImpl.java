@@ -212,17 +212,19 @@ public final class BuildContentManagerImpl implements BuildContentManager {
       }
       closeListenerMap.put(buildDescriptor.getId(), new CloseListener(content, processHandler));
     }
+    Pair<Icon, AtomicInteger> pair = liveContentsMap.computeIfAbsent(content, c -> Pair.pair(c.getIcon(), new AtomicInteger(0)));
+    pair.second.incrementAndGet();
+    content.putUserData(ToolWindow.SHOW_CONTENT_ICON, Boolean.TRUE);
+    if (pair.first == null) {
+      content.putUserData(Content.TAB_LABEL_ORIENTATION_KEY, ComponentOrientation.RIGHT_TO_LEFT);
+    }
+    content.setIcon(ExecutionUtil.getLiveIndicator(pair.first, 0, 13));
     invokeLaterIfNeeded(() -> {
-      Pair<Icon, AtomicInteger> pair = liveContentsMap.computeIfAbsent(content, c -> Pair.pair(c.getIcon(), new AtomicInteger(0)));
-      pair.second.incrementAndGet();
-      content.putUserData(ToolWindow.SHOW_CONTENT_ICON, Boolean.TRUE);
-      if (pair.first == null) {
-        content.putUserData(Content.TAB_LABEL_ORIENTATION_KEY, ComponentOrientation.RIGHT_TO_LEFT);
-      }
-      content.setIcon(ExecutionUtil.getLiveIndicator(pair.first, 0, 13));
       JComponent component = content.getComponent();
       component.invalidate();
-      getOrCreateToolWindow().setIcon(ExecutionUtil.getLiveIndicator(AllIcons.Toolwindows.ToolWindowBuild));
+      if (!liveContentsMap.isEmpty()) {
+        getOrCreateToolWindow().setIcon(ExecutionUtil.getLiveIndicator(AllIcons.Toolwindows.ToolWindowBuild));
+      }
     });
   }
 
@@ -237,17 +239,19 @@ public final class BuildContentManagerImpl implements BuildContentManager {
         }
       }
     }
+
+    Pair<Icon, AtomicInteger> pair = liveContentsMap.get(content);
+    if (pair != null && pair.second.decrementAndGet() == 0) {
+      content.setIcon(pair.first);
+      if (pair.first == null) {
+        content.putUserData(ToolWindow.SHOW_CONTENT_ICON, Boolean.FALSE);
+      }
+      liveContentsMap.remove(content);
+    }
+
     invokeLaterIfNeeded(() -> {
-      Pair<Icon, AtomicInteger> pair = liveContentsMap.get(content);
-      if (pair != null && pair.second.decrementAndGet() == 0) {
-        content.setIcon(pair.first);
-        if (pair.first == null) {
-          content.putUserData(ToolWindow.SHOW_CONTENT_ICON, Boolean.FALSE);
-        }
-        liveContentsMap.remove(content);
-        if (liveContentsMap.isEmpty()) {
-          getOrCreateToolWindow().setIcon(AllIcons.Toolwindows.ToolWindowBuild);
-        }
+      if (liveContentsMap.isEmpty()) {
+        getOrCreateToolWindow().setIcon(AllIcons.Toolwindows.ToolWindowBuild);
       }
     });
   }
