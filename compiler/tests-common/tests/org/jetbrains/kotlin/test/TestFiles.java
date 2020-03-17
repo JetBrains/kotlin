@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.parseDirectives;
-import static org.jetbrains.kotlin.test.KotlinTestUtils.parseDirectivesAndFlags;
 
 public class TestFiles {
     /**
@@ -67,11 +66,11 @@ public class TestFiles {
         if (!matcher.find()) {
             assert testFileName != null : "testFileName should not be null if no FILE directive defined";
             // One file
-            testFiles.add(factory.createFile(null, testFileName, expectedText, parseDirectivesAndFlags(expectedText)));
+            testFiles.add(factory.createFile(null, testFileName, expectedText, parseDirectives(expectedText)));
             commonPrefixOrWholeFile = expectedText;
         }
         else {
-            Directives allFilesOrCommonPrefixDirectives = parseDirectivesPerFile ? null : parseDirectivesAndFlags(expectedText);
+            Directives allFilesOrCommonPrefixDirectives = parseDirectivesPerFile ? null : parseDirectives(expectedText);
             int processedChars = 0;
             M module = null;
             boolean firstFileProcessed = false;
@@ -106,9 +105,10 @@ public class TestFiles {
                                   expectedText.substring(start,end);
 
 
+                String expectedText1 = firstFileProcessed ? commonPrefixOrWholeFile + fileText : fileText;
                 testFiles.add(factory.createFile(module, fileName, fileText,
                                                  parseDirectivesPerFile ?
-                                                 parseDirectivesAndFlags(firstFileProcessed ? commonPrefixOrWholeFile + fileText : fileText)
+                                                 parseDirectives(expectedText1)
                                                                         : allFilesOrCommonPrefixDirectives));
                 processedChars = end;
                 firstFileProcessed = true;

@@ -97,8 +97,7 @@ public class KotlinTestUtils {
 
     private static final List<File> filesToDelete = new ArrayList<>();
 
-    static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!([\\w_]+)(:\\s*(.*)$)?", Pattern.MULTILINE);
-    static final Pattern BACKEND_DIRECTIVE_PATTERN = Pattern.compile("^//\\s*(FULL_JDK|JVM_TARGET|KOTLIN_CONFIGURATION_FLAGS|LANGUAGE_VERSION|COMMON_COROUTINES_TEST|COROUTINES_PACKAGE|WITH_RUNTIME|WITH_REFLECT|NO_CHECK_LAMBDA_INLINING|SKIP_INLINE_CHECK_IN)(:[ \\t]*(.*)$)?", Pattern.MULTILINE);
+    private static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*[!]?([A-Z_]+)(:[ \\t]*(.*))?$", Pattern.MULTILINE);
 
     private KotlinTestUtils() {
     }
@@ -531,25 +530,13 @@ public class KotlinTestUtils {
 
     @NotNull
     public static Directives parseDirectives(String expectedText, @NotNull Directives directives) {
-        return parseByRegexp(DIRECTIVE_PATTERN, expectedText, directives);
-    }
-
-    private static Directives parseByRegexp(Pattern pattern, String expectedText, Directives directives) {
-        Matcher directiveMatcher = pattern.matcher(expectedText);
+        Matcher directiveMatcher = DIRECTIVE_PATTERN.matcher(expectedText);
         while (directiveMatcher.find()) {
             String name = directiveMatcher.group(1);
             String value = directiveMatcher.group(3);
-            String oldValue = directives.put(name, value);
-            Assert.assertNull("Directive or flag overwritten: " + name + " old value: " + oldValue + " new value: " + value, oldValue);
+            directives.put(name, value);
         }
         return directives;
-    }
-
-    @NotNull
-    public static Directives parseDirectivesAndFlags(String expectedText) {
-        Directives directiveAndFlags = parseDirectives(expectedText);
-        parseByRegexp(BACKEND_DIRECTIVE_PATTERN, expectedText, directiveAndFlags);
-        return directiveAndFlags;
     }
 
     public static List<String> loadBeforeAfterText(String filePath) {

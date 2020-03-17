@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinBaseTest
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
@@ -172,7 +170,7 @@ object InlineTestUtil {
     ): ArrayList<NotInlinedParameter> {
         val skipMethods =
             files.flatMap {
-                it.getListDirectiveIfPresent("SKIP_INLINE_CHECK_IN") ?: emptyList()
+                it.directives.listValues("SKIP_INLINE_CHECK_IN") ?: emptyList()
             }.toSet()
 
         val inlinedMethods = inlineInfo.inlineMethods

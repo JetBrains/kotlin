@@ -70,7 +70,6 @@ import static org.jetbrains.kotlin.cli.common.output.OutputUtilsKt.writeAllTo;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.codegen.TestUtilsKt.extractUrls;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
-import static org.jetbrains.kotlin.test.KotlinTestUtils.parseDirectivesAndFlags;
 import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getBoxMethodOrNull;
 import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getGeneratedClass;
 
@@ -161,11 +160,10 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         List<String> kotlinConfigurationFlags = new ArrayList<>(0);
         for (TestFile testFile : testFilesWithConfigurationDirectives) {
             String content = testFile.content;
-            Directives directives = usePreparsedDirectives ? testFile.directives : parseDirectivesAndFlags(content);
-
-            String configurationFlags = directives.get("KOTLIN_CONFIGURATION_FLAGS");
-            if (configurationFlags != null) {
-                kotlinConfigurationFlags.addAll(InTextDirectivesUtils.splitValues(new ArrayList<>(), configurationFlags));
+            Directives directives = usePreparsedDirectives ? testFile.directives : KotlinTestUtils.parseDirectives(content);
+            List<String> flags = directives.listValues("KOTLIN_CONFIGURATION_FLAGS");
+            if (flags != null) {
+                kotlinConfigurationFlags.addAll(flags);
             }
 
             String targetString = directives.get("JVM_TARGET");

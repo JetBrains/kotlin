@@ -91,11 +91,6 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
             return name
         }
 
-        fun getListDirectiveIfPresent(name: String): List<String>? {
-            return directives[name]?.let {
-                InTextDirectivesUtils.splitValues(arrayListOf(), it)
-            } ?: emptyList()
-        }
     }
 
     open class TestModule(
