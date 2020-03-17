@@ -81,7 +81,12 @@ public abstract class FunctionGenerationStrategy {
                 @NotNull MemberCodegen<?> parentCodegen
         ) {
             ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, signature.getReturnType(), context, state, parentCodegen);
-            doGenerateBody(codegen, signature);
+            state.getGlobalInlineContext().enterDeclaration(context.getFunctionDescriptor());
+            try {
+                doGenerateBody(codegen, signature);
+            } finally {
+                state.getGlobalInlineContext().exitDeclaration();
+            }
         }
 
         @Override
