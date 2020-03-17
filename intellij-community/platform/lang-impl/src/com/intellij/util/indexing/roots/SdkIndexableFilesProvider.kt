@@ -8,8 +8,10 @@ import com.intellij.openapi.roots.ContentIterator
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.util.containers.ConcurrentBitSet
 import com.intellij.util.indexing.IndexingBundle
+import org.jetbrains.annotations.ApiStatus
 
-internal class SdkIndexableFilesProvider(val sdk: Sdk) : IndexableFilesProvider {
+@ApiStatus.Internal
+class SdkIndexableFilesProvider(val sdk: Sdk) : IndexableFilesProvider {
   override fun getIndexingProgressText() = IndexingBundle.message("indexable.files.provider.indexing.sdk.name", sdk.name)
 
   override fun getRootsScanningProgressText() = IndexingBundle.message("indexable.files.provider.scanning.sdk.name", sdk.name)
