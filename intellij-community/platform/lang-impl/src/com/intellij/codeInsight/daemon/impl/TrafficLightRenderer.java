@@ -446,14 +446,14 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       if (StringUtil.isNotEmpty(status.reasonWhyDisabled)) {
         return new AnalyzerStatus(AllIcons.General.InspectionsTrafficOff,
                                  "<b>No analysis has been performed</b>", status.reasonWhyDisabled, this::createUIController).
-          withExpandedStatus("OFF");
+          withStandardStatus(StandardStatus.OFF);
       }
       if (StringUtil.isNotEmpty(status.reasonWhySuspended)) {
         return new AnalyzerStatus(AllIcons.General.InspectionsPause,
                                   "<b>Code analysis has been suspended</b>",
                                   status.reasonWhySuspended,
                                   this::createUIController).
-          withExpandedStatus("Indexing...");
+          withStandardStatus(StandardStatus.INDEXING);
       }
       if (status.errorAnalyzingFinished) {
         return new AnalyzerStatus(AllIcons.General.InspectionsOK, "No problems found",
@@ -462,7 +462,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
       //noinspection ConstantConditions
       return new AnalyzerStatus(AllIcons.General.InspectionsEye, title, detailsBuilder.toString(), this::createUIController).
-        withExpandedStatus("Analyzing...").
+        withStandardStatus(StandardStatus.ANALYZING).
         withPasses(ContainerUtil.map(status.passes, p -> new PassWrapper(p.getPresentableName(), p.getProgress(), p.isFinished())));
     }
   }
