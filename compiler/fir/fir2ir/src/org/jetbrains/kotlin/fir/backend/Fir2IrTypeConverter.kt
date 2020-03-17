@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.types.Variance
 class Fir2IrTypeConverter(
     private val components: Fir2IrComponents
 ) : Fir2IrComponents by components {
-    private val classIdToSymbolMap = mapOf(
+    internal val classIdToSymbolMap = mapOf(
         StandardClassIds.Nothing to irBuiltIns.nothingClass,
         StandardClassIds.Unit to irBuiltIns.unitClass,
         StandardClassIds.Boolean to irBuiltIns.booleanClass,
@@ -37,7 +37,7 @@ class Fir2IrTypeConverter(
         StandardClassIds.Array to irBuiltIns.arrayClass
     )
 
-    private val classIdToTypeMap = mapOf(
+    internal val classIdToTypeMap = mapOf(
         StandardClassIds.Nothing to irBuiltIns.nothingType,
         StandardClassIds.Unit to irBuiltIns.unitType,
         StandardClassIds.Boolean to irBuiltIns.booleanType,

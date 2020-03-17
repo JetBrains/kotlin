@@ -66,6 +66,12 @@ class Fir2IrDeclarationStorage(
 
     private val localStorage = Fir2IrLocalStorage()
 
+    internal fun preCacheBuiltinClassConstructorIfAny(firClass: FirRegularClass, irClass: IrClass) {
+        val primaryConstructor = firClass.getPrimaryConstructorIfAny() ?: return
+        val irConstructor = irClass.constructors.firstOrNull() ?: return
+        constructorCache[primaryConstructor] = irConstructor
+    }
+
     fun registerFile(firFile: FirFile, irFile: IrFile) {
         fileCache[firFile] = irFile
     }
@@ -653,15 +659,6 @@ class Fir2IrDeclarationStorage(
     fun getIrConstructorSymbol(firConstructorSymbol: FirConstructorSymbol): IrConstructorSymbol {
         val firConstructor = firConstructorSymbol.fir
         getCachedIrConstructor(firConstructor)?.let { return symbolTable.referenceConstructor(it.descriptor) }
-        val builtinParent = when (firConstructorSymbol.callableId.classId) {
-            StandardClassIds.Any -> irBuiltIns.anyClass
-            else -> null
-        }
-        if (builtinParent != null) {
-            val constructorSymbol = builtinParent.constructors.first()
-            constructorCache[firConstructor] = constructorSymbol.owner
-            return symbolTable.referenceConstructor(constructorSymbol.descriptor)
-        }
 
         val irParent = findIrParent(firConstructor) as IrClass
         val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED

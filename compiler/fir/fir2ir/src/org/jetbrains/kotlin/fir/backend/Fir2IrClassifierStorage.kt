@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -44,6 +46,24 @@ class Fir2IrClassifierStorage(
 
     private fun FirTypeRef.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType =
         with(typeConverter) { toIrType(typeContext) }
+
+    fun preCacheBuiltinClasses() {
+        for ((classId, irBuiltinSymbol) in typeConverter.classIdToSymbolMap) {
+            val firClass = ConeClassLikeLookupTagImpl(classId).toSymbol(session)!!.fir as FirRegularClass
+            val irClass = irBuiltinSymbol.owner
+            classCache[firClass] = irClass
+            processClassHeader(firClass, irClass)
+            declarationStorage.preCacheBuiltinClassConstructorIfAny(firClass, irClass)
+        }
+        for ((primitiveClassId, primitiveArrayId) in StandardClassIds.primitiveArrayTypeByElementType) {
+            val firClass = ConeClassLikeLookupTagImpl(primitiveArrayId).toSymbol(session)!!.fir as FirRegularClass
+            val irType = typeConverter.classIdToTypeMap[primitiveClassId]
+            val irClass = irBuiltIns.primitiveArrayForType[irType]!!.owner
+            classCache[firClass] = irClass
+            processClassHeader(firClass, irClass)
+            declarationStorage.preCacheBuiltinClassConstructorIfAny(firClass, irClass)
+        }
+    }
 
     internal fun IrDeclaration.declareThisReceiverParameter(
         parent: IrDeclarationParent,
@@ -354,14 +374,6 @@ class Fir2IrClassifierStorage(
     fun getIrClassSymbol(firClassSymbol: FirClassSymbol<*>): IrClassSymbol {
         val firClass = firClassSymbol.fir
         getCachedIrClass(firClass)?.let { return symbolTable.referenceClass(it.descriptor) }
-        val builtinClassSymbol = when (firClassSymbol.classId) {
-            StandardClassIds.Any -> irBuiltIns.anyClass
-            else -> null
-        }
-        if (builtinClassSymbol != null && firClass is FirRegularClass) {
-            classCache[firClass] = builtinClassSymbol.owner
-            return symbolTable.referenceClass(builtinClassSymbol.descriptor)
-        }
         // TODO: remove all this code and change to unbound symbol creation
         val irClass = createIrClass(firClass)
         if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.LOCAL) {

@@ -186,7 +186,9 @@ class Fir2IrConverter(
             val externalDependenciesGenerator = ExternalDependenciesGenerator(
                 symbolTable, generateTypicalIrProviderList(irModuleFragment.descriptor, builtIns, symbolTable)
             )
+            // Necessary call to generate built-in IR classes
             externalDependenciesGenerator.generateUnboundSymbolsAsDependencies()
+            classifierStorage.preCacheBuiltinClasses()
             for (firFile in firFiles) {
                 converter.processClassHeaders(firFile)
             }
