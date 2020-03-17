@@ -7,7 +7,7 @@ import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class KotlinCompilerArgumentsMacroFilter extends PathMacroFilter {
+final class KotlinCompilerArgumentsMacroFilter extends PathMacroFilter {
   @Override
   public boolean recursePathMacros(@NotNull Attribute attribute) {
     if (!attribute.getName().equals(Constants.VALUE)) return false;
