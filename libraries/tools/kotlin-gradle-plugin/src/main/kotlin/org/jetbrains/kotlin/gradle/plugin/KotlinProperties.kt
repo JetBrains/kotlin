@@ -189,7 +189,11 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * Forces to run a compilation in a separate JVM.
      */
     val nativeDisableCompilerDaemon: Boolean?
-        get() = booleanProperty("kotlin.native.disableCompilerDaemon")
+        get() = booleanProperty(KOTLIN_NATIVE_DISABLE_COMPILER_DAEMON)
+
+    // TODO: Remove once KT-37550 is fixed
+    val nativeEnableParallelExecutionCheck: Boolean
+        get() = booleanProperty(KOTLIN_NATIVE_ENABLE_PARALLEL_EXECUTION_CHECK) ?: true
 
     /**
      * Dependencies caching strategy. The default is static.
@@ -237,6 +241,11 @@ internal class PropertiesProvider private constructor(private val project: Proje
         internal const val KOTLIN_NATIVE_HOME = "kotlin.native.home"
 
         private const val CACHED_PROVIDER_EXT_NAME = "kotlin.properties.provider"
+
+        internal const val KOTLIN_NATIVE_DISABLE_COMPILER_DAEMON = "kotlin.native.disableCompilerDaemon"
+
+        // TODO: Remove once KT-37550 is fixed
+        internal const val KOTLIN_NATIVE_ENABLE_PARALLEL_EXECUTION_CHECK = "kotlin.native.enableParallelExecutionCheck"
 
         operator fun invoke(project: Project): PropertiesProvider =
             with(project.extensions.extraProperties) {

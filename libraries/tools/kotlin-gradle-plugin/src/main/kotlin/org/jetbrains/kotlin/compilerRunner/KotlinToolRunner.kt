@@ -90,7 +90,8 @@ internal abstract class KotlinToolRunner(
         }
     }
 
-    private fun runInProcess(args: List<String>) {
+    // TODO: Make it private again once KT-37550 is fixed.
+    protected open fun runInProcess(args: List<String>) {
         val oldProperties = setUpSystemProperties()
 
         try {
