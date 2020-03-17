@@ -37,14 +37,17 @@ abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotli
 
         val settings = ConverterSettings.defaultSettings.copy()
         val directives = KotlinTestUtils.parseDirectives(javaCode)
-        for ((name, value) in directives.asMapOfSingleValues()) {
-            when (name) {
-                "forceNotNullTypes" -> settings.forceNotNullTypes = value.toBoolean()
-                "specifyLocalVariableTypeByDefault" -> settings.specifyLocalVariableTypeByDefault = value.toBoolean()
-                "specifyFieldTypeByDefault" -> settings.specifyFieldTypeByDefault = value.toBoolean()
-                "openByDefault" -> settings.openByDefault = value.toBoolean()
-                else -> throw IllegalArgumentException("Unknown option: $name")
-            }
+        directives["FORCE_NOT_NULL_TYPES"]?.let {
+            settings.forceNotNullTypes = it.toBoolean()
+        }
+        directives["SPECIFY_LOCAL_VARIABLE_TYPE_BY_DEFAULT"]?.let {
+            settings.specifyLocalVariableTypeByDefault = it.toBoolean()
+        }
+        directives["SPECIFY_FIELD_TYPE_BY_DEFAULT"]?.let {
+            settings.specifyFieldTypeByDefault = it.toBoolean()
+        }
+        directives["OPEN_BY_DEFAULT"]?.let {
+            settings.openByDefault = it.toBoolean()
         }
 
         val rawConverted = when (prefix) {

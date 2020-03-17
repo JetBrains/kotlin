@@ -35,8 +35,4 @@ class Directives {
             values.flatMap { InTextDirectivesUtils.splitValues(arrayListOf(), it) }
         }
     }
-
-    public fun asMapOfSingleValues(): Map<String, String?> {
-        return directives.entries.associate { it.key to it.value?.single() }
-    }
 }
