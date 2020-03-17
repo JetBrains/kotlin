@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 public final class IntentionActionWrapper implements IntentionAction, ShortcutProvider, IntentionActionDelegate, PossiblyDumbAware {
   private final IntentionActionBean myExtension;
   private String myFullFamilyName;
+  private String myFamilyName;
 
   IntentionActionWrapper(@NotNull IntentionActionBean extension) {
     myExtension = extension;
@@ -45,7 +46,11 @@ public final class IntentionActionWrapper implements IntentionAction, ShortcutPr
   @Override
   @NotNull
   public String getFamilyName() {
-    return getDelegate().getFamilyName();
+    String result = myFamilyName;
+    if (result == null) {
+      myFamilyName = result = getDelegate().getFamilyName();
+    }
+    return result;
   }
 
   @Override
@@ -90,6 +95,7 @@ public final class IntentionActionWrapper implements IntentionAction, ShortcutPr
     return myExtension.getInstance();
   }
 
+  @Override
   @NotNull
   public String getImplementationClassName() {
     return myExtension.className;
