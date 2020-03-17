@@ -1,6 +1,9 @@
 package org.jetbrains.kotlin.idea.refactoring.suggested
 
+import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.suggested.*
 import com.intellij.refactoring.suggested.SuggestedRefactoringSupport.Parameter
 import com.intellij.refactoring.suggested.SuggestedRefactoringSupport.Signature
@@ -20,6 +23,21 @@ import org.jetbrains.kotlin.types.isError
 class KotlinSuggestedRefactoringAvailability(refactoringSupport: SuggestedRefactoringSupport) :
     SuggestedRefactoringAvailability(refactoringSupport)
 {
+    private val HAS_USAGES = Key<Boolean>("KotlinSuggestedRefactoringAvailability.HAS_USAGES")
+
+    override fun amendStateInBackground(state: SuggestedRefactoringState): Iterator<SuggestedRefactoringState> {
+        return iterator {
+            if (state.additionalData[HAS_USAGES] == null) {
+                val declarationCopy = state.restoredDeclarationCopy()
+                val useScope = declarationCopy.useScope
+                if (useScope is LocalSearchScope) {
+                    val hasUsages = ReferencesSearch.search(declarationCopy, useScope).findFirst() != null
+                    yield(state.withAdditionalData(HAS_USAGES, hasUsages))
+                }
+            }
+        }
+    }
+
     override fun refineSignaturesWithResolve(state: SuggestedRefactoringState): SuggestedRefactoringState {
         val newDeclaration = state.declaration as? KtCallableDeclaration ?: return state
         val oldDeclaration = state.restoredDeclarationCopy() as? KtCallableDeclaration ?: return state
@@ -107,8 +125,12 @@ class KotlinSuggestedRefactoringAvailability(refactoringSupport: SuggestedRefact
     override fun detectAvailableRefactoring(state: SuggestedRefactoringState): SuggestedRefactoringData? {
         val declaration = state.declaration
         if (declaration !is KtCallableDeclaration || KotlinSuggestedRefactoringSupport.isOnlyRenameSupported(declaration)) {
+            if (state.additionalData[HAS_USAGES] == false) return null
             return SuggestedRenameData(declaration as PsiNamedElement, state.oldSignature.name)
         }
+
+        val overridesName = declaration.overridesName()
+        if (overridesName == null && state.additionalData[HAS_USAGES] == false) return null
 
         val oldSignature = state.oldSignature
         val newSignature = state.newSignature
@@ -125,7 +147,7 @@ class KotlinSuggestedRefactoringAvailability(refactoringSupport: SuggestedRefact
             return if (nameChanges > 0)
                 updateUsagesData
             else
-                declaration.overridesName()?.let { updateUsagesData.copy(nameOfStuffToUpdate = it) }
+                overridesName?.let { updateUsagesData.copy(nameOfStuffToUpdate = it) }
         }
 
         return when {

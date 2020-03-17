@@ -409,6 +409,36 @@ class KotlinSuggestedRefactoringAvailabilityTest : BaseSuggestedRefactoringAvail
         )
     }
 
+
+    fun testUnusedLocal() {
+        doTest(
+            """
+                fun foo() {
+                    val local<caret> = 0
+                }
+            """.trimIndent(),
+            {
+                myFixture.type("123")
+            },
+            expectedAvailability = Availability.Available(renameAvailableTooltip("local", "local123")),
+            expectedAvailabilityAfterBackgroundAmend = Availability.Disabled
+        )
+    }
+
+    fun testPrivateMethod() {
+        doTest(
+            """
+                private fun foo(<caret>) {
+                }
+            """.trimIndent(),
+            {
+                myFixture.type("p: Int")
+            },
+            expectedAvailability = Availability.Available(changeSignatureAvailableTooltip("foo", "usages")),
+            expectedAvailabilityAfterBackgroundAmend = Availability.Disabled
+        )
+    }
+
     private fun addImport(fqName: String) {
         (file as KtFile).importList!!.add(KtPsiFactory(project).createImportDirective(ImportPath.fromString(fqName)))
     }
