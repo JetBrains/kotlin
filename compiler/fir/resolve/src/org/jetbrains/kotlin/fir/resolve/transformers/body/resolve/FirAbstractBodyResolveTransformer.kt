@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -71,7 +72,6 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         }
     }
 
-    protected inline val topLevelScopes: MutableList<FirScope> get() = components.topLevelScopes
     protected inline val localScopes: List<FirLocalScope> get() = components.localScopes
 
     protected inline val noExpectedType: FirTypeRef get() = components.noExpectedType
@@ -104,7 +104,10 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val scopeSession: ScopeSession,
         val transformer: FirBodyResolveTransformer
     ) : BodyResolveComponents {
-        override val topLevelScopes: MutableList<FirScope> = mutableListOf()
+        override val fileImportsScope: MutableList<FirScope> = mutableListOf()
+
+        @set:PrivateForInline
+        override var typeParametersScopes: PersistentList<FirScope> = persistentListOf()
 
         @set:PrivateForInline
         override var localScopes: FirLocalScopes = persistentListOf()

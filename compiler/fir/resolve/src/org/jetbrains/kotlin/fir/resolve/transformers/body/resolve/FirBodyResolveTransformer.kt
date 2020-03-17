@@ -41,8 +41,8 @@ open class FirBodyResolveTransformer(
         @OptIn(PrivateForInline::class)
         components.file = file
         packageFqName = file.packageFqName
-        return withScopeCleanup(components.topLevelScopes) {
-            components.topLevelScopes.addImportingScopes(file, session, components.scopeSession)
+        return withScopeCleanup(components.fileImportsScope) {
+            components.fileImportsScope.addImportingScopes(file, session, components.scopeSession)
             super.transformFile(file, data)
         }
     }

@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirFunctionTarget
-import org.jetbrains.kotlin.fir.copy
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -25,7 +23,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctiona
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer.Companion.resolveStatus
-import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -55,16 +52,6 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         return ((data as? ResolutionMode.WithStatus)?.status ?: declarationStatus).compose()
     }
 
-    private fun prepareTypeParameterOwnerForBodyResolve(declaration: FirMemberDeclaration) {
-        if (declaration.typeParameters.isNotEmpty()) {
-            topLevelScopes += FirMemberTypeParameterScope(declaration)
-            for (typeParameter in declaration.typeParameters) {
-                typeParameter.transformChildren(transformer, ResolutionMode.ContextIndependent)
-                typeParameter.replaceResolvePhase(FirResolvePhase.STATUS)
-            }
-        }
-    }
-
     private fun prepareSignatureForBodyResolve(callableMember: FirCallableMemberDeclaration<*>) {
         callableMember.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
         callableMember.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
@@ -76,27 +63,45 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         }
     }
 
+    private inline fun <T> withTypeParametersOf(declaration: FirMemberDeclaration, crossinline l: () -> T): T {
+        if (declaration.typeParameters.isEmpty()) return l()
+
+        for (typeParameter in declaration.typeParameters) {
+            typeParameter.replaceResolvePhase(FirResolvePhase.STATUS)
+            typeParameter.transformChildren(transformer, ResolutionMode.ContextIndependent)
+        }
+
+        val before = components.typeParametersScopes
+        @OptIn(PrivateForInline::class)
+        components.typeParametersScopes = components.typeParametersScopes.add(FirMemberTypeParameterScope(declaration))
+        return try {
+            l()
+        } finally {
+            @OptIn(PrivateForInline::class)
+            components.typeParametersScopes = before
+        }
+    }
+
     override fun transformProperty(property: FirProperty, data: ResolutionMode): CompositeTransformResult<FirProperty> {
         if (property is FirSyntheticProperty) {
             transformSimpleFunction(property.getter.delegate, data)
             property.replaceReturnTypeRef(property.getter.delegate.returnTypeRef)
             return property.compose()
         }
-        return withScopeCleanup(topLevelScopes) {
-            prepareTypeParameterOwnerForBodyResolve(property)
+        return withTypeParametersOf(property) {
             if (property.isLocal) {
                 prepareSignatureForBodyResolve(property)
                 property.transformStatus(this, property.resolveStatus(property.status).mode())
                 property.getter?.let { it.transformStatus(this, it.resolveStatus(it.status).mode()) }
                 property.setter?.let { it.transformStatus(this, it.resolveStatus(it.status).mode()) }
-                return@withScopeCleanup transformLocalVariable(property)
+                return@withTypeParametersOf transformLocalVariable(property)
             }
             val returnTypeRef = property.returnTypeRef
-            if (returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return@withScopeCleanup property.compose()
-            if (property.resolvePhase == transformerPhase) return@withScopeCleanup property.compose()
+            if (returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return@withTypeParametersOf property.compose()
+            if (property.resolvePhase == transformerPhase) return@withTypeParametersOf property.compose()
             if (property.resolvePhase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE && transformerPhase == FirResolvePhase.BODY_RESOLVE) {
                 property.replaceResolvePhase(transformerPhase)
-                return@withScopeCleanup property.compose()
+                return@withTypeParametersOf property.compose()
             }
             dataFlowAnalyzer.enterProperty(property)
             withFullBodyResolve {
@@ -282,8 +287,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                     prepareLocalClassForBodyResolve(declaration)
                 }
                 is FirCallableMemberDeclaration<*> -> {
-                    withScopeCleanup(topLevelScopes) {
-                        prepareTypeParameterOwnerForBodyResolve(declaration)
+                    withTypeParametersOf(declaration) {
                         prepareSignatureForBodyResolve(declaration)
                         declaration.transformStatus(transformer, declaration.resolveStatus(declaration.status, klass).mode())
                         if (declaration is FirProperty) {
@@ -304,8 +308,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         components.storeClass(regularClass)
-        return withScopeCleanup(topLevelScopes) {
-            prepareTypeParameterOwnerForBodyResolve(regularClass)
+        return withTypeParametersOf(regularClass) {
             if (regularClass.symbol.classId.isLocal) {
                 prepareLocalClassForBodyResolve(regularClass)
             }
@@ -335,19 +338,17 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
 
     override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         prepareLocalClassForBodyResolve(anonymousObject)
-        return withScopeCleanup(topLevelScopes) {
-            val type = anonymousObject.defaultType()
-            anonymousObject.resultType = buildResolvedTypeRef {
-                source = anonymousObject.source
-                this.type = type
-            }
-            val result = withLabelAndReceiverType(null, anonymousObject, type) {
-                transformDeclaration(anonymousObject, data)
-            }
-            dataFlowAnalyzer.exitAnonymousObject(result.single as FirAnonymousObject)
-            @Suppress("UNCHECKED_CAST")
-            result as CompositeTransformResult<FirStatement>
+        val type = anonymousObject.defaultType()
+        anonymousObject.resultType = buildResolvedTypeRef {
+            source = anonymousObject.source
+            this.type = type
         }
+        val result = withLabelAndReceiverType(null, anonymousObject, type) {
+            transformDeclaration(anonymousObject, data)
+        }
+        dataFlowAnalyzer.exitAnonymousObject(result.single as FirAnonymousObject)
+        @Suppress("UNCHECKED_CAST")
+        return result as CompositeTransformResult<FirStatement>
     }
 
     private fun transformAnonymousFunctionWithLambdaResolution(
@@ -388,8 +389,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             return simpleFunction.compose()
         }
 
-        return withScopeCleanup(topLevelScopes) {
-            prepareTypeParameterOwnerForBodyResolve(simpleFunction)
+        return withTypeParametersOf(simpleFunction) {
             val containingDeclaration = components.containerIfAny
             if (containingDeclaration != null && containingDeclaration !is FirClass<*>) {
                 // For class members everything should be already prepared
