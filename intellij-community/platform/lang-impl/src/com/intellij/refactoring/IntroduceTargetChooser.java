@@ -6,10 +6,7 @@ import com.intellij.codeInsight.unwrap.ScopeHighlighter;
 import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.JBPopupListener;
-import com.intellij.openapi.ui.popup.LightweightWindowEvent;
+import com.intellij.openapi.ui.popup.*;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Pass;
 import com.intellij.openapi.util.TextRange;
@@ -22,6 +19,7 @@ import com.intellij.util.NotNullFunction;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -79,9 +77,18 @@ public class IntroduceTargetChooser {
                                                                             @NotNull Pass<? super T> callback,
                                                                             @NotNull @Nls String title,
                                                                             int selection) {
+    showIntroduceTargetChooser(editor, expressions, callback, title, null, selection);
+  }
+
+  public static <T extends IntroduceTarget> void showIntroduceTargetChooser(@NotNull Editor editor,
+                                                                            @NotNull List<T> expressions,
+                                                                            @NotNull Pass<? super T> callback,
+                                                                            @NotNull @Nls String title,
+                                                                            @Nullable JComponent southComponent,
+                                                                            int selection) {
     AtomicReference<ScopeHighlighter> highlighter = new AtomicReference<>(new ScopeHighlighter(editor));
 
-    JBPopup popup = JBPopupFactory.getInstance().createPopupChooserBuilder(expressions)
+    IPopupChooserBuilder<T> builder = JBPopupFactory.getInstance().createPopupChooserBuilder(expressions)
       .setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
       .setSelectedValue(expressions.get(selection > -1 ? selection : 0), true)
       .setAccessibleName(title)
@@ -133,7 +140,11 @@ public class IntroduceTargetChooser {
           }
           return rendererComponent;
         }
-      }).createPopup();
+      });
+    if (southComponent != null && builder instanceof PopupChooserBuilder) {
+      ((PopupChooserBuilder<T>)builder).setSouthComponent(southComponent);
+    }
+    JBPopup popup = builder.createPopup();
     popup.showInBestPositionFor(editor);
     Project project = editor.getProject();
     if (project != null && !popup.isDisposed()) {
