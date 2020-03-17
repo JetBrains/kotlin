@@ -185,6 +185,11 @@ open class SerializerCodegenImpl(
         }
     }
 
+    override fun generateTypeParamsSerializersGetter(function: FunctionDescriptor) = codegen.generateMethod(function) { _, _ ->
+        genArrayOfTypeParametersSerializers()
+        areturn(kSerializerArrayType)
+    }
+
     override fun generateChildSerializersGetter(function: FunctionDescriptor) {
         codegen.generateMethod(function) { _, _ ->
             val size = serializableProperties.size

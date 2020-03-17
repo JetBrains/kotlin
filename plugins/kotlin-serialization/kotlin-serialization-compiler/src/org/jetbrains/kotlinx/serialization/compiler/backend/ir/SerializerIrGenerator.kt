@@ -194,6 +194,18 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
         +irReturn(array)
     }
 
+    override fun generateTypeParamsSerializersGetter(function: FunctionDescriptor) = irClass.contributeFunction(function) { irFun ->
+        val typeParams = serializableDescriptor.declaredTypeParameters.mapIndexed { idx, _ ->
+            irGetField(
+                irGet(irFun.dispatchReceiverParameter!!),
+                compilerContext.symbolTable.referenceField(localSerializersFieldsDescriptors[idx]).owner
+            )
+        }
+        val kSerType = ((irFun.returnType as IrSimpleType).arguments.first() as IrTypeProjection).type
+        val array = createArrayOfExpression(kSerType, typeParams)
+        +irReturn(array)
+    }
+
     override fun generateSerializableClassProperty(property: PropertyDescriptor) {
         /* Already implemented in .generateSerialClassDesc ? */
     }

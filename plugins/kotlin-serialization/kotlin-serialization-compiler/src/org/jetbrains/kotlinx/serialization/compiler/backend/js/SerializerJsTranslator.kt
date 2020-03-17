@@ -111,6 +111,13 @@ open class SerializerJsTranslator(
         +JsReturn(JsArrayLiteral(allSerializers))
     }
 
+    override fun generateTypeParamsSerializersGetter(function: FunctionDescriptor) = generateFunction(function) { _, _ ->
+        val typeParams = serializableDescriptor.declaredTypeParameters.mapIndexed { idx, _ ->
+            JsNameRef(context.scope().declareName("$typeArgPrefix$idx"), JsThisRef())
+        }
+        +JsReturn(JsArrayLiteral(typeParams))
+    }
+
     override fun generateSerializableClassProperty(property: PropertyDescriptor) {
         val propDesc = generatedSerialDescPropertyDescriptor ?: return
         val propTranslator = DefaultPropertyTranslator(

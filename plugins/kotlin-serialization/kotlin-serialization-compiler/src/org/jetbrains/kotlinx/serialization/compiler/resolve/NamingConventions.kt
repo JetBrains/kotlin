@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlinx.serialization.compiler.resolve
 
 import org.jetbrains.kotlin.name.FqName
@@ -66,7 +71,8 @@ object SerialEntityNames {
     val SERIAL_DESC_FIELD_NAME = Name.identifier(SERIAL_DESC_FIELD)
     val SAVE_NAME = Name.identifier(SAVE)
     val LOAD_NAME = Name.identifier(LOAD)
-    val GENERATED_DESCRIPTOR_GETTER = Name.identifier("childSerializers")
+    val CHILD_SERIALIZERS_GETTER = Name.identifier("childSerializers")
+    val TYPE_PARAMS_SERIALIZERS_GETTER = Name.identifier("typeParametersSerializers")
     val WRITE_SELF_NAME = Name.identifier("write\$Self")
     val SERIALIZER_PROVIDER_NAME = Name.identifier("serializer")
 
