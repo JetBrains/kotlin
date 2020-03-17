@@ -104,8 +104,8 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
 
             val inInlineFunctionScope = allScopes.any { scope -> (scope.irElement as? IrFunction)?.isInline ?: false }
             val cache = if (inInlineFunctionScope) inlineCachedImplementations else cachedImplementations
-            val implementation = cache.getOrPut(superType) {
-                createObjectProxy(superType, inInlineFunctionScope, expression)
+            val implementation = cache.getOrPut(erasedSuperType) {
+                createObjectProxy(erasedSuperType, inInlineFunctionScope, expression)
             }
 
             return if (superType.isNullable() && invokable.type.isNullable()) {
