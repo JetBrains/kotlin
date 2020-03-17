@@ -13366,6 +13366,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inlineClasses/javaClassIntrinsicOnInlineClasses.kt");
         }
 
+        @TestMetadata("javaPrimitiveTypeIC.kt")
+        public void testJavaPrimitiveTypeIC() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/javaPrimitiveTypeIC.kt");
+        }
+
         @TestMetadata("jvmFieldInInlineClassCompanion.kt")
         public void testJvmFieldInInlineClassCompanion() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/jvmFieldInInlineClassCompanion.kt");
@@ -14630,6 +14635,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("javaPrimitiveType.kt")
         public void testJavaPrimitiveType() throws Exception {
             runTest("compiler/testData/codegen/box/intrinsics/javaPrimitiveType.kt");
+        }
+
+        @TestMetadata("javaPrimitiveType_UnitAndNothing.kt")
+        public void testJavaPrimitiveType_UnitAndNothing() throws Exception {
+            runTest("compiler/testData/codegen/box/intrinsics/javaPrimitiveType_UnitAndNothing.kt");
         }
 
         @TestMetadata("kt10131.kt")

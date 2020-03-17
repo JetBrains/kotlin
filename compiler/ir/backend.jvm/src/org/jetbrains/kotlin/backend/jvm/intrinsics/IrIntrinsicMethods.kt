@@ -44,6 +44,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
             listOf(
                 Key(kotlinJvm, FqName("T"), "<get-javaClass>", emptyList()) to JavaClassProperty,
                 Key(kotlinJvm, KotlinBuiltIns.FQ_NAMES.kClass.toSafe(), "<get-javaObjectType>", emptyList()) to GetJavaObjectType,
+                Key(kotlinJvm, KotlinBuiltIns.FQ_NAMES.kClass.toSafe(), "<get-javaPrimitiveType>", emptyList()) to GetJavaPrimitiveType,
                 Key(
                     kotlinJvm,
                     KotlinBuiltIns.FQ_NAMES.kClass.toSafe(),
