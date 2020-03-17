@@ -15,7 +15,7 @@ import com.intellij.util.xmlb.annotations.Attribute
 class DefaultLiveTemplateEP : AbstractExtensionPointBean() {
 
   /**
-   * Path to resource, without `.xml` extension (e.g. `/templates/foo`).
+   * Path to resource (e.g. `/templates/customTemplates.xml`). `.xml` extension can be omitted.
    */
   @Attribute("file")
   @RequiredElement
