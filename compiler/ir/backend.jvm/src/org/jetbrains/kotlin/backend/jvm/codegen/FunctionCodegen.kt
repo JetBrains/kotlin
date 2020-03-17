@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -110,7 +111,12 @@ open class FunctionCodegen(
                     irFunction, classCodegen, methodVisitor, flags, signature, getContinuation, psiElement()
                 )
             }
-            ExpressionCodegen(irFunction, signature, frameMap, InstructionAdapter(methodVisitor), classCodegen, inlinedInto).generate()
+            context.state.globalInlineContext.enterDeclaration(irFunction.suspendFunctionOriginal().descriptor)
+            try {
+                ExpressionCodegen(irFunction, signature, frameMap, InstructionAdapter(methodVisitor), classCodegen, inlinedInto).generate()
+            } finally {
+                context.state.globalInlineContext.exitDeclaration()
+            }
             methodVisitor.visitMaxs(-1, -1)
         }
         methodVisitor.visitEnd()

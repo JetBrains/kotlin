@@ -639,10 +639,8 @@ private fun IrFunction.suspendFunctionViewOrStub(context: JvmBackendContext): Ir
     return context.suspendFunctionOriginalToView.getOrPut(suspendFunctionOriginal()) { createSuspendFunctionStub(context) }
 }
 
-internal fun IrFunction.suspendFunctionOriginal(): IrFunction {
-    require(isSuspend && this is IrSimpleFunction)
-    return attributeOwnerId as IrFunction
-}
+internal fun IrFunction.suspendFunctionOriginal(): IrFunction =
+    if (this is IrSimpleFunction && isSuspend) attributeOwnerId as IrFunction else this
 
 private fun IrFunction.createSuspendFunctionStub(context: JvmBackendContext): IrFunction {
     require(this.isSuspend && this is IrSimpleFunction)
