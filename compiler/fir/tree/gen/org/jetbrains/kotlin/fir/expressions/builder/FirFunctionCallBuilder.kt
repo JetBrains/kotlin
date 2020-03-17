@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirArgumentList
+import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
@@ -40,10 +42,10 @@ open class FirFunctionCallBuilder : FirQualifiedAccessBuilder, FirCallBuilder, F
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
-    override val arguments: MutableList<FirExpression> = mutableListOf()
+    override var argumentList: FirArgumentList = FirEmptyArgumentList
     open lateinit var calleeReference: FirNamedReference
 
-    @UseExperimental(FirImplementationDetail::class)
+    @OptIn(FirImplementationDetail::class)
     override fun build(): FirFunctionCall {
         return FirFunctionCallImpl(
             source,
@@ -54,14 +56,14 @@ open class FirFunctionCallBuilder : FirQualifiedAccessBuilder, FirCallBuilder, F
             explicitReceiver,
             dispatchReceiver,
             extensionReceiver,
-            arguments,
+            argumentList,
             calleeReference,
         )
     }
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildFunctionCall(init: FirFunctionCallBuilder.() -> Unit): FirFunctionCall {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

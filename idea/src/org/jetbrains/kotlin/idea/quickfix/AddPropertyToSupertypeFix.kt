@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.Modality.ABSTRACT
 import org.jetbrains.kotlin.descriptors.Modality.SEALED
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.ShortenReferences
@@ -43,10 +44,10 @@ class AddPropertyToSupertypeFix private constructor(
 
     override fun getText(): String {
         val single = properties.singleOrNull()
-        return if (single != null) actionName(single) else "Add property to supertype..."
+        return if (single != null) actionName(single) else KotlinBundle.message("fix.add.property.to.supertype.text.generic")
     }
 
-    override fun getFamilyName() = "Add property to supertype"
+    override fun getFamilyName() = KotlinBundle.message("fix.add.property.to.supertype.family")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         CommandProcessor.getInstance().runUndoTransparentAction {
@@ -59,7 +60,7 @@ class AddPropertyToSupertypeFix private constructor(
     }
 
     private fun addProperty(propertyData: PropertyData, project: Project) {
-        project.executeWriteCommand("Add Property to Type") {
+        project.executeWriteCommand(KotlinBundle.message("fix.add.property.to.supertype.progress")) {
             val classBody = propertyData.targetClass.getOrCreateBody()
 
             val propertyElement = KtPsiFactory(project).createProperty(propertyData.sourceCode)
@@ -75,7 +76,7 @@ class AddPropertyToSupertypeFix private constructor(
     }
 
     private fun createPropertyPopup(project: Project): ListPopupStep<*> {
-        return object : BaseListPopupStep<PropertyData>("Choose Type", properties) {
+        return object : BaseListPopupStep<PropertyData>(KotlinBundle.message("fix.add.property.to.supertype.choose.type"), properties) {
             override fun isAutoSelectionEnabled() = false
 
             override fun onChosen(selectedValue: PropertyData, finalChoice: Boolean): PopupStep<*>? {
@@ -90,7 +91,9 @@ class AddPropertyToSupertypeFix private constructor(
         }
     }
 
-    private fun actionName(propertyData: PropertyData) = "Add '${propertyData.signaturePreview}' to '${propertyData.targetClass.name}'"
+    private fun actionName(propertyData: PropertyData): String {
+        return KotlinBundle.message("fix.add.property.to.supertype.text", propertyData.signaturePreview, propertyData.targetClass.name.toString())
+    }
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {

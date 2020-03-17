@@ -25,7 +25,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.selectElement
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
@@ -38,7 +38,7 @@ fun showErrorHint(project: Project, editor: Editor, message: String, title: Stri
 }
 
 fun showErrorHintByKey(project: Project, editor: Editor, messageKey: String, title: String) {
-    showErrorHint(project, editor, KotlinRefactoringBundle.message(messageKey), title)
+    showErrorHint(project, editor, KotlinBundle.message(messageKey), title)
 }
 
 fun selectElementsWithTargetSibling(
@@ -122,7 +122,12 @@ fun selectElementsWithTargetParent(
             return when (elementKinds.singleOrNull()) {
                 CodeInsightUtils.ElementKind.EXPRESSION -> showErrorHintByKey("cannot.refactor.no.expression")
                 CodeInsightUtils.ElementKind.TYPE_ELEMENT -> showErrorHintByKey("cannot.refactor.no.type")
-                else -> showErrorHint(file.project, editor, "Refactoring can't be performed on the selected code element", title)
+                else -> showErrorHint(
+                    file.project,
+                    editor,
+                    KotlinBundle.message("text.refactoring.can.t.be.performed.on.the.selected.code.element"),
+                    title
+                )
             }
         }
 
@@ -246,7 +251,7 @@ fun <T : KtDeclaration> insertDeclaration(declaration: T, targetSibling: PsiElem
 
 internal fun validateExpressionElements(elements: List<PsiElement>): String? {
     if (elements.any { it is KtConstructor<*> || it is KtParameter || it is KtTypeAlias || it is KtPropertyAccessor }) {
-        return "Refactoring is not applicable to this code fragment"
+        return KotlinBundle.message("text.refactoring.is.not.applicable.to.this.code.fragment")
     }
     return null
 }

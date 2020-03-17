@@ -86,6 +86,6 @@ FILE fqName:test fileName:/boundInnerGenericConstructor.kt
           CONST String type=kotlin.String value="K"
           FUNCTION_REFERENCE 'public constructor <init> (a: T of test.Foo, b: P of test.Foo.Inner) [primary] declared in test.Foo.Inner' type=kotlin.reflect.KFunction2<T of test.Foo, kotlin.Any?, test.Foo.Inner<kotlin.Any?>> origin=null reflectionTarget=<same>
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in test'
-        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin' type=kotlin.String origin=null
+        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin' type=kotlin.String origin=PLUS
           $receiver: ERROR_CALL 'Unresolved reference: <Unresolved name: a>#' type=IrErrorType
           other: ERROR_CALL 'Unresolved reference: <Unresolved name: b>#' type=IrErrorType

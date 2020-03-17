@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirArraySetCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirOperation
@@ -29,11 +30,11 @@ internal class FirArraySetCallImpl(
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
     override var calleeReference: FirReference,
+    override var argumentList: FirArgumentList,
     override var rValue: FirExpression,
     override val operation: FirOperation,
     override val indexes: MutableList<FirExpression>,
 ) : FirArraySetCall(), FirModifiableQualifiedAccess {
-    override val arguments: List<FirExpression> get() = indexes + rValue
     override var lValue: FirReference 
         get() = calleeReference
         set(value) {
@@ -51,6 +52,7 @@ internal class FirArraySetCallImpl(
             extensionReceiver.accept(visitor, data)
         }
         calleeReference.accept(visitor, data)
+        argumentList.accept(visitor, data)
         rValue.accept(visitor, data)
         indexes.forEach { it.accept(visitor, data) }
     }
@@ -66,6 +68,7 @@ internal class FirArraySetCallImpl(
             extensionReceiver = extensionReceiver.transformSingle(transformer, data)
         }
         transformCalleeReference(transformer, data)
+        argumentList = argumentList.transformSingle(transformer, data)
         transformRValue(transformer, data)
         transformIndexes(transformer, data)
         return this
@@ -96,10 +99,6 @@ internal class FirArraySetCallImpl(
         return this
     }
 
-    override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArraySetCallImpl {
-        return this
-    }
-
     override fun <D> transformRValue(transformer: FirTransformer<D>, data: D): FirArraySetCallImpl {
         rValue = rValue.transformSingle(transformer, data)
         return this
@@ -113,5 +112,9 @@ internal class FirArraySetCallImpl(
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
         typeArguments.clear()
         typeArguments.addAll(newTypeArguments)
+    }
+
+    override fun replaceArgumentList(newArgumentList: FirArgumentList) {
+        argumentList = newArgumentList
     }
 }

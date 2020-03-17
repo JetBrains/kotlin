@@ -1,3 +1,4 @@
+// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
 // !LANGUAGE: +NewInference
 
 import kotlin.experimental.ExperimentalTypeInference
@@ -10,7 +11,7 @@ class InImpl<E> : In<E> {
     override fun send(element: E) {}
 }
 
-@<!DEPRECATION, EXPERIMENTAL_IS_NOT_ENABLED!>UseExperimental<!>(ExperimentalTypeInference::class)
+@OptIn(ExperimentalTypeInference::class)
 public fun <T> builder(@BuilderInference block: In<T>.() -> Unit) {
     InImpl<T>().block()
 }

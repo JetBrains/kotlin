@@ -28,7 +28,9 @@ import org.jetbrains.kotlin.frontend.di.createContainerForLazyBodyResolve
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.caches.trackers.clearInBlockModifications
 import org.jetbrains.kotlin.idea.caches.trackers.inBlockModifications
-import org.jetbrains.kotlin.idea.project.*
+import org.jetbrains.kotlin.idea.project.IdeaModuleStructureOracle
+import org.jetbrains.kotlin.idea.project.findAnalyzerServices
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.*
@@ -40,6 +42,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import java.util.*
+import java.util.concurrent.locks.ReentrantLock
 
 internal class PerFileAnalysisCache(val file: KtFile, componentProvider: ComponentProvider) {
     private val globalContext = componentProvider.get<GlobalContext>()
@@ -50,13 +53,30 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
 
     private val cache = HashMap<PsiElement, AnalysisResult>()
     private var fileResult: AnalysisResult? = null
+    private val lock = ReentrantLock()
 
-    fun getAnalysisResults(element: KtElement): AnalysisResult {
+    internal fun fetchAnalysisResults(element: KtElement): AnalysisResult? {
+        assert(element.containingKtFile == file) { "Wrong file. Expected $file, but was ${element.containingKtFile}" }
+
+        if (lock.tryLock()) {
+            try {
+                updateFileResultFromCache()
+
+                return fileResult?.takeIf { file.inBlockModifications.isEmpty() }
+            } finally {
+                lock.unlock()
+            }
+        }
+        return null
+    }
+
+    internal fun getAnalysisResults(element: KtElement): AnalysisResult {
         assert(element.containingKtFile == file) { "Wrong file. Expected $file, but was ${element.containingKtFile}" }
 
         val analyzableParent = KotlinResolveDataProvider.findAnalyzableParent(element)
 
-        return synchronized(this) {
+        lock.lock()
+        try {
             ProgressIndicatorProvider.checkCanceled()
 
             // step 1: perform incremental analysis IF it is applicable
@@ -67,27 +87,21 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
 
             // step 2: return result if it is cached
             lookUp(analyzableParent)?.let {
-                return@synchronized it
+                return it
             }
 
             // step 3: perform analyze of analyzableParent as nothing has been cached yet
             val result = analyze(analyzableParent)
             cache[analyzableParent] = result
 
-            return@synchronized result
+            return result
+        } finally {
+            lock.unlock()
         }
     }
 
     private fun getIncrementalAnalysisResult(): AnalysisResult? {
-        // move fileResult from cache if it is stored there
-        if (fileResult == null && cache.containsKey(file)) {
-            fileResult = cache[file]
-
-            // drop existed results for entire cache:
-            // if incremental analysis is applicable it will produce a single value for file
-            // otherwise those results are potentially stale
-            cache.clear()
-        }
+        updateFileResultFromCache()
 
         val inBlockModifications = file.inBlockModifications
         if (inBlockModifications.isNotEmpty()) {
@@ -137,6 +151,18 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
             }
         }
         return fileResult
+    }
+
+    private fun updateFileResultFromCache() {
+        // move fileResult from cache if it is stored there
+        if (fileResult == null && cache.containsKey(file)) {
+            fileResult = cache[file]
+
+            // drop existed results for entire cache:
+            // if incremental analysis is applicable it will produce a single value for file
+            // otherwise those results are potentially stale
+            cache.clear()
+        }
     }
 
     private fun lookUp(analyzableElement: KtElement): AnalysisResult? {

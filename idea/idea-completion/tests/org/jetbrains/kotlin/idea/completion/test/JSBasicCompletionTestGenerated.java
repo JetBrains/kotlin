@@ -1255,6 +1255,21 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 runTest("idea/idea-completion/testData/basic/common/extensionMethodInObject/CompanionObjectExplicitReceiver.kt");
             }
 
+            @TestMetadata("CompanionObjectExplicitReceiverInfixExtension.kt")
+            public void testCompanionObjectExplicitReceiverInfixExtension() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/extensionMethodInObject/CompanionObjectExplicitReceiverInfixExtension.kt");
+            }
+
+            @TestMetadata("CompanionObjectExplicitReceiverNoPrefix.kt")
+            public void testCompanionObjectExplicitReceiverNoPrefix() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/extensionMethodInObject/CompanionObjectExplicitReceiverNoPrefix.kt");
+            }
+
+            @TestMetadata("CompanionObjectExplicitReceiverSafeAccess.kt")
+            public void testCompanionObjectExplicitReceiverSafeAccess() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/extensionMethodInObject/CompanionObjectExplicitReceiverSafeAccess.kt");
+            }
+
             @TestMetadata("CompanionObjectImplicitReceiver.kt")
             public void testCompanionObjectImplicitReceiver() throws Exception {
                 runTest("idea/idea-completion/testData/basic/common/extensionMethodInObject/CompanionObjectImplicitReceiver.kt");

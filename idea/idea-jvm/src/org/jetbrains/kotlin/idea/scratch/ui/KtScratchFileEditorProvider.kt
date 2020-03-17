@@ -29,7 +29,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.pom.Navigatable
 import com.intellij.psi.PsiManager
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.core.util.getLineNumber
 import org.jetbrains.kotlin.idea.scratch.*
 import org.jetbrains.kotlin.idea.scratch.output.*
@@ -171,13 +171,13 @@ class KtScratchFileEditorWithPreview private constructor(
      * That's why we set long and descriptive [Presentation.getText], but short [Presentation.getDescription].
      */
     override fun getShowEditorAction(): ToggleAction = super.getShowEditorAction().apply {
-        templatePresentation.text = KotlinBundle.message("scratch.inlay.output.mode")
-        templatePresentation.description = KotlinBundle.message("scratch.inlay.output.mode.description")
+        templatePresentation.text = KotlinJvmBundle.message("scratch.inlay.output.mode")
+        templatePresentation.description = KotlinJvmBundle.message("scratch.inlay.output.mode.description")
     }
 
     override fun getShowEditorAndPreviewAction(): ToggleAction = super.getShowEditorAndPreviewAction().apply {
-        templatePresentation.text = KotlinBundle.message("scratch.side.panel.output.mode")
-        templatePresentation.description = KotlinBundle.message("scratch.side.panel.output.mode.description")
+        templatePresentation.text = KotlinJvmBundle.message("scratch.side.panel.output.mode")
+        templatePresentation.description = KotlinJvmBundle.message("scratch.side.panel.output.mode.description")
     }
 
     override fun setLayout(newLayout: Layout) {

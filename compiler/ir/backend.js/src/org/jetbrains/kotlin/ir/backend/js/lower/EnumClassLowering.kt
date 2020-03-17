@@ -343,8 +343,7 @@ class EnumEntryInstancesLowering(val context: JsIrBackendContext) : DeclarationT
             isStatic = true
         }.apply {
             parent = irClass
-            val builder = context.createIrBuilder(irClass.symbol)
-            initializer = builder.run { irExprBody(irImplicitCast(irNull(), type)) }
+            initializer = null
         }
 
         enumEntry.correspondingField = result
@@ -407,8 +406,7 @@ class EnumClassCreateInitializerLowering(val context: JsIrBackendContext) : Decl
         isStatic = true
     }.apply {
         parent = irClass
-        val builder = context.createIrBuilder(irClass.symbol)
-        initializer = builder.run { irExprBody(irBoolean(false)) }
+        initializer = null
     }
 
     private fun createInitEntryInstancesFun(irClass: IrClass, entryInstancesInitializedField: IrField): IrSimpleFunction =

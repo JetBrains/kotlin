@@ -52,7 +52,7 @@ FILE: propertiesAndInitBlocks.kt
         Int(2)
     }
     finally {
-        IntegerLiteral(0)
+        Int(0)
     }
 
         public get(): R|kotlin/Int|

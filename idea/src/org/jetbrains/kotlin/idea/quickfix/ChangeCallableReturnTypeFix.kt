@@ -77,9 +77,10 @@ abstract class ChangeCallableReturnTypeFix(
             val containerName = container?.name?.takeUnless { it.isSpecial }?.asString()
             val fullName = if (containerName != null) "'$containerName.$name'" else "'$name'"
             if (element is KtParameter) {
-                return "property $fullName"
+                return KotlinBundle.message("fix.change.return.type.presentation.property", fullName)
+            } else {
+                return KotlinBundle.message("fix.change.return.type.presentation.function", fullName)
             }
-            return "function $fullName"
         } else {
             return null
         }
@@ -91,22 +92,27 @@ abstract class ChangeCallableReturnTypeFix(
 
     class ForEnclosing(element: KtFunction, type: KotlinType) : ChangeCallableReturnTypeFix(element, type), HighPriorityAction {
         override fun functionPresentation(): String? {
-            val presentation = super.functionPresentation() ?: return "enclosing function"
-            return "enclosing $presentation"
+            val presentation = super.functionPresentation()
+                ?: return KotlinBundle.message("fix.change.return.type.presentation.enclosing.function")
+            return KotlinBundle.message("fix.change.return.type.presentation.enclosing", presentation)
         }
     }
 
     class ForCalled(element: KtCallableDeclaration, type: KotlinType) : ChangeCallableReturnTypeFix(element, type) {
         override fun functionPresentation(): String? {
-            val presentation = super.functionPresentation() ?: return "called function"
-            return if (element is KtParameter) "accessed $presentation" else "called $presentation"
+            val presentation = super.functionPresentation()
+                ?: return KotlinBundle.message("fix.change.return.type.presentation.called.function")
+            return when (element) {
+                is KtParameter -> KotlinBundle.message("fix.change.return.type.presentation.accessed", presentation)
+                else -> KotlinBundle.message("fix.change.return.type.presentation.called", presentation)
+            }
         }
     }
 
     class ForOverridden(element: KtFunction, type: KotlinType) : ChangeCallableReturnTypeFix(element, type) {
         override fun functionPresentation(): String? {
             val presentation = super.functionPresentation() ?: return null
-            return "base $presentation"
+            return KotlinBundle.message("fix.change.return.type.presentation.base", presentation)
         }
     }
 
@@ -121,20 +127,28 @@ abstract class ChangeCallableReturnTypeFix(
 
         if (isUnitType && element is KtFunction && element.hasBlockBody()) {
             return if (functionPresentation == null)
-                "Remove explicitly specified return type"
+                KotlinBundle.message("fix.change.return.type.remove.explicit.return.type")
             else
-                "Remove explicitly specified return type of $functionPresentation"
+                KotlinBundle.message("fix.change.return.type.remove.explicit.return.type.of", functionPresentation)
         }
 
-        val typeName = if (element is KtFunction) "return type" else "type"
-
-        return if (functionPresentation == null)
-            "Change $typeName to '$typePresentation'"
-        else
-            "Change $typeName of $functionPresentation to '$typePresentation'"
+        return when (element) {
+            is KtFunction -> {
+                if (functionPresentation != null)
+                    KotlinBundle.message("fix.change.return.type.return.type.text.of", functionPresentation, typePresentation)
+                else
+                    KotlinBundle.message("fix.change.return.type.return.type.text", typePresentation)
+            }
+            else -> {
+                if (functionPresentation != null)
+                    KotlinBundle.message("fix.change.return.type.type.text.of", functionPresentation, typePresentation)
+                else
+                    KotlinBundle.message("fix.change.return.type.type.text", typePresentation)
+            }
+        }
     }
 
-    override fun getFamilyName() = KotlinBundle.message("change.type.family")
+    override fun getFamilyName() = KotlinBundle.message("fix.change.return.type.family")
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         return !typeContainsError &&

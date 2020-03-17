@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.idea.completion
@@ -34,7 +34,7 @@ class KotlinExcludeFromCompletionLookupActionProvider : LookupActionProvider {
     private class ExcludeFromCompletionAction(
         private val project: Project,
         private val exclude: String
-    ) : LookupElementAction(null, "Exclude '$exclude' from completion") {
+    ) : LookupElementAction(null, KotlinIdeaCompletionBundle.message("exclude.0.from.completion", exclude)) {
         override fun performLookupAction(): Result {
             AddImportAction.excludeFromImport(project, exclude)
             return Result.HIDE_LOOKUP

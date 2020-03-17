@@ -284,6 +284,8 @@ abstract class CompletionSession(
 
         sorter = sorter.weighAfter("kotlin.proximity", ByNameAlphabeticalWeigher, PreferLessParametersWeigher)
 
+        sorter = sorter.weighBefore("prefix", KotlinUnwantedLookupElementWeigher)
+
         sorter = if (expectedInfos.all { it.fuzzyType?.type?.isUnit() == true }) {
             sorter.weighBefore("prefix", PreferDslMembers)
         } else {

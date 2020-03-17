@@ -10,17 +10,13 @@ import com.intellij.slicer.SliceUsageCellRendererBase
 import com.intellij.ui.JBColor
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.util.FontUtil
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
@@ -47,7 +43,10 @@ object KotlinSliceUsageCellRenderer : SliceUsageCellRendererBase() {
             }
         }
 
-        append(" (Tracking enclosing lambda)".repeat(sliceUsage.lambdaLevel), SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES)
+        append(
+            KotlinBundle.message("slicer.text.tracking.enclosing.lambda").repeat(sliceUsage.lambdaLevel),
+            SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES
+        )
 
         val declaration = sliceUsage.element?.parents?.firstOrNull {
             it is KtClass ||
@@ -57,7 +56,7 @@ object KotlinSliceUsageCellRenderer : SliceUsageCellRendererBase() {
                     it is KtConstructor<*>
         } as? KtDeclaration ?: return
 
-        append(" in ", SimpleTextAttributes.GRAY_ATTRIBUTES)
+        append(KotlinBundle.message("slicer.text.in", ""), SimpleTextAttributes.GRAY_ATTRIBUTES)
 
         val descriptor = declaration.unsafeResolveToDescriptor()
 

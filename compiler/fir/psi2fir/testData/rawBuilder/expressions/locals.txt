@@ -20,7 +20,7 @@ FILE: locals.kt
         }
 
         lval code: <implicit> = object : Any {
-            private constructor(): Any {
+            private constructor(): R|anonymous| {
                 super<Any>()
             }
 

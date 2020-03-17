@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -26,15 +27,15 @@ class RemoveModifierFix(
         val modifierText = modifier.value
         when {
             isRedundant ->
-                "Remove redundant '$modifierText' modifier"
+                KotlinBundle.message("remove.redundant.0.modifier", modifierText)
             modifier === KtTokens.ABSTRACT_KEYWORD || modifier === KtTokens.OPEN_KEYWORD ->
-                "Make ${AddModifierFix.getElementName(element)} not $modifierText"
+                KotlinBundle.message("make.0.not.1", AddModifierFix.getElementName(element), modifierText)
             else ->
-                "Remove '$modifierText' modifier"
+                KotlinBundle.message("remove.0.modifier", modifierText, modifier)
         }
     }
 
-    override fun getFamilyName() = "Remove modifier"
+    override fun getFamilyName() = KotlinBundle.message("remove.modifier")
 
     override fun getText() = text
 

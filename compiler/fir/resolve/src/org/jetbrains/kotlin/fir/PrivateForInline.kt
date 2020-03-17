@@ -5,5 +5,5 @@
 
 package org.jetbrains.kotlin.fir
 
-@Experimental(level = Experimental.Level.ERROR)
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 annotation class PrivateForInline

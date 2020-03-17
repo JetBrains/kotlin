@@ -27,7 +27,7 @@ dependencies {
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:plugin-api"))
 
-    compileOnly(toolsJar())
+    compileOnly(toolsJarApi())
     compileOnly(project(":kotlin-annotation-processing-cli"))
     compileOnly(project(":kotlin-annotation-processing-base"))
     compileOnly(project(":kotlin-annotation-processing-runtime"))
@@ -39,7 +39,8 @@ dependencies {
     testCompile(projectTests(":kotlin-annotation-processing-base"))
     testCompile(commonDep("junit:junit"))
     testCompile(project(":kotlin-annotation-processing-runtime"))
-    testCompileOnly(toolsJar())
+
+    testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
 
     embedded(project(":kotlin-annotation-processing-runtime")) { isTransitive = false }

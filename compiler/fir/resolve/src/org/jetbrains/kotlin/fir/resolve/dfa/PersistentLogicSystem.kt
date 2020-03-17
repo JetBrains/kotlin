@@ -145,6 +145,43 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         return commonFlow
     }
 
+    override fun unionFlow(flows: Collection<PersistentFlow>): PersistentFlow {
+        if (flows.isEmpty()) return createEmptyFlow()
+        flows.singleOrNull()?.let { return it }
+
+        val flowsSize = flows.size
+        val aliasedVariablesThatDontChangeAlias = mutableMapOf<RealVariable, RealVariable>()
+        flows.flatMapTo(mutableSetOf()) { it.directAliasMap.keys }.forEach { aliasedVariable ->
+            val originals = flows.map { it.directAliasMap[aliasedVariable] ?: return@forEach }
+            if (originals.size != flowsSize) return@forEach
+            val firstOriginal = originals.first()
+            if (originals.all { it == firstOriginal }) {
+                aliasedVariablesThatDontChangeAlias[aliasedVariable] = firstOriginal
+            }
+        }
+
+        val commonFlow = flows.reduce(::lowestCommonFlow)
+        val allVariables = flows.flatMapTo(mutableSetOf()) {
+            it.diffVariablesIterable(commonFlow, aliasedVariablesThatDontChangeAlias.keys)
+        }
+
+        for (variable in allVariables) {
+            val info = and(flows.map { it.getApprovedTypeStatementsDiff(variable, commonFlow) })
+            commonFlow.approvedTypeStatements = commonFlow.approvedTypeStatements.addTypeStatement(info)
+            if (commonFlow.previousFlow != null) {
+                commonFlow.approvedTypeStatementsDiff = commonFlow.approvedTypeStatementsDiff.addTypeStatement(info)
+            }
+        }
+
+        for ((alias, underlyingVariable) in aliasedVariablesThatDontChangeAlias) {
+            addLocalVariableAlias(commonFlow,alias, underlyingVariable)
+        }
+
+        updateAllReceivers(commonFlow)
+
+        return commonFlow
+    }
+
     override fun addLocalVariableAlias(flow: PersistentFlow, alias: RealVariable, underlyingVariable: RealVariable) {
         removeLocalVariableAlias(flow, alias)
         flow.directAliasMap = flow.directAliasMap.put(alias, underlyingVariable)
@@ -163,7 +200,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         flow.backwardsAliasMap = flow.backwardsAliasMap.put(original, variables - alias)
     }
 
-    @UseExperimental(DfaInternals::class)
+    @OptIn(DfaInternals::class)
     private fun PersistentFlow.getApprovedTypeStatementsDiff(variable: RealVariable, parentFlow: PersistentFlow): MutableTypeStatement {
         var flow = this
         val result = MutableTypeStatement(variable)

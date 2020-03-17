@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 
-@UseExperimental(FirImplementationDetail::class)
+@OptIn(FirImplementationDetail::class)
 class FirIntegerOperatorCall @FirImplementationDetail constructor(
     source: FirSourceElement?,
     typeRef: FirTypeRef,
@@ -32,7 +33,7 @@ class FirIntegerOperatorCall @FirImplementationDetail constructor(
     explicitReceiver: FirExpression?,
     dispatchReceiver: FirExpression,
     extensionReceiver: FirExpression,
-    arguments: MutableList<FirExpression>,
+    argumentList: FirArgumentList,
     calleeReference: FirNamedReference,
 ) : FirFunctionCallImpl(
     source,
@@ -43,7 +44,7 @@ class FirIntegerOperatorCall @FirImplementationDetail constructor(
     explicitReceiver,
     dispatchReceiver,
     extensionReceiver,
-    arguments,
+    argumentList,
     calleeReference,
 )
 
@@ -57,10 +58,10 @@ class FirIntegerOperatorCallBuilder : FirQualifiedAccessBuilder, FirCallBuilder,
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
-    override val arguments: MutableList<FirExpression> = mutableListOf()
     lateinit var calleeReference: FirNamedReference
+    override lateinit var argumentList: FirArgumentList
 
-    @UseExperimental(FirImplementationDetail::class)
+    @OptIn(FirImplementationDetail::class)
     override fun build(): FirIntegerOperatorCall {
         return FirIntegerOperatorCall(
             source,
@@ -71,7 +72,7 @@ class FirIntegerOperatorCallBuilder : FirQualifiedAccessBuilder, FirCallBuilder,
             explicitReceiver,
             dispatchReceiver,
             extensionReceiver,
-            arguments,
+            argumentList,
             calleeReference,
         )
     }

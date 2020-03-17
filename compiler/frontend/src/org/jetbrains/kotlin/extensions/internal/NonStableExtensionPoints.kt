@@ -23,12 +23,13 @@ import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 
-
 /**
  * This is marker for non-stable experimental extension points.
  * Extension points marked with this meta-annotation will be broken in the future version.
  * Please do not use them in general code.
  */
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+@Suppress("DEPRECATION")
 @Experimental(level = Experimental.Level.ERROR)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class InternalNonStableExtensionPoints

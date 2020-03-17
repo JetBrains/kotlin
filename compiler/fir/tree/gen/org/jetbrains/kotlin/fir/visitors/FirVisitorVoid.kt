@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirStarProjection
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
+import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirCall
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirOperatorCall
@@ -350,6 +351,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitTypeProjectionWithVariance(typeProjectionWithVariance: FirTypeProjectionWithVariance) {
         visitElement(typeProjectionWithVariance)
+    }
+
+    open fun visitArgumentList(argumentList: FirArgumentList) {
+        visitElement(argumentList)
     }
 
     open fun visitCall(call: FirCall) {
@@ -806,6 +811,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitTypeProjectionWithVariance(typeProjectionWithVariance: FirTypeProjectionWithVariance, data: Nothing?) {
         visitTypeProjectionWithVariance(typeProjectionWithVariance)
+    }
+
+    final override fun visitArgumentList(argumentList: FirArgumentList, data: Nothing?) {
+        visitArgumentList(argumentList)
     }
 
     final override fun visitCall(call: FirCall, data: Nothing?) {

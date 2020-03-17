@@ -6,11 +6,15 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
 class InfixCallToOrdinaryIntention :
-    SelfTargetingIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Replace infix call with ordinary call") {
+    SelfTargetingIntention<KtBinaryExpression>(
+        KtBinaryExpression::class.java,
+        KotlinBundle.message("replace.infix.call.with.ordinary.call")
+    ) {
     override fun isApplicableTo(element: KtBinaryExpression, caretOffset: Int): Boolean {
         if (element.operationToken != KtTokens.IDENTIFIER || element.left == null || element.right == null) return false
         return element.operationReference.textRange.containsOffset(caretOffset)

@@ -1,7 +1,7 @@
 // "Add 'lateinit' modifier" "false"
 // ACTION: Add initializer
 // ACTION: Introduce import alias
-// ACTION: Make 'a' abstract
+// ACTION: Make 'a' 'abstract'
 // ACTION: Move to constructor parameters
 // ACTION: Move to constructor
 // ACTION: Add getter

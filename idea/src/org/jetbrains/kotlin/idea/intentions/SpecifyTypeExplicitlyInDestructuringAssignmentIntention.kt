@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.isError
 
 class SpecifyTypeExplicitlyInDestructuringAssignmentIntention : SelfTargetingRangeIntention<KtDestructuringDeclaration>(
-    KtDestructuringDeclaration::class.java, "Specify all types explicitly in destructuring declaration"
+    KtDestructuringDeclaration::class.java, KotlinBundle.message("specify.all.types.explicitly.in.destructuring.declaration")
 ), LowPriorityAction {
 
     override fun applicabilityRange(element: KtDestructuringDeclaration): TextRange? {

@@ -3,7 +3,7 @@ FILE: localInnerClass.kt
     }
     public final fun bar(): R|kotlin/Unit| {
         object : R|Foo| {
-            private constructor(): R|kotlin/Any| {
+            private constructor(): R|anonymous| {
                 super<R|kotlin/Any|>()
             }
 

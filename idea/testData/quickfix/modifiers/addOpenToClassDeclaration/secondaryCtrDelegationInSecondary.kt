@@ -1,4 +1,4 @@
-// "Make 'B' open" "true"
+// "Make 'B' 'open'" "true"
 class B {
     constructor() {
     }

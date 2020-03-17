@@ -17,14 +17,15 @@
 package org.jetbrains.kotlin.console.gutter
 
 import com.intellij.openapi.editor.markup.GutterIconRenderer
+import org.jetbrains.kotlin.KotlinIdeaReplBundle
 import org.jetbrains.kotlin.console.SeverityDetails
 import org.jetbrains.kotlin.diagnostics.Severity
 
 class ConsoleErrorRenderer(private val messages: List<SeverityDetails>) : GutterIconRenderer() {
     private fun msgType(severity: Severity) = when (severity) {
-        Severity.ERROR -> "Error:"
-        Severity.WARNING -> "Warning:"
-        Severity.INFO -> "Info:"
+        Severity.ERROR -> KotlinIdeaReplBundle.message("error")
+        Severity.WARNING -> KotlinIdeaReplBundle.message("warning")
+        Severity.INFO -> KotlinIdeaReplBundle.message("info")
     }
 
     override fun getTooltipText(): String {

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import kotlin.properties.Delegates
 
-@UseExperimental(FirImplementationDetail::class)
+@OptIn(FirImplementationDetail::class)
 class FirJavaConstructor @FirImplementationDetail constructor(
     override val source: FirSourceElement?,
     override val session: FirSession,
@@ -119,7 +119,7 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
     var isInner: Boolean by Delegates.notNull()
     var isPrimary: Boolean by Delegates.notNull()
 
-    @UseExperimental(FirImplementationDetail::class)
+    @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaConstructor {
         val status = FirDeclarationStatusImpl(visibility, Modality.FINAL).apply {
             isExpect = false

@@ -496,7 +496,7 @@ class DeclarationsConverter(
         }
 
         superTypeRefs.ifEmpty { superTypeRefs += implicitAnyType }
-        val delegatedType = delegatedSuperTypeRef ?: implicitAnyType
+        val delegatedSuperType = delegatedSuperTypeRef ?: implicitAnyType
 
         return withChildClassName(ANONYMOUS_OBJECT_NAME) {
             buildAnonymousObject {
@@ -505,16 +505,17 @@ class DeclarationsConverter(
                 classKind = ClassKind.OBJECT
                 scopeProvider = baseScopeProvider
                 symbol = FirAnonymousObjectSymbol()
+                val delegatedSelfType = objectLiteral.toDelegatedSelfType(this)
                 annotations += modifiers.annotations
                 this.superTypeRefs += superTypeRefs
-                typeRef = superTypeRefs.first()
+                typeRef = delegatedSelfType
 
                 val classWrapper = ClassWrapper(
                     SpecialNames.NO_NAME_PROVIDED, modifiers, ClassKind.OBJECT, hasPrimaryConstructor = false,
                     hasSecondaryConstructor = classBody.getChildNodesByType(SECONDARY_CONSTRUCTOR).isNotEmpty(),
                     hasDefaultConstructor = false,
-                    delegatedSelfTypeRef = delegatedType,
-                    delegatedSuperTypeRef = delegatedType,
+                    delegatedSelfTypeRef = delegatedSelfType,
+                    delegatedSuperTypeRef = delegatedSuperType,
                     superTypeCallEntry = superTypeCallEntry
                 )
                 //parse primary constructor

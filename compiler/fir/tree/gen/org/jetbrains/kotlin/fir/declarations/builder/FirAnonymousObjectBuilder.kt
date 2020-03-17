@@ -59,7 +59,7 @@ class FirAnonymousObjectBuilder : FirClassBuilder, FirAnnotationContainerBuilder
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildAnonymousObject(init: FirAnonymousObjectBuilder.() -> Unit): FirAnonymousObject {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

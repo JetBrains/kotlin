@@ -24,6 +24,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -134,7 +135,7 @@ class PlainTextPasteImportResolver(private val dataForConversion: DataForConvers
         }
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(
-            task, "Adding imports ...", true, project
+            task, KotlinBundle.message("copy.text.adding.imports"), true, project
         )
     }
 
@@ -229,7 +230,7 @@ class PlainTextPasteImportResolver(private val dataForConversion: DataForConvers
         }
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(
-            task, "Resolving references ...", true, project
+            task, KotlinBundle.message("copy.text.resolving.references"), true, project
         )
 
     }

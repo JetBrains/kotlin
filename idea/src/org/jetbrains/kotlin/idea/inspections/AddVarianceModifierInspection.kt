@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -64,7 +65,7 @@ class AddVarianceModifierInspection : AbstractKotlinInspection() {
                     val fixes = variances.map(::AddVarianceFix)
                     holder.registerProblem(
                         typeParameter,
-                        "Type parameter can have $suggested variance",
+                        KotlinBundle.message("type.parameter.can.have.0.variance", suggested),
                         ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                         *fixes.toTypedArray()
                     )
@@ -86,9 +87,9 @@ class AddVarianceModifierInspection : AbstractKotlinInspection() {
 
 
     class AddVarianceFix(val variance: Variance) : LocalQuickFix {
-        override fun getName() = "Add '$variance' variance"
+        override fun getName() = KotlinBundle.message("add.variance.fix.text", variance)
 
-        override fun getFamilyName() = "Add variance"
+        override fun getFamilyName() = KotlinBundle.message("add.variance.fix.family.name")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             if (!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.psiElement)) return

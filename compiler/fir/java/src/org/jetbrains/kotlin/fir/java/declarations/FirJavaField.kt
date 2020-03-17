@@ -30,7 +30,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.properties.Delegates
 
-@UseExperimental(FirImplementationDetail::class)
+@OptIn(FirImplementationDetail::class)
 class FirJavaField @FirImplementationDetail constructor(
     override val source: FirSourceElement?,
     override val session: FirSession,
@@ -130,7 +130,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
 
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
-    @UseExperimental(FirImplementationDetail::class)
+    @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaField {
         val status: FirDeclarationStatus = FirDeclarationStatusImpl(visibility, modality).apply {
             isStatic = this@FirJavaFieldBuilder.isStatic
@@ -154,7 +154,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
     }
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 internal inline fun buildJavaField(init: FirJavaFieldBuilder.() -> Unit): FirJavaField {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)

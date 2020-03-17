@@ -638,6 +638,9 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                 function10 -> PsiType:T
                 function11 -> PsiType:T
             """.trimIndent(), methods.joinToString("\n") { m -> m.name + " -> " + m.returnType.toString() })
+            for (method in methods.drop(3)) {
+                assertEquals("assert return types comparable for '${method.name}'", method.returnType, method.returnType)
+            }
         }
     }
 

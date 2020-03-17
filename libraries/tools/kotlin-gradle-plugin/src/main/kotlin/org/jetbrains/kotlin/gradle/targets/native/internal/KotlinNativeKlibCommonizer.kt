@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.io.IOException
 import java.nio.charset.StandardCharsets
-import java.nio.file.AtomicMoveNotSupportedException
-import java.nio.file.Files
-import java.nio.file.StandardCopyOption
+import java.nio.file.*
+import java.nio.file.attribute.*
+import java.time.*
 import java.util.*
 
 internal fun runCommonizerInBulk(
@@ -25,18 +25,15 @@ internal fun runCommonizerInBulk(
     kotlinVersion: String
 ): List<File> {
     val commandLineArguments = mutableListOf<String>()
-    val postActions = mutableListOf<() -> Unit>()
 
-    val result = targetGroups.map { targets ->
+    val successPostActions = mutableListOf<() -> Unit>()
+    val failurePostActions = mutableListOf<() -> Unit>()
+
+    val destinationDirs = targetGroups.map { targets ->
         if (targets.size == 1) {
             // no need to commonize, just use the libraries from the distribution
             distributionDir.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
         } else {
-            // naive up-to-date check:
-            // "X.Y.Z-SNAPSHOT" is not enough to uniquely identify the concrete version of Kotlin plugin,
-            // therefore lets assume that it's always not up to date
-            val definitelyNotUpToDate = kotlinVersion.endsWith("SNAPSHOT", ignoreCase = true)
-
             // need stable order of targets for consistency
             val orderedTargets = targets.sortedBy { it.name }
 
@@ -47,7 +44,7 @@ internal fun runCommonizerInBulk(
             }
 
             val destinationDir = baseDestinationDir.resolve(discriminator)
-            if (definitelyNotUpToDate || !destinationDir.isDirectory) {
+            if (!destinationDir.isDirectory) {
                 val parentDir = destinationDir.parentFile
                 parentDir.mkdirs()
 
@@ -65,18 +62,27 @@ internal fun runCommonizerInBulk(
                 commandLineArguments += "-targets"
                 commandLineArguments += orderedTargets.joinToString(separator = ",")
 
-                postActions.add { renameDirectory(destinationTmpDir, destinationDir) }
+                successPostActions.add { renameDirectory(destinationTmpDir, destinationDir) }
+                failurePostActions.add { renameToTempAndDelete(destinationTmpDir) }
             }
 
             destinationDir
         }
     }
 
-    callCommonizerCLI(project, commandLineArguments)
+    // first of all remove directories with unused commonized libraries plus temporary directories with commonized libraries
+    // that accidentally were not cleaned up before
+    cleanUp(baseDestinationDir, excludedDirectories = destinationDirs)
 
-    postActions.forEach { it() }
+    try {
+        callCommonizerCLI(project, commandLineArguments)
+        successPostActions.forEach { it() }
+    } catch (e: Exception) {
+        failurePostActions.forEach { it() }
+        throw e
+    }
 
-    return result
+    return destinationDirs
 }
 
 private fun callCommonizerCLI(project: Project, commandLineArguments: List<String>) {
@@ -93,7 +99,7 @@ private fun renameDirectory(source: File, destination: File) {
 
     for (it in 0 until 3) {
         try {
-            safeDelete(destination)
+            renameToTempAndDelete(destination)
             Files.move(sourcePath, destinationPath, StandardCopyOption.ATOMIC_MOVE)
             return
         } catch (e: IOException) {
@@ -109,21 +115,78 @@ private fun renameDirectory(source: File, destination: File) {
     throw IllegalStateException("Failed to rename $source to $destination").apply { suppressedExceptions.forEach(::addSuppressed) }
 }
 
-private fun safeDelete(directory: File) {
+private fun renameToTempAndDelete(directory: File) {
     if (!directory.exists()) return
 
-    // first, rename directory to some temp directory
-    val tempDir = createTempFile(
-        prefix = "tmp-" + directory.name,
-        suffix = ".old",
-        directory = directory.parentFile
-    )
-    tempDir.delete()
+    val dirToRemove = if (directory.name.startsWith("tmp-")) {
+        // already temp directory, return as is
+        directory
+    } else {
+        // first, rename the directory to some temp directory
+        val tempDir = createTempFile(
+            prefix = "tmp-" + directory.name,
+            suffix = ".old",
+            directory = directory.parentFile
+        )
+        tempDir.delete()
 
-    Files.move(directory.toPath(), tempDir.toPath(), StandardCopyOption.ATOMIC_MOVE)
+        Files.move(directory.toPath(), tempDir.toPath(), StandardCopyOption.ATOMIC_MOVE)
 
-    // only then delete it recursively
-    tempDir.deleteRecursively()
+        tempDir
+    }
+
+    dirToRemove.deleteRecursively()
+}
+
+private fun cleanUp(baseDirectory: File, excludedDirectories: List<File>) {
+    fun File.getAttributes(): BasicFileAttributes? =
+        try {
+            Files.readAttributes(toPath(), BasicFileAttributes::class.java)
+        } catch (_: IOException) {
+            null
+        }
+
+    fun FileTime.isSameOrAfter(targetInstant: Instant): Boolean {
+        val fileInstant = toInstant()
+
+        if (fileInstant.atZone(ZoneOffset.UTC).toLocalDate().year <= 1970) {
+            // file time represents the epoch (or even a time point before it)
+            // such instant can't be used for reliable comparison
+            return false
+        }
+
+        return fileInstant >= targetInstant
+    }
+
+    val now = Instant.now()
+    val oneHourAgo = now.minus(Duration.ofHours(1))
+    val oneMonthAgo = now.minus(Duration.ofDays(31))
+
+    val excludedPaths = excludedDirectories.map { it.absolutePath }.toSet()
+
+    baseDirectory.listFiles()
+        ?.forEach { file ->
+            if (file.absolutePath in excludedPaths) return@forEach
+
+            val attributes = file.getAttributes() ?: return@forEach
+            if (attributes.isDirectory) {
+                if (file.name.startsWith("tmp-")) {
+                    // temp directories created more than 1 hour ago are stale and should be GCed
+                    if (attributes.creationTime().isSameOrAfter(oneHourAgo)) return@forEach
+                } else {
+                    // clean up other directories which were not accesses within the last month
+                    if (attributes.lastAccessTime().isSameOrAfter(oneMonthAgo)) return@forEach
+                }
+            } /*else {
+                // clean up everything that is not a directory
+            }*/
+
+            try {
+                renameToTempAndDelete(file)
+            } catch (_: IOException) {
+                // do nothing
+            }
+        }
 }
 
 private val String.base64

@@ -38,9 +38,9 @@ compileKotlinCommon {
     kotlinOptions {
         freeCompilerArgs = [
                 "-module-name", project.name,
-                "-Xuse-experimental=kotlin.Experimental",
-                "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
-                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+                "-Xopt-in=kotlin.RequiresOptIn",
+                "-Xopt-in=kotlin.ExperimentalMultiplatform",
+                "-Xopt-in=kotlin.contracts.ExperimentalContracts",
                 "-Xinline-classes",
                 "-Xallow-kotlin-package",
                 "-Xallow-result-return-type"
@@ -51,9 +51,9 @@ compileKotlinCommon {
 compileTestKotlinCommon {
     kotlinOptions {
         freeCompilerArgs += [
-                "-Xuse-experimental=kotlin.Experimental",
-                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
-                "-Xuse-experimental=kotlin.ExperimentalStdlibApi"
+                "-Xopt-in=kotlin.RequiresOptIn",
+                "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
+                "-Xopt-in=kotlin.ExperimentalStdlibApi",
         ]
     }
 }

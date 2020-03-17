@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import java.io.BufferedWriter
 
@@ -24,10 +25,10 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.web"
 
-    override fun getPresentableName() = "JS Client and JVM Server | Gradle"
+    override fun getPresentableName() = KotlinIdeaGradleBundle.message("presentable.text.js.client.and.jvm.server.gradle")
 
     override fun getDescription() =
-        "Multiplatform Gradle project allowing reuse of the same Kotlin code between JS Client and JVM Server"
+        KotlinIdeaGradleBundle.message("description.text.multiplatform.gradle.project.allowing.reuse.of.the.same.kotlin.code.between.js.client.and.jvm.server")
 
     override fun BuildScriptDataBuilder.setupAdditionalDependencies() {
         addBuildscriptRepositoriesDefinition("jcenter()")

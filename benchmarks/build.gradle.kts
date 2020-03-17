@@ -75,6 +75,21 @@ benchmark {
             include("CommonCallsBenchmark")
             //include("InferenceBaselineCallsBenchmark")
         }
+
+        register("ni") {
+            warmups = 10
+            iterations = 10
+            iterationTime = 1
+            iterationTimeUnit = "sec"
+            param("useNI", true)
+            param("isIR", false)
+            param("size", 1000)
+            include("InferenceBaselineCallsBenchmark")
+            include("InferenceExplicitArgumentsCallsBenchmark")
+            include("InferenceForInApplicableCandidate")
+            include("InferenceFromArgumentCallsBenchmark")
+            include("InferenceFromReturnTypeCallsBenchmark")
+        }
     }
     targets {
         register("main")

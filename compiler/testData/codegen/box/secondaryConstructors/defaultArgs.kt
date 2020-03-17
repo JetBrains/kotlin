@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 val global = "OK"
 class A {
     val prop: String

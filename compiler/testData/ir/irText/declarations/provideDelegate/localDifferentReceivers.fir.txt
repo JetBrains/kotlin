@@ -50,7 +50,7 @@ FILE fqName:<root> fileName:/localDifferentReceivers.kt
       VAR name:testO type:kotlin.String [val]
       VAR name:testK type:kotlin.String [val]
       VAR name:testOK type:kotlin.String [val]
-        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=null
+        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
           $this: GET_VAR 'val testO: kotlin.String [val] declared in <root>.box' type=kotlin.String origin=null
           other: GET_VAR 'val testK: kotlin.String [val] declared in <root>.box' type=kotlin.String origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'

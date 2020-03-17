@@ -10,7 +10,7 @@ dependencies {
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:backend.jvm"))
 
-    compileOnly(toolsJar())
+    compileOnly(toolsJarApi())
     compileOnly(intellijDep())
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
 
@@ -22,7 +22,11 @@ dependencies {
     compileOnly(intellijPluginDep("testng"))
     compileOnly(intellijPluginDep("coverage"))
     compileOnly(intellijPluginDep("java-decompiler"))
-    compileOnly(intellijPluginDep("IntelliLang"))
+    if (Platform[201].orHigher()) {
+        compileOnly(intellijPluginDep("platform-langInjection"))
+    } else {
+        compileOnly(intellijPluginDep("IntelliLang"))
+    }
     compileOnly(intellijPluginDep("copyright"))
     compileOnly(intellijPluginDep("properties"))
     compileOnly(intellijPluginDep("java-i18n"))

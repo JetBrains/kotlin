@@ -31,7 +31,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.duplicates.MethodDuplicatesHandler
 import com.intellij.ui.ReplacePromptDialog
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.getPhysicalTextRange
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
@@ -84,14 +84,13 @@ fun processDuplicates(
     } else {
         Messages.showYesNoDialog(
             project,
-            KotlinRefactoringBundle.message(
-                "0.has.detected.1.code.fragments.in.2.that.can.be.replaced.with.3",
+            KotlinBundle.message("0.has.detected.1.code.fragments.in.2.that.can.be.replaced.with.3",
                 ApplicationNamesInfo.getInstance().productName,
                 duplicateReplacers.size,
                 scopeDescription,
                 usageDescription
             ),
-            "Process Duplicates",
+            KotlinBundle.message("text.process.duplicates"),
             Messages.getQuestionIcon()
         )
     }

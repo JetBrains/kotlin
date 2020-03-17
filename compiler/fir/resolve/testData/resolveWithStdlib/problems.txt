@@ -2,7 +2,7 @@ FILE: problems.kt
     public final val sb: R|java/lang/StringBuilder| = R|java/lang/StringBuilder.StringBuilder|()
         public get(): R|java/lang/StringBuilder|
     public final val o: R|anonymous| = object : R|kotlin/Any| {
-        private constructor(): R|kotlin/Any| {
+        private constructor(): R|anonymous| {
             super<R|kotlin/Any|>()
         }
 

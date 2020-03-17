@@ -26,7 +26,7 @@ class FirPropertyFromParameterResolvedNamedReferenceBuilder {
     lateinit var name: Name
     lateinit var resolvedSymbol: AbstractFirBasedSymbol<*>
 
-    @UseExperimental(FirImplementationDetail::class)
+    @OptIn(FirImplementationDetail::class)
     fun build(): FirResolvedNamedReference {
         return FirPropertyFromParameterResolvedNamedReference(
             source,
@@ -37,7 +37,7 @@ class FirPropertyFromParameterResolvedNamedReferenceBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildPropertyFromParameterResolvedNamedReference(init: FirPropertyFromParameterResolvedNamedReferenceBuilder.() -> Unit): FirResolvedNamedReference {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

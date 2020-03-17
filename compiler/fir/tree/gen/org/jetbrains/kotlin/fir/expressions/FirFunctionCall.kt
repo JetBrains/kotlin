@@ -25,7 +25,7 @@ abstract class FirFunctionCall : FirQualifiedAccessExpression(), FirCall {
     abstract override val explicitReceiver: FirExpression?
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
-    abstract override val arguments: List<FirExpression>
+    abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirNamedReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFunctionCall(this, data)
@@ -37,8 +37,6 @@ abstract class FirFunctionCall : FirQualifiedAccessExpression(), FirCall {
     abstract override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirFunctionCall
 
     abstract override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirFunctionCall
-
-    abstract override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirFunctionCall
 
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirFunctionCall
 }

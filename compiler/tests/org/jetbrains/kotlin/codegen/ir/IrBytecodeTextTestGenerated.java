@@ -84,6 +84,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         runTest("compiler/testData/codegen/bytecodeText/charConstant.kt");
     }
 
+    @TestMetadata("collectionStubs.kt")
+    public void testCollectionStubs() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/collectionStubs.kt");
+    }
+
     @TestMetadata("componentEvaluatesOnlyOnce.kt")
     public void testComponentEvaluatesOnlyOnce() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/componentEvaluatesOnlyOnce.kt");
@@ -397,6 +402,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
     @TestMetadata("superFlagInMultiFileFacade.kt")
     public void testSuperFlagInMultiFileFacade() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/superFlagInMultiFileFacade.kt");
+    }
+
+    @TestMetadata("suspendCoroutineUninterceptedOrReturn.kt")
+    public void testSuspendCoroutineUninterceptedOrReturn() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/suspendCoroutineUninterceptedOrReturn.kt");
     }
 
     @TestMetadata("topLevelFunWithDefaultArgs.kt")
@@ -2845,6 +2855,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/isCheckForInlineClass.kt");
         }
 
+        @TestMetadata("mangledInlineClassInterfaceImplementation.kt")
+        public void testMangledInlineClassInterfaceImplementation() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/mangledInlineClassInterfaceImplementation.kt");
+        }
+
         @TestMetadata("noActualCallsOfInlineFunctionsOfInlineClass.kt")
         public void testNoActualCallsOfInlineFunctionsOfInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noActualCallsOfInlineFunctionsOfInlineClass.kt");
@@ -4305,6 +4320,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/when/lookupSwitch.kt");
         }
 
+        @TestMetadata("lookupSwitchWithSubjectVal.kt")
+        public void testLookupSwitchWithSubjectVal() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/when/lookupSwitchWithSubjectVal.kt");
+        }
+
         @TestMetadata("noBoxingInDefaultWhenWithSpecialCases.kt")
         public void testNoBoxingInDefaultWhenWithSpecialCases() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/when/noBoxingInDefaultWhenWithSpecialCases.kt");
@@ -4323,6 +4343,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         @TestMetadata("simpleConstValsInsideWhen.kt")
         public void testSimpleConstValsInsideWhen() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/when/simpleConstValsInsideWhen.kt");
+        }
+
+        @TestMetadata("stringSwitchWithSubjectVal.kt")
+        public void testStringSwitchWithSubjectVal() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/when/stringSwitchWithSubjectVal.kt");
         }
 
         @TestMetadata("subjectValHasLocalVariableSlot.kt")
@@ -4353,6 +4378,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         @TestMetadata("tableSwitch.kt")
         public void testTableSwitch() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/when/tableSwitch.kt");
+        }
+
+        @TestMetadata("tableSwitchWithSubjectVal.kt")
+        public void testTableSwitchWithSubjectVal() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/when/tableSwitchWithSubjectVal.kt");
         }
 
         @TestMetadata("whenNull.kt")

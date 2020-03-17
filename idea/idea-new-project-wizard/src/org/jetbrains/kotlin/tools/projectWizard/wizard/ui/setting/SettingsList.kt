@@ -1,11 +1,11 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting
 
 import com.intellij.ui.components.panels.VerticalLayout
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.isSpecificError
 import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
+import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.PanelWithStatusText
@@ -19,7 +19,7 @@ class SettingsList(
     settings: List<SettingReference<*, *>>,
     private val ideContext: IdeContext
 ) : DynamicComponent(ideContext), ErrorAwareComponent {
-    private val panel = PanelWithStatusText(VerticalLayout(5), "This module has no settings to configure")
+    private val panel = PanelWithStatusText(VerticalLayout(5), KotlinNewProjectWizardBundle.message("editor.no.configurable.settings"))
 
     var settingComponents: List<SettingComponent<*, *>> = emptyList()
         private set

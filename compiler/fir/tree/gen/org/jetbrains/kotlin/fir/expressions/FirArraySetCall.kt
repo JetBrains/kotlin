@@ -25,7 +25,7 @@ abstract class FirArraySetCall : FirPureAbstractElement(), FirQualifiedAccess, F
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
     abstract override val calleeReference: FirReference
-    abstract override val arguments: List<FirExpression>
+    abstract override val argumentList: FirArgumentList
     abstract val rValue: FirExpression
     abstract val operation: FirOperation
     abstract val lValue: FirReference
@@ -42,8 +42,6 @@ abstract class FirArraySetCall : FirPureAbstractElement(), FirQualifiedAccess, F
     abstract override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirArraySetCall
 
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirArraySetCall
-
-    abstract override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArraySetCall
 
     abstract fun <D> transformRValue(transformer: FirTransformer<D>, data: D): FirArraySetCall
 

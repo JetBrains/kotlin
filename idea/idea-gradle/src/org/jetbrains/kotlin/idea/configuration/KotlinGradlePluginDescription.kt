@@ -16,9 +16,10 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.plugins.gradle.codeInsight.GradlePluginDescriptionsExtension
 
 class KotlinGradlePluginDescription : GradlePluginDescriptionsExtension {
     override fun getPluginDescriptions(): Map<String, String> =
-        mapOf("kotlin" to "Adds support for building Kotlin projects")
+        mapOf("kotlin" to KotlinIdeaGradleBundle.message("description.text.adds.support.for.building.kotlin.projects"))
 }

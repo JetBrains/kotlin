@@ -18,6 +18,7 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.psi.PsiFile
 import com.intellij.ui.BrowserHyperlinkListener
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import java.io.File
 
 class ShowKotlinGradleDslLogs : IntentionAction, AnAction(), DumbAware {
@@ -46,7 +47,10 @@ class ShowKotlinGradleDslLogs : IntentionAction, AnAction(), DumbAware {
                 ?: WindowManager.getInstance().findVisibleFrame().rootPane
             JBPopupFactory.getInstance()
                 .createHtmlTextBalloonBuilder(
-                    "Gradle DSL Logs cannot be found automatically.<br/>See how to find logs <a href=\"$gradleTroubleshootingLink\">here</a>.",
+                    KotlinIdeaGradleBundle.message(
+                        "text.gradle.dsl.logs.cannot.be.found.automatically.see.how.to.find.logs",
+                        gradleTroubleshootingLink
+                    ),
                     MessageType.ERROR,
                     BrowserHyperlinkListener.INSTANCE
                 )
@@ -78,6 +82,6 @@ class ShowKotlinGradleDslLogs : IntentionAction, AnAction(), DumbAware {
     companion object {
         private const val gradleTroubleshootingLink = "https://docs.gradle.org/current/userguide/kotlin_dsl.html#troubleshooting"
 
-        val NAME = "Show Kotlin Gradle DSL Logs in ${ShowFilePathAction.getFileManagerName()}"
+        val NAME = KotlinIdeaGradleBundle.message("action.text.show.kotlin.gradle.dsl.logs.in", ShowFilePathAction.getFileManagerName())
     }
 }

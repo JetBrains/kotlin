@@ -21,6 +21,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.ReplaceItWithExplicitFunctionLiteralParamIntention
 import org.jetbrains.kotlin.idea.intentions.isAutoCreatedItUsage
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -35,7 +36,7 @@ class RenameKotlinImplicitLambdaParameter : KotlinVariableInplaceRenameHandler()
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext) {
         val intention = ReplaceItWithExplicitFunctionLiteralParamIntention()
-        project.executeWriteCommand("Convert 'it' to explicit lambda parameter") {
+        project.executeWriteCommand(KotlinBundle.message("text.convert._it_.to.explicit.lambda.parameter")) {
             if (file != null) intention.invoke(project, editor, file)
         }
     }

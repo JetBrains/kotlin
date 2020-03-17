@@ -92,9 +92,8 @@ class ChangeFunctionLiteralReturnTypeFix(
             null
     }
 
-    override fun getText() = appropriateQuickFix?.text ?: "Change lambda expression return type to '$typePresentation'"
-
-    override fun getFamilyName() = KotlinBundle.message("change.type.family")
+    override fun getText() = appropriateQuickFix?.text ?: KotlinBundle.message("fix.change.return.type.lambda", typePresentation)
+    override fun getFamilyName() = KotlinBundle.message("fix.change.return.type.family")
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean =
         functionLiteralReturnTypeRef != null || appropriateQuickFix != null && appropriateQuickFix.isAvailable(

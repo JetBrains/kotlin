@@ -26,8 +26,14 @@ fun box(): String {
     if (!Modifier.isStatic(A::class.java.getDeclaredField("x").modifiers))
         return "Fail: A.x should be static"
 
+    if (!Modifier.isStatic(A::class.java.getDeclaredField("y").modifiers))
+        return "Fail: A.y should be static"
+
     if (Modifier.isStatic(A::class.java.getDeclaredField("x$1").modifiers))
         return "Fail: A.x$1 should not be static"
+
+    if (Modifier.isStatic(A::class.java.getDeclaredField("y$1").modifiers))
+        return "Fail: A.y$1 should not be static"
 
     return "OK"
 }

@@ -48,7 +48,7 @@ class FirContinueExpressionBuilder : FirLoopJumpBuilder, FirAnnotationContainerB
         }
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildContinueExpression(init: FirContinueExpressionBuilder.() -> Unit): FirContinueExpression {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

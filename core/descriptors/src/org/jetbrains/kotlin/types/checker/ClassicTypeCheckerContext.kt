@@ -35,7 +35,7 @@ open class ClassicTypeCheckerContext(
         return NewKotlinTypeChecker.Default.transformToNewType(type.unwrap())
     }
 
-    @UseExperimental(TypeRefinement::class)
+    @OptIn(TypeRefinement::class)
     override fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
         require(type is KotlinType, type::errorMessage)
         return kotlinTypeRefiner.refineType(type)

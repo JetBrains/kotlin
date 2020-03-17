@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 
 fun FirFunctionCall.copy(
     annotations: List<FirAnnotationCall> = this.annotations,
-    arguments: List<FirExpression> = this.arguments,
+    argumentList: FirArgumentList = this.argumentList,
     calleeReference: FirNamedReference = this.calleeReference,
     explicitReceiver: FirExpression? = this.explicitReceiver,
     dispatchReceiver: FirExpression = this.dispatchReceiver,
@@ -49,7 +49,7 @@ fun FirFunctionCall.copy(
         this.source = source
         this.safe = safe
         this.annotations.addAll(annotations)
-        this.arguments.addAll(arguments)
+        this.argumentList = argumentList
         this.explicitReceiver = explicitReceiver
         this.dispatchReceiver = dispatchReceiver
         this.extensionReceiver = extensionReceiver
@@ -151,7 +151,7 @@ fun FirCheckNotNullCall.copy(
 ): FirCheckNotNullCall = buildCheckNotNullCall {
     source = this@copy.source
     this.calleeReference = calleeReference
-    arguments += this@copy.arguments
+    argumentList = this@copy.argumentList
     this.typeRef = resultType
     this.annotations += annotations
 }

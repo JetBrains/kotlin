@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 class AddDefaultConstructorFix(expectClass: KtClass) : KotlinQuickFixAction<KtClass>(expectClass) {
 
-    override fun getText() = "Add default constructor to expect class"
+    override fun getText() = KotlinBundle.message("fix.add.default.constructor")
 
     override fun getFamilyName() = text
 

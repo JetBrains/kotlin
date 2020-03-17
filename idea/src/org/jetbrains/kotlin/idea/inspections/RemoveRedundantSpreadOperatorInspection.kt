@@ -12,6 +12,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.isArrayOfMethod
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -39,7 +40,7 @@ class RemoveRedundantSpreadOperatorInspection : AbstractKotlinInspection() {
             val problemDescriptor = holder.manager.createProblemDescriptor(
                 argument,
                 TextRange(startOffset, endOffset),
-                "Remove redundant spread operator",
+                KotlinBundle.message("remove.redundant.spread.operator.quickfix.text"),
                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                 isOnTheFly,
                 RemoveRedundantSpreadOperatorQuickfix()
@@ -50,7 +51,7 @@ class RemoveRedundantSpreadOperatorInspection : AbstractKotlinInspection() {
 }
 
 class RemoveRedundantSpreadOperatorQuickfix : LocalQuickFix {
-    override fun getName() = "Remove redundant spread operator"
+    override fun getName() = KotlinBundle.message("remove.redundant.spread.operator.quickfix.text")
 
     override fun getFamilyName() = name
 

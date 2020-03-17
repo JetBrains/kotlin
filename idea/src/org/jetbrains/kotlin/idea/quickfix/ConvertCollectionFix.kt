@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtExpression
@@ -30,8 +31,8 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class ConvertCollectionFix(element: KtExpression, val type: CollectionType) : KotlinQuickFixAction<KtExpression>(element) {
-    override fun getFamilyName(): String = "Convert to ${type.displayName}"
-    override fun getText() = "Convert expression to '${type.displayName}' by inserting '.${type.functionCall}'"
+    override fun getFamilyName(): String = KotlinBundle.message("convert.to.0", type.displayName)
+    override fun getText() = KotlinBundle.message("convert.expression.to.0.by.inserting.1", type.displayName, type.functionCall)
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val expression = element ?: return

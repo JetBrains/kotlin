@@ -35,7 +35,7 @@ class FirDynamicTypeRefBuilder : FirAnnotationContainerBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildDynamicTypeRef(init: FirDynamicTypeRefBuilder.() -> Unit): FirDynamicTypeRef {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

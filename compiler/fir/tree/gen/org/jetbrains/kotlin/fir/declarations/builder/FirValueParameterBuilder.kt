@@ -42,7 +42,7 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
     open var isNoinline: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     open var isVararg: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 
-    @UseExperimental(FirImplementationDetail::class)
+    @OptIn(FirImplementationDetail::class)
     override fun build(): FirValueParameter {
         return FirValueParameterImpl(
             source,
@@ -61,7 +61,7 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildValueParameter(init: FirValueParameterBuilder.() -> Unit): FirValueParameter {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

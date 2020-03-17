@@ -9,7 +9,6 @@ import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.JavaDebugProcess
 import com.intellij.debugger.engine.JavaExecutionStack
 import com.intellij.debugger.engine.SuspendContextImpl
-import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl
 import com.intellij.ide.CommonActionsManager
@@ -41,17 +40,20 @@ import com.intellij.xdebugger.impl.ui.tree.XDebuggerTreeState
 import com.intellij.xdebugger.impl.ui.tree.nodes.XValueContainerNode
 import com.intellij.xdebugger.impl.ui.tree.nodes.XValueNodeImpl
 import com.sun.jdi.request.EventRequest
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineDebuggerContentInfo
 import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineDebuggerContentInfo.Companion.XCOROUTINE_POPUP_ACTION_GROUP
+import org.jetbrains.kotlin.idea.debugger.coroutine.KotlinDebuggerCoroutinesBundle
 import org.jetbrains.kotlin.idea.debugger.coroutine.VersionedImplementationProvider
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.*
-import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.*
+import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.ApplicationThreadExecutor
+import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.CoroutineDebugProbesProxy
+import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.LookupContinuation
+import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.ManagerThreadExecutor
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.CreateContentParams
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.CreateContentParamsProvider
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.XDebugSessionListenerProvider
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
-import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
+import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 import java.awt.BorderLayout
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
@@ -148,7 +150,7 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
         CreateContentParams(
             CoroutineDebuggerContentInfo.XCOROUTINE_THREADS_CONTENT,
             mainPanel,
-            KotlinBundle.message("debugger.session.tab.xcoroutine.title"),
+            KotlinDebuggerCoroutinesBundle.message("coroutine.view.title"),
             null,
             panel.tree
         )
@@ -156,7 +158,10 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
     inner class EmptyNode : XValueContainerNode<XValueContainer>(panel.tree, null, true, object : XValueContainer() {})
 
     inner class XCoroutinesRootNode(suspendContext: XSuspendContext) :
-        XValueContainerNode<CoroutineGroupContainer>(panel.tree, null, false, CoroutineGroupContainer(suspendContext, "Default group"))
+        XValueContainerNode<CoroutineGroupContainer>(
+            panel.tree, null, false,
+            CoroutineGroupContainer(suspendContext, KotlinDebuggerCoroutinesBundle.message("coroutine.view.default.group"))
+        )
 
     inner class CoroutineGroupContainer(val suspendContext: XSuspendContext, val groupName: String) : XValueContainer() {
         override fun computeChildren(node: XCompositeNode) {
@@ -189,7 +194,8 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
                     }
                     node.addChildren(children, true)
                 } else {
-                    node.addChildren(XValueChildrenList.singleton(ErrorNode("Error occurs while fetching information")), true)
+                    val errorNode = ErrorNode(KotlinDebuggerCoroutinesBundle.message("coroutine.view.fetching.error"))
+                    node.addChildren(XValueChildrenList.singleton(errorNode), true)
                 }
             }
         }
@@ -363,13 +369,12 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
         return XDebuggerUtil.getInstance().createPosition(classFile, lineNumber)
     }
 
-    private fun executionContext(suspendContext: SuspendContextImpl, frameProxy: StackFrameProxyImpl): ExecutionContext {
-        val evaluationContextImpl = EvaluationContextImpl(suspendContext, frameProxy)
-        return ExecutionContext(evaluationContextImpl, frameProxy)
+    private fun executionContext(suspendContext: SuspendContextImpl, frameProxy: StackFrameProxyImpl): DefaultExecutionContext {
+        return DefaultExecutionContext(suspendContext, frameProxy)
     }
 
     private fun createSyntheticStackFrame(
-        executionContext: ExecutionContext,
+        executionContext: DefaultExecutionContext,
         frame: SuspendCoroutineStackFrameItem
     ): SyntheticStackFrame? {
 

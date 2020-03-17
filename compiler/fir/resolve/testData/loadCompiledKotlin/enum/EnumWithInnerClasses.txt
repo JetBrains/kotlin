@@ -21,5 +21,11 @@ public final enum class Enum : R|kotlin/Enum<test/Enum>| {
 
     public final static enum entry ENTRY1: R|test/Enum|
     public final static enum entry ENTRY2: R|test/Enum|
+    public final static fun values(): R|kotlin/Array<test/Enum>| {
+    }
+
+    public final static fun valueOf(value: R|kotlin/String|): R|test/Enum| {
+    }
+
 }
 

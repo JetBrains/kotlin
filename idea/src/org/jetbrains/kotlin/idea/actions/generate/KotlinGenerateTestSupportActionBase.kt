@@ -30,6 +30,7 @@ import com.intellij.ui.components.JBList
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.insertMember
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.BodyType
@@ -64,7 +65,7 @@ abstract class KotlinGenerateTestSupportActionBase(
             list.cellRenderer = TestFrameworkListCellRenderer()
 
             PopupChooserBuilder<TestFramework>(list).setFilteringEnabled { (it as TestFramework).name }
-                .setTitle("Choose Framework")
+                .setTitle(KotlinBundle.message("action.generate.test.support.choose.framework"))
                 .setItemChoosenCallback { consumer(list.selectedValue as TestFramework) }
                 .setMovable(true)
                 .createPopup()
@@ -136,7 +137,7 @@ abstract class KotlinGenerateTestSupportActionBase(
 
     private fun doGenerate(editor: Editor, file: PsiFile, klass: KtClassOrObject, framework: TestFramework) {
         val project = file.project
-        val commandName = "Generate test function"
+        val commandName = KotlinBundle.message("action.generate.test.support.generate.test.function")
 
         val fileTemplateDescriptor = methodKind.getFileTemplateDescriptor(framework)
         val fileTemplate = FileTemplateManager.getInstance(project).getCodeTemplate(fileTemplateDescriptor.fileName)
@@ -145,8 +146,8 @@ abstract class KotlinGenerateTestSupportActionBase(
         if (templateText.contains(NAME_VAR)) {
             name = if (templateText.contains("test$NAME_VAR")) "Name" else "name"
             if (!ApplicationManager.getApplication().isUnitTestMode) {
-                name = Messages.showInputDialog("Choose test name: ", commandName, null, name, NAME_VALIDATOR)
-                    ?: return
+                val message = KotlinBundle.message("action.generate.test.support.choose.test.name")
+                name = Messages.showInputDialog(message, commandName, null, name, NAME_VALIDATOR) ?: return
             }
 
             templateText = fileTemplate.text.replace(NAME_VAR, DUMMY_NAME)
@@ -161,7 +162,7 @@ abstract class KotlinGenerateTestSupportActionBase(
                 val psiMethod = factory.createMethodFromText(templateText, null)
                 psiMethod.throwsList.referenceElements.forEach { it.delete() }
                 var function = psiMethod.j2k() as? KtNamedFunction ?: run {
-                    errorHint = "Couldn't convert Java template to Kotlin"
+                    errorHint = KotlinBundle.message("action.generate.test.support.error.cant.convert.java.template")
                     return@executeWriteCommand
                 }
                 name?.let {
@@ -187,7 +188,8 @@ abstract class KotlinGenerateTestSupportActionBase(
             }
             errorHint?.let { HintManager.getInstance().showErrorHint(editor, it) }
         } catch (e: IncorrectOperationException) {
-            HintManager.getInstance().showErrorHint(editor, "Cannot generate method: " + e.message)
+            val message = KotlinBundle.message("action.generate.test.support.error.cant.generate.method", e.message.toString())
+            HintManager.getInstance().showErrorHint(editor, message)
         }
     }
 
@@ -231,12 +233,16 @@ abstract class KotlinGenerateTestSupportActionBase(
         val targetClass = getTargetClass(editor, file) ?: return null
         val frameworks = findSuitableFrameworks(targetClass).ifEmpty { return null }
 
-        return object : AnAction("Edit Template") {
+        return object : AnAction(KotlinBundle.message("action.generate.test.support.edit.template")) {
             override fun actionPerformed(e: AnActionEvent) {
                 chooseAndPerform(editor, frameworks) {
                     val descriptor = methodKind.getFileTemplateDescriptor(it)
                     if (descriptor == null) {
-                        HintManager.getInstance().showErrorHint(editor, "No template found for ${it.name}:${templatePresentation.text}")
+                        val message = KotlinBundle.message(
+                            "action.generate.test.support.error.no.template.found",
+                            it.name, templatePresentation.text
+                        )
+                        HintManager.getInstance().showErrorHint(editor, message)
                         return@chooseAndPerform
                     }
 

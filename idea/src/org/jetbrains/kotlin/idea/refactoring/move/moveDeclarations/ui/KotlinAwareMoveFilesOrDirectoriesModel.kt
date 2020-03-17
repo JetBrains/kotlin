@@ -15,6 +15,7 @@ import com.intellij.psi.PsiFileSystemItem
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.isInKotlinAwareSourceRoot
 import org.jetbrains.kotlin.idea.refactoring.move.getOrCreateDirectory
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinAwareMoveFilesOrDirectoriesProcessor
@@ -64,7 +65,7 @@ class KotlinAwareMoveFilesOrDirectoriesModel(
         try {
             return getOrCreateDirectory(targetDirectoryName, project)
         } catch (e: IncorrectOperationException) {
-            throw ConfigurationException("Cannot create target directory $targetDirectoryName")
+            throw ConfigurationException(KotlinBundle.message("text.cannot.create.target.directory.0", targetDirectoryName))
         }
     }
 
@@ -74,21 +75,21 @@ class KotlinAwareMoveFilesOrDirectoriesModel(
     private fun checkModel() {
 
         elementsToMove.firstOrNull { it !is PsiFile && it !is PsiDirectory }?.let {
-            throw ConfigurationException("Unexpected element type: $it")
+            throw ConfigurationException(KotlinBundle.message("text.unexpected.element.type.0", it))
         }
 
         if (elementsToMove.isEmpty()) {
-            throw ConfigurationException("There is no given files to move")
+            throw ConfigurationException(KotlinBundle.message("text.no.files.to.move"))
         }
 
         try {
             Paths.get(targetDirectoryName)
         } catch (e: InvalidPathException) {
-            throw ConfigurationException("Invalid target path $targetDirectoryName")
+            throw ConfigurationException(KotlinBundle.message("text.invalid.target.path.0", targetDirectoryName))
         }
 
         if (DumbService.isDumb(project)) {
-            throw ConfigurationException("Move refactoring is not available while indexing is in progress")
+            throw ConfigurationException(KotlinBundle.message("text.move.refactoring.not.available.during.indexing"))
         }
     }
 

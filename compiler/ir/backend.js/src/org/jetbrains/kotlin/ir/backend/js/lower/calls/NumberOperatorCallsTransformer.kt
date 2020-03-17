@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.name.Name
+
+private val HASH_CODE_NAME = Name.identifier("hashCode")
 
 class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransformer {
     private val intrinsics = context.intrinsics
@@ -52,10 +54,13 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
             add(it, OperatorNames.XOR) { call -> toBoolean(irCall(call, intrinsics.jsBitXor, receiversAsArguments = true)) }
 
             add(it, OperatorNames.NOT, intrinsics.jsNot)
+
+            add(it, HASH_CODE_NAME) { call -> toInt32(call.dispatchReceiver!!) }
         }
 
         for (type in primitiveNumbers) {
             add(type, Name.identifier("rangeTo"), ::transformRangeTo)
+            add(type, HASH_CODE_NAME, ::transformHashCode)
         }
 
         for (type in primitiveNumbers) {
@@ -92,6 +97,19 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
                     irCall(call, intrinsics.jsNumberRangeToNumber, receiversAsArguments = true)
                 isLong() ->
                     irCall(call, intrinsics.jsNumberRangeToLong, receiversAsArguments = true)
+                else -> call
+            }
+        }
+    }
+
+    private fun transformHashCode(call: IrFunctionAccessExpression): IrExpression {
+        return with(call.symbol.owner.dispatchReceiverParameter!!.type) {
+            when {
+                isByte() || isShort() || isInt() ->
+                    call.dispatchReceiver!!
+                isFloat() || isDouble() ->
+                    // TODO introduce doubleToHashCode?
+                    irCall(call, intrinsics.jsGetNumberHashCode, receiversAsArguments = true)
                 else -> call
             }
         }

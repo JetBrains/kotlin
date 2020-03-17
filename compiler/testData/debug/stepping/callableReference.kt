@@ -11,13 +11,13 @@ fun f(block: () -> Unit) {
 }
 
 // LINENUMBERS
-// TestKt.box():3
-// TestKt.box():4
-// TestKt.f(kotlin.jvm.functions.Function0):10
-// TestKt$box$1.invoke():5
-// TestKt$box$1.invoke():6
-// TestKt$box$1.invoke():-1
-// TestKt$box$1.invoke():-1
-// TestKt.f(kotlin.jvm.functions.Function0):10
-// TestKt.f(kotlin.jvm.functions.Function0):11
-// TestKt.box():7
+// test.kt:3
+// test.kt:4
+// test.kt:10
+// test.kt:5
+// test.kt:6
+// test.kt:-1
+// test.kt:-1
+// test.kt:10
+// test.kt:11
+// test.kt:7

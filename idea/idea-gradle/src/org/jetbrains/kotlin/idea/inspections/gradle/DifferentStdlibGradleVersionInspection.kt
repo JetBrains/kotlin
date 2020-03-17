@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.inspections.gradle
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.configuration.KOTLIN_GROUP_ID
 import org.jetbrains.kotlin.idea.inspections.gradle.GradleHeuristicHelper.PRODUCTION_DEPENDENCY_STATEMENTS
 import org.jetbrains.kotlin.idea.platform.tooling
@@ -34,7 +35,7 @@ class DifferentStdlibGradleVersionInspection : BaseInspection() {
     override fun buildVisitor(): BaseInspectionVisitor = MyVisitor(KOTLIN_GROUP_ID, JvmIdePlatformKind.tooling.mavenLibraryIds)
 
     override fun buildErrorString(vararg args: Any) =
-        "Plugin version (${args[0]}) is not the same as library version (${args[1]})"
+        KotlinIdeaGradleBundle.message("error.text.different.kotlin.library.version", args[0], args[1])
 
     private abstract class VersionFinder(private val groupId: String, private val libraryIds: List<String>) :
         KotlinGradleInspectionVisitor() {

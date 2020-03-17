@@ -148,6 +148,11 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 runTest("compiler/testData/cfg/bugs/kt10105.kt");
             }
 
+            @TestMetadata("kt37447.kt")
+            public void testKt37447() throws Exception {
+                runTest("compiler/testData/cfg/bugs/kt37447.kt");
+            }
+
             @TestMetadata("kt7761.kt")
             public void testKt7761() throws Exception {
                 runTest("compiler/testData/cfg/bugs/kt7761.kt");

@@ -70,6 +70,6 @@ tasks {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        freeCompilerArgs += listOf("-Xuse-experimental=kotlin.Experimental")
+        freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
     }
 }

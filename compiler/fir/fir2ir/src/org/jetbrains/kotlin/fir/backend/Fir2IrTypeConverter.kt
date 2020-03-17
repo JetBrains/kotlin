@@ -62,7 +62,9 @@ class Fir2IrTypeConverter(
                 // TODO: yet we take more general type. Not quite sure it's Ok
                 upperBound.toIrType(typeContext)
             }
-            is ConeCapturedType -> TODO()
+            is ConeCapturedType -> {
+                lowerType?.toIrType(typeContext) ?: constructor.supertypes!!.first().toIrType(typeContext)
+            }
             is ConeDefinitelyNotNullType -> {
                 original.toIrType(typeContext.definitelyNotNull())
             }

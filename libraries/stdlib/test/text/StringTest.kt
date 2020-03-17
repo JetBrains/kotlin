@@ -1268,6 +1268,22 @@ class StringTest {
         }
     }
 
+    @Test fun reduceIndexedOrNull() = withOneCharSequenceArg { arg1 ->
+        // get the 3rd character
+        assertEquals('c', arg1("bacfd").reduceIndexedOrNull { index, v, c -> if (index == 2) c else v })
+
+        expect('c') {
+            "ab".reduceIndexedOrNull { index, acc, e ->
+                assertEquals(1, index)
+                assertEquals('a', acc)
+                assertEquals('b', e)
+                e + (e - acc)
+            }
+        }
+
+        expect(null, { arg1("").reduceIndexedOrNull { _, _, _ -> '\n' } })
+    }
+
     @Test fun reduceRightIndexed() = withOneCharSequenceArg { arg1 ->
         // get the 3rd character
         assertEquals('c', arg1("bacfd").reduceRightIndexed { index, c, v -> if (index == 2) c else v })
@@ -1284,6 +1300,22 @@ class StringTest {
         assertFailsWith<UnsupportedOperationException> {
             arg1("").reduceRightIndexed { _, _, _ -> '\n' }
         }
+    }
+
+    @Test fun reduceRightIndexedOrNull() = withOneCharSequenceArg { arg1 ->
+        // get the 3rd character
+        assertEquals('c', arg1("bacfd").reduceRightIndexedOrNull { index, c, v -> if (index == 2) c else v })
+
+        expect('c') {
+            "ab".reduceRightIndexedOrNull { index, e, acc ->
+                assertEquals(0, index)
+                assertEquals('b', acc)
+                assertEquals('a', e)
+                acc + (acc - e)
+            }
+        }
+
+        expect(null, { arg1("").reduceRightIndexedOrNull { _, _, _ -> '\n' } })
     }
 
     @Test fun reduce() = withOneCharSequenceArg { arg1 ->

@@ -50,7 +50,7 @@ class FirNamedArgumentExpressionBuilder : FirAnnotationContainerBuilder, FirExpr
         }
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildNamedArgumentExpression(init: FirNamedArgumentExpressionBuilder.() -> Unit): FirNamedArgumentExpression {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

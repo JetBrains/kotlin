@@ -9,6 +9,7 @@ import com.intellij.psi.PsiCompiledElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
@@ -17,19 +18,26 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.AccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun <T : IrElement> FirElement.convertWithOffsets(
     f: (startOffset: Int, endOffset: Int) -> T
@@ -180,3 +188,35 @@ internal tailrec fun FirCallableSymbol<*>.deepestOverriddenSymbol(): FirCallable
     val overriddenSymbol = overriddenSymbol ?: return this
     return overriddenSymbol.deepestOverriddenSymbol()
 }
+
+private val nameToOperationConventionOrigin = mutableMapOf(
+    OperatorNameConventions.PLUS to IrStatementOrigin.PLUS,
+    OperatorNameConventions.MINUS to IrStatementOrigin.MINUS,
+    OperatorNameConventions.TIMES to IrStatementOrigin.MUL,
+    OperatorNameConventions.DIV to IrStatementOrigin.DIV,
+    OperatorNameConventions.MOD to IrStatementOrigin.PERC,
+    OperatorNameConventions.REM to IrStatementOrigin.PERC,
+    OperatorNameConventions.RANGE_TO to IrStatementOrigin.RANGE
+)
+
+internal fun FirReference.statementOrigin(): IrStatementOrigin? {
+    return when (this) {
+        is FirPropertyFromParameterResolvedNamedReference -> IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
+        is FirResolvedNamedReference -> when (resolvedSymbol) {
+            is AccessorSymbol, is SyntheticPropertySymbol -> IrStatementOrigin.GET_PROPERTY
+            is FirNamedFunctionSymbol -> when {
+                resolvedSymbol.callableId.isInvoke() -> IrStatementOrigin.INVOKE
+                source.psi is KtForExpression && resolvedSymbol.callableId.isIteratorNext() -> IrStatementOrigin.FOR_LOOP_NEXT
+                source.psi is KtForExpression && resolvedSymbol.callableId.isIteratorHasNext() -> IrStatementOrigin.FOR_LOOP_HAS_NEXT
+                source.psi is KtForExpression && resolvedSymbol.callableId.isIterator() -> IrStatementOrigin.FOR_LOOP_ITERATOR
+                source.psi is KtOperationReferenceExpression -> nameToOperationConventionOrigin[resolvedSymbol.callableId.callableName]
+                else -> null
+            }
+            else -> null
+        }
+        else -> null
+    }
+}
+
+fun FirClass<*>.getPrimaryConstructorIfAny(): FirConstructor? =
+    declarations.filterIsInstance<FirConstructor>().firstOrNull()?.takeIf { it.isPrimary }

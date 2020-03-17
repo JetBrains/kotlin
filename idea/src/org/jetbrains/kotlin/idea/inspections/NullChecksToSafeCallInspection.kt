@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableSimpleExpression
@@ -24,7 +25,7 @@ class NullChecksToSafeCallInspection : AbstractKotlinInspection() {
             if (isNullChecksToSafeCallFixAvailable(expression)) {
                 holder.registerProblem(
                     expression,
-                    "Null-checks replaceable with safe-calls",
+                    KotlinBundle.message("null.checks.replaceable.with.safe.calls"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     NullChecksToSafeCallCheckFix()
                 )
@@ -32,7 +33,7 @@ class NullChecksToSafeCallInspection : AbstractKotlinInspection() {
         }
 
     private class NullChecksToSafeCallCheckFix : LocalQuickFix {
-        override fun getName() = "Replace chained null-checks with safe-calls"
+        override fun getName() = KotlinBundle.message("null.checks.to.safe.call.check.fix.text")
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {

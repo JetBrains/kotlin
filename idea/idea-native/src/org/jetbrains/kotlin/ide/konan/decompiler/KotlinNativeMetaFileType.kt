@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.ide.konan.decompiler
 
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.ide.konan.KotlinNativeBundle
 import org.jetbrains.kotlin.library.KLIB_METADATA_FILE_EXTENSION
 
 object KotlinNativeMetaFileType : FileType {
     override fun getName() = "KNM"
-    override fun getDescription() = "Kotlin/Native Metadata"
+    override fun getDescription() = KotlinNativeBundle.message("kotlin.native.metadata.short")
     override fun getDefaultExtension() = KLIB_METADATA_FILE_EXTENSION
     override fun getIcon(): Nothing? = null
     override fun isBinary() = true

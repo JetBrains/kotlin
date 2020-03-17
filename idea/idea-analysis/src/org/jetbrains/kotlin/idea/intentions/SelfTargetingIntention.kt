@@ -16,6 +16,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.CREATE_BY_PATTERN_MAY_NOT_REFORMAT
 import org.jetbrains.kotlin.psi.KtBlockExpression
@@ -26,13 +27,14 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 @Suppress("EqualsOrHashCode")
 abstract class SelfTargetingIntention<TElement : PsiElement>(
     val elementType: Class<TElement>,
-    private var text: String,
-    private val familyName: String = text
+    @Nls private var text: String,
+    @Nls private val familyName: String = text
 ) : IntentionAction {
 
+    @Nls
     protected val defaultText: String = text
 
-    protected fun setText(text: String) {
+    protected fun setText(@Nls text: String) {
         this.text = text
     }
 
@@ -114,13 +116,13 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
 
 abstract class SelfTargetingRangeIntention<TElement : PsiElement>(
     elementType: Class<TElement>,
-    text: String,
-    familyName: String = text
+    @Nls text: String,
+    @Nls familyName: String = text
 ) : SelfTargetingIntention<TElement>(elementType, text, familyName) {
 
     abstract fun applicabilityRange(element: TElement): TextRange?
 
-    override final fun isApplicableTo(element: TElement, caretOffset: Int): Boolean {
+    final override fun isApplicableTo(element: TElement, caretOffset: Int): Boolean {
         val range = applicabilityRange(element) ?: return false
         return range.containsOffset(caretOffset)
     }
@@ -128,13 +130,13 @@ abstract class SelfTargetingRangeIntention<TElement : PsiElement>(
 
 abstract class SelfTargetingOffsetIndependentIntention<TElement : KtElement>(
     elementType: Class<TElement>,
-    text: String,
-    familyName: String = text
+    @Nls text: String,
+    @Nls familyName: String = text
 ) : SelfTargetingRangeIntention<TElement>(elementType, text, familyName) {
 
     abstract fun isApplicableTo(element: TElement): Boolean
 
-    override final fun applicabilityRange(element: TElement): TextRange? {
+    final override fun applicabilityRange(element: TElement): TextRange? {
         return if (isApplicableTo(element)) element.textRange else null
     }
 }

@@ -48,7 +48,7 @@ class FirBreakExpressionBuilder : FirLoopJumpBuilder, FirAnnotationContainerBuil
         }
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildBreakExpression(init: FirBreakExpressionBuilder.() -> Unit): FirBreakExpression {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

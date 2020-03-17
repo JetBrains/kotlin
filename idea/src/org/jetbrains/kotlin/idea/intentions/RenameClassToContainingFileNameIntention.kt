@@ -9,12 +9,13 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.refactoring.rename.RenameProcessor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.renderer.render
 
 class RenameClassToContainingFileNameIntention : SelfTargetingRangeIntention<KtClassOrObject>(
-    KtClassOrObject::class.java, "Rename class to containing file name"
+    KtClassOrObject::class.java, KotlinBundle.message("rename.class.to.containing.file.name")
 ) {
     override fun startInWriteAction() = false
 
@@ -28,7 +29,7 @@ class RenameClassToContainingFileNameIntention : SelfTargetingRangeIntention<KtC
             || Name.identifier(fileName).render() != fileName
             || element.containingKtFile.declarations.any { it is KtClassOrObject && it.name == fileName }
         ) return null
-        text = "Rename class to $fileName"
+        text = KotlinBundle.message("rename.class.to.0", fileName)
         return element.nameIdentifier?.textRange
     }
 

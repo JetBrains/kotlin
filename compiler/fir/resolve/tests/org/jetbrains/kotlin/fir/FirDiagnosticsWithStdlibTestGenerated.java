@@ -88,6 +88,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/emptyArray.kt");
     }
 
+    @TestMetadata("enumValuesDeserialized.kt")
+    public void testEnumValuesDeserialized() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolveWithStdlib/enumValuesDeserialized.kt");
+    }
+
     @TestMetadata("exception.kt")
     public void testException() throws Exception {
         runTest("compiler/fir/resolve/testData/resolveWithStdlib/exception.kt");
@@ -580,6 +585,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/resolve/testData/resolveWithStdlib/j+k/FieldAndGetter.kt");
         }
 
+        @TestMetadata("fieldOverride.kt")
+        public void testFieldOverride() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/j+k/fieldOverride.kt");
+        }
+
         @TestMetadata("FieldSubstitution.kt")
         public void testFieldSubstitution() throws Exception {
             runTest("compiler/fir/resolve/testData/resolveWithStdlib/j+k/FieldSubstitution.kt");
@@ -736,6 +746,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         @TestMetadata("qualifierPriority.kt")
         public void testQualifierPriority() throws Exception {
             runTest("compiler/fir/resolve/testData/resolveWithStdlib/problems/qualifierPriority.kt");
+        }
+
+        @TestMetadata("receiverResolutionInLambda.kt")
+        public void testReceiverResolutionInLambda() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolveWithStdlib/problems/receiverResolutionInLambda.kt");
         }
 
         @TestMetadata("weakHashMap.kt")

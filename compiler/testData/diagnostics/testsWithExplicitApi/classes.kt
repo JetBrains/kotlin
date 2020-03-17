@@ -42,3 +42,6 @@ public class WithNested {
     <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>class Nested<!> {}
     <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>inner class Inner<!> {}
 }
+
+<!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>enum class Foo<!> { A, B }
+public enum class Bar { A, B }

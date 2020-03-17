@@ -351,7 +351,7 @@ allprojects {
     configureJvmProject(javaHome!!, jvmTarget!!)
 
     val commonCompilerArgs = listOfNotNull(
-        "-Xuse-experimental=kotlin.Experimental",
+        "-Xopt-in=kotlin.RequiresOptIn",
         "-Xread-deserialized-contracts",
         "-Xjvm-default=compatibility",
         "-progressive".takeIf { hasProperty("test.progressive.mode") }
@@ -396,6 +396,7 @@ allprojects {
         runtimeClasspath {
             ignore("META-INF/MANIFEST.MF")
             ignore("META-INF/compiler.version")
+            ignore("META-INF/plugin.xml")
         }
     }
 

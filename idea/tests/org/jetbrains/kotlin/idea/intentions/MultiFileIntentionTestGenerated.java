@@ -108,6 +108,11 @@ public class MultiFileIntentionTestGenerated extends AbstractMultiFileIntentionT
         runTest("idea/testData/multiFileIntentions/moveDeclarationToSeparateFile/optimizeImports/optimizeImports.test");
     }
 
+    @TestMetadata("moveMemberToTopLevel/function/function.test")
+    public void testMoveMemberToTopLevel_function_Function() throws Exception {
+        runTest("idea/testData/multiFileIntentions/moveMemberToTopLevel/function/function.test");
+    }
+
     @TestMetadata("moveOutOfCompanion/moveClass/moveClass.test")
     public void testMoveOutOfCompanion_moveClass_MoveClass() throws Exception {
         runTest("idea/testData/multiFileIntentions/moveOutOfCompanion/moveClass/moveClass.test");

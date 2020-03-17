@@ -1,5 +1,8 @@
 // !LANGUAGE: +MultiPlatformProjects
 // NO_CHECK_LAMBDA_INLINING
+// TODO: replace all references on expected declarations and their members to actuals,
+//  otherwise DCE keeps members of expect D referenced from lambdas in default arguments instead of members of actual D
+// IGNORE_BACKEND: JS, JS_IR
 
 // FILE: 1.kt
 

@@ -37,7 +37,7 @@ class FirResolvedImportBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildResolvedImport(init: FirResolvedImportBuilder.() -> Unit): FirResolvedImport {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

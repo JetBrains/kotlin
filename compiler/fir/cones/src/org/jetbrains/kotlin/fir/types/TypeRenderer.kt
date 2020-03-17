@@ -82,7 +82,7 @@ fun ConeKotlinType.renderFunctionType(kind: FunctionClassDescriptor.Kind?, isExt
     }
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 fun FunctionClassDescriptor.Kind?.withPrettyRender(): Boolean {
     contract {
         returns(true) implies (this@withPrettyRender != null)

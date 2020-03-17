@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.fir.visitors.*
 interface FirCall : FirStatement {
     override val source: FirSourceElement?
     override val annotations: List<FirAnnotationCall>
-    val arguments: List<FirExpression>
+    val argumentList: FirArgumentList
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCall(this, data)
 
-    fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirCall
+    fun replaceArgumentList(newArgumentList: FirArgumentList)
 }

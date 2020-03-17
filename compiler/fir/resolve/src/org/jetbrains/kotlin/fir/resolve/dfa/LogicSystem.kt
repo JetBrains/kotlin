@@ -29,6 +29,7 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
     abstract fun createEmptyFlow(): FLOW
     abstract fun forkFlow(flow: FLOW): FLOW
     abstract fun joinFlow(flows: Collection<FLOW>): FLOW
+    abstract fun unionFlow(flows: Collection<FLOW>): FLOW
 
     abstract fun addTypeStatement(flow: FLOW, statement: TypeStatement)
 
@@ -141,6 +142,20 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
             context.commonSuperTypeOrNull(differentTypes.flatten())?.let { commonTypes += it }
         }
         return commonTypes
+    }
+
+    protected fun and(statements: Collection<TypeStatement>): MutableTypeStatement {
+        require(statements.isNotEmpty())
+        statements.singleOrNull()?.let { return it as MutableTypeStatement }
+        val variable = statements.first().variable
+        assert(statements.all { it.variable == variable })
+        val exactType = andForTypes(statements.map { it.exactType })
+        val exactNotType = andForTypes(statements.map { it.exactNotType })
+        return MutableTypeStatement(variable, exactType, exactNotType)
+    }
+
+    private fun andForTypes(types: Collection<Set<ConeKotlinType>>): MutableSet<ConeKotlinType> {
+        return types.flatMapTo(mutableSetOf()) { it }
     }
 }
 

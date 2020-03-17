@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.implicitModality
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 class AddOpenModifierIntention : SelfTargetingIntention<KtCallableDeclaration>(
-    KtCallableDeclaration::class.java, "Make open"
+    KtCallableDeclaration::class.java, KotlinBundle.message("make.open")
 ), LowPriorityAction {
 
     override fun isApplicableTo(element: KtCallableDeclaration, caretOffset: Int): Boolean {

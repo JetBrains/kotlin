@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -140,28 +141,25 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
         propertyInfo: PropertyInfo,
         private val classOrFileName: String?
     ) : CreateCallableFromUsageFix<KtElement>(contextElement, listOf(propertyInfo)) {
-        override fun getFamilyName() = "Add property"
+        override fun getFamilyName() = KotlinBundle.message("add.property")
         override fun getText(): String {
             val info = callableInfos.first() as PropertyInfo
             return buildString {
-                append("Add '")
+                append(KotlinBundle.message("text.add"))
                 if (info.isLateinitPreferred || info.modifierList?.hasModifier(KtTokens.LATEINIT_KEYWORD) == true) {
                     append("lateinit ")
                 }
                 append(if (info.writable) "var" else "val")
-                append("' property '${info.name}' to '$classOrFileName'")
+                append(KotlinBundle.message("property.0.to.1", info.name, classOrFileName.toString()))
             }
         }
     }
 
-    private fun JvmClass.toKtClassOrFile(): KtElement? {
-        val psi = sourceElement
-        return when (psi) {
-            is KtClassOrObject -> psi
-            is KtLightClassForSourceDeclaration -> psi.kotlinOrigin
-            is KtLightClassForFacade -> psi.files.firstOrNull()
-            else -> null
-        }
+    private fun JvmClass.toKtClassOrFile(): KtElement? = when (val psi = sourceElement) {
+        is KtClassOrObject -> psi
+        is KtLightClassForSourceDeclaration -> psi.kotlinOrigin
+        is KtLightClassForFacade -> psi.files.firstOrNull()
+        else -> null
     }
 
     private inline fun <reified T : KtElement> JvmElement.toKtElement() = sourceElement?.unwrapped as? T
@@ -246,8 +244,12 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
         )
         val targetClassName = targetClass.name
         val addConstructorAction = object : CreateCallableFromUsageFix<KtElement>(targetKtClass, listOf(constructorInfo)) {
-            override fun getFamilyName() = "Add method"
-            override fun getText() = "Add ${if (needPrimary) "primary" else "secondary"} constructor to '$targetClassName'"
+            override fun getFamilyName() = KotlinBundle.message("add.method")
+            override fun getText() = KotlinBundle.message(
+                "add.0.constructor.to.1",
+                if (needPrimary) KotlinBundle.message("text.primary") else KotlinBundle.message("text.secondary"),
+                targetClassName.toString()
+            )
         }
 
         val changePrimaryConstructorAction = run {
@@ -361,8 +363,8 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
         )
         val targetClassName = targetClass.name
         val action = object : CreateCallableFromUsageFix<KtElement>(targetContainer, listOf(functionInfo)) {
-            override fun getFamilyName() = "Add method"
-            override fun getText() = "Add method '$methodName' to '$targetClassName'"
+            override fun getFamilyName() = KotlinBundle.message("add.method")
+            override fun getText() = KotlinBundle.message("add.method.0.to.1", methodName, targetClassName.toString())
         }
 
         val nameAndKind = PropertyUtilBase.getPropertyNameAndKind(methodName) ?: return listOf(action)

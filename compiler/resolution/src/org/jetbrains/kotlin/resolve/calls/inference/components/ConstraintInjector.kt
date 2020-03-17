@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.LOWER
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.UPPER
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
-import java.util.*
+import org.jetbrains.kotlin.utils.SmartList
 import kotlin.math.max
 
 class ConstraintInjector(
@@ -69,22 +70,43 @@ class ConstraintInjector(
         upperType: KotlinTypeMarker,
         incorporatePosition: IncorporationConstraintPosition
     ) {
-        val possibleNewConstraints = Stack<Pair<TypeVariableMarker, Constraint>>()
-        val typeCheckerContext = TypeCheckerContext(c, incorporatePosition, lowerType, upperType, possibleNewConstraints)
+        var possibleNewConstraints: MutableList<Pair<TypeVariableMarker, Constraint>>? = null
+
+        val typeCheckerContext = TypeCheckerContext(c, incorporatePosition, lowerType, upperType) { typeVar, constraint ->
+            if (possibleNewConstraints == null) {
+                possibleNewConstraints = SmartList()
+            }
+            possibleNewConstraints!!.add(typeVar to constraint)
+        }
         typeCheckerContext.runIsSubtypeOf(lowerType, upperType)
 
-        while (possibleNewConstraints.isNotEmpty()) {
-            val (typeVariable, constraint) = possibleNewConstraints.pop()
-            if (c.shouldWeSkipConstraint(typeVariable, constraint)) continue
+        while (possibleNewConstraints != null) {
 
-            val constraints =
-                c.notFixedTypeVariables[typeVariable.freshTypeConstructor(c)] ?: typeCheckerContext.fixedTypeVariable(typeVariable)
+            val constraintsToProcess = possibleNewConstraints
+            possibleNewConstraints = null
+            for ((typeVariable, constraint) in constraintsToProcess!!) {
+                if (c.shouldWeSkipConstraint(typeVariable, constraint)) continue
 
-            // it is important, that we add constraint here(not inside TypeCheckerContext), because inside incorporation we read constraints
-            constraints.addConstraint(constraint)?.let {
-                if (!constraint.isNullabilityConstraint) {
-                    constraintIncorporator.incorporate(typeCheckerContext, typeVariable, it)
+                val constraints =
+                    c.notFixedTypeVariables[typeVariable.freshTypeConstructor(c)] ?: typeCheckerContext.fixedTypeVariable(typeVariable)
+
+                // it is important, that we add constraint here(not inside TypeCheckerContext), because inside incorporation we read constraints
+                constraints.addConstraint(constraint)?.let {
+                    if (!constraint.isNullabilityConstraint) {
+                        constraintIncorporator.incorporate(typeCheckerContext, typeVariable, it)
+                    }
                 }
+            }
+
+            val contextOps = c as? ConstraintSystemOperation
+            if (possibleNewConstraints == null ||
+                (contextOps != null && c.notFixedTypeVariables.all { typeVariable ->
+                    typeVariable.value.constraints.any { constraint ->
+                        constraint.kind == ConstraintKind.EQUALITY && contextOps.isProperType(constraint.type)
+                    }
+                })
+            ) {
+                break
             }
         }
     }
@@ -122,7 +144,7 @@ class ConstraintInjector(
         val position: IncorporationConstraintPosition,
         val baseLowerType: KotlinTypeMarker,
         val baseUpperType: KotlinTypeMarker,
-        val possibleNewConstraints: MutableList<Pair<TypeVariableMarker, Constraint>>
+        val addPossibleNewConstraints: (TypeVariableMarker, Constraint) -> Unit
     ) : AbstractTypeCheckerContextForConstraintSystem(), ConstraintIncorporator.Context, TypeSystemInferenceExtensionContext by c {
 
         val baseContext: AbstractTypeCheckerContext = newBaseTypeCheckerContext(isErrorTypeEqualsToAnything, isStubTypeEqualsToAnything)
@@ -139,7 +161,7 @@ class ConstraintInjector(
             return baseContext.prepareType(type)
         }
 
-        @UseExperimental(TypeRefinement::class)
+        @OptIn(TypeRefinement::class)
         override fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
             return if (type is KotlinType) {
                 kotlinTypeRefiner.refineType(type)
@@ -263,7 +285,7 @@ class ConstraintInjector(
                 isNullabilityConstraint = isNullabilityConstraint,
                 inputTypePositionBeforeIncorporation = inputTypePosition
             )
-            possibleNewConstraints.add(typeVariable to newConstraint)
+            addPossibleNewConstraints(typeVariable, newConstraint)
         }
 
         override val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>
@@ -279,7 +301,7 @@ class ConstraintInjector(
 
         override fun getConstraintsForVariable(typeVariable: TypeVariableMarker) =
             c.notFixedTypeVariables[typeVariable.freshTypeConstructor()]?.constraints
-                    ?: fixedTypeVariable(typeVariable)
+                ?: fixedTypeVariable(typeVariable)
 
         fun fixedTypeVariable(variable: TypeVariableMarker): Nothing {
             error(

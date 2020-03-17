@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -20,7 +21,7 @@ class RedundantSetterInspection : AbstractKotlinInspection(), CleanupLocalInspec
             if (accessor.isRedundantSetter()) {
                 holder.registerProblem(
                     accessor,
-                    "Redundant setter",
+                    KotlinBundle.message("redundant.setter"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     rangeInElement,
                     RemoveRedundantSetterFix()
@@ -46,7 +47,7 @@ fun KtPropertyAccessor.isRedundantSetter(): Boolean {
 
 
 class RemoveRedundantSetterFix : LocalQuickFix {
-    override fun getName() = "Remove redundant setter"
+    override fun getName() = KotlinBundle.message("remove.redundant.setter.fix.text")
 
     override fun getFamilyName() = name
 

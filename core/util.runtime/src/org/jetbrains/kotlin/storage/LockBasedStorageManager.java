@@ -305,10 +305,7 @@ public class LockBasedStorageManager implements StorageManager {
 
     private static class LockBasedLazyValue<T> implements NullableLazyValue<T> {
         private final LockBasedStorageManager storageManager;
-        /**
-         * Computable function is <code>null</code> when value has been calculated
-         */
-        private Function0<? extends T> computable;
+        private final Function0<? extends T> computable;
 
         @Nullable
         private volatile Object value = NotValue.NOT_COMPUTED;
@@ -362,7 +359,6 @@ public class LockBasedStorageManager implements StorageManager {
                     postCompute(typedValue);
 
                     value = typedValue;
-                    computable = null;
                     return typedValue;
                 }
                 catch (Throwable throwable) {

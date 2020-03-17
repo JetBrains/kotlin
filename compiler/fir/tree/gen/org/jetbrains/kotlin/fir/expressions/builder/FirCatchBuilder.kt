@@ -35,7 +35,7 @@ class FirCatchBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildCatch(init: FirCatchBuilder.() -> Unit): FirCatch {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

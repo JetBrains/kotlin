@@ -59,7 +59,11 @@ dependencies {
     testRuntime(intellijPluginDep("coverage"))
     testRuntime(intellijPluginDep("gradle"))
     testRuntime(intellijPluginDep("Groovy"))
-    testRuntime(intellijPluginDep("IntelliLang"))
+    if (Platform[201].orHigher()) {
+        testRuntime(intellijPluginDep("platform-langInjection"))
+    } else {
+        testRuntime(intellijPluginDep("IntelliLang"))
+    }
     testRuntime(intellijPluginDep("java-decompiler"))
     testRuntime(intellijPluginDep("java-i18n"))
     testRuntime(intellijPluginDep("junit"))

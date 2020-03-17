@@ -229,8 +229,9 @@ class CompletionModeCalculator {
             constraint: Constraint,
             variable: TypeVariableMarker
         ): Boolean {
+            val defaultType = variable.defaultType()
             return constraint.kind.isLower() && postponedAtoms.any { atom ->
-                atom.expectedType?.contains { type -> variable.defaultType() == type } ?: false
+                atom.expectedType?.contains { type -> defaultType == type } ?: false
             }
         }
     }

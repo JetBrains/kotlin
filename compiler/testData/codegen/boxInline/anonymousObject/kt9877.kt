@@ -1,5 +1,6 @@
 // NO_CHECK_LAMBDA_INLINING
 // WITH_RUNTIME
+// KJS_WITH_FULL_RUNTIME
 // FILE: 1.kt
 package test
 

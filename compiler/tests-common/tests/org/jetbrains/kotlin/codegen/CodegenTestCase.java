@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.TestsCompiletimeError;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection;
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings;
-import org.jetbrains.kotlin.test.KotlinBaseTest;
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.output.OutputUtilsKt;
@@ -86,7 +85,6 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
     protected GeneratedClassLoader initializedClassLoader;
     protected File javaClassesOutputDirectory = null;
     protected List<File> additionalDependencies = null;
-    protected String coroutinesPackage = "";
 
     protected ConfigurationKind configurationKind = ConfigurationKind.JDK_ONLY;
 

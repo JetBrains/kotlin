@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.isAnyEquals
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -25,7 +26,7 @@ class UnusedEqualsInspection : AbstractKotlinInspection() {
                 if (!expression.isUsedAsExpression(context)) {
                     holder.registerProblem(
                         target,
-                        "Unused equals expression",
+                        KotlinBundle.message("unused.equals.expression"),
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL
                     )
 

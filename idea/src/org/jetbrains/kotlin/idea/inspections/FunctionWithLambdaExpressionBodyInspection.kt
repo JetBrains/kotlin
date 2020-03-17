@@ -11,6 +11,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
@@ -59,7 +60,7 @@ class FunctionWithLambdaExpressionBodyInspection : AbstractKotlinInspection() {
             )
             holder.registerProblem(
                 lambda,
-                "Function with `= { ... }` and inferred return type",
+                KotlinBundle.message("function.with.and.inferred.return.type"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 *fixes.toTypedArray()
             )
@@ -71,7 +72,7 @@ class FunctionWithLambdaExpressionBodyInspection : AbstractKotlinInspection() {
     }
 
     private class RemoveBracesFix : LocalQuickFix {
-        override fun getName() = "Remove braces"
+        override fun getName() = KotlinBundle.message("remove.braces.fix.text")
 
         override fun getFamilyName() = name
 
@@ -84,7 +85,7 @@ class FunctionWithLambdaExpressionBodyInspection : AbstractKotlinInspection() {
     }
 
     private class WrapRunFix : LocalQuickFix {
-        override fun getName() = "Convert to run { ... }"
+        override fun getName() = KotlinBundle.message("wrap.run.fix.text")
 
         override fun getFamilyName() = name
 

@@ -918,7 +918,7 @@ class OverrideResolver(
             declaringClass: ClassDescriptor,
             kotlinTypeRefiner: KotlinTypeRefiner
         ): CallableMemberDescriptor? {
-            @UseExperimental(TypeRefinement::class)
+            @OptIn(TypeRefinement::class)
             for (supertype in kotlinTypeRefiner.refineSupertypes(declaringClass)) {
                 val all = linkedSetOf<CallableMemberDescriptor>()
                 all.addAll(supertype.memberScope.getContributedFunctions(declared.name, NoLookupLocation.WHEN_CHECK_OVERRIDES))

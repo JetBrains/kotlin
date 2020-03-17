@@ -26,14 +26,14 @@
         <clientProperties>
           <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithoutIndent"/>
         </clientProperties>
-        <border type="etched" title-resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" title-key="kotlin.compiler.js.option.panel.title"/>
+        <border type="etched" title-resource-bundle="messages/KotlinBundle" title-key="kotlin.compiler.js.option.panel.title"/>
         <children>
           <component id="3ac8f" class="javax.swing.JLabel" binding="labelForOutputPrefixFile">
             <constraints>
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.output.prefix"/>
+              <text resource-bundle="messages/KotlinBundle" key="kotlin.compiler.js.option.output.prefix"/>
             </properties>
           </component>
           <component id="dd0c2" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="outputPrefixFile">
@@ -47,7 +47,7 @@
               <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.output.postfix"/>
+              <text resource-bundle="messages/KotlinBundle" key="kotlin.compiler.js.option.output.postfix"/>
             </properties>
           </component>
           <component id="1bdb7" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="outputPostfixFile">
@@ -61,7 +61,7 @@
               <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="2" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="&amp;Destination directory"/>
+              <text resource-bundle="messages/KotlinBundle" key="destination.directory"/>
             </properties>
           </component>
           <component id="7c11a" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="outputDirectory">
@@ -80,7 +80,7 @@
             </constraints>
             <properties>
               <state value="NOT_SELECTED"/>
-              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.output.copy.files"/>
+              <text resource-bundle="messages/KotlinBundle" key="kotlin.compiler.js.option.output.copy.files"/>
             </properties>
           </component>
           <component id="915d" class="javax.swing.JLabel">
@@ -89,7 +89,7 @@
             </constraints>
             <properties>
               <labelFor value="ca29c"/>
-              <text value="Module &amp;kind:"/>
+              <text resource-bundle="messages/KotlinBundle" key="module.kind"/>
             </properties>
           </component>
           <component id="ca29c" class="javax.swing.JComboBox" binding="moduleKindComboBox">
@@ -106,7 +106,7 @@
             </constraints>
             <properties>
               <state value="NOT_SELECTED"/>
-              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.generate.sourcemaps"/>
+              <text resource-bundle="messages/KotlinBundle" key="kotlin.compiler.js.option.generate.sourcemaps"/>
             </properties>
           </component>
           <component id="6484c" class="javax.swing.JLabel" binding="labelForSourceMapPrefix">
@@ -115,7 +115,7 @@
             </constraints>
             <properties>
               <labelFor value="e65e6"/>
-              <text value="Add prefix to paths in source map:"/>
+              <text resource-bundle="messages/KotlinBundle" key="add.prefix.to.paths.in.source.map"/>
             </properties>
           </component>
           <component id="e65e6" class="javax.swing.JTextField" binding="sourceMapPrefix">
@@ -131,7 +131,7 @@
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Embed source code into source map:"/>
+              <text resource-bundle="messages/KotlinBundle" key="embed.source.code.into.source.map"/>
             </properties>
           </component>
           <component id="48310" class="javax.swing.JComboBox" binding="sourceMapEmbedSources">
@@ -145,7 +145,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Enable incremental compilation"/>
+              <text resource-bundle="messages/KotlinBundle" key="enable.incremental.compilation"/>
             </properties>
           </component>
         </children>
@@ -161,7 +161,7 @@
         <clientProperties>
           <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithoutIndent"/>
         </clientProperties>
-        <border type="etched" title="Kotlin Scripting"/>
+        <border type="etched" title-resource-bundle="messages/KotlinBundle" title-key="action.new.script.name"/>
         <children>
           <component id="71c3f" class="javax.swing.JTextField" binding="scriptTemplatesField">
             <constraints>
@@ -177,7 +177,7 @@
             </constraints>
             <properties>
               <labelFor value="644d9"/>
-              <text value="Script templates class&amp;path:"/>
+              <text resource-bundle="messages/KotlinBundle" key="script.templates.classpath"/>
             </properties>
           </component>
           <component id="644d9" class="javax.swing.JTextField" binding="scriptTemplatesClasspathField">
@@ -195,7 +195,7 @@
             <properties>
               <enabled value="true"/>
               <labelFor value="71c3f"/>
-              <text value="Script &amp;template classes:"/>
+              <text resource-bundle="messages/KotlinBundle" key="script.template.classes"/>
             </properties>
           </component>
         </children>
@@ -237,14 +237,14 @@
         <clientProperties>
           <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithoutIndent"/>
         </clientProperties>
-        <border type="etched" title-resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" title-key="kotlin.compiler.jvm.option.panel.title"/>
+        <border type="etched" title-resource-bundle="messages/KotlinBundle" title-key="kotlin.compiler.jvm.option.panel.title"/>
         <children>
           <component id="9131b" class="javax.swing.JLabel">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Target &amp;JVM version"/>
+              <text resource-bundle="messages/KotlinBundle" key="target.jvm.version"/>
             </properties>
           </component>
           <component id="d8f92" class="javax.swing.JCheckBox" binding="enableIncrementalCompilationForJvmCheckBox">
@@ -252,7 +252,7 @@
               <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Enable incremental compilation"/>
+              <text resource-bundle="messages/KotlinBundle" key="enable.incremental.compilation"/>
             </properties>
           </component>
           <component id="769be" class="javax.swing.JComboBox" binding="jvmVersionComboBox">
@@ -278,7 +278,7 @@
             <properties>
               <selected value="false"/>
               <state value="NOT_SELECTED"/>
-              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.option.generate.no.warnings"/>
+              <text resource-bundle="messages/KotlinBundle" key="kotlin.compiler.option.generate.no.warnings"/>
             </properties>
           </component>
         </children>
@@ -296,7 +296,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="&amp;Language version"/>
+              <text resource-bundle="messages/KotlinBundle" key="language.version"/>
             </properties>
           </component>
           <component id="d931b" class="javax.swing.JComboBox" binding="languageVersionComboBox">
@@ -320,7 +320,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="AP&amp;I version"/>
+              <text resource-bundle="messages/KotlinBundle" key="api.version"/>
             </properties>
           </component>
           <component id="ab3e4" class="javax.swing.JComboBox" binding="apiVersionComboBox">
@@ -344,7 +344,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Coro&amp;utines"/>
+              <text resource-bundle="messages/KotlinBundle" key="compiler.coroutines"/>
             </properties>
           </component>
           <component id="4cb8f" class="javax.swing.JComboBox" binding="coroutineSupportComboBox">
@@ -360,7 +360,7 @@
           <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.option.additional.command.line.parameters"/>
+          <text resource-bundle="messages/KotlinBundle" key="kotlin.compiler.option.additional.command.line.parameters"/>
         </properties>
       </component>
       <component id="df236" class="com.intellij.ui.RawCommandLineEditor" binding="additionalArgsOptionsField">
@@ -368,7 +368,7 @@
           <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <dialogCaption value="Additional command line parameters"/>
+          <dialogCaption resource-bundle="messages/KotlinBundle" key="additional.command.line.parameters"/>
         </properties>
       </component>
       <component id="dae3f" class="com.intellij.util.ui.ThreeStateCheckBox" binding="keepAliveCheckBox">
@@ -377,7 +377,7 @@
         </constraints>
         <properties>
           <state value="NOT_SELECTED"/>
-          <text value="Keep compiler process alive between invocations"/>
+          <text resource-bundle="messages/KotlinBundle" key="keep.compiler.process.alive.between.invocations"/>
         </properties>
       </component>
       <grid id="8b5c9" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -395,7 +395,7 @@
             <properties>
               <selected value="false"/>
               <state value="NOT_SELECTED"/>
-              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.option.enable.new.inference.in.ide"/>
+              <text resource-bundle="messages/KotlinBundle" key="kotlin.compiler.option.enable.new.inference.in.ide"/>
             </properties>
           </component>
         </children>

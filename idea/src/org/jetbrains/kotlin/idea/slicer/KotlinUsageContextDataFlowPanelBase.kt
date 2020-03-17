@@ -24,6 +24,7 @@ import com.intellij.usages.UsageView
 import com.intellij.usages.UsageViewPresentation
 import com.intellij.usages.impl.UsageContextPanelBase
 import com.intellij.usages.impl.UsageViewImpl
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtDeclaration
 import java.awt.BorderLayout
 import javax.swing.JLabel
@@ -109,7 +110,7 @@ class KotlinUsageContextDataInflowPanel(
             return KotlinUsageContextDataInflowPanel((usageView as UsageViewImpl).project, usageView.getPresentation())
         }
 
-        override fun getTabTitle() = "Dataflow to Here"
+        override fun getTabTitle() = KotlinBundle.message("slicer.title.dataflow.to.here")
     }
 }
 
@@ -122,6 +123,6 @@ class KotlinUsageContextDataOutflowPanel(
             return KotlinUsageContextDataOutflowPanel((usageView as UsageViewImpl).project, usageView.getPresentation())
         }
 
-        override fun getTabTitle() = "Dataflow from Here"
+        override fun getTabTitle() = KotlinBundle.message("slicer.title.dataflow.from.here")
     }
 }

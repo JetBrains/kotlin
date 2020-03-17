@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,6 +16,7 @@ import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ui.configuration.FacetsProvider
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
@@ -48,7 +49,7 @@ class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
                 FrameworksCompatibilityUtils.suggestRemoveIncompatibleFramework(
                     rootModel,
                     JSLibraryStdDescription.SUITABLE_LIBRARY_KINDS,
-                    "Kotlin/\u200BJS"
+                    KotlinJvmBundle.message("kotlin.js")
                 )
 
                 description!!.finishLibConfiguration(module, rootModel, false)

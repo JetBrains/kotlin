@@ -7,8 +7,12 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.expressions.FirArgumentList
+import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
@@ -31,7 +35,7 @@ data class CallInfo(
     val name: Name,
 
     val explicitReceiver: FirExpression?,
-    val arguments: List<FirExpression>,
+    val argumentList: FirArgumentList,
     val isSafeCall: Boolean,
     val isPotentialQualifierPart: Boolean,
 
@@ -46,23 +50,30 @@ data class CallInfo(
     val lhs: DoubleColonLHS? = null,
     val stubReceiver: FirExpression? = null
 ) {
+    val arguments: List<FirExpression> get() = argumentList.arguments
+
     val argumentCount get() = arguments.size
 
     fun noStubReceiver(): CallInfo =
         if (stubReceiver == null) this else CallInfo(
-            callKind, name, explicitReceiver, arguments,
+            callKind, name, explicitReceiver, argumentList,
             isSafeCall, isPotentialQualifierPart, typeArguments, session,
             containingFile, implicitReceiverStack, expectedType, outerCSBuilder, lhs, null
         )
 
     fun replaceWithVariableAccess(): CallInfo =
-        copy(callKind = CallKind.VariableAccess, arguments = emptyList())
+        copy(callKind = CallKind.VariableAccess, typeArguments = emptyList(), argumentList = FirEmptyArgumentList)
 
     fun replaceExplicitReceiver(explicitReceiver: FirExpression?): CallInfo =
         copy(explicitReceiver = explicitReceiver)
 
     fun withReceiverAsArgument(receiverExpression: FirExpression): CallInfo =
-        copy(arguments = listOf(receiverExpression) + arguments)
+        copy(
+            argumentList = buildArgumentList {
+                arguments += receiverExpression
+                arguments += argumentList.arguments
+            }
+        )
 }
 
 enum class CandidateApplicability {
@@ -102,6 +113,7 @@ class Candidate(
     var usesSAM: Boolean = false
 
     var argumentMapping: Map<FirExpression, FirValueParameter>? = null
+    lateinit var typeArgumentMapping: TypeArgumentMapping
     val postponedAtoms = mutableListOf<PostponedResolvedAtomMarker>()
 
     val diagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()

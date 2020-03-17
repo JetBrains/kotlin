@@ -10,6 +10,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.MovePropertyToConstructorIntention
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.hasUsages
@@ -56,7 +57,7 @@ class CanBePrimaryConstructorPropertyInspection : AbstractKotlinInspection() {
                 holder.manager.createProblemDescriptor(
                     nameIdentifier,
                     nameIdentifier,
-                    "Property is explicitly assigned to parameter ${assignedDescriptor.name}, can be declared directly in constructor",
+                    KotlinBundle.message("property.is.explicitly.assigned.to.parameter.0.can", assignedDescriptor.name),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     isOnTheFly,
                     MovePropertyToConstructorIntention()

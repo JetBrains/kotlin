@@ -10106,6 +10106,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/inference/kt35702.kt");
         }
 
+        @TestMetadata("kt36044.kt")
+        public void testKt36044() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inference/kt36044.kt");
+        }
+
         @TestMetadata("kt36819.kt")
         public void testKt36819() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inference/kt36819.kt");
@@ -10632,9 +10637,9 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/inference/completion/basic.kt");
             }
 
-            @TestMetadata("definetlyNotNullType.kt")
-            public void testDefinetlyNotNullType() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/inference/completion/definetlyNotNullType.kt");
+            @TestMetadata("definitelyNotNullType.kt")
+            public void testDefinitelyNotNullType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/completion/definitelyNotNullType.kt");
             }
 
             @TestMetadata("equalityConstraintUpstairs.kt")
@@ -15237,6 +15242,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/nullableTypes/baseWithNullableUpperBound.kt");
         }
 
+        @TestMetadata("definitelyNotNullWithNullableBound.kt")
+        public void testDefinitelyNotNullWithNullableBound() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/nullableTypes/definitelyNotNullWithNullableBound.kt");
+        }
+
         @TestMetadata("elvisOnUnit.kt")
         public void testElvisOnUnit() throws Exception {
             runTest("compiler/testData/diagnostics/tests/nullableTypes/elvisOnUnit.kt");
@@ -18069,9 +18079,24 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/regressions/kt3535.kt");
         }
 
+        @TestMetadata("kt35626.kt")
+        public void testKt35626() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/regressions/kt35626.kt");
+        }
+
+        @TestMetadata("kt35626small.kt")
+        public void testKt35626small() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/regressions/kt35626small.kt");
+        }
+
         @TestMetadata("kt35668.kt")
         public void testKt35668() throws Exception {
             runTest("compiler/testData/diagnostics/tests/regressions/kt35668.kt");
+        }
+
+        @TestMetadata("kt36222.kt")
+        public void testKt36222() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/regressions/kt36222.kt");
         }
 
         @TestMetadata("kt3647.kt")

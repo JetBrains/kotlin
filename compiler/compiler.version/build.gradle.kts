@@ -2,6 +2,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
     java
+    id("jps-compatible")
 }
 
 jvmTarget = "1.6"

@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.idea.debugger.sequence.psi.java
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.CallCheckerWithNameHeuristics
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.StreamCallChecker
 
 class StreamExCallChecker(nestedChecker: StreamCallChecker) : CallCheckerWithNameHeuristics(nestedChecker) {
     private companion object {
+        @NonNls
         val TERMINATION_CALLS: Set<String> = setOf(
             "forEach", "toArray", "reduce", "collect", "min", "max", "count", "sum", "anyMatch", "allMatch", "noneMatch", "findFirst",
             "findAny", "forEachOrdered", "average", "summaryStatistics", "toList", "toSet", "toCollection", "toListAndThen", "toSetAndThen",

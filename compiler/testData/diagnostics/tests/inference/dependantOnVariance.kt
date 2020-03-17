@@ -14,7 +14,7 @@ fun <T> readFromMyList(<!UNUSED_PARAMETER!>l<!>: MyList<out T>, <!UNUSED_PARAMET
 fun test1(int: Int, any: Any) {
     val a0 : MyList<Any> = getMyList(int)
 
-    val a1 : MyList<Int> = <!NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>getMyList(any)<!>
+    val a1 : MyList<Int> = <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>getMyList(any)<!>
 
     val a2 : MyList<out Any> = getMyList(int)
 

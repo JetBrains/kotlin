@@ -21,6 +21,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -98,7 +99,7 @@ abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement
 class ChopParameterListIntention : AbstractChopListIntention<KtParameterList, KtParameter>(
     KtParameterList::class.java,
     KtParameter::class.java,
-    "Put parameters on separate lines"
+    KotlinBundle.message("put.parameters.on.separate.lines")
 ) {
     override fun isApplicableTo(element: KtParameterList): Boolean {
         if (element.parent is KtFunctionLiteral) return false
@@ -109,5 +110,5 @@ class ChopParameterListIntention : AbstractChopListIntention<KtParameterList, Kt
 class ChopArgumentListIntention : AbstractChopListIntention<KtValueArgumentList, KtValueArgument>(
     KtValueArgumentList::class.java,
     KtValueArgument::class.java,
-    "Put arguments on separate lines"
+    KotlinBundle.message("put.arguments.on.separate.lines")
 )

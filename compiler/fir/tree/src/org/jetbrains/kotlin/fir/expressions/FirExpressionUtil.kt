@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.TransformData
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.name.ClassId
 
@@ -34,7 +36,12 @@ fun <T> buildConstOrErrorExpression(source: FirSourceElement?, kind: FirConstKin
         this.diagnostic = diagnostic
     }
 
-inline val FirCall.argument: FirExpression get() = arguments.first()
+inline val FirCall.arguments: List<FirExpression> get() = argumentList.arguments
+
+inline val FirCall.argument: FirExpression get() = argumentList.arguments.first()
+
+inline val FirCall.argumentMapping: Map<FirExpression, FirValueParameter>?
+    get() = (argumentList as? FirResolvedArgumentList)?.mapping
 
 fun FirExpression.toResolvedCallableReference(): FirResolvedNamedReference? {
     return (this as? FirQualifiedAccess)?.calleeReference as? FirResolvedNamedReference
@@ -58,19 +65,23 @@ fun buildErrorExpression(source: FirSourceElement?, diagnostic: FirDiagnostic): 
     }
 }
 
-fun <D : Any> FirBlock.transformStatementsIndexed(transformer: FirTransformer<D>, dataProducer: (Int) -> D?): FirBlock {
+fun <D> FirBlock.transformStatementsIndexed(transformer: FirTransformer<D>, dataProducer: (Int) -> TransformData<D>): FirBlock {
     when (this) {
         is FirBlockImpl -> statements.transformInplace(transformer, dataProducer)
         is FirSingleExpressionBlock -> {
-            dataProducer(0)?.let { transformStatements(transformer, it) }
+            (dataProducer(0) as? TransformData.Data<D>)?.value?.let { transformStatements(transformer, it) }
         }
     }
     return this
 }
 
-fun <D : Any> FirBlock.transformAllStatementsExceptLast(transformer: FirTransformer<D>, data: D): FirBlock {
+fun <D> FirBlock.transformAllStatementsExceptLast(transformer: FirTransformer<D>, data: D): FirBlock {
     val threshold = statements.size - 1
     return transformStatementsIndexed(transformer) { index ->
-        data.takeIf { index < threshold }
+        if (index < threshold) {
+            TransformData.Data(data)
+        } else {
+            TransformData.Nothing
+        }
     }
 }

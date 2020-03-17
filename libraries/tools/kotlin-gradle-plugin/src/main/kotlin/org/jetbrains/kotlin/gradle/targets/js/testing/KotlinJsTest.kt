@@ -31,7 +31,7 @@ open class KotlinJsTest :
     private val nodeJs get() = NodeJsRootPlugin.apply(project.rootProject)
 
     @get:Internal
-    internal var testFramework: KotlinJsTestFramework? = null
+    var testFramework: KotlinJsTestFramework? = null
 
     @Suppress("unused")
     val testFrameworkSettings: String

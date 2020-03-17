@@ -17,10 +17,8 @@ object KotlinPluginCompatibilityVerifier {
 
         if (kotlinVersion.platformVersion.platform != platformVersion.platform) {
             Messages.showWarningDialog(
-                "Installed Kotlin plugin version ($kotlinVersion) is not compatible with $platformVersion.\n" +
-                        "Some functionality may be broken.\n\n" +
-                        "Please reinstall the Kotlin plugin.",
-                "Compatibility issue"
+                KotlinBundle.message("plugin.verifier.compatibility.issue.message", kotlinVersion, platformVersion),
+                KotlinBundle.message("plugin.verifier.compatibility.issue.title")
             )
         }
     }

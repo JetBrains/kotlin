@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
@@ -49,12 +50,12 @@ open class AddModifierFix(
     override fun getText(): String {
         val element = element ?: return ""
         if (modifier in modalityModifiers || modifier in VISIBILITY_MODIFIERS || modifier == CONST_KEYWORD) {
-            return "Make ${getElementName(element)} ${modifier.value}"
+            return KotlinBundle.message("fix.add.modifier.text", getElementName(element), modifier.value)
         }
-        return "Add '${modifier.value}' modifier"
+        return KotlinBundle.message("fix.add.modifier.text.generic", modifier.value)
     }
 
-    override fun getFamilyName() = "Add modifier"
+    override fun getFamilyName() = KotlinBundle.message("fix.add.modifier.family")
 
     private fun invokeOnElement(element: KtModifierListOwner?) {
         element?.addModifier(modifier)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.caches.resolve.resolution
 import org.jetbrains.kotlin.config.SourceKotlinRootType
 import org.jetbrains.kotlin.config.TestSourceKotlinRootType
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
 import org.jetbrains.kotlin.idea.caches.resolve.util.enlargedSearchScope
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinModuleOutOfCodeBlockModificationTracker
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
@@ -189,7 +190,7 @@ data class ModuleProductionSourceInfo internal constructor(
     override val module: Module
 ) : ModuleSourceInfoWithExpectedBy(forProduction = true) {
 
-    override val name = Name.special("<production sources for module ${module.name}>")
+    override val name = Name.special(KotlinIdeaAnalysisBundle.message("production.sources.for.module.0", module.name))
 
     override val stableName: Name = module.getStableName()
 
@@ -203,7 +204,7 @@ data class ModuleProductionSourceInfo internal constructor(
 data class ModuleTestSourceInfo internal constructor(override val module: Module) :
     ModuleSourceInfoWithExpectedBy(forProduction = false), org.jetbrains.kotlin.idea.caches.resolve.ModuleTestSourceInfo {
 
-    override val name = Name.special("<test sources for module ${module.name}>")
+    override val name = Name.special(KotlinIdeaAnalysisBundle.message("test.sources.for.module.0", module.name))
 
     override val stableName: Name = module.getStableName()
 
@@ -287,7 +288,7 @@ open class LibraryInfo(val project: Project, val library: Library) : IdeaModuleI
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.LIBRARY
 
-    override val name: Name = Name.special("<library ${library.name}>")
+    override val name: Name = Name.special(KotlinIdeaAnalysisBundle.message("library.0", library.name.toString()))
 
     override fun contentScope(): GlobalSearchScope = LibraryWithoutSourceScope(project, library)
 
@@ -331,7 +332,7 @@ open class LibraryInfo(val project: Project, val library: Library) : IdeaModuleI
 data class LibrarySourceInfo(val project: Project, val library: Library, override val binariesModuleInfo: BinaryModuleInfo) :
     IdeaModuleInfo, SourceForBinaryModuleInfo {
 
-    override val name: Name = Name.special("<sources for library ${library.name}>")
+    override val name: Name = Name.special(KotlinIdeaAnalysisBundle.message("sources.for.library.0", library.name.toString()))
 
     override fun sourceScope(): GlobalSearchScope = KotlinSourceFilterScope.librarySources(
         LibrarySourceScope(
@@ -358,7 +359,7 @@ data class SdkInfo(val project: Project, val sdk: Sdk) : IdeaModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.LIBRARY
 
-    override val name: Name = Name.special("<sdk ${sdk.name}>")
+    override val name: Name = Name.special(KotlinIdeaAnalysisBundle.message("sdk.0", sdk.name))
 
     override fun contentScope(): GlobalSearchScope = SdkScope(project, sdk)
 
@@ -375,7 +376,7 @@ object NotUnderContentRootModuleInfo : IdeaModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
 
-    override val name: Name = Name.special("<special module for files not under source root>")
+    override val name: Name = Name.special(KotlinIdeaAnalysisBundle.message("special.module.for.files.not.under.source.root"))
 
     override fun contentScope() = GlobalSearchScope.EMPTY_SCOPE
 

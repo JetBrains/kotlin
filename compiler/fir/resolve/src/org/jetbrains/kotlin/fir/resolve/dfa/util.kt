@@ -32,7 +32,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 fun DataFlowVariable.isSynthetic(): Boolean {
     contract {
         returns(true) implies (this@isSynthetic is SyntheticVariable)
@@ -41,7 +41,7 @@ fun DataFlowVariable.isSynthetic(): Boolean {
     return this is SyntheticVariable
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 fun DataFlowVariable.isReal(): Boolean {
     contract {
         returns(true) implies (this@isReal is RealVariable)
@@ -62,7 +62,7 @@ fun MutableTypeStatements.mergeTypeStatements(other: TypeStatements) {
     }
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 internal inline fun <K, V> MutableMap<K, V>.put(key: K, value: V, remappingFunction: (existing: V) -> V) {
     contract {
         callsInPlace(remappingFunction, InvocationKind.AT_MOST_ONCE)
@@ -75,7 +75,7 @@ internal inline fun <K, V> MutableMap<K, V>.put(key: K, value: V, remappingFunct
     }
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 internal inline fun <K, V> PersistentMap<K, V>.put(key: K, valueProducer: () -> V, remappingFunction: (existing: V) -> V): PersistentMap<K, V> {
     contract {
         callsInPlace(remappingFunction, InvocationKind.AT_MOST_ONCE)

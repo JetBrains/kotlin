@@ -8,14 +8,14 @@ fun box() {
 inline fun foo(n: Int) {}
 
 // LINENUMBERS
-// TestKt.box():3
-// TestKt.box():4
-// TestKt.box():8
-// TestKt.box():3
-// TestKt.box():4
-// TestKt.box():8
-// TestKt.box():3
-// TestKt.box():4
-// TestKt.box():8
-// TestKt.box():3
-// TestKt.box():6
+// test.kt:3
+// test.kt:4
+// test.kt:8
+// test.kt:3
+// test.kt:4
+// test.kt:8
+// test.kt:3
+// test.kt:4
+// test.kt:8
+// test.kt:3
+// test.kt:6

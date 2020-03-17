@@ -37,6 +37,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.uiDesigner.core.GridConstraints
 import kotlinx.coroutines.*
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.ModuleOrigin
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
@@ -211,7 +212,7 @@ internal abstract class AbstractCompletionBenchmarkScenario(
                 }
             })
         }
-        AbstractCompletionBenchmarkAction.showPopup(project, "Done")
+        AbstractCompletionBenchmarkAction.showPopup(project, KotlinBundle.message("title.done"))
     }
 
     abstract suspend fun doBenchmark()

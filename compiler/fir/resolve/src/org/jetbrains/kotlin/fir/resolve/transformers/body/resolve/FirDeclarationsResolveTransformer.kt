@@ -161,18 +161,23 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         wrappedDelegateExpression: FirWrappedDelegateExpression,
         data: ResolutionMode,
     ): CompositeTransformResult<FirStatement> {
-        val delegateProvider = wrappedDelegateExpression.delegateProvider.transformSingle(transformer, ResolutionMode.ContextDependent)
-        when (val calleeReference = (delegateProvider as FirResolvable).calleeReference) {
-            is FirResolvedNamedReference -> return delegateProvider.compose()
-            is FirNamedReferenceWithCandidate -> {
-                val candidate = calleeReference.candidate
-                if (!candidate.system.hasContradiction) {
-                    return delegateProvider.compose()
+        dataFlowAnalyzer.enterDelegateExpression()
+        try {
+            val delegateProvider = wrappedDelegateExpression.delegateProvider.transformSingle(transformer, ResolutionMode.ContextDependent)
+            when (val calleeReference = (delegateProvider as FirResolvable).calleeReference) {
+                is FirResolvedNamedReference -> return delegateProvider.compose()
+                is FirNamedReferenceWithCandidate -> {
+                    val candidate = calleeReference.candidate
+                    if (!candidate.system.hasContradiction) {
+                        return delegateProvider.compose()
+                    }
                 }
             }
-        }
 
-        return wrappedDelegateExpression.expression.transform(transformer, ResolutionMode.ContextDependent)
+            return wrappedDelegateExpression.expression.transform(transformer, ResolutionMode.ContextDependent)
+        } finally {
+            dataFlowAnalyzer.exitDelegateExpression()
+        }
     }
 
     private fun transformLocalVariable(variable: FirProperty): CompositeTransformResult<FirProperty> {
@@ -233,13 +238,19 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         } else {
             returnTypeRef
         }
+        val resolutionMode = if (expectedReturnTypeRef.coneTypeSafe<ConeKotlinType>() == session.builtinTypes.unitType.type) {
+            ResolutionMode.ContextIndependent
+        } else {
+            withExpectedType(expectedReturnTypeRef)
+        }
+
         val receiverTypeRef = owner.receiverTypeRef
         if (receiverTypeRef != null) {
             withLabelAndReceiverType(owner.name, owner, receiverTypeRef.coneTypeUnsafe()) {
-                transformFunctionWithGivenSignature(accessor, expectedReturnTypeRef)
+                transformFunctionWithGivenSignature(accessor, resolutionMode)
             }
         } else {
-            transformFunctionWithGivenSignature(accessor, expectedReturnTypeRef)
+            transformFunctionWithGivenSignature(accessor, resolutionMode)
         }
     }
 
@@ -387,10 +398,10 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                 val receiverTypeRef = simpleFunction.receiverTypeRef
                 if (receiverTypeRef != null) {
                     withLabelAndReceiverType(simpleFunction.name, simpleFunction, receiverTypeRef.coneTypeUnsafe()) {
-                        transformFunctionWithGivenSignature(simpleFunction, returnTypeRef)
+                        transformFunctionWithGivenSignature(simpleFunction, ResolutionMode.ContextIndependent)
                     }
                 } else {
-                    transformFunctionWithGivenSignature(simpleFunction, returnTypeRef)
+                    transformFunctionWithGivenSignature(simpleFunction, ResolutionMode.ContextIndependent)
                 }
             }
         }
@@ -398,14 +409,14 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
 
     private fun <F : FirFunction<F>> transformFunctionWithGivenSignature(
         function: F,
-        returnTypeRef: FirTypeRef,
+        resolutionMode: ResolutionMode,
     ): CompositeTransformResult<F> {
         if (function is FirSimpleFunction) {
             components.storeFunction(function)
         }
 
         @Suppress("UNCHECKED_CAST")
-        val result = transformFunction(function, withExpectedType(returnTypeRef)).single as F
+        val result = transformFunction(function, resolutionMode).single as F
 
         val body = result.body
         if (result.returnTypeRef is FirImplicitTypeRef) {

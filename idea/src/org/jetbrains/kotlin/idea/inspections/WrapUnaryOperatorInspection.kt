@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.getLeftMostReceiverExpression
 import org.jetbrains.kotlin.idea.intentions.replaceFirstReceiver
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -33,7 +34,7 @@ class WrapUnaryOperatorInspection : AbstractKotlinInspection() {
                     ) {
                         holder.registerProblem(
                             expression,
-                            "Wrap unary operator and value with ()",
+                            KotlinBundle.message("wrap.unary.operator.quickfix.text"),
                             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                             WrapUnaryOperatorQuickfix()
                         )
@@ -46,7 +47,7 @@ class WrapUnaryOperatorInspection : AbstractKotlinInspection() {
     private fun IElementType.isUnaryMinusOrPlus() = this == KtTokens.MINUS || this == KtTokens.PLUS
 
     private class WrapUnaryOperatorQuickfix : LocalQuickFix {
-        override fun getName() = "Wrap unary operator and value with ()"
+        override fun getName() = KotlinBundle.message("wrap.unary.operator.quickfix.text")
 
         override fun getFamilyName() = name
 

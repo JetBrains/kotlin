@@ -1247,6 +1247,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/expressions/thisOfGenericOuterClass.kt");
         }
 
+        @TestMetadata("thisRefToObjectInNestedClassConstructorCall.kt")
+        public void testThisRefToObjectInNestedClassConstructorCall() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/thisRefToObjectInNestedClassConstructorCall.kt");
+        }
+
         @TestMetadata("thisReferenceBeforeClassDeclared.kt")
         public void testThisReferenceBeforeClassDeclared() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/thisReferenceBeforeClassDeclared.kt");
@@ -1368,6 +1373,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         public static class CallableReferences extends AbstractFir2IrTextTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
+            }
+
+            @TestMetadata("adaptedExtensionFunctions.kt")
+            public void testAdaptedExtensionFunctions() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/callableReferences/adaptedExtensionFunctions.kt");
             }
 
             public void testAllFilesPresentInCallableReferences() throws Exception {
@@ -1860,6 +1870,16 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @TestMetadata("coercionToUnitInLambdaReturnValue.kt")
         public void testCoercionToUnitInLambdaReturnValue() throws Exception {
             runTest("compiler/testData/ir/irText/types/coercionToUnitInLambdaReturnValue.kt");
+        }
+
+        @TestMetadata("genericDelegatedDeepProperty.kt")
+        public void testGenericDelegatedDeepProperty() throws Exception {
+            runTest("compiler/testData/ir/irText/types/genericDelegatedDeepProperty.kt");
+        }
+
+        @TestMetadata("genericFunWithStar.kt")
+        public void testGenericFunWithStar() throws Exception {
+            runTest("compiler/testData/ir/irText/types/genericFunWithStar.kt");
         }
 
         @TestMetadata("genericPropertyReferenceType.kt")

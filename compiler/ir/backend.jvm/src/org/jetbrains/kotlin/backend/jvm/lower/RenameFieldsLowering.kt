@@ -96,7 +96,9 @@ private class FieldNameCollector : IrElementVisitorVoid {
     }
 
     override fun visitField(declaration: IrField) {
-        nameToField.getOrPut(declaration.parent to declaration.name) { mutableListOf() }.add(declaration)
+        if (!declaration.isFakeOverride) {
+            nameToField.getOrPut(declaration.parent to declaration.name) { mutableListOf() }.add(declaration)
+        }
     }
 }
 

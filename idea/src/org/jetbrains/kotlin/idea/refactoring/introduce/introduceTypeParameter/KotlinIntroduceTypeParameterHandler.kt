@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter.CreateTypeParameterByUnresolvedRefActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter.CreateTypeParameterFromUsageFix
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter.getPossibleTypeParameterContainers
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractIntroduceAction
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.processDuplicates
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeAlias.KotlinIntroduceTypeAliasHandler
@@ -53,14 +54,14 @@ import org.jetbrains.kotlin.utils.keysToMap
 
 object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
     @JvmField
-    val REFACTORING_NAME = "Introduce Type Parameter"
+    val REFACTORING_NAME = KotlinBundle.message("introduce.type.parameter")
 
     fun selectElements(editor: Editor, file: KtFile, continuation: (elements: List<PsiElement>, targetParent: PsiElement) -> Unit) {
         selectElementsWithTargetParent(
             REFACTORING_NAME,
             editor,
             file,
-            "Introduce type parameter to declaration",
+            KotlinBundle.message("introduce.type.parameter.to.declaration"),
             listOf(CodeInsightUtils.ElementKind.TYPE_ELEMENT),
             { null },
             { _, parent -> getPossibleTypeParameterContainers(parent) },
@@ -71,7 +72,12 @@ object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
     fun doInvoke(project: Project, editor: Editor, elements: List<PsiElement>, targetParent: PsiElement) {
         val targetOwner = targetParent as KtTypeParameterListOwner
         val typeElementToExtract =
-            elements.singleOrNull() as? KtTypeElement ?: return showErrorHint(project, editor, "No type to refactor", REFACTORING_NAME)
+            elements.singleOrNull() as? KtTypeElement ?: return showErrorHint(
+                project,
+                editor,
+                KotlinBundle.message("error.text.no.type.to.refactor"),
+                REFACTORING_NAME
+            )
 
         val typeElementToExtractPointer = typeElementToExtract.createSmartPointer()
 
@@ -90,7 +96,12 @@ object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
         val createTypeParameterData =
             CreateTypeParameterByUnresolvedRefActionFactory.extractFixData(typeElementToExtract, defaultName)?.let {
                 it.copy(typeParameters = listOf(it.typeParameters.single().copy(upperBoundType = originalType)), declaration = targetOwner)
-            } ?: return showErrorHint(project, editor, "Refactoring is not applicable in the current context", REFACTORING_NAME)
+            } ?: return showErrorHint(
+                project,
+                editor,
+                KotlinBundle.message("error.text.refactoring.is.not.applicable.in.the.current.context"),
+                REFACTORING_NAME
+            )
 
         project.executeCommand(REFACTORING_NAME) {
             val newTypeParameter =
@@ -134,7 +145,7 @@ object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
                         restoredOwner,
                         UsageViewTypeLocation.INSTANCE
                     ) + " '${restoredOwner.name}'",
-                    "a reference to extracted type parameter"
+                    KotlinBundle.message("description.a.reference.to.extracted.type.parameter")
                 )
 
                 restoredTypeParameter.extendsBound?.let {

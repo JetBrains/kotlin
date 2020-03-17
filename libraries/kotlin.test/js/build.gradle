@@ -19,7 +19,7 @@ dependencies {
 compileKotlin2Js {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
-            "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+            "-Xopt-in=kotlin.contracts.ExperimentalContracts",
     ]
     kotlinOptions {
         moduleKind = "umd"

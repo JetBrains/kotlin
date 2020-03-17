@@ -95,7 +95,7 @@ class FirIntegerLiteralTypeScope(private val session: FirSession) : FirScope() {
         name to FirNamedFunctionSymbol(CallableId(name)).apply { createFirFunction(name, this) }
     }.toMap()
 
-    @UseExperimental(FirImplementationDetail::class)
+    @OptIn(FirImplementationDetail::class)
     private fun createFirFunction(name: Name, symbol: FirNamedFunctionSymbol): FirSimpleFunctionImpl = FirIntegerOperator(
         source = null,
         session,
@@ -123,7 +123,7 @@ class FirIntegerLiteralTypeScope(private val session: FirSession) : FirScope() {
     }
 }
 
-@UseExperimental(FirImplementationDetail::class)
+@OptIn(FirImplementationDetail::class)
 class FirIntegerOperator @FirImplementationDetail constructor(
     source: FirSourceElement?,
     session: FirSession,

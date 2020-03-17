@@ -58,18 +58,18 @@ fun getOverriddenPropertyTooltip(property: KtNamedDeclaration): String? {
     val isImplemented = isImplemented(property)
     if (overriddenInClassesProcessor.isOverflow) {
         return if (isImplemented)
-            KotlinBundle.message("property.is.implemented.too.many")
+            KotlinBundle.message("overridden.marker.implementations.multiple")
         else
-            KotlinBundle.message("property.is.overridden.too.many")
+            KotlinBundle.message("overridden.marker.overrides.multiple")
     }
 
     val collectedClasses = overriddenInClassesProcessor.collection
     if (collectedClasses.isEmpty()) return null
 
     val start = if (isImplemented)
-        KotlinBundle.message("property.is.implemented.header")
+        KotlinBundle.message("overridden.marker.implementation")
     else
-        KotlinBundle.message("property.is.overridden.header")
+        KotlinBundle.message("overridden.marker.overrides")
 
     val pattern = "&nbsp;&nbsp;&nbsp;&nbsp;{0}"
     return GutterIconTooltipHelper.composeText(collectedClasses.sortedWith(PsiClassListCellRenderer().comparator), start, pattern)
@@ -80,7 +80,8 @@ fun buildNavigateToPropertyOverriddenDeclarationsPopup(e: MouseEvent?, element: 
     val project = propertyOrParameter.project
 
     if (DumbService.isDumb(project)) {
-        DumbService.getInstance(project)?.showDumbModeNotification("Navigation to overriding classes is not possible during index update")
+        DumbService.getInstance(project)?.showDumbModeNotification(
+            KotlinBundle.message("highlighter.notification.text.navigation.to.overriding.classes.is.not.possible.during.index.update"))
         return null
     }
 
@@ -112,8 +113,8 @@ fun buildNavigateToPropertyOverriddenDeclarationsPopup(e: MouseEvent?, element: 
 
     return NavigationPopupDescriptor(
         navigatingOverrides,
-        KotlinBundle.message("navigation.title.overriding.property", propertyOrParameter.name),
-        KotlinBundle.message("navigation.findUsages.title.overriding.property", propertyOrParameter.name), renderer
+        KotlinBundle.message("overridden.marker.implementations.choose.implementation.title", propertyOrParameter.name.toString()),
+        KotlinBundle.message("overridden.marker.implementations.choose.implementation.find.usages", propertyOrParameter.name.toString()), renderer
     )
 }
 

@@ -248,6 +248,7 @@ class Main<L>(x: L?, y: L) {
     val x430 = foo43(x)
     val x431 = foo43(y)
 
+    // Change after fix KT-37380
     val x440 = foo44(x)
     val x441 = foo44(y)
 

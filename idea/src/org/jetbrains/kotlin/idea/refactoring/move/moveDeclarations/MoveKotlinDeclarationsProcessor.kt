@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightElements
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToBeShortenedDescendantsToWaitingSet
 import org.jetbrains.kotlin.idea.core.deleteSingle
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
@@ -138,7 +139,6 @@ class MoveKotlinDeclarationsProcessor(
     private val throwOnConflicts: Boolean = false
 ) : BaseRefactoringProcessor(descriptor.project) {
     companion object {
-        private const val REFACTORING_NAME = "Move declarations"
         const val REFACTORING_ID = "move.kotlin.declarations"
     }
 
@@ -365,5 +365,5 @@ class MoveKotlinDeclarationsProcessor(
         }
     }
 
-    override fun getCommandName(): String = REFACTORING_NAME
+    override fun getCommandName(): String = KotlinBundle.message("text.move.declarations")
 }

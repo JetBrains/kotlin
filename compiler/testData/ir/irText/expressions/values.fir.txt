@@ -129,4 +129,4 @@ FILE fqName:<root> fileName:/values.kt
   FUN name:test4 visibility:public modality:FINAL <> () returnType:<root>.Z.Companion
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (): <root>.Z.Companion declared in <root>'
-        GET_OBJECT 'CLASS CLASS name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z.Companion
+        GET_OBJECT 'CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]' type=<root>.Z.Companion

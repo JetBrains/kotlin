@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
 import org.jetbrains.kotlin.backend.common.serialization.mangle.collect
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -77,6 +76,8 @@ abstract class DescriptorMangleComputer(protected val builder: StringBuilder, pr
     open fun FunctionDescriptor.platformSpecificSuffix(): String? = null
     open fun PropertyDescriptor.platformSpecificSuffix(): String? = null
 
+    protected open fun addReturnType(): Boolean = false
+
     open fun FunctionDescriptor.specialValueParamPrefix(param: ValueParameterDescriptor): String = ""
 
     private val CallableDescriptor.isRealStatic: Boolean
@@ -97,11 +98,6 @@ abstract class DescriptorMangleComputer(protected val builder: StringBuilder, pr
         }
 
         builder.append(name.asString())
-
-        if (visibility == Visibilities.INTERNAL) {
-            builder.append(MangleConstant.MODULE_SEPARATOR)
-            builder.append(module.name.asString().run { substring(1, lastIndex) })
-        }
 
         mangleSignature(isCtor, container)
     }
@@ -127,7 +123,7 @@ abstract class DescriptorMangleComputer(protected val builder: StringBuilder, pr
             .collect(builder, MangleConstant.TYPE_PARAMETERS) { mangleTypeParameter(this, it) }
 
         returnType?.run {
-            if (!isCtor && !isUnit()) {
+            if (!isCtor && !isUnit() && addReturnType()) {
                 mangleType(builder, this)
             }
         }

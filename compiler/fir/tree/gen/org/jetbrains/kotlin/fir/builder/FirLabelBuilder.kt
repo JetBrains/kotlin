@@ -31,7 +31,7 @@ class FirLabelBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildLabel(init: FirLabelBuilder.() -> Unit): FirLabel {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

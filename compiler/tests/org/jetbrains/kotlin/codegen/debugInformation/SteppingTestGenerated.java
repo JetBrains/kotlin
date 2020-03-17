@@ -86,6 +86,12 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     }
 
     @Test
+    @TestMetadata("nestedInline.kt")
+    public void testNestedInline() throws Exception {
+        runTest("compiler/testData/debug/stepping/nestedInline.kt");
+    }
+
+    @Test
     @TestMetadata("recursion.kt")
     public void testRecursion() throws Exception {
         runTest("compiler/testData/debug/stepping/recursion.kt");

@@ -56,7 +56,7 @@ class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildErrorFunction(init: FirErrorFunctionBuilder.() -> Unit): FirErrorFunction {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

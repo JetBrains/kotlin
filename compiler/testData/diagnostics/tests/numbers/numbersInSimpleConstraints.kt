@@ -44,7 +44,7 @@ interface Inv<T>
 fun <T> exactBound(t: T, l: Inv<T>): T = throw Exception("$t $l")
 
 fun testExactBound(invS: Inv<String>, invI: Inv<Int>, invB: Inv<Byte>) {
-    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>exactBound<!>(1, <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>invS<!>)
+    <!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>exactBound<!>(1, <!NI;TYPE_MISMATCH!>invS<!>)
     exactBound(1, invI)
 
     val b = exactBound(1, invB)

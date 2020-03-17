@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.move.MoveCallback
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
@@ -25,10 +26,10 @@ internal class MoveKotlinNestedClassesModel(
 ) : Model<MoveKotlinDeclarationsProcessor> {
 
     private fun getCheckedTargetClass(): KtElement {
-        val targetClass = this.targetClass ?: throw ConfigurationException("No destination class specified")
+        val targetClass = this.targetClass ?: throw ConfigurationException(RefactoringBundle.message("no.destination.class.specified"))
 
         if (targetClass !is KtClassOrObject) {
-            throw ConfigurationException("Destination class must be a Kotlin class")
+            throw ConfigurationException(KotlinBundle.message("text.destination.class.should.be.kotlin.class"))
         }
 
         if (originalClass === targetClass) {
@@ -37,7 +38,9 @@ internal class MoveKotlinNestedClassesModel(
 
         for (classOrObject in selectedElementsToMove) {
             if (PsiTreeUtil.isAncestor(classOrObject, targetClass, false)) {
-                throw ConfigurationException("Cannot move nested class ${classOrObject.name} to itself")
+                throw ConfigurationException(
+                    KotlinBundle.message("text.cannot.move.inner.class.0.into.itself", classOrObject.name.toString())
+                )
             }
         }
 

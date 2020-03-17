@@ -26,7 +26,7 @@ class FirSimpleNamedReferenceBuilder {
     lateinit var name: Name
     var candidateSymbol: AbstractFirBasedSymbol<*>? = null
 
-    @UseExperimental(FirImplementationDetail::class)
+    @OptIn(FirImplementationDetail::class)
     fun build(): FirNamedReference {
         return FirSimpleNamedReference(
             source,
@@ -37,7 +37,7 @@ class FirSimpleNamedReferenceBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildSimpleNamedReference(init: FirSimpleNamedReferenceBuilder.() -> Unit): FirNamedReference {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

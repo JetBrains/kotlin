@@ -23,6 +23,7 @@ import com.intellij.util.SmartList
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
@@ -520,7 +521,7 @@ fun postProcessMoveUsages(
 
     val progressStep = 1.0 / sortedUsages.size
     val progressIndicator = ProgressManager.getInstance().progressIndicator
-    progressIndicator?.text = "Updating usages..."
+    progressIndicator?.text = KotlinBundle.message("text.updating.usages.progress")
     usageLoop@ for ((i, usage) in sortedUsages.withIndex()) {
         progressIndicator?.fraction = (i + 1) * progressStep
         postProcessMoveUsage(usage, oldToNewElementsMapping, nonCodeUsages, shorteningMode)
@@ -537,7 +538,7 @@ sealed class OuterInstanceReferenceUsageInfo(element: PsiElement, private val is
         val element = element ?: return false
 
         if (isIndirectOuter) {
-            conflicts.putValue(element, "Indirect outer instances won't be extracted: ${element.text}")
+            conflicts.putValue(element, KotlinBundle.message("text.indirect.outer.instances.will.not.be.extracted.0", element.text))
             return true
         }
 
@@ -566,12 +567,12 @@ sealed class OuterInstanceReferenceUsageInfo(element: PsiElement, private val is
             val fullCall = callElement?.let { it.getQualifiedExpressionForSelector() ?: it } ?: return false
             return when {
                 fullCall is KtQualifiedExpression -> {
-                    conflicts.putValue(fullCall, "Qualified call won't be processed: ${fullCall.text}")
+                    conflicts.putValue(fullCall, KotlinBundle.message("text.qualified.call.will.not.be.processed.0", fullCall.text))
                     true
                 }
 
                 isDoubleReceiver -> {
-                    conflicts.putValue(fullCall, "Member extension call won't be processed: ${fullCall.text}")
+                    conflicts.putValue(fullCall, KotlinBundle.message("text.member.extension.call.will.not.be.processed.0", fullCall.text))
                     true
                 }
                 else -> false

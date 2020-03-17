@@ -7,7 +7,7 @@ package kotlin.time
 
 import kotlin.math.abs
 
-@UseExperimental(ExperimentalTime::class)
+@OptIn(ExperimentalTime::class)
 private inline val storageUnit get() = DurationUnit.NANOSECONDS
 
 /**
@@ -302,7 +302,7 @@ public inline class Duration internal constructor(internal val value: Double) : 
      *
      * @sample samples.time.Durations.toIsoString
      */
-    @UseExperimental(ExperimentalStdlibApi::class)
+    @OptIn(ExperimentalStdlibApi::class)
     public fun toIsoString(): String = buildString {
         if (isNegative()) append('-')
         append("PT")

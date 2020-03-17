@@ -62,7 +62,6 @@ public class StringSwitchCodegen extends SwitchCodegen {
     @Override
     public void generate() {
         super.generate();
-        codegen.myFrameMap.leaveTemp(subjectType);
     }
 
     @Override

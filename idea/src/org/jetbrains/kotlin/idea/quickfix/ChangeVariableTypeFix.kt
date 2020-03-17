@@ -61,9 +61,9 @@ open class ChangeVariableTypeFix(element: KtVariableDeclaration, type: KotlinTyp
 
         val variablePresentation = variablePresentation()
         return if (variablePresentation != null) {
-            "Change type of $variablePresentation to '$typePresentation'"
+            KotlinBundle.message("change.type.of.0.to.1", variablePresentation, typePresentation)
         } else {
-            "Change type to '$typePresentation'"
+            KotlinBundle.message("change.type.to.0", typePresentation)
         }
     }
 
@@ -74,11 +74,11 @@ open class ChangeVariableTypeFix(element: KtVariableDeclaration, type: KotlinTyp
     class ForOverridden(element: KtVariableDeclaration, type: KotlinType) : ChangeVariableTypeFix(element, type) {
         override fun variablePresentation(): String? {
             val presentation = super.variablePresentation() ?: return null
-            return "base property $presentation"
+            return KotlinBundle.message("base.property.0", presentation)
         }
     }
 
-    override fun getFamilyName() = KotlinBundle.message("change.type.family")
+    override fun getFamilyName() = KotlinBundle.message("fix.change.return.type.family")
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile) = !typeContainsError
 

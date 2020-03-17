@@ -116,7 +116,7 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
             private fun registerProblem(receiverTypeReference: KtTypeReference, inSameClass: Boolean = false) {
                 holder.registerProblem(
                     receiverTypeReference,
-                    KotlinBundle.message("unused.receiver.parameter"),
+                    KotlinBundle.message("inspection.unused.receiver.parameter"),
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                     RemoveReceiverFix(inSameClass)
                 )
@@ -139,7 +139,7 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
         override fun startInWriteAction() = false
 
         companion object {
-            private val actionName = KotlinBundle.message("unused.receiver.parameter.remove")
+            private val actionName = KotlinBundle.message("fix.unused.receiver.parameter.remove")
 
             private fun configureChangeSignature() = object : KotlinChangeSignatureConfiguration {
                 override fun performSilently(affectedFunctions: Collection<PsiElement>) = true

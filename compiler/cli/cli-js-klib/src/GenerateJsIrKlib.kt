@@ -41,9 +41,9 @@ fun buildConfiguration(environment: KotlinCoreEnvironment, moduleName: String): 
         ),
         analysisFlags = mapOf(
             AnalysisFlags.useExperimental to listOf(
+                "kotlin.RequiresOptIn",
                 "kotlin.contracts.ExperimentalContracts",
-                "kotlin.Experimental",
-                "kotlin.ExperimentalMultiplatform"
+                "kotlin.ExperimentalMultiplatform",
             ),
             AnalysisFlags.allowResultReturnType to true
         )

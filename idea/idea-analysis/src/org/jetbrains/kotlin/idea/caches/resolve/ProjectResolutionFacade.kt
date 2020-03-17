@@ -136,6 +136,18 @@ internal class ProjectResolutionFacade(
         return AnalysisResult.success(bindingContext, findModuleDescriptor(elements.first().getModuleInfo()))
     }
 
+    internal fun fetchAnalysisResultsForElement(element: KtElement): AnalysisResult? {
+
+//        val slruCache = synchronized(analysisResults) {
+//            analysisResults.upToDateOrNull?.get() ?: return null
+//        }
+//        val perFileCache = synchronized(slruCache) {
+//            slruCache[element.containingKtFile]
+//        }
+//        return perFileCache.fetchAnalysisResults(element)
+        return null
+    }
+
     override fun toString(): String {
         return "$debugString@${Integer.toHexString(hashCode())}"
     }

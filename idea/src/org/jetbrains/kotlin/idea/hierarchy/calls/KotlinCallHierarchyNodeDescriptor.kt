@@ -17,6 +17,7 @@ package org.jetbrains.kotlin.idea.hierarchy.calls
 
 import com.intellij.icons.AllIcons
 import com.intellij.ide.IdeBundle
+import com.intellij.ide.hierarchy.HierarchyNodeDescriptor
 import com.intellij.ide.hierarchy.call.CallHierarchyNodeDescriptor
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.roots.ui.util.CompositeAppearance
@@ -29,6 +30,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.ui.LayeredIcon
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -161,7 +163,7 @@ class KotlinCallHierarchyNodeDescriptor(
                                     elementText = if (element.name != null) {
                                         renderClassOrObject(descriptor as ClassDescriptor)
                                     } else {
-                                        "[anonymous]"
+                                        KotlinBundle.message("hierarchy.text.anonymous")
                                     }
                                 }
                             }

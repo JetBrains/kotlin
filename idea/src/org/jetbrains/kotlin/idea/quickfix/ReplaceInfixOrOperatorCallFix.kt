@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -25,7 +26,7 @@ class ReplaceInfixOrOperatorCallFix(
     private val notNullNeeded: Boolean
 ) : KotlinQuickFixAction<KtExpression>(element) {
 
-    override fun getText() = "Replace with safe (?.) call"
+    override fun getText() = KotlinBundle.message("replace.with.safe.call1")
 
     override fun getFamilyName() = text
 

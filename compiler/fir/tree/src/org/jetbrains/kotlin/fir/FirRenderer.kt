@@ -42,8 +42,8 @@ fun FirElement.render(mode: FirRenderer.RenderMode = FirRenderer.RenderMode.Norm
     buildString { this@render.accept(FirRenderer(this, mode)) }
 
 class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderMode.Normal) : FirVisitorVoid() {
-    enum class RenderMode {
-        Normal, DontRenderLambdaBodies
+    abstract class RenderMode(val renderLambdaBodies: Boolean, val renderCallArguments: Boolean) {
+        object Normal : RenderMode(renderLambdaBodies = true, renderCallArguments = true)
     }
 
     private val printer = Printer(builder)
@@ -427,7 +427,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         if (anonymousFunction.invocationKind != null) {
             print(" <kind=${anonymousFunction.invocationKind}> ")
         }
-        if (mode != RenderMode.DontRenderLambdaBodies) {
+        if (mode.renderLambdaBodies) {
             anonymousFunction.body?.renderBody()
         }
     }
@@ -677,7 +677,13 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
 
     override fun visitCall(call: FirCall) {
         print("(")
-        call.arguments.renderSeparated()
+        if (mode.renderCallArguments) {
+            call.arguments.renderSeparated()
+        } else {
+            if (call.arguments.isNotEmpty()) {
+                print("...")
+            }
+        }
         print(")")
     }
 

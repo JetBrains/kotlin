@@ -91,6 +91,7 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
 }
 
 val CFGNode<*>.firstPreviousNode: CFGNode<*> get() = previousNodes[0]
+val CFGNode<*>.lastPreviousNode: CFGNode<*> get() = previousNodes.last()
 
 interface EnterNodeMarker
 interface ExitNodeMarker
@@ -104,8 +105,9 @@ class FunctionExitNode(owner: ControlFlowGraph, override val fir: FirFunction<*>
 
 class PostponedLambdaEnterNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunction, level: Int, id: Int) : CFGNode<FirAnonymousFunction>(owner, level, id)
 class PostponedLambdaExitNode(owner: ControlFlowGraph, override val fir: FirAnonymousFunction, level: Int, id: Int) : CFGNode<FirAnonymousFunction>(owner, level, id)
+class UnionFunctionCallArgumentsNode(owner: ControlFlowGraph, override val fir: FirElement, level: Int, id: Int) : CFGNode<FirElement>(owner, level, id)
 
-// ----------------------------------- Anonymous function -----------------------------------
+// ----------------------------------- Anonymous object -----------------------------------
 
 class AnonymousObjectExitNode(owner: ControlFlowGraph, override val fir: FirAnonymousObject, level: Int, id: Int) : CFGNode<FirAnonymousObject>(owner, level, id)
 
@@ -200,11 +202,24 @@ class QualifiedAccessNode(
     level: Int, id: Int
 ) : CFGNode<FirQualifiedAccessExpression>(owner, level, id)
 
+class ResolvedQualifierNode(
+    owner: ControlFlowGraph,
+    override val fir: FirResolvedQualifier,
+    level: Int, id: Int
+) : CFGNode<FirResolvedQualifier>(owner, level, id)
+
 class FunctionCallNode(
     owner: ControlFlowGraph,
     override val fir: FirFunctionCall,
     level: Int, id: Int
 ) : CFGNode<FirFunctionCall>(owner, level, id)
+
+class DelegatedConstructorCallNode(
+    owner: ControlFlowGraph,
+    override val fir: FirDelegatedConstructorCall,
+    level: Int,
+    id: Int
+) : CFGNode<FirDelegatedConstructorCall>(owner, level, id)
 
 class ThrowExceptionNode(
     owner: ControlFlowGraph,

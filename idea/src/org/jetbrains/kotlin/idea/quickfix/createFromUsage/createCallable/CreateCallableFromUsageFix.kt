@@ -82,7 +82,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         return if (isExtension || declaration.canRefactor()) declaration else null
     }
 
-    override fun getFamilyName(): String = KotlinBundle.message("create.from.usage.family")
+    override fun getFamilyName(): String = KotlinBundle.message("fix.create.from.usage.family")
 
     override fun getText(): String {
         val element = element ?: return ""
@@ -90,13 +90,14 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         val renderedCallables = callableInfos.map {
             buildString {
                 if (it.isAbstract) {
-                    append("abstract ")
+                    append(KotlinBundle.message("text.abstract"))
+                    append(' ')
                 }
 
                 val kind = when (it.kind) {
-                    CallableKind.FUNCTION -> "function"
-                    CallableKind.PROPERTY -> "property"
-                    CallableKind.CONSTRUCTOR -> "secondary constructor"
+                    CallableKind.FUNCTION -> KotlinBundle.message("text.function")
+                    CallableKind.PROPERTY -> KotlinBundle.message("text.property")
+                    CallableKind.CONSTRUCTOR -> KotlinBundle.message("text.secondary.constructor")
                     else -> throw AssertionError("Unexpected callable info: $it")
                 }
                 append(kind)
@@ -130,13 +131,16 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         }
 
         return StringBuilder().apply {
-            append("Create ")
+            append(KotlinBundle.message("text.create"))
+            append(' ')
 
             if (!callableInfos.any { it.isAbstract }) {
                 if (isExtension) {
-                    append("extension ")
+                    append(KotlinBundle.message("text.extension"))
+                    append(' ')
                 } else if (receiverTypeInfo != TypeInfo.Empty) {
-                    append("member ")
+                    append(KotlinBundle.message("text.member"))
+                    append(' ')
                 }
             }
 
@@ -200,7 +204,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
             return
         }
 
-        val popupTitle = "Choose target class or interface"
+        val popupTitle = KotlinBundle.message("choose.target.class.or.interface")
         val receiverTypeInfo = callableInfo.receiverTypeInfo
         val receiverTypeCandidates = callableBuilder.computeTypeCandidates(receiverTypeInfo).let {
             if (callableInfo.isAbstract)

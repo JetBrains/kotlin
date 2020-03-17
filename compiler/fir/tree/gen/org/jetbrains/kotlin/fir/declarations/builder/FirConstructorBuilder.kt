@@ -75,7 +75,7 @@ open class FirConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotationC
         }
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildConstructor(init: FirConstructorBuilder.() -> Unit): FirConstructor {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

@@ -5,6 +5,12 @@ public final class A : R|kotlin/Any| {
         private constructor(): R|test/A.E|
 
         public final static enum entry ENTRY: R|test/A.E|
+        public final static fun values(): R|kotlin/Array<test/A.E>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|test/A.E| {
+        }
+
     }
 
 }

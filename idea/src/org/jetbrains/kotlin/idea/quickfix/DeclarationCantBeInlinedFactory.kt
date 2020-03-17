@@ -9,6 +9,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.declarations.ConvertMemberToExtensionIntention
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
@@ -30,7 +31,7 @@ object DeclarationCantBeInlinedFactory : KotlinIntentionActionsFactory() {
 }
 
 private class ConvertMemberToExtensionFix(element: KtNamedFunction) : KotlinQuickFixAction<KtNamedFunction>(element) {
-    override fun getText() = "Convert member to extension"
+    override fun getText() = KotlinBundle.message("convert.member.to.extension")
 
     override fun getFamilyName() = text
 

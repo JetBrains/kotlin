@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.hierarchy.overrides
 
 import com.intellij.icons.AllIcons
 import com.intellij.ide.IdeBundle
+import com.intellij.ide.hierarchy.HierarchyNodeDescriptor
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.roots.ui.util.CompositeAppearance
 import com.intellij.openapi.util.Comparing
@@ -29,7 +30,7 @@ import com.intellij.ui.RowIcon
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
-import org.jetbrains.kotlin.idea.hierarchy.calls.HierarchyNodeDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -140,7 +141,7 @@ class KotlinOverrideHierarchyNodeDescriptor(
             classDescriptor.parents.forEach { parentDescriptor ->
                 when (parentDescriptor) {
                     is MemberDescriptor -> {
-                        addText(" in ${parentDescriptor.name.asString()}", classNameAttributes)
+                        addText(KotlinBundle.message("hierarchy.text.in", parentDescriptor.name.asString()), classNameAttributes)
                         if (parentDescriptor is FunctionDescriptor) {
                             addText("()", classNameAttributes)
                         }

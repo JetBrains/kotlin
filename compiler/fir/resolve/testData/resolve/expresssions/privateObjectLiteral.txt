@@ -5,7 +5,7 @@ FILE: privateObjectLiteral.kt
         }
 
         private final val x: R|anonymous| = object : R|kotlin/Any| {
-            private constructor(): R|kotlin/Any| {
+            private constructor(): R|anonymous| {
                 super<R|kotlin/Any|>()
             }
 
@@ -21,7 +21,7 @@ FILE: privateObjectLiteral.kt
             public get(): R|kotlin/Int|
 
         internal final val z: R|anonymous| = object : R|kotlin/Any| {
-            private constructor(): R|kotlin/Any| {
+            private constructor(): R|anonymous| {
                 super<R|kotlin/Any|>()
             }
 

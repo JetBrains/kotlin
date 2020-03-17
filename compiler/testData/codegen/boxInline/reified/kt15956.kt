@@ -1,5 +1,6 @@
 // FILE: 1.kt
 // WITH_REFLECT
+// IGNORE_BACKEND: JS, JS_IR
 
 package foo
 

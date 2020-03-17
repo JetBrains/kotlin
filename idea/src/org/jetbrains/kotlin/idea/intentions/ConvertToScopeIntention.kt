@@ -6,12 +6,16 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.*
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.ConvertToScopeIntention.ScopeFunction.*
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
@@ -23,7 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 
 sealed class ConvertToScopeIntention(
     private val scopeFunction: ScopeFunction
-) : SelfTargetingIntention<KtExpression>(KtExpression::class.java, "Convert to ${scopeFunction.functionName}") {
+) : SelfTargetingIntention<KtExpression>(KtExpression::class.java, KotlinBundle.message("convert.to.0", scopeFunction.functionName)) {
 
     enum class ScopeFunction(val functionName: String, val isParameterScope: Boolean) {
         ALSO(functionName = "also", isParameterScope = true),

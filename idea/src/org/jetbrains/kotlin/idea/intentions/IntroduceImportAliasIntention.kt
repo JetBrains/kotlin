@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.imports.canBeAddedToImport
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceImportAlias.KotlinIntroduceImportAliasHandler
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
 class IntroduceImportAliasIntention : SelfTargetingRangeIntention<KtNameReferenceExpression>(
     KtNameReferenceExpression::class.java,
-    "Introduce import alias"
+    KotlinBundle.message("introduce.import.alias")
 ) {
     override fun applicabilityRange(element: KtNameReferenceExpression): TextRange? {
         if (element.parent is KtInstanceExpressionWithLabel) return null

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.jvm.codegen.createFakeContinuation
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
+import org.jetbrains.kotlin.backend.jvm.lower.CollectionStubComputer
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.MemoizedInlineClassReplacements
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
@@ -106,6 +107,8 @@ class JvmBackendContext(
     internal val multifileFacadeMemberToPartMember = mutableMapOf<IrFunction, IrFunction>()
 
     internal val hiddenConstructors = mutableMapOf<IrConstructor, IrConstructorImpl>()
+
+    internal val collectionStubComputer = CollectionStubComputer(this)
 
     override var inVerbosePhase: Boolean = false
 

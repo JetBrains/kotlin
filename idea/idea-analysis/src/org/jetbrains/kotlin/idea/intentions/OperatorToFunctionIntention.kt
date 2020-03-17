@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -27,7 +29,9 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class OperatorToFunctionIntention :
-    SelfTargetingIntention<KtExpression>(KtExpression::class.java, "Replace overloaded operator with function call") {
+    SelfTargetingIntention<KtExpression>(KtExpression::class.java,
+                                         KotlinIdeaAnalysisBundle.message("replace.overloaded.operator.with.function.call")
+    ) {
     companion object {
         private fun isApplicableUnary(element: KtUnaryExpression, caretOffset: Int): Boolean {
             if (element.baseExpression == null) return false
@@ -136,6 +140,7 @@ class OperatorToFunctionIntention :
             val functionName = functionCandidate?.candidateDescriptor?.name.toString()
             val elemType = context.getType(left)
 
+            @NonNls
             val pattern = when (op) {
                 KtTokens.PLUS -> "$0.plus($1)"
                 KtTokens.MINUS -> "$0.minus($1)"

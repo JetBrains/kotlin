@@ -22,13 +22,13 @@ import com.intellij.openapi.keymap.KeymapManager
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.project.DumbService
 import com.intellij.task.ProjectTaskManager
-import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.scratch.*
 import org.jetbrains.kotlin.idea.scratch.printDebugMessage
 import org.jetbrains.kotlin.idea.scratch.LOG as log
 
 class RunScratchAction : ScratchAction(
-    KotlinBundle.message("scratch.run.button"),
+    KotlinJvmBundle.message("scratch.run.button"),
     AllIcons.Actions.Execute
 ) {
 
@@ -60,7 +60,7 @@ class RunScratchAction : ScratchAction(
                         executor.execute()
                     }
                 } catch (ex: Throwable) {
-                    executor.errorOccurs("Exception occurs during Run Scratch Action", ex, true)
+                    executor.errorOccurs(KotlinJvmBundle.message("exception.occurs.during.run.scratch.action"), ex, true)
                 }
             }
 
@@ -74,7 +74,7 @@ class RunScratchAction : ScratchAction(
                 val project = scratchFile.project
                 ProjectTaskManager.getInstance(project).build(arrayOf(module)) { result ->
                     if (result.isAborted || result.errors > 0) {
-                        executor.errorOccurs("There were compilation errors in module ${module.name}")
+                        executor.errorOccurs(KotlinJvmBundle.message("there.were.compilation.errors.in.module.0", module.name))
                     }
 
                     if (DumbService.isDumb(project)) {
@@ -99,7 +99,7 @@ class RunScratchAction : ScratchAction(
         if (e.presentation.isEnabled) {
             e.presentation.text = templatePresentation.text
         } else {
-            e.presentation.text = "Other Scratch file execution is in progress"
+            e.presentation.text = KotlinJvmBundle.message("other.scratch.file.execution.is.in.progress")
         }
 
         val project = e.project ?: return

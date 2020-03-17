@@ -36,6 +36,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.actions.internal.benchmark.AbstractCompletionBenchmarkAction.Companion.addBoxWithLabel
 import org.jetbrains.kotlin.idea.actions.internal.benchmark.AbstractCompletionBenchmarkAction.Companion.collectSuitableKotlinFiles
 import org.jetbrains.kotlin.idea.actions.internal.benchmark.AbstractCompletionBenchmarkAction.Companion.shuffledSequence
@@ -59,7 +60,10 @@ class HighlightingBenchmarkAction : AnAction() {
             val ktFiles = collectSuitableKotlinFiles(project) { it.getLineCount() >= settings.lines }
 
             if (ktFiles.size < settings.files) {
-                AbstractCompletionBenchmarkAction.showPopup(project, "Number of attempts > then files in project, ${ktFiles.size}")
+                AbstractCompletionBenchmarkAction.showPopup(
+                    project,
+                    KotlinBundle.message("number.of.attempts.then.files.in.project.0", ktFiles.size)
+                )
                 return null
             }
 
@@ -122,9 +126,9 @@ class HighlightingBenchmarkAction : AnAction() {
 
         val jPanel = JBPanel<JBPanel<*>>(GridLayoutManager(3, 2)).apply {
             var i = 0
-            cSeed = addBoxWithLabel("Random seed", default = "0", i = i++)
-            cFiles = addBoxWithLabel("Files to visit", default = "20", i = i++)
-            cLines = addBoxWithLabel("Minimal line count", default = "100", i = i)
+            cSeed = addBoxWithLabel(KotlinBundle.message("random.seed"), default = "0", i = i++)
+            cFiles = addBoxWithLabel(KotlinBundle.message("files.to.visit"), default = "20", i = i++)
+            cLines = addBoxWithLabel(KotlinBundle.message("minimal.line.count"), default = "100", i = i)
         }
         dialogBuilder.centerPanel(jPanel)
         if (!dialogBuilder.showAndGet()) return null
@@ -211,7 +215,7 @@ class HighlightingBenchmarkAction : AnAction() {
                 }
             })
         }
-        AbstractCompletionBenchmarkAction.showPopup(project, "Done")
+        AbstractCompletionBenchmarkAction.showPopup(project, KotlinBundle.message("text.done"))
     }
 
     override fun update(e: AnActionEvent) {

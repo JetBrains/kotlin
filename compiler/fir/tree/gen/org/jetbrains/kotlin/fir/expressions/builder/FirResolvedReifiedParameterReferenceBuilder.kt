@@ -41,7 +41,7 @@ class FirResolvedReifiedParameterReferenceBuilder : FirAnnotationContainerBuilde
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildResolvedReifiedParameterReference(init: FirResolvedReifiedParameterReferenceBuilder.() -> Unit): FirResolvedReifiedParameterReference {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

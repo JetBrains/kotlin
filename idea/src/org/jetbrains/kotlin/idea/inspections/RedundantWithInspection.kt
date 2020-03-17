@@ -11,6 +11,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.replaced
@@ -66,7 +67,7 @@ class RedundantWithInspection : AbstractKotlinInspection() {
                 }
                 holder.registerProblem(
                     callee,
-                    "Redundant 'with' call",
+                    KotlinBundle.message("redundant.with.call"),
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                     quickfix
                 )
@@ -78,7 +79,7 @@ private fun KtValueArgument.lambdaExpression(): KtLambdaExpression? =
     (this as? KtLambdaArgument)?.getLambdaExpression() ?: this.getArgumentExpression() as? KtLambdaExpression
 
 private class RemoveRedundantWithFix : LocalQuickFix {
-    override fun getName() = "Remove redundant 'with' call"
+    override fun getName() = KotlinBundle.message("remove.redundant.with.fix.text")
 
     override fun getFamilyName() = name
 

@@ -5,7 +5,7 @@ FILE: anonymousInDelegate.kt
     }
     public final val x: R|kotlin/Int|by R|kotlin/lazy|<R|kotlin/Int|>(<L> = lazy@fun <anonymous>(): R|kotlin/Int| {
         lval foo: R|anonymous| = object : R|Foo| {
-            private constructor(): R|kotlin/Any| {
+            private constructor(): R|anonymous| {
                 super<R|kotlin/Any|>()
             }
 

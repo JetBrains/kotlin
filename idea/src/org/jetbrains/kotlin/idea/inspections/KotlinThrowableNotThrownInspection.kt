@@ -12,6 +12,7 @@ import com.siyeh.ig.psiutils.TestUtils
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.psi.*
@@ -35,9 +36,9 @@ class KotlinThrowableNotThrownInspection : AbstractKotlinInspection() {
         if (callExpression.isUsed()) return
 
         val description = if (resultingDescriptor is ConstructorDescriptor) {
-            "Throwable instance '${calleeExpression.text}' is not thrown"
+            KotlinBundle.message("throwable.instance.0.is.not.thrown", calleeExpression.text)
         } else {
-            "Result of '${calleeExpression.text}' call is not thrown"
+            KotlinBundle.message("result.of.0.call.is.not.thrown", calleeExpression.text)
         }
         holder.registerProblem(calleeExpression, description, ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
     })

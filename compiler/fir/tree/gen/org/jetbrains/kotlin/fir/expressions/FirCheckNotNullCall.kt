@@ -19,12 +19,10 @@ abstract class FirCheckNotNullCall : FirExpression(), FirCall, FirResolvable {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val arguments: List<FirExpression>
+    abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCheckNotNullCall(this, data)
-
-    abstract override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirCheckNotNullCall
 
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirCheckNotNullCall
 }

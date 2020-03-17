@@ -31,6 +31,7 @@ import com.intellij.util.ui.UIUtil;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.core.PackageUtilsKt;
 import org.jetbrains.kotlin.idea.core.util.PhysicalFileSystemUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings;
@@ -268,7 +269,10 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         }
 
         fileChooser.addActionListener(e -> {
-                    KotlinFileChooserDialog dialog = new KotlinFileChooserDialog("Choose Containing File", myProject);
+                    KotlinFileChooserDialog dialog = new KotlinFileChooserDialog(
+                            KotlinBundle.message("text.choose.containing.file"),
+                            myProject
+                    );
 
                     File targetFile1 = new File(fileChooser.getText());
                     PsiFile targetPsiFile = PhysicalFileSystemUtilsKt.toPsiFile(targetFile1, myProject);
@@ -387,7 +391,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     private List<KtNamedDeclaration> getSelectedElementsToMoveChecked() throws ConfigurationException {
         List<KtNamedDeclaration> elementsToMove = getSelectedElementsToMove();
         if (elementsToMove.isEmpty()) {
-            throw new ConfigurationException("No elements to move are selected");
+            throw new ConfigurationException(KotlinBundle.message("text.no.elements.to.move.are.selected"));
         }
         return elementsToMove;
     }

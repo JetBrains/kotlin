@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.inspections.collections
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.name.FqName
@@ -63,10 +64,10 @@ abstract class AbstractCallChainChecker : AbstractKotlinInspection() {
     }
 
     data class Conversion(
-        val firstFqName: String,
-        val secondFqName: String,
-        val replacement: String,
-        val additionalArgument: String? = null,
+        @NonNls val firstFqName: String,
+        @NonNls val secondFqName: String,
+        @NonNls val replacement: String,
+        @NonNls val additionalArgument: String? = null,
         val withNotNullAssertion: Boolean = false
     ) {
         private fun String.convertToShort() = takeLastWhile { it != '.' }

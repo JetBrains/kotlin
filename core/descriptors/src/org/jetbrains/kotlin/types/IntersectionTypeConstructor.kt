@@ -72,7 +72,7 @@ class IntersectionTypeConstructor(typesToIntersect: Collection<KotlinType>) : Ty
         return intersectedTypes == other.intersectedTypes
     }
 
-    @UseExperimental(TypeRefinement::class)
+    @OptIn(TypeRefinement::class)
     fun createType(): SimpleType =
         KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
             Annotations.EMPTY, this, listOf(), false, this.createScopeForKotlinType()

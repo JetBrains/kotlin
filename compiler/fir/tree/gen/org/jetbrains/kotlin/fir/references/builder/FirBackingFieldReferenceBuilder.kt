@@ -36,7 +36,7 @@ class FirBackingFieldReferenceBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildBackingFieldReference(init: FirBackingFieldReferenceBuilder.() -> Unit): FirBackingFieldReference {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

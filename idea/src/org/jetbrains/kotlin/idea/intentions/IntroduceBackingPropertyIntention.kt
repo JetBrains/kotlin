@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
@@ -28,7 +29,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class IntroduceBackingPropertyIntention : SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Introduce backing property") {
+class IntroduceBackingPropertyIntention : SelfTargetingIntention<KtProperty>(
+    KtProperty::class.java,
+    KotlinBundle.message("introduce.backing.property")
+) {
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
         if (!canIntroduceBackingProperty(element)) return false
         return element.nameIdentifier?.textRange?.containsOffset(caretOffset) == true

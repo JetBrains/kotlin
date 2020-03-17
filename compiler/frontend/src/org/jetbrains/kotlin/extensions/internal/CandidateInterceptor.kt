@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 
-@UseExperimental(InternalNonStableExtensionPoints::class)
+@OptIn(InternalNonStableExtensionPoints::class)
 class CandidateInterceptor(project: Project) {
     private val extensions = getInstances(project)
 

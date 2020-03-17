@@ -7,11 +7,6 @@ interface B {
     fun bar()
 }
 
-
-inline fun run(block: () -> Unit) {
-    block()
-}
-
 fun test_1(x: Any?) {
     if (x is A) {
         run {

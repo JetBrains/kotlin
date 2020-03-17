@@ -152,16 +152,8 @@ class PostponedArgumentsAnalyzer(
 
         if (!hasExpressionInReturnArguments) {
             val lambdaReturnType = lambda.returnType.let(::substitute)
-            c.getBuilder().addSubtypeConstraint(
-                lambdaReturnType,
-                unitType, /*LambdaArgumentConstraintPosition(lambda)*/
-                SimpleConstraintSystemConstraintPosition
-            )
-            c.getBuilder().addSubtypeConstraint(
-                unitType,
-                lambdaReturnType, /*LambdaArgumentConstraintPosition(lambda)*/
-                SimpleConstraintSystemConstraintPosition
-            )
+            /*LambdaArgumentConstraintPosition(lambda)*/
+            c.getBuilder().addEqualityConstraint(lambdaReturnType, unitType, SimpleConstraintSystemConstraintPosition)
         }
 
         lambda.analyzed = true

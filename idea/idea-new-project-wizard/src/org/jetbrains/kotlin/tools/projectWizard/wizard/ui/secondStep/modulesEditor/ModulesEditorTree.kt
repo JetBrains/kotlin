@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.path
+import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.icon
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import javax.swing.JComponent
@@ -63,9 +64,9 @@ class ModulesEditorTree(
         }
 
         emptyText.clear()
-        emptyText.appendText("No modules created")
+        emptyText.appendText(KotlinNewProjectWizardBundle.message("editor.no.modules.created"))
         emptyText.appendSecondaryText(
-            "Add a module to the project",
+            KotlinNewProjectWizardBundle.message("editor.add.module.to.project"),
             SimpleTextAttributes.LINK_PLAIN_ATTRIBUTES
         ) {
             addModule(this)
@@ -83,11 +84,10 @@ class ModulesEditorTree(
             ) {
                 if (value?.safeAs<DefaultMutableTreeNode>()?.userObject == PROJECT_USER_OBJECT) {
                     icon = AllIcons.Nodes.Project
-                    append("Project")
+                    append(KotlinNewProjectWizardBundle.message("editor.project"))
                     return
                 }
-                val setting = (value as? DefaultMutableTreeNode)?.userObject as? DisplayableSettingItem
-                    ?: return
+                val setting = (value as? DefaultMutableTreeNode)?.userObject as? DisplayableSettingItem ?: return
                 icon = when (setting) {
                     is Module -> setting.icon
                     is Sourceset -> AllIcons.Nodes.Module

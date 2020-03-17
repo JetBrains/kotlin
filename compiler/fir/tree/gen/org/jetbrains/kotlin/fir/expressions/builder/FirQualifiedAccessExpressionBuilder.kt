@@ -56,7 +56,7 @@ class FirQualifiedAccessExpressionBuilder : FirQualifiedAccessBuilder, FirAnnota
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildQualifiedAccessExpression(init: FirQualifiedAccessExpressionBuilder.() -> Unit): FirQualifiedAccessExpression {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

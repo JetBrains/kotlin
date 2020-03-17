@@ -17,6 +17,7 @@ import com.intellij.debugger.ui.impl.watch.StackFrameDescriptorImpl
 import com.intellij.debugger.ui.tree.render.DescriptorLabelListener
 import com.intellij.icons.AllIcons
 import com.sun.jdi.ObjectReference
+import org.jetbrains.kotlin.idea.debugger.coroutine.KotlinDebuggerCoroutinesBundle
 import javax.swing.Icon
 
 @Deprecated("moved to XCoroutineView")
@@ -49,7 +50,7 @@ class CoroutineDescriptorImpl(val infoData: CoroutineInfoData) : NodeDescriptorI
 
 @Deprecated("moved to XCoroutineView")
 class CreationFramesDescriptor(val frames: List<StackTraceElement>) :
-    MessageDescriptor("Coroutine creation stack trace", INFORMATION) {
+    MessageDescriptor(KotlinDebuggerCoroutinesBundle.message("coroutine.dump.creation.trace"), INFORMATION) {
 
     override fun isExpandable() = true
 }

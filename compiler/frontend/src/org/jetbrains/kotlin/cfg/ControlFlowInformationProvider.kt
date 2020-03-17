@@ -804,9 +804,14 @@ class ControlFlowInformationProvider private constructor(
     }
 
     private fun markAnnotationArguments() {
-        when (subroutine) {
-            is KtAnnotationEntry -> markAnnotationArguments(subroutine)
-            is KtAnnotated -> subroutine.annotationEntries.forEach { markAnnotationArguments(it) }
+        if (subroutine is KtAnnotationEntry) {
+            markAnnotationArguments(subroutine)
+        } else {
+            subroutine.children.forEach { child ->
+                child.forEachDescendantOfType<KtAnnotationEntry>(
+                    canGoInside = { it !is KtDeclaration || it is KtParameter }
+                ) { markAnnotationArguments(it) }
+            }
         }
     }
 

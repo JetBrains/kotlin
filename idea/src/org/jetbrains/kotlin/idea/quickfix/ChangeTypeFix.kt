@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.core.replaced
@@ -19,11 +20,14 @@ import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.types.KotlinType
 
 class ChangeTypeFix(element: KtTypeReference, private val type: KotlinType) : KotlinQuickFixAction<KtTypeReference>(element) {
-    override fun getFamilyName() = "Change type"
+    override fun getFamilyName() = KotlinBundle.message("fix.change.type.family")
 
     override fun getText(): String {
         val currentTypeText = element?.text ?: return ""
-        return "Change type from '$currentTypeText' to '${QuickFixUtil.renderTypeWithFqNameOnClash(type, currentTypeText)}'"
+        return KotlinBundle.message(
+            "fix.change.type.text",
+            currentTypeText, QuickFixUtil.renderTypeWithFqNameOnClash(type, currentTypeText)
+        )
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {

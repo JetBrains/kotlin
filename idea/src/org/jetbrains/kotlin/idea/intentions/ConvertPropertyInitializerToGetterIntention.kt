@@ -21,6 +21,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -32,7 +33,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.isError
 
 class ConvertPropertyInitializerToGetterIntention : SelfTargetingRangeIntention<KtProperty>(
-    KtProperty::class.java, "Convert property initializer to getter"
+    KtProperty::class.java, KotlinBundle.message("convert.property.initializer.to.getter")
 ) {
     override fun applicabilityRange(element: KtProperty): TextRange? {
         val initializer = element.initializer ?: return null

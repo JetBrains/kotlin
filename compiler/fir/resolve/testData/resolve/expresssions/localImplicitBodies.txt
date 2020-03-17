@@ -1,7 +1,7 @@
 FILE: localImplicitBodies.kt
     public final fun foo(): R|kotlin/Unit| {
         lval x: R|anonymous| = object : R|kotlin/Any| {
-            private constructor(): R|kotlin/Any| {
+            private constructor(): R|anonymous| {
                 super<R|kotlin/Any|>()
             }
 

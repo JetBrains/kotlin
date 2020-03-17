@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspection
@@ -62,7 +63,7 @@ class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQual
         return target.name != OperatorNameConventions.SET || !element.isUsedAsExpression(bindingContext)
     }
 
-    override fun inspectionText(element: KtDotQualifiedExpression) = "Should be replaced with indexing"
+    override fun inspectionText(element: KtDotQualifiedExpression) = KotlinBundle.message("should.be.replaced.with.indexing")
 
     override fun inspectionHighlightType(element: KtDotQualifiedExpression): ProblemHighlightType =
         if ((element.toResolvedCall(BodyResolveMode.PARTIAL)?.resultingDescriptor as? FunctionDescriptor)?.isExplicitOperator() == true) {
@@ -72,12 +73,12 @@ class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQual
         }
 
     override val defaultFixText: String
-        get() = "Replace get or set call with indexing operator"
+        get() = KotlinBundle.message("replace.get.or.set.call.with.indexing.operator")
 
     override fun fixText(element: KtDotQualifiedExpression): String {
         val callExpression = element.callExpression ?: return defaultFixText
         val resolvedCall = callExpression.resolveToCall() ?: return defaultFixText
-        return "Replace '${resolvedCall.resultingDescriptor.name.asString()}' call with indexing operator"
+        return KotlinBundle.message("replace.0.call.with.indexing.operator", resolvedCall.resultingDescriptor.name.asString())
     }
 
     override fun inspectionHighlightRangeInElement(element: KtDotQualifiedExpression) = element.calleeTextRangeInThis()

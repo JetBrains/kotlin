@@ -1,4 +1,4 @@
-// "Make 'A' open" "true"
+// "Make 'A' 'open'" "true"
 interface X {}
 interface Y {}
 

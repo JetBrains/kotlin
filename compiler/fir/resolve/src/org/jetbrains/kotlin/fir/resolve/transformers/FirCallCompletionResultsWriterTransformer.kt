@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
-import java.lang.Math.min
+import kotlin.math.min
 
 class FirCallCompletionResultsWriterTransformer(
     override val session: FirSession,
@@ -175,37 +175,43 @@ class FirCallCompletionResultsWriterTransformer(
                 val expectedType = data?.getExpectedType(functionCall)
                 resultType =
                     typeRef.resolvedTypeFromPrototype(typeRef.coneTypeUnsafe<ConeIntegerLiteralType>().getApproximatedType(expectedType))
-                result.transformArguments(this, expectedType?.toExpectedType()).transformSingle(integerApproximator, expectedType)
+                result.argumentList.transformArguments(this, expectedType?.toExpectedType())
+                result.transformSingle(integerApproximator, expectedType)
             }
             else -> {
                 resultType = typeRef.substituteTypeRef(subCandidate)
-                val vararg = subCandidate.argumentMapping?.values?.firstOrNull { it.isVararg }
-                result.transformArguments(this, subCandidate.createArgumentsMapping()).apply call@{
-                    if (vararg != null && this is FirFunctionCallImpl) {
+                val argumentMapping = subCandidate.argumentMapping
+                val varargParameter = argumentMapping?.values?.firstOrNull { it.isVararg }
+                result.argumentList.transformArguments(this, subCandidate.createArgumentsMapping())
+                with(result.argumentList) call@{
+                    if (varargParameter != null) {
                         // Create a FirVarargArgumentExpression for the vararg arguments
-                        val resolvedArrayType = vararg.returnTypeRef.substitute(subCandidate)
+                        val varargParameterTypeRef = varargParameter.returnTypeRef
+                        val resolvedArrayType = varargParameterTypeRef.substitute(subCandidate)
                         val resolvedElementType = resolvedArrayType.arrayElementType(session)
                         var firstIndex = this@call.arguments.size
+                        val newArgumentMapping = mutableMapOf<FirExpression, FirValueParameter>()
                         val varargArgument = buildVarargArgumentsExpression {
-                            varargElementType = vararg.returnTypeRef.withReplacedConeType(resolvedElementType)
-                            this.typeRef = vararg.returnTypeRef.withReplacedConeType(
-                                vararg.returnTypeRef.substitute(
-                                    subCandidate
-                                )
-                            )
+                            varargElementType = varargParameterTypeRef.withReplacedConeType(resolvedElementType)
+                            this.typeRef = varargParameterTypeRef.withReplacedConeType(resolvedArrayType)
                             for ((i, arg) in this@call.arguments.withIndex()) {
-                                if (subCandidate.argumentMapping!![arg]?.isVararg ?: false) {
+                                val valueParameter = argumentMapping[arg] ?: continue
+                                if (valueParameter.isVararg) {
                                     firstIndex = min(firstIndex, i)
                                     arguments += arg
+                                } else {
+                                    newArgumentMapping[arg] = valueParameter
                                 }
                             }
                         }
-                        for (arg in varargArgument.arguments) {
-                            arguments.remove(arg)
-                        }
-                        arguments.add(firstIndex, varargArgument)
+                        newArgumentMapping[varargArgument] = varargParameter
+                        subCandidate.argumentMapping = newArgumentMapping
                     }
-                }.transformExplicitReceiver(integerApproximator, null)
+                }
+                subCandidate.argumentMapping?.let {
+                    result.replaceArgumentList(buildResolvedArgumentList(it))
+                }
+                result.transformExplicitReceiver(integerApproximator, null)
             }
         }
 
@@ -215,7 +221,7 @@ class FirCallCompletionResultsWriterTransformer(
         if (mode == Mode.DelegatedPropertyCompletion) {
             calleeReference.candidateSymbol.fir.transformSingle(declarationWriter, null)
             val typeUpdater = TypeUpdaterForDelegateArguments()
-            result.transformArguments(typeUpdater, null)
+            result.argumentList.transformArguments(typeUpdater, null)
             result.transformExplicitReceiver(typeUpdater, null)
         }
 
@@ -260,8 +266,8 @@ class FirCallCompletionResultsWriterTransformer(
         val calleeReference =
             delegatedConstructorCall.calleeReference as? FirNamedReferenceWithCandidate ?: return delegatedConstructorCall.compose()
 
-        val result = delegatedConstructorCall.transformArguments(this, calleeReference.candidate.createArgumentsMapping())
-        return result.transformCalleeReference(
+        delegatedConstructorCall.argumentList.transformArguments(this, calleeReference.candidate.createArgumentsMapping())
+        return delegatedConstructorCall.transformCalleeReference(
             StoreCalleeReference,
             buildResolvedNamedReference {
                 source = calleeReference.source

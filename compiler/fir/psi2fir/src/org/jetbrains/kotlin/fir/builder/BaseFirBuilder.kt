@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.addDeclaration
-import org.jetbrains.kotlin.fir.declarations.builder.AbstractFirRegularClassBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.buildErrorFunction
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
+import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
@@ -147,6 +144,13 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 firClass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
                 false
             )
+        }
+    }
+
+    fun T?.toDelegatedSelfType(firObject: FirAnonymousObjectBuilder): FirResolvedTypeRef {
+        return buildResolvedTypeRef {
+            source = this@toDelegatedSelfType?.toFirSourceElement()
+            type = ConeClassLikeTypeImpl(firObject.symbol.toLookupTag(), emptyArray(), false)
         }
     }
 
@@ -285,36 +289,38 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         return buildStringConcatenationCall {
             val sb = StringBuilder()
             var hasExpressions = false
-            L@ for (entry in this@toInterpolatingCall) {
-                if (entry == null) continue
-                arguments += when (entry.elementType) {
-                    OPEN_QUOTE, CLOSING_QUOTE -> continue@L
-                    LITERAL_STRING_TEMPLATE_ENTRY -> {
-                        sb.append(entry.asText)
-                        buildConstExpression(entry.getSourceOrNull(), FirConstKind.String, entry.asText)
-                    }
-                    ESCAPE_STRING_TEMPLATE_ENTRY -> {
-                        sb.append(entry.unescapedValue)
-                        buildConstExpression(entry.getSourceOrNull(), FirConstKind.String, entry.unescapedValue)
-                    }
-                    SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
-                        hasExpressions = true
-                        val firExpression = entry.convertTemplateEntry("Incorrect template argument")
-                        val source = firExpression.source
-                        buildFunctionCall {
-                            this.source = source
-                            explicitReceiver = firExpression
-                            calleeReference = buildSimpleNamedReference {
+            argumentList = buildArgumentList {
+                L@ for (entry in this@toInterpolatingCall) {
+                    if (entry == null) continue
+                    arguments += when (entry.elementType) {
+                        OPEN_QUOTE, CLOSING_QUOTE -> continue@L
+                        LITERAL_STRING_TEMPLATE_ENTRY -> {
+                            sb.append(entry.asText)
+                            buildConstExpression(entry.getSourceOrNull(), FirConstKind.String, entry.asText)
+                        }
+                        ESCAPE_STRING_TEMPLATE_ENTRY -> {
+                            sb.append(entry.unescapedValue)
+                            buildConstExpression(entry.getSourceOrNull(), FirConstKind.String, entry.unescapedValue)
+                        }
+                        SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
+                            hasExpressions = true
+                            val firExpression = entry.convertTemplateEntry("Incorrect template argument")
+                            val source = firExpression.source
+                            buildFunctionCall {
                                 this.source = source
-                                name = Name.identifier("toString")
+                                explicitReceiver = firExpression
+                                calleeReference = buildSimpleNamedReference {
+                                    this.source = source
+                                    name = Name.identifier("toString")
+                                }
                             }
                         }
-                    }
-                    else -> {
-                        hasExpressions = true
-                        buildErrorExpression {
-                            source = entry.getSourceOrNull()
-                            diagnostic = FirSimpleDiagnostic("Incorrect template entry: ${entry.asText}", DiagnosticKind.Syntax)
+                        else -> {
+                            hasExpressions = true
+                            buildErrorExpression {
+                                source = entry.getSourceOrNull()
+                                diagnostic = FirSimpleDiagnostic("Incorrect template entry: ${entry.asText}", DiagnosticKind.Syntax)
+                            }
                         }
                     }
                 }
@@ -322,7 +328,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             source = base?.toFirSourceElement()
             // Fast-pass if there is no non-const string expressions
             if (!hasExpressions) return buildConstExpression(source, FirConstKind.String, sb.toString())
-            arguments.singleOrNull()?.let { return it }
+            argumentList.arguments.singleOrNull()?.let { return it }
         }
     }
 
@@ -478,6 +484,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 rValue = value
                 this.operation = operation
                 indexes += firArrayAccess.arguments
+                argumentList = buildArraySetArgumentList(rValue, indexes)
             }
             val arrayExpression = this.getChildNodeByType(REFERENCE_EXPRESSION)
             if (arrayExpression != null) {
@@ -506,12 +513,13 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 source = baseSource
                 this.operation = operation
                 // TODO: take good psi
-                arguments += this@generateAssignment?.convert() ?:
-                        buildErrorExpression {
-                            source = null
-                            diagnostic = FirSimpleDiagnostic("Unsupported left value of assignment: ${baseSource?.psi?.text}", DiagnosticKind.Syntax)
-                        }
-                arguments += value
+                argumentList = buildBinaryArgumentList(
+                    this@generateAssignment?.convert() ?: buildErrorExpression {
+                        source = null
+                        diagnostic = FirSimpleDiagnostic("Unsupported left value of assignment: ${baseSource?.psi?.text}", DiagnosticKind.Syntax)
+                    },
+                    value
+                )
             }
         }
         require(operation == FirOperation.ASSIGN)

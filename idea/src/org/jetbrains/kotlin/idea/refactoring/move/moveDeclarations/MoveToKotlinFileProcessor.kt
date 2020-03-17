@@ -27,6 +27,7 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.text.UniqueNameGenerator
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtFile
 
 class MoveToKotlinFileProcessor @JvmOverloads constructor(
@@ -49,7 +50,7 @@ class MoveToKotlinFileProcessor @JvmOverloads constructor(
     moveCallback,
     prepareSuccessfulCallback
 ) {
-    override fun getCommandName() = "Move ${sourceFile.name}"
+    override fun getCommandName() = KotlinBundle.message("text.move.file.0", sourceFile.name)
 
     override fun createUsageViewDescriptor(usages: Array<out UsageInfo>): UsageViewDescriptor {
         return MoveFilesWithDeclarationsViewDescriptor(arrayOf(sourceFile), targetDirectory)

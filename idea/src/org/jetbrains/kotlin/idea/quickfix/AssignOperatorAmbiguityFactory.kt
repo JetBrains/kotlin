@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -37,7 +38,11 @@ object AssignOperatorAmbiguityFactory : KotlinIntentionActionsFactory() {
                     val property = left.mainReference?.resolve() as? KtProperty
                     val propertyName = property?.name
                     if (property != null && propertyName != null && property.isLocal) {
-                        fixes.add(ChangeVariableMutabilityFix(property, false, "Change '$propertyName' to val"))
+                        val fix = ChangeVariableMutabilityFix(
+                            property, false,
+                            KotlinBundle.message("fix.change.mutability.change.to.val", propertyName)
+                        )
+                        fixes.add(fix)
                     }
                     fixes.add(ReplaceWithAssignFunctionCallFix(element, operationText))
                 }
@@ -56,7 +61,10 @@ private class ReplaceWithAssignFunctionCallFix(
     element: KtBinaryExpression,
     private val operationText: String
 ) : KotlinQuickFixAction<KtBinaryExpression>(element) {
-    override fun getText() = "Replace with '${operationText}Assign()' call"
+    override fun getText(): String {
+        val call = operationText + "Assign()"
+        return KotlinBundle.message("fix.replace.with.assign.function.call", call)
+    }
 
     override fun getFamilyName() = text
 

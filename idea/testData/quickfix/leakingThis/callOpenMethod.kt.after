@@ -1,4 +1,4 @@
-// "Make 'init' final" "true"
+// "Make 'init' 'final'" "true"
 
 open class My {
 

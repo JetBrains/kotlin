@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.KotlinShortNamesCache
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -232,8 +233,10 @@ abstract class DeprecatedSymbolUsageFixBase(
                                         )
                                         HintManager.getInstance().showErrorHint(
                                             editor,
-                                            "There is own 'ReplaceWith' on '$constructorStr' that is used through this alias. " +
-                                                    "Please replace usages first."
+                                            KotlinBundle.message(
+                                                "there.is.own.replacewith.on.0.that.is.used.through.this.alias.please.replace.usages.first",
+                                                constructorStr
+                                            )
                                         )
                                         return null
                                     }

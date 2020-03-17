@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirStarProjection
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
+import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirCall
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirOperatorCall
@@ -239,6 +240,8 @@ abstract class FirVisitor<out R, in D> {
     open fun visitStarProjection(starProjection: FirStarProjection, data: D): R  = visitElement(starProjection, data)
 
     open fun visitTypeProjectionWithVariance(typeProjectionWithVariance: FirTypeProjectionWithVariance, data: D): R  = visitElement(typeProjectionWithVariance, data)
+
+    open fun visitArgumentList(argumentList: FirArgumentList, data: D): R  = visitElement(argumentList, data)
 
     open fun visitCall(call: FirCall, data: D): R  = visitElement(call, data)
 

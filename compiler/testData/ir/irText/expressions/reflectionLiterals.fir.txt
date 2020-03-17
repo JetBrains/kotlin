@@ -35,8 +35,7 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KClass<<root>.A> visibility:private [final,static]
       EXPRESSION_BODY
-        GET_CLASS type=kotlin.reflect.KClass<<root>.A>
-          GET_OBJECT 'CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+        CLASS_REFERENCE 'CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.A>
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KClass<<root>.A>
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY

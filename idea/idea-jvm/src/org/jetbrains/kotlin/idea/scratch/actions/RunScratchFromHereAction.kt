@@ -1,18 +1,18 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.scratch.actions
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
-import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.getScratchFileFromSelectedEditor
 
 class RunScratchFromHereAction : ScratchAction(
-    KotlinBundle.message("scratch.run.from.here.button"),
+    KotlinJvmBundle.message("scratch.run.from.here.button"),
     AllIcons.Diff.ArrowRight
 ) {
 
@@ -30,7 +30,7 @@ class RunScratchFromHereAction : ScratchAction(
             try {
                 executor.executeNew()
             } catch (ex: Throwable) {
-                executor.errorOccurs("Exception occurs during Run Scratch Action", ex, true)
+                executor.errorOccurs(KotlinJvmBundle.message("exception.occurs.during.run.scratch.action1"), ex, true)
             }
         }
     }

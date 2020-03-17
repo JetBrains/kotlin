@@ -29,7 +29,7 @@ class FirStarProjectionBuilder {
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildStarProjection(init: FirStarProjectionBuilder.() -> Unit = {}): FirStarProjection {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

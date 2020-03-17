@@ -64,7 +64,7 @@ private fun SmartPrinter.printBuilder(builder: Builder) {
             is IntermediateBuilder -> builder.materializedElement!!.typeWithArguments.replace(Regex("<.>"), "<*>")
         }
         if (builder is LeafBuilder && builder.implementation.isPublic) {
-            println("@UseExperimental(FirImplementationDetail::class)")
+            println("@OptIn(FirImplementationDetail::class)")
         }
         if (builder.parents.isNotEmpty()) {
             print("override ")
@@ -226,10 +226,10 @@ private fun SmartPrinter.printDslBuildFunction(
 ) {
     val isEmpty = builder.allFields.isEmpty()
     if (!isEmpty) {
-        println("@UseExperimental(ExperimentalContracts::class)")
+        println("@OptIn(ExperimentalContracts::class)")
         print("inline ")
     } else if(builder.implementation.isPublic) {
-        println("@UseExperimental(FirImplementationDetail::class)")
+        println("@OptIn(FirImplementationDetail::class)")
     }
     print("fun ")
     builder.implementation.element.typeArguments.takeIf { it.isNotEmpty() }?.let {

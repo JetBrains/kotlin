@@ -151,7 +151,7 @@ class KotlinResolutionCallbacksImpl(
         // Also note that refining the whole type might be undesired because sometimes it contains NO_EXPECTED_TYPE
         // which throws exceptions on attempt to call equals
         val refinedReceiverType = receiverType?.let {
-            @UseExperimental(TypeRefinement::class) callComponents.kotlinTypeChecker.kotlinTypeRefiner.refineType(it)
+            @OptIn(TypeRefinement::class) callComponents.kotlinTypeChecker.kotlinTypeRefiner.refineType(it)
         }
 
         val expectedType = createFunctionType(

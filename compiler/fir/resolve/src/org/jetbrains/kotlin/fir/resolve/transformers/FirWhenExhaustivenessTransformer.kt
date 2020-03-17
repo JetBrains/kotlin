@@ -149,8 +149,16 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         override fun visitOperatorCall(operatorCall: FirOperatorCall, data: SealedExhaustivenessData) {
             if (operatorCall.operation == FirOperation.EQ) {
                 val argument = operatorCall.arguments[1]
-                if (argument is FirConstExpression<*> && argument.value == null) {
-                    data.containsNull = true
+                when (argument) {
+                    is FirConstExpression<*> -> {
+                        if (argument.value == null) {
+                            data.containsNull = true
+                        }
+                    }
+
+                    is FirResolvedQualifier -> {
+                        argument.typeRef.accept(this, data)
+                    }
                 }
             }
         }

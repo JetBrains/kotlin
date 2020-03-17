@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.inspections.collections
 import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.quickfix.ReplaceWithDotCallFix
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
@@ -48,7 +49,7 @@ class UselessCallOnNotNullInspection : AbstractUselessCallInspection() {
             val descriptor = holder.manager.createProblemDescriptor(
                 expression,
                 defaultRange,
-                "Call on not-null type may be reduced",
+                KotlinBundle.message("call.on.not.null.type.may.be.reduced"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 isOnTheFly,
                 *fixes.toTypedArray()
@@ -58,7 +59,7 @@ class UselessCallOnNotNullInspection : AbstractUselessCallInspection() {
             val descriptor = holder.manager.createProblemDescriptor(
                 expression,
                 defaultRange,
-                "Useless call on not-null type",
+                KotlinBundle.message("useless.call.on.not.null.type"),
                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                 isOnTheFly,
                 RemoveUselessCallFix()
@@ -67,7 +68,7 @@ class UselessCallOnNotNullInspection : AbstractUselessCallInspection() {
         } else if (safeExpression != null) {
             holder.registerProblem(
                 safeExpression.operationTokenNode.psi,
-                "This call is useless with ?.",
+                KotlinBundle.message("this.call.is.useless.with"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 IntentionWrapper(ReplaceWithDotCallFix(safeExpression), safeExpression.containingKtFile)
             )

@@ -18,11 +18,9 @@ abstract class FirTypeOperatorCall : FirExpression(), FirCall {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val arguments: List<FirExpression>
+    abstract override val argumentList: FirArgumentList
     abstract val operation: FirOperation
     abstract val conversionTypeRef: FirTypeRef
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeOperatorCall(this, data)
-
-    abstract override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirTypeOperatorCall
 }

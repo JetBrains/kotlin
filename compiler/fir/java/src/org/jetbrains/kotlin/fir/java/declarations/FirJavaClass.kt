@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import kotlin.properties.Delegates
 
-@UseExperimental(FirImplementationDetail::class)
+@OptIn(FirImplementationDetail::class)
 class FirJavaClass @FirImplementationDetail internal constructor(
     override val source: FirSourceElement?,
     override val session: FirSession,
@@ -111,7 +111,7 @@ internal class FirJavaClassBuilder : AbstractFirRegularClassBuilder, FirAnnotati
 
     override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
 
-    @UseExperimental(FirImplementationDetail::class)
+    @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaClass {
         val status = FirDeclarationStatusImpl(visibility, modality).apply {
             isInner = !isTopLevel && !isStatic

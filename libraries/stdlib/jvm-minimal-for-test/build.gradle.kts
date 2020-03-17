@@ -60,8 +60,8 @@ tasks.withType<KotlinCompile> {
             "kotlin-stdlib",
             "-Xallow-kotlin-package",
             "-Xmulti-platform",
-            "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
-            "-Xuse-experimental=kotlin.Experimental"
+            "-Xopt-in=kotlin.RequiresOptIn",
+            "-Xopt-in=kotlin.contracts.ExperimentalContracts"
         )
     }
 }

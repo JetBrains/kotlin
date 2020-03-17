@@ -402,16 +402,19 @@ fun writeIvyXml(
                 }
 
                 element("publications") {
-                    artifactDir.listFiles()?.filter(::shouldIncludeIntellijJar)?.forEach { jarFile ->
-                        val relativeName = jarFile.toRelativeString(baseDir).removeSuffix(".jar")
-                        emptyElement("artifact") {
-                            attributes(
-                                "name" to relativeName,
-                                "type" to "jar",
-                                "ext" to "jar",
-                                "conf" to "default"
-                            )
-                        }
+                    artifactDir.listFiles()
+                        ?.filter(::shouldIncludeIntellijJar)
+                        ?.sortedBy { it.name.toLowerCase() }
+                        ?.forEach { jarFile ->
+                            val relativeName = jarFile.toRelativeString(baseDir).removeSuffix(".jar")
+                            emptyElement("artifact") {
+                                attributes(
+                                    "name" to relativeName,
+                                    "type" to "jar",
+                                    "ext" to "jar",
+                                    "conf" to "default"
+                                )
+                            }
                     }
 
                     sourcesJar.forEach { jarFile ->

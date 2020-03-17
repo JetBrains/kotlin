@@ -6263,6 +6263,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/objectDeclaration/kt3684.kt");
         }
 
+        @TestMetadata("kt37386.kt")
+        public void testKt37386() throws Exception {
+            runTest("js/js.translator/testData/box/objectDeclaration/kt37386.kt");
+        }
+
         @TestMetadata("lambdaInObjectInsideObject.kt")
         public void testLambdaInObjectInsideObject() throws Exception {
             runTest("js/js.translator/testData/box/objectDeclaration/lambdaInObjectInsideObject.kt");
@@ -6852,6 +6857,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
 
         public void testAllFilesPresentInRegression() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/regression"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+        }
+
+        @TestMetadata("enumEntryInitOrder.kt")
+        public void testEnumEntryInitOrder() throws Exception {
+            runTest("js/js.translator/testData/box/regression/enumEntryInitOrder.kt");
         }
 
         @TestMetadata("kt2470.kt")

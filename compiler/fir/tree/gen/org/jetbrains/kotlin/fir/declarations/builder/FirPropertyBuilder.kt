@@ -80,7 +80,7 @@ class FirPropertyBuilder : FirTypeParametersOwnerBuilder, FirAnnotationContainer
 
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 inline fun buildProperty(init: FirPropertyBuilder.() -> Unit): FirProperty {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)

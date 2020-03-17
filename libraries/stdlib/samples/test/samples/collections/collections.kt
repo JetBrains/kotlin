@@ -698,6 +698,7 @@ class Collections {
         fun reduceOrNull() {
             val strings = listOf("a", "b", "c", "d")
             assertPrints(strings.reduceOrNull { acc, string -> acc + string }, "abcd")
+            assertPrints(strings.reduceIndexedOrNull { index, acc, string -> acc + string + index }, "ab1c2d3")
 
             assertPrints(emptyList<String>().reduceOrNull { _, _ -> "" }, "null")
         }
@@ -706,6 +707,7 @@ class Collections {
         fun reduceRightOrNull() {
             val strings = listOf("a", "b", "c", "d")
             assertPrints(strings.reduceRightOrNull { string, acc -> acc + string }, "dcba")
+            assertPrints(strings.reduceRightIndexedOrNull { index, string, acc -> acc + string + index }, "dc2b1a0")
 
             assertPrints(emptyList<String>().reduceRightOrNull { _, _ -> "" }, "null")
         }

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-@UseExperimental(DfaInternals::class)
+@OptIn(DfaInternals::class)
 abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     protected val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents
 ) {
@@ -122,9 +122,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     fun exitFunction(function: FirFunction<*>): ControlFlowGraph? {
         val (node, graph) = graphBuilder.exitFunction(function)
-        if (function.body == null) {
-            node.mergeIncomingFlow()
-        }
+        node.mergeIncomingFlow()
         if (!graphBuilder.isTopLevel()) {
             for (valueParameter in function.valueParameters) {
                 variableStorage.removeRealVariable(valueParameter.symbol)
@@ -144,6 +142,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val (enterNode, exitNode) = graphBuilder.visitPostponedAnonymousFunction(anonymousFunction)
         enterNode.mergeIncomingFlow()
         exitNode.mergeIncomingFlow()
+        enterNode.flow = enterNode.flow.fork()
     }
 
     // ----------------------------------- Anonymous object -----------------------------------
@@ -162,6 +161,16 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val (node, graph) = graphBuilder.exitProperty(property)
         node.mergeIncomingFlow()
         return graph
+    }
+
+    // ----------------------------------- Delegate -----------------------------------
+
+    fun enterDelegateExpression() {
+        graphBuilder.enterDelegateExpression()
+    }
+
+    fun exitDelegateExpression() {
+        graphBuilder.exitDelegateExpression()
     }
 
     // ----------------------------------- Block -----------------------------------
@@ -352,18 +361,21 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     // ----------------------------------- Check not null call -----------------------------------
 
-    fun exitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall) {
+    fun exitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, callCompleted: Boolean) {
         // Add `Any` to the set of possible types; the intersection type `T? & Any` will be reduced to `T` after smartcast.
-        val node = graphBuilder.exitCheckNotNullCall(checkNotNullCall).mergeIncomingFlow()
+        val (node, unionNode) = graphBuilder.exitCheckNotNullCall(checkNotNullCall, callCompleted)
+        node.mergeIncomingFlow()
         val argument = checkNotNullCall.argument
-        val operandVariable = variableStorage.getOrCreateRealVariable(node.previousFlow, argument.symbol, argument) ?: return
-        node.flow.addTypeStatement(operandVariable typeEq any)
-        logicSystem.approveStatementsInsideFlow(
-            node.flow,
-            operandVariable notEq null,
-            shouldRemoveSynthetics = true,
-            shouldForkFlow = false
-        )
+        variableStorage.getOrCreateRealVariable(node.previousFlow, argument.symbol, argument)?.let { operandVariable ->
+            node.flow.addTypeStatement(operandVariable typeEq any)
+            logicSystem.approveStatementsInsideFlow(
+                node.flow,
+                operandVariable notEq null,
+                shouldRemoveSynthetics = true,
+                shouldForkFlow = false
+            )
+        }
+        unionNode?.let { unionFlowFromArguments(it) }
     }
 
     // ----------------------------------- When -----------------------------------
@@ -405,8 +417,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         graphBuilder.exitWhenBranchResult(whenBranch).mergeIncomingFlow()
     }
 
-    fun exitWhenExpression(whenExpression: FirWhenExpression) {
-        val (whenExitNode, syntheticElseNode) = graphBuilder.exitWhenExpression(whenExpression)
+    fun exitWhenExpression(whenExpression: FirWhenExpression, callCompleted: Boolean) {
+        val (whenExitNode, syntheticElseNode, unionNode) = graphBuilder.exitWhenExpression(whenExpression, callCompleted)
         if (syntheticElseNode != null) {
             val previousConditionExitNode = syntheticElseNode.firstPreviousNode as? WhenBranchConditionExitNode
             // previous node for syntheticElseNode can be not WhenBranchConditionExitNode in case of `when` without any branches
@@ -424,6 +436,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             }
         }
         whenExitNode.mergeIncomingFlow(updateReceivers = true)
+        unionNode?.let { unionFlowFromArguments(unionNode) }
     }
 
     // ----------------------------------- While Loop -----------------------------------
@@ -519,9 +532,11 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         graphBuilder.exitFinallyBlock(tryExpression).mergeIncomingFlow()
     }
 
-    fun exitTryExpression(tryExpression: FirTryExpression) {
+    fun exitTryExpression(tryExpression: FirTryExpression, callCompleted: Boolean) {
         // TODO
-        graphBuilder.exitTryExpression(tryExpression).mergeIncomingFlow()
+        val (tryExpressionExitNode, unionNode) = graphBuilder.exitTryExpression(tryExpression, callCompleted)
+        tryExpressionExitNode.mergeIncomingFlow()
+        unionNode?.let { unionFlowFromArguments(it) }
     }
 
     // ----------------------------------- Resolvable call -----------------------------------
@@ -571,14 +586,37 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         exitSafeCall(qualifiedAccessExpression)
     }
 
-    fun exitFunctionCall(functionCall: FirFunctionCall) {
-        val node = graphBuilder.exitFunctionCall(functionCall).mergeIncomingFlow()
+    fun exitResolvedQualifierNode(resolvedQualifier: FirResolvedQualifier) {
+        graphBuilder.exitResolvedQualifierNode(resolvedQualifier).mergeIncomingFlow()
+    }
+
+    fun enterCall(functionCall: FirCall) {
+        graphBuilder.enterCall(functionCall)
+    }
+
+    fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean) {
+        val (functionCallNode, unionNode) = graphBuilder.exitFunctionCall(functionCall, callCompleted)
+        unionNode?.let { unionFlowFromArguments(it) }
+        functionCallNode.mergeIncomingFlow()
         if (functionCall.isBooleanNot()) {
-            exitBooleanNot(functionCall, node)
+            exitBooleanNot(functionCall, functionCallNode)
         }
         processConditionalContract(functionCall)
         if (functionCall.safe) {
             exitSafeCall(functionCall)
+        }
+    }
+
+    fun exitDelegatedConstructorCall(call: FirDelegatedConstructorCall, callCompleted: Boolean) {
+        val (callNode, unionNode) = graphBuilder.exitDelegatedConstructorCall(call, callCompleted)
+        unionNode?.let { unionFlowFromArguments(it) }
+        callNode.mergeIncomingFlow()
+    }
+
+
+    private fun unionFlowFromArguments(node: UnionFunctionCallArgumentsNode) {
+        node.flow = logicSystem.unionFlow(node.previousNodes.map { it.flow }).also {
+            logicSystem.updateAllReceivers(it)
         }
     }
 
@@ -897,6 +935,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     private fun FLOW.removeAllAboutVariable(variable: RealVariable?) {
         if (variable == null) return
         logicSystem.removeAllAboutVariable(this, variable)
+    }
+
+    private fun FLOW.fork(): FLOW {
+        return logicSystem.forkFlow(this)
     }
 
     private val CFGNode<*>.previousFlow : FLOW

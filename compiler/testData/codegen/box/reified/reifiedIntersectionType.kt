@@ -1,6 +1,6 @@
-// IGNORE_BACKEND: JS
 // KJS_WITH_FULL_RUNTIME
 
+// KT-37163
 // Case that was found in kotlinx.coroutines
 
 fun test1() {
@@ -19,18 +19,6 @@ public inline fun <reified T, R> combine(
 
 fun <T> flowOf(value: T): Flow<T> = TODO()
 interface Flow<out T>
-
-// Simplified case
-
-class In<in T>
-
-inline fun <reified K> select(x: K, y: K): K = x
-interface A
-interface B
-
-fun test2(a: In<A>, b: In<B>) {
-    select(a, b)
-}
 
 fun box(): String {
     return "OK"

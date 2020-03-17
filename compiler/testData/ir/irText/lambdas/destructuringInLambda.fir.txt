@@ -79,7 +79,7 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
                 CALL 'public final fun component2 (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
                   $this: GET_VAR '<destruct>: <root>.A declared in <root>.fn.<anonymous>' type=<root>.A origin=null
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (<destruct>: <root>.A): kotlin.Int declared in <root>.fn'
-                CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+                CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
                   $this: CONST Int type=kotlin.Int value=42
                   other: GET_VAR 'val y: kotlin.Int [val] declared in <root>.fn.<anonymous>' type=kotlin.Int origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fn> visibility:public modality:FINAL <> () returnType:kotlin.Function1<<root>.A, kotlin.Int>

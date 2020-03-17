@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
@@ -72,7 +73,7 @@ import org.jetbrains.kotlin.util.findCallableMemberBySignature
 
 class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamedDeclaration>(
     KtNamedDeclaration::class.java,
-    "Move to companion object"
+    KotlinBundle.message("move.to.companion.object")
 ) {
     override fun applicabilityRange(element: KtNamedDeclaration): TextRange? {
         if (element !is KtNamedFunction && element !is KtProperty && element !is KtClassOrObject) return null
@@ -294,13 +295,13 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
 
         if (HierarchySearchRequest(element, element.useScope, false).searchOverriders().any()) {
             return CommonRefactoringUtil.showErrorHint(
-                project, editor, "$description is overridden by declaration(s) in a subclass", text, null
+                project, editor, KotlinBundle.message("0.is.overridden.by.declaration.s.in.a.subclass", description), text, null
             )
         }
 
         if (hasTypeParameterReferences(containingClass, element)) {
             return CommonRefactoringUtil.showErrorHint(
-                project, editor, "$description references type parameters of the containing class", text, null
+                project, editor, KotlinBundle.message("0.references.type.parameters.of.the.containing.class", description), text, null
             )
         }
 
@@ -314,20 +315,29 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
             companionDescriptor.findCallableMemberBySignature(callableDescriptor)?.let {
                 DescriptorToSourceUtilsIde.getAnyDeclaration(project, it)
             }?.let {
-                conflicts.putValue(it, "Companion object already contains ${RefactoringUIUtil.getDescription(it, false)}")
+                conflicts.putValue(
+                    it,
+                    KotlinBundle.message("companion.object.already.contains.0", RefactoringUIUtil.getDescription(it, false))
+                )
             }
         }
 
         val outerInstanceReferences = collectOuterInstanceReferences(element)
         if (outerInstanceReferences.isNotEmpty()) {
             if (element is KtProperty) {
-                conflicts.putValue(element, "Usages of outer class instance inside of property '${element.name}' won't be processed")
+                conflicts.putValue(
+                    element,
+                    KotlinBundle.message(
+                        "usages.of.outer.class.instance.inside.of.property.0.won.t.be.processed",
+                        element.name.toString()
+                    )
+                )
             } else {
                 outerInstanceReferences.filterNotTo(outerInstanceUsages) { it.reportConflictIfAny(conflicts) }
             }
         }
 
-        project.runSynchronouslyWithProgress("Searching for ${element.name}", true) {
+        project.runSynchronouslyWithProgress(KotlinBundle.message("searching.for.0", element.name.toString()), true) {
             runReadAction {
                 ReferencesSearch.search(element).mapNotNullTo(externalUsages) { ref ->
                     when (ref) {
@@ -343,7 +353,7 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
                             if (extensionReceiver != null && extensionReceiver !is ImplicitReceiver) {
                                 conflicts.putValue(
                                     callExpression,
-                                    "Calls with explicit extension receiver won't be processed: ${callExpression.text}"
+                                    KotlinBundle.message("calls.with.explicit.extension.receiver.won.t.be.processed.0", callExpression.text)
                                 )
                                 return@mapNotNullTo null
                             }

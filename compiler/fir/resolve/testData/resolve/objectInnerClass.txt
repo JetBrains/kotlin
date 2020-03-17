@@ -1,6 +1,6 @@
 FILE: objectInnerClass.kt
     public final val case1: R|anonymous| = object : R|A| {
-        private constructor(): R|kotlin/Any| {
+        private constructor(): R|anonymous| {
             super<R|kotlin/Any|>()
         }
 
@@ -68,7 +68,7 @@ FILE: objectInnerClass.kt
         }
 
         public final val x: R|anonymous| = object : R|Case2.Base| {
-            private constructor(): R|Case2.Base| {
+            private constructor(): R|anonymous| {
                 super<R|Case2.Base|>(R|/B.B|())
             }
 
@@ -125,7 +125,7 @@ FILE: objectInnerClass.kt
         }
 
         public final val x: R|anonymous| = object : R|A| {
-            private constructor(): R|kotlin/Any| {
+            private constructor(): R|anonymous| {
                 super<R|kotlin/Any|>()
             }
 

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.test.runTest
 
 class KotlinSuggestedRefactoringTest : BaseSuggestedRefactoringTest() {
     override val fileType: LanguageFileType
@@ -1541,6 +1542,10 @@ class KotlinSuggestedRefactoringTest : BaseSuggestedRefactoringTest() {
                   'StringToUnit' (modified)
             """.trimIndent()
         )
+    }
+
+    override fun runTest() {
+        runTest { super.runTest() }
     }
 
     private fun addImport(fqName: String) {

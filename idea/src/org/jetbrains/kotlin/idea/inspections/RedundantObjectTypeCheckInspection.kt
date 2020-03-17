@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -41,7 +42,7 @@ class RedundantObjectTypeCheckInspection : AbstractKotlinInspection() {
                 holder.registerProblem(
                     expression.operationReference,
                     TextRange(0, if (expression.isNegated) 3 else 2),
-                    "Redundant type checks for object",
+                    KotlinBundle.message("redundant.type.checks.for.object"),
                     ReplaceWithEqualityFix(expression.isNegated)
                 )
             }
@@ -60,7 +61,7 @@ private class ReplaceWithEqualityFix(isNegated: Boolean) : LocalQuickFix {
 
     private val equality = if (isNegated) "!==" else "==="
 
-    override fun getName() = "Replace '$isOperator' with '$equality'"
+    override fun getName() = KotlinBundle.message("replace.with.equality.fix.text", isOperator, equality)
 
     override fun getFamilyName() = name
 

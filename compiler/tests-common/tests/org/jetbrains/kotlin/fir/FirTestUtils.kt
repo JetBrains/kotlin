@@ -33,7 +33,13 @@ fun compareAndMergeFirFileAndOldFrontendFile(
         }
         if (sameDumps) {
             frontendIRTestDataFile.delete()
-            oldFrontendTestDataFile.writeText("// FIR_IDENTICAL\n" + oldFrontendTestDataFile.readText())
+            val oldFrontendTestDataFilePath = oldFrontendTestDataFile.absolutePath
+            val fileWithFirIdentical = if (!oldFrontendTestDataFilePath.endsWith(".txt")) {
+                oldFrontendTestDataFile
+            } else {
+                File(oldFrontendTestDataFilePath.replace(".txt", ".kt"))
+            }
+            fileWithFirIdentical.writeText("// FIR_IDENTICAL\n" + fileWithFirIdentical.readText())
         }
         TestCase.assertFalse(
             "Dumps via FIR & via old FE are the same. " +

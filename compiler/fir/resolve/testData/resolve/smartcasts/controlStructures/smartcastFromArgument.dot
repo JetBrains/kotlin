@@ -1,5 +1,5 @@
 digraph smartcastFromArgument_kt {
-    graph [splines=ortho nodesep=3]
+    graph [nodesep=3]
     node [shape=box penwidth=2]
     edge [penwidth=2]
 
@@ -72,15 +72,7 @@ digraph smartcastFromArgument_kt {
                     30 [label="Exit when branch result" style="filled" fillcolor=gray];
                     31 [label="Exit when"];
                 }
-                32 [label="Function call: R|/takeA|(when (lval <elvis>: R|A?| = (R|<local>/a| as? R|A|)) {
-    ==($subj$, Null(null)) ->  {
-        ^test Unit
-    }
-    else ->  {
-        R|<local>/<elvis>|
-    }
-}
-)"];
+                32 [label="Function call: R|/takeA|(...)"];
                 33 [label="Exit when branch condition"];
             }
             34 [label="Synthetic else branch"];

@@ -92,7 +92,7 @@ abstract class AbstractTypeAliasDescriptor(
 
     protected abstract fun getTypeConstructorTypeParameters(): List<TypeParameterDescriptor>
 
-    @UseExperimental(TypeRefinement::class)
+    @OptIn(TypeRefinement::class)
     protected fun computeDefaultType(): SimpleType =
         TypeUtils.makeUnsubstitutedType(this, classDescriptor?.unsubstitutedMemberScope ?: MemberScope.Empty) { kotlinTypeRefiner ->
             kotlinTypeRefiner.refineDescriptor(this)?.defaultType
@@ -121,7 +121,7 @@ abstract class AbstractTypeAliasDescriptor(
 
         // There must be @TypeRefinement, but there is a bug with anonymous objects and experimental annotations
         // See KT-31728
-        @UseExperimental(TypeRefinement::class)
+        @OptIn(TypeRefinement::class)
         override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): TypeConstructor = this
     }
 }
