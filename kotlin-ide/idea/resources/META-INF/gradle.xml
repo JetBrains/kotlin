@@ -21,12 +21,15 @@
         <orderEnumerationHandlerFactory implementation="org.jetbrains.kotlin.idea.gradle.execution.KotlinGradleOrderEnumerationHandler$Factory" order="first"/>
         <projectResolve implementation="org.jetbrains.kotlin.idea.configuration.KotlinMPPGradleProjectResolver"/>
         <testTasksProvider implementation="org.jetbrains.kotlin.idea.run.KotlinMPPGradleTestTasksProvider"/>
+
+        <projectModelContributor implementation="org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModelContributor"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
         <projectTaskRunner implementation="org.jetbrains.kotlin.idea.gradle.execution.KotlinMPPGradleProjectTaskRunner" order="first, before gradle"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinSourceSetDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectSettingsDataService"/>
+        <externalSystemTaskNotificationListener implementation="org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModelsUpdater"/>
 
         <registryKey key="kotlin.mpp.tests.force.gradle"
                      description="Run multi-platform tests with Gradle runner even if the platform runner is used by default.

@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle.importing
 
-import com.intellij.openapi.externalSystem.model.DataNode
-import com.intellij.openapi.externalSystem.model.project.ProjectData
-import org.gradle.tooling.model.idea.IdeaProject
-import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
-import org.jetbrains.kotlin.idea.scripting.gradle.kotlinDslScriptsModelImportSupported
-import org.jetbrains.plugins.gradle.model.Build
 import org.jetbrains.plugins.gradle.model.ClassSetImportModelProvider
 import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider
+import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
+import org.jetbrains.kotlin.idea.scripting.gradle.kotlinDslScriptsModelImportSupported
+import org.jetbrains.plugins.gradle.service.project.ModifiableGradleProjectModel
+import org.jetbrains.plugins.gradle.service.project.ProjectModelContributor
+import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
+import org.jetbrains.plugins.gradle.service.project.ToolingModelsProvider
 
 class KotlinDslScriptModelResolver : KotlinDslScriptModelResolverCommon() {
     override fun requiresTaskRunning() = true
@@ -21,31 +21,27 @@ class KotlinDslScriptModelResolver : KotlinDslScriptModelResolverCommon() {
 
     override fun getProjectsLoadedModelProvider(): ProjectImportModelProvider? {
         return ClassSetImportModelProvider(
-            emptySet(),
-            setOf(KotlinDslScriptAdditionalTask::class.java)
+                emptySet(),
+                setOf(KotlinDslScriptAdditionalTask::class.java)
         )
     }
+}
 
-    override fun populateProjectExtraModels(gradleProject: IdeaProject, ideProject: DataNode<ProjectData>) {
-        super.populateProjectExtraModels(gradleProject, ideProject)
-
-        if (kotlinDslScriptsModelImportSupported(resolverCtx.projectGradleVersion)) {
-            populateBuildModels(resolverCtx.models.mainBuild, ideProject)
-
-            resolverCtx.models.includedBuilds.forEach { includedRoot ->
-                populateBuildModels(includedRoot, ideProject)
-            }
-        }
-    }
-
-    private fun populateBuildModels(
-        root: Build,
-        ideProject: DataNode<ProjectData>
+@Suppress("UnstableApiUsage")
+class KotlinDslScriptModelContributor : ProjectModelContributor {
+    override fun accept(
+            projectModelBuilder: ModifiableGradleProjectModel,
+            toolingModelsProvider: ToolingModelsProvider,
+            resolverContext: ProjectResolverContext
     ) {
-        root.projects.forEach {
-            if (it.projectIdentifier.projectPath == ":") {
-                resolverCtx.models.getModel(it, KotlinDslScriptsModel::class.java)?.let { model ->
-                    processScriptModel(ideProject, model, it.projectIdentifier.projectPath)
+        if (!kotlinDslScriptsModelImportSupported(resolverContext.projectGradleVersion)) return
+
+        toolingModelsProvider.projects().forEach {
+            val projectIdentifier = it.projectIdentifier.projectPath
+            if (projectIdentifier == ":") {
+                val model = toolingModelsProvider.getProjectModel(it, KotlinDslScriptsModel::class.java)
+                if (model != null) {
+                    processScriptModel(resolverContext, model, projectIdentifier)
                 }
             }
         }
