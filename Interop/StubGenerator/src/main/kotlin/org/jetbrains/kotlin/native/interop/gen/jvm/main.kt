@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.resolver.impl.KotlinLibraryResolverImpl
 import org.jetbrains.kotlin.library.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
@@ -109,7 +110,7 @@ private fun parseImports(dependencies: List<KotlinLibrary>): ImportsImpl =
             // TODO: handle missing properties?
             library.packageFqName?.let { packageFqName ->
                 val headerIds = library.includedHeaders
-                headerIds.map { HeaderId(it) to packageFqName }
+                headerIds.map { HeaderId(it) to PackageInfo(packageFqName, library) }
             }
         }.reversed().flatten().toMap().let(::ImportsImpl)
 
@@ -225,8 +226,10 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
         }
     }
 
+    val resolver = getLibraryResolver(cinteropArguments, tool.target)
+
     val allLibraryDependencies = when (flavor) {
-        KotlinPlatform.NATIVE -> resolveDependencies(cinteropArguments, tool.target)
+        KotlinPlatform.NATIVE -> resolveDependencies(resolver, cinteropArguments)
         else -> listOf()
     }
 
@@ -337,6 +340,11 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
             argsToCompiler(staticLibraries, libraryPaths) + bitcodePaths
         }
         is StubIrDriver.Result.Metadata -> {
+            val stdlibDependency = resolver.resolveWithDependencies(
+                    emptyList(),
+                    noDefaultLibs = true,
+                    noEndorsedLibs = true
+            ).getFullList()
             createInteropLibrary(
                     metadata = stubIrOutput.metadata,
                     nativeBitcodeFiles = compiledFiles + nativeOutputPath,
@@ -344,7 +352,7 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
                     moduleName = moduleName,
                     outputPath = cinteropArguments.output,
                     manifest = def.manifestAddendProperties,
-                    dependencies = allLibraryDependencies,
+                    dependencies = stdlibDependency + imports.requiredLibraries.toList(),
                     nopack = cinteropArguments.nopack
             )
             return null
@@ -366,19 +374,25 @@ private fun compileSources(
     outputFileName
 }
 
-private fun resolveDependencies(
+private fun getLibraryResolver(
         cinteropArguments: CInteropArguments, target: KonanTarget
-): List<KotlinLibrary> {
+): KotlinLibraryResolverImpl<KonanLibrary> {
     val libraries = cinteropArguments.library
     val repos = cinteropArguments.repo
-    val noDefaultLibs = cinteropArguments.nodefaultlibs || cinteropArguments.nodefaultlibsDeprecated
-    val noEndorsedLibs = cinteropArguments.noendorsedlibs
-    val resolver = defaultResolver(
+    return defaultResolver(
             repos,
             libraries.filter { it.contains(org.jetbrains.kotlin.konan.file.File.separator) },
             target,
             Distribution()
     ).libraryResolver()
+}
+
+private fun resolveDependencies(
+        resolver: KotlinLibraryResolverImpl<KonanLibrary>, cinteropArguments: CInteropArguments
+): List<KotlinLibrary> {
+    val libraries = cinteropArguments.library
+    val noDefaultLibs = cinteropArguments.nodefaultlibs || cinteropArguments.nodefaultlibsDeprecated
+    val noEndorsedLibs = cinteropArguments.noendorsedlibs
     return resolver.resolveWithDependencies(
             libraries.toUnresolvedLibraries,
             noStdLib = false,
