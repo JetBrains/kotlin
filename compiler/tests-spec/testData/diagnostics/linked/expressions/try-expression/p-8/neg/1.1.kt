@@ -52,7 +52,7 @@ fun case2() {
  */
 fun case3() {
     val tryVal: A<Int> =
-    <!TYPE_MISMATCH, TYPE_MISMATCH!>try {
+    <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>try {
         throwExceptionA(false)
         A(2)
     } catch (e: ExcA) {
