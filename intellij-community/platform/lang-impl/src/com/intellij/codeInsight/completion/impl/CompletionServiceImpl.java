@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 public final class CompletionServiceImpl extends BaseCompletionService {
   private static final Logger LOG = Logger.getInstance(CompletionServiceImpl.class);
   private static volatile CompletionPhase ourPhase = CompletionPhase.NoCompletion;
+  private static boolean ourTracePhases;
   private static Throwable ourPhaseTrace;
 
   public CompletionServiceImpl() {
@@ -134,8 +135,12 @@ public final class CompletionServiceImpl extends BaseCompletionService {
   @SafeVarargs
   public static void assertPhase(Class<? extends CompletionPhase> @NotNull ... possibilities) {
     if (!isPhase(possibilities)) {
-      LOG.error(ourPhase + "; set at " + ExceptionUtil.getThrowableText(ourPhaseTrace));
+      reportPhase();
     }
+  }
+
+  private static void reportPhase() {
+    LOG.error(ourPhase + (ourPhaseTrace != null ? "; set at " + ExceptionUtil.getThrowableText(ourPhaseTrace) : ""));
   }
 
   @SafeVarargs
@@ -153,9 +158,11 @@ public final class CompletionServiceImpl extends BaseCompletionService {
     ApplicationManager.getApplication().assertIsDispatchThread();
     CompletionPhase oldPhase = getCompletionPhase();
     CompletionProgressIndicator oldIndicator = oldPhase.indicator;
-    if (oldIndicator != null && !(phase instanceof CompletionPhase.BgCalculation)) {
-      LOG.assertTrue(!oldIndicator.isRunning() || oldIndicator.isCanceled(),
-                     "don't change phase during running completion: oldPhase=" + oldPhase);
+    if (oldIndicator != null &&
+        !(phase instanceof CompletionPhase.BgCalculation) &&
+        oldIndicator.isRunning() &&
+        !oldIndicator.isCanceled()) {
+      LOG.error("don't change phase during running completion: oldPhase=" + oldPhase);
     }
     boolean wasCompletionRunning = isRunningPhase(oldPhase);
     boolean isCompletionRunning = isRunningPhase(phase);
@@ -166,7 +173,9 @@ public final class CompletionServiceImpl extends BaseCompletionService {
 
     Disposer.dispose(oldPhase);
     ourPhase = phase;
-    ourPhaseTrace = new Throwable();
+    if (ourTracePhases) {
+      ourPhaseTrace = new Throwable();
+    }
   }
 
   private static boolean isRunningPhase(@NotNull CompletionPhase phase) {
