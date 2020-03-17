@@ -380,6 +380,9 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.debugger.StackFrameInterceptor"
                     serviceImplementation="org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineStackFrameInterceptor"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.debugger.coroutine.DebuggerListener"
+                    serviceImplementation="org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineDebuggerListener"/>
+
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
     <registryKey

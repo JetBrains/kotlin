@@ -24,18 +24,18 @@ import javax.swing.Icon
 class CoroutineDescriptorImpl(val infoData: CoroutineInfoData) : NodeDescriptorImpl() {
     lateinit var icon: Icon
 
-    override fun getName() = infoData.name
+    override fun getName() = infoData.key.name
 
     @Throws(EvaluateException::class)
     override fun calcRepresentation(context: EvaluationContextImpl?, labelListener: DescriptorLabelListener): String {
         val thread = infoData.activeThread
-        val name = thread?.name()?.substringBefore(" @${infoData.name}") ?: ""
+        val name = thread?.name()?.substringBefore(" @${infoData.key.name}") ?: ""
         val threadState = if (thread != null) DebuggerUtilsEx.getThreadStatusText(thread.status()) else ""
         val threadName = if (name.isNotEmpty()) " on thread \"$name\":$threadState" else ""
-        return "${infoData.name}: ${infoData.state} $threadName"
+        return "${infoData.key.name}: ${infoData.key.state} $threadName"
     }
 
-    override fun isExpandable() = infoData.state != CoroutineInfoData.State.CREATED
+    override fun isExpandable() = infoData.key.state != State.CREATED
 
     private fun calcIcon() = when {
         infoData.isSuspended() -> AllIcons.Debugger.ThreadSuspended

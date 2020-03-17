@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.debugger.test
 
 import com.intellij.debugger.engine.AsyncStackTraceProvider
+import com.intellij.debugger.engine.JavaStackFrame
 import com.intellij.debugger.engine.JavaValue
 import com.intellij.debugger.memory.utils.StackFrameItem
 import com.intellij.execution.process.ProcessOutputTypes
@@ -37,7 +38,7 @@ abstract class AbstractAsyncStackTraceTest : KotlinDescriptorTestCaseWithSteppin
             val frameProxy = this.frameProxy
             if (frameProxy != null) {
                 try {
-                    val stackTrace = asyncStackTraceProvider.getAsyncStackTraceSafe(frameProxy, this)
+                    val stackTrace = asyncStackTraceProvider.lookupForResumeContinuation(frameProxy, this)
                     if (stackTrace != null && stackTrace.isNotEmpty()) {
                         print(renderAsyncStackTrace(stackTrace), ProcessOutputTypes.SYSTEM)
                     } else {
