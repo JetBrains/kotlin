@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.idea.refactoring.suggested
 
+import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.refactoring.suggested.BaseSuggestedRefactoringAvailabilityTest
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -358,6 +359,53 @@ class KotlinSuggestedRefactoringAvailabilityTest : BaseSuggestedRefactoringAvail
             },
             expectedAvailability = Availability.NotAvailable,
             expectedAvailabilityAfterResolve = Availability.Available((changeSignatureAvailableTooltip("foo", "implementations")))
+        )
+    }
+
+    fun testDuplicateProperty() {
+        doTest(
+            """
+                const val <caret>CONST1 = 1
+            """.trimIndent(),
+            {
+                myFixture.performEditorAction(IdeActions.ACTION_EDITOR_DUPLICATE)
+            },
+            {
+                replaceTextAtCaret("CONST1", "CONST2")
+            },
+            expectedAvailability = Availability.NotAvailable
+        )
+    }
+
+    fun testDuplicateMethod() {
+        doTest(
+            """
+                class Test {
+                    fun <caret>foo(p: Int) {}
+                }
+            """.trimIndent(),
+            {
+                myFixture.performEditorAction(IdeActions.ACTION_EDITOR_DUPLICATE)
+            },
+            {
+                replaceTextAtCaret("foo", "bar")
+            },
+            expectedAvailability = Availability.NotAvailable
+        )
+    }
+
+    fun testNotDuplicateMethod() {
+        doTest(
+            """
+                class Test {
+                    fun <caret>foo(p: Int) {}
+                    fun foo(p: String) {}
+                }
+            """.trimIndent(),
+            {
+                replaceTextAtCaret("foo", "bar")
+            },
+            expectedAvailability = Availability.Available(renameAvailableTooltip("foo", "bar"))
         )
     }
 
