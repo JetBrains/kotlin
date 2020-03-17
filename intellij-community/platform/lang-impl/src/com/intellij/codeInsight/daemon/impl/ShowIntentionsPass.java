@@ -4,7 +4,6 @@ package com.intellij.codeInsight.daemon.impl;
 
 import com.intellij.codeHighlighting.TextEditorHighlightingPass;
 import com.intellij.codeInsight.CodeInsightBundle;
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.IntentionManager;
 import com.intellij.codeInsight.intention.impl.CachedIntentions;
@@ -16,7 +15,6 @@ import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.editor.ex.EditorEx;
@@ -79,11 +77,12 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
                                                                                 int offset) {
     final Project project = file.getProject();
 
-    List<HighlightInfo> infos = new ArrayList<>();
-    DaemonCodeAnalyzerImpl.processHighlightsNearOffset(editor.getDocument(), project, HighlightSeverity.INFORMATION, offset, true,
-                                                       new CommonProcessors.CollectProcessor<>(infos));
     List<HighlightInfo.IntentionActionDescriptor> result = new ArrayList<>();
-    infos.forEach(info-> addAvailableFixesForGroups(info, editor, file, result, passId, offset));
+    DaemonCodeAnalyzerImpl.processHighlightsNearOffset(editor.getDocument(), project, HighlightSeverity.INFORMATION, offset, true,
+                                                       info-> {
+                                                         addAvailableFixesForGroups(info, editor, file, result, passId, offset);
+                                                         return true;
+                                                       });
     return result;
   }
 
@@ -293,12 +292,16 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
     if (psiElement != null) PsiUtilCore.ensureValid(psiElement);
 
     intentions.setOffset(offset);
-    final Project project = hostFile.getProject();
 
-    List<HighlightInfo.IntentionActionDescriptor> fixes = getAvailableFixes(hostEditor, hostFile, passIdToShowIntentionsFor, offset);
-    final DaemonCodeAnalyzer codeAnalyzer = DaemonCodeAnalyzer.getInstance(project);
-    final Document hostDocument = hostEditor.getDocument();
-    HighlightInfo infoAtCursor = ((DaemonCodeAnalyzerImpl)codeAnalyzer).findHighlightByOffset(hostDocument, offset, true);
+    List<HighlightInfo.IntentionActionDescriptor> fixes = new ArrayList<>();
+    DaemonCodeAnalyzerImpl.HighlightByOffsetProcessor highestPriorityInfoFinder = new DaemonCodeAnalyzerImpl.HighlightByOffsetProcessor(true);
+    DaemonCodeAnalyzerImpl.processHighlightsNearOffset(
+      hostEditor.getDocument(), hostFile.getProject(), HighlightSeverity.INFORMATION, offset, true, info -> {
+        addAvailableFixesForGroups(info, hostEditor, hostFile, fixes, passIdToShowIntentionsFor, offset);
+        return highestPriorityInfoFinder.process(info);
+      });
+
+    @Nullable HighlightInfo infoAtCursor = highestPriorityInfoFinder.getResult();
     if (infoAtCursor == null) {
       intentions.errorFixesToShow.addAll(fixes);
     }

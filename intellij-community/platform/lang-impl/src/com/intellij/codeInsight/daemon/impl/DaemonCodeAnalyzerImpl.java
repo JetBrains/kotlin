@@ -657,31 +657,46 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
                                               final boolean includeFixRange,
                                               final boolean highestPriorityOnly,
                                               @NotNull HighlightSeverity minSeverity) {
-    final List<HighlightInfo> foundInfoList = new SmartList<>();
-    processHighlightsNearOffset(document, myProject, minSeverity, offset, includeFixRange,
-        info -> {
-          if (info.getSeverity() == HighlightInfoType.ELEMENT_UNDER_CARET_SEVERITY || info.type == HighlightInfoType.TODO) {
-            return true;
-          }
+    HighlightByOffsetProcessor processor = new HighlightByOffsetProcessor(highestPriorityOnly);
+    processHighlightsNearOffset(document, myProject, minSeverity, offset, includeFixRange, processor);
+    return processor.getResult();
+  }
 
-          if (!foundInfoList.isEmpty() && highestPriorityOnly) {
-            HighlightInfo foundInfo = foundInfoList.get(0);
-            int compare = foundInfo.getSeverity().compareTo(info.getSeverity());
-            if (compare < 0) {
-              foundInfoList.clear();
-            }
-            else if (compare > 0) {
-              return true;
-            }
-          }
-          foundInfoList.add(info);
+  static class HighlightByOffsetProcessor implements Processor<HighlightInfo> {
+    private final List<HighlightInfo> foundInfoList = new SmartList<>();
+    private final boolean highestPriorityOnly;
+
+    HighlightByOffsetProcessor(boolean highestPriorityOnly) {
+      this.highestPriorityOnly = highestPriorityOnly;
+    }
+
+    @Override
+    public boolean process(HighlightInfo info) {
+      if (info.getSeverity() == HighlightInfoType.ELEMENT_UNDER_CARET_SEVERITY || info.type == HighlightInfoType.TODO) {
+        return true;
+      }
+
+      if (!foundInfoList.isEmpty() && highestPriorityOnly) {
+        HighlightInfo foundInfo = foundInfoList.get(0);
+        int compare = foundInfo.getSeverity().compareTo(info.getSeverity());
+        if (compare < 0) {
+          foundInfoList.clear();
+        }
+        else if (compare > 0) {
           return true;
-        });
+        }
+      }
+      foundInfoList.add(info);
+      return true;
+    }
 
-    if (foundInfoList.isEmpty()) return null;
-    if (foundInfoList.size() == 1) return foundInfoList.get(0);
-    foundInfoList.sort(Comparator.comparing(HighlightInfo::getSeverity).reversed());
-    return HighlightInfoComposite.create(foundInfoList);
+    @Nullable
+    HighlightInfo getResult() {
+      if (foundInfoList.isEmpty()) return null;
+      if (foundInfoList.size() == 1) return foundInfoList.get(0);
+      foundInfoList.sort(Comparator.comparing(HighlightInfo::getSeverity).reversed());
+      return HighlightInfoComposite.create(foundInfoList);
+    }
   }
 
   private static boolean isOffsetInsideHighlightInfo(int offset, @NotNull HighlightInfo info, boolean includeFixRange) {
