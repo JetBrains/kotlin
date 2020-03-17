@@ -6,14 +6,10 @@
 package org.jetbrains.kotlin.idea.scripting.gradle.importing
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.externalSystem.model.DataNode
-import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.util.Order
 import com.intellij.openapi.util.Pair
-import org.gradle.tooling.model.kotlin.dsl.EditorReportSeverity
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslModelsParameters.*
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
-import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 
 internal val LOG = Logger.getInstance(KotlinDslScriptModelResolverCommon::class.java)
@@ -35,74 +31,5 @@ abstract class KotlinDslScriptModelResolverCommon : AbstractProjectResolverExten
 
     override fun getExtraCommandLineArgs(): List<String> {
         return listOf("-P$CORRELATION_ID_GRADLE_PROPERTY_NAME=${System.nanoTime()}")
-    }
-
-    @Suppress("unused")
-    protected fun KotlinDslScriptsModel.toListOfScriptModels(): List<KotlinDslScriptModel> =
-        scriptModels.map { (file, model) ->
-            val messages = mutableListOf<KotlinDslScriptModel.Message>()
-
-            model.exceptions.forEach {
-                val fromException = parsePositionFromException(it)
-                if (fromException != null) {
-                    val (filePath, _) = fromException
-                    if (filePath != file.path) return@forEach
-                }
-                messages.add(
-                    KotlinDslScriptModel.Message(
-                        KotlinDslScriptModel.Severity.ERROR,
-                        it.substringBefore(System.lineSeparator()),
-                        it,
-                        fromException?.second
-                    )
-                )
-            }
-
-            model.editorReports.forEach {
-                messages.add(
-                    KotlinDslScriptModel.Message(
-                        when (it.severity) {
-                            EditorReportSeverity.WARNING -> KotlinDslScriptModel.Severity.WARNING
-                            else -> KotlinDslScriptModel.Severity.ERROR
-                        },
-                        it.message,
-                        position = KotlinDslScriptModel.Position(it.position?.line ?: 0, it.position?.column ?: 0)
-                    )
-                )
-            }
-
-            // todo(KT-34440): take inputs snapshot before starting import
-            KotlinDslScriptModel(
-                file.absolutePath,
-                System.currentTimeMillis(),
-                model.classPath.map { it.absolutePath },
-                model.sourcePath.map { it.absolutePath },
-                model.implicitImports,
-                messages
-            )
-        }
-
-    protected fun processScriptModel(
-        ideProject: DataNode<ProjectData>,
-        model: KotlinDslScriptsModel,
-        projectName: String
-    ) {
-        if (model is BrokenKotlinDslScriptsModel) {
-            LOG.error(
-                "Couldn't get KotlinDslScriptsModel for $projectName:\n${model.message}\n${model.stackTrace}"
-            )
-        } else {
-            val models = model.toListOfScriptModels()
-            resolverCtx.externalSystemTaskId.findProject()?.kotlinDslModels?.addAll(
-                models
-            )
-            if (models.containsErrors()) {
-                throw IllegalStateException(KotlinIdeaGradleBundle.message("title.kotlin.build.script"))
-            }
-        }
-    }
-
-    private fun Collection<KotlinDslScriptModel>.containsErrors(): Boolean {
-        return any { it.messages.any { it.severity == KotlinDslScriptModel.Severity.ERROR } }
     }
 }

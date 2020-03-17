@@ -45,7 +45,7 @@ class KotlinDslScriptModelResolver : KotlinDslScriptModelResolverCommon() {
         root.projects.forEach {
             if (it.projectIdentifier.projectPath == ":") {
                 resolverCtx.models.getModel(it, KotlinDslScriptsModel::class.java)?.let { model ->
-                    processScriptModel(ideProject, model, it.projectIdentifier.projectPath)
+                    processScriptModel(resolverCtx, model, it.projectIdentifier.projectPath)
                 }
             }
         }

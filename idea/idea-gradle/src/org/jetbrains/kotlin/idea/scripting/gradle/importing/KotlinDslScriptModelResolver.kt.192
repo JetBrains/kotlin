@@ -43,7 +43,7 @@ class KotlinDslScriptModelResolver : KotlinDslScriptModelResolverCommon() {
         root.modules.forEach {
             if (it.gradleProject.parent == null) {
                 resolverCtx.getExtraProject(it, KotlinDslScriptsModel::class.java)?.let { model ->
-                    processScriptModel(ideProject, model, it.name)
+                    processScriptModel(resolverCtx, model, it.name)
                 }
             }
         }
