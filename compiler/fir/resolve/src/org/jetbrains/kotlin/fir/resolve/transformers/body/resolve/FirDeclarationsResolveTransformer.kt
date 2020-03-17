@@ -114,7 +114,9 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                                 storeVariableReturnType(property)
                             }
                             withLocalScopeCleanup {
-                                addLocalScope(FirLocalScope().storeBackingField(property))
+                                if (property.receiverTypeRef == null) {
+                                    addLocalScope(FirLocalScope().storeBackingField(property))
+                                }
                                 property.transformAccessors()
                             }
                         }

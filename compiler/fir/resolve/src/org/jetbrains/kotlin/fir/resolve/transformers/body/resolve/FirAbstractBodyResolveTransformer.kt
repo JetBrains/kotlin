@@ -205,10 +205,6 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             updateLastScope { storeVariable(variable) }
         }
 
-        fun storeBackingField(property: FirProperty) {
-            updateLastScope { storeBackingField(property) }
-        }
-
         override fun saveContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
             localContextForAnonymousFunctions[anonymousFunction.symbol] = FirLocalContext(localScopes, implicitReceiverStack.snapshot())
         }
