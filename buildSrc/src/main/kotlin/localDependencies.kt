@@ -24,7 +24,9 @@ import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.DependencyHandlerScope
+import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.register
 import java.io.File
 
 private fun Project.kotlinBuildLocalDependenciesDir(): File =
@@ -172,6 +174,7 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
             "-XX:ReservedCodeCacheSize=240m",
             "-XX:+HeapDumpOnOutOfMemoryError",
             "-ea",
+            "-Didea.platform.prefix=Idea",
             "-Didea.debug.mode=true",
             "-Didea.system.path=$ideaSandboxDir",
             "-Didea.config.path=$ideaSandboxConfigDir",

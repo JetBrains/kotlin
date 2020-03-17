@@ -169,6 +169,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                                     "-XX:ReservedCodeCacheSize=240m",
                                     "-XX:+HeapDumpOnOutOfMemoryError",
                                     "-ea",
+                                    "-Didea.platform.prefix=Idea",
                                     "-Didea.is.internal=true",
                                     "-Didea.debug.mode=true",
                                     "-Didea.system.path=${sandboxDir.absolutePath}",
