@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.idea.configuration.GradlePropertiesFileFacade.Companion.KOTLIN_NOT_IMPORTED_COMMON_SOURCE_SETS_SETTING
 import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibrariesDependencySubstitutor
 import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibrariesFixer
-import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.KOTLIN_NATIVE_LIBRARY_PREFIX
+import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
@@ -595,12 +595,24 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                 }
                 if (processedModuleIds.add(getKotlinModuleId(gradleModule, sourceSet, resolverCtx))) {
                     val mergedSubstitutedDependencies = LinkedHashSet<KotlinDependency>().apply {
+                        val forceNativeDependencyPropagation: Boolean
+                        val excludeInheritedNativeDependencies: Boolean
+                        if (mppModel.extraFeatures.isHMPPEnabled && sourceSet.actualPlatforms.getSinglePlatform() == KotlinPlatform.NATIVE) {
+                            forceNativeDependencyPropagation = mppModel.extraFeatures.isNativeDependencyPropagationEnabled
+                            excludeInheritedNativeDependencies = !forceNativeDependencyPropagation
+                        } else {
+                            forceNativeDependencyPropagation = false
+                            excludeInheritedNativeDependencies = false
+                        }
                         addAll(substitutor.substituteDependencies(sourceSet))
-                        dependeeSourceSets.flatMapTo(this) { substitutor.substituteDependencies(it) }
-                        if (mppModel.extraFeatures.isNativeDependencyPropagationEnabled
-                            && mppModel.extraFeatures.isHMPPEnabled
-                            && sourceSet.actualPlatforms.getSinglePlatform() == KotlinPlatform.NATIVE
-                        ) {
+                        dependeeSourceSets.flatMapTo(this) { dependeeSourceSet ->
+                            substitutor.substituteDependencies(dependeeSourceSet).run {
+                                if (excludeInheritedNativeDependencies)
+                                    filter { !it.name.startsWith(KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE) }
+                                else this
+                            }
+                        }
+                        if (forceNativeDependencyPropagation) {
                             sourceSetToCompilations[sourceSet.name]?.let { compilations ->
                                 addAll(propagatedNativeDependencies(compilations))
                             }
@@ -620,7 +632,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
             }
         }
 
-        private fun KotlinNativeLibrariesDependencySubstitutor.substituteDependencies(kotlinModule: KotlinModule) =
+        private fun KotlinNativeLibrariesDependencySubstitutor.substituteDependencies(kotlinModule: KotlinModule): List<ExternalDependency> =
             substituteDependencies(kotlinModule.dependencies.mapNotNull { mppModel.dependencyMap[it] })
 
         // We can't really commonize native platform libraries yet.
@@ -654,7 +666,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
 
             return copyFrom.dependencyNames.mapNotNull { (name, dependency) ->
                 when {
-                    !name.startsWith(KOTLIN_NATIVE_LIBRARY_PREFIX) -> null  // Support only default platform libs for now.
+                    !name.startsWith(KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE) -> null  // Support only default platform libs for now.
                     compilations.all { it.dependencyNames.containsKey(name) } -> dependency
                     else -> null
                 }
