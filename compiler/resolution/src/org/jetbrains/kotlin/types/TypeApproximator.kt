@@ -134,6 +134,10 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
     private val referenceApproximateToSuperType = this::approximateSimpleToSuperType
     private val referenceApproximateToSubType = this::approximateSimpleToSubType
 
+    companion object {
+        const val CACHE_FOR_INCORPORATION_MAX_SIZE = 500
+    }
+
     open fun createErrorType(message: String): SimpleTypeMarker =
         ErrorUtils.createErrorType(message)
 
@@ -183,6 +187,9 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
         if (conf !is TypeApproximatorConfiguration.IncorporationConfiguration) return approximate()
 
         val cache = if (toSuper) cacheForIncorporationConfigToSuperDirection else cacheForIncorporationConfigToSubtypeDirection
+
+        if (cache.size > CACHE_FOR_INCORPORATION_MAX_SIZE) return approximate()
+
         return cache.getOrPut(type, { approximate().toApproximationResult() }).type
     }
 
