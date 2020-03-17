@@ -3700,6 +3700,11 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
                 runTest("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/privateInCrossInline.kt");
             }
 
+            @TestMetadata("protectedInCrossinline.kt")
+            public void testProtectedInCrossinline() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/protectedInCrossinline.kt");
+            }
+
             @TestMetadata("protectedMembersFromSuper.kt")
             public void testProtectedMembersFromSuper() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/protectedMembersFromSuper.kt");
