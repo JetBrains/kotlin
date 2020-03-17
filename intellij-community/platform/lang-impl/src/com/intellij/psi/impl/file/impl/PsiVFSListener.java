@@ -5,6 +5,8 @@ import com.intellij.AppTopics;
 import com.intellij.ProjectTopics;
 import com.intellij.application.Topics;
 import com.intellij.ide.impl.ProjectUtil;
+import com.intellij.ide.plugins.DynamicPluginListener;
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
@@ -88,6 +90,20 @@ public final class PsiVFSListener implements BulkFileListener {
         }
       });
       connection.subscribe(AppTopics.FILE_DOCUMENT_SYNC, new MyFileDocumentManagerListener(project));
+
+      connection.subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
+        @Override
+        public void beforePluginLoaded(@NotNull IdeaPluginDescriptor pluginDescriptor) {
+          PsiManagerImpl psiManager = (PsiManagerImpl)PsiManager.getInstance(project);
+          ((FileManagerImpl)(psiManager.getFileManager())).processFileTypesChanged(true);
+        }
+
+        @Override
+        public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
+          PsiManagerImpl psiManager = (PsiManagerImpl)PsiManager.getInstance(project);
+          ((FileManagerImpl)(psiManager.getFileManager())).processFileTypesChanged(true);
+        }
+      });
 
       installGlobalListener();
     }
