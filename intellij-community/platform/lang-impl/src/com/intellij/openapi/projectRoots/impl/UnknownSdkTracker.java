@@ -22,6 +22,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
+import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.util.Consumer;
 import com.intellij.util.TripleFunction;
 import com.intellij.util.ui.update.MergingUpdateQueue;
@@ -30,7 +31,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.util.*;
 
 import static com.intellij.openapi.progress.PerformInBackgroundOption.ALWAYS_BACKGROUND;
@@ -218,10 +218,10 @@ public class UnknownSdkTracker {
     });
   }
 
-  public void showSdkSelectionPopup(@Nullable String sdkName,
-                                    @Nullable SdkType sdkType,
-                                    @NotNull JComponent underneathRightOfComponent) {
-    SdkPopupFactory
+  @NotNull
+  public EditorNotificationPanel.ActionHandler createSdkSelectionPopup(@Nullable String sdkName,
+                                                                       @Nullable SdkType sdkType) {
+    return SdkPopupFactory
       .newBuilder()
       .withProject(myProject)
       .withSdkTypeFilter(type -> sdkType == null || Objects.equals(type, sdkType))
@@ -229,8 +229,7 @@ public class UnknownSdkTracker {
         registerNewSdkInJdkTable(sdkName, sdk);
         updateUnknownSdks();
       })
-      .buildPopup()
-      .showUnderneathToTheRightOf(underneathRightOfComponent);
+      .buildEditorNotificationPanelHandler();
   }
 
   private void configureLocalSdks(@NotNull Map<UnknownSdk, UnknownSdkLocalSdkFix> localFixes) {

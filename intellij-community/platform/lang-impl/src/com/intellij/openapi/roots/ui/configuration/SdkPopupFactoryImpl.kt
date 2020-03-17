@@ -4,6 +4,7 @@ package com.intellij.openapi.roots.ui.configuration
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.service
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
@@ -18,6 +19,8 @@ import com.intellij.openapi.util.Condition
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.ui.AnActionButton
+import com.intellij.ui.EditorNotificationPanel
+import com.intellij.ui.EditorNotificationPanel.ActionHandler
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.popup.list.ComboBoxPopup
 import java.awt.Component
@@ -27,6 +30,7 @@ import java.util.function.Consumer
 import javax.swing.JComponent
 import javax.swing.JFrame
 import javax.swing.JPanel
+import javax.swing.event.HyperlinkEvent
 
 private data class SdkPopupBuilderImpl(
   val project: Project? = null,
@@ -62,6 +66,7 @@ private data class SdkPopupBuilderImpl(
   override fun onPopupClosed(onClosed: Runnable) = copy(onPopupClosed = onClosed)
   override fun onSdkSelected(onSdkSelected: Consumer<Sdk>) = copy(onSdkSelected = onSdkSelected)
   override fun buildPopup() = service<SdkPopupFactory>().createPopup(copy())
+  override fun buildEditorNotificationPanelHandler(): ActionHandler = service<SdkPopupFactory>().createEditorNotificationPanelHandler(copy())
 }
 
 private interface SdkPopupListener {
@@ -83,6 +88,23 @@ private interface SdkPopupListener {
 
 internal class PlatformSdkPopupFactory : SdkPopupFactory {
   override fun createBuilder(): SdkPopupBuilder = SdkPopupBuilderImpl()
+
+  override fun createEditorNotificationPanelHandler(builder: SdkPopupBuilder) = object : ActionHandler {
+    override fun handlePanelActionClick(panel: EditorNotificationPanel,
+                                        event: HyperlinkEvent) {
+      //FileEditorManager#addTopComponent wraps the panel to implement borders, unwrapping
+      val anchorPanel = when (val parent = panel.parent) {
+        is JComponent -> parent
+        else -> panel
+      }
+
+      createPopup(builder).showUnderneathToTheRightOf(anchorPanel)
+    }
+
+    override fun handleQuickFixClick(editor: Editor, file: PsiFile) {
+      createPopup(builder).showInBestPositionFor(editor)
+    }
+  }
 
   override fun createPopup(builder: SdkPopupBuilder): SdkPopup = (builder as SdkPopupBuilderImpl).copy().run {
     val (sdksModel, ownsModel) = if (projectSdksModel != null) {

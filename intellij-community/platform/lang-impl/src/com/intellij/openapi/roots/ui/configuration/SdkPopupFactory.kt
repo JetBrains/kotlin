@@ -2,33 +2,21 @@
 package com.intellij.openapi.roots.ui.configuration
 
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.service
-import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkTypeId
-import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.ui.popup.JBPopup
-import com.intellij.openapi.ui.popup.JBPopupListener
-import com.intellij.openapi.ui.popup.LightweightWindowEvent
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
-import com.intellij.ui.AnActionButton.AnActionEventWrapper
-import com.intellij.ui.awt.RelativePoint
-import com.intellij.ui.popup.list.ComboBoxPopup
+import com.intellij.ui.EditorNotificationPanel
+import com.intellij.ui.EditorNotificationPanel.ActionHandler
 import org.jetbrains.annotations.Contract
 import java.awt.Component
-import java.awt.Point
-import java.awt.Window
 import java.util.function.Consumer
-import javax.swing.JComponent
-import javax.swing.JFrame
-import javax.swing.JPanel
 
 
 /**
@@ -49,6 +37,7 @@ import javax.swing.JPanel
 interface SdkPopupFactory {
   fun createBuilder() : SdkPopupBuilder
   fun createPopup(builder: SdkPopupBuilder): SdkPopup
+  fun createEditorNotificationPanelHandler(builder: SdkPopupBuilder): ActionHandler
 
   companion object {
     @JvmStatic
@@ -72,6 +61,13 @@ interface SdkPopupBuilder {
    */
   @Contract(pure = true)
   fun buildPopup(): SdkPopup
+
+  /**
+   * Terminal operator that returns an [EditorNotificationPanel] action handler.
+   * The handler implementation builds a popup lazily for each interface call
+   */
+  @Contract(pure = true)
+  fun buildEditorNotificationPanelHandler() : ActionHandler
 
   /**
    * Adds the newly created SDK into the [ProjectJdkTable] automatically.
