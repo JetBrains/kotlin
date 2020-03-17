@@ -82,9 +82,12 @@ class Fir2IrClassifierStorage(
 
     internal fun preCacheTypeParameters(owner: FirTypeParametersOwner) {
         owner.typeParameters.mapIndexed { index, typeParameter ->
-            getIrTypeParameter(typeParameter, index)
+            getCachedIrTypeParameter(typeParameter, index)
+                ?: createIrTypeParameterWithoutBounds(typeParameter, index)
             if (owner is FirProperty && owner.isVar) {
-                getIrTypeParameter(typeParameter, index, ConversionTypeContext.DEFAULT.inSetter())
+                val context = ConversionTypeContext.DEFAULT.inSetter()
+                getCachedIrTypeParameter(typeParameter, index, context)
+                    ?: createIrTypeParameterWithoutBounds(typeParameter, index, context)
             }
         }
     }
@@ -94,12 +97,18 @@ class Fir2IrClassifierStorage(
         typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
     ) {
         typeParameters = owner.typeParameters.mapIndexed { index, typeParameter ->
-            getIrTypeParameter(typeParameter, index, typeContext).apply { parent = this@setTypeParameters }
+            getIrTypeParameter(typeParameter, index, typeContext).apply {
+                parent = this@setTypeParameters
+                if (superTypes.isEmpty()) {
+                    typeParameter.bounds.mapTo(superTypes) { it.toIrType() }
+                }
+            }
         }
     }
 
     private fun IrClass.declareSupertypesAndTypeParameters(klass: FirClass<*>): IrClass {
         if (klass is FirRegularClass) {
+            preCacheTypeParameters(klass)
             setTypeParameters(klass)
         }
         superTypes = klass.superTypeRefs.map { superTypeRef -> superTypeRef.toIrType() }
@@ -230,11 +239,43 @@ class Fir2IrClassifierStorage(
         return createIrAnonymousObject(anonymousObject, Visibilities.PRIVATE, name, irParent)
     }
 
-    private fun getIrTypeParameter(
+    private fun createIrTypeParameterWithoutBounds(
+        typeParameter: FirTypeParameter,
+        index: Int,
+        typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
+    ): IrTypeParameter {
+        require(index >= 0)
+        val descriptor = WrappedTypeParameterDescriptor()
+        val origin = IrDeclarationOrigin.DEFINED
+        val irTypeParameter = with(typeParameter) {
+            convertWithOffsets { startOffset, endOffset ->
+                symbolTable.declareGlobalTypeParameter(startOffset, endOffset, origin, descriptor) { symbol ->
+                    IrTypeParameterImpl(
+                        startOffset, endOffset, origin, symbol,
+                        name, if (index < 0) 0 else index,
+                        isReified,
+                        variance
+                    ).apply {
+                        descriptor.bind(this)
+                    }
+                }
+            }
+        }
+
+        // Cache the type parameter BEFORE processing its bounds/supertypes, to properly handle recursive type bounds.
+        if (typeContext.origin == ConversionTypeOrigin.SETTER) {
+            typeParameterCacheForSetter[typeParameter] = irTypeParameter
+        } else {
+            typeParameterCache[typeParameter] = irTypeParameter
+        }
+        return irTypeParameter
+    }
+
+    private fun getCachedIrTypeParameter(
         typeParameter: FirTypeParameter,
         index: Int = -1,
         typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
-    ): IrTypeParameter {
+    ): IrTypeParameter? {
         // Here transformation is a bit difficult because one FIR property type parameter
         // can be transformed to two different type parameters: one for getter and another one for setter
         val simpleCachedParameter = typeParameterCache[typeParameter]
@@ -252,33 +293,17 @@ class Fir2IrClassifierStorage(
         if (typeContext.origin == ConversionTypeOrigin.SETTER) {
             typeParameterCacheForSetter[typeParameter]?.let { return it }
         }
-        return typeParameter.run {
-            // Yet I don't want to enable this requirement because it breaks some tests
-            // However, if we get here it *should* mean that type parameter index is given explicitly
-            // At this moment (20.02.2020) this requirement breaks 11/355 Fir2IrText tests
-            // require(index != -1)
-            val descriptor = WrappedTypeParameterDescriptor()
-            val origin = IrDeclarationOrigin.DEFINED
-            val irTypeParameter =
-                convertWithOffsets { startOffset, endOffset ->
-                    symbolTable.declareGlobalTypeParameter(startOffset, endOffset, origin, descriptor) { symbol ->
-                        IrTypeParameterImpl(
-                            startOffset, endOffset, origin, symbol,
-                            name, if (index < 0) 0 else index,
-                            isReified,
-                            variance
-                        ).apply {
-                            descriptor.bind(this)
-                        }
-                    }
-                }
+        return null
+    }
 
-            // Cache the type parameter BEFORE processing its bounds/supertypes, to properly handle recursive type bounds.
-            if (typeContext.origin == ConversionTypeOrigin.SETTER) {
-                typeParameterCacheForSetter[typeParameter] = irTypeParameter
-            } else {
-                typeParameterCache[typeParameter] = irTypeParameter
-            }
+    private fun getIrTypeParameter(
+        typeParameter: FirTypeParameter,
+        index: Int,
+        typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
+    ): IrTypeParameter {
+        getCachedIrTypeParameter(typeParameter, index, typeContext)?.let { return it }
+        return typeParameter.run {
+            val irTypeParameter = createIrTypeParameterWithoutBounds(typeParameter, index, typeContext)
             bounds.mapTo(irTypeParameter.superTypes) { it.toIrType() }
             irTypeParameter
         }
@@ -359,8 +384,8 @@ class Fir2IrClassifierStorage(
         firTypeParameterSymbol: FirTypeParameterSymbol,
         typeContext: ConversionTypeContext
     ): IrTypeParameterSymbol {
-        // TODO: use cached type parameter here
-        val irTypeParameter = getIrTypeParameter(firTypeParameterSymbol.fir, typeContext = typeContext)
+        val irTypeParameter = getCachedIrTypeParameter(firTypeParameterSymbol.fir, typeContext = typeContext)
+            ?: throw AssertionError("Cannot find cached type parameter by FIR symbol: ${firTypeParameterSymbol.name}")
         return symbolTable.referenceTypeParameter(irTypeParameter.descriptor)
     }
 }
