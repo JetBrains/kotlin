@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.components.JBCheckBox
 import org.jdesktop.swingx.VerticalLayout
@@ -40,38 +41,28 @@ object ExperimentalFeatures {
         }
     }
 
-    object MLCompletionForKotlinFeature : ExperimentalFeature {
-        override val title: String
-            get() = KotlinBundle.message("experimental.ml.completion")
-
-        override fun shouldBeShown(): Boolean = MLCompletionForKotlin.isAvailable
-
-        override var isEnabled: Boolean
-            get() = MLCompletionForKotlin.isEnabled
-            set(value) {
-                MLCompletionForKotlin.isEnabled = value
-            }
-    }
-
     val allFeatures: List<ExperimentalFeature> = listOf(
         NewJ2k,
-        NewWizard,
-        MLCompletionForKotlinFeature
-    )
+        NewWizard
+    ) + ExperimentalFeature.EP_NAME.extensionList
 }
 
-interface ExperimentalFeature {
-    val title: String
-    var isEnabled: Boolean
-    fun shouldBeShown(): Boolean = true
-    fun onFeatureStatusChanged(enabled: Boolean) {}
+abstract class ExperimentalFeature {
+    abstract val title: String
+    abstract var isEnabled: Boolean
+    open fun shouldBeShown(): Boolean = true
+    open fun onFeatureStatusChanged(enabled: Boolean) {}
+
+    companion object {
+        internal var EP_NAME = ExtensionPointName<ExperimentalFeature>("org.jetbrains.kotlin.experimentalFeature")
+    }
 }
 
 open class RegistryExperimentalFeature(
     override val title: String,
     private val registryKey: String,
     private val enabledByDefault: Boolean
-) : ExperimentalFeature {
+) : ExperimentalFeature() {
     final override var isEnabled
         get() = Registry.`is`(registryKey, enabledByDefault)
         set(value) {
