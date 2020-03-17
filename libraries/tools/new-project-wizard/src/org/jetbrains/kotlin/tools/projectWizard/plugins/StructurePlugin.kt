@@ -13,24 +13,24 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import java.nio.file.Paths
 
 class StructurePlugin(context: Context) : Plugin(context) {
-    val projectPath by pathSetting("Location", GenerationPhase.PROJECT_GENERATION) {
+    val projectPath by pathSetting("Location", GenerationPhase.FIRST_STEP) {
         defaultValue = value(Paths.get("."))
     }
-    val name by stringSetting("Name", GenerationPhase.PROJECT_GENERATION) {
+    val name by stringSetting("Name", GenerationPhase.FIRST_STEP) {
         shouldNotBeBlank()
         validate(StringValidators.shouldBeValidIdentifier("Name", Module.ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES))
     }
 
-    val groupId by stringSetting("Group ID", GenerationPhase.PROJECT_GENERATION) {
+    val groupId by stringSetting("Group ID", GenerationPhase.FIRST_STEP) {
         isSavable = true
         shouldNotBeBlank()
         validate(StringValidators.shouldBeValidIdentifier("Group ID", setOf('.', '_')))
     }
-    val artifactId by stringSetting("Artifact ID", GenerationPhase.PROJECT_GENERATION) {
+    val artifactId by stringSetting("Artifact ID", GenerationPhase.FIRST_STEP) {
         shouldNotBeBlank()
         validate(StringValidators.shouldBeValidIdentifier("Artifact ID", setOf('_')))
     }
-    val version by stringSetting("Version", GenerationPhase.PROJECT_GENERATION) {
+    val version by stringSetting("Version", GenerationPhase.FIRST_STEP) {
         shouldNotBeBlank()
         validate(StringValidators.shouldBeValidIdentifier("Version", setOf('_', '-', '.')))
         defaultValue = value("1.0-SNAPSHOT")

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.label
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.customPanel
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.IdeaBasedComponentValidator
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -57,7 +57,7 @@ abstract class UIComponent<V : Any>(
     }
 
     final override val component: JComponent by lazy(LazyThreadSafetyMode.NONE) {
-        panel {
+        customPanel {
             labelText?.let { add(label("$it:"), BorderLayout.NORTH) }
             add(uiComponent, BorderLayout.CENTER)
         }

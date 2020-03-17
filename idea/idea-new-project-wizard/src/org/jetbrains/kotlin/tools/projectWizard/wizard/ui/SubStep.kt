@@ -11,7 +11,7 @@ abstract class SubStep(
     protected abstract fun buildContent(): JComponent
 
     final override val component: JComponent by lazy(LazyThreadSafetyMode.NONE) {
-        panel {
+        customPanel {
             add(buildContent(), BorderLayout.CENTER)
         }
     }

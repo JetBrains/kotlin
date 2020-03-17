@@ -62,7 +62,7 @@ class SourcesetDependenciesSettingsComponent(
                 }
         }
 
-    override val component = panel {
+    override val component = customPanel {
         add(toolbarDecorator.createPanelWithPopupHandler(sourcesetDependenciesList), BorderLayout.CENTER)
     }
 }
@@ -76,7 +76,7 @@ private class ChooseModuleDialog(modules: List<Module>, parent: JComponent) : Di
         }
     ).bordered(needTopEmptyBorder = false, needBottomEmptyBorder = false)
 
-    override fun createCenterPanel() = panel {
+    override fun createCenterPanel() = customPanel {
         preferredSize = Dimension(preferredSize.width, 300)
         add(
             label("Please select the modules to add as dependencies:")

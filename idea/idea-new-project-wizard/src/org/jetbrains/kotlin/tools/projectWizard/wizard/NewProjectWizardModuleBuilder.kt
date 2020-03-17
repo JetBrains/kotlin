@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard
 
 import com.intellij.ide.RecentProjectsManager
-import com.intellij.ide.projectWizard.ProjectSettingsStep
 import com.intellij.ide.util.projectWizard.*
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationNamesInfo
@@ -15,13 +14,11 @@ import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.SystemProperties
 import org.jetbrains.kotlin.idea.configuration.ExperimentalFeatures
-import org.jetbrains.kotlin.idea.framework.KotlinModuleSettingStep
 import org.jetbrains.kotlin.idea.framework.KotlinTemplatesFactory
 import org.jetbrains.kotlin.idea.projectWizard.ProjectCreationStats
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
@@ -30,16 +27,14 @@ import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.Plugins
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.wizard.service.IdeaServices
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.PomWizardStepComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.asHtml
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep.FirstWizardStepComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.runWithProgressBar
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.SecondStepWizardComponent
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
-import java.nio.file.Paths
+import javax.swing.JButton
 import javax.swing.JComponent
 import com.intellij.openapi.module.Module as IdeaModule
 
@@ -60,7 +55,6 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
 
     companion object {
         const val MODULE_BUILDER_ID = "kotlin.newProjectWizard.builder"
-        private const val DEFAULT_GROUP_ID = "me.user"
         private val projectNameValidator = StringValidators.shouldBeValidIdentifier("Project name", setOf('-', '_'))
         private const val INVALID_PROJECT_NAME_MESSAGE = "Invalid project name"
     }
@@ -68,7 +62,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
     override fun isAvailable(): Boolean = ExperimentalFeatures.NewWizard.isEnabled
 
     private var wizardContext: WizardContext? = null
-    private var pomValuesAreSet: Boolean = false
+    private var finishButtonClicked: Boolean = false
 
     override fun getModuleType(): ModuleType<*> = NewProjectWizardModuleType()
     override fun getParentGroup(): String = KotlinTemplatesFactory.KOTLIN_PARENT_GROUP_NAME
@@ -78,7 +72,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
         modulesProvider: ModulesProvider
     ): Array<ModuleWizardStep> {
         this.wizardContext = wizardContext
-        return arrayOf(ModuleNewWizardSecondStep(wizard, uiEditorUsagesStats))
+        return arrayOf(ModuleNewWizardSecondStep(wizard, uiEditorUsagesStats, wizardContext))
     }
 
     override fun commit(
@@ -114,19 +108,15 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
         }
     }
 
-    override fun modifySettingsStep(settingsStep: SettingsStep): ModuleWizardStep {
-        updateProjectNameAndPomDate(settingsStep)
-        return when (wizard.buildSystemType) {
-            BuildSystemType.Jps -> {
-                KotlinModuleSettingStep(
-                    JvmPlatforms.defaultJvmPlatform,
-                    this,
-                    settingsStep,
-                    wizardContext
-                )
-            }
-            else -> PomWizardStep(settingsStep, wizard)
-        }
+    private fun clickFinishButton() {
+        if (finishButtonClicked) return
+        finishButtonClicked = true
+        wizardContext?.getActionButtonWithText("Finish", "Next")?.doClick()
+    }
+
+    override fun modifySettingsStep(settingsStep: SettingsStep): ModuleWizardStep? {
+        clickFinishButton()
+        return null
     }
 
     override fun validateModuleName(moduleName: String): Boolean {
@@ -141,42 +131,10 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
         }
     }
 
-    private fun updateProjectNameAndPomDate(settingsStep: SettingsStep) {
-        if (pomValuesAreSet) return
-        val suggestedProjectName = wizard.context.read {
-            ProjectTemplatesPlugin::template.settingValue.suggestedProjectName.decapitalize()
-        }
-        settingsStep.moduleNameLocationSettings?.apply {
-            moduleName = wizard.projectName!!
-            moduleContentRoot = wizard.projectPath!!.toString()
-        }
-
-        settingsStep.safeAs<ProjectSettingsStep>()?.bindModuleSettings()
-
-        wizard.artifactId = suggestedProjectName
-        wizard.groupId = suggestGroupId()
-        pomValuesAreSet = true
-    }
-
-    private fun suggestGroupId(): String {
-        val username = SystemProperties.getUserName() ?: return DEFAULT_GROUP_ID
-        if (!username.matches("[\\w\\s]+".toRegex())) return DEFAULT_GROUP_ID
-        val usernameAsGroupId = username.trim().toLowerCase().split("\\s+".toRegex()).joinToString(separator = ".")
-        return "me.$usernameAsGroupId"
-    }
-
     override fun getCustomOptionsStep(context: WizardContext?, parentDisposable: Disposable?) =
         ModuleNewWizardFirstStep(wizard)
 
-    override fun setName(name: String) {
-        wizard.projectName = name
-    }
-
     override fun setModuleFilePath(path: String) = Unit
-
-    override fun setContentEntryPath(moduleRootPath: String) {
-        wizard.projectPath = Paths.get(moduleRootPath)
-    }
 }
 
 abstract class WizardStep(protected val wizard: IdeWizard, private val phase: GenerationPhase) : ModuleWizardStep() {
@@ -195,29 +153,13 @@ abstract class WizardStep(protected val wizard: IdeWizard, private val phase: Ge
     }
 }
 
-private class PomWizardStep(
-    originalSettingStep: SettingsStep,
-    wizard: IdeWizard
-) : WizardStep(wizard, GenerationPhase.PROJECT_GENERATION) {
-    private val pomWizardStepComponent = PomWizardStepComponent(wizard.context)
-
-    init {
-        originalSettingStep.addSettingsComponent(component)
-        pomWizardStepComponent.onInit()
-
-    }
-
-    override fun getComponent(): JComponent = pomWizardStepComponent.component
-}
-
-
 class ModuleNewWizardFirstStep(wizard: IdeWizard) : WizardStep(wizard, GenerationPhase.FIRST_STEP) {
     private val component = FirstWizardStepComponent(wizard)
     override fun getComponent(): JComponent = component.component
 
     init {
         runPreparePhase()
-        initDefaultProjectNameAndPathValues()
+        initDefaultValues()
         component.onInit()
     }
 
@@ -227,13 +169,29 @@ class ModuleNewWizardFirstStep(wizard: IdeWizard) : WizardStep(wizard, Generatio
         }
     }
 
-    private fun initDefaultProjectNameAndPathValues() {
+    override fun handleErrors(error: ValidationResult.ValidationError) {
+        component.navigateTo(error)
+    }
+
+    private fun initDefaultValues() {
         val suggestedProjectParentLocation = suggestProjectLocation()
         val suggestedProjectName = ProjectWizardUtil.findNonExistingFileName(suggestedProjectParentLocation, "untitled", "")
         wizard.context.writeSettings {
             StructurePlugin::name.reference.setValue(suggestedProjectName)
             StructurePlugin::projectPath.reference.setValue(suggestedProjectParentLocation / suggestedProjectName)
+            StructurePlugin::artifactId.reference.setValue(suggestedProjectName)
+
+            if (StructurePlugin::groupId.reference.notRequiredSettingValue == null) {
+                StructurePlugin::groupId.reference.setValue(suggestGroupId())
+            }
         }
+    }
+
+    private fun suggestGroupId(): String {
+        val username = SystemProperties.getUserName() ?: return DEFAULT_GROUP_ID
+        if (!username.matches("[\\w\\s]+".toRegex())) return DEFAULT_GROUP_ID
+        val usernameAsGroupId = username.trim().toLowerCase().split("\\s+".toRegex()).joinToString(separator = ".")
+        return "me.$usernameAsGroupId"
     }
 
     // copied from com.intellij.ide.util.projectWizard.WizardContext.getProjectFileDirectory
@@ -246,11 +204,16 @@ class ModuleNewWizardFirstStep(wizard: IdeWizard) : WizardStep(wizard, Generatio
         val productName = ApplicationNamesInfo.getInstance().lowercaseProductName
         return userHome.replace('/', File.separatorChar) + File.separator + productName.replace(" ", "") + "Projects"
     }
+
+    companion object {
+        private const val DEFAULT_GROUP_ID = "me.user"
+    }
 }
 
 class ModuleNewWizardSecondStep(
     wizard: IdeWizard,
-    uiEditorUsagesStats: UiEditorUsageStats
+    uiEditorUsagesStats: UiEditorUsageStats,
+    private val wizardContext: WizardContext
 ) : WizardStep(wizard, GenerationPhase.SECOND_STEP) {
     private val component = SecondStepWizardComponent(wizard, uiEditorUsagesStats)
     override fun getComponent(): JComponent = component.component
@@ -259,7 +222,22 @@ class ModuleNewWizardSecondStep(
         component.onInit()
     }
 
+    override fun getPreferredFocusedComponent(): JComponent? {
+        wizardContext.getActionButtonWithText("Next")?.apply {
+            text = "Finish"
+            updateUI()
+        }
+        return super.getPreferredFocusedComponent()
+    }
+
     override fun handleErrors(error: ValidationResult.ValidationError) {
         component.navigateTo(error)
     }
 }
+
+private fun WizardContext.getActionButtonWithText(text: String, alternativeText: String? = null): JButton? =
+    wizard?.cancelButton?.parent?.components?.find { child ->
+        child.safeAs<JButton>()?.let { button ->
+            button.text == text || alternativeText != null && button.text == alternativeText
+        } == true
+    } as? JButton

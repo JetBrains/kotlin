@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.customPanel
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ValidationIndicator
 import java.awt.BorderLayout
@@ -74,7 +74,7 @@ class ModulesEditorComponent(
     ) else null
 
     override val component: JComponent by lazy(LazyThreadSafetyMode.NONE) {
-        panel {
+        customPanel {
             if (needBorder) {
                 border = BorderFactory.createLineBorder(JBColor.border())
             }

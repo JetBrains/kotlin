@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting
 
+import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
@@ -31,6 +32,17 @@ abstract class UIComponentDelegatingSettingComponent<V : Any, T : SettingType<V>
 
     override fun focusOn() {
         uiComponent.focusOn()
+    }
+
+    override fun onValueUpdated(reference: SettingReference<*, *>?) {
+        super.onValueUpdated(reference)
+        if (reference == this.reference) {
+            ApplicationManager.getApplication().invokeLater {
+                if (uiComponent.getUiValue() != value) {
+                    value?.let(uiComponent::updateUiValue)
+                }
+            }
+        }
     }
 
     override val component: JComponent by lazy(LazyThreadSafetyMode.NONE) { uiComponent.component }

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.DropDownCom
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.PathFieldComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.TextFieldComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.label
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.customPanel
 import java.awt.BorderLayout
 import java.awt.event.ItemEvent
 import java.nio.file.Path
@@ -87,9 +87,9 @@ class VersionSettingComponent(
 
     override val validationIndicator = null
     override val component: JComponent by lazy(LazyThreadSafetyMode.NONE) {
-        panel {
+        customPanel {
             add(
-                panel {
+                customPanel {
                     add(settingLabel, BorderLayout.CENTER)
                 },
                 BorderLayout.WEST

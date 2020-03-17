@@ -40,7 +40,7 @@ internal inline fun label(text: String, bold: Boolean = false, init: JBLabel.() 
     init()
 }
 
-inline fun panel(layout: LayoutManager = BorderLayout(), init: JPanel.() -> Unit = {}) = JPanel(layout).apply(init)
+inline fun customPanel(layout: LayoutManager = BorderLayout(), init: JPanel.() -> Unit = {}) = JPanel(layout).apply(init)
 
 inline fun borderPanel(init: BorderLayoutPanel.() -> Unit = {}) = BorderLayoutPanel().apply(init)
 

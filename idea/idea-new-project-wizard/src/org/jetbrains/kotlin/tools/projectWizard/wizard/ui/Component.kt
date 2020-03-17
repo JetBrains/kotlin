@@ -22,6 +22,10 @@ abstract class Component : Displayable, ErrorNavigatable {
         this@Component.subComponents += it
     }
 
+    protected fun clearSubComponents() {
+        subComponents.clear()
+    }
+
     override fun navigateTo(error: ValidationResult.ValidationError) {
         subComponents.forEach { it.navigateTo(error) }
     }
