@@ -523,23 +523,27 @@ public final class TemplateSettings implements PersistentStateComponent<Template
                                @NotNull String defTemplate,
                                boolean registerTemplate, ClassLoader loader, PluginInfo info) throws JDOMException, InvalidDataException, IOException {
     InputStream inputStream = DecodeDefaultsUtil.getDefaultsInputStream(requestor, defTemplate);
-    if (inputStream != null) {
-      Element element = JDOMUtil.load(inputStream);
-      TemplateGroup defGroup = parseTemplateGroup(element, getDefaultTemplateName(defTemplate), loader);
-      if (defGroup != null) {
-        for (TemplateImpl template : defGroup.getElements()) {
-          String key = template.getKey();
-          String groupName = template.getGroupName();
-          if (StringUtil.isNotEmpty(key) && StringUtil.isNotEmpty(groupName)) {
-            myPredefinedTemplates.put(Pair.create(key, groupName), info);
-          }
+    if (inputStream == null) {
+      LOG.error("Unable to find template resource: " + defTemplate +
+                "; classLoader: " + loader +
+                "; plugin: " + info);
+      return;
+    }
+    Element element = JDOMUtil.load(inputStream);
+    TemplateGroup defGroup = parseTemplateGroup(element, getDefaultTemplateName(defTemplate), loader);
+    if (defGroup != null) {
+      for (TemplateImpl template : defGroup.getElements()) {
+        String key = template.getKey();
+        String groupName = template.getGroupName();
+        if (StringUtil.isNotEmpty(key) && StringUtil.isNotEmpty(groupName)) {
+          myPredefinedTemplates.put(Pair.create(key, groupName), info);
         }
+      }
 
-        TemplateGroup group = mergeParsedGroup(element, true, registerTemplate, defGroup);
-        if (group != null && group.getReplace() != null) {
-          for (TemplateImpl template : myTemplates.get(group.getReplace())) {
-            removeTemplate(template);
-          }
+      TemplateGroup group = mergeParsedGroup(element, true, registerTemplate, defGroup);
+      if (group != null && group.getReplace() != null) {
+        for (TemplateImpl template : myTemplates.get(group.getReplace())) {
+          removeTemplate(template);
         }
       }
     }
