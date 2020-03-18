@@ -123,7 +123,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
   private final CompletionThreadingBase myThreading;
   private final Object myLock = ObjectUtils.sentinel("CompletionProgressIndicator");
 
-  private final DumbModeNotifier myDumbModeNotifier;
+  private final EmptyCompletionNotifier myEmptyCompletionNotifier;
 
   CompletionProgressIndicator(Editor editor, @NotNull Caret caret, int invocationCount,
                               CodeCompletionHandlerBase handler, @NotNull OffsetMap offsetMap, @NotNull OffsetsInFile hostOffsets,
@@ -147,8 +147,8 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
     myLookup.addLookupListener(myLookupListener);
     myLookup.setCalculating(true);
 
-    myDumbModeNotifier = LightEdit.owns(editor.getProject()) ? LightEditUtil.createDumbModeCompletionNotifier() :
-                         new ProjectDumbModeNotifier();
+    myEmptyCompletionNotifier = LightEdit.owns(editor.getProject()) ? LightEditUtil.createEmptyCompletionNotifier() :
+                                new ProjectEmptyCompletionNotifier();
 
     myLookupManagerListener = evt -> {
       if (evt.getNewValue() != null) {
@@ -779,13 +779,12 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
   }
 
   private String getNoSuggestionsMessage(CompletionParameters parameters) {
-    String text = CompletionContributor.forParameters(parameters)
+    return CompletionContributor.forParameters(parameters)
                                        .stream()
                                        .map(c -> c.handleEmptyLookup(parameters, getEditor()))
                                        .filter(StringUtil::isNotEmpty)
                                        .findFirst()
                                        .orElse(LangBundle.message("completion.no.suggestions"));
-    return DumbService.isDumb(getProject()) ? text + myDumbModeNotifier.getIncompleteMessageSuffix() : text;
   }
 
   private LightweightHint showErrorHint(Project project, Editor editor, String text) {
@@ -794,7 +793,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
     final MessageBusConnection connection = project.getMessageBus().connect();
     connection.subscribe(EditorHintListener.TOPIC, listener);
     assert text != null;
-    myDumbModeNotifier.showIncompleteHint(editor, text);
+    myEmptyCompletionNotifier.showIncompleteHint(editor, text, DumbService.isDumb(project));
     connection.disconnect();
     return result[0];
   }
@@ -908,16 +907,12 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
     }
   }
 
-  private static class ProjectDumbModeNotifier implements DumbModeNotifier {
-
+  private static class ProjectEmptyCompletionNotifier implements EmptyCompletionNotifier {
     @Override
-    public String getIncompleteMessageSuffix() {
-      return CodeInsightBundle.message("completion.incomplete.during.indexing.suffix");
-    }
-
-    @Override
-    public void showIncompleteHint(@NotNull Editor editor, @NotNull String text) {
-      HintManager.getInstance().showInformationHint(editor, StringUtil.escapeXmlEntities(text), HintManager.UNDER);
+    public void showIncompleteHint(@NotNull Editor editor, @NotNull String text, boolean isDumbMode) {
+      String message = isDumbMode ?
+                       text + CodeInsightBundle.message("completion.incomplete.during.indexing.suffix") : text;
+      HintManager.getInstance().showInformationHint(editor, StringUtil.escapeXmlEntities(message), HintManager.UNDER);
     }
   }
 }
