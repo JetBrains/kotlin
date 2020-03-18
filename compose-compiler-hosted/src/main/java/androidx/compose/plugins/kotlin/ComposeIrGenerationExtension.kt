@@ -33,15 +33,16 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 
 object ComposeTransforms {
-    const val DEFAULT = 0b0111111
-    const val NONE = 0b0000000
-    const val FRAMED_CLASSES = 0b0000001
-    const val LAMBDA_MEMOIZATION = 0b0000010
-    const val COMPOSER_PARAM = 0b0000100
-    const val INTRINSICS = 0b0001000
-    const val CALLS_AND_EMITS = 0b0010000
-    const val RESTART_GROUPS = 0b0100000
-    const val CONTROL_FLOW_GROUPS = 0b1000000
+    const val DEFAULT = 0b00111111
+    const val NONE = 0b00000000
+    const val FRAMED_CLASSES = 0b00000001
+    const val LAMBDA_MEMOIZATION = 0b00000010
+    const val COMPOSER_PARAM = 0b00000100
+    const val INTRINSICS = 0b00001000
+    const val CALLS_AND_EMITS = 0b00010000
+    const val RESTART_GROUPS = 0b00100000
+    const val CONTROL_FLOW_GROUPS = 0b01000000
+    const val FUNCTION_BODY_SKIPPING = 0b10000000
 }
 
 class ComposeIrGenerationExtension : IrGenerationExtension {
@@ -94,11 +95,20 @@ class ComposeIrGenerationExtension : IrGenerationExtension {
                 ComposerLambdaMemoization(jvmContext, symbolRemapper, bindingTrace).lower(module)
             }
 
+            val functionBodySkipping = transforms and ComposeTransforms.FUNCTION_BODY_SKIPPING != 0
+
             // transform all composable functions to have an extra synthetic composer
             // parameter. this will also transform all types and calls to include the extra
             // parameter.
             if (transforms and ComposeTransforms.COMPOSER_PARAM != 0) {
-                ComposerParamTransformer(jvmContext, symbolRemapper, bindingTrace).lower(module)
+                ComposerParamTransformer(
+                    jvmContext,
+                    symbolRemapper,
+                    bindingTrace,
+                    functionBodySkipping
+                ).lower(module)
+            } else if (functionBodySkipping) {
+                error("Cannot have FUNCTION_BODY_SKIPPING on without COMPOSER_PARAM")
             }
 
             // transform calls to the currentComposer to just use the local parameter from the

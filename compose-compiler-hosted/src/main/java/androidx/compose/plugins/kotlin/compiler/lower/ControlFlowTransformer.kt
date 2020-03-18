@@ -16,6 +16,7 @@
 
 package androidx.compose.plugins.kotlin.compiler.lower
 
+import androidx.compose.plugins.kotlin.KtxNameConventions
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
 import org.jetbrains.kotlin.ir.expressions.IrElseBranch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.IrWhen
@@ -157,17 +159,14 @@ class ControlFlowTransformer(
 
     private fun visitFunctionInScope(declaration: IrFunction): IrStatement {
         val scope = currentFunctionScope
-        if (!scope.isComposable()) return super.visitFunction(declaration)
-        declaration.transformChildren()
-
+        if (!scope.isComposable) return super.visitFunction(declaration)
         val body = declaration.body ?: return declaration
 
-        var transformed: IrExpression = IrBlockImpl(
+        val preamble = IrBlockImpl(
             body.startOffset,
             body.endOffset,
             declaration.returnType,
-            null,
-            body.statements
+            null
         )
 
         // right now this is a replaceable group, but we will turn it into a "restart group" in the
@@ -177,24 +176,63 @@ class ControlFlowTransformer(
         val start = irStartReplaceableGroup(declaration.irSourceKey())
         val end = { irEndReplaceableGroup() }
 
-        transformed = when {
-            transformed.endsWithReturnOrJump() -> {
-                scope.pushEnd(end)
-                prependSimple(start, transformed)
-            }
-            else -> {
-                scope.pushEnd(end)
-                wrapSimple(start, transformed, end())
+        preamble.statements.add(start)
+
+        declaration.valueParameters.forEachIndexed { index, param ->
+            val defaultExpr = param.defaultValue
+            if (defaultExpr != null) {
+                param.defaultValue = null
+                val varSymbol = irTemporary(
+                    irIfThenElse(
+                        param.type,
+                        condition = irGetBit(currentFunctionScope.defaultParameter!!, index),
+                        thenPart = defaultExpr.expression,
+                        elsePart = irGet(param)
+                    ),
+                    param.name.identifier,
+                    param.type,
+                    exactName = true
+                )
+                varSymbol.transformChildrenVoid()
+                currentFunctionScope.remappedParams[param] = varSymbol
+                preamble.statements.add(varSymbol)
             }
         }
+
+        declaration.transformChildrenVoid()
+
+        var transformed: IrExpression = IrBlockImpl(
+            body.startOffset,
+            body.endOffset,
+            declaration.returnType,
+            null,
+            body.statements
+        )
+
+        scope.pushEnd(end)
+
+        transformed = when {
+            !transformed.endsWithReturnOrJump() -> {
+                wrapSimple(null, transformed, end())
+            }
+            else -> {
+                transformed
+            }
+        }
+
+        val statements = (
+                preamble.statements
+            ) + (
+                when (transformed) {
+                    is IrBlock -> transformed.statements
+                    else -> listOf(transformed)
+                }
+            )
 
         declaration.body = IrBlockBodyImpl(
             body.startOffset,
             body.endOffset,
-            when (transformed) {
-                is IrBlock -> transformed.statements
-                else -> listOf(transformed)
-            }
+            statements
         )
 
         return declaration
@@ -233,7 +271,7 @@ class ControlFlowTransformer(
     }
 
     private fun nearestComposer(): IrValueParameter {
-        return currentFunctionScope.composerParameter()
+        return currentFunctionScope.composerParameter
             ?: error("Not in a composable function")
     }
 
@@ -309,12 +347,17 @@ class ControlFlowTransformer(
         value: IrExpression,
         nameHint: String? = null,
         irType: IrType = value.type,
-        isVar: Boolean = false
+        isVar: Boolean = false,
+        exactName: Boolean = false
     ): IrVariableImpl {
         val scope = currentFunctionScope
+        val name = if (exactName && nameHint != null)
+            nameHint
+        else
+            scope.getNameForTemporary(nameHint)
         val tempVarDescriptor = IrTemporaryVariableDescriptorImpl(
             scope.function.symbol.descriptor,
-            Name.identifier(scope.getNameForTemporary(nameHint)),
+            Name.identifier(name),
             irType.toKotlinType(),
             isVar
         )
@@ -385,9 +428,9 @@ class ControlFlowTransformer(
     }
 
     private fun wrapSimple(
-        start: IrExpression,
+        start: IrExpression?,
         wrapped: IrExpression,
-        end: IrExpression
+        end: IrExpression?
     ): IrExpression {
         if (wrapped.type.isUnitOrNullableUnit()) {
             return IrBlockImpl(
@@ -395,7 +438,7 @@ class ControlFlowTransformer(
                 wrapped.endOffset,
                 wrapped.type,
                 null,
-                listOf(
+                listOfNotNull(
                     start,
                     wrapped,
                     end
@@ -409,7 +452,7 @@ class ControlFlowTransformer(
                 wrapped.endOffset,
                 wrapped.type,
                 null,
-                listOf(
+                listOfNotNull(
                     start,
                     tempVar,
                     end,
@@ -460,14 +503,10 @@ class ControlFlowTransformer(
         symbol: IrReturnTargetSymbol,
         pushEndCall: (IrExpression) -> Unit
     ) {
-        var isEarly = false
         loop@ for (scope in scopeStack.asReversed()) {
             when (scope) {
                 is Scope.FunctionScope -> {
                     scope.markReturn(pushEndCall)
-                    if (isEarly) {
-                        scope.hasEarlyReturn = true
-                    }
                     if (scope.function == symbol.owner) {
                         break@loop
                     } else {
@@ -475,7 +514,6 @@ class ControlFlowTransformer(
                     }
                 }
                 is Scope.BlockScope -> {
-                    isEarly = true
                     scope.markReturn(pushEndCall)
                 }
             }
@@ -527,8 +565,15 @@ class ControlFlowTransformer(
         return super.visitCall(expression)
     }
 
+    override fun visitGetValue(expression: IrGetValue): IrExpression {
+        if (!currentFunctionScope.isComposable) return expression
+        val valueSymbol = currentFunctionScope.remappedParams[expression.symbol.owner]
+            ?: return expression
+        return irGet(valueSymbol)
+    }
+
     override fun visitReturn(expression: IrReturn): IrExpression {
-        if (!currentFunctionScope.isComposable()) return super.visitReturn(expression)
+        if (!currentFunctionScope.isComposable) return super.visitReturn(expression)
         val endBlock = IrBlockImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
@@ -573,7 +618,7 @@ class ControlFlowTransformer(
     }
 
     override fun visitBreakContinue(jump: IrBreakContinue): IrExpression {
-        if (!currentFunctionScope.isComposable()) return super.visitBreakContinue(jump)
+        if (!currentFunctionScope.isComposable) return super.visitBreakContinue(jump)
         val endBlock = IrBlockImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
@@ -593,12 +638,12 @@ class ControlFlowTransformer(
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop): IrExpression {
-        if (!currentFunctionScope.isComposable()) return super.visitDoWhileLoop(loop)
+        if (!currentFunctionScope.isComposable) return super.visitDoWhileLoop(loop)
         return handleLoop(loop as IrLoopBase)
     }
 
     override fun visitWhileLoop(loop: IrWhileLoop): IrExpression {
-        if (!currentFunctionScope.isComposable()) return super.visitWhileLoop(loop)
+        if (!currentFunctionScope.isComposable) return super.visitWhileLoop(loop)
         return handleLoop(loop as IrLoopBase)
     }
 
@@ -623,7 +668,7 @@ class ControlFlowTransformer(
     }
 
     override fun visitWhen(expression: IrWhen): IrExpression {
-        if (!currentFunctionScope.isComposable()) return super.visitWhen(expression)
+        if (!currentFunctionScope.isComposable) return super.visitWhen(expression)
 
         // Composable calls in conditions are more expensive than composable calls in the different
         // result branches of the when clause. This is because if we have N branches of a when
@@ -737,23 +782,36 @@ class ControlFlowTransformer(
 
     sealed class Scope {
         class FunctionScope(val function: IrFunction) : BlockScope() {
+            val remappedParams = mutableMapOf<IrValueDeclaration, IrValueDeclaration>()
+
             private var lastTemporaryIndex: Int = 0
 
             private fun nextTemporaryIndex(): Int = lastTemporaryIndex++
 
-            fun isComposable(): Boolean {
-                return composerParameter() != null
-            }
+            var composerParameter: IrValueParameter? = null
+                private set
 
-            var hasEarlyReturn = false
+            var defaultParameter: IrValueParameter? = null
+                private set
 
-            fun composerParameter(): IrValueParameter? {
-                val param = function.valueParameters.lastOrNull()
-                if (param != null && param.isComposerParam()) {
-                    return param
+            var changedParameter: IrValueParameter? = null
+                private set
+
+            init {
+                loop@ for (param in function.valueParameters.asReversed()) {
+                    when (param.name.identifier) {
+                        KtxNameConventions.COMPOSER_PARAMETER.identifier ->
+                            composerParameter = param
+                        KtxNameConventions.DEFAULT_PARAMETER.identifier ->
+                            defaultParameter = param
+                        KtxNameConventions.CHANGED_PARAMETER.identifier ->
+                            changedParameter = param
+                        else -> break@loop
+                    }
                 }
-                return null
             }
+
+            val isComposable = composerParameter != null
 
             fun getNameForTemporary(nameHint: String?): String {
                 val index = nextTemporaryIndex()
