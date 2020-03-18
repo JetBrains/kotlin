@@ -8,12 +8,9 @@ package com.jetbrains.mpp
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.service.project.IdeModelsProvider
-import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
 import com.intellij.openapi.project.Project
-import com.jetbrains.konan.BinaryRunConfigurationBase
 import com.jetbrains.konan.KonanExecutable
 import com.jetbrains.konan.ProjectDataServiceBase
-import com.jetbrains.mpp.ProjectWorkspace
 import com.jetbrains.mpp.execution.BinaryRunConfiguration
 import com.jetbrains.mpp.execution.BinaryRunConfigurationType
 import org.jetbrains.kotlin.idea.configuration.KotlinTargetData

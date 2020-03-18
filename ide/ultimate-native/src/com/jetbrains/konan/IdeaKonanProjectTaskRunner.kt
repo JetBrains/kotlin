@@ -14,8 +14,8 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.task.*
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
-import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.kotlin.platform.konan.isNative
+import org.jetbrains.plugins.gradle.util.GradleConstants
 
 internal fun ModuleBuildTask.isSupported() =
     when (this) {
@@ -38,15 +38,6 @@ class IdeaKonanProjectTaskRunner : ProjectTaskRunner() {
 
     /* This method has limited usage, so it's safe to always return false here */
     override fun canRun(task: ProjectTask): Boolean = false
-
-    override fun run(
-        project: Project,
-        context: ProjectTaskContext,
-        notification: ProjectTaskNotification?,
-        tasks: MutableCollection<out ProjectTask>
-    ) {
-        if (tasks.isEmpty()) return
-    }
 
     private fun hasKonanModules(project: Project): Boolean =
         CachedValuesManager.getManager(project).getCachedValue(project) {

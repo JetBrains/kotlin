@@ -5,19 +5,11 @@
 
 package com.jetbrains.konan
 
-import com.intellij.execution.*
-import com.intellij.notification.NotificationType
-import com.intellij.openapi.components.*
+import com.intellij.execution.ExecutionTargetManager
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.project.Project
-import org.jdom.Element
-import org.jetbrains.kotlin.konan.CompilerVersion
-import org.jetbrains.kotlin.konan.CompilerVersionImpl
-import org.jetbrains.kotlin.konan.MetaVersion
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.util.DependencyDirectories
-import java.io.File
-import java.util.*
-import kotlin.collections.HashSet
 
 @State(name = "KotlinMultiplatform", storages = [(Storage(StoragePathMacros.WORKSPACE_FILE))])
 class IdeaKonanWorkspace(project: Project) : WorkspaceBase(project) {

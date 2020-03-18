@@ -2,42 +2,39 @@ plugins {
     kotlin("jvm")
 }
 
-val clionVersion: String by rootProject.extra
-
-repositories {
-    maven("https://repo.labs.intellij.net/intellij-proprietary-modules")
-}
-
 val ultimateTools: Map<String, Any> by rootProject.extensions
-val addCidrDeps: (Project) -> Unit by ultimateTools
+val proprietaryRepositories: Project.() -> Unit by ultimateTools
+val cidrVersion: String by rootProject.extra
 
-addCidrDeps(project)
+proprietaryRepositories(project)
 
 dependencies {
-    implementation(kotlin("stdlib"))
-    implementation(project(":idea")) { isTransitive = false }
-    implementation(project(":idea:idea-gradle")) { isTransitive = false }
-    implementation(project(":kotlin-ultimate:ide:common-native"))
-    implementation(project(":kotlin-ultimate:ide:common-noncidr-native"))
+    compileOnly(kotlin("stdlib"))
+    compileOnly(project(":compiler:util")) { isTransitive = false }
+    compileOnly(project(":idea:idea-gradle")) { isTransitive = false }
+    compileOnly(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
+    compileOnly(project(":kotlin-ultimate:ide:common-noncidr-native")) { isTransitive = false }
     compileOnly(intellijDep()) { includeJars(
-        "android-base-common",
         "external-system-rt",
         "extensions",
+        "idea",
         "jdom",
         "platform-api",
         "platform-impl",
         "platform-util-ex",
         "platform-util-ui",
+        "platform-ide-util-io",
         "util"
     ) }
     compileOnly(intellijPluginDep("android")) { includeJars("sdk-tools") }
+    compileOnly(intellijPluginDep("gradle"))
     compileOnly(intellijPluginDep("java")) { includeJars(
         "java-api",
         "java-impl"
     ) }
 
-    implementation("com.jetbrains.intellij.cidr:cidr-cocoa-common:$clionVersion") { isTransitive = false }
-    implementation("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$clionVersion") { isTransitive = false }
+    compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa-common:$cidrVersion") { isTransitive = false }
+    compileOnly("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$cidrVersion") { isTransitive = false }
 }
 
 

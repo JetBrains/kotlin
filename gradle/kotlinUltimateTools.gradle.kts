@@ -8,8 +8,6 @@ import kotlin.reflect.KFunction
 val ultimateTools: Map<String, KFunction<Any>> = listOf<KFunction<Any>>(
     ::ijProductBranch,
     ::disableBuildTasks,
-
-    ::addCidrDeps,
     ::addIdeaNativeModuleDeps,
     ::addKotlinGradleToolingDeps,
     ::handleSymlink,
@@ -173,16 +171,6 @@ fun addIdeaNativeModuleDeps(project: Project) {
         }
     }
     if (isStandaloneBuild) addIdeaNativeModuleDepsStandalone(project) else addIdeaNativeModuleDepsComposite(project)
-}
-
-fun addCidrDeps(project: Project) = with(project) {
-    val nativeDebugPluginDir: File? by rootProject.extra
-
-    if (nativeDebugPluginDir?.exists() == true) { // Idea Ultimate build
-        dependencies {
-            add("compile", fileTree(nativeDebugPluginDir!!) { include("**/*.jar") })
-        }
-    }
 }
 
 fun addKotlinGradleToolingDepsComposite(project: Project) = with(project) {

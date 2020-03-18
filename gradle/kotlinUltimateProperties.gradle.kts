@@ -75,7 +75,9 @@ if (rootProject.extra.has("versions.nativeDebug")) {
     rootProject.extra["nativeDebugVersion"] = nativeDebugVersion
     rootProject.extra["nativeDebugRepo"] = rootProject.extra["versions.nativeDebug.repo"] as String
     rootProject.extra["nativeDebugPluginDir"] = externalDepsDir("native-debug-plugin", "native-debug-$nativeDebugVersion")
+}
 
+if (rootProject.extra.has("versions.lldbFrontend.hash")) {
     val lldbFrontendHash = rootProject.extra["versions.lldbFrontend.hash"] as String
     rootProject.extra["lldbFrontendHash"] = lldbFrontendHash
 

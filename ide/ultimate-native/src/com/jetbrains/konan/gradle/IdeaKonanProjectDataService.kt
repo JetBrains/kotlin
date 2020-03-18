@@ -5,21 +5,12 @@
 
 package com.jetbrains.konan.gradle
 
-import com.intellij.execution.RunManager
-import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.openapi.externalSystem.model.DataNode
-import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.service.project.IdeModelsProvider
-import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
-import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
 import com.intellij.openapi.project.Project
-import com.intellij.util.execution.ParametersListUtil
 import com.jetbrains.konan.*
-import org.jetbrains.kotlin.gradle.KonanRunConfigurationModel
 import org.jetbrains.kotlin.idea.configuration.KotlinTargetData
-import org.jetbrains.kotlin.idea.configuration.kotlinNativeHome
-import org.jetbrains.kotlin.idea.configuration.readGradleProperty
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
 class IdeaKonanProjectDataService : ProjectDataServiceBase() {
