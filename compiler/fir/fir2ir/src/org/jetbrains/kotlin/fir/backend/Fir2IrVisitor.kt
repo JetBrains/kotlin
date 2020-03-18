@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -483,16 +484,17 @@ class Fir2IrVisitor(
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: Any?): IrElement {
         val subjectVariable = generateWhenSubjectVariable(whenExpression)
-        val origin = when (val psi = whenExpression.psi) {
-            is KtWhenExpression -> IrStatementOrigin.WHEN
-            is KtIfExpression -> IrStatementOrigin.IF
-            is KtBinaryExpression -> when (psi.operationToken) {
+        val psi = whenExpression.psi
+        val origin = when (whenExpression.source?.elementType) {
+            KtNodeTypes.WHEN -> IrStatementOrigin.WHEN
+            KtNodeTypes.IF -> IrStatementOrigin.IF
+            KtNodeTypes.BINARY_EXPRESSION -> when ((psi as? KtBinaryExpression)?.operationToken) {
                 KtTokens.ELVIS -> IrStatementOrigin.ELVIS
                 KtTokens.OROR -> IrStatementOrigin.OROR
                 KtTokens.ANDAND -> IrStatementOrigin.ANDAND
                 else -> null
             }
-            is KtUnaryExpression -> IrStatementOrigin.EXCLEXCL
+            KtNodeTypes.POSTFIX_EXPRESSION -> IrStatementOrigin.EXCLEXCL
             else -> null
         }
         return conversionScope.withSubject(subjectVariable) {
@@ -555,7 +557,7 @@ class Fir2IrVisitor(
 
     override fun visitWhileLoop(whileLoop: FirWhileLoop, data: Any?): IrElement {
         return whileLoop.convertWithOffsets { startOffset, endOffset ->
-            val origin = if (whileLoop.psi is KtForExpression) IrStatementOrigin.FOR_LOOP_INNER_WHILE
+            val origin = if (whileLoop.source?.elementType == KtNodeTypes.FOR) IrStatementOrigin.FOR_LOOP_INNER_WHILE
             else IrStatementOrigin.WHILE_LOOP
             IrWhileLoopImpl(startOffset, endOffset, irBuiltIns.unitType, origin).apply {
                 loopMap[whileLoop] = this

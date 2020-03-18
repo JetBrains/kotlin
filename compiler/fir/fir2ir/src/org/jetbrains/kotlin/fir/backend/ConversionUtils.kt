@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.PsiCompiledElement
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -31,8 +32,6 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtForExpression
-import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.types.Variance
@@ -212,12 +211,18 @@ internal fun FirReference.statementOrigin(): IrStatementOrigin? {
         is FirResolvedNamedReference -> when (resolvedSymbol) {
             is AccessorSymbol, is SyntheticPropertySymbol -> IrStatementOrigin.GET_PROPERTY
             is FirNamedFunctionSymbol -> when {
-                resolvedSymbol.callableId.isInvoke() -> IrStatementOrigin.INVOKE
-                source.psi is KtForExpression && resolvedSymbol.callableId.isIteratorNext() -> IrStatementOrigin.FOR_LOOP_NEXT
-                source.psi is KtForExpression && resolvedSymbol.callableId.isIteratorHasNext() -> IrStatementOrigin.FOR_LOOP_HAS_NEXT
-                source.psi is KtForExpression && resolvedSymbol.callableId.isIterator() -> IrStatementOrigin.FOR_LOOP_ITERATOR
-                source.psi is KtOperationReferenceExpression -> nameToOperationConventionOrigin[resolvedSymbol.callableId.callableName]
-                else -> null
+                resolvedSymbol.callableId.isInvoke() ->
+                    IrStatementOrigin.INVOKE
+                source?.elementType == KtNodeTypes.FOR && resolvedSymbol.callableId.isIteratorNext() ->
+                    IrStatementOrigin.FOR_LOOP_NEXT
+                source?.elementType == KtNodeTypes.FOR && resolvedSymbol.callableId.isIteratorHasNext() ->
+                    IrStatementOrigin.FOR_LOOP_HAS_NEXT
+                source?.elementType == KtNodeTypes.FOR && resolvedSymbol.callableId.isIterator() ->
+                    IrStatementOrigin.FOR_LOOP_ITERATOR
+                source?.elementType == KtNodeTypes.OPERATION_REFERENCE ->
+                    nameToOperationConventionOrigin[resolvedSymbol.callableId.callableName]
+                else ->
+                    null
             }
             else -> null
         }

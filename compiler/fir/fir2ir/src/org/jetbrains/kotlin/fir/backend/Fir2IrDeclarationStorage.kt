@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 
@@ -327,7 +326,7 @@ class Fir2IrDeclarationStorage(
         val simpleFunction = function as? FirSimpleFunction
         val containerSource = simpleFunction?.containerSource
         val descriptor = containerSource?.let { WrappedFunctionDescriptorWithContainerSource(it) } ?: WrappedSimpleFunctionDescriptor()
-        val isLambda = function.psi is KtFunctionLiteral
+        val isLambda = function.source?.elementType == KtNodeTypes.FUNCTION_LITERAL
         val updatedOrigin = when {
             isLambda -> IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
             function.symbol.callableId.isKFunctionInvoke() -> IrDeclarationOrigin.FAKE_OVERRIDE
