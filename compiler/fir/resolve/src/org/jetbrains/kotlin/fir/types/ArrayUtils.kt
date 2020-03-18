@@ -19,7 +19,9 @@ fun ConeTypeProjection.createArrayOf(session: FirSession, nullable: Boolean = fa
     if (this is ConeKotlinTypeProjection) {
         val type = type.lowerBoundIfFlexible()
         if (type is ConeClassLikeType) {
-            val primitiveArrayId = StandardClassIds.primitiveArrayTypeByElementType[type.lookupTag.classId]
+            val classId = type.lookupTag.classId
+            val primitiveArrayId =
+                StandardClassIds.primitiveArrayTypeByElementType[classId] ?: StandardClassIds.unsignedArrayTypeByElementType[classId]
             if (primitiveArrayId != null) {
                 return primitiveArrayId.invoke(symbolProvider).constructType(emptyArray(), nullable)
             }
@@ -36,7 +38,7 @@ fun ConeKotlinType.arrayElementType(session: FirSession): ConeKotlinType? {
     val classId = type.lookupTag.classId
     if (classId == StandardClassIds.Array)
         return (type.typeArguments.first() as ConeKotlinTypeProjection).type
-    val elementType = StandardClassIds.elementTypeByPrimitiveArrayType[classId]
+    val elementType = StandardClassIds.elementTypeByPrimitiveArrayType[classId] ?: StandardClassIds.elementTypeByUnsignedArrayType[classId]
     if (elementType != null) {
         return elementType.invoke(session.firSymbolProvider).constructType(emptyArray(), isNullable = false)
     }

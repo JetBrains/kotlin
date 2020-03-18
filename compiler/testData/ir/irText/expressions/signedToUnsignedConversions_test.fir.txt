@@ -77,8 +77,8 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
   FUN name:takeULong visibility:public modality:FINAL <> (u:kotlin.ULong) returnType:kotlin.Unit
     VALUE_PARAMETER name:u index:0 type:kotlin.ULong
     BLOCK_BODY
-  FUN name:takeUBytes visibility:public modality:FINAL <> (u:kotlin.Array<out kotlin.UByte>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:u index:0 type:kotlin.Array<out kotlin.UByte> varargElementType:kotlin.UByte [vararg]
+  FUN name:takeUBytes visibility:public modality:FINAL <> (u:kotlin.UByteArray) returnType:kotlin.Unit
+    VALUE_PARAMETER name:u index:0 type:kotlin.UByteArray varargElementType:kotlin.UByte [vararg]
     BLOCK_BODY
   FUN name:takeLong visibility:public modality:FINAL <> (l:kotlin.Long) returnType:kotlin.Unit
     VALUE_PARAMETER name:l index:0 type:kotlin.Long
