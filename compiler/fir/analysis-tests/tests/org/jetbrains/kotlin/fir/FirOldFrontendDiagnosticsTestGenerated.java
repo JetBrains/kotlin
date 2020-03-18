@@ -10986,11 +10986,6 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/inference/nothingType/inferArgumentToNothingFromNullConstant.kt");
             }
 
-            @TestMetadata("inferenceWithRecursiveGenericsAndNothing.kt")
-            public void testInferenceWithRecursiveGenericsAndNothing() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/inference/nothingType/inferenceWithRecursiveGenericsAndNothing.kt");
-            }
-
             @TestMetadata("kt24490.kt")
             public void testKt24490() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/nothingType/kt24490.kt");
