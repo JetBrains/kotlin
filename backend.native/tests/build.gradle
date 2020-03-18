@@ -2675,6 +2675,11 @@ task initializers5(type: KonanLocalTest) {
     source = "runtime/basic/initializers5.kt"
 }
 
+task initializers6(type: KonanLocalTest) {
+    disabled = project.testTarget == 'wasm32' // Needs workers.
+    source = "runtime/basic/initializers6.kt"
+}
+
 task expression_as_statement(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // uses exceptions.
     goldValue = "Ok\n"
