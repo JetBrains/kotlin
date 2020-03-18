@@ -4,7 +4,6 @@ package com.intellij.openapi.externalSystem.service.ui
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil.getJavaSdkType
-import com.intellij.openapi.externalSystem.service.ui.ExternalSystemJdkComboBox.select
 import com.intellij.openapi.externalSystem.test.ExternalSystemTestCase
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
@@ -40,7 +39,7 @@ abstract class ExternalSystemJdkComboBoxTestCase : ExternalSystemTestCase() {
   }
 
   protected fun assertSelectedJdk(selectionName: String, jdk: Sdk) {
-    select(comboBox.model, selectionName)
+    comboBox.select(selectionName)
     val selectedJdk = comboBox.selectedJdk!!
     assertEquals(jdk.name, selectedJdk.name)
     assertEquals(jdk.versionString, selectedJdk.versionString)
