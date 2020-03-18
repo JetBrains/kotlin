@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,6 +30,10 @@ import java.util.regex.Pattern
 
 private val BUILD_IOS_APP_TASK_ID = Key.create<BuildIOSAppTask>(BuildIOSAppTask::class.java.name)
 
+internal object XCFileExtensions {
+    const val project = "xcodeproj"
+    const val workspace = "xcworkspace"
+}
 
 class BuildIOSAppTask : BeforeRunTask<BuildIOSAppTask>(BUILD_IOS_APP_TASK_ID) {
     init {
@@ -59,6 +63,16 @@ private class BuildConfiguration : CidrBuildConfiguration {
     override fun getName(): String = "Xcode Build Configuration"
 }
 
+private class XCProjectFile(file: File) {
+    val absolutePath: String = file.absolutePath
+
+    val selector: String
+        get() = if (absolutePath.endsWith(XCFileExtensions.workspace))
+            "-workspace"
+        else
+            "-project"
+}
+
 class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
     override fun getName() = "Build iOS app"
 
@@ -75,7 +89,7 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
     ): Boolean {
         if (configuration !is AppleRunConfiguration) return false
         val workDirectory = configuration.project.basePath ?: return false
-        val xcodeprojFile = getXcodeprojFile(workDirectory, configuration.xcodeproj) ?: return false
+        val xcProjectFile = findXCProjectFile(workDirectory, configuration.xcodeproj) ?: return false
 
         val buildContext = CidrBuild.BuildContext(
             configuration.project,
@@ -87,7 +101,7 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
 
         buildContext.processHandler = createBuildProcess(
             workDirectory,
-            xcodeprojFile,
+            xcProjectFile,
             configuration.xcodeScheme,
             FileUtil.join(workDirectory, configuration.iosBuildDirectory),
             configuration.xcodeSdk(environment.executionTarget)
@@ -106,7 +120,7 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
 
     private fun createBuildProcess(
         workDirectory: String,
-        xcodeprojFile: File,
+        xcProjectFile: XCProjectFile,
         scheme: String,
         buildDirectory: String,
         sdk: String
@@ -118,7 +132,7 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
         // It seems that Xcode simply adds /usr/local/bin out of nowhere, but xcodebuild does not
         cmd.withEnvironment("PATH", "/usr/local/bin:" + cmd.parentEnvironment["PATH"])
         cmd.exePath = "/usr/bin/xcodebuild"
-        cmd.addParameters("-project", xcodeprojFile.absolutePath)
+        cmd.addParameters(xcProjectFile.selector, xcProjectFile.absolutePath)
         cmd.addParameters("-scheme", scheme)
         cmd.addParameters("OBJROOT=$buildDirectory")
         cmd.addParameters("SYMROOT=$buildDirectory")
@@ -127,13 +141,26 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
         return OSProcessHandler(cmd)
     }
 
-    private fun getXcodeprojFile(workDirectory: String, xcodeprojRelativeDirectory: String?): File? {
+    private fun findXCProjectFile(workDirectory: String, xcodeprojRelativeDirectory: String?): XCProjectFile? {
         if (xcodeprojRelativeDirectory == null) {
             return null
         }
 
-        val xcodeprojAbsolute = FileUtil.join(workDirectory, xcodeprojRelativeDirectory)
-        val xcodeprojPattern = Pattern.compile(".+\\.xcodeproj")
-        return FileUtil.findFilesOrDirsByMask(xcodeprojPattern, File(xcodeprojAbsolute)).firstOrNull()
+        val xcodeprojAbsoluteDirectory = FileUtil.join(workDirectory, xcodeprojRelativeDirectory)
+
+        val projectFilePatterns = listOf(
+            Pattern.compile(".+\\.${XCFileExtensions.workspace}"),
+            Pattern.compile(".+\\.${XCFileExtensions.project}")
+        )
+
+        for (pattern in projectFilePatterns) {
+            val files = FileUtil.findFilesOrDirsByMask(pattern, File(xcodeprojAbsoluteDirectory))
+
+            files.minBy { it.absolutePath.lastIndexOf('/') }?.also {
+                return XCProjectFile(it)
+            }
+        }
+
+        return null
     }
 }
