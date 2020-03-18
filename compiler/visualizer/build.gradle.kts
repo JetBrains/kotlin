@@ -13,7 +13,7 @@ dependencies {
     
     testCompile(commonDep("junit:junit"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(projectTests(":compiler:fir:resolve"))
+    testCompile(projectTests(":compiler:fir:analysis-tests"))
 
 }
 

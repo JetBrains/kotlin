@@ -35,7 +35,7 @@ dependencies {
 
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntime(project(":kotlin-reflect"))
-    testCompile(projectTests(":compiler:fir:resolve"))
+    testCompile(projectTests(":compiler:fir:analysis-tests"))
     testCompile(project(":compiler:fir:resolve"))
     testCompile(project(":compiler:fir:dump"))
 }

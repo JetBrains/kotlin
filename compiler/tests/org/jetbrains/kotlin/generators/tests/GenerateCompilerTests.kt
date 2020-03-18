@@ -545,7 +545,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("compiler/fir/resolve/tests", "compiler/fir/resolve/testData") {
+    testGroup("compiler/fir/analysis-tests/tests", "compiler/fir/analysis-tests/testData") {
         testClass<AbstractFirDiagnosticsTest> {
             model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
@@ -555,31 +555,31 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("compiler/fir/resolve/tests", "compiler/fir/resolve/testData") {
+    testGroup("compiler/fir/analysis-tests/tests", "compiler/fir/analysis-tests/testData") {
         testClass<AbstractFirDiagnosticsWithStdlibTest> {
             model("resolveWithStdlib", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 
-    testGroup("compiler/fir/resolve/tests", "compiler/testData") {
+    testGroup("compiler/fir/analysis-tests/tests", "compiler/testData") {
         testClass<AbstractFirLoadCompiledKotlin> {
             model("loadJava/compiledKotlin", extension = "kt")
         }
     }
 
-    testGroup("compiler/fir/resolve/tests", "compiler/testData") {
+    testGroup("compiler/fir/analysis-tests/tests", "compiler/testData") {
         testClass<AbstractFirTypeEnhancementTest> {
             model("loadJava/compiledJava", extension = "java")
         }
     }
 
-    testGroup("compiler/fir/resolve/tests", "compiler/fir/resolve/testData") {
+    testGroup("compiler/fir/analysis-tests/tests", "compiler/fir/analysis-tests/testData") {
         testClass<AbstractOwnFirTypeEnhancementTest> {
             model("enhancement", extension = "java")
         }
     }
 
-    testGroup("compiler/fir/resolve/tests", "compiler/testData") {
+    testGroup("compiler/fir/analysis-tests/tests", "compiler/testData") {
         testClass<AbstractFirOldFrontendDiagnosticsTest> {
             model("diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
         }
@@ -593,7 +593,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("compiler/fir/resolve/tests", "compiler/fir/resolve/testData") {
+    testGroup("compiler/fir/analysis-tests/tests", "compiler/fir/analysis-tests/testData") {
         testClass<AbstractFirOldFrontendLightClassesTest> {
             model("lightClasses")
         }

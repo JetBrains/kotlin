@@ -9,25 +9,15 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":core:descriptors"))
-    compileOnly(project(":compiler:fir:cones"))
-    compileOnly(project(":compiler:fir:resolve"))
-    compileOnly(project(":compiler:fir:tree"))
-    compileOnly(project(":compiler:ir.tree"))
-    compileOnly(project(":compiler:ir.psi2ir"))
-    compileOnly(project(":compiler:ir.backend.common"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-
-    testCompileOnly(intellijDep())
-
-    testRuntime(intellijDep())
+    testCompile(intellijDep())
 
     testCompile(commonDep("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(projectTests(":compiler:fir:analysis-tests"))
+    testCompile(project(":compiler:fir:resolve"))
 
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntime(project(":kotlin-reflect"))
@@ -40,12 +30,14 @@ dependencies {
 }
 
 sourceSets {
-    "main" { projectDefault() }
+    "main" { none() }
     "test" { projectDefault() }
 }
 
 projectTest(parallel = true) {
     workingDir = rootDir
+    jvmArgs!!.removeIf { it.contains("-Xmx") }
+    maxHeapSize = "3g"
 }
 
 testsJar()

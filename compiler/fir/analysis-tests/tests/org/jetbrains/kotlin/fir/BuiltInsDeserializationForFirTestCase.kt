@@ -56,7 +56,7 @@ class BuiltInsDeserializationForFirTestCase : AbstractFirResolveWithSessionTestC
 
 
         KotlinTestUtils.assertEqualsToFile(
-            File("compiler/fir/resolve/testData/builtIns/" + packageFqName.asString().replace('.', '-') + ".txt"),
+            File("compiler/fir/analysis-tests/testData/builtIns/" + packageFqName.asString().replace('.', '-') + ".txt"),
             builder.toString()
         )
     }

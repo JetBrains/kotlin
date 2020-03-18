@@ -79,7 +79,7 @@ abstract class AbstractFirLoadCompiledKotlin : AbstractFirResolveWithSessionTest
         }
 
         val testDataDirectoryPath =
-            "compiler/fir/resolve/testData/loadCompiledKotlin/" +
+            "compiler/fir/analysis-tests/testData/loadCompiledKotlin/" +
                     testDataPath
                         .removePrefix("compiler/testData/loadJava/compiledKotlin/")
                         .removeSuffix(File(testDataPath).name)
