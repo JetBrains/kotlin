@@ -59,6 +59,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         if (declaration.typeParameters.isNotEmpty()) {
             topLevelScopes += FirMemberTypeParameterScope(declaration)
             for (typeParameter in declaration.typeParameters) {
+                typeParameter.transformChildren(transformer, ResolutionMode.ContextIndependent)
                 typeParameter.replaceResolvePhase(FirResolvePhase.STATUS)
             }
         }
