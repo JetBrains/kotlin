@@ -661,7 +661,7 @@ class LocalDeclarationsLowering(
                     localFunctionContext.remapType(p.type),
                     null,
                     isCrossinline = (capturedValue as? IrValueParameterSymbol)?.owner?.isCrossinline == true,
-                    isNoinline = false
+                    isNoinline = (capturedValue as? IrValueParameterSymbol)?.owner?.isNoinline == true
                 ).also {
                     parameterDescriptor.bind(it)
                     it.parent = newDeclaration
