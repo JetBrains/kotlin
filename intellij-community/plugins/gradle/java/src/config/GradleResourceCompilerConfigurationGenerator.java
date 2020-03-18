@@ -37,6 +37,7 @@ import org.jetbrains.plugins.gradle.model.ExternalProject;
 import org.jetbrains.plugins.gradle.model.ExternalSourceDirectorySet;
 import org.jetbrains.plugins.gradle.model.ExternalSourceSet;
 import org.jetbrains.plugins.gradle.service.project.data.ExternalProjectDataCache;
+import org.jetbrains.plugins.gradle.util.GradleBundle;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
@@ -174,10 +175,8 @@ public class GradleResourceCompilerConfigurationGenerator {
 
       final ExternalProject externalRootProject = lazyExternalProjectMap.get(gradleProjectPath);
       if (externalRootProject == null) {
-        context.addMessage(CompilerMessageCategory.WARNING,
-                           String.format("Unable to make the module: %s, related gradle configuration was not found. " +
-                                         "Please, re-import the Gradle project and try again.",
-                                         module.getName()), VfsUtilCore.pathToUrl(gradleProjectPath), -1, -1);
+        String message = GradleBundle.message("compiler.build.messages.gradle.configuration.not.found", module.getName());
+        context.addMessage(CompilerMessageCategory.WARNING, message, null, -1, -1);
         continue;
       }
 

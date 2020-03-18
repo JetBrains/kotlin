@@ -14,24 +14,24 @@ import org.jetbrains.annotations.Nullable;
  */
 public class FileNavigatable implements Navigatable {
   private final Project myProject;
-  private final NullableLazyValue<Navigatable> myValue;
+  private final NullableLazyValue<OpenFileDescriptor> myValue;
   private final FilePosition myFilePosition;
 
   public FileNavigatable(Project project, FilePosition filePosition) {
     myProject = project;
     myFilePosition = filePosition;
-    myValue = new NullableLazyValue<Navigatable>() {
+    myValue = new NullableLazyValue<OpenFileDescriptor>() {
       @Nullable
       @Override
-      protected Navigatable compute() {
-        return getDescriptor();
+      protected OpenFileDescriptor compute() {
+        return createDescriptor();
       }
     };
   }
 
   @Override
   public void navigate(boolean requestFocus) {
-    Navigatable descriptor = myValue.getValue();
+    Navigatable descriptor = getFileDescriptor();
     if (descriptor != null) {
       descriptor.navigate(requestFocus);
     }
@@ -39,7 +39,7 @@ public class FileNavigatable implements Navigatable {
 
   @Override
   public boolean canNavigate() {
-    Navigatable descriptor = myValue.getValue();
+    Navigatable descriptor = getFileDescriptor();
     if (descriptor != null) {
       return descriptor.canNavigate();
     }
@@ -48,7 +48,7 @@ public class FileNavigatable implements Navigatable {
 
   @Override
   public boolean canNavigateToSource() {
-    Navigatable descriptor = myValue.getValue();
+    Navigatable descriptor = getFileDescriptor();
     if (descriptor != null) {
       return descriptor.canNavigateToSource();
     }
@@ -56,8 +56,13 @@ public class FileNavigatable implements Navigatable {
   }
 
   @Nullable
-  private Navigatable getDescriptor() {
-    Navigatable descriptor = null;
+  public OpenFileDescriptor getFileDescriptor() {
+    return myValue.getValue();
+  }
+
+  @Nullable
+  private OpenFileDescriptor createDescriptor() {
+    OpenFileDescriptor descriptor = null;
     VirtualFile file = VfsUtil.findFileByIoFile(myFilePosition.getFile(), false);
     if (file != null) {
       descriptor = new OpenFileDescriptor(myProject, file, myFilePosition.getStartLine(), myFilePosition.getStartColumn());

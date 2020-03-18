@@ -5,7 +5,9 @@ import com.intellij.ide.errorTreeView.NewErrorTreeViewPanel;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.compiler.JavaCompilerBundle;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class ProblemsViewPanel extends NewErrorTreeViewPanel {
   public ProblemsViewPanel(@NotNull Project project) {
@@ -24,7 +26,12 @@ public final class ProblemsViewPanel extends NewErrorTreeViewPanel {
 
   @Override
   protected void addExtraPopupMenuActions(DefaultActionGroup group) {
-    group.add(new ExcludeFromCompileAction(myProject, this));
+    group.add(new ExcludeFromCompileAction(myProject) {
+      @Override
+      protected @Nullable VirtualFile getFile() {
+        return getSelectedFile();
+      }
+    });
     // todo: do we need compiler's popup actions here?
     //ActionGroup popupGroup = (ActionGroup)ActionManager.getInstance().getAction(IdeActions.GROUP_COMPILER_ERROR_VIEW_POPUP);
     //if (popupGroup != null) {

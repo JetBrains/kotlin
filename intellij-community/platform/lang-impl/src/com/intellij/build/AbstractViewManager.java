@@ -206,11 +206,8 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
     EventResult result;
     Content content;
 
-    BuildInfo(@NotNull Object id,
-              @NotNull String title,
-              @NotNull String workingDir,
-              long startTime) {
-      super(id, title, workingDir, startTime);
+    BuildInfo(@NotNull BuildDescriptor descriptor) {
+      super(descriptor);
     }
 
     public Icon getIcon() {
@@ -244,10 +241,10 @@ public abstract class AbstractViewManager implements ViewManager, BuildProgressL
   private String getPinnedTabName(MultipleBuildsView buildsView) {
     Map<BuildDescriptor, BuildView> buildsMap = buildsView.getBuildsMap();
 
-    BuildDescriptor buildInfo =
-      buildsMap.keySet().stream()
-               .reduce((b1, b2) -> b1.getStartTime() <= b2.getStartTime() ? b1 : b2)
-               .orElse(null);
+    BuildDescriptor buildInfo = buildsMap.keySet()
+      .stream()
+      .reduce((b1, b2) -> b1.getStartTime() <= b2.getStartTime() ? b1 : b2)
+      .orElse(null);
     if (buildInfo != null) {
       String title = buildInfo.getTitle();
       String viewName = getViewName().split(" ")[0];

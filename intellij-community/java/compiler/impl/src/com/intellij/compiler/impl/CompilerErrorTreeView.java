@@ -23,6 +23,7 @@ import com.intellij.pom.java.LanguageLevel;
 import com.intellij.psi.*;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CompilerErrorTreeView extends NewErrorTreeViewPanel {
   public CompilerErrorTreeView(Project project, Runnable rerunAction) {
@@ -39,7 +40,12 @@ public class CompilerErrorTreeView extends NewErrorTreeViewPanel {
   @Override
   protected void addExtraPopupMenuActions(DefaultActionGroup group) {
     group.addSeparator();
-    group.add(new ExcludeFromCompileAction(myProject, this));
+    group.add(new ExcludeFromCompileAction(myProject) {
+      @Override
+      protected @Nullable VirtualFile getFile() {
+        return getSelectedFile();
+      }
+    });
     group.add(new SuppressJavacWarningsAction());
     group.add(new SuppressJavacWarningForClassAction());
     ActionGroup popupGroup = (ActionGroup)ActionManager.getInstance().getAction(IdeActions.GROUP_COMPILER_ERROR_VIEW_POPUP);

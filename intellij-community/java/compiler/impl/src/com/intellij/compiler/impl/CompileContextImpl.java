@@ -61,7 +61,7 @@ public class CompileContextImpl extends UserDataHolderBase implements CompileCon
     myProjectFileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
     myProjectCompileScope = new ProjectCompileScope(myProject);
     myIsAnnotationProcessorsEnabled = CompilerConfiguration.getInstance(project).isAnnotationProcessorsEnabled();
-
+    myBuildSession.setStartCompilationStamp(myStartCompilationStamp);
     final Object sessionId = ExecutionManagerImpl.EXECUTION_SESSION_ID_KEY.get(compileScope);
     if (sessionId != null) {
       // in case compilation is started as a part of some execution session,

@@ -17,21 +17,19 @@ package com.intellij.build.events.impl;
 
 import com.intellij.build.BuildDescriptor;
 import com.intellij.build.BuildViewSettingsProvider;
+import com.intellij.build.DefaultBuildDescriptor;
 import com.intellij.build.events.StartBuildEvent;
 import com.intellij.build.process.BuildProcessHandler;
 import com.intellij.execution.filters.Filter;
-import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.util.Consumer;
-import com.intellij.util.SmartList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -39,114 +37,81 @@ import java.util.function.Supplier;
  */
 public class StartBuildEventImpl extends StartEventImpl implements StartBuildEvent {
 
-  private final String myBuildTitle;
-  private final String myWorkingDir;
-  @Nullable
-  private BuildProcessHandler myProcessHandler;
-  private Consumer<ConsoleView> myAttachedConsoleConsumer;
-  @NotNull
-  private final List<AnAction> myRestartActions = new SmartList<>();
-  @NotNull
-  private final List<Filter> myFilters = new SmartList<>();
-  @Nullable
-  private ExecutionEnvironment myExecutionEnvironment;
-  @Nullable
-  private Supplier<RunContentDescriptor> myContentDescriptorSupplier;
-  @Nullable
-  private BuildViewSettingsProvider myBuildViewSettingsProvider;
+  private final @NotNull DefaultBuildDescriptor myBuildDescriptor;
+  private @Nullable BuildViewSettingsProvider myBuildViewSettingsProvider;
 
   public StartBuildEventImpl(@NotNull BuildDescriptor descriptor, @NotNull String message) {
     super(descriptor.getId(), null, descriptor.getStartTime(), message);
-    myBuildTitle = descriptor.getTitle();
-    myWorkingDir = descriptor.getWorkingDir();
+    myBuildDescriptor =
+      descriptor instanceof DefaultBuildDescriptor ? (DefaultBuildDescriptor)descriptor : new DefaultBuildDescriptor(descriptor);
   }
 
-  @Override
-  public String getBuildTitle() {
-    return myBuildTitle;
-  }
-
+  @ApiStatus.Experimental
   @NotNull
   @Override
-  public String getWorkingDir() {
-    return myWorkingDir;
+  public DefaultBuildDescriptor getBuildDescriptor() {
+    return myBuildDescriptor;
   }
 
-  @Nullable
-  @Override
-  public BuildProcessHandler getProcessHandler() {
-    return myProcessHandler;
+  /**
+   * @deprecated use {@link DefaultBuildDescriptor#withProcessHandler}
+   */
+  @Deprecated
+  public StartBuildEventImpl withProcessHandler(@Nullable BuildProcessHandler processHandler,
+                                                @Nullable Consumer<ConsoleView> attachedConsoleConsumer) {
+    myBuildDescriptor.withProcessHandler(processHandler, attachedConsoleConsumer);
+    return this;
   }
 
-  @Nullable
-  @Override
-  public ExecutionEnvironment getExecutionEnvironment() {
-    return myExecutionEnvironment;
+  /**
+   * @deprecated use {@link DefaultBuildDescriptor#withProcessHandler}
+   */
+  @Deprecated
+  public StartBuildEventImpl withRestartAction(@NotNull AnAction anAction) {
+    myBuildDescriptor.withRestartAction(anAction);
+    return this;
   }
 
-  @Override
-  public AnAction @NotNull [] getRestartActions() {
-    return myRestartActions.toArray(AnAction.EMPTY_ARRAY);
+  /**
+   * @deprecated use {@link DefaultBuildDescriptor#withProcessHandler}
+   */
+  @Deprecated
+  public StartBuildEventImpl withRestartActions(AnAction... actions) {
+    Arrays.stream(actions).forEach(myBuildDescriptor::withRestartAction);
+    return this;
   }
 
-  @Override
-  public Filter @NotNull [] getExecutionFilters() {
-    return myFilters.toArray(Filter.EMPTY_ARRAY);
+  /**
+   * @deprecated use {@link DefaultBuildDescriptor#withProcessHandler}
+   */
+  @Deprecated
+  public StartBuildEventImpl withContentDescriptorSupplier(Supplier<RunContentDescriptor> contentDescriptorSupplier) {
+    myBuildDescriptor.withContentDescriptor(contentDescriptorSupplier);
+    return this;
   }
 
-  @Nullable
-  @Override
-  public Supplier<RunContentDescriptor> getContentDescriptorSupplier() {
-    return myContentDescriptorSupplier;
+  /**
+   * @deprecated use {@link DefaultBuildDescriptor#withProcessHandler}
+   */
+  @Deprecated
+  public StartBuildEventImpl withExecutionFilter(@NotNull Filter filter) {
+    myBuildDescriptor.withExecutionFilter(filter);
+    return this;
   }
 
-  @Nullable
-  @Override
-  public Consumer<ConsoleView> getAttachedConsoleConsumer() {
-    return myAttachedConsoleConsumer;
+  /**
+   * @deprecated use {@link DefaultBuildDescriptor#withProcessHandler}
+   */
+  @Deprecated
+  public StartBuildEventImpl withExecutionFilters(Filter... filters) {
+    Arrays.stream(filters).forEach(myBuildDescriptor::withExecutionFilter);
+    return this;
   }
 
   @Nullable
   @ApiStatus.Experimental
   public BuildViewSettingsProvider getBuildViewSettingsProvider() {
     return myBuildViewSettingsProvider;
-  }
-
-  public StartBuildEventImpl withProcessHandler(@Nullable BuildProcessHandler processHandler,
-                                                @Nullable Consumer<ConsoleView> attachedConsoleConsumer) {
-    myProcessHandler = processHandler;
-    myAttachedConsoleConsumer = attachedConsoleConsumer;
-    return this;
-  }
-
-  public StartBuildEventImpl withRestartAction(@NotNull AnAction anAction) {
-    myRestartActions.add(anAction);
-    return this;
-  }
-
-  public StartBuildEventImpl withRestartActions(AnAction... actions) {
-    myRestartActions.addAll(Arrays.asList(actions));
-    return this;
-  }
-
-  public StartBuildEventImpl withExecutionEnvironment(ExecutionEnvironment env) {
-    myExecutionEnvironment = env;
-    return this;
-  }
-
-  public StartBuildEventImpl withContentDescriptorSupplier(Supplier<RunContentDescriptor> contentDescriptorSupplier) {
-    myContentDescriptorSupplier = contentDescriptorSupplier;
-    return this;
-  }
-
-  public StartBuildEventImpl withExecutionFilter(@NotNull Filter filter) {
-    myFilters.add(filter);
-    return this;
-  }
-
-  public StartBuildEventImpl withExecutionFilters(Filter... filters) {
-    myFilters.addAll(Arrays.asList(filters));
-    return this;
   }
 
   @ApiStatus.Experimental

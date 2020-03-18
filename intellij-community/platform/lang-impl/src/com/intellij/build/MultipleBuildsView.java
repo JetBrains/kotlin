@@ -127,8 +127,7 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
       if (isInitializeStarted.get()) {
         clearOldBuilds(runOnEdt, startBuildEvent);
       }
-      buildInfo = new AbstractViewManager.BuildInfo(
-        event.getId(), startBuildEvent.getBuildTitle(), startBuildEvent.getWorkingDir(), event.getEventTime());
+      buildInfo = new AbstractViewManager.BuildInfo(((StartBuildEvent)event).getBuildDescriptor());
       myBuildsMap.put(buildId, buildInfo);
     }
     else {
@@ -141,15 +140,14 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
 
     runOnEdt.add(() -> {
       if (event instanceof StartBuildEvent) {
-        StartBuildEvent startBuildEvent = (StartBuildEvent)event;
-        buildInfo.message = startBuildEvent.getMessage();
+        buildInfo.message = event.getMessage();
 
         DefaultListModel<AbstractViewManager.BuildInfo> listModel =
           (DefaultListModel<AbstractViewManager.BuildInfo>)myBuildsList.getModel();
         listModel.addElement(buildInfo);
 
         RunContentDescriptor contentDescriptor;
-        Supplier<RunContentDescriptor> contentDescriptorSupplier = startBuildEvent.getContentDescriptorSupplier();
+        Supplier<RunContentDescriptor> contentDescriptorSupplier = buildInfo.getContentDescriptorSupplier();
         contentDescriptor = contentDescriptorSupplier != null ? contentDescriptorSupplier.get() : null;
         final Runnable activationCallback;
         if (contentDescriptor != null) {
@@ -179,7 +177,7 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
           }
           return buildView;
         });
-        view.onEvent(buildId, startBuildEvent);
+        view.onEvent(buildId, event);
 
         myContent.setPreferredFocusedComponent(view::getPreferredFocusableComponent);
 
@@ -214,7 +212,7 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
         }
         myViewManager.onBuildStart(buildInfo);
         myProgressWatcher.addBuild(buildInfo);
-        ((BuildContentManagerImpl)myBuildContentManager).startBuildNotified(buildInfo, buildInfo.content, startBuildEvent.getProcessHandler());
+        ((BuildContentManagerImpl)myBuildContentManager).startBuildNotified(buildInfo, buildInfo.content, buildInfo.getProcessHandler());
       }
       else {
         if (!isFirstErrorShown.get() &&
@@ -321,7 +319,7 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
     List<AbstractViewManager.BuildInfo> sameBuildsToClear = new SmartList<>();
     for (int i = 0; i < listModel.getSize(); i++) {
       AbstractViewManager.BuildInfo build = listModel.getElementAt(i);
-      boolean sameBuild = build.getWorkingDir().equals(startBuildEvent.getWorkingDir());
+      boolean sameBuild = build.getWorkingDir().equals(startBuildEvent.getBuildDescriptor().getWorkingDir());
       if (!build.isRunning() && sameBuild) {
         sameBuildsToClear.add(build);
       }

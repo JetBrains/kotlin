@@ -181,17 +181,16 @@ public class ExternalSystemRunnableState extends UserDataHolderBase implements R
               BuildViewSettingsProvider viewSettingsProvider =
                 consoleView instanceof BuildViewSettingsProvider ?
                 new BuildViewSettingsProviderAdapter((BuildViewSettingsProvider)consoleView) : null;
+              BuildDescriptor buildDescriptor = new DefaultBuildDescriptor(id, executionName, workingDir, eventTime)
+                .withProcessHandler(processHandler, view -> ExternalSystemRunConfiguration
+                  .foldGreetingOrFarewell(consoleView, greeting, true))
+                .withContentDescriptor(() -> myContentDescriptor)
+                .withRestartAction(rerunTaskAction)
+                .withRestartActions(restartActions)
+                .withExecutionEnvironment(myEnv);
               progressListener.onEvent(id,
-                                       new StartBuildEventImpl(new DefaultBuildDescriptor(id, executionName, workingDir, eventTime),
-                                                               "running...")
-                                         .withProcessHandler(processHandler, view -> ExternalSystemRunConfiguration
-                                           .foldGreetingOrFarewell(consoleView, greeting, true))
-                                         .withContentDescriptorSupplier(() -> myContentDescriptor)
-                                         .withRestartAction(rerunTaskAction)
-                                         .withRestartActions(restartActions)
-                                         .withExecutionEnvironment(myEnv)
-                                         .withBuildViewSettingsProvider(viewSettingsProvider)
-              );
+                                       new StartBuildEventImpl(buildDescriptor, "running...")
+                                         .withBuildViewSettingsProvider(viewSettingsProvider));
             }
           }
 
