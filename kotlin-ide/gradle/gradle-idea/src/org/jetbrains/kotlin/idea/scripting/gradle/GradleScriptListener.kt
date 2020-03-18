@@ -18,6 +18,8 @@ open class GradleScriptListener(project: Project) : ScriptChangeListener(project
     }
 
     override fun editorActivated(vFile: VirtualFile, updater: ScriptConfigurationUpdater) {
+        if (!isInAffectedGradleProjectFiles(project, vFile.path)) return
+
         if (useScriptConfigurationFromImportOnly()) {
             // do nothing
         } else {
@@ -27,6 +29,8 @@ open class GradleScriptListener(project: Project) : ScriptChangeListener(project
     }
 
     override fun documentChanged(vFile: VirtualFile, updater: ScriptConfigurationUpdater) {
+        if (!isInAffectedGradleProjectFiles(project, vFile.path)) return
+
         val file = getAnalyzableKtFileForScript(vFile)
         if (file != null) {
             // *.gradle.kts file was changed
@@ -35,8 +39,6 @@ open class GradleScriptListener(project: Project) : ScriptChangeListener(project
     }
 
     override fun isApplicable(vFile: VirtualFile): Boolean {
-        if (!isGradleKotlinScript(vFile)) return false
-
-        return isInAffectedGradleProjectFiles(project, vFile.path)
+        return isGradleKotlinScript(vFile)
     }
 }
