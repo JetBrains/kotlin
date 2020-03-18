@@ -176,7 +176,7 @@ internal class DefaultScriptConfigurationManager(project: Project) :
         val shouldLoad = isFirstLoad || loadEvenWillNotBeApplied || autoReloadEnabled
         if (!shouldLoad) return
 
-        val postponeLoading = isPostponedLoad && !autoReloadEnabled
+        val postponeLoading = isPostponedLoad && !autoReloadEnabled && !isFirstLoad
 
         if (!ScriptDefinitionsManager.getInstance(project).isReady()) return
         val scriptDefinition = file.findScriptDefinition() ?: return
