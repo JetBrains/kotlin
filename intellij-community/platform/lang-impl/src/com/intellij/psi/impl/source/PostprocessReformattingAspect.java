@@ -19,6 +19,7 @@ import com.intellij.openapi.util.*;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.PomManager;
 import com.intellij.pom.PomModelAspect;
+import com.intellij.pom.core.impl.PomModelImpl;
 import com.intellij.pom.event.PomModelEvent;
 import com.intellij.pom.tree.TreeAspect;
 import com.intellij.pom.tree.events.ChangeInfo;
@@ -54,43 +55,44 @@ import java.util.*;
 public final class PostprocessReformattingAspect implements PomModelAspect {
   private static final Logger LOG = Logger.getInstance(PostprocessReformattingAspect.class);
   private final Project myProject;
-  private final PsiManager myPsiManager;
-  private final TreeAspect myTreeAspect;
+  private final NotNullLazyValue<TreeAspect> myTreeAspect;
   private static final Key<Throwable> REFORMAT_ORIGINATOR = Key.create("REFORMAT_ORIGINATOR");
   private static final Key<Boolean> REPARSE_PENDING = Key.create("REPARSE_PENDING");
 
-  private static class Holder {
+  private final ThreadLocal<Context> myContext = ThreadLocal.withInitial(Context::new);
+
+  private static final class Holder {
     private static final boolean STORE_REFORMAT_ORIGINATOR_STACKTRACE = ApplicationManager.getApplication().isInternal();
   }
 
-  private final ThreadLocal<Context> myContext = ThreadLocal.withInitial(Context::new);
+  static final class LangPomModel extends PomModelImpl {
+    public LangPomModel(@NotNull Project project) {
+      super(project, new PostprocessReformattingAspect(project));
+    }
+  }
 
-  public PostprocessReformattingAspect(Project project) {
+  public static PostprocessReformattingAspect getInstance(@NotNull Project project) {
+    return PomManager.getModel(project).getModelAspect(PostprocessReformattingAspect.class);
+  }
+
+  public PostprocessReformattingAspect(@NotNull Project project) {
     myProject = project;
-    myPsiManager = PsiManager.getInstance(project);
-    myTreeAspect = TreeAspect.getInstance(project);
-    PomManager.getModel(project).registerAspect(PostprocessReformattingAspect.class, this, Collections.singleton(myTreeAspect));
+    myTreeAspect = NotNullLazyValue.createValue(() -> TreeAspect.getInstance(myProject));
 
     ApplicationManager.getApplication().addApplicationListener(new ApplicationListener() {
       @Override
       public void writeActionStarted(@NotNull Object action) {
         CommandProcessor processor = CommandProcessor.getInstance();
-        if (processor != null) {
-          final Project project1 = processor.getCurrentCommandProject();
-          if (project1 == myProject) {
-            incrementPostponedCounter();
-          }
+        if (processor != null && processor.getCurrentCommandProject() == myProject) {
+          incrementPostponedCounter();
         }
       }
 
       @Override
-      public void writeActionFinished(@NotNull final Object action) {
-        CommandProcessor processor = CommandProcessor.getInstance();
-        if (processor != null) {
-          final Project project1 = processor.getCurrentCommandProject();
-          if (project1 == myProject) {
-            decrementPostponedCounter();
-          }
+      public void writeActionFinished(@NotNull Object action) {
+        CommandProcessor processor = ApplicationManager.getApplication().getServiceIfCreated(CommandProcessor.class);
+        if (processor != null && processor.getCurrentCommandProject() == myProject) {
+          decrementPostponedCounter();
         }
       }
     }, project);
@@ -160,7 +162,7 @@ public final class PostprocessReformattingAspect implements PomModelAspect {
       @Override
       public void run() {
         if (isDisabled() || getContext().myPostponedCounter == 0 && !ApplicationManager.getApplication().isUnitTestMode()) return;
-        final TreeChangeEvent changeSet = (TreeChangeEvent)event.getChangeSet(myTreeAspect);
+        final TreeChangeEvent changeSet = (TreeChangeEvent)event.getChangeSet(myTreeAspect.getValue());
         if (changeSet == null) return;
         final PsiElement psiElement = changeSet.getRootElement().getPsi();
         if (psiElement == null) return;
@@ -312,10 +314,6 @@ public final class PostprocessReformattingAspect implements PomModelAspect {
       count ++;
     }
     return sb.toString();
-  }
-
-  public static PostprocessReformattingAspect getInstance(Project project) {
-    return project.getComponent(PostprocessReformattingAspect.class);
   }
 
   private void postponeFormatting(@NotNull FileViewProvider viewProvider, @NotNull ASTNode child) {
