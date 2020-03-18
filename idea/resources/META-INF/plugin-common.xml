@@ -1,19 +1,6 @@
 <idea-plugin>
   <project-components>
     <component>
-      <implementation-class>org.jetbrains.kotlin.idea.highlighter.KotlinBeforeResolveHighlightingPass$Factory</implementation-class>
-    </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.parameterInfo.custom.KotlinCodeHintsPass$Companion$Factory</implementation-class>
-    </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsPassFactory</implementation-class>
-      <skipForDefaultProject/>
-    </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.highlighter.ScriptExternalHighlightingPass$Factory</implementation-class>
-    </component>
-    <component>
       <implementation-class>org.jetbrains.kotlin.idea.completion.LookupCancelWatcher</implementation-class>
     </component>
     <component>
@@ -231,6 +218,11 @@
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceImplementation="org.jetbrains.kotlin.idea.PluginStartupService" />
     <postStartupActivity implementation="org.jetbrains.kotlin.idea.PluginStartupActivity"/>
+
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinBeforeResolveHighlightingPass$Registrar"/>
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.ScriptExternalHighlightingPass$Registrar"/>
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.parameterInfo.custom.KotlinCodeHintsPass$Registrar"/>
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsPassFactory$Registrar"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.KotlinIconProviderService"
                         serviceImplementation="org.jetbrains.kotlin.idea.KotlinIdeFileIconProviderService"/>
