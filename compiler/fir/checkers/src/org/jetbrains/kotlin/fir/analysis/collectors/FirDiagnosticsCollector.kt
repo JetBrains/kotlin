@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.diagnostics.collectors
+package org.jetbrains.kotlin.fir.analysis.collectors
 
 object FirDiagnosticsCollector {
     fun create(): AbstractDiagnosticCollector {

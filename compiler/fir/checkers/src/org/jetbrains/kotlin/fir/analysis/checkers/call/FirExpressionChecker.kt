@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.diagnostics.checkers.call
+package org.jetbrains.kotlin.fir.analysis.checkers.call
 
+import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.resolve.diagnostics.DiagnosticReporter
 
 abstract class FirExpressionChecker<in E : FirExpression> {
     abstract fun check(functionCall: E, reporter: DiagnosticReporter)

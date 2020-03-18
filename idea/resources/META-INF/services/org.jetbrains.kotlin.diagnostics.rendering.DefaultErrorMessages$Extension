@@ -1,5 +1,5 @@
 # Note that this file is also present in compiler/cli/src/META-INF/services
 org.jetbrains.kotlin.resolve.jvm.diagnostics.DefaultErrorMessagesJvm
 org.jetbrains.kotlin.js.resolve.diagnostics.DefaultErrorMessagesJs
-org.jetbrains.kotlin.fir.resolve.diagnostics.DefaultErrorMessagesFir
+org.jetbrains.kotlin.fir.analysis.diagnostics.DefaultErrorMessagesFir
 org.jetbrains.kotlin.resolve.konan.diagnostics.DefaultErrorMessagesNative

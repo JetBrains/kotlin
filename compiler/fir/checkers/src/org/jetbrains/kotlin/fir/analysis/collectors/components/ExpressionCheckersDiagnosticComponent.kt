@@ -3,13 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.components
+package org.jetbrains.kotlin.fir.analysis.collectors.components
 
+import org.jetbrains.kotlin.fir.analysis.checkers.call.CallCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.call.FirExpressionChecker
+import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
+import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.resolve.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.resolve.diagnostics.checkers.call.CallCheckers
-import org.jetbrains.kotlin.fir.resolve.diagnostics.checkers.call.FirExpressionChecker
-import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.AbstractDiagnosticCollector
 
 class ExpressionCheckersDiagnosticComponent(collector: AbstractDiagnosticCollector) : AbstractDiagnosticCollectorComponent(collector) {
     override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall) {

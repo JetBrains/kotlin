@@ -17,7 +17,8 @@ dependencies {
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(project(":compiler:fir:resolve"))
+    testCompile(project(":compiler:fir:checkers"))
+    testCompile(project(":compiler:frontend"))
 
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntime(project(":kotlin-reflect"))

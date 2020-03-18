@@ -1,15 +1,15 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.diagnostics
+package org.jetbrains.kotlin.fir.analysis.diagnostics
 
-import org.jetbrains.kotlin.diagnostics.Severity.*
+import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.Severity.ERROR
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtElement
-import kotlin.reflect.full.memberProperties
 
 object FirErrors {
     val UNRESOLVED_REFERENCE = DiagnosticFactory1.create<KtElement, String?>(ERROR)
@@ -31,10 +31,6 @@ object FirErrors {
     val TYPE_MISMATCH = DiagnosticFactory2.create<KtElement, ConeKotlinType, ConeKotlinType>(ERROR)
 
     init {
-        val klass = FirErrors::class
-        for (property in klass.memberProperties) {
-            val factory = property.get(this) as? DiagnosticFactory<*> ?: continue
-            factory.name = property.name
-        }
+        registerExternalFactories()
     }
 }

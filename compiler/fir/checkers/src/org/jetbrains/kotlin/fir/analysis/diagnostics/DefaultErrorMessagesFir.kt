@@ -1,26 +1,26 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.diagnostics
+package org.jetbrains.kotlin.fir.analysis.diagnostics
 
-import org.jetbrains.kotlin.diagnostics.FirErrors.AMBIGUITY
-import org.jetbrains.kotlin.diagnostics.FirErrors.ASSIGN_OPERATOR_AMBIGUITY
-import org.jetbrains.kotlin.diagnostics.FirErrors.DESERIALIZATION_ERROR
-import org.jetbrains.kotlin.diagnostics.FirErrors.ENUM_AS_SUPERTYPE
-import org.jetbrains.kotlin.diagnostics.FirErrors.ERROR_FROM_JAVA_RESOLUTION
-import org.jetbrains.kotlin.diagnostics.FirErrors.ILLEGAL_CONST_EXPRESSION
-import org.jetbrains.kotlin.diagnostics.FirErrors.INAPPLICABLE_CANDIDATE
-import org.jetbrains.kotlin.diagnostics.FirErrors.INFERENCE_ERROR
-import org.jetbrains.kotlin.diagnostics.FirErrors.NO_SUPERTYPE
-import org.jetbrains.kotlin.diagnostics.FirErrors.OTHER_ERROR
-import org.jetbrains.kotlin.diagnostics.FirErrors.RECURSION_IN_IMPLICIT_TYPES
-import org.jetbrains.kotlin.diagnostics.FirErrors.RECURSION_IN_SUPERTYPES
-import org.jetbrains.kotlin.diagnostics.FirErrors.SYNTAX_ERROR
-import org.jetbrains.kotlin.diagnostics.FirErrors.TYPE_PARAMETER_AS_SUPERTYPE
-import org.jetbrains.kotlin.diagnostics.FirErrors.UNRESOLVED_LABEL
-import org.jetbrains.kotlin.diagnostics.FirErrors.UNRESOLVED_REFERENCE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGN_OPERATOR_AMBIGUITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESERIALIZATION_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ENUM_AS_SUPERTYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_FROM_JAVA_RESOLUTION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_CONST_EXPRESSION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_CANDIDATE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_SUPERTYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OTHER_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_IMPLICIT_TYPES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_SUPERTYPES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SYNTAX_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_AS_SUPERTYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_LABEL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 
+@Suppress("unused")
 class DefaultErrorMessagesFir : DefaultErrorMessages.Extension {
 
     override fun getMap(): DiagnosticFactoryToRendererMap {
