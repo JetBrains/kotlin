@@ -9417,6 +9417,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/defaultArguments/inheritedFromInterfaceViaAbstractSuperclass.kt");
         }
 
+        @TestMetadata("kt36972_companion.kt")
+        public void testKt36972_companion() throws Exception {
+            runTest("compiler/testData/codegen/box/defaultArguments/kt36972_companion.kt");
+        }
+
+        @TestMetadata("kt36972_object.kt")
+        public void testKt36972_object() throws Exception {
+            runTest("compiler/testData/codegen/box/defaultArguments/kt36972_object.kt");
+        }
+
         @TestMetadata("kt6382.kt")
         public void testKt6382() throws Exception {
             runTest("compiler/testData/codegen/box/defaultArguments/kt6382.kt");
