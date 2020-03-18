@@ -14,12 +14,16 @@ import com.jetbrains.swift.symbols.SwiftTypeSymbol
 import org.jetbrains.konan.resolve.konan.KonanBridgeFileManager
 import org.jetbrains.konan.resolve.konan.KonanConsumer
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 fun KtNamedDeclaration.findSymbols(kind: OCLanguageKind): List<OCSymbol> {
+    val containingFile = containingKtFile
+    if (containingFile.isCompiled) return emptyList()
+
     val offset = textOffset // we have to use same offset as in `org.jetbrains.konan.resolve.symbols.KtSymbolUtilKt.getOffset`
-    return containingClassOrObject?.findMemberSymbols(offset, kind) ?: findGlobalSymbols(offset, kind)
+    return containingClassOrObject?.findMemberSymbols(offset, kind) ?: findGlobalSymbols(containingFile, offset, kind)
 }
 
 private fun KtClassOrObject.findMemberSymbols(startOffset: Int, kind: OCLanguageKind): List<OCSymbol> =
@@ -42,10 +46,11 @@ private fun SwiftTypeSymbol.findMemberSymbols(offset: Int): List<SwiftSymbol> =
         it.offset == offset
     }.also { processMembers(it, ResolveState.initial()) }.collectedSymbols
 
-private fun KtNamedDeclaration.findGlobalSymbols(offset: Int, kind: OCLanguageKind): List<OCSymbol> {
+private fun findGlobalSymbols(containingFile: KtFile, offset: Int, kind: OCLanguageKind): List<OCSymbol> {
     val tables = hashSetOf<FileSymbolTable>()
     val symbols = hashSetOf<OCSymbol>()
     val results = mutableListOf<OCSymbol>()
+    val project = containingFile.project
     for (konanTarget in KonanConsumer.getAllReferencedKonanTargets(project)) {
         val bridgeFile = konanTarget.let { target ->
             KonanBridgeFileManager.getInstance(project).forTarget(target, target.productModuleName.let { "$it/$it.h" })
