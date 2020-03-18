@@ -237,28 +237,110 @@ private fun Project.findSourceSetsToAddCommonizedPlatformDependencies(): Map<Kot
             val commonizedCommonDep = CommonizedCommon(allTargets)
             val includeEndorsedLibsToCommonSourceSet = leafSourceSets.values.all { it.includeEndorsedLibs }
 
+            // save the dependencies for the current common native source set
             sourceSetsToAddDeps[sourceSet] = setOf(
                 OutOfDistributionCommon(includeEndorsedLibsToCommonSourceSet),
                 commonizedCommonDep
             )
 
+            // now set the dependencies for leaf native source sets (those that dependsOn the current common native source set)
             leafSourceSets.forEach { (leafSourceSet, details) ->
-                val existingDep = sourceSetsToAddDeps[leafSourceSet]
-                if (existingDep == null) {
-                    val commonizedPlatformDep = CommonizedPlatform(details.target, commonizedCommonDep)
+                val newLeafSourceSetDeps = setOf(
+                    OutOfDistributionCommon(details.includeEndorsedLibs),
+                    CommonizedPlatform(details.target, commonizedCommonDep)
+                )
 
-                    sourceSetsToAddDeps[leafSourceSet] = setOf(
-                        OutOfDistributionCommon(details.includeEndorsedLibs),
-                        commonizedPlatformDep
-                    )
-                } /*else if (existingDep != leafDep) {
-                    // actually, no action required
-                }*/
+                /*
+                 * It may happen that the leaf source set has already been processed with another common native source set, and
+                 * its dependencies have already been evaluated. Then, it's necessary to merge earlier and newly evaluated dependencies
+                 * to narrow combination of commonized targets.
+                 *
+                 * Why? Consider this example: There is `watchos()` shortcut in Gradle DSL that creates few native targets
+                 * in HMPP project with the corresponding source set hierarchy:
+                 *
+                 *                    watchosMain [commonized targets: watchosX86, watchosArm32, watchosArm64]
+                 *                   /           \
+                 *     watchosX86Main             watchosDeviceMain [commonized targets: watchosArm32, watchosArm64]
+                 *                               /                 \
+                 *               watchosArm32Main                   watchosArm64Main
+                 *
+                 * There are two common native source sets that participate in commonization process:
+                 *
+                 * 1. `watchosMain`. This source set is included into three native compilations for different native targets.
+                 *    Thus, it has three commonized targets: watchosX86, watchosArm32 and watchosArm64.
+                 *
+                 * 2. `watchosDeviceMain`. Two native compilations -> two commonized targets: watchosArm32 and watchosArm64.
+                 *
+                 * Let's consider some leaf source set that depends on both of them, for instance, `watchosArm64Main`:
+                 *
+                 * - When `watchosArm64Main` is processed with `watchosMain`, the dependencies are evaluated from `watchosMain`
+                 *   viewpoint. This means the following: the leaf source set should get the libraries with `actual` declarations
+                 *   produced as a result of commonization of the three targets: watchosX86, watchosArm32 and watchosArm64.
+                 *
+                 * - When `watchosArm64Main` is processed with `watchosDeviceMain`, which is immediate parent according to the hierarchy,
+                 *   the dependencies are evaluated from `watchosDeviceMain` viewpoint. Assuming libraries with `actual` declarations
+                 *   produced for tho targets: watchosArm32, watchosArm64.
+                 */
+                val existingLeafSourceSetDeps = sourceSetsToAddDeps[leafSourceSet]
+                sourceSetsToAddDeps[leafSourceSet] = existingLeafSourceSetDeps?.let {
+                    mergeLeafSourceSetDeps(leafSourceSet, it, newLeafSourceSetDeps)
+                } ?: newLeafSourceSetDeps
             }
         }
     }
 
     return sourceSetsToAddDeps
+}
+
+private fun Project.mergeLeafSourceSetDeps(
+    leafSourceSet: KotlinSourceSet,
+    existingDeps: Set<NativePlatformDependency>,
+    newDeps: Set<NativePlatformDependency>
+): Set<NativePlatformDependency> {
+
+    fun merge(dependencies: List<CommonizedPlatform>): CommonizedPlatform? = when (dependencies.size) {
+        1 -> dependencies[0]
+        2 -> {
+            val (first, second) = dependencies
+            when {
+                first.target != second.target -> {
+                    // leaf source set is included into several native compilations for different targets
+                    // this is an extremely rare case, though, possible - let's just fallback to no-merge
+                    null
+                }
+                first.common.targets.containsAll(second.common.targets) -> second
+                second.common.targets.containsAll(first.common.targets) -> first
+                else -> null
+            }
+        }
+        else -> error("Unexpected number of dependencies: $dependencies")
+    }
+
+    fun merge(dependencies: List<OutOfDistributionCommon>): OutOfDistributionCommon = when (dependencies.size) {
+        1 -> dependencies[0]
+        2 -> {
+            val (first, second) = dependencies
+            if (!first.includeEndorsedLibs) first else second
+        }
+        else -> error("Unexpected number of dependencies: $dependencies")
+    }
+
+    val allDeps = existingDeps + newDeps
+
+    val allDepTypes = allDeps.mapTo(HashSet()) { it::class }
+    check(allDepTypes.size == 2 && OutOfDistributionCommon::class in allDepTypes && CommonizedPlatform::class in allDepTypes) {
+        // sanity check, such case should not happen normally
+        "Unexpected combination of dependency types in leaf $leafSourceSet while merging $existingDeps and $newDeps"
+    }
+
+    val result = HashSet<NativePlatformDependency>()
+    result += merge(allDeps.filterIsInstance<CommonizedPlatform>()) ?: run {
+        logger.warn("Leaf $leafSourceSet is probably included into several native compilations with different targets.")
+        return existingDeps
+    }
+    result += merge(allDeps.filterIsInstance<OutOfDistributionCommon>())
+
+    return result
 }
 
 private class NativeSourceSetDetails(
