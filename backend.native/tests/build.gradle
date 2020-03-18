@@ -3683,6 +3683,8 @@ if (PlatformInfo.isAppleTarget(project)) {
                 args "$projectDir/interop/objc/smoke.m"
                 args "-lobjc", '-fobjc-arc'
                 args '-fPIC', '-shared', '-o', "$buildDir/libobjcsmoke.dylib"
+                // Enable ARC optimizations to prevent some objects from leaking in Obj-C code due to exceptions:
+                args '-O2'
             }
             if (project.target instanceof KonanTarget.IOS_X64) {
                 UtilsKt.codesign(project, "$buildDir/libobjcsmoke.dylib")
