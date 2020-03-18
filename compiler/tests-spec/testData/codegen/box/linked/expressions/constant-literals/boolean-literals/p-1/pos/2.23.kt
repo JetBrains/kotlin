@@ -1,7 +1,7 @@
 /*
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-100
+ * SPEC VERSION: 0.1-300
  * PLACE: expressions, constant-literals, boolean-literals -> paragraph 1 -> sentence 2
  * NUMBER: 23
  * DESCRIPTION: The use of Boolean literals as the identifier (with backtick) in the atomicExpression.

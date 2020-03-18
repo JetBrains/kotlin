@@ -2837,11 +2837,6 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                             }
 
-                            @TestMetadata("2.1.kt")
-                            public void test2_1() throws Exception {
-                                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-1/neg/2.1.kt");
-                            }
-
                             public void testAllFilesPresentInNeg() throws Exception {
                                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
@@ -2871,19 +2866,50 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                         }
                     }
 
-                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4")
+                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-2")
                     @TestDataPath("$PROJECT_ROOT")
                     @RunWith(JUnit3RunnerWithInners.class)
-                    public static class P_4 extends AbstractBlackBoxCodegenTestSpec {
+                    public static class P_2 extends AbstractBlackBoxCodegenTestSpec {
                         private void runTest(String testDataFilePath) throws Exception {
                             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                         }
 
-                        public void testAllFilesPresentInP_4() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        public void testAllFilesPresentInP_2() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
-                        @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4/pos")
+                        @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-2/neg")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Neg extends AbstractBlackBoxCodegenTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("1.1.kt")
+                            public void test1_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-2/neg/1.1.kt");
+                            }
+
+                            public void testAllFilesPresentInNeg() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            }
+                        }
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-5")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_5 extends AbstractBlackBoxCodegenTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_5() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-5/pos")
                         @TestDataPath("$PROJECT_ROOT")
                         @RunWith(JUnit3RunnerWithInners.class)
                         public static class Pos extends AbstractBlackBoxCodegenTestSpec {
@@ -2893,11 +2919,11 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
-                                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4/pos/1.1.kt");
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-5/pos/1.1.kt");
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }

@@ -3,7 +3,7 @@
     "neg": {
       "2": [
         {
-          "specVersion": "0.1-213",
+          "specVersion": "0.1-296",
           "casesNumber": 2,
           "description": "check any if-statement in kotlin may be trivially turned into such an expression by replacing the missing branch with a kotlin.Unit object expression.",
           "unexpectedBehaviour": false
@@ -11,25 +11,25 @@
       ],
       "1": [
         {
-          "specVersion": "0.1-213",
+          "specVersion": "0.1-296",
           "casesNumber": 2,
           "description": "check if-expressions must have both branches.",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-213",
+          "specVersion": "0.1-296",
           "casesNumber": 8,
           "description": "check if-expressions must have both branches. (attempt to pass Nothing to if-condition without \u0027else\u0027 key word)",
           "unexpectedBehaviour": true
         },
         {
-          "specVersion": "0.1-213",
+          "specVersion": "0.1-296",
           "casesNumber": 5,
           "description": "check if-expressions must have both branches. (attempt to pass Nothing to if-condition with \u0027else\u0027 key word)",
           "unexpectedBehaviour": true
         },
         {
-          "specVersion": "0.1-213",
+          "specVersion": "0.1-296",
           "casesNumber": 2,
           "description": "check if-expressions must have both branches.",
           "unexpectedBehaviour": false
@@ -39,7 +39,7 @@
     "pos": {
       "2": [
         {
-          "specVersion": "0.1-213",
+          "specVersion": "0.1-296",
           "casesNumber": 2,
           "description": "check any if-statement in kotlin may be trivially turned into such an expression by replacing the missing branch with a kotlin.Unit object expression.",
           "unexpectedBehaviour": false
@@ -47,13 +47,13 @@
       ],
       "1": [
         {
-          "specVersion": "0.1-213",
+          "specVersion": "0.1-296",
           "casesNumber": 2,
           "description": "check if-expressions must have both branches.",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-213",
+          "specVersion": "0.1-296",
           "casesNumber": 3,
           "description": "check if-expressions must have both branches.",
           "unexpectedBehaviour": false

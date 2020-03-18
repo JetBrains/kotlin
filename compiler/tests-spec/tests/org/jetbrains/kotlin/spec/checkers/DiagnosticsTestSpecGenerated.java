@@ -2035,6 +2035,37 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class P_2 extends AbstractDiagnosticsTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInP_2() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2/pos")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Pos extends AbstractDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        @TestMetadata("1.1.kt")
+                        public void test1_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2/pos/1.1.kt");
+                        }
+
+                        public void testAllFilesPresentInPos() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        }
+                    }
+                }
+
                 @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-3")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
@@ -2062,37 +2093,6 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
 
                         public void testAllFilesPresentInPos() throws Exception {
                             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
-                        }
-                    }
-                }
-
-                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-4")
-                @TestDataPath("$PROJECT_ROOT")
-                @RunWith(JUnit3RunnerWithInners.class)
-                public static class P_4 extends AbstractDiagnosticsTestSpec {
-                    private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-                    }
-
-                    public void testAllFilesPresentInP_4() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
-                    }
-
-                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-4/pos")
-                    @TestDataPath("$PROJECT_ROOT")
-                    @RunWith(JUnit3RunnerWithInners.class)
-                    public static class Pos extends AbstractDiagnosticsTestSpec {
-                        private void runTest(String testDataFilePath) throws Exception {
-                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-                        }
-
-                        @TestMetadata("1.1.kt")
-                        public void test1_1() throws Exception {
-                            runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-4/pos/1.1.kt");
-                        }
-
-                        public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }
@@ -2718,19 +2718,19 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
-                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-3")
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4")
                     @TestDataPath("$PROJECT_ROOT")
                     @RunWith(JUnit3RunnerWithInners.class)
-                    public static class P_3 extends AbstractDiagnosticsTestSpec {
+                    public static class P_4 extends AbstractDiagnosticsTestSpec {
                         private void runTest(String testDataFilePath) throws Exception {
                             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                         }
 
-                        public void testAllFilesPresentInP_3() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-3"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        public void testAllFilesPresentInP_4() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
 
-                        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-3/pos")
+                        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4/pos")
                         @TestDataPath("$PROJECT_ROOT")
                         @RunWith(JUnit3RunnerWithInners.class)
                         public static class Pos extends AbstractDiagnosticsTestSpec {
@@ -2740,11 +2740,11 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
 
                             @TestMetadata("1.1.kt")
                             public void test1_1() throws Exception {
-                                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-3/pos/1.1.kt");
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4/pos/1.1.kt");
                             }
 
                             public void testAllFilesPresentInPos() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                             }
                         }
                     }

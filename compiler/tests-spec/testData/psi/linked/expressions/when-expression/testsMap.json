@@ -11,13 +11,13 @@
       ],
       "1": [
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-296",
           "casesNumber": 0,
           "description": "\u0027When\u0027 with bound value and \u0027when condition\u0027 with type checking operator and non-type value.",
           "unexpectedBehaviour": true
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-296",
           "casesNumber": 0,
           "description": "\u0027When\u0027 with bound value and type test condition, but missed type in \u0027when condition\u0027.",
           "unexpectedBehaviour": false
@@ -25,7 +25,7 @@
       ],
       "3": [
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-296",
           "casesNumber": 0,
           "description": "\u0027When\u0027 with bound value and \u0027when condition\u0027 with range expression, but without contains operator.",
           "unexpectedBehaviour": false

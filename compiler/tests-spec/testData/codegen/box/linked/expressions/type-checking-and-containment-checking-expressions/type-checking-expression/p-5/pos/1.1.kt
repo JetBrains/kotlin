@@ -3,8 +3,8 @@
 /*
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-218
- * PLACE: expressions, type-checking-and-containment-checking-expressions, type-checking-expression -> paragraph 4 -> sentence 1
+ * SPEC VERSION: 0.1-297
+ * PLACE: expressions, type-checking-and-containment-checking-expressions, type-checking-expression -> paragraph 5 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: the expression null is T? for any type T always evaluates to true
  */

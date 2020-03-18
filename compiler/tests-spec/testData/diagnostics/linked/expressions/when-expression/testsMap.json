@@ -11,13 +11,13 @@
       ],
       "1": [
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-296",
           "casesNumber": 1,
           "description": "\u0027When\u0027 with bound value and type test condition on the non-type operand of the type checking operator.",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-296",
           "casesNumber": 3,
           "description": "\u0027When\u0027 with bound value and type test condition (without companion object in classes), but without type checking operator.",
           "unexpectedBehaviour": false
@@ -74,13 +74,13 @@
       ],
       "3": [
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-296",
           "casesNumber": 1,
           "description": "\u0027When\u0027 with bound value and \u0027when condition\u0027 with range expression, but without containment checking operator.",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-296",
           "casesNumber": 2,
           "description": "\u0027When\u0027 with bound value and \u0027when condition\u0027 with contains operator and type without defined contains operator.",
           "unexpectedBehaviour": false
@@ -190,25 +190,25 @@
       ],
       "1": [
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-296",
           "casesNumber": 5,
           "description": "\u0027When\u0027 with bound value and type test condition (invert type checking operator).",
           "unexpectedBehaviour": true
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-296",
           "casesNumber": 6,
           "description": "\u0027When\u0027 with bound value and enumaration of type test conditions.",
           "unexpectedBehaviour": true
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-296",
           "casesNumber": 7,
           "description": "\u0027When\u0027 with bound value and enumaration of type test conditions (with invert type checking operator).",
           "unexpectedBehaviour": true
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-296",
           "casesNumber": 6,
           "description": "\u0027When\u0027 with bound value and type test condition.",
           "unexpectedBehaviour": true
@@ -251,13 +251,13 @@
       ],
       "3": [
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-296",
           "casesNumber": 2,
           "description": "\u0027When\u0027 with bound value and containment operator.",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-296",
           "casesNumber": 2,
           "description": "\u0027When\u0027 with bound value and enumeration of the containment operators.",
           "unexpectedBehaviour": false
