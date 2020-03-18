@@ -62,6 +62,9 @@ public abstract class BigPopupUI extends BorderLayoutPanel implements Disposable
   @NotNull
   protected abstract String getInitialHint();
 
+  @NotNull
+  protected abstract String getAccessibleName();
+
   protected void installScrollingActions() {
     ScrollingUtil.installActions(myResultsList, getSearchField());
   }
@@ -152,6 +155,8 @@ public abstract class BigPopupUI extends BorderLayoutPanel implements Disposable
 
     addToTop(topPanel);
     addToCenter(suggestionsPanel);
+
+    getAccessibleContext().setAccessibleName(getAccessibleName());
 
     MnemonicHelper.init(this);
   }

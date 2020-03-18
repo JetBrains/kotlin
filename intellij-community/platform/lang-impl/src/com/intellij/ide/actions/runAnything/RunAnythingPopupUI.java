@@ -683,7 +683,6 @@ public class RunAnythingPopupUI extends BigPopupUI {
     myModule = actionEvent.getData(LangDataKeys.MODULE);
 
     init();
-    getAccessibleContext().setAccessibleName("Run Anything");
 
     initSearchActions();
 
@@ -804,6 +803,11 @@ public class RunAnythingPopupUI extends BigPopupUI {
     return IdeBundle.message("run.anything.hint.initial.text",
                              KeymapUtil.getKeystrokeText(UP_KEYSTROKE),
                              KeymapUtil.getKeystrokeText(DOWN_KEYSTROKE));
+  }
+
+  @Override
+  protected @NotNull String getAccessibleName() {
+    return IdeBundle.message("run.anything.accessible.name");
   }
 
   @NotNull

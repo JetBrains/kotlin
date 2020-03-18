@@ -131,7 +131,6 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
       namesMap::get, c -> null);
 
     init();
-    getAccessibleContext().setAccessibleName("Search everywhere");
 
     initSearchActions();
 
@@ -391,6 +390,11 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
     return IdeBundle.message("searcheverywhere.history.shortcuts.hint",
                              KeymapUtil.getKeystrokeText(SearchTextField.ALT_SHOW_HISTORY_KEYSTROKE),
                              KeymapUtil.getKeystrokeText(SearchTextField.SHOW_HISTORY_KEYSTROKE));
+  }
+
+  @Override
+  protected @NotNull String getAccessibleName() {
+    return IdeBundle.message("searcheverywhere.accessible.name");
   }
 
   @NotNull
