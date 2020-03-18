@@ -1914,6 +1914,7 @@
                      level="WARNING"
                      runForWholeFile="true"
                      language="kotlin"
+                     suppressId="unused"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedReceiverParameterInspection"
@@ -1923,6 +1924,7 @@
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
+                     suppressId="unused"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinUnusedImportInspection"
@@ -1933,6 +1935,7 @@
                      level="WARNING"
                      runForWholeFile="true"
                      language="kotlin"
+                     suppressId="UnusedImport"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection"
@@ -2658,6 +2661,7 @@
                      cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
+                     suppressId="DoubleNegation"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.WhenWithOnlyElseInspection"
@@ -2766,6 +2770,7 @@
                      cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
+                     suppressId="RedundantOverride"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SuspiciousEqualsCombination"
@@ -3460,6 +3465,7 @@
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
+                     suppressId="ThrowableNotThrown"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.JavaMapForEachInspection"
@@ -3487,6 +3493,7 @@
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
+                     suppressId="CovariantEquals"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceNotNullAssertionWithElvisReturnInspection"
@@ -3550,6 +3557,7 @@
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
+                     suppressId="EqualsBetweenInconvertibleTypes"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.LateinitVarOverridesLateinitVarInspection"
