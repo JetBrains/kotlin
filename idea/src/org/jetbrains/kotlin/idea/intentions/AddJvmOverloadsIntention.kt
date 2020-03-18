@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private val annotationFqName = FqName("kotlin.jvm.JvmOverloads")
 
@@ -44,6 +45,7 @@ class AddJvmOverloadsIntention : SelfTargetingIntention<KtModifierListOwner>(
                 KotlinBundle.message("text.secondary.constructor") to valueParameterList.parameters
             }
             is KtPrimaryConstructor -> {
+                if (element.parent.safeAs<KtClass>()?.isAnnotation() == true) return false
                 val parameters = (element.valueParameterList ?: return false).parameters
 
                 // For primary constructors with all default values, a zero-arg constructor is generated anyway. If there's only one

@@ -953,6 +953,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/addJvmOverloads/primaryConstructor.kt");
         }
 
+        @TestMetadata("primaryConstructorOnAnnotationClass.kt")
+        public void testPrimaryConstructorOnAnnotationClass() throws Exception {
+            runTest("idea/testData/intentions/addJvmOverloads/primaryConstructorOnAnnotationClass.kt");
+        }
+
         @TestMetadata("primaryConstructorOneWithDefault.kt")
         public void testPrimaryConstructorOneWithDefault() throws Exception {
             runTest("idea/testData/intentions/addJvmOverloads/primaryConstructorOneWithDefault.kt");
