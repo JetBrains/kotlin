@@ -34,7 +34,7 @@ abstract class BinaryRunConfigurationBase(
     project: Project,
     factory: ConfigurationFactory,
     var executable: KonanExecutable?
-) : LocatableConfigurationBase<Any>(project, factory, executable?.base?.name),
+) : LocatableConfigurationBase<Any>(project, factory, executable?.base?.fullName),
     CommonProgramRunConfigurationParameters,
     CidrDebugProfile {
 

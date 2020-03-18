@@ -22,7 +22,7 @@ data class KonanExecutableBase(
 ) {
     val name = "$targetName" + if (executableName.isEmpty()) "" else ".$executableName"
 
-    val fullName = "$targetType.$targetName.$executableName.$projectPrefix"
+    val fullName = "$projectPrefix$targetType.$targetName.$executableName"
 
     fun writeToXml(element: Element) {
         element.setAttribute(XmlExecutable.attributeTargetType, targetType.name)

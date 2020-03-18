@@ -61,9 +61,9 @@ abstract class ProjectDataServiceBase : AbstractProjectDataService<KotlinTargetD
 
             node.data.konanArtifacts?.forEach { artifact ->
                 val executable = KonanExecutableBase.constructFrom(artifact, targetName, projectPrefix) ?: return@forEach
-                val runProfile = BinaryExecutionTarget.constructFrom(artifact, executable.name) ?: return@forEach
+                val runProfile = BinaryExecutionTarget.constructFrom(artifact, executable.fullName) ?: return@forEach
                 executionTargets.getOrPut(executable) { ArrayList() } += runProfile
-                artifact.runConfiguration.let { runConfigurations.put(executable, it) }
+                artifact.runConfiguration.let { runConfigurations[executable] = it }
             }
         }
 

@@ -5,19 +5,23 @@
 
 package com.jetbrains.mpp.execution
 
-import com.intellij.execution.Executor
-import com.intellij.execution.configuration.EnvironmentVariablesComponent
-import com.intellij.execution.configurations.*
+import com.intellij.execution.configurations.ConfigurationFactory
+import com.intellij.execution.configurations.ConfigurationTypeBase
+import com.intellij.execution.configurations.ConfigurationTypeUtil
+import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
-import com.jetbrains.konan.*
+import com.jetbrains.konan.BinaryRunConfigurationBase
+import com.jetbrains.konan.KonanBundle
+import com.jetbrains.konan.KonanExecutable
+import com.jetbrains.konan.WorkspaceBase
 import com.jetbrains.mpp.AppleLLDBDriverConfiguration
 import com.jetbrains.mpp.ProjectWorkspace
-import org.jdom.Element
-import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
+import java.awt.GridBagLayout
 import javax.swing.JComponent
+import javax.swing.JPanel
 
 class BinaryRunConfigurationSettingsEditor(val project: Project) : SettingsEditor<BinaryRunConfiguration>()
 {
@@ -26,7 +30,7 @@ class BinaryRunConfigurationSettingsEditor(val project: Project) : SettingsEdito
     }
 
     override fun createEditor(): JComponent {
-        TODO("Not yet implemented")
+        return JPanel(GridBagLayout())
     }
 
     override fun applyEditorTo(s: BinaryRunConfiguration) {
