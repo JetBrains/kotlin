@@ -466,8 +466,7 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
 
   private static Set<TemplateContextType> getDirectlyApplicableContextTypes(@NotNull PsiFile file, int offset) {
     LinkedHashSet<TemplateContextType> set = new LinkedHashSet<>();
-    LinkedList<TemplateContextType> contexts = buildOrderedContextTypes();
-    for (TemplateContextType contextType : contexts) {
+    for (TemplateContextType contextType : getAllContextTypes()) {
       if (contextType.isInContext(file, offset)) {
         set.add(contextType);
       }
@@ -483,19 +482,6 @@ public class TemplateManagerImpl extends TemplateManager implements Disposable {
 
       return set;
     }
-  }
-
-  private static LinkedList<TemplateContextType> buildOrderedContextTypes() {
-    LinkedList<TemplateContextType> userDefinedExtensionsFirst = new LinkedList<>();
-    for (TemplateContextType contextType : getAllContextTypes()) {
-      if (contextType.getClass().getName().startsWith(Template.class.getPackage().getName())) {
-        userDefinedExtensionsFirst.addLast(contextType);
-      }
-      else {
-        userDefinedExtensionsFirst.addFirst(contextType);
-      }
-    }
-    return userDefinedExtensionsFirst;
   }
 
   @NotNull
