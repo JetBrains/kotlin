@@ -18,13 +18,14 @@ import com.jetbrains.cidr.lang.symbols.objc.OCClassSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCImplementationSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCMemberSymbol
 import com.jetbrains.cidr.lang.types.OCObjectType
-import org.jetbrains.konan.resolve.translation.KtOCSymbolTranslator
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 abstract class KtOCClassSymbol<State : KtOCClassSymbol.ClassState, Stub : ObjCClass<*>> : KtOCLazySymbol<State, Stub>, OCClassSymbol {
     private lateinit var qualifiedName: OCQualifiedName
 
-    constructor(stub: Stub, project: Project, file: VirtualFile) : super(stub, project, file) {
+    constructor(moduleDescriptor: ModuleDescriptor, stub: Stub, project: Project, file: VirtualFile)
+            : super(moduleDescriptor, stub, project, file) {
         qualifiedName = OCQualifiedName.interned(stub.name)
     }
 
@@ -32,18 +33,18 @@ abstract class KtOCClassSymbol<State : KtOCClassSymbol.ClassState, Stub : ObjCCl
 
     override fun isGlobal(): Boolean = true
 
-    override fun getProtocolNames(): List<String> = state.protocolNames
+    override fun getProtocolNames(): List<String> = state?.protocolNames ?: emptyList()
 
-    override fun getMembersCount(): Int = state.members?.size() ?: 0
+    override fun getMembersCount(): Int = state?.members?.size() ?: 0
 
     override fun <T : OCMemberSymbol?> processMembers(
         memberName: String?,
         memberClass: Class<out T>?,
         processor: Processor<in T>
     ): Boolean {
-        val members = state.members ?: return true
+        val members = state?.members ?: return true
 
-        val myProcessor: Processor<OCMemberSymbol> = if (memberClass != null) {
+        val myProcessor = if (memberClass != null) {
             Processor { member -> !memberClass.isAssignableFrom(member.javaClass) || processor.process(member as T) }
         } else {
             processor as Processor<OCMemberSymbol>
@@ -81,7 +82,7 @@ abstract class KtOCClassSymbol<State : KtOCClassSymbol.ClassState, Stub : ObjCCl
 
         constructor(clazz: KtOCClassSymbol<*, *>, stub: ObjCClass<*>, project: Project) : super(stub) {
             protocolNames = stub.superProtocols
-            members = KtOCSymbolTranslator(project).translateMembers(stub, clazz)
+            members = createTranslator(project).translateMembers(stub, clazz)
         }
 
         constructor() : super() {

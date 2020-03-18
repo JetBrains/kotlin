@@ -11,18 +11,20 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.lang.symbols.DeepEqual
 import com.jetbrains.cidr.lang.symbols.VirtualFileOwner
 import org.jetbrains.konan.resolve.symbols.KtLazySymbol
+import org.jetbrains.konan.resolve.translation.KtOCSymbolTranslator
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 abstract class KtOCLazySymbol<State : KtLazySymbol.StubState, Stb : ObjCTopLevel<*>> : KtLazySymbol<State, Stb>, VirtualFileOwner {
-
     @Transient
     private lateinit var file: VirtualFile
 
     constructor(
+        moduleDescriptor: ModuleDescriptor,
         stub: Stb,
         project: Project,
         file: VirtualFile
-    ) : super(stub, project, stub.name) {
+    ) : super(moduleDescriptor, stub, project, stub.name) {
         this.file = file
     }
 
@@ -45,5 +47,10 @@ abstract class KtOCLazySymbol<State : KtLazySymbol.StubState, Stb : ObjCTopLevel
 
     override fun init(file: VirtualFile) {
         this.file = file
+    }
+
+    companion object {
+        @JvmStatic
+        protected fun createTranslator(project: Project): KtOCSymbolTranslator = KtOCSymbolTranslator(project)
     }
 }

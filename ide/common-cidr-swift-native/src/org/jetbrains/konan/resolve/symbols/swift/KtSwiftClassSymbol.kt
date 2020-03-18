@@ -7,9 +7,12 @@ import com.jetbrains.swift.psi.types.SwiftClassType
 import com.jetbrains.swift.symbols.SwiftClassSymbol
 import com.jetbrains.swift.symbols.SwiftInitializerSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 class KtSwiftClassSymbol : KtSwiftTypeSymbol<KtSwiftClassSymbol.ClassState, ObjCInterface>, SwiftClassSymbol {
-    constructor(stub: ObjCInterface, project: Project, file: VirtualFile) : super(stub, project, file)
+    constructor(moduleDescriptor: ModuleDescriptor, stub: ObjCInterface, project: Project, file: VirtualFile)
+            : super(moduleDescriptor, stub, project, file)
+
     constructor() : super()
 
     override val declarationKind: SwiftDeclarationKind
@@ -18,7 +21,7 @@ class KtSwiftClassSymbol : KtSwiftTypeSymbol<KtSwiftClassSymbol.ClassState, ObjC
     override fun computeState(stub: ObjCInterface, project: Project): ClassState = ClassState(this, stub, project)
 
     override val rawSuperTypes: List<SwiftClassType>
-        get() = state.superTypes
+        get() = state?.superTypes ?: emptyList()
 
     //todo [medvedev] ??? also implement SwiftObjcClassSymbol.getDesignatedInitializers
     override fun getDesignatedInitializers(): List<SwiftInitializerSymbol> = emptyList()
@@ -26,11 +29,7 @@ class KtSwiftClassSymbol : KtSwiftTypeSymbol<KtSwiftClassSymbol.ClassState, ObjC
     class ClassState : TypeState {
         lateinit var superTypes: List<SwiftClassType>
 
-        constructor(
-            classSymbol: KtSwiftClassSymbol,
-            stub: ObjCInterface,
-            project: Project
-        ) : super(classSymbol, stub, project) {
+        constructor(classSymbol: KtSwiftClassSymbol, stub: ObjCInterface, project: Project) : super(classSymbol, stub, project) {
             superTypes = (sequenceOf(stub.superClass) + stub.superProtocols.asSequence())
                 .filterNotNull()
                 .map { ref -> createClassType(ref, classSymbol) }

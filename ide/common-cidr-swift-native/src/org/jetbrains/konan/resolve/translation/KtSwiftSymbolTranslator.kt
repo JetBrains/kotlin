@@ -9,17 +9,15 @@ import com.jetbrains.swift.symbols.SwiftMemberSymbol
 import com.jetbrains.swift.symbols.SwiftParameterSymbol
 import org.jetbrains.konan.resolve.symbols.swift.*
 import org.jetbrains.kotlin.backend.konan.objcexport.*
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 class KtSwiftSymbolTranslator(val project: Project) : KtFileTranslator<KtSwiftTypeSymbol<*, *>, SwiftMemberSymbol>() {
-    override fun translate(stub: ObjCTopLevel<*>, file: VirtualFile): KtSwiftTypeSymbol<*, *>? {
+    override fun translate(moduleDescriptor: ModuleDescriptor, stub: ObjCTopLevel<*>, file: VirtualFile): KtSwiftTypeSymbol<*, *>? {
         return when (stub) {
-            is ObjCProtocol -> KtSwiftProtocolSymbol(stub, project, file)
-            is ObjCInterface -> {
-                if (stub.categoryName != null) {
-                    KtSwiftExtensionSymbol(stub, project, file)
-                } else {
-                    KtSwiftClassSymbol(stub, project, file)
-                }
+            is ObjCProtocol -> KtSwiftProtocolSymbol(moduleDescriptor, stub, project, file)
+            is ObjCInterface -> when (stub.categoryName) {
+                null -> KtSwiftClassSymbol(moduleDescriptor, stub, project, file)
+                else -> KtSwiftExtensionSymbol(moduleDescriptor, stub, project, file)
             }
             else -> {
                 OCLog.LOG.error("unknown kotlin declaration: " + stub::class)

@@ -11,19 +11,24 @@ import com.jetbrains.swift.presentation.calculateMaybeDeferredFullIcon
 import com.jetbrains.swift.psi.types.SwiftContext
 import com.jetbrains.swift.symbols.*
 import org.jetbrains.konan.resolve.symbols.KtLazySymbol
+import org.jetbrains.konan.resolve.translation.KtSwiftSymbolTranslator
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import javax.swing.Icon
 
-abstract class KtSwiftLazySymbol<State : KtLazySymbol.StubState, Stb : ObjCTopLevel<*>> : KtLazySymbol<State, Stb>, SwiftSymbol, SwiftContextInitializable {
+abstract class KtSwiftLazySymbol<State : KtLazySymbol.StubState, Stb : ObjCTopLevel<*>>
+    : KtLazySymbol<State, Stb>, SwiftSymbol, SwiftContextInitializable {
     @Transient
     private lateinit var file: VirtualFile
+
     @Transient
     private lateinit var project: Project
 
     override val projectFile: SwiftContext
         get() = SwiftContext.of(file, project)
 
-    constructor(stub: Stb, project: Project, file: VirtualFile) : super(stub, project, stub.swiftName) {
+    constructor(moduleDescriptor: ModuleDescriptor, stub: Stb, project: Project, file: VirtualFile)
+            : super(moduleDescriptor, stub, project, stub.swiftName) {
         this.file = file
         this.project = project
         this.objcName = stub.name
@@ -73,4 +78,9 @@ abstract class KtSwiftLazySymbol<State : KtLazySymbol.StubState, Stb : ObjCTopLe
 
     final override lateinit var objcName: String //todo???
         private set
+
+    companion object {
+        @JvmStatic
+        protected fun createTranslator(project: Project): KtSwiftSymbolTranslator = KtSwiftSymbolTranslator(project)
+    }
 }

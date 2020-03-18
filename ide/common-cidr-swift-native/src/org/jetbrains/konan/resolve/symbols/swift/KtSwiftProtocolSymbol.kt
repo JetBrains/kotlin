@@ -11,13 +11,16 @@ import com.jetbrains.swift.symbols.SwiftMemberSymbol
 import com.jetbrains.swift.symbols.SwiftProtocolSymbol
 import com.jetbrains.swift.symbols.impl.SwiftAllMemberHolder
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocol
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 class KtSwiftProtocolSymbol : KtSwiftTypeSymbol<KtSwiftProtocolSymbol.ProtocolState, ObjCProtocol>, SwiftProtocolSymbol {
     @Transient
     @Volatile
     private var myCachedMemberHolder: SwiftAllMemberHolder? = null
 
-    constructor(stub: ObjCProtocol, project: Project, file: VirtualFile) : super(stub, project, file)
+    constructor(moduleDescriptor: ModuleDescriptor, stub: ObjCProtocol, project: Project, file: VirtualFile)
+            : super(moduleDescriptor, stub, project, file)
+
     constructor() : super()
 
     override val declarationKind: SwiftDeclarationKind
@@ -37,7 +40,7 @@ class KtSwiftProtocolSymbol : KtSwiftTypeSymbol<KtSwiftProtocolSymbol.ProtocolSt
     }
 
     override val rawSuperTypes: List<SwiftClassType>
-        get() = state.superTypes
+        get() = state?.superTypes ?: emptyList()
 
     override fun computeState(stub: ObjCProtocol, project: Project): ProtocolState = ProtocolState(this, stub, project)
 

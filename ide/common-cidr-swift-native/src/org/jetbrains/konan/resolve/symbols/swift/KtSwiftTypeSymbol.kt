@@ -8,13 +8,14 @@ import com.jetbrains.swift.psi.types.SwiftTypeFactory
 import com.jetbrains.swift.symbols.SwiftGenericParametersInfo
 import com.jetbrains.swift.symbols.SwiftMemberSymbol
 import com.jetbrains.swift.symbols.SwiftTypeSymbol
-import org.jetbrains.konan.resolve.translation.KtSwiftSymbolTranslator
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 abstract class KtSwiftTypeSymbol<State : KtSwiftTypeSymbol.TypeState, Stub : ObjCClass<*>>
     : KtSwiftLazySymbol<State, Stub>, SwiftTypeSymbol {
 
-    constructor(stub: Stub, project: Project, file: VirtualFile) : super(stub, project, file)
+    constructor(moduleDescriptor: ModuleDescriptor, stub: Stub, project: Project, file: VirtualFile)
+            : super(moduleDescriptor, stub, project, file)
 
     constructor() : super()
 
@@ -32,7 +33,7 @@ abstract class KtSwiftTypeSymbol<State : KtSwiftTypeSymbol.TypeState, Stub : Obj
         get() = name
 
     override val rawMembers: MostlySingularMultiMap<String, SwiftMemberSymbol>
-        get() = state.members ?: MostlySingularMultiMap.emptyMap()
+        get() = state?.members ?: MostlySingularMultiMap.emptyMap()
 
     override fun getContainingTypeSymbol(): SwiftTypeSymbol? = null
 
@@ -40,7 +41,7 @@ abstract class KtSwiftTypeSymbol<State : KtSwiftTypeSymbol.TypeState, Stub : Obj
         var members: MostlySingularMultiMap<String, SwiftMemberSymbol>?
 
         constructor(clazz: KtSwiftTypeSymbol<*, *>, stub: ObjCClass<*>, project: Project) : super(stub) {
-            members = KtSwiftSymbolTranslator(project).translateMembers(stub, clazz)
+            members = createTranslator(project).translateMembers(stub, clazz)
         }
 
         constructor() : super() {

@@ -18,12 +18,13 @@ import com.jetbrains.cidr.lang.types.OCTypeArgument
 import com.jetbrains.cidr.lang.types.visitors.OCTypeSubstitution
 import org.jetbrains.konan.resolve.translation.createSuperType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 class KtOCInterfaceSymbol : KtOCClassSymbol<KtOCInterfaceSymbol.InterfaceState, ObjCInterface>, OCInterfaceSymbol {
-
     private var categoryName: String?
 
-    constructor(stub: ObjCInterface, project: Project, file: VirtualFile) : super(stub, project, file) {
+    constructor(moduleDescriptor: ModuleDescriptor, stub: ObjCInterface, project: Project, file: VirtualFile)
+            : super(moduleDescriptor, stub, project, file) {
         this.categoryName = stub.categoryName
     }
 
@@ -37,12 +38,12 @@ class KtOCInterfaceSymbol : KtOCClassSymbol<KtOCInterfaceSymbol.InterfaceState, 
 
     override fun getSubstitution(): OCTypeSubstitution = OCTypeSubstitution.ID
 
-    override fun isTemplateSymbol(): Boolean = state.isTemplateSymbol
+    override fun isTemplateSymbol(): Boolean = state?.isTemplateSymbol ?: false
 
     override fun isVariadicTemplate(): Boolean = false
 
-    @Suppress("UNCHECKED_CAST")
-    override fun getTemplateParameters(): List<OCTypeParameterSymbol<OCTypeArgument>> = genericParameters as List<OCTypeParameterSymbol<OCTypeArgument>>
+    //todo implement generics
+    override fun getTemplateParameters(): List<OCTypeParameterSymbol<OCTypeArgument>> = emptyList()
 
     override fun isSpecialization(): Boolean = false
 
@@ -54,7 +55,7 @@ class KtOCInterfaceSymbol : KtOCClassSymbol<KtOCInterfaceSymbol.InterfaceState, 
 
     override fun getCategoryName(): String? = categoryName
 
-    override fun getSuperType(): OCReferenceType = state.superType
+    override fun getSuperType(): OCReferenceType = state?.superType ?: OCReferenceType.fromText("")
 
     //todo implement generics
     override fun getGenericParameters(): List<OCGenericParameterSymbol> = emptyList()

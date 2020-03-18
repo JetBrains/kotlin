@@ -9,22 +9,25 @@ import com.jetbrains.swift.psi.types.SwiftType
 import com.jetbrains.swift.psi.types.SwiftTypeFactory
 import com.jetbrains.swift.symbols.SwiftExtensionSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 class KtSwiftExtensionSymbol : KtSwiftTypeSymbol<KtSwiftExtensionSymbol.ExtensionState, ObjCInterface>, SwiftExtensionSymbol {
-    constructor(stub: ObjCInterface, project: Project, file: VirtualFile) : super(stub, project, file)
+    constructor(moduleDescriptor: ModuleDescriptor, stub: ObjCInterface, project: Project, file: VirtualFile)
+            : super(moduleDescriptor, stub, project, file)
+
     constructor() : super()
 
     override val declarationKind: SwiftDeclarationKind
         get() = SwiftDeclarationKind.extensionDeclaration
 
     override val baseType: SwiftType
-        get() = state.baseType
+        get() = state?.baseType ?: SwiftType.UNKNOWN
 
     override val docString: String?
         get() = null
 
     override val rawSuperTypes: List<SwiftClassType>
-        get() = state.superTypes
+        get() = state?.superTypes ?: emptyList()
 
     override fun computeState(stub: ObjCInterface, project: Project): ExtensionState = ExtensionState(this, stub, project)
 

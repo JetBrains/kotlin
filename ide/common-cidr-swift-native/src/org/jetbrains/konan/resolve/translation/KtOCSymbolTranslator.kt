@@ -12,12 +12,13 @@ import com.jetbrains.cidr.lang.symbols.objc.SelectorPartSymbolImpl
 import com.jetbrains.cidr.lang.types.OCVoidType
 import org.jetbrains.konan.resolve.symbols.objc.*
 import org.jetbrains.kotlin.backend.konan.objcexport.*
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 class KtOCSymbolTranslator(val project: Project) : KtFileTranslator<KtOCClassSymbol<*, *>, OCMemberSymbol>() {
-    override fun translate(stub: ObjCTopLevel<*>, file: VirtualFile): KtOCClassSymbol<*, *>? {
+    override fun translate(moduleDescriptor: ModuleDescriptor, stub: ObjCTopLevel<*>, file: VirtualFile): KtOCClassSymbol<*, *>? {
         return when (stub) {
-            is ObjCProtocol -> KtOCProtocolSymbol(stub, project, file)
-            is ObjCInterface -> KtOCInterfaceSymbol(stub, project, file)
+            is ObjCProtocol -> KtOCProtocolSymbol(moduleDescriptor, stub, project, file)
+            is ObjCInterface -> KtOCInterfaceSymbol(moduleDescriptor, stub, project, file)
             else -> {
                 OCLog.LOG.error("unknown kotlin objective-c declaration: " + stub::class)
                 null

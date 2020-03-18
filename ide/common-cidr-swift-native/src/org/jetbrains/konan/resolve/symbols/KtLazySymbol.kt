@@ -5,51 +5,63 @@ import com.intellij.openapi.util.Comparing
 import com.intellij.psi.PsiElement
 import com.jetbrains.cidr.lang.symbols.DeepEqual
 import com.jetbrains.cidr.lang.symbols.OCSymbolBase
+import org.jetbrains.konan.resolve.symbols.KtLazySymbol.StubState
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
 import org.jetbrains.kotlin.backend.konan.objcexport.Stub
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
-abstract class KtLazySymbol<State : KtLazySymbol.StubState, Stb : ObjCTopLevel<*>> : KtSymbol {
+abstract class KtLazySymbol<State : StubState, Stb : ObjCTopLevel<*>> : KtSymbol {
     private lateinit var name: String
 
     @Volatile
-    private var _state: State? = null
+    private var _state: StubState? = null
 
+    @Suppress("UNCHECKED_CAST")
+    private val validStateOrNull: State?
+        get() = _state.takeUnless { it is AbortedState } as State?
+
+    // TODO: Remove superfluous ModuleDescriptor reference, when Kotlin/Native 1.4.0-M2 lands
     @Transient
     @Volatile
-    private var stubAndProject: Pair<Stb, Project>?
+    private var stubAndProject: Triple<ModuleDescriptor, Stb, Project>?
 
     constructor(
+        moduleDescriptor: ModuleDescriptor,
         stub: Stb,
         project: Project,
         name: String
     ) {
         this.name = name
-        this.stubAndProject = Pair(stub, project)
+        this.stubAndProject = Triple(moduleDescriptor, stub, project)
     }
 
     constructor() {
         this.stubAndProject = null
     }
 
-    protected val state: State
+    protected val state: State?
         get() {
-            _state?.let { return it }
-            stubAndProject?.let { (stub, project) ->
-                //todo check project.isDisposed
-                val newState = runReadAction { computeState(stub, project) }
-                if (valueUpdater.compareAndSet(this, null, newState)) {
+            _state?.let { return validStateOrNull }
+            stubAndProject?.let { (moduleDescriptor, stub, project) ->
+                val newState = runReadAction {
+                    if (project.isDisposed || !moduleDescriptor.isValid) {
+                        return@runReadAction null
+                    }
+                    computeState(stub, project)
+                }
+                if (valueUpdater.compareAndSet(this, null, newState ?: AbortedState(stub))) {
                     stubAndProject = null
                     return newState
                 }
             }
-            return _state!!
+            return validStateOrNull
         }
 
     private fun psi(project: Project): PsiElement? {
-        stubAndProject?.let { return it.first.psi }
+        stubAndProject?.let { (_, stub, _) -> return stub.psi }
         return OCSymbolBase.doLocateDefinition(this, project, KtNamedDeclaration::class.java)
     }
 
@@ -57,8 +69,8 @@ abstract class KtLazySymbol<State : KtLazySymbol.StubState, Stb : ObjCTopLevel<*
 
     override fun getComplexOffset(): Long =
         _state?.offset
-        ?: stubAndProject?.first?.offset
-        ?: _state!!.offset
+            ?: stubAndProject?.let { (_, stub, _) -> stub.offset }
+            ?: _state!!.offset
 
     protected abstract fun computeState(stub: Stb, project: Project): State
 
@@ -74,7 +86,7 @@ abstract class KtLazySymbol<State : KtLazySymbol.StubState, Stb : ObjCTopLevel<*
     override fun locateDefinition(project: Project): PsiElement? = psi(project)?.let { KtOCSymbolPsiWrapper(it, this) }
 
     override fun updateOffset(start: Int, lengthShift: Int) {
-        if (_state == null) return
+        if (validStateOrNull == null) return
         super.updateOffset(start, lengthShift)
     }
 
@@ -97,6 +109,11 @@ abstract class KtLazySymbol<State : KtLazySymbol.StubState, Stb : ObjCTopLevel<*
 
         var offset: Long
             internal set
+    }
+
+    internal class AbortedState : StubState {
+        constructor(stub: Stub<*>) : super(stub)
+        constructor() : super()
     }
 
     companion object {

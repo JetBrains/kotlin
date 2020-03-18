@@ -1,10 +1,12 @@
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+
 package org.jetbrains.konan.resolve.symbols.serialization
 
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.cidr.lang.symbols.symtable.serialization.FileSymbolTableSerializer
 import com.jetbrains.cidr.lang.symbols.symtable.serialization.SerializerProvider
 import com.jetbrains.swift.symbols.impl.registerProjectAndFileOwnerSerializer
+import org.jetbrains.konan.resolve.symbols.KtLazySymbol
 import org.jetbrains.konan.resolve.symbols.objc.*
 import org.jetbrains.konan.resolve.symbols.swift.*
 import org.objenesis.instantiator.ObjectInstantiator
@@ -30,6 +32,7 @@ class KtSerializer : SerializerProvider {
         serializer.registerSwiftLazySymbolSerializer(KtSwiftProtocolSymbol::class.java, ::KtSwiftProtocolSymbol)
         serializer.registerSwiftLazySymbolSerializer(KtSwiftExtensionSymbol::class.java, ::KtSwiftExtensionSymbol)
 
+        serializer.registerFieldSerializer(KtLazySymbol.AbortedState::class.java) { KtLazySymbol.AbortedState() }
         serializer.registerFieldSerializer(KtSwiftClassSymbol.ClassState::class.java, KtSwiftClassSymbol::ClassState)
         serializer.registerFieldSerializer(KtSwiftProtocolSymbol.ProtocolState::class.java, KtSwiftProtocolSymbol::ProtocolState)
         serializer.registerFieldSerializer(KtSwiftExtensionSymbol.ExtensionState::class.java, KtSwiftExtensionSymbol::ExtensionState)
@@ -53,8 +56,7 @@ class KtSerializer : SerializerProvider {
         }
     }
 
-
-    override fun getVersion(): Int = 5
+    override fun getVersion(): Int = 6
 
     companion object {
         @JvmStatic
