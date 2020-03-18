@@ -386,11 +386,13 @@ fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
 val IrConstructor.constructedClassType get() = (parent as IrClass).thisReceiver?.type!!
 
 fun IrFunction.isFakeOverriddenFromAny(): Boolean {
-    if (origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
+    val simpleFunction = this as? IrSimpleFunction ?: return false
+
+    if (!simpleFunction.isFakeOverride) {
         return (parent as? IrClass)?.thisReceiver?.type?.isAny() ?: false
     }
 
-    return (this as IrSimpleFunction).overriddenSymbols.all { it.owner.isFakeOverriddenFromAny() }
+    return simpleFunction.overriddenSymbols.all { it.owner.isFakeOverriddenFromAny() }
 }
 
 fun IrCall.isSuperToAny() = superQualifierSymbol?.let { this.symbol.owner.isFakeOverriddenFromAny() } ?: false

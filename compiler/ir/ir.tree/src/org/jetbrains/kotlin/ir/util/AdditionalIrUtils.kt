@@ -65,7 +65,7 @@ val IrValueParameter.isVararg get() = this.varargElementType != null
 
 val IrFunction.isSuspend get() = this is IrSimpleFunction && this.isSuspend
 
-val IrFunction.isReal get() = this.origin != IrDeclarationOrigin.FAKE_OVERRIDE
+val IrFunction.isReal get() = !(this is IrSimpleFunction && isFakeOverride)
 
 fun IrSimpleFunction.overrides(other: IrSimpleFunction): Boolean {
     if (this == other) return true
