@@ -24,7 +24,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.HintListener;
 import com.intellij.ui.LightweightHint;
 import com.intellij.util.ThreeState;
@@ -79,7 +78,7 @@ public abstract class CompletionPhase implements Disposable {
     }
 
     private boolean isExpired() {
-      return CompletionServiceImpl.getCompletionPhase() != this || myTracker.hasAnythingHappened();
+      return myTracker.hasAnythingHappened();
     }
 
     @Override
@@ -116,6 +115,8 @@ public abstract class CompletionPhase implements Disposable {
 
       ReadAction
         .nonBlocking(() -> {
+          if (phase.isExpired()) return null;
+
           // retrieve the injected file from scratch since our typing might have destroyed the old one completely
           PsiFile topLevelFile = PsiDocumentManager.getInstance(project).getPsiFile(topLevelEditor.getDocument());
           Editor completionEditor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(topLevelEditor, topLevelFile, offset);
@@ -132,9 +133,8 @@ public abstract class CompletionPhase implements Disposable {
         })
         .withDocumentsCommitted(project)
         .expireWith(phase)
-        .expireWhen(() -> phase.isExpired())
         .finishOnUiThread(ModalityState.current(), completionEditor -> {
-          if (completionEditor != null) {
+          if (completionEditor != null && !phase.isExpired()) {
             int time = prevIndicator == null ? 0 : prevIndicator.getInvocationCount();
             CodeCompletionHandlerBase handler = CodeCompletionHandlerBase.createHandler(completionType, false, autopopup, false);
             handler.invokeCompletion(project, completionEditor, time, false);
@@ -143,12 +143,7 @@ public abstract class CompletionPhase implements Disposable {
             CompletionServiceImpl.setCompletionPhase(NoCompletion);
           }
         })
-        .submit(ourExecutor)
-        .onError(__ -> AppUIUtil.invokeOnEdt(() -> {
-          if (phase == CompletionServiceImpl.getCompletionPhase()) {
-            CompletionServiceImpl.setCompletionPhase(NoCompletion);
-          }
-        }));
+        .submit(ourExecutor);
     }
 
     private static void loadContributorsOutsideEdt(Editor editor, PsiFile file) {
