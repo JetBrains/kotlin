@@ -3364,6 +3364,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             runTest("compiler/testData/diagnostics/testsWithStdLib/regression/kt34391.kt");
         }
 
+        @TestMetadata("kt37554.kt")
+        public void testKt37554() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/regression/kt37554.kt");
+        }
+
         @TestMetadata("kt9820_javaFunctionTypeInheritor.kt")
         public void testKt9820_javaFunctionTypeInheritor() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/regression/kt9820_javaFunctionTypeInheritor.kt");
