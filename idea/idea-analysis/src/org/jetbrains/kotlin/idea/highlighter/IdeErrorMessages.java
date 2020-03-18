@@ -147,6 +147,9 @@ public class IdeErrorMessages {
         MAP.put(OVERLOAD_RESOLUTION_AMBIGUITY,
                 KotlinIdeaAnalysisBundle.htmlMessage("html.overload.resolution.ambiguity.all.these.functions.match.ul.0.ul.html"),
                 HTML_AMBIGUOUS_CALLS);
+        MAP.put(CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY,
+                KotlinIdeaAnalysisBundle.htmlMessage("html.overload.resolution.ambiguity.all.these.functions.match.ul.0.ul.html"),
+                HTML_AMBIGUOUS_REFERENCES);
         MAP.put(NONE_APPLICABLE, KotlinIdeaAnalysisBundle.htmlMessage("html.none.of.the.following.functions.can.be.called.with.the.arguments.supplied.ul.0.ul.html"),
                 HTML_NONE_APPLICABLE_CALLS);
         MAP.put(CANNOT_COMPLETE_RESOLVE,
