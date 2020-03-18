@@ -22,6 +22,7 @@ public final class kotlin/ExceptionsKt {
 	public static final fun addSuppressed (Ljava/lang/Throwable;Ljava/lang/Throwable;)V
 	public static final fun getStackTrace (Ljava/lang/Throwable;)[Ljava/lang/StackTraceElement;
 	public static final fun getSuppressedExceptions (Ljava/lang/Throwable;)Ljava/util/List;
+	public static final fun toStringWithTrace (Ljava/lang/Throwable;)Ljava/lang/String;
 }
 
 public abstract interface annotation class kotlin/Experimental : java/lang/annotation/Annotation {

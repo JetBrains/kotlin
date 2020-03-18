@@ -119,6 +119,17 @@ internal class KotlinNothingValueException : RuntimeException {
 
 
 /**
+ * Returns the detailed description of this throwable with its stack trace.
+ *
+ * The detailed description includes:
+ * - the short description (see [Throwable.toString]) of this throwable;
+ * - the complete stack trace;
+ * - detailed descriptions of the exceptions that were [suppressed][suppressedExceptions] in order to deliver this exception;
+ * - the detailed description of each throwable in the [Throwable.cause] chain.
+ */
+@SinceKotlin("1.4")
+public expect fun Throwable.toStringWithTrace(): String
+/**
  * When supported by the platform, adds the specified exception to the list of exceptions that were
  * suppressed in order to deliver this exception.
  */

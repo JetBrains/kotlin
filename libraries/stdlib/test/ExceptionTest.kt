@@ -87,4 +87,47 @@ class ExceptionTest {
         }
     }
 
+    @Test
+    fun exceptionDetailedTrace() {
+        fun root(): Nothing = throw IllegalStateException("Root cause\nDetails: root")
+
+        fun suppressedError(id: Int): Throwable = UnsupportedOperationException("Side error\nId: $id")
+
+        fun induced(): Nothing {
+            try {
+                root()
+            } catch (e: Throwable) {
+                e.addSuppressed(suppressedError(1))
+                throw RuntimeException("Induced", e)
+            }
+        }
+
+        val e = try {
+            induced()
+        } catch (e: Throwable) {
+            e.apply { addSuppressed(suppressedError(2)) }
+        }
+
+        val topLevelTrace = e.toStringWithTrace()
+        fun assertInTrace(value: Any) {
+            if (value.toString() !in topLevelTrace) {
+                fail("Expected top level trace: $topLevelTrace\n\nto contain: $value")
+            }
+        }
+
+        assertInTrace(e)
+
+        val cause = assertNotNull(e.cause, "Should have cause")
+        assertInTrace(cause)
+
+        if (supportsSuppressedExceptions) {
+            val topLevelSuppressed = e.suppressedExceptions.single()
+            assertInTrace(topLevelSuppressed)
+            val causeSuppressed = cause.suppressedExceptions.single()
+            assertInTrace(causeSuppressed)
+        }
+
+//        fail(topLevelTrace) // to dump the entire trace
+    }
+
 }
