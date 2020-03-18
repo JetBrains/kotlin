@@ -319,7 +319,7 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     boolean stateChanged = multiline != myMultilineMode;
     myMultilineMode = multiline;
     if (stateChanged) {
-      multilineStateChanged();
+      myEventDispatcher.getMulticaster().multilineStateChanged();
     }
   }
 
@@ -343,7 +343,7 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     mySearchTextComponent.getDocument().addDocumentListener(new DocumentAdapter() {
       @Override
       protected void textChanged(@NotNull DocumentEvent e) {
-        ApplicationManager.getApplication().invokeLater(() -> searchFieldDocumentChanged());
+        ApplicationManager.getApplication().invokeLater(() -> myEventDispatcher.getMulticaster().searchFieldDocumentChanged());
       }
     });
 
@@ -390,7 +390,7 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     myReplaceTextComponent.getDocument().addDocumentListener(new DocumentAdapter() {
       @Override
       protected void textChanged(@NotNull DocumentEvent e) {
-        ApplicationManager.getApplication().invokeLater(() -> replaceFieldDocumentChanged());
+        ApplicationManager.getApplication().invokeLater(() -> myEventDispatcher.getMulticaster().replaceFieldDocumentChanged());
       }
     });
 
@@ -479,6 +479,7 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
 
     final JTextArea textComponent;
     SearchTextArea textArea = new SearchTextArea(search);
+    textArea.setGrowHorizontallyWithText(true);
     if (search) {
       myExtraSearchButtons.clear();
       myExtraSearchButtons.addAll(textArea.setExtraActions(myEmbeddedSearchActions.toArray(AnAction.EMPTY_ARRAY)));
@@ -512,30 +513,6 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     });
     installCloseOnEscapeAction(textComponent);
     return true;
-  }
-
-  private void searchFieldDocumentChanged() {
-    if (mySearchTextComponent instanceof JTextArea) {
-      adjustRows((JTextArea)mySearchTextComponent);
-    }
-    myEventDispatcher.getMulticaster().searchFieldDocumentChanged();
-  }
-
-  private void replaceFieldDocumentChanged() {
-    if (myReplaceTextComponent instanceof JTextArea) {
-      adjustRows((JTextArea)myReplaceTextComponent);
-    }
-    myReplaceActionsToolbar2.invalidate();
-    doLayout();
-    myEventDispatcher.getMulticaster().replaceFieldDocumentChanged();
-  }
-
-  private void multilineStateChanged() {
-    myEventDispatcher.getMulticaster().multilineStateChanged();
-  }
-
-  private static void adjustRows(@NotNull JTextArea area) {
-    area.setRows(Math.max(1, Math.min(3, StringUtil.countChars(area.getText(), '\n') + 1)));
   }
 
   private void installCloseOnEscapeAction(@NotNull JTextComponent c) {

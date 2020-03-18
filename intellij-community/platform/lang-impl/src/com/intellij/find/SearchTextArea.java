@@ -36,7 +36,6 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.event.DocumentEvent;
-import javax.swing.plaf.TextUI;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
@@ -53,7 +52,7 @@ import java.util.List;
 import static java.awt.event.InputEvent.*;
 import static javax.swing.ScrollPaneConstants.*;
 
-public class SearchTextArea extends JPanel implements PropertyChangeListener/*, FocusListener*/ {
+public class SearchTextArea extends JPanel implements PropertyChangeListener {
   public static final String JUST_CLEARED_KEY = "JUST_CLEARED";
   public static final KeyStroke NEW_LINE_KEYSTROKE
     = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, (SystemInfo.isMac ? META_DOWN_MASK : CTRL_DOWN_MASK) | SHIFT_DOWN_MASK);
@@ -90,6 +89,7 @@ public class SearchTextArea extends JPanel implements PropertyChangeListener/*, 
   private final JBScrollPane myScrollPane;
   private final ActionButton myHistoryPopupButton;
   private boolean myMultilineEnabled = true;
+  private boolean myGrowHorizontallyWithText = false;
 
   public SearchTextArea(boolean searchMode) {
     this(new JBTextArea(), searchMode, false);
@@ -147,6 +147,8 @@ public class SearchTextArea extends JPanel implements PropertyChangeListener/*, 
         if (e.getType() == DocumentEvent.EventType.INSERT) {
           myTextArea.putClientProperty(JUST_CLEARED_KEY, null);
         }
+        int rows = Math.min(Registry.get("ide.find.max.rows").asInteger(), myTextArea.getLineCount());
+        myTextArea.setRows(Math.max(1, Math.min(25, rows)));
         updateIconsLayout();
       }
     });
@@ -155,24 +157,10 @@ public class SearchTextArea extends JPanel implements PropertyChangeListener/*, 
       @Override
       public Dimension getPreferredSize() {
         Dimension d = super.getPreferredSize();
-        TextUI ui = myTextArea.getUI();
-        if (ui != null) {
-          d.height = Math.min(d.height, ui.getPreferredSize(myTextArea).height);
-        }
+        if (!myGrowHorizontallyWithText) return d;
+        Insets insets = getInsets();
+        d.width = Math.max(d.width, myTextArea.getPreferredSize().width + insets.left + insets.right) /*+ 5*/;
         return d;
-      }
-
-      @Override
-      public void doLayout() {
-        super.doLayout();
-        JScrollBar hsb = getHorizontalScrollBar();
-        if (StringUtil.getLineBreakCount(getTextArea().getText()) == 0 && hsb.isVisible()) {
-          Rectangle hsbBounds = hsb.getBounds();
-          hsb.setVisible(false);
-          Rectangle bounds = getViewport().getBounds();
-          bounds = bounds.union(hsbBounds);
-          getViewport().setBounds(bounds);
-        }
       }
 
       @Override
@@ -224,6 +212,10 @@ public class SearchTextArea extends JPanel implements PropertyChangeListener/*, 
     myNewLineButton = new MyActionButton(new NewLineAction(), false);
 
     updateLayout();
+  }
+
+  public void setGrowHorizontallyWithText(boolean growHorizontallyWithText) {
+    myGrowHorizontallyWithText = growHorizontallyWithText;
   }
 
   @Override
@@ -281,21 +273,20 @@ public class SearchTextArea extends JPanel implements PropertyChangeListener/*, 
     boolean multiline = StringUtil.getLineBreakCount(myTextArea.getText()) > 0;
     if (wrongVisibility) {
       myIconsPanel.removeAll();
-      myIconsPanel.setLayout(new GridLayout(1, showClearIcon && showNewLine ? 2 : 1, 0, 0));
-      if (showClearIcon) {
-        myIconsPanel.add(myClearButton);
-      }
-      if (showNewLine) {
-        myIconsPanel.add(myNewLineButton);
-      }
+      myIconsPanel.setLayout(new BorderLayout());
+      myIconsPanel.add(myClearButton, BorderLayout.CENTER);
+      myIconsPanel.add(myNewLineButton, BorderLayout.EAST);
+      myIconsPanel.setPreferredSize(myIconsPanel.getPreferredSize());
+      if (!showClearIcon) myIconsPanel.remove(myClearButton);
+      if (!showNewLine) myIconsPanel.remove(myNewLineButton);
       myIconsPanel.revalidate();
       myIconsPanel.repaint();
-      myScrollPane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_AS_NEEDED);
-      myScrollPane.setVerticalScrollBarPolicy(multiline ? VERTICAL_SCROLLBAR_AS_NEEDED : VERTICAL_SCROLLBAR_NEVER);
-      myScrollPane.getHorizontalScrollBar().setVisible(multiline);
-      myScrollPane.revalidate();
-      doLayout();
     }
+    myScrollPane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    myScrollPane.setVerticalScrollBarPolicy(multiline ? VERTICAL_SCROLLBAR_AS_NEEDED : VERTICAL_SCROLLBAR_NEVER);
+    myScrollPane.getHorizontalScrollBar().setVisible(multiline);
+    myScrollPane.revalidate();
+    doLayout();
   }
 
   public List<Component> setExtraActions(AnAction... actions) {
