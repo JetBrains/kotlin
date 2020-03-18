@@ -11,6 +11,7 @@ import com.intellij.framework.detection.FrameworkDetector;
 import com.intellij.framework.detection.impl.exclude.DetectionExcludesConfigurationImpl;
 import com.intellij.framework.detection.impl.ui.ConfigureDetectedFrameworksDialog;
 import com.intellij.ide.IdeBundle;
+import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationAction;
 import com.intellij.notification.NotificationGroup;
@@ -44,7 +45,8 @@ import java.util.*;
 
 public final class FrameworkDetectionManager implements FrameworkDetectionIndexListener, Disposable {
   private static final Logger LOG = Logger.getInstance(FrameworkDetectionManager.class);
-  private static final NotificationGroup FRAMEWORK_DETECTION_NOTIFICATION = NotificationGroup.balloonGroup("Framework Detection");
+  private static final NotificationGroup FRAMEWORK_DETECTION_NOTIFICATION = NotificationGroup.balloonGroup("Framework Detection",
+                                                                                                           PluginManagerCore.CORE_ID);
   private final Update myDetectionUpdate = new Update("detection") {
     @Override
     public void run() {

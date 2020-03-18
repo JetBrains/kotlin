@@ -3,6 +3,7 @@ package com.intellij.util.indexing;
 
 import com.intellij.diagnostic.Activity;
 import com.intellij.diagnostic.StartUpMeasurer;
+import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
@@ -33,7 +34,8 @@ import java.util.Set;
 import static com.intellij.serviceContainer.ComponentManagerImplKt.handleComponentError;
 
 class FileBasedIndexDataInitialization extends IndexInfrastructure.DataInitialization<IndexConfiguration> {
-  private static final NotificationGroup NOTIFICATIONS = new NotificationGroup("Indexing", NotificationDisplayType.BALLOON, false);
+  private static final NotificationGroup NOTIFICATIONS = new NotificationGroup("Indexing", NotificationDisplayType.BALLOON, false, null, null,
+                                                                               PluginManagerCore.CORE_ID);
   private static final Logger LOG = Logger.getInstance(FileBasedIndexDataInitialization.class);
 
   private final IndexConfiguration state = new IndexConfiguration();

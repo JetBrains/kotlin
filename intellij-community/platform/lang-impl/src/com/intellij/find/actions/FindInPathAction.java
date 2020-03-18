@@ -19,6 +19,7 @@ package com.intellij.find.actions;
 
 import com.intellij.find.findInProject.FindInProjectManager;
 import com.intellij.ide.lightEdit.LightEdit;
+import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.*;
@@ -31,7 +32,8 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
 public class FindInPathAction extends AnAction implements DumbAware {
-  public static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.toolWindowGroup("Find in Path", ToolWindowId.FIND, false);
+  public static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.toolWindowGroup("Find in Path", ToolWindowId.FIND, false,
+                                                                                               PluginManagerCore.CORE_ID);
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
