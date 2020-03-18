@@ -3,6 +3,7 @@
 
 package org.jetbrains.plugins.gradle.util
 
+import com.intellij.openapi.externalSystem.util.environment.Environment
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.plugins.gradle.util.GradleProperties.EMPTY
 import org.jetbrains.plugins.gradle.util.GradleProperties.GradleProperty

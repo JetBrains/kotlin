@@ -41,7 +41,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.service.project.wizard.AbstractGradleModuleBuilder;
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleStructureWizardStep;
-import org.jetbrains.plugins.gradle.util.Environment;
+import com.intellij.openapi.externalSystem.util.environment.Environment;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;

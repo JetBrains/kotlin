@@ -87,8 +87,6 @@
     <externalSystemNotificationExtension implementation="org.jetbrains.plugins.gradle.service.notification.GradleNotificationExtension" order="last"/>
     <externalSystemTaskNotificationListener implementation="org.jetbrains.plugins.gradle.service.project.GradleProjectImportNotificationListener"/>
 
-    <applicationService serviceInterface="org.jetbrains.plugins.gradle.util.Environment"
-                        serviceImplementation="org.jetbrains.plugins.gradle.util.SystemEnvironment"/>
     <applicationService serviceImplementation="org.jetbrains.plugins.gradle.service.GradleInstallationManager"/>
 
     <applicationService serviceImplementation="org.jetbrains.plugins.gradle.settings.GradleSystemSettings"/>

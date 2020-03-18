@@ -4,6 +4,8 @@ package org.jetbrains.plugins.gradle.util
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkProvider
+import com.intellij.openapi.externalSystem.util.environment.Environment
+import com.intellij.openapi.externalSystem.util.environment.TestEnvironment
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ui.configuration.SdkTestCase
@@ -16,7 +18,6 @@ import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import java.io.File
 import java.util.*
-import kotlin.collections.LinkedHashMap
 
 abstract class GradleJdkResolutionTestCase : SdkTestCase() {
 
@@ -72,48 +73,6 @@ abstract class GradleJdkResolutionTestCase : SdkTestCase() {
       val sdk = TestSdkGenerator.findTestSdk(homePath)!!
       Disposer.register(testRootDisposable, Disposable { removeSdk(sdk) })
       return sdk
-    }
-  }
-
-  class TestEnvironment : Environment {
-    private val properties = LinkedHashMap<String, String?>()
-    private val variables = LinkedHashMap<String, String?>()
-    private val previousEnvironment = Environment.getInstance()
-
-    fun properties(vararg properties: Pair<String, String?>) {
-      this.properties.putAll(properties)
-    }
-
-    fun variables(vararg variables: Pair<String, String?>) {
-      this.variables.putAll(variables)
-    }
-
-    fun <R> withVariables(vararg variables: Pair<String, String?>, action: () -> R): R {
-      val environment = TestEnvironment()
-      environment.variables(*variables)
-      val application = ApplicationManager.getApplication()
-      val parentDisposable = Disposer.newDisposable("Test Environment")
-      application.replaceService(Environment::class.java, environment, parentDisposable)
-      try {
-        return action()
-      }
-      finally {
-        Disposer.dispose(parentDisposable)
-      }
-    }
-
-    override fun getProperty(name: String): String? {
-      return when (name) {
-        in properties -> properties[name]
-        else -> previousEnvironment.getProperty(name)
-      }
-    }
-
-    override fun getVariable(name: String): String? {
-      return when (name) {
-        in variables -> variables[name]
-        else -> previousEnvironment.getVariable(name)
-      }
     }
   }
 

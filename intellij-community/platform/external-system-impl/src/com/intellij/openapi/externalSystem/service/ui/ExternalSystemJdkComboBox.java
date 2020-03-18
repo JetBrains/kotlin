@@ -24,7 +24,6 @@ import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.Consumer;
-import com.intellij.util.EnvironmentUtil;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -254,7 +253,7 @@ public class ExternalSystemJdkComboBox extends ComboBoxWithWidePopup<ExternalSys
                  new JdkComboBoxItem(ExternalSystemJdkUtil.USE_PROJECT_JDK, "Use Project JDK", buildComment(myProjectJdk), true));
     }
 
-    String javaHomePath = EnvironmentUtil.getEnvironmentMap().get("JAVA_HOME");
+    String javaHomePath = ExternalSystemJdkUtil.getJavaHome();
     if (ExternalSystemJdkUtil.isValidJdk(javaHomePath)) {
       result.put(ExternalSystemJdkUtil.USE_JAVA_HOME,
                  new JdkComboBoxItem(

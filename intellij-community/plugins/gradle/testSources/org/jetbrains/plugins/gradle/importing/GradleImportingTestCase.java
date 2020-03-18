@@ -41,7 +41,7 @@ import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.GradleSystemSettings;
 import org.jetbrains.plugins.gradle.tooling.VersionMatcherRule;
 import org.jetbrains.plugins.gradle.tooling.builder.AbstractModelBuilderTest;
-import org.jetbrains.plugins.gradle.util.Environment;
+import com.intellij.openapi.externalSystem.util.environment.Environment;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 import org.jetbrains.plugins.gradle.util.GradleUtil;
 import org.junit.Assume;

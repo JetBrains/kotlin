@@ -6,6 +6,7 @@ package org.jetbrains.plugins.gradle.util
 
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.externalSystem.util.environment.Environment
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
