@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirArraySetCall
+import org.jetbrains.kotlin.fir.expressions.FirAugmentedArraySetCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
-import org.jetbrains.kotlin.fir.expressions.impl.FirArraySetCallImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirAugmentedArraySetCallImpl
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.visitors.*
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 @FirBuilderDsl
-class FirArraySetCallBuilder : FirAnnotationContainerBuilder {
+class FirAugmentedArraySetCallBuilder : FirAnnotationContainerBuilder {
     override var source: FirSourceElement? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     lateinit var assignCall: FirFunctionCall
@@ -33,8 +33,8 @@ class FirArraySetCallBuilder : FirAnnotationContainerBuilder {
     lateinit var operation: FirOperation
     var calleeReference: FirReference = FirStubReference
 
-    override fun build(): FirArraySetCall {
-        return FirArraySetCallImpl(
+    override fun build(): FirAugmentedArraySetCall {
+        return FirAugmentedArraySetCallImpl(
             source,
             annotations,
             assignCall,
@@ -47,9 +47,9 @@ class FirArraySetCallBuilder : FirAnnotationContainerBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildArraySetCall(init: FirArraySetCallBuilder.() -> Unit): FirArraySetCall {
+inline fun buildAugmentedArraySetCall(init: FirAugmentedArraySetCallBuilder.() -> Unit): FirAugmentedArraySetCall {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
-    return FirArraySetCallBuilder().apply(init).build()
+    return FirAugmentedArraySetCallBuilder().apply(init).build()
 }

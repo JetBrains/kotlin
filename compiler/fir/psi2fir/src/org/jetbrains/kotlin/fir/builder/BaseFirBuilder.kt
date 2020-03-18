@@ -479,7 +479,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             return if (operation == FirOperation.ASSIGN) {
                 this.convert()
             } else {
-                generateArraySetCall(baseSource, operation, rhs, convert)
+                generateAugmentedArraySetCall(baseSource, operation, rhs, convert)
             }
         }
 
@@ -506,13 +506,13 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
     }
 
-    private fun T.generateArraySetCall(
+    private fun T.generateAugmentedArraySetCall(
         baseSource: FirSourceElement?,
         operation: FirOperation,
         rhs: T?,
         convert: T.() -> FirExpression
     ): FirStatement {
-        return buildArraySetCall {
+        return buildAugmentedArraySetCall {
             source = baseSource
             this.operation = operation
             assignCall = generateAugmentedCallForAugmentedArraySetCall(operation, rhs, convert)

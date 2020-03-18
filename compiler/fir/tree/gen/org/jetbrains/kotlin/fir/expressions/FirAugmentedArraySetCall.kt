@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirArraySetCall : FirPureAbstractElement(), FirStatement {
+abstract class FirAugmentedArraySetCall : FirPureAbstractElement(), FirStatement {
     abstract override val source: FirSourceElement?
     abstract override val annotations: List<FirAnnotationCall>
     abstract val assignCall: FirFunctionCall
@@ -23,7 +23,7 @@ abstract class FirArraySetCall : FirPureAbstractElement(), FirStatement {
     abstract val operation: FirOperation
     abstract val calleeReference: FirReference
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitArraySetCall(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAugmentedArraySetCall(this, data)
 
     abstract fun replaceCalleeReference(newCalleeReference: FirReference)
 }

@@ -997,10 +997,10 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         visitAssignment(FirOperation.ASSIGN, variableAssignment.rValue)
     }
 
-    override fun visitArraySetCall(arraySetCall: FirArraySetCall) {
-        arraySetCall.annotations.renderAnnotations()
+    override fun visitAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall) {
+        augmentedArraySetCall.annotations.renderAnnotations()
         print("ArraySet:[")
-        arraySetCall.assignCall.accept(this)
+        augmentedArraySetCall.assignCall.accept(this)
         print("]")
     }
 

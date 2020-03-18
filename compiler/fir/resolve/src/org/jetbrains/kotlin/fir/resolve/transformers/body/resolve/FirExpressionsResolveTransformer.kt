@@ -629,13 +629,13 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    override fun transformArraySetCall(arraySetCall: FirArraySetCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        assert(arraySetCall.operation in FirOperation.ASSIGNMENTS)
-        assert(arraySetCall.operation != FirOperation.ASSIGN)
+    override fun transformAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+        assert(augmentedArraySetCall.operation in FirOperation.ASSIGNMENTS)
+        assert(augmentedArraySetCall.operation != FirOperation.ASSIGN)
 
-        val operatorName = FirOperationNameConventions.ASSIGNMENTS.getValue(arraySetCall.operation)
+        val operatorName = FirOperationNameConventions.ASSIGNMENTS.getValue(augmentedArraySetCall.operation)
 
-        val firstCalls = with(arraySetCall.setGetBlock.statements.last() as FirFunctionCall) setCall@{
+        val firstCalls = with(augmentedArraySetCall.setGetBlock.statements.last() as FirFunctionCall) setCall@{
             buildList {
                 add(this@setCall)
                 with(arguments.last() as FirFunctionCall) plusCall@{
@@ -645,25 +645,25 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             }
         }
         val secondCalls = listOf(
-            arraySetCall.assignCall,
-            arraySetCall.assignCall.explicitReceiver as FirFunctionCall
+            augmentedArraySetCall.assignCall,
+            augmentedArraySetCall.assignCall.explicitReceiver as FirFunctionCall
         )
 
         val firstResult = withLocalScopeCleanup {
-            arraySetCall.setGetBlock.transformSingle(transformer, ResolutionMode.ContextIndependent)
+            augmentedArraySetCall.setGetBlock.transformSingle(transformer, ResolutionMode.ContextIndependent)
         }
-        val secondResult = arraySetCall.assignCall.transformSingle(transformer, ResolutionMode.ContextIndependent)
+        val secondResult = augmentedArraySetCall.assignCall.transformSingle(transformer, ResolutionMode.ContextIndependent)
 
         val firstSucceed = firstCalls.all { it.typeRef !is FirErrorTypeRef }
         val secondSucceed = secondCalls.all { it.typeRef !is FirErrorTypeRef }
 
         val result: FirStatement = when {
             firstSucceed && secondSucceed -> {
-                arraySetCall.also {
+                augmentedArraySetCall.also {
                     it.replaceCalleeReference(
                         buildErrorNamedReference {
                             // TODO: add better diagnostic
-                            source = arraySetCall.source
+                            source = augmentedArraySetCall.source
                             diagnostic = FirAmbiguityError(operatorName, emptyList())
                         }
                     )
@@ -672,10 +672,10 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             firstSucceed -> firstResult
             secondSucceed -> secondResult
             else -> {
-                arraySetCall.also {
+                augmentedArraySetCall.also {
                     it.replaceCalleeReference(
                         buildErrorNamedReference {
-                            source = arraySetCall.source
+                            source = augmentedArraySetCall.source
                             diagnostic = FirUnresolvedNameError(operatorName)
                         }
                     )

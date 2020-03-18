@@ -1257,8 +1257,8 @@ class Fir2IrVisitor(
         }
     }
 
-    override fun visitArraySetCall(arraySetCall: FirArraySetCall, data: Any?): IrElement {
-        return arraySetCall.convertWithOffsets { startOffset, endOffset ->
+    override fun visitAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall, data: Any?): IrElement {
+        return augmentedArraySetCall.convertWithOffsets { startOffset, endOffset ->
             IrErrorCallExpressionImpl(
                 startOffset, endOffset, typeConverter.unitType,
                 "FirArraySetCall (resolve isn't supported yet)"

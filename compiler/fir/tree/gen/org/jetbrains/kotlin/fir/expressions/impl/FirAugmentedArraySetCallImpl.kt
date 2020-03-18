@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirArraySetCall
+import org.jetbrains.kotlin.fir.expressions.FirAugmentedArraySetCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
@@ -19,14 +19,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-internal class FirArraySetCallImpl(
+internal class FirAugmentedArraySetCallImpl(
     override val source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
     override var assignCall: FirFunctionCall,
     override var setGetBlock: FirBlock,
     override val operation: FirOperation,
     override var calleeReference: FirReference,
-) : FirArraySetCall() {
+) : FirAugmentedArraySetCall() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         assignCall.accept(visitor, data)
@@ -34,7 +34,7 @@ internal class FirArraySetCallImpl(
         calleeReference.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirArraySetCallImpl {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCallImpl {
         annotations.transformInplace(transformer, data)
         assignCall = assignCall.transformSingle(transformer, data)
         setGetBlock = setGetBlock.transformSingle(transformer, data)
