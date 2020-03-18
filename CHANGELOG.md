@@ -1,3 +1,7 @@
+# v1.3.71 (March 2020)
+  * Fix `lazy {}` memory leak regression ([`KT-37232`](https://youtrack.jetbrains.com/issue/KT-37232), GH-3944)
+  * Fix using cached Kotlin subclasses of Objective-C classes (GH-3986)
+  
 # v1.3.70 (Dec 2019)
   * Support compiler caches for debug mode (GH-3650)
   * Support running Kotlin/Native compiler from Gradle daemon (GH-3442)
