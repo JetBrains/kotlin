@@ -75,12 +75,14 @@ internal abstract class AbstractScriptConfigurationManager(
      * user can see potential notification and accept new configuration. In other cases this should be `false` since
      * loaded configuration will be just leaved in hidden user notification and cannot be used in any way.
      * @param forceSync should be used in tests only
+     * @param isPostponedLoad is used to postspone loading: show a notification for out of date script and start loading when user request
      */
     protected abstract fun reloadOutOfDateConfiguration(
         file: KtFile,
         isFirstLoad: Boolean = getAppliedConfiguration(file.originalFile.virtualFile) == null,
         loadEvenWillNotBeApplied: Boolean = false,
-        forceSync: Boolean = false
+        forceSync: Boolean = false,
+        isPostponedLoad: Boolean = false
     )
 
     /**
@@ -149,19 +151,23 @@ internal abstract class AbstractScriptConfigurationManager(
 
     override val updater: ScriptConfigurationUpdater = object : ScriptConfigurationUpdater {
         override fun ensureUpToDatedConfigurationSuggested(file: KtFile) {
-            reloadIfOutOfDate(listOf(file), true)
+            reloadIfOutOfDate(listOf(file), loadEvenWillNotBeApplied = true, isPostponedLoad = false)
         }
 
         override fun ensureConfigurationUpToDate(files: List<KtFile>): Boolean {
-            return reloadIfOutOfDate(files, false)
+            return reloadIfOutOfDate(files, loadEvenWillNotBeApplied = false, isPostponedLoad = false)
         }
 
         override fun postponeConfigurationReload(scope: ScriptConfigurationCacheScope) {
             cache.markOutOfDate(scope)
         }
+
+        override fun suggestToUpdateConfigurationIfOutOfDate(file: KtFile) {
+            reloadIfOutOfDate(listOf(file), loadEvenWillNotBeApplied = true, isPostponedLoad = true)
+        }
     }
 
-    private fun reloadIfOutOfDate(files: List<KtFile>, loadEvenWillNotBeApplied: Boolean): Boolean {
+    private fun reloadIfOutOfDate(files: List<KtFile>, loadEvenWillNotBeApplied: Boolean, isPostponedLoad: Boolean): Boolean {
         if (!ScriptDefinitionsManager.getInstance(project).isReady()) return false
 
         var upToDate = true
@@ -175,7 +181,8 @@ internal abstract class AbstractScriptConfigurationManager(
                         reloadOutOfDateConfiguration(
                             file,
                             isFirstLoad = state == null,
-                            loadEvenWillNotBeApplied = loadEvenWillNotBeApplied
+                            loadEvenWillNotBeApplied = loadEvenWillNotBeApplied,
+                            isPostponedLoad = isPostponedLoad
                         )
                     }
                 }
@@ -282,6 +289,7 @@ internal abstract class AbstractScriptConfigurationManager(
     // ScriptRootsCache
 
     private val classpathRootsLock = ReentrantLock()
+
     @Volatile
     private var _classpathRoots: ScriptClassRootsCache? = null
     private val classpathRoots: ScriptClassRootsCache

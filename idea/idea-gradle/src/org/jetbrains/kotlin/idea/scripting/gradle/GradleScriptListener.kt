@@ -22,7 +22,7 @@ open class GradleScriptListener(project: Project) : ScriptChangeListener(project
             // do nothing
         } else {
             val file = getAnalyzableKtFileForScript(vFile) ?: return
-            updater.ensureUpToDatedConfigurationSuggested(file)
+            updater.suggestToUpdateConfigurationIfOutOfDate(file)
         }
     }
 
@@ -30,7 +30,7 @@ open class GradleScriptListener(project: Project) : ScriptChangeListener(project
         val file = getAnalyzableKtFileForScript(vFile)
         if (file != null) {
             // *.gradle.kts file was changed
-            updater.ensureUpToDatedConfigurationSuggested(file)
+            updater.suggestToUpdateConfigurationIfOutOfDate(file)
         }
     }
 
