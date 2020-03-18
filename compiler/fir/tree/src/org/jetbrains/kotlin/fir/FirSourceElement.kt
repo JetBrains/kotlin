@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.fir
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.psi.KtModifierListOwner
 
-abstract class FirSourceElement
+sealed class FirSourceElement
 
 class FirPsiSourceElement(val psi: PsiElement) : FirSourceElement()
 class FirLightSourceElement(val element: LighterASTNode) : FirSourceElement()
@@ -24,3 +26,11 @@ inline fun PsiElement.toFirSourceElement(): FirPsiSourceElement = FirPsiSourceEl
 inline fun LighterASTNode.toFirSourceElement(): FirLightSourceElement = FirLightSourceElement(this)
 
 val FirSourceElement?.lightNode: LighterASTNode? get() = (this as? FirLightSourceElement)?.element
+
+fun FirSourceElement?.getModifierList(): FirModifierList? {
+    return when (this) {
+        is FirPsiSourceElement -> (psi as? KtModifierListOwner)?.modifierList?.let { FirPsiModifierList(it) }
+        is FirLightSourceElement -> FirLightModifierList(element)
+        null -> null
+    }
+}
