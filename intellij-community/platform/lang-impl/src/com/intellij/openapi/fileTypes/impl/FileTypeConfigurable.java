@@ -407,7 +407,7 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
       @Override
       protected void selectElement(Object element, String selectedText) {
         if (element != null) {
-          ScrollingUtil.selectItem(myComponent, element);
+          ScrollingUtil.selectItem(myComponent, (FileType)element);
           if (myCurrentType != null && myCurrentType.equals(element) && myController != null) {
             myController.myPatterns.select(myExtension);
           }

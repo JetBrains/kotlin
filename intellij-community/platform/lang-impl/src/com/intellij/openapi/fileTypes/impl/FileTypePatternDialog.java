@@ -36,7 +36,7 @@ class FileTypePatternDialog {
   private JLabel myTemplateDataLanguageButton;
   private JPanel myMainPanel;
 
-  FileTypePatternDialog(@Nullable String initialPatterns, FileType fileType, Language templateDataLanguage) {
+  FileTypePatternDialog(@Nullable String initialPatterns, @NotNull FileType fileType, Language templateDataLanguage) {
     myPatternField.setText(initialPatterns);
 
     if (fileType instanceof TemplateLanguageFileType) {
