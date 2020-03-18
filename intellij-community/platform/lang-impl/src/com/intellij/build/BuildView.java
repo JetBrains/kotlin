@@ -60,7 +60,7 @@ public class BuildView extends CompositeView<ExecutionConsole>
   implements BuildProgressListener, ConsoleView, DataProvider, Filterable<ExecutionNode>, OccurenceNavigator {
   public static final String CONSOLE_VIEW_NAME = "consoleView";
   @ApiStatus.Experimental
-  public static final DataKey<AnAction[]> RESTART_ACTIONS = DataKey.create("restart actions");
+  public static final DataKey<List<AnAction>> RESTART_ACTIONS = DataKey.create("restart actions");
   private final @NotNull Project myProject;
   private final @NotNull ViewManager myViewManager;
   private final AtomicBoolean isBuildStartEventProcessed = new AtomicBoolean();
