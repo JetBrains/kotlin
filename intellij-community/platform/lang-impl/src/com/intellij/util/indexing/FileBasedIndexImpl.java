@@ -203,7 +203,12 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
 
   @ApiStatus.Internal
   public void scheduleFullIndexesRebuild(@NotNull String reason) {
-    scheduleFullIndexesRescan(myRegisteredIndexes.getState().getIndexIDs(), reason);
+    RegisteredIndexes registeredIndexes = myRegisteredIndexes;
+    if (registeredIndexes == null) {
+      scheduleFullIndexesRescan(registeredIndexes.getState().getIndexIDs(), reason);
+    } else {
+      RebuildStatus.rebuildAfterInitialization();
+    }
   }
 
   void scheduleFullIndexesRescan(@NotNull Collection<ID<?, ?>> indexesToRebuild, @NotNull String reason) {

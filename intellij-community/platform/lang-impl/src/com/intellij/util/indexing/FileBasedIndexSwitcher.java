@@ -55,6 +55,7 @@ public class FileBasedIndexSwitcher {
 
     public void turnOn() {
         LOG.assertTrue(ApplicationManager.getApplication().isWriteThread());
+        RebuildStatus.reset();
         myFileBasedIndex.initComponent();
         boolean unitTestMode = ApplicationManager.getApplication().isUnitTestMode();
 
