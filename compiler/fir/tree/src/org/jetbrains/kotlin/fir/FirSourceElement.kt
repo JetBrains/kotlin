@@ -8,14 +8,24 @@ package org.jetbrains.kotlin.fir
 import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
+import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 
-sealed class FirSourceElement
+sealed class FirSourceElement {
+    abstract val elementType: IElementType
+}
 
-class FirPsiSourceElement(val psi: PsiElement) : FirSourceElement()
-class FirLightSourceElement(val element: LighterASTNode, val tree: FlyweightCapableTreeStructure<LighterASTNode>) : FirSourceElement()
+class FirPsiSourceElement(val psi: PsiElement) : FirSourceElement() {
+    override val elementType: IElementType
+        get() = psi.node.elementType
+}
+
+class FirLightSourceElement(val element: LighterASTNode, val tree: FlyweightCapableTreeStructure<LighterASTNode>) : FirSourceElement() {
+    override val elementType: IElementType
+        get() = element.tokenType
+}
 
 val FirSourceElement?.psi: PsiElement? get() = (this as? FirPsiSourceElement)?.psi
 
