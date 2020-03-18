@@ -96,16 +96,12 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                  *    ```
                  */
                 function.origin == IrDeclarationOrigin.FAKE_OVERRIDE -> {
-                    // We check to see if this is a default stub function BEFORE finding the implementation because of a front-end bug
-                    // (KT-36188) where there could be multiple implementations. (resolveFakeOverride() only returns the implementation if
-                    // there's only one.)
-                    if (function.name.asString().endsWith("\$default")) {
-                        continue@loop
-                    }
-                    val implementation = function.resolveFakeOverride() ?: error("No single implementation found for: ${function.render()}")
+                    val implementation = function.resolveFakeOverride()!!
 
                     when {
-                        Visibilities.isPrivate(implementation.visibility) || implementation.isMethodOfAny() ->
+                        Visibilities.isPrivate(implementation.visibility) ||
+                                implementation.isMethodOfAny() ||
+                                implementation.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ->
                             continue@loop
                         !implementation.hasJvmDefault() -> {
                             val defaultImpl = createDefaultImpl(function)
