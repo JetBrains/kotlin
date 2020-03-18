@@ -191,17 +191,16 @@ internal class DefaultScriptConfigurationManager(project: Project) :
                 if (postponeLoading) {
                     ScriptConfigurationNotificationFactory.NOTIFICATION_FACTORY.getPoint(project).extensionList.firstOrNull {
                         it.showNotification(virtualFile, project) {
-                            runAsyncLoaders(file, virtualFile, scriptDefinition, async, postponeLoading)
+                            runAsyncLoaders(file, virtualFile, scriptDefinition, async, isLoadingPostponed = true)
                         }
                     }
                 } else {
-                    runAsyncLoaders(file, virtualFile, scriptDefinition, async, postponeLoading)
+                    runAsyncLoaders(file, virtualFile, scriptDefinition, async, isLoadingPostponed = false)
                 }
             }
         }
     }
 
-    //  в нотификации остается старый колбек - нужно перезаписывать колбек
     private fun runAsyncLoaders(
         file: KtFile,
         virtualFile: VirtualFile,

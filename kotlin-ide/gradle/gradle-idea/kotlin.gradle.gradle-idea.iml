@@ -64,5 +64,6 @@
     <orderEntry type="module" module-name="kotlin.compiler-plugins.scripting" scope="RUNTIME" />
     <orderEntry type="module" module-name="kotlin.project-wizard.idea" scope="RUNTIME" />
     <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.diff.impl" />
   </component>
 </module>
