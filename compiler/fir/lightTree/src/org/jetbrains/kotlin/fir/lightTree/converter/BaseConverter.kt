@@ -32,7 +32,7 @@ open class BaseConverter(
     protected val implicitType = buildImplicitTypeRef()
 
     override fun LighterASTNode.toFirSourceElement(): FirSourceElement {
-        return FirLightSourceElement(this)
+        return FirLightSourceElement(this, tree)
     }
 
     override val LighterASTNode.elementType: IElementType

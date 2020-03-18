@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.fir
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.LighterASTNode
+import com.intellij.openapi.util.Ref
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
+import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtModifierList
@@ -26,9 +29,16 @@ class FirPsiModifierList(val modifierList: KtModifierList) : FirModifierList() {
 
 }
 
-class FirLightModifierList(val modifierList: LighterASTNode) : FirModifierList() {
+class FirLightModifierList(val modifierList: LighterASTNode, val tree: FlyweightCapableTreeStructure<LighterASTNode>) : FirModifierList() {
     override val modifiers: List<FirLightModifier>
-        get() = TODO()
+        get() {
+            val kidsRef = Ref<Array<LighterASTNode?>>()
+            tree.getChildren(modifierList, kidsRef)
+            val modifierNodes = kidsRef.get()
+            return modifierNodes.filterNotNull()
+                .filter { it.tokenType is KtModifierKeywordToken }
+                .map { FirLightModifier(it, it.tokenType as KtModifierKeywordToken) }
+        }
 }
 
 sealed class FirModifier<Node : Any>(val node: Node, val token: KtModifierKeywordToken)
@@ -36,3 +46,5 @@ sealed class FirModifier<Node : Any>(val node: Node, val token: KtModifierKeywor
 class FirPsiModifier(node: ASTNode, token: KtModifierKeywordToken) : FirModifier<ASTNode>(node, token)
 
 class FirLightModifier(node: LighterASTNode, token: KtModifierKeywordToken) : FirModifier<LighterASTNode>(node, token)
+
+val FirModifier<*>.psi: PsiElement? get() = (this as? FirPsiModifier)?.node?.psi
