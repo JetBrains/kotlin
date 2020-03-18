@@ -66,12 +66,14 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
                 irClass.typeInfoPtr,
                 companionObject?.typeInfoPtr ?: NullPointer(runtime.typeInfoType),
 
-                objCLLvmDeclarations.classPointerGlobal.pointer
+                staticData.placeGlobal(
+                        "kobjcclassptr:${irClass.fqNameForIrSerialization}#internal",
+                        NullPointer(int8Type)
+                ).pointer
         )
 
         objCLLvmDeclarations.classInfoGlobal.setInitializer(info)
 
-        objCLLvmDeclarations.classPointerGlobal.setInitializer(NullPointer(int8Type))
         objCLLvmDeclarations.bodyOffsetGlobal.setInitializer(Int32(0))
     }
 
@@ -132,4 +134,17 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
                         it.llvmFunction
                 )
             }
+}
+
+internal fun CodeGenerator.kotlinObjCClassInfo(irClass: IrClass): LLVMValueRef {
+    require(irClass.isKotlinObjCClass())
+    return if (isExternal(irClass)) {
+        importGlobal(
+                irClass.kotlinObjCClassInfoSymbolName,
+                runtime.kotlinObjCClassInfo,
+                origin = irClass.llvmSymbolOrigin
+        )
+    } else {
+        context.llvmDeclarations.forClass(irClass).objCDeclarations!!.classInfoGlobal.llvmGlobal
+    }
 }

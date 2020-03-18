@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.ir.allParameters
 import org.jetbrains.kotlin.backend.konan.ir.isUnit
 import org.jetbrains.kotlin.backend.konan.isExternalObjCClass
+import org.jetbrains.kotlin.backend.konan.isKotlinObjCClass
 import org.jetbrains.kotlin.backend.konan.serialization.AbstractKonanIrMangler
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.findAnnotation
@@ -91,6 +92,14 @@ internal val IrClass.objectInstanceGetterSymbolName: String
         assert (!this.isUnit())
 
         return "kobjget:$fqNameForIrSerialization"
+    }
+
+internal val IrClass.kotlinObjCClassInfoSymbolName: String
+    get() {
+        assert (this.isExported())
+        assert (this.isKotlinObjCClass())
+
+        return "kobjcclassinfo:$fqNameForIrSerialization"
     }
 
 val IrFunction.functionName get() = with(KonanBinaryInterface) { functionName }

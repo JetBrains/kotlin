@@ -70,7 +70,6 @@ internal class ClassLlvmDeclarations(
 internal class SingletonLlvmDeclarations(val instanceStorage: AddressAccess, val instanceShadowStorage: AddressAccess?)
 
 internal class KotlinObjCClassLlvmDeclarations(
-        val classPointerGlobal: StaticData.Global,
         val classInfoGlobal: StaticData.Global,
         val bodyOffsetGlobal: StaticData.Global
 )
@@ -290,18 +289,23 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
     private fun createKotlinObjCClassDeclarations(irClass: IrClass): KotlinObjCClassLlvmDeclarations {
         val internalName = qualifyInternalName(irClass)
 
-        val classPointerGlobal = staticData.createGlobal(int8TypePtr, "kobjcclassptr:$internalName")
-
+        val isExported = irClass.isExported()
+        val classInfoSymbolName = if (isExported) {
+            irClass.kotlinObjCClassInfoSymbolName
+        } else {
+            "kobjcclassinfo:$internalName"
+        }
         val classInfoGlobal = staticData.createGlobal(
                 context.llvm.runtime.kotlinObjCClassInfo,
-                "kobjcclassinfo:$internalName"
+                classInfoSymbolName,
+                isExported = isExported
         ).apply {
             setConstant(true)
         }
 
         val bodyOffsetGlobal = staticData.createGlobal(int32Type, "kobjcbodyoffs:$internalName")
 
-        return KotlinObjCClassLlvmDeclarations(classPointerGlobal, classInfoGlobal, bodyOffsetGlobal)
+        return KotlinObjCClassLlvmDeclarations(classInfoGlobal, bodyOffsetGlobal)
     }
 
     override fun visitField(declaration: IrField) {
