@@ -38,14 +38,18 @@ public class BraceHighlighter implements StartupActivity.DumbAware {
       @Override
       public void caretPositionChanged(@NotNull CaretEvent e) {
         if (e.getCaret() != e.getEditor().getCaretModel().getPrimaryCaret()) return;
-        myAlarm.cancelAllRequests();
-        Editor editor = e.getEditor();
-        final SelectionModel selectionModel = editor.getSelectionModel();
-        // Don't update braces in case of the active selection.
-        if (editor.getProject() != project || selectionModel.hasSelection()) {
-          return;
-        }
-        updateBraces(editor, myAlarm);
+        onCaretUpdate(e.getEditor(), project);
+      }
+
+      @Override
+      public void caretAdded(@NotNull CaretEvent e) {
+        if (e.getCaret() != e.getEditor().getCaretModel().getPrimaryCaret()) return;
+        onCaretUpdate(e.getEditor(), project);
+      }
+
+      @Override
+      public void caretRemoved(@NotNull CaretEvent e) {
+        onCaretUpdate(e.getEditor(), project);
       }
     }, activityDisposable);
 
@@ -96,6 +100,16 @@ public class BraceHighlighter implements StartupActivity.DumbAware {
           }
         }
       });
+  }
+
+  private void onCaretUpdate(@NotNull Editor editor, @NotNull Project project) {
+    myAlarm.cancelAllRequests();
+    SelectionModel selectionModel = editor.getSelectionModel();
+    // Don't update braces in case of the active selection.
+    if (editor.getProject() != project || selectionModel.hasSelection()) {
+      return;
+    }
+    updateBraces(editor, myAlarm);
   }
 
   static void updateBraces(@NotNull final Editor editor, @NotNull final Alarm alarm) {
