@@ -200,8 +200,8 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
             @Composable
             fun Example(x: Int) {
                 when (x) {
-                    20 -> 8
-                    30 -> 10
+                    0 -> 8
+                    1 -> 10
                     else -> x
                 }
             }
@@ -212,10 +212,10 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
               %composer.startReplaceableGroup(2002223143)
               val tmp0_subject = x
               when {
-                tmp0_subject == 20 -> {
+                tmp0_subject == 0 -> {
                   8
                 }
-                tmp0_subject == 30 -> {
+                tmp0_subject == 0b1 -> {
                   10
                 }
                 else -> {
@@ -234,8 +234,8 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
             @Composable
             fun Example(x: Int) {
                 when (x) {
-                    20 -> A()
-                    30 -> A()
+                    0 -> A()
+                    1 -> A()
                     else -> A()
                 }
             }
@@ -246,18 +246,18 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
               %composer.startReplaceableGroup(2002223143)
               val tmp0_subject = x
               when {
-                tmp0_subject == 20 -> {
-                  %composer.startReplaceableGroup(2002223194)
+                tmp0_subject == 0 -> {
+                  %composer.startReplaceableGroup(2002223193)
                   A(%composer)
                   %composer.endReplaceableGroup()
                 }
-                tmp0_subject == 30 -> {
-                  %composer.startReplaceableGroup(2002223212)
+                tmp0_subject == 0b1 -> {
+                  %composer.startReplaceableGroup(2002223210)
                   A(%composer)
                   %composer.endReplaceableGroup()
                 }
                 else -> {
-                  %composer.startReplaceableGroup(2002223232)
+                  %composer.startReplaceableGroup(2002223230)
                   A(%composer)
                   %composer.endReplaceableGroup()
                 }
@@ -273,8 +273,8 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
             @Composable
             fun Example(x: Int) {
                 var y = when (x) {
-                    20 -> R()
-                    30 -> R()
+                    0 -> R()
+                    1 -> R()
                     else -> R()
                 }
             }
@@ -285,20 +285,20 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
               %composer.startReplaceableGroup(2002223143)
               var y = val tmp0_subject = x
               when {
-                tmp0_subject == 20 -> {
-                  %composer.startReplaceableGroup(2002223202)
+                tmp0_subject == 0 -> {
+                  %composer.startReplaceableGroup(2002223201)
                   val tmp0_group = R(%composer)
                   %composer.endReplaceableGroup()
                   tmp0_group
                 }
-                tmp0_subject == 30 -> {
-                  %composer.startReplaceableGroup(2002223220)
+                tmp0_subject == 0b1 -> {
+                  %composer.startReplaceableGroup(2002223218)
                   val tmp1_group = R(%composer)
                   %composer.endReplaceableGroup()
                   tmp1_group
                 }
                 else -> {
-                  %composer.startReplaceableGroup(2002223240)
+                  %composer.startReplaceableGroup(2002223238)
                   val tmp2_group = R(%composer)
                   %composer.endReplaceableGroup()
                   tmp2_group
@@ -315,7 +315,7 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
             @Composable
             fun Example(x: Int) {
                 when {
-                    x == 20 -> A()
+                    x < 0 -> A()
                     x > 30 -> A()
                     else -> A()
                 }
@@ -326,25 +326,24 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
             fun Example(x: Int, %composer: Composer<N>?) {
               %composer.startReplaceableGroup(2002223143)
               when {
-                x == 20 -> {
-                  %composer.startReplaceableGroup(2002223195)
+                x < 0 -> {
+                  %composer.startReplaceableGroup(2002223193)
                   A(%composer)
                   %composer.endReplaceableGroup()
                 }
                 x > 30 -> {
-                  %composer.startReplaceableGroup(2002223217)
+                  %composer.startReplaceableGroup(2002223215)
                   A(%composer)
                   %composer.endReplaceableGroup()
                 }
                 else -> {
-                  %composer.startReplaceableGroup(2002223237)
+                  %composer.startReplaceableGroup(2002223235)
                   A(%composer)
                   %composer.endReplaceableGroup()
                 }
               }
               %composer.endReplaceableGroup()
             }
-
         """
     )
 
@@ -1014,7 +1013,7 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
                         if (y == x) {
                             break@a
                         }
-                        if (y == 100) {
+                        if (y > 100) {
                             return
                         }
                         A()
@@ -1046,7 +1045,7 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
                     %composer.endReplaceableGroup()
                     break@a
                   }
-                  if (y == 100) {
+                  if (y > 100) {
                     %composer.endReplaceableGroup()
                     %composer.endReplaceableGroup()
                     %composer.endReplaceableGroup()

@@ -84,15 +84,15 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
             .replace('$', '%')
             .trimIndent()
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
+        if (dumpTree) {
+            println(irModule.dump())
+        }
         assertEquals(
             expectedTransformed
                 .trimIndent()
                 .trimTrailingWhitespacesAndAddNewlineAtEOF(),
             actualTransformed
         )
-        if (dumpTree) {
-            println(irModule.dump())
-        }
     }
 
     private fun generateIrModuleWithJvmResolve(

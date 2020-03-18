@@ -17,6 +17,7 @@
 package androidx.compose.plugins.kotlin.compiler.lower
 
 import androidx.compose.plugins.kotlin.ComposableEmitDescriptor
+import androidx.compose.plugins.kotlin.KtxNameConventions
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -91,6 +92,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeAbbreviation
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.isAny
+import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
@@ -248,6 +250,8 @@ private class IrSourcePrinterVisitor(
         declaration.printBody()
     }
 
+    private var isInNotCall = false
+
     override fun visitCall(expression: IrCall) {
         val function = expression.symbol.owner
         val name = function.name.asString()
@@ -256,9 +260,33 @@ private class IrSourcePrinterVisitor(
                 descriptor is IrSimpleBuiltinOperatorDescriptorImpl
         val isInfix = descriptor.isInfix
         if (isOperator) {
+            if (name == "not") {
+                // IR tree for `a !== b` looks like `not(equals(a, b))` which makes
+                // it challenging to print it like the former. To do so, we capture when we are in
+                // a "not" call, and then check to see if the argument is an equals call. if it is,
+                // we will just print the child call and put the transformer into a mode where it
+                // knows to print the negative
+                val arg = expression.dispatchReceiver!!
+                if (arg is IrCall) {
+                    val fn = arg.symbol.owner
+                    if (fn.descriptor is IrSimpleBuiltinOperatorDescriptorImpl) {
+                        when (fn.name.asString()) {
+                            "equals",
+                            "EQEQ",
+                            "EQEQEQ" -> {
+                                val prevIsInNotCall = isInNotCall
+                                isInNotCall = true
+                                arg.print()
+                                isInNotCall = prevIsInNotCall
+                                return
+                            }
+                        }
+                    }
+                }
+            }
             val opSymbol = when (name) {
                 "contains" -> "in"
-                "equals" -> "=="
+                "equals" -> if (isInNotCall) "!=" else "=="
                 "plus" -> "+"
                 "not" -> "!"
                 "minus" -> "-"
@@ -277,14 +305,28 @@ private class IrSourcePrinterVisitor(
                 "less" -> "<"
                 "lessOrEqual" -> "<="
                 "greaterOrEqual" -> ">="
-                "EQEQ" -> "=="
-                "EQEQEQ" -> "==="
+                "EQEQ" -> if (isInNotCall) "!=" else "=="
+                "EQEQEQ" -> if (isInNotCall) "!==" else "==="
                 // no names for
                 "invoke", "get", "set" -> ""
                 "iterator", "hasNext", "next" -> name
                 else -> error("Unhandled operator $name")
             }
 
+            val printBinary = when (name) {
+                "equals",
+                "EQEQ",
+                "EQEQEQ" -> when {
+                    expression.dispatchReceiver?.type?.isInt() == true -> true
+                    expression.extensionReceiver?.type?.isInt() == true -> true
+                    expression.valueArgumentsCount > 0 &&
+                            expression.getValueArgument(0)?.type?.isInt() == true -> true
+                    else -> false
+                }
+                else -> false
+            }
+            val prevPrintBinary = printIntsAsBinary
+            printIntsAsBinary = printBinary
             when (name) {
                 // unary prefx
                 "unaryPlus", "unaryMinus", "not" -> {
@@ -338,6 +380,7 @@ private class IrSourcePrinterVisitor(
                     expression.getValueArgument(0)?.print()
                 }
             }
+            printIntsAsBinary = prevPrintBinary
             return
         }
 
@@ -436,7 +479,20 @@ private class IrSourcePrinterVisitor(
                 }
                 println()
             } else {
-                arguments.printJoin(", ")
+                arguments.forEachIndexed { index, it ->
+                    when (paramNames[index]) {
+                        KtxNameConventions.DEFAULT_PARAMETER.identifier,
+                        KtxNameConventions.CHANGED_PARAMETER.identifier -> {
+                            withIntsAsBinaryLiterals {
+                                it.print()
+                            }
+                        }
+                        else -> {
+                            it.print()
+                        }
+                    }
+                    if (index < arguments.size - 1) print(", ")
+                }
             }
             print(")")
         }
@@ -724,6 +780,29 @@ private class IrSourcePrinterVisitor(
         }
     }
 
+    private var printIntsAsBinary = false
+    fun <T> withIntsAsBinaryLiterals(block: () -> T): T {
+        val prev = printIntsAsBinary
+        try {
+            printIntsAsBinary = true
+            return block()
+        } finally {
+            printIntsAsBinary = prev
+        }
+    }
+
+    private fun intAsBinaryString(value: Int): String {
+        if (value == 0) return "0"
+        var current = value
+        var result = ""
+        while (current != 0) {
+            val nextBit = current and 1 != 0
+            current = current shr 1
+            result = "${if (nextBit) "1" else "0"}$result"
+        }
+        return "0b$result"
+    }
+
     override fun <T> visitConst(expression: IrConst<T>) {
         val result = when (expression.kind) {
             is IrConstKind.Null -> "${expression.value}"
@@ -731,7 +810,13 @@ private class IrSourcePrinterVisitor(
             is IrConstKind.Char -> "'${expression.value}'"
             is IrConstKind.Byte -> "${expression.value}"
             is IrConstKind.Short -> "${expression.value}"
-            is IrConstKind.Int -> "${expression.value}"
+            is IrConstKind.Int -> {
+                if (printIntsAsBinary) {
+                    intAsBinaryString(expression.value as Int)
+                } else {
+                    "${expression.value}"
+                }
+            }
             is IrConstKind.Long -> "${expression.value}L"
             is IrConstKind.Float -> "${expression.value}f"
             is IrConstKind.Double -> "${expression.value}"

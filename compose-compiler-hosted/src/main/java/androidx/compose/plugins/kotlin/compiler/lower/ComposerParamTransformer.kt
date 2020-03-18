@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
@@ -72,6 +73,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.createType
+import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
@@ -103,7 +105,8 @@ private const val DEBUG_LOG = false
 class ComposerParamTransformer(
     context: JvmBackendContext,
     symbolRemapper: DeepCopySymbolRemapper,
-    bindingTrace: BindingTrace
+    bindingTrace: BindingTrace,
+    val functionBodySkipping: Boolean
 ) :
     AbstractComposeLowering(context, symbolRemapper, bindingTrace),
     FileLoweringPass,
@@ -251,7 +254,7 @@ class ComposerParamTransformer(
             ownerFn.symbol,
             ownerFn.symbol.descriptor,
             typeArgumentsCount,
-            valueArgumentsCount + 1, // +1 for the composer param
+            ownerFn.valueParameters.size,
             origin,
             superQualifierSymbol
         ).also {
@@ -264,8 +267,19 @@ class ComposerParamTransformer(
             it.copyTypeArgumentsFrom(this)
             it.dispatchReceiver = dispatchReceiver
             it.extensionReceiver = extensionReceiver
+            val argumentsMissing = mutableListOf<Boolean>()
             for (i in 0 until valueArgumentsCount) {
-                it.putValueArgument(i, getValueArgument(i))
+                val arg = getValueArgument(i)
+                if (valueArgumentsCount < 22) {
+                    argumentsMissing.add(arg == null)
+                } else if (functionBodySkipping) {
+                    TODO("deal with 22+ params!")
+                }
+                if (arg != null) {
+                    it.putValueArgument(i, arg)
+                } else if (functionBodySkipping) {
+                    it.putValueArgument(i, defaultArgumentFor(ownerFn.valueParameters[i]))
+                }
             }
             it.putValueArgument(
                 valueArgumentsCount,
@@ -274,6 +288,36 @@ class ComposerParamTransformer(
                     UNDEFINED_OFFSET,
                     composerParam.symbol
                 )
+            )
+
+            if (functionBodySkipping && valueArgumentsCount + 1 < ownerFn.valueParameters.size) {
+                it.putValueArgument(
+                    valueArgumentsCount + 1,
+                    irConst(0)
+                )
+            }
+
+            if (functionBodySkipping && valueArgumentsCount + 2 < ownerFn.valueParameters.size) {
+                it.putValueArgument(
+                    valueArgumentsCount + 2,
+                    irConst(
+                        bitMask(*argumentsMissing.toBooleanArray())
+                    )
+                )
+            }
+        }
+    }
+
+    private fun defaultArgumentFor(param: IrValueParameter): IrExpression {
+        assert(functionBodySkipping)
+        return when {
+            param.type.isInt() -> irConst(0)
+            else -> IrConstImpl(
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET,
+                param.type,
+                IrConstKind.Null,
+                null
             )
         }
     }
@@ -530,6 +574,28 @@ class ComposerParamTransformer(
                 KtxNameConventions.COMPOSER_PARAMETER.identifier,
                 composerType.makeNullable()
             )
+
+            if (functionBodySkipping) {
+                fn.addValueParameter(
+                    KtxNameConventions.CHANGED_PARAMETER.identifier,
+                    context.irBuiltIns.intType
+                )
+            }
+
+            if (
+                functionBodySkipping &&
+                // we only add a default mask parameter if one of the parameters has a default
+                // expression
+                fn.valueParameters.any {
+                    it.defaultValue != null
+                }
+            ) {
+                fn.addValueParameter(
+                    KtxNameConventions.DEFAULT_PARAMETER.identifier,
+                    context.irBuiltIns.intType
+                )
+            }
+
             fn.transformChildrenVoid(object : IrElementTransformerVoid() {
                 var isNestedScope = false
                 override fun visitGetValue(expression: IrGetValue): IrGetValue {
