@@ -45,8 +45,8 @@ dependencies {
     embedded(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     runtime(project(":kotlin-ultimate:ide:common-cidr-swift-native")) { isTransitive = false }
     embedded(project(":kotlin-ultimate:ide:appcode-native")) { isTransitive = false }
-    runtime(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:${kotlinNativeBackendVersion}:backend.native.jar"))
-    runtime(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:${kotlinNativeBackendVersion}:konan.serializer.jar")) // required for backend.native
+    runtime(tc("Kotlin_KotlinNative_Development_KotlinNativeLinuxBundle:${kotlinNativeBackendVersion}:backend.native.jar"))
+    runtime(tc("Kotlin_KotlinNative_Development_KotlinNativeLinuxBundle:${kotlinNativeBackendVersion}:konan.serializer.jar")) // required for backend.native
 }
 
 val copyRuntimeDeps: Task by tasks.creating(Copy::class) {

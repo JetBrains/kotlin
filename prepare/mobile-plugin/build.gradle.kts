@@ -32,8 +32,8 @@ dependencies {
         exclude("com.google.guava", "guava")
     }
     runtime(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api")) { isTransitive = false }
-    runtime(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:${kotlinNativeBackendVersion}:backend.native.jar"))
-    runtime(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:${kotlinNativeBackendVersion}:konan.serializer.jar")) // required for backend.native
+    runtime(tc("Kotlin_KotlinNative_Development_KotlinNativeLinuxBundle:${kotlinNativeBackendVersion}:backend.native.jar"))
+    runtime(tc("Kotlin_KotlinNative_Development_KotlinNativeLinuxBundle:${kotlinNativeBackendVersion}:konan.serializer.jar")) // required for backend.native
 }
 
 val pluginJarTask: Task by tasks.named<Jar>("jar") {

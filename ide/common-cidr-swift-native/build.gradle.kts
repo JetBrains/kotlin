@@ -27,7 +27,7 @@ dependencies {
     compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa:$cidrVersion")
     compileOnly("com.jetbrains.intellij.platform:external-system-rt:$cidrVersion")
     compileOnly("com.esotericsoftware.kryo:kryo:2.24.0")
-    compileOnly(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:$kotlinNativeBackendVersion:backend.native.jar"))
+    compileOnly(tc("Kotlin_KotlinNative_Development_KotlinNativeLinuxBundle:$kotlinNativeBackendVersion:backend.native.jar"))
 }
 
 the<JavaPluginConvention>().sourceSets["main"].apply {
