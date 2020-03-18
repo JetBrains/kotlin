@@ -15,7 +15,10 @@ import com.intellij.util.xmlb.annotations.Attribute
 class DefaultLiveTemplateEP : AbstractExtensionPointBean() {
 
   /**
-   * Path to resource (e.g. `/templates/customTemplates.xml`). `.xml` extension can be omitted.
+   * Relative path to resource (e.g. `templates/customTemplates.xml`). `.xml` extension can be omitted.
+   *
+   * Note, that even though absolute path will work, it heavily depends on class-loader that loads resource,
+   * so it's better to use relative path without leading slash since it will work for any class-loader.
    */
   @Attribute("file")
   @RequiredElement
