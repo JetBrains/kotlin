@@ -11,9 +11,8 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 
@@ -52,41 +50,6 @@ class FirImplicitTypeBodyResolveTransformerAdapter(private val scopeSession: Sco
 
 fun createReturnTypeCalculatorForIDE(session: FirSession, scopeSession: ScopeSession): ReturnTypeCalculator =
     ReturnTypeCalculatorWithJump(session, scopeSession, ImplicitBodyResolveComputationSession())
-
-// TODO: This class is unused because it's effectively unneeded while we have mutable trees
-// Once we decide to switch to persistent trees this, it should be applied to each file
-// If the decision is to stay with mutable trees, this class should be removed
-private class FirApplyInferredDeclarationTypesTransformer(
-    private val implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession
-) : FirDefaultTransformer<Nothing?>() {
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
-        return element.compose()
-    }
-
-    override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        file.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
-
-        return (file.transformChildren(this, null) as FirFile).compose()
-    }
-
-    override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): CompositeTransformResult<FirStatement> {
-        return (regularClass.transformChildren(this, null) as FirRegularClass).compose()
-    }
-
-    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        if (simpleFunction.returnTypeRef !is FirImplicitTypeRef) return simpleFunction.compose()
-
-        val transformedDeclaration = implicitBodyResolveComputationSession.getComputedResult(simpleFunction.symbol).transformedDeclaration
-        return transformedDeclaration.compose()
-    }
-
-    override fun transformProperty(property: FirProperty, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        if (property.returnTypeRef !is FirImplicitTypeRef) return property.compose()
-
-        val transformedDeclaration = implicitBodyResolveComputationSession.getComputedResult(property.symbol).transformedDeclaration
-        return transformedDeclaration.compose()
-    }
-}
 
 private open class FirImplicitBodyResolveTransformer(
     session: FirSession,
@@ -279,15 +242,6 @@ private class ImplicitBodyResolveComputationSession {
         }
 
         implicitBodyResolveStatusMap[symbol] = ImplicitBodyResolveComputationStatus.Computed(returnTypeRef, transformedDeclaration)
-    }
-
-    fun getComputedResult(symbol: FirCallableSymbol<*>): ImplicitBodyResolveComputationStatus.Computed {
-        val status = getStatus(symbol)
-        require(status is ImplicitBodyResolveComputationStatus.Computed) {
-            "Unexpected status $status for ${symbol.fir.render()}"
-        }
-
-        return status
     }
 }
 
