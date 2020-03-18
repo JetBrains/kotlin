@@ -10,11 +10,16 @@ plugins {
 val mobilePluginDir: File by rootProject.extra
 val mobilePluginZipPath: File by rootProject.extra
 val cidrVersion: String by rootProject.extra
+val kotlinAndroidExtensionsVersion: String by rootProject.extra(rootProject.extra["versions.kotlinAndroidExtensions"] as String)
 val kotlinNativeBackendVersion: String by rootProject.extra
+val isStandaloneBuild: Boolean by rootProject.extra
 
 repositories {
     maven("https://maven.google.com")
     maven("https://repo.labs.intellij.net/intellij-proprietary-modules")
+    if (isStandaloneBuild) {
+        maven("https://dl.bintray.com/kotlin/kotlin-dev/")
+    }
     teamcityServer {
         setUrl("https://buildserver.labs.intellij.net")
     }
@@ -25,8 +30,12 @@ dependencies {
     runtime(project(":kotlin-ultimate:ide:common-cidr-native")) { isTransitive = false }
     runtime(project(":kotlin-ultimate:ide:common-cidr-swift-native")) { isTransitive = false }
     embedded(project(":kotlin-ultimate:ide:mobile-native")) { isTransitive = false }
-    runtime(project(":kotlin-android-extensions-runtime"))
-    runtime(project(":plugins:android-extensions-compiler"))
+    if (isStandaloneBuild) {
+        runtime("org.jetbrains.kotlin:kotlin-android-extensions-runtime:$kotlinAndroidExtensionsVersion") { isTransitive = false }
+    } else {
+        runtime(project(":kotlin-android-extensions-runtime"))
+        runtime(project(":plugins:android-extensions-compiler"))
+    }
     runtime("com.jetbrains.intellij.android:android-kotlin-extensions-common:$cidrVersion") { isTransitive = false }
     runtime("com.android.tools.ddms:ddmlib:26.0.0") {
         exclude("com.google.guava", "guava")
