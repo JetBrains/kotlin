@@ -108,7 +108,7 @@ sealed class IdSignature {
         override fun asPublic(): PublicSignature? = accessorSignature
     }
 
-    data class FileLocalSignature(val container: IdSignature, val id: Long) : IdSignature() {
+    class FileLocalSignature(val container: IdSignature, val id: Long) : IdSignature() {
         override val isPublic = false
 
         override fun packageFqName(): FqName = container.packageFqName()
@@ -128,7 +128,8 @@ sealed class IdSignature {
 
         override fun render(): String = "${container.render()}:$id"
 
-        override fun toString() = super.toString()
+        override fun hashCode(): Int = id.toInt()
+        override fun equals(other: Any?): Boolean = other is FileLocalSignature && id == other.id
     }
 
     // Used to reference local variable and value parameters in function
