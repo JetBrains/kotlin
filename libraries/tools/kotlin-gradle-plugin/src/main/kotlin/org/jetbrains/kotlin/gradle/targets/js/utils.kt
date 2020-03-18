@@ -12,7 +12,7 @@ fun Appendable.appendConfigsFromDir(confDir: File) {
 
     files.asSequence()
         .filter { it.isFile }
-        .filter { it.name.endsWith(".js") }
+        .filter { it.extension == "js" }
         .sortedBy { it.name }
         .forEach {
             appendln("// ${it.name}")
