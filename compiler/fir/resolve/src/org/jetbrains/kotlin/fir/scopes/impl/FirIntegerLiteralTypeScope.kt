@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
@@ -102,7 +103,7 @@ class FirIntegerLiteralTypeScope(private val session: FirSession) : FirScope() {
         FirILTTypeRefPlaceHolder(),
         receiverTypeRef = null,
         ALL_OPERATORS.getValue(name),
-        FirResolvedDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL),
+        FirResolvedDeclarationStatusImpl(Visibilities.PUBLIC, FirEffectiveVisibility.Public, Modality.FINAL),
         symbol
     ).apply {
         resolvePhase = FirResolvePhase.BODY_RESOLVE

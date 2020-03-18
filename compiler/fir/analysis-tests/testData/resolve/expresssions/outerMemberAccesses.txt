@@ -14,7 +14,7 @@ FILE: O.kt
         }
 
         private final class Derived : R|Base| {
-            public constructor(bar: R|kotlin/Int|): R|O.Derived| {
+            public[private] constructor(bar: R|kotlin/Int|): R|O.Derived| {
                 super<R|Base|>()
             }
 
@@ -22,14 +22,14 @@ FILE: O.kt
                 private get(): R|kotlin/Int|
 
             private final inner class Some : R|kotlin/Any| {
-                public constructor(z: R|kotlin/Boolean|): R|O.Derived.Some| {
+                public[private] constructor(z: R|kotlin/Boolean|): R|O.Derived.Some| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val z: R|kotlin/Boolean| = R|<local>/z|
+                public[private] final val z: R|kotlin/Boolean| = R|<local>/z|
                     public get(): R|kotlin/Boolean|
 
-                public final fun test(): R|kotlin/Unit| {
+                public[private] final fun test(): R|kotlin/Unit| {
                     lval x: R|kotlin/Int| = this@R|/O.Derived|.R|/O.Derived.bar|
                     lval o: R|anonymous| = object : R|Wrapper| {
                         private constructor(): R|anonymous| {
@@ -58,7 +58,7 @@ FILE: O.kt
 
             }
 
-            public final fun test(): R|kotlin/Unit| {
+            public[private] final fun test(): R|kotlin/Unit| {
                 lval x: R|kotlin/Int| = this@R|/O.Derived|.R|/O.Derived.bar|
                 lval o: R|anonymous| = object : R|kotlin/Any| {
                     private constructor(): R|anonymous| {

@@ -41,6 +41,13 @@ fun FirElement.render(mode: FirRenderer.RenderMode = FirRenderer.RenderMode.Norm
     buildString { this@render.accept(FirRenderer(this, mode)) }
 
 class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderMode.Normal) : FirVisitorVoid() {
+    companion object {
+        private val visibilitiesToRenderEffectiveSet = setOf(
+            Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS, Visibilities.INTERNAL,
+            Visibilities.PROTECTED, Visibilities.PUBLIC, Visibilities.LOCAL
+        )
+    }
+
     abstract class RenderMode(val renderLambdaBodies: Boolean, val renderCallArguments: Boolean) {
         object Normal : RenderMode(renderLambdaBodies = true, renderCallArguments = true)
     }
@@ -152,11 +159,18 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         callableDeclaration.returnTypeRef.accept(this)
     }
 
-    private fun Visibility.asString() =
-        when (this) {
-            Visibilities.UNKNOWN -> "public?"
+    private fun Visibility.asString(effectiveVisibility: FirEffectiveVisibility? = null): String {
+        val itself = when (this) {
+            Visibilities.UNKNOWN -> return "public?"
             else -> toString()
         }
+        if (effectiveVisibility == null) return itself
+        val effectiveAsVisibility = effectiveVisibility.toVisibility()
+        if (effectiveAsVisibility == this) return itself
+        if (effectiveAsVisibility == Visibilities.PRIVATE && this == Visibilities.PRIVATE_TO_THIS) return itself
+        if (this !in visibilitiesToRenderEffectiveSet) return itself
+        return itself + "[${effectiveVisibility.name}]"
+    }
 
     private fun FirMemberDeclaration.modalityAsString(): String {
         return modality?.name?.toLowerCase() ?: run {
@@ -187,7 +201,8 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
         memberDeclaration.annotations.renderAnnotations()
         if (memberDeclaration !is FirProperty || !memberDeclaration.isLocal) {
-            print(memberDeclaration.visibility.asString() + " " + memberDeclaration.modalityAsString() + " ")
+            print(memberDeclaration.visibility.asString(memberDeclaration.effectiveVisibility) + " ")
+            print(memberDeclaration.modalityAsString() + " ")
         }
         if (memberDeclaration.isExpect) {
             print("expect ")
@@ -377,7 +392,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
 
     override fun visitConstructor(constructor: FirConstructor) {
         constructor.annotations.renderAnnotations()
-        print(constructor.visibility.asString() + " constructor")
+        print(constructor.visibility.asString(constructor.effectiveVisibility) + " constructor")
         constructor.typeParameters.renderTypeParameters()
         constructor.valueParameters.renderParameters()
         print(": ")

@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.fir.tree.generator
 
+import org.jetbrains.kotlin.descriptors.effectiveVisibility
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.annotations
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.arguments
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.body
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.classKind
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.controlFlowGraphReferenceField
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.declarations
+import org.jetbrains.kotlin.fir.tree.generator.FieldSets.effectiveVisibility
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.initializer
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.modality
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.name
@@ -303,6 +305,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         declarationStatus.configure {
             +visibility
+            +effectiveVisibility
             +modality
             generateBooleanFields(
                 "expect", "actual", "override", "operator", "infix", "inline", "tailRec",

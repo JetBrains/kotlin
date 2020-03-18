@@ -33,7 +33,7 @@ FILE: localObjects.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final fun foo(): R|kotlin/Unit| {
+            public[local] final fun foo(): R|kotlin/Unit| {
             }
 
         }

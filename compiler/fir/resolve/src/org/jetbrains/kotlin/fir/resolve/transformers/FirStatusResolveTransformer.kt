@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.firEffectiveVisibility
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
 
@@ -119,7 +118,10 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationSta
                     else -> status.visibility
                 }
                 val modality = status.modality ?: resolveModality(containingClass)
-                return (status as FirDeclarationStatusImpl).resolved(visibility, modality)
+                val containerEffectiveVisibility = containingClass?.effectiveVisibility ?: FirEffectiveVisibility.Public
+                val effectiveVisibility =
+                    visibility.firEffectiveVisibility(session, this as? FirMemberDeclaration).lowerBound(containerEffectiveVisibility)
+                return (status as FirDeclarationStatusImpl).resolved(visibility, effectiveVisibility, modality)
             }
             return status
         }

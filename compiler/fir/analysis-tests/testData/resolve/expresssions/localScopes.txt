@@ -10,11 +10,11 @@ FILE: localScopes.kt
     }
     public final fun test(): R|kotlin/Unit| {
         local open class BaseLocal : R|Bar| {
-            public constructor(): R|BaseLocal| {
+            public[local] constructor(): R|BaseLocal| {
                 super<R|Bar|>()
             }
 
-            public final fun baz(): R|kotlin/Unit| {
+            public[local] final fun baz(): R|kotlin/Unit| {
             }
 
         }
@@ -35,11 +35,11 @@ FILE: localScopes.kt
         R|<local>/anonymous|.R|/anonymous.baz|()
         R|<local>/anonymous|.R|/Bar.foo|()
         local final class DerivedLocal : R|BaseLocal| {
-            public constructor(): R|DerivedLocal| {
+            public[local] constructor(): R|DerivedLocal| {
                 super<R|BaseLocal|>()
             }
 
-            public final fun gau(): R|kotlin/Unit| {
+            public[local] final fun gau(): R|kotlin/Unit| {
             }
 
         }

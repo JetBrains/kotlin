@@ -12,11 +12,11 @@ FILE: localInnerClass.kt
             }
 
             local final inner class Derived : R|Foo| {
-                public constructor(x: R|kotlin/Int|): R|<anonymous>.Derived| {
+                public[local] constructor(x: R|kotlin/Int|): R|<anonymous>.Derived| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val x: R|kotlin/Int| = R|<local>/x|
+                public[local] final val x: R|kotlin/Int| = R|<local>/x|
                     public get(): R|kotlin/Int|
 
             }

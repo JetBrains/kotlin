@@ -5,15 +5,15 @@ FILE: objectInnerClass.kt
         }
 
         local final inner class Child : R|ERROR CLASS: Symbol not found, for `Base`| {
-            public constructor(property: R|B|): R|<anonymous>.Child| {
+            public[local] constructor(property: R|B|): R|<anonymous>.Child| {
                 super<R|ERROR CLASS: Symbol not found, for `Base`|>(R|<local>/property|)
             }
 
-            public final fun R|ERROR CLASS: Symbol not found, for `Base`|.zoo(): R|kotlin/Unit| {
+            public[local] final fun R|ERROR CLASS: Symbol not found, for `Base`|.zoo(): R|kotlin/Unit| {
                 lval x: <ERROR TYPE REF: Unresolved name: property> = <Unresolved name: property>#
             }
 
-            public final fun foo(): R|kotlin/Unit| {
+            public[local] final fun foo(): R|kotlin/Unit| {
                 <Unresolved name: baseFun>#()
                 lval x: <ERROR TYPE REF: Unresolved name: property> = <Unresolved name: property>#
                 <Unresolved name: zoo>#()
@@ -31,14 +31,14 @@ FILE: objectInnerClass.kt
         }
 
         local open inner class Base : R|kotlin/Any| {
-            public constructor(property: R|B|): R|<anonymous>.Base| {
+            public[local] constructor(property: R|B|): R|<anonymous>.Base| {
                 super<R|kotlin/Any|>()
             }
 
-            public final val property: R|B| = R|<local>/property|
+            public[local] final val property: R|B| = R|<local>/property|
                 public get(): R|B|
 
-            public final fun baseFun(): R|kotlin/Unit| {
+            public[local] final fun baseFun(): R|kotlin/Unit| {
             }
 
         }
@@ -130,15 +130,15 @@ FILE: objectInnerClass.kt
             }
 
             local final inner class Child : R|ERROR CLASS: Symbol not found, for `Base`| {
-                public constructor(property: R|B|): R|Case3.<anonymous>.Child| {
+                public[local] constructor(property: R|B|): R|Case3.<anonymous>.Child| {
                     super<R|ERROR CLASS: Symbol not found, for `Base`|>(R|<local>/property|)
                 }
 
-                public final fun R|ERROR CLASS: Symbol not found, for `Base`|.zoo(): R|kotlin/Unit| {
+                public[local] final fun R|ERROR CLASS: Symbol not found, for `Base`|.zoo(): R|kotlin/Unit| {
                     lval x: <ERROR TYPE REF: Unresolved name: property> = <Unresolved name: property>#
                 }
 
-                public final fun foo(): R|kotlin/Unit| {
+                public[local] final fun foo(): R|kotlin/Unit| {
                     <Unresolved name: baseFun>#()
                     lval x: <ERROR TYPE REF: Unresolved name: property> = <Unresolved name: property>#
                     this@R|/Case3.<anonymous>.Child|.R|/Case3.<anonymous>.Child.zoo|()
@@ -156,14 +156,14 @@ FILE: objectInnerClass.kt
             }
 
             local open inner class Base : R|kotlin/Any| {
-                public constructor(property: R|B|): R|Case3.<anonymous>.Base| {
+                public[local] constructor(property: R|B|): R|Case3.<anonymous>.Base| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val property: R|B| = R|<local>/property|
+                public[local] final val property: R|B| = R|<local>/property|
                     public get(): R|B|
 
-                public final fun baseFun(): R|kotlin/Unit| {
+                public[local] final fun baseFun(): R|kotlin/Unit| {
                 }
 
             }
