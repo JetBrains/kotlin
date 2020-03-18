@@ -201,13 +201,15 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     initComponent();
   }
 
-  void scheduleFullIndexesRescan(@NotNull Collection<ID<?, ?>> indexesToRebuild) {
+  @ApiStatus.Internal
+  public void scheduleFullIndexesRebuild(@NotNull String reason) {
+    scheduleFullIndexesRescan(myRegisteredIndexes.getState().getIndexIDs(), reason);
+  }
+
+  void scheduleFullIndexesRescan(@NotNull Collection<ID<?, ?>> indexesToRebuild, @NotNull String reason) {
     cleanupProcessedFlag();
     doClearIndices(id -> indexesToRebuild.contains(id));
-    String rebuiltIndexesLog = indexesToRebuild.isEmpty()
-      ? ""
-      : "; indexes " + indexesToRebuild + " will be rebuild completely due to version change";
-    scheduleIndexRebuild("File type change" + rebuiltIndexesLog);
+    scheduleIndexRebuild(reason);
   }
 
   @VisibleForTesting

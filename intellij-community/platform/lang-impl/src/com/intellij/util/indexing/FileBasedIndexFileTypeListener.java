@@ -1,11 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.indexing;
 
-import com.intellij.openapi.fileTypes.*;
+import com.intellij.openapi.fileTypes.FileTypeEvent;
+import com.intellij.openapi.fileTypes.FileTypeListener;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Set;
 
 class FileBasedIndexFileTypeListener implements FileTypeListener {
   @Override
@@ -18,6 +19,9 @@ class FileBasedIndexFileTypeListener implements FileTypeListener {
     }
 
     FileBasedIndexImpl fileBasedIndex = (FileBasedIndexImpl)FileBasedIndex.getInstance();
-    fileBasedIndex.scheduleFullIndexesRescan(indexesToRebuild);
+    String rebuiltIndexesLog = indexesToRebuild.isEmpty()
+                               ? ""
+                               : "; indexes " + indexesToRebuild + " will be rebuild completely due to version change";
+    fileBasedIndex.scheduleFullIndexesRescan(indexesToRebuild, "File type change" + rebuiltIndexesLog);
   }
 }
