@@ -78,7 +78,9 @@ class GradleScriptConfigurationLoader(project: Project) : DefaultScriptConfigura
             }
         }
 
-        return super.loadDependencies(isFirstLoad, ktFile, scriptDefinition, context)
+        val result = getConfigurationThroughScriptingApi(ktFile, vFile, scriptDefinition)
+        context.saveNewConfiguration(vFile, result)
+        return true
     }
 
     override fun getInputsStamp(virtualFile: VirtualFile, file: KtFile): CachedConfigurationInputs {

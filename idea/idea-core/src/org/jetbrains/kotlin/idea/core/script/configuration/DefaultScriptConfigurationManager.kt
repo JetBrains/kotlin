@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.core.script.configuration.utils.DefaultBackgrou
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
 import java.util.concurrent.locks.ReentrantLock
@@ -138,6 +139,7 @@ internal class DefaultScriptConfigurationManager(project: Project) :
      * - invalid, in queue. `cache[file]?.upToDate == false && file in backgroundExecutor`.
      * - invalid, loading. `cache[file]?.upToDate == false && file !in backgroundExecutor`.
      * - invalid, waiting for apply. `cache[file]?.upToDate == false && file !in backgroundExecutor` and has notification panel?
+     * - invalid, waiting for update. `cache[file]?.upToDate == false` and has notification panel
      *
      * Async:
      * - up-to-date: [reloadOutOfDateConfiguration] will not be called.
@@ -151,6 +153,8 @@ internal class DefaultScriptConfigurationManager(project: Project) :
      * - `invalid, waiting for apply`:
      *   Loading will not be queued, since we are marking file as up-to-date with
      *   not yet applied configuration.
+     * - `invalid, waiting for update`:
+     *   Loading wasn't started, only notification is shown
      *
      * Sync:
      * - up-to-date:
@@ -163,13 +167,16 @@ internal class DefaultScriptConfigurationManager(project: Project) :
         file: KtFile,
         isFirstLoad: Boolean,
         loadEvenWillNotBeApplied: Boolean,
-        forceSync: Boolean
+        forceSync: Boolean,
+        isPostponedLoad: Boolean
     ) {
         val virtualFile = file.originalFile.virtualFile ?: return
 
         val autoReloadEnabled = KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled
         val shouldLoad = isFirstLoad || loadEvenWillNotBeApplied || autoReloadEnabled
         if (!shouldLoad) return
+
+        val postponeLoading = isPostponedLoad && !autoReloadEnabled
 
         if (!ScriptDefinitionsManager.getInstance(project).isReady()) return
         val scriptDefinition = file.findScriptDefinition() ?: return
@@ -178,24 +185,42 @@ internal class DefaultScriptConfigurationManager(project: Project) :
 
         val syncLoader = sync.firstOrNull { it.loadDependencies(isFirstLoad, file, scriptDefinition, loadingContext) }
         if (syncLoader == null) {
-            // run async loader
             if (forceSync) {
-                async.firstOrNull { it.loadDependencies(isFirstLoad, file, scriptDefinition, loadingContext) }
+                loaders.firstOrNull { it.loadDependencies(isFirstLoad, file, scriptDefinition, loadingContext) }
             } else {
-                backgroundExecutor.ensureScheduled(virtualFile) {
-                    val cached = getCachedConfigurationState(virtualFile)
-
-                    val applied = cached?.applied
-                    if (applied != null && applied.inputs.isUpToDate(project, virtualFile)) {
-                        // in case user reverted to applied configuration
-                        suggestOrSaveConfiguration(virtualFile, applied, false)
-                    } else if (cached == null || !cached.isUpToDate(project, virtualFile)) {
-                        // don't start loading if nothing was changed
-                        // (in case we checking for up-to-date and loading concurrently)
-                        val actualIsFirstLoad = cached == null
-                        async.firstOrNull { it.loadDependencies(actualIsFirstLoad, file, scriptDefinition, loadingContext) }
+                if (postponeLoading) {
+                    ScriptConfigurationNotificationFactory.NOTIFICATION_FACTORY.getPoint(project).extensionList.firstOrNull {
+                        it.showNotification(virtualFile, project) {
+                            runAsyncLoaders(file, virtualFile, scriptDefinition, async, postponeLoading)
+                        }
                     }
+                } else {
+                    runAsyncLoaders(file, virtualFile, scriptDefinition, async, postponeLoading)
                 }
+            }
+        }
+    }
+
+    //  в нотификации остается старый колбек - нужно перезаписывать колбек
+    private fun runAsyncLoaders(
+        file: KtFile,
+        virtualFile: VirtualFile,
+        scriptDefinition: ScriptDefinition,
+        loaders: List<ScriptConfigurationLoader>,
+        isLoadingPostponed: Boolean
+    ) {
+        backgroundExecutor.ensureScheduled(virtualFile) {
+            val cached = getCachedConfigurationState(virtualFile)
+
+            val applied = cached?.applied
+            if (applied != null && applied.inputs.isUpToDate(project, virtualFile)) {
+                // in case user reverted to applied configuration
+                suggestOrSaveConfiguration(virtualFile, applied, isLoadingPostponed)
+            } else if (cached == null || !cached.isUpToDate(project, virtualFile)) {
+                // don't start loading if nothing was changed
+                // (in case we checking for up-to-date and loading concurrently)
+                val actualIsFirstLoad = cached == null
+                loaders.firstOrNull { it.loadDependencies(actualIsFirstLoad, file, scriptDefinition, loadingContext) }
             }
         }
     }
@@ -250,6 +275,10 @@ internal class DefaultScriptConfigurationManager(project: Project) :
             debug(file) { "configuration received = $newResult" }
 
             setLoadedConfiguration(file, newResult)
+
+            ScriptConfigurationNotificationFactory.NOTIFICATION_FACTORY.getPoint(project).extensionList.firstOrNull {
+                it.hideNotification(file, project)
+            }
 
             val newConfiguration = newResult.configuration
             if (newConfiguration == null) {
