@@ -7,6 +7,7 @@ import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.popup.PopupFactoryImpl
+import com.intellij.util.ui.JBUI
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
@@ -22,6 +23,8 @@ class ModuleDependenciesComponent(
 ) : TitledComponent(context) {
     override val title: String = "Module dependencies"
     private val dependenciesList = ModuleDependenciesList()
+    override val needCentering: Boolean = false
+    override val maximumWidth: Int = 500
 
     private val toolbarDecorator: ToolbarDecorator = ToolbarDecorator.createDecorator(dependenciesList).apply {
         setToolbarPosition(ActionToolbarPosition.BOTTOM)
@@ -72,6 +75,7 @@ class ModuleDependenciesComponent(
 
     override val component: JPanel = toolbarDecorator.createPanelWithPopupHandler(dependenciesList).apply {
         preferredSize = Dimension(preferredSize.width, 200)
+        addBorder(JBUI.Borders.empty(0, 3))
     }
 }
 

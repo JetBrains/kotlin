@@ -35,12 +35,12 @@ import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
 internal inline fun label(text: String, bold: Boolean = false, init: JBLabel.() -> Unit = {}) = JBLabel().apply {
-    font = UIUtil.getButtonFont().deriveFont(if (bold) Font.BOLD else Font.PLAIN)
+    font = UIUtil.getLabelFont().deriveFont(if (bold) Font.BOLD else Font.PLAIN)
     this.text = text
     init()
 }
 
-inline fun customPanel(layout: LayoutManager = BorderLayout(), init: JPanel.() -> Unit = {}) = JPanel(layout).apply(init)
+inline fun customPanel(layout: LayoutManager? = BorderLayout(), init: JPanel.() -> Unit = {}) = JPanel(layout).apply(init)
 
 inline fun borderPanel(init: BorderLayoutPanel.() -> Unit = {}) = BorderLayoutPanel().apply(init)
 

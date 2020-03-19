@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEditor.ModulesEditorComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.TitledComponentsList
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.createSettingComponent
+import java.awt.Cursor
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.JComponent
@@ -52,7 +53,9 @@ class ProjectSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizar
             projectTemplateComponent,
             buildSystemSetting
         ),
-        context
+        context,
+        stretchY = true,
+        useBigYGap = true
     ).asSubComponent()
 
     override val component: JComponent by lazy(LazyThreadSafetyMode.NONE) {
@@ -63,8 +66,6 @@ class ProjectSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizar
             row {
                 buildSystemAdditionalSettingsComponent.component(growX)
             }
-        }.apply {
-            border = JBUI.Borders.empty(10)
         }
     }
 
@@ -152,10 +153,24 @@ private class PomSettingsComponent(context: Context) : TitledComponentsList(
         StructurePlugin::artifactId.reference.createSettingComponent(context),
         StructurePlugin::version.reference.createSettingComponent(context)
     ),
-    context
+    context,
+    stretchY = true
 )
 
 class KotlinJpsRuntimeComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizard.context) {
+    private val componentList = TitledComponentsList(
+        listOf(
+            JdkComponent(ideWizard),
+            KotlinRuntimeComponentComponent(ideWizard)
+        ),
+        ideWizard.context,
+        stretchY = true
+    ).asSubComponent()
+
+    override val component: JComponent = componentList.component
+}
+
+private class JdkComponent(ideWizard: IdeWizard) : TitledComponent(ideWizard.context) {
     private val javaModuleBuilder = JavaModuleBuilder()
     private val jdkComboBox = JdkComboBox(
         ProjectSdksModel().apply { reset(null) },
@@ -166,14 +181,14 @@ class KotlinJpsRuntimeComponent(ideWizard: IdeWizard) : DynamicComponent(ideWiza
             ideWizard.jpsData.jdk = selectedJdk
         }
     }
-    override val component: JComponent = panel {
-        row("Project JDK:") {
-            borderPanel { addToCenter(jdkComboBox) }.addBorder(JBUI.Borders.empty(0, 7))(growX)
-        }
-        row("Kotlin Runtime:") {
-            ideWizard.jpsData.libraryOptionsPanel.simplePanel(growX)
-        }
-    }
+
+    override val title: String = "Project JDK"
+    override val component: JComponent = jdkComboBox
+}
+
+private class KotlinRuntimeComponentComponent(ideWizard: IdeWizard) : TitledComponent(ideWizard.context) {
+    override val title: String = "Kotlin Runtime"
+    override val component: JComponent = ideWizard.jpsData.libraryOptionsPanel.simplePanel
 }
 
 @Suppress("SpellCheckingInspection")
@@ -182,6 +197,7 @@ private class HideableSection(text: String, private var component: JComponent) :
     private var isExpanded = false
 
     init {
+        titledSeparator.label.cursor = Cursor(Cursor.HAND_CURSOR)
         updateComponent(component)
         titledSeparator.addMouseListener(object : MouseAdapter() {
             override fun mouseReleased(e: MouseEvent) = update(!isExpanded)

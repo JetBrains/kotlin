@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
-import com.intellij.util.ui.JBUI
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 import org.jetbrains.kotlin.tools.projectWizard.templates.settings
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.TitledComponent
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.borderPanel
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.DropDownComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.TextFieldComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.TitledComponentsList
@@ -29,10 +27,7 @@ class ModuleSettingsComponent(
     private val settingsList = TitledComponentsList(emptyList(), context).asSubComponent()
     private val moduleDependenciesComponent = ModuleDependenciesComponent(context)
 
-    override val component: JComponent = borderPanel {
-        addToCenter(settingsList.component)
-        border = JBUI.Borders.empty(20)
-    }
+    override val component: JComponent = settingsList.component
 
     var module: Module? = null
         set(value) {

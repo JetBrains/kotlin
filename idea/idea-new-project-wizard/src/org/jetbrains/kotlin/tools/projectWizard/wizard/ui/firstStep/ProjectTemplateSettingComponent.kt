@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.ProjectTemplate
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ValidationIndicator
-import java.awt.BorderLayout
 import javax.swing.JComponent
 
 class ProjectTemplateSettingComponent(
@@ -23,6 +22,7 @@ class ProjectTemplateSettingComponent(
     context
 ) {
     override val validationIndicator: ValidationIndicator? get() = null
+    override val needCentering: Boolean = false
     private val templateDescriptionComponent = TemplateDescriptionComponent().asSubComponent()
 
     private val list = ImmutableSingleSelectableListWithIcon(
@@ -37,7 +37,7 @@ class ProjectTemplateSettingComponent(
 
     override val component: JComponent = borderPanel {
         addToCenter(borderPanel { addToCenter(list) }.addBorder(JBUI.Borders.empty(0,/*left*/ 3, 0, /*right*/ 3)))
-        addToBottom(templateDescriptionComponent.component.addBorder(JBUI.Borders.empty(/*top*/5,/*left*/ 3, 0, 0)))
+        addToBottom(templateDescriptionComponent.component.addBorder(JBUI.Borders.empty(/*top*/8,/*left*/ 3, /*bottom*/10, 0)))
     }
 
     private fun applySelectedTemplate() = modify {
