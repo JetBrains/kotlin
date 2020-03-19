@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.native.interop.gen.wasm
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.native.interop.gen.argsToCompiler
 import org.jetbrains.kotlin.native.interop.gen.wasm.idl.*
-import kotlinx.cli.ArgParser
+import org.jetbrains.kotlin.native.interop.gen.jvm.InternalInteropOptions
 import org.jetbrains.kotlin.native.interop.tool.JSInteropArguments
 
 fun kotlinHeader(packageName: String): String {
@@ -391,12 +391,12 @@ fun generateJs(interfaces: List<Interface>): String =
 const val idlMathPackage = "kotlinx.interop.wasm.math"
 const val idlDomPackage = "kotlinx.interop.wasm.dom"
 
-fun processIdlLib(args: Array<String>, additionalArgs: Map<String, Any> = mapOf()): Array<String> {
+fun processIdlLib(args: Array<String>, additionalArgs: InternalInteropOptions): Array<String> {
     val jsInteropArguments = JSInteropArguments()
     jsInteropArguments.argParser.parse(args)
     // TODO: Refactor me.
-    val ktGenRoot = File(jsInteropArguments.generated).mkdirs()
-    val nativeLibsDir = File(jsInteropArguments.natives).mkdirs()
+    val ktGenRoot = File(additionalArgs.generated).mkdirs()
+    val nativeLibsDir = File(additionalArgs.natives).mkdirs()
 
     val idl = when (jsInteropArguments.pkg) {
         idlMathPackage -> idlMath
@@ -405,6 +405,6 @@ fun processIdlLib(args: Array<String>, additionalArgs: Map<String, Any> = mapOf(
     }
     File(ktGenRoot, "kotlin_stubs.kt").writeText(generateKotlin(jsInteropArguments.pkg!!, idl))
     File(nativeLibsDir, "js_stubs.js").writeText(generateJs(idl))
-    File((additionalArgs["manifest"] as? String)!!).writeText("") // The manifest is currently unused for wasm.
+    File((additionalArgs.manifest)!!).writeText("") // The manifest is currently unused for wasm.
     return argsToCompiler(jsInteropArguments.staticLibrary.toTypedArray(), jsInteropArguments.libraryPath.toTypedArray())
 }

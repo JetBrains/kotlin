@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.cli.utilities
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.native.interop.gen.jvm.InternalInteropOptions
 import org.jetbrains.kotlin.native.interop.gen.jvm.interop
 import org.jetbrains.kotlin.native.interop.tool.*
 
@@ -28,13 +29,8 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String>? {
 
     val buildDir = File("$outputFileName-build")
     val generatedDir = File(buildDir, "kotlin")
-    val nativesDir = File(buildDir, "natives")
+    val nativesDir = File(buildDir,"natives")
     val manifest = File(buildDir, "manifest.properties")
-    val additionalArgs = listOf(
-            "-generated", generatedDir.path,
-            "-natives", nativesDir.path,
-            "-flavor", flavor
-    )
     val cstubsName ="cstubs"
     val libraries = arguments.library
     val repos = arguments.repo
@@ -42,11 +38,11 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String>? {
         else (arguments as JSInteropArguments).target
     val target = PlatformManager().targetManager(targetRequest).target
 
-    val cinteropArgsToCompiler = interop(flavor, args + additionalArgs,
-            listOfNotNull(
-                    "manifest" to manifest.path,
-                    ("cstubsName" to cstubsName).takeIf { flavor == "native" }
-            ).toMap()
+    val cinteropArgsToCompiler = interop(flavor, args,
+            InternalInteropOptions(generatedDir.absolutePath,
+                    nativesDir.absolutePath,manifest.path,
+                    cstubsName.takeIf { flavor == "native" }
+            )
     ) ?: return null // There is no need in compiler invocation if we're generating only metadata.
 
     val nativeStubs =
