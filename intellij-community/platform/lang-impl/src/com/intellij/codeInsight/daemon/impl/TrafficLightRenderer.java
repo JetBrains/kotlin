@@ -391,15 +391,15 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       if (status.errorAnalyzingFinished) {
         boolean isDumb = DumbService.isDumb(myProject);
         if (isDumb) {
-          title = "<b>Shallow analysis completed</b>";
+          title = DaemonBundle.message("shallow.analysis.completed");
           detailsBuilder.append("Complete results will be available after indexing");
         }
         else {
-          title = "<b>" + DaemonBundle.message("analysis.completed") + "</b>";
+          title = DaemonBundle.message("analysis.completed");
         }
       }
       else {
-        title = "<b>" + DaemonBundle.message("performing.code.analysis") + "</b>";
+        title = DaemonBundle.message("performing.code.analysis");
       }
 
       int currentSeverityErrors = 0;
@@ -445,18 +445,18 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
       }
       if (StringUtil.isNotEmpty(status.reasonWhyDisabled)) {
         return new AnalyzerStatus(AllIcons.General.InspectionsTrafficOff,
-                                 "<b>No analysis has been performed</b>", status.reasonWhyDisabled, this::createUIController).
+                                  DaemonBundle.message("no.analysis.performed"),
+                                  status.reasonWhyDisabled, this::createUIController).
           withStandardStatus(StandardStatus.OFF);
       }
       if (StringUtil.isNotEmpty(status.reasonWhySuspended)) {
         return new AnalyzerStatus(AllIcons.General.InspectionsPause,
-                                  "<b>Code analysis has been suspended</b>",
-                                  status.reasonWhySuspended,
-                                  this::createUIController).
+                                  DaemonBundle.message("analysis.suspended"),
+                                  status.reasonWhySuspended, this::createUIController).
           withStandardStatus(StandardStatus.INDEXING);
       }
       if (status.errorAnalyzingFinished) {
-        return new AnalyzerStatus(AllIcons.General.InspectionsOK, "No problems found",
+        return new AnalyzerStatus(AllIcons.General.InspectionsOK, DaemonBundle.message("no.errors.or.warnings.found"),
                                   detailsBuilder.toString(), this::createUIController);
       }
 
