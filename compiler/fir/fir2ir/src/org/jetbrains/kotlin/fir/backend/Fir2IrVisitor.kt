@@ -504,10 +504,24 @@ class Fir2IrVisitor(
                     whenExpression.typeRef.toIrType(),
                     origin
                 ).apply {
+                    var unconditionalBranchFound = false
                     for (branch in whenExpression.branches) {
-                        if (branch.condition !is FirElseIfTrueCondition || branch.result.statements.isNotEmpty()) {
+                        if (branch.condition !is FirElseIfTrueCondition) {
                             branches += branch.accept(this@Fir2IrVisitor, data) as IrBranch
+                        } else {
+                            unconditionalBranchFound = true
+                            if (branch.result.statements.isNotEmpty()) {
+                                branches += branch.accept(this@Fir2IrVisitor, data) as IrBranch
+                            }
                         }
+                    }
+                    if (whenExpression.isExhaustive && !unconditionalBranchFound) {
+                        val irResult = IrCallImpl(
+                            startOffset, endOffset, irBuiltIns.nothingType, irBuiltIns.noWhenBranchMatchedExceptionSymbol
+                        )
+                        branches += IrElseBranchImpl(
+                            IrConstImpl.boolean(startOffset, endOffset, irBuiltIns.booleanType, true), irResult
+                        )
                     }
                 }
                 if (subjectVariable == null) {
