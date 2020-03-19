@@ -22,6 +22,7 @@ import com.intellij.ide.fileTemplates.actions.CreateFromTemplateActionBase;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsActions;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
@@ -43,8 +44,8 @@ import java.util.function.Supplier;
  */
 public abstract class CreateFileFromTemplateAction extends CreateFromTemplateAction<PsiFile> {
 
-  public CreateFileFromTemplateAction(@Nls(capitalization = Nls.Capitalization.Title) String text,
-                                      @Nls(capitalization = Nls.Capitalization.Sentence) String description, Icon icon) {
+  public CreateFileFromTemplateAction(@Nls @NlsActions.ActionText String text,
+                                      @Nls @NlsActions.ActionDescription String description, Icon icon) {
     super(text, description, icon);
   }
 

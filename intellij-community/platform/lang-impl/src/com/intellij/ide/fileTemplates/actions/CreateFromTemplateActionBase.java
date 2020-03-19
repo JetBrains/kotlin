@@ -30,6 +30,7 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsActions;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -44,8 +45,8 @@ import java.util.function.Supplier;
 import static com.intellij.util.ObjectUtils.notNull;
 
 public abstract class CreateFromTemplateActionBase extends AnAction {
-  public CreateFromTemplateActionBase(@Nls(capitalization = Nls.Capitalization.Title) String title,
-                                      @Nls(capitalization = Nls.Capitalization.Sentence) String description,
+  public CreateFromTemplateActionBase(@Nls @NlsActions.ActionText String title,
+                                      @Nls @NlsActions.ActionDescription String description,
                                       Icon icon) {
     super(title, description, icon);
   }

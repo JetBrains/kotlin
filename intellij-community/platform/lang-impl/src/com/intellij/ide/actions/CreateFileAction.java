@@ -19,6 +19,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidatorEx;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.openapi.util.NlsActions;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
@@ -44,8 +45,8 @@ public class CreateFileAction extends CreateElementActionBase implements DumbAwa
     super(ActionsBundle.messagePointer("action.NewFile.text"), IdeBundle.messagePointer("action.create.new.file.description"), AllIcons.FileTypes.Text);
   }
 
-  public CreateFileAction(@Nls(capitalization = Nls.Capitalization.Title) String text,
-                          @Nls(capitalization = Nls.Capitalization.Sentence) String description,
+  public CreateFileAction(@Nls @NlsActions.ActionText String text,
+                          @Nls @NlsActions.ActionDescription String description,
                           final Icon icon) {
     super(text, description, icon);
   }

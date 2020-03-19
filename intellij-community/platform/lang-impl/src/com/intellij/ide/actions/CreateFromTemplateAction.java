@@ -12,6 +12,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsActions;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -32,8 +33,8 @@ import java.util.function.Supplier;
 public abstract class CreateFromTemplateAction<T extends PsiElement> extends AnAction implements WriteActionAware {
   protected static final Logger LOG = Logger.getInstance(CreateFromTemplateAction.class);
 
-  public CreateFromTemplateAction(@Nls(capitalization = Nls.Capitalization.Title) String text,
-                                  @Nls(capitalization = Nls.Capitalization.Sentence) String description, Icon icon) {
+  public CreateFromTemplateAction(@Nls @NlsActions.ActionText String text,
+                                  @Nls @NlsActions.ActionDescription String description, Icon icon) {
     super(text, description, icon);
   }
 
