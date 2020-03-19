@@ -65,6 +65,8 @@ interface IdeaModuleInfo : org.jetbrains.kotlin.idea.caches.resolve.IdeaModuleIn
 
     val moduleOrigin: ModuleOrigin
 
+    val project: Project?
+
     override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
         get() = super.capabilities + mapOf(OriginCapability to moduleOrigin)
 
@@ -155,6 +157,9 @@ interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
 
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.MODULE
+
+    override val project: Project
+        get() = module.project
 
     override val platform: TargetPlatform
         get() = TargetPlatformDetector.getPlatform(module)
@@ -284,7 +289,7 @@ private class ModuleTestSourceScope(module: Module) : ModuleSourceScope(module) 
     override fun toString() = "ModuleTestSourceScope($module)"
 }
 
-open class LibraryInfo(val project: Project, val library: Library) : IdeaModuleInfo, LibraryModuleInfo, BinaryModuleInfo {
+open class LibraryInfo(override val project: Project, val library: Library) : IdeaModuleInfo, LibraryModuleInfo, BinaryModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.LIBRARY
 
@@ -329,7 +334,7 @@ open class LibraryInfo(val project: Project, val library: Library) : IdeaModuleI
 
 }
 
-data class LibrarySourceInfo(val project: Project, val library: Library, override val binariesModuleInfo: BinaryModuleInfo) :
+data class LibrarySourceInfo(override val project: Project, val library: Library, override val binariesModuleInfo: BinaryModuleInfo) :
     IdeaModuleInfo, SourceForBinaryModuleInfo {
 
     override val name: Name = Name.special(KotlinIdeaAnalysisBundle.message("sources.for.library.0", library.name.toString()))
@@ -355,7 +360,7 @@ data class LibrarySourceInfo(val project: Project, val library: Library, overrid
 }
 
 //TODO: (module refactoring) there should be separate SdkSourceInfo but there are no kotlin source in existing sdks for now :)
-data class SdkInfo(val project: Project, val sdk: Sdk) : IdeaModuleInfo {
+data class SdkInfo(override val project: Project, val sdk: Sdk) : IdeaModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.LIBRARY
 
@@ -377,6 +382,9 @@ object NotUnderContentRootModuleInfo : IdeaModuleInfo {
         get() = ModuleOrigin.OTHER
 
     override val name: Name = Name.special(KotlinIdeaAnalysisBundle.message("special.module.for.files.not.under.source.root"))
+
+    override val project: Project?
+        get() = null
 
     override fun contentScope() = GlobalSearchScope.EMPTY_SCOPE
 
@@ -480,6 +488,9 @@ data class PlatformModuleInfo(
     override fun contentScope() = GlobalSearchScope.union(containedModules.map { it.contentScope() }.toTypedArray())
 
     override val containedModules: List<ModuleSourceInfo> = listOf(platformModule) + commonModules
+
+    override val project: Project
+        get() = platformModule.module.project
 
     override val platform: TargetPlatform
         get() = platformModule.platform
