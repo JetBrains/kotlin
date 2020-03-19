@@ -61,10 +61,12 @@ import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -360,9 +362,11 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                         assert(originalReceiverInfo != null) { "No original receiver info provided: " + functionUsageInfo.declaration.text }
                         result.add(KotlinParameterUsage(expression, originalReceiverInfo!!, functionUsageInfo))
                     } else {
+                        if (receiverDescriptor.value is ExtensionReceiver) return
                         val targetDescriptor = receiverDescriptor.type.constructor.declarationDescriptor
                         assert(targetDescriptor != null) { "Receiver type has no descriptor: " + functionUsageInfo.declaration.text }
-                        result.add(KotlinNonQualifiedOuterThisUsage(expression.parent as KtThisExpression, targetDescriptor!!))
+                        if (DescriptorUtils.isAnonymousObject(targetDescriptor!!)) return
+                        result.add(KotlinNonQualifiedOuterThisUsage(expression.parent as KtThisExpression, targetDescriptor))
                     }
                 }
 
