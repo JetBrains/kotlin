@@ -172,7 +172,7 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
 
   private void clearInjectorCache() {
     cachedInjectors = null;
-    if (myProject.isDisposed()) return;
+    if (myProject.isDisposed() || myProject.isDefault()) return;
 
     for (VirtualFile file : FileEditorManager.getInstance(myProject).getOpenFiles()) {
       PsiFile psiFile = PsiManager.getInstance(myProject).findFile(file);
