@@ -5,19 +5,15 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.call
 
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
 
 abstract class FirExpressionChecker<in E : FirExpression> {
-    abstract fun check(functionCall: E, reporter: DiagnosticReporter)
+    abstract fun check(functionCall: E, context: CheckerContext, reporter: DiagnosticReporter)
 }
 
 typealias FirFunctionCallChecker = FirExpressionChecker<FirFunctionCall>
 typealias FirQualifiedAccessChecker = FirExpressionChecker<FirQualifiedAccessExpression>
-
-class FirExpressionCheckerContext(
-    val implicitReceiverStack: ImplicitReceiverStack
-)

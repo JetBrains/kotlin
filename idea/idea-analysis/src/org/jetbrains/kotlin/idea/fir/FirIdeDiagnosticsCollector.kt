@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.fir
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.registerAllComponents
 import org.jetbrains.kotlin.fir.analysis.diagnostics.ConeDiagnostic
@@ -12,7 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtElement
 
-class FirIdeDiagnosticsCollector(private val resolveState: FirModuleResolveState) : AbstractDiagnosticCollector() {
+class FirIdeDiagnosticsCollector(session: FirSession, private val resolveState: FirModuleResolveState) : AbstractDiagnosticCollector(session) {
 
     init {
         registerAllComponents()

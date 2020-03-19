@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.fir.analysis.collectors.components
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-abstract class AbstractDiagnosticCollectorComponent(private val collector: AbstractDiagnosticCollector) : FirVisitorVoid() {
-    override fun visitElement(element: FirElement) {}
+abstract class AbstractDiagnosticCollectorComponent(private val collector: AbstractDiagnosticCollector) : FirVisitor<Unit, CheckerContext>() {
+    override fun visitElement(element: FirElement, data: CheckerContext) {}
 
     protected fun runCheck(block: (DiagnosticReporter) -> Unit) {
         collector.runCheck(block)

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildReturnExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildUnitExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.inference.FirDelegatedPropertyInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionalType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -621,53 +621,19 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         type: ConeKotlinType?,
         block: () -> T
     ): T {
-        val implicitCompanionValues: List<ImplicitReceiverValue<*>>
-        if (type != null) {
-            implicitCompanionValues = mutableListOf()
-            val implicitReceiverValue = when (owner) {
-                is FirClass<*> -> {
-                    // Questionable: performance
-                    (owner as? FirRegularClass)?.companionObject?.let { companion ->
-                        implicitCompanionValues += ImplicitDispatchReceiverValue(
-                            companion.symbol, session, scopeSession, kind = ImplicitDispatchReceiverKind.COMPANION
-                        )
-                    }
-                    lookupSuperTypes(owner, lookupInterfaces = false, deep = true, useSiteSession = session).mapNotNull {
-                        val superClass = (it as? ConeClassLikeType)?.lookupTag?.toSymbol(session)?.fir as? FirRegularClass
-                        superClass?.companionObject?.let { companion ->
-                            implicitCompanionValues += ImplicitDispatchReceiverValue(
-                                companion.symbol, session, scopeSession, kind = ImplicitDispatchReceiverKind.COMPANION_FROM_SUPERTYPE
-                            )
-                        }
-                    }
-                    // ---
-                    ImplicitDispatchReceiverValue(owner.symbol, type, session, scopeSession)
-                }
-                is FirFunction<*> -> {
-                    ImplicitExtensionReceiverValue(owner.symbol, type, session, scopeSession)
-                }
-                is FirVariable<*> -> {
-                    ImplicitExtensionReceiverValue(owner.symbol, type, session, scopeSession)
-                }
-                else -> {
-                    throw IllegalArgumentException("Incorrect label & receiver owner: ${owner.javaClass}")
-                }
-            }
-            for (implicitCompanionValue in implicitCompanionValues.asReversed()) {
-                implicitReceiverStack.add(null, implicitCompanionValue)
-            }
-            implicitReceiverStack.add(labelName, implicitReceiverValue)
-        } else {
-            implicitCompanionValues = emptyList()
+        val (implicitReceiverValue, implicitCompanionValues) = components.collectImplicitReceivers(type, owner)
+        implicitCompanionValues.forEach { value ->
+            implicitReceiverStack.add(null, value)
         }
+        implicitReceiverValue?.let { implicitReceiverStack.add(labelName, it) }
+
         try {
             return block()
         } finally {
             if (type != null) {
                 implicitReceiverStack.pop(labelName)
-                for (implicitCompanionValue in implicitCompanionValues) {
+                for (i in implicitCompanionValues.indices)
                     implicitReceiverStack.pop(null)
-                }
             }
         }
     }

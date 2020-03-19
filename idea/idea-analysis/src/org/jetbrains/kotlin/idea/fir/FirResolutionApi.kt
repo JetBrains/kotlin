@@ -157,7 +157,7 @@ fun KtFile.getOrBuildFirWithDiagnostics(state: FirModuleResolveState): FirFile {
     ProgressIndicatorProvider.checkCanceled() // ???
     if (state.hasDiagnosticsForFile(this)) return firFile
 
-    FirIdeDiagnosticsCollector(state).collectDiagnostics(firFile)
+    FirIdeDiagnosticsCollector(firFile.session, state).collectDiagnostics(firFile)
     state.setDiagnosticsForFile(this, firFile)
     return firFile
 }

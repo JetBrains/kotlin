@@ -78,11 +78,13 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
     }
 
     protected fun checkDiagnostics(file: File, testFiles: List<TestFile>, firFiles: List<FirFile>) {
-        val collector = createCollector()
+        val collectors = mutableMapOf<FirSession, AbstractDiagnosticCollector>()
         val actualText = StringBuilder()
         for (testFile in testFiles) {
             val firFile = firFiles.firstOrNull { it.psi == testFile.ktFile }
             if (firFile != null) {
+                val session = firFile.session
+                val collector = collectors.computeIfAbsent(session) { createCollector(session) }
                 val coneDiagnostics = collector.collectDiagnostics(firFile)
                 testFile.getActualText(coneDiagnostics, actualText)
             } else {
@@ -92,8 +94,8 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         KotlinTestUtils.assertEqualsToFile(file, actualText.toString())
     }
 
-    protected fun createCollector(): AbstractDiagnosticCollector {
-        return FirDiagnosticsCollector.create()
+    protected fun createCollector(session: FirSession): AbstractDiagnosticCollector {
+        return FirDiagnosticsCollector.create(session)
     }
 
     private fun checkCfg(testDataFile: File, firFiles: List<FirFile>) {

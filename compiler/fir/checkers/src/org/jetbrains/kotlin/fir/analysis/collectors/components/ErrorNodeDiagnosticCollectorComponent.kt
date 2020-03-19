@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -16,8 +17,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.onSource
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.FirStubDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.FirStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -25,27 +26,27 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 
 class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollector) : AbstractDiagnosticCollectorComponent(collector) {
-    override fun visitErrorLoop(errorLoop: FirErrorLoop) {
+    override fun visitErrorLoop(errorLoop: FirErrorLoop, data: CheckerContext) {
         val source = errorLoop.source ?: return
         runCheck { reportFirDiagnostic(errorLoop.diagnostic, source, it) }
     }
 
-    override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
+    override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: CheckerContext) {
         val source = errorTypeRef.source ?: return
         runCheck { reportFirDiagnostic(errorTypeRef.diagnostic, source, it) }
     }
 
-    override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference) {
+    override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: CheckerContext) {
         val source = errorNamedReference.source ?: return
         runCheck { reportFirDiagnostic(errorNamedReference.diagnostic, source, it) }
     }
 
-    override fun visitErrorExpression(errorExpression: FirErrorExpression) {
+    override fun visitErrorExpression(errorExpression: FirErrorExpression, data: CheckerContext) {
         val source = errorExpression.source ?: return
         runCheck { reportFirDiagnostic(errorExpression.diagnostic, source, it) }
     }
 
-    override fun visitErrorFunction(errorFunction: FirErrorFunction) {
+    override fun visitErrorFunction(errorFunction: FirErrorFunction, data: CheckerContext) {
         val source = errorFunction.source ?: return
         runCheck { reportFirDiagnostic(errorFunction.diagnostic, source, it) }
     }

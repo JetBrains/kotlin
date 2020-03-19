@@ -6,16 +6,30 @@
 package org.jetbrains.kotlin.fir.analysis.collectors
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.analysis.collectors.components.DeclarationCheckersDiagnosticComponent
 import org.jetbrains.kotlin.fir.analysis.collectors.components.ErrorNodeDiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.analysis.collectors.components.ExpressionCheckersDiagnosticComponent
 import org.jetbrains.kotlin.fir.analysis.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.resolve.collectImplicitReceivers
+import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.name.Name
 
-abstract class AbstractDiagnosticCollector {
+abstract class AbstractDiagnosticCollector(
+    override val session: FirSession,
+    override val scopeSession: ScopeSession = ScopeSession()
+) : SessionHolder {
     fun collectDiagnostics(firFile: FirFile): Iterable<ConeDiagnostic> {
         if (!componentsInitialized) {
             throw IllegalStateException("Components are not initialized")
@@ -33,6 +47,8 @@ abstract class AbstractDiagnosticCollector {
     private var componentsInitialized = false
     private val visitor = Visitor()
 
+    private var context = PersistentCheckerContext()
+
     fun initializeComponents(vararg components: AbstractDiagnosticCollectorComponent) {
         if (componentsInitialized) {
             throw IllegalStateException()
@@ -44,13 +60,109 @@ abstract class AbstractDiagnosticCollector {
     private inner class Visitor : FirVisitorVoid() {
         private fun <T : FirElement> T.runComponents() {
             components.forEach {
-                this.accept(it)
+                this.accept(it, context)
             }
         }
 
         override fun visitElement(element: FirElement) {
             element.runComponents()
             element.acceptChildren(this)
+        }
+
+        override fun visitRegularClass(regularClass: FirRegularClass) {
+            val typeRef = buildResolvedTypeRef {
+                type = regularClass.defaultType()
+            }
+            visitWithDeclarationAndReceiver(regularClass, regularClass.name, typeRef)
+        }
+
+        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
+            visitWithDeclarationAndReceiver(simpleFunction, simpleFunction.name, simpleFunction.receiverTypeRef)
+        }
+
+        override fun visitConstructor(constructor: FirConstructor) {
+            visitWithDeclaration(constructor)
+        }
+
+        override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
+            val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
+            visitWithDeclarationAndReceiver(
+                anonymousFunction,
+                labelName,
+                anonymousFunction.receiverTypeRef
+            )
+        }
+
+        override fun visitProperty(property: FirProperty) {
+            visitWithDeclaration(property)
+        }
+
+        override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
+            val property = context.containingDeclarations.last() as FirProperty
+            visitWithDeclarationAndReceiver(propertyAccessor, property.name, property.receiverTypeRef)
+        }
+
+        override fun visitValueParameter(valueParameter: FirValueParameter) {
+            visitWithDeclaration(valueParameter)
+        }
+
+        override fun visitEnumEntry(enumEntry: FirEnumEntry) {
+            visitWithDeclaration(enumEntry)
+        }
+
+        override fun visitFile(file: FirFile) {
+            visitWithDeclaration(file)
+        }
+
+        private fun visitWithDeclaration(declaration: FirDeclaration) {
+            declaration.runComponents()
+            withDeclaration(declaration) {
+                declaration.acceptChildren(this)
+            }
+        }
+
+        private fun visitWithDeclarationAndReceiver(declaration: FirDeclaration, labelName: Name?, receiverTypeRef: FirTypeRef?) {
+            declaration.runComponents()
+            withDeclaration(declaration) {
+                withLabelAndReceiverType(
+                    labelName,
+                    declaration,
+                    receiverTypeRef?.coneTypeSafe()
+                ) {
+                    declaration.acceptChildren(this)
+                }
+            }
+        }
+    }
+
+    private inline fun <R> withDeclaration(declaration: FirDeclaration, block: () -> R): R {
+        val existingContext = context
+        context = context.addDeclaration(declaration)
+        try {
+            return block()
+        } finally {
+            context = existingContext
+        }
+    }
+
+    private inline fun <R> withLabelAndReceiverType(
+        labelName: Name?,
+        owner: FirDeclaration,
+        type: ConeKotlinType?,
+        block: () -> R
+    ): R {
+        val (implicitReceiverValue, implicitCompanionValues) = collectImplicitReceivers(type, owner)
+        val existingContext = context
+        implicitCompanionValues.forEach { value ->
+            context = context.addImplicitReceiver(null, value)
+        }
+        implicitReceiverValue?.let {
+            context = context.addImplicitReceiver(labelName, it)
+        }
+        try {
+            return block()
+        } finally {
+            context = existingContext
         }
     }
 }

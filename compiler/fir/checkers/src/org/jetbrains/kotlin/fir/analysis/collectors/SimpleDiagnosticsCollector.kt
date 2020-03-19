@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.SimpleDiagnosticReporter
 
-class SimpleDiagnosticsCollector : AbstractDiagnosticCollector() {
+class SimpleDiagnosticsCollector(session: FirSession) : AbstractDiagnosticCollector(session) {
     private var reporter = SimpleDiagnosticReporter()
 
     override fun initializeCollector() {

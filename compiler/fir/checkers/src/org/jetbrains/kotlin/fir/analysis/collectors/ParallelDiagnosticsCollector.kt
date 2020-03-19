@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.SimpleDiagnosticReporter
@@ -13,7 +14,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicInteger
 
-class ParallelDiagnosticsCollector(private val numberOfThreads: Int) : AbstractDiagnosticCollector() {
+class ParallelDiagnosticsCollector(session: FirSession, private val numberOfThreads: Int) : AbstractDiagnosticCollector(session) {
     init {
         require(numberOfThreads >= 1) {
             "Number of threads should be at least 1"
