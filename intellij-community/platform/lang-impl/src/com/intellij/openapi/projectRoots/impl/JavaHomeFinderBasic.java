@@ -175,14 +175,14 @@ public class JavaHomeFinderBasic {
   @Nullable
   private static File findSdkManCandidatesDir() {
     // first, try the special environment variable
-    String candidatesPath = System.getenv("SDKMAN_CANDIDATES_DIR");
+    String candidatesPath = EnvironmentUtil.getValue("SDKMAN_CANDIDATES_DIR");
     if (candidatesPath != null) {
       File candidatesDir = new File(candidatesPath);
       if (candidatesDir.isDirectory()) return candidatesDir;
     }
 
     // then, try to use its 'primary' variable
-    String primaryPath = System.getenv("SDKMAN_DIR");
+    String primaryPath = EnvironmentUtil.getValue("SDKMAN_DIR");
     if (primaryPath != null) {
       File primaryDir = new File(primaryPath);
       if (primaryDir.isDirectory()) {
