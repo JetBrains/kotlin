@@ -15,16 +15,18 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.Name
 
-interface ImplicitReceiverStack {
-    fun add(name: Name?, value: ImplicitReceiverValue<*>)
-    fun pop(name: Name?)
+abstract class ImplicitReceiverStack : Iterable<ImplicitReceiverValue<*>> {
+    abstract operator fun get(name: String?): ImplicitReceiverValue<*>?
 
-    operator fun get(name: String?): ImplicitReceiverValue<*>?
+    abstract fun lastDispatchReceiver(): ImplicitDispatchReceiverValue?
+    abstract fun receiversAsReversed(): List<ImplicitReceiverValue<*>>
+}
 
-    fun lastDispatchReceiver(): ImplicitDispatchReceiverValue?
-    fun receiversAsReversed(): List<ImplicitReceiverValue<*>>
+abstract class MutableImplicitReceiverStack : ImplicitReceiverStack() {
+    abstract fun add(name: Name?, value: ImplicitReceiverValue<*>)
+    abstract fun pop(name: Name?)
 
-    fun snapshot(): ImplicitReceiverStack
+    abstract fun snapshot(): MutableImplicitReceiverStack
 }
 
 class ImplicitReceiverStackImpl private constructor(
@@ -33,7 +35,7 @@ class ImplicitReceiverStackImpl private constructor(
     private var originalTypes: PersistentList<ConeKotlinType>,
     private var indexesPerLabel: PersistentSetMultimap<Name, Int>,
     private var indexesPerSymbol: PersistentMap<FirBasedSymbol<*>, Int>
-) : ImplicitReceiverStack, Iterable<ImplicitReceiverValue<*>> {
+) : MutableImplicitReceiverStack() {
     val size: Int get() = stack.size
 
     constructor() : this(
@@ -90,7 +92,7 @@ class ImplicitReceiverStackImpl private constructor(
         return stack.iterator()
     }
 
-    override fun snapshot(): ImplicitReceiverStack {
+    override fun snapshot(): ImplicitReceiverStackImpl {
         return ImplicitReceiverStackImpl(stack, originalTypes, indexesPerLabel, indexesPerSymbol)
     }
 }

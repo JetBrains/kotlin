@@ -28,7 +28,7 @@ typealias FirLocalScopes = PersistentList<FirLocalScope>
 
 class FirLocalContext(
     val localScopes: FirLocalScopes,
-    val implicitReceiverStack: ImplicitReceiverStack
+    val implicitReceiverStack: MutableImplicitReceiverStack
 )
 
 typealias LocalContextForAnonymousFunctions = Map<FirAnonymousFunctionSymbol, FirLocalContext>
@@ -39,7 +39,7 @@ interface SessionHolder {
 
 interface BodyResolveComponents : SessionHolder {
     val returnTypeCalculator: ReturnTypeCalculator
-    val implicitReceiverStack: ImplicitReceiverStack
+    val implicitReceiverStack: MutableImplicitReceiverStack
     val topLevelScopes: List<FirScope>
     val localScopes: FirLocalScopes
     val localContextForAnonymousFunctions: LocalContextForAnonymousFunctions

@@ -78,7 +78,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
 
     protected inline val symbolProvider: FirSymbolProvider get() = components.symbolProvider
 
-    protected inline val implicitReceiverStack: ImplicitReceiverStack get() = components.implicitReceiverStack
+    protected inline val implicitReceiverStack: MutableImplicitReceiverStack get() = components.implicitReceiverStack
     protected inline val inferenceComponents: InferenceComponents get() = components.inferenceComponents
     protected inline val resolutionStageRunner: ResolutionStageRunner get() = components.resolutionStageRunner
     protected inline val samResolver: FirSamResolver get() = components.samResolver
@@ -122,7 +122,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val returnTypeCalculator: ReturnTypeCalculator = transformer.returnTypeCalculator
 
         @set:PrivateForInline
-        override var implicitReceiverStack: ImplicitReceiverStack = ImplicitReceiverStackImpl()
+        override var implicitReceiverStack: MutableImplicitReceiverStack = ImplicitReceiverStackImpl()
 
         override val inferenceComponents: InferenceComponents = inferenceComponents(session, returnTypeCalculator, scopeSession)
         override val resolutionStageRunner: ResolutionStageRunner = ResolutionStageRunner(inferenceComponents)
