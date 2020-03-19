@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-class ControlFlowGraph(val name: String, val kind: Kind) {
+class ControlFlowGraph(val owner: FirDeclaration?, val name: String, val kind: Kind) {
     private val _nodes: MutableList<CFGNode<*>> = mutableListOf()
 
     val nodes: List<CFGNode<*>> get() = _nodes

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.isNothing
 
 class ControlFlowGraphBuilder {
-    private val graphs: Stack<ControlFlowGraph> = stackOf(ControlFlowGraph("<DUMP_GRAPH_FOR_ENUMS>", ControlFlowGraph.Kind.TopLevel))
+    private val graphs: Stack<ControlFlowGraph> = stackOf(ControlFlowGraph(null, "<TOP_LEVEL_GRAPH>", ControlFlowGraph.Kind.TopLevel))
     val graph: ControlFlowGraph get() = graphs.top()
 
     private val lexicalScopes: Stack<Stack<CFGNode<*>>> = stackOf(stackOf())
@@ -88,7 +88,7 @@ class ControlFlowGraphBuilder {
         }
 
         if (!isInplace) {
-            graphs.push(ControlFlowGraph(name, ControlFlowGraph.Kind.Function))
+            graphs.push(ControlFlowGraph(function, name, ControlFlowGraph.Kind.Function))
         }
 
         val enterNode = createFunctionEnterNode(function, isInplace).also {
@@ -240,7 +240,7 @@ class ControlFlowGraphBuilder {
     // ----------------------------------- Property -----------------------------------
 
     fun enterProperty(property: FirProperty): PropertyInitializerEnterNode {
-        graphs.push(ControlFlowGraph("val ${property.name}", ControlFlowGraph.Kind.PropertyInitializer))
+        graphs.push(ControlFlowGraph(property, "val ${property.name}", ControlFlowGraph.Kind.PropertyInitializer))
         val enterNode = createPropertyInitializerEnterNode(property)
         val exitNode = createPropertyInitializerExitNode(property)
         topLevelVariableInitializerExitNodes.push(exitNode)
@@ -729,7 +729,7 @@ class ControlFlowGraphBuilder {
     // ----------------------------------- Block -----------------------------------
 
     fun enterInitBlock(initBlock: FirAnonymousInitializer): InitBlockEnterNode {
-        graphs.push(ControlFlowGraph("init block", ControlFlowGraph.Kind.ClassInitializer))
+        graphs.push(ControlFlowGraph(initBlock, "init block", ControlFlowGraph.Kind.ClassInitializer))
         val enterNode = createInitBlockEnterNode(initBlock).also {
             lexicalScopes.push(stackOf(it))
         }
