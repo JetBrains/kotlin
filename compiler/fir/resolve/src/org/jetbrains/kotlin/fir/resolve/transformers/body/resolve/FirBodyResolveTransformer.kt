@@ -46,7 +46,9 @@ open class FirBodyResolveTransformer(
         packageFqName = file.packageFqName
         return withScopeCleanup(context.fileImportsScope) {
             context.fileImportsScope.addImportingScopes(file, session, components.scopeSession)
-            super.transformFile(file, data)
+            file.replaceResolvePhase(transformerPhase)
+            @Suppress("UNCHECKED_CAST")
+            transformDeclarationContent(file, data) as CompositeTransformResult<FirFile>
         }
     }
 
@@ -180,6 +182,12 @@ open class FirBodyResolveTransformer(
 
     override fun transformDeclaration(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
         return declarationsTransformer.transformDeclaration(declaration, data)
+    }
+
+    open fun transformDeclarationContent(
+        declaration: FirDeclaration, data: ResolutionMode
+    ): CompositeTransformResult<FirDeclaration> {
+        return transformElement(declaration, data)
     }
 
     override fun transformDeclarationStatus(

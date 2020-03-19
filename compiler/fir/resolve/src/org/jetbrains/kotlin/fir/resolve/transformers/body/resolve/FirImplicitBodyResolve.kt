@@ -199,25 +199,18 @@ private class FirDesignatedBodyResolveTransformerForReturnTypeCalculator(
     returnTypeCalculator,
     outerBodyResolveContext
 ) {
-
     var lastResult: FirElement? = null
 
-    override fun <E : FirElement> transformElement(element: E, data: ResolutionMode): CompositeTransformResult<E> {
+    override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
         if (designation.hasNext()) {
-            val result = designation.next().transform<E, ResolutionMode>(this, data).single
-            if (!designation.hasNext()) {
+            val result = designation.next().transform<FirDeclaration, ResolutionMode>(this, data).single
+            if (!designation.hasNext() && lastResult == null) {
                 lastResult = result
             }
-            return result.compose()
+            return declaration.compose()
         }
-        return super.transformElement(element, data)
-    }
 
-    override fun transformDeclaration(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
-        return context.withContainer(declaration) {
-            declaration.replaceResolvePhase(transformerPhase)
-            transformElement(declaration, data)
-        }
+        return super.transformDeclarationContent(declaration, data)
     }
 }
 
