@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticWithParameters1
-import org.jetbrains.kotlin.fir.diagnostics.FirMessageDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -1487,7 +1485,7 @@ class RawFirBuilder(
                 is KtSuperExpression -> {
                     buildErrorNamedReference {
                         source = calleeExpression.toFirSourceElement()
-                        diagnostic = FirMessageDiagnostic("Super cannot be a callee", "TODO", DiagnosticKind.SuperNotAllowed)
+                        diagnostic = FirDiagnosticWithParameters1("Super cannot be a callee", calleeExpression.text, DiagnosticKind.SuperNotAllowed)
                     } to null
                 }
 

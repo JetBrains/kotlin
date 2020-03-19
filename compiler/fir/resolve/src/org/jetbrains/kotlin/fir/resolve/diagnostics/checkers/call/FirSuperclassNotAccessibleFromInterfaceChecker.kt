@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.onSource
 
 object FirSuperclassNotAccessibleFromInterfaceChecker : FirExpressionChecker<FirFunctionCall>() {
     override fun check(functionCall: FirFunctionCall, reporter: DiagnosticReporter) {
-        TODO("Waiting for implicit receivers API")
+//        TODO("Waiting for implicit receivers API")
     }
 
     private fun DiagnosticReporter.report(source: FirSourceElement?) {
