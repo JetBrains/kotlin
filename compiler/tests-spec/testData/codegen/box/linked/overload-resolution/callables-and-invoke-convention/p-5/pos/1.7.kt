@@ -3,8 +3,8 @@
 /*
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-253
- * PLACE: overload-resolution, callables-and-invoke-convention -> paragraph 6 -> sentence 1
+ * SPEC VERSION: 0.1-268
+ * PLACE: overload-resolution, callables-and-invoke-convention -> paragraph 5 -> sentence 1
  * RELEVANT PLACES: overload-resolution, callables-and-invoke-convention -> paragraph 2 -> sentence 2
  * overload-resolution, callables-and-invoke-convention -> paragraph 2 -> sentence 7
  * NUMBER: 7
