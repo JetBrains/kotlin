@@ -309,7 +309,8 @@ task detectJarCollision(type: CollisionDetector) {
                                                     "js.parser", "js.frontend", "js.translator", "js.dce", "metadata",
                                                     "metadata.jvm", "descriptors", "descriptors.jvm", "descriptors.runtime",
                                                     "deserialization", "util.runtime", "type-system", "cones", "resolve",
-                                                    "tree", "psi2fir", "fir2ir", "java", "kotlin-build-common", "lightTree"])
+                                                    "tree", "psi2fir", "fir2ir", "java", "kotlin-build-common", "lightTree",
+                                                    "jvm", "checkers"])
     }
 }
 
