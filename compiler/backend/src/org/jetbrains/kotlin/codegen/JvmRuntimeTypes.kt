@@ -43,9 +43,8 @@ class JvmRuntimeTypes(
     private fun propertyClasses(prefix: String, suffix: String): Lazy<List<ClassDescriptor>> =
         lazy { (0..2).map { i -> createClass(kotlinJvmInternalPackage, prefix + i + suffix) } }
 
-    private val lambda: ClassDescriptor by internal("Lambda")
-
-    private val functionReference: ClassDescriptor by internal("FunctionReference")
+    val lambda: ClassDescriptor by internal("Lambda")
+    val functionReference: ClassDescriptor by internal("FunctionReference")
     val functionReferenceImpl: ClassDescriptor by internal("FunctionReferenceImpl")
 
     private val localVariableReference: ClassDescriptor by internal("LocalVariableReference")
@@ -135,7 +134,8 @@ class JvmRuntimeTypes(
     fun getSupertypesForFunctionReference(
         referencedFunction: FunctionDescriptor,
         anonymousFunctionDescriptor: AnonymousFunctionDescriptor,
-        isBound: Boolean
+        isBound: Boolean,
+        isAdaptedCallableReference: Boolean
     ): Collection<KotlinType> {
         val receivers = computeExpectedNumberOfReceivers(referencedFunction, isBound)
 
@@ -151,7 +151,11 @@ class JvmRuntimeTypes(
         )
 
         val suspendFunctionType = if (referencedFunction.isSuspend) suspendFunctionInterface?.defaultType else null
-        val superClass = if (generateOptimizedCallableReferenceSuperClasses) functionReferenceImpl else functionReference
+        val superClass = when {
+            isAdaptedCallableReference -> lambda
+            generateOptimizedCallableReferenceSuperClasses -> functionReferenceImpl
+            else -> functionReference
+        }
         return listOfNotNull(superClass.defaultType, functionType, suspendFunctionType)
     }
 

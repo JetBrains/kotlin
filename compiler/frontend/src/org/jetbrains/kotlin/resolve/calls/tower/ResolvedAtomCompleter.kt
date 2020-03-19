@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.createFunctionType
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.psi.KtElement
@@ -41,6 +38,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
@@ -396,7 +394,6 @@ class ResolvedAtomCompleter(
         callableReferenceAdaptation: CallableReferenceAdaptation?
     ) {
         if (callableReferenceAdaptation == null) return
-
         val callElement = resolvedCall.call.callElement
         val isUnboundReference = resolvedCall.dispatchReceiver is TransientReceiver
 
@@ -409,33 +406,54 @@ class ResolvedAtomCompleter(
             )
         }
 
+        // We should record argument mapping only if callable reference requires adaptation:
+        // - argument mapping is non-trivial: any of the arguments were mapped as defaults or vararg elements;
+        // - result should be coerced.
+        var hasNonTrivialMapping = false
+        val mappedArguments = ArrayList<Pair<ValueParameterDescriptor, ResolvedValueArgument>>()
         for ((valueParameter, resolvedCallArgument) in callableReferenceAdaptation.mappedArguments) {
-            resolvedCall.recordValueArgument(
-                valueParameter,
-                when (resolvedCallArgument) {
-                    ResolvedCallArgument.DefaultArgument ->
-                        DefaultValueArgument.DEFAULT
-                    is ResolvedCallArgument.SimpleArgument -> {
-                        val valueArgument = makeFakeValueArgument(resolvedCallArgument.callArgument)
-                        if (valueParameter.isVararg)
-                            VarargValueArgument(
-                                listOf(
-                                    FakeImplicitSpreadValueArgumentForCallableReferenceImpl(callElement, valueArgument)
-                                )
-                            )
-                        else
-                            ExpressionValueArgument(valueArgument)
-                    }
-                    is ResolvedCallArgument.VarargArgument ->
-                        VarargValueArgument(
-                            resolvedCallArgument.arguments.map {
-                                makeFakeValueArgument(it)
-                            }
-                        )
+            val resolvedValueArgument = when (resolvedCallArgument) {
+                ResolvedCallArgument.DefaultArgument -> {
+                    hasNonTrivialMapping = true
+                    DefaultValueArgument.DEFAULT
                 }
-            )
+                is ResolvedCallArgument.SimpleArgument -> {
+                    val valueArgument = makeFakeValueArgument(resolvedCallArgument.callArgument)
+                    if (valueParameter.isVararg)
+                        VarargValueArgument(
+                            listOf(
+                                FakeImplicitSpreadValueArgumentForCallableReferenceImpl(callElement, valueArgument)
+                            )
+                        )
+                    else
+                        ExpressionValueArgument(valueArgument)
+                }
+                is ResolvedCallArgument.VarargArgument -> {
+                    hasNonTrivialMapping = true
+                    VarargValueArgument(
+                        resolvedCallArgument.arguments.map {
+                            makeFakeValueArgument(it)
+                        }
+                    )
+                }
+            }
+            mappedArguments.add(valueParameter to resolvedValueArgument)
+        }
+        if (hasNonTrivialMapping || isCallableReferenceWithCoercion(resolvedCall, callableReferenceAdaptation.coercionStrategy)) {
+            for ((valueParameter, resolvedValueArgument) in mappedArguments) {
+                resolvedCall.recordValueArgument(valueParameter, resolvedValueArgument)
+            }
         }
     }
+
+    private fun isCallableReferenceWithCoercion(
+        resolvedCall: ResolvedCall<CallableDescriptor>,
+        coercionStrategy: CoercionStrategy
+    ): Boolean =
+        when (coercionStrategy) {
+            CoercionStrategy.NO_COERCION -> false
+            CoercionStrategy.COERCION_TO_UNIT -> !resolvedCall.resultingDescriptor.returnType!!.isUnit()
+        }
 
     private fun completeCollectionLiteralCalls(collectionLiteralArgument: ResolvedCollectionLiteralAtom) {
         val psiCallArgument = collectionLiteralArgument.atom.psiCallArgument as CollectionLiteralKotlinCallArgumentImpl

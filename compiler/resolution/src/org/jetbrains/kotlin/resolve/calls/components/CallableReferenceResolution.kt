@@ -315,6 +315,12 @@ class CallableReferencesCandidateFactory(
             mappedArguments[valueParameter] = ResolvedCallArgument.VarargArgument(varargElements)
         }
 
+        for (valueParameter in descriptor.valueParameters) {
+            if (valueParameter.isVararg && valueParameter !in mappedArguments) {
+                mappedArguments[valueParameter] = ResolvedCallArgument.VarargArgument(emptyList())
+            }
+        }
+
         // lower(Unit!) = Unit
         val returnExpectedType = inputOutputTypes.outputType
 

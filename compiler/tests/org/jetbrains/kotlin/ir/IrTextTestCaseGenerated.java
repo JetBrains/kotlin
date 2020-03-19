@@ -1394,6 +1394,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 runTest("compiler/testData/ir/irText/expressions/callableReferences/adaptedExtensionFunctions.kt");
             }
 
+            @TestMetadata("adaptedWithCoercionToUnit.kt")
+            public void testAdaptedWithCoercionToUnit() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/callableReferences/adaptedWithCoercionToUnit.kt");
+            }
+
             public void testAllFilesPresentInCallableReferences() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions/callableReferences"), Pattern.compile("^(.+)\\.kt$"), null, true);
             }
