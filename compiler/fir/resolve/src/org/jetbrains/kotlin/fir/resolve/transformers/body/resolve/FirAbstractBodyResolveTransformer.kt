@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 
 abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAbstractPhaseTransformer<ResolutionMode>(phase) {
+    abstract val context: BodyResolveContext
     abstract val components: BodyResolveTransformerComponents
 
     @set:PrivateForInline
@@ -52,12 +52,12 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     }
 
     protected inline fun <T> withLocalScopeCleanup(crossinline l: () -> T): T {
-        return components.withLocalScopesCleanup(l)
+        return context.withLocalScopesCleanup(l)
     }
 
     protected fun addLocalScope(localScope: FirLocalScope?) {
         if (localScope == null) return
-        components.addLocalScope(localScope)
+        context.addLocalScope(localScope)
     }
 
 
@@ -78,7 +78,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
 
     protected inline val symbolProvider: FirSymbolProvider get() = components.symbolProvider
 
-    protected inline val implicitReceiverStack: MutableImplicitReceiverStack get() = components.implicitReceiverStack
+    protected inline val implicitReceiverStack: ImplicitReceiverStack get() = components.implicitReceiverStack
     protected inline val inferenceComponents: InferenceComponents get() = components.inferenceComponents
     protected inline val resolutionStageRunner: ResolutionStageRunner get() = components.resolutionStageRunner
     protected inline val samResolver: FirSamResolver get() = components.samResolver
@@ -99,62 +99,26 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             else -> null
         }
 
-    class BodyResolveTransformerComponents(
-        override val session: FirSession,
-        override val scopeSession: ScopeSession,
-        val transformer: FirBodyResolveTransformer
-    ) : BodyResolveComponents {
-        override val fileImportsScope: MutableList<FirScope> = mutableListOf()
+    class BodyResolveContext(val returnTypeCalculator: ReturnTypeCalculator) {
+        val fileImportsScope: MutableList<FirScope> = mutableListOf()
 
         @set:PrivateForInline
-        override var typeParametersScopes: PersistentList<FirScope> = persistentListOf()
+        var typeParametersScopes: FirTypeParametersScopes = persistentListOf()
 
         @set:PrivateForInline
-        override var localScopes: FirLocalScopes = persistentListOf()
-
-        override val noExpectedType: FirTypeRef = buildImplicitTypeRef()
-
-        override val localContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirLocalContext> = mutableMapOf()
+        var localScopes: FirLocalScopes = persistentListOf()
 
         @set:PrivateForInline
-        override lateinit var file: FirFile
+        lateinit var file: FirFile
             internal set
 
-        override val symbolProvider: FirSymbolProvider = session.firSymbolProvider
-
-        override val returnTypeCalculator: ReturnTypeCalculator = transformer.returnTypeCalculator
-
         @set:PrivateForInline
-        override var implicitReceiverStack: MutableImplicitReceiverStack = ImplicitReceiverStackImpl()
-
-        override val inferenceComponents: InferenceComponents = inferenceComponents(session, returnTypeCalculator, scopeSession)
-        override val resolutionStageRunner: ResolutionStageRunner = ResolutionStageRunner(inferenceComponents)
-        override val samResolver: FirSamResolver = FirSamResolverImpl(session, scopeSession)
-        override val doubleColonExpressionResolver: FirDoubleColonExpressionResolver = FirDoubleColonExpressionResolver(session)
-        private val qualifiedResolver: FirQualifiedNameResolver = FirQualifiedNameResolver(this)
-        override val callResolver: FirCallResolver = FirCallResolver(
-            this,
-            qualifiedResolver
-        )
-        val typeResolverTransformer = FirSpecificTypeResolverTransformer(
-            FirTypeResolveScopeForBodyResolve(this), session
-        )
-        override val callCompleter: FirCallCompleter = FirCallCompleter(transformer, this)
-        override val dataFlowAnalyzer: FirDataFlowAnalyzer<*> = FirDataFlowAnalyzer.createFirDataFlowAnalyzer(this)
-        override val syntheticCallGenerator: FirSyntheticCallGenerator = FirSyntheticCallGenerator(this)
-        override val integerLiteralTypeApproximator: IntegerLiteralTypeApproximationTransformer =
-            IntegerLiteralTypeApproximationTransformer(symbolProvider, inferenceComponents.ctx)
-        override val integerOperatorsTypeUpdater: IntegerOperatorsTypeUpdater = IntegerOperatorsTypeUpdater(integerLiteralTypeApproximator)
+        var implicitReceiverStack: MutableImplicitReceiverStack = ImplicitReceiverStackImpl()
 
         @set:PrivateForInline
         var containerIfAny: FirDeclaration? = null
 
-        override var container: FirDeclaration
-            get() = containerIfAny!!
-            private set(value) {
-                @OptIn(PrivateForInline::class)
-                containerIfAny = value
-            }
+        val localContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirLocalContext> = mutableMapOf()
 
         @OptIn(PrivateForInline::class)
         inline fun <T> withContainer(declaration: FirDeclaration, crossinline f: () -> T): T {
@@ -208,11 +172,11 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             updateLastScope { storeVariable(variable) }
         }
 
-        override fun saveContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
+        fun saveContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
             localContextForAnonymousFunctions[anonymousFunction.symbol] = FirLocalContext(localScopes, implicitReceiverStack.snapshot())
         }
 
-        override fun dropContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
+        fun dropContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
             localContextForAnonymousFunctions.remove(anonymousFunction.symbol)
         }
 
@@ -225,6 +189,44 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             val lastScope = localScopes.lastOrNull() ?: return
             localScopes = localScopes.set(localScopes.size - 1, lastScope.transform())
         }
+    }
+
+    class BodyResolveTransformerComponents(
+        override val session: FirSession,
+        override val scopeSession: ScopeSession,
+        val transformer: FirBodyResolveTransformer,
+        private val context: BodyResolveContext
+    ) : BodyResolveComponents {
+        override val fileImportsScope: List<FirScope> get() = context.fileImportsScope
+        override val typeParametersScopes: List<FirScope> get() = context.typeParametersScopes
+        override val localScopes: FirLocalScopes get() = context.localScopes
+        override val file: FirFile get() = context.file
+        override val implicitReceiverStack: ImplicitReceiverStack get() = context.implicitReceiverStack
+        override val localContextForAnonymousFunctions: LocalContextForAnonymousFunctions get() = context.localContextForAnonymousFunctions
+        override val returnTypeCalculator: ReturnTypeCalculator get() = context.returnTypeCalculator
+        override val container: FirDeclaration get() = context.containerIfAny!!
+
+        override val noExpectedType: FirTypeRef = buildImplicitTypeRef()
+        override val symbolProvider: FirSymbolProvider = session.firSymbolProvider
+
+        override val inferenceComponents: InferenceComponents = inferenceComponents(session, returnTypeCalculator, scopeSession)
+        override val resolutionStageRunner: ResolutionStageRunner = ResolutionStageRunner(inferenceComponents)
+        override val samResolver: FirSamResolver = FirSamResolverImpl(session, scopeSession)
+        override val doubleColonExpressionResolver: FirDoubleColonExpressionResolver = FirDoubleColonExpressionResolver(session)
+        private val qualifiedResolver: FirQualifiedNameResolver = FirQualifiedNameResolver(this)
+        override val callResolver: FirCallResolver = FirCallResolver(
+            this,
+            qualifiedResolver
+        )
+        val typeResolverTransformer = FirSpecificTypeResolverTransformer(
+            FirTypeResolveScopeForBodyResolve(this), session
+        )
+        override val callCompleter: FirCallCompleter = FirCallCompleter(transformer, this)
+        override val dataFlowAnalyzer: FirDataFlowAnalyzer<*> = FirDataFlowAnalyzer.createFirDataFlowAnalyzer(this)
+        override val syntheticCallGenerator: FirSyntheticCallGenerator = FirSyntheticCallGenerator(this)
+        override val integerLiteralTypeApproximator: IntegerLiteralTypeApproximationTransformer =
+            IntegerLiteralTypeApproximationTransformer(symbolProvider, inferenceComponents.ctx)
+        override val integerOperatorsTypeUpdater: IntegerOperatorsTypeUpdater = IntegerOperatorsTypeUpdater(integerLiteralTypeApproximator)
     }
 }
 

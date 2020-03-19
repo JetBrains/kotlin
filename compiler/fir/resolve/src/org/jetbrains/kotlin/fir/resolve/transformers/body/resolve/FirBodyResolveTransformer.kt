@@ -30,19 +30,21 @@ open class FirBodyResolveTransformer(
 ) : FirAbstractBodyResolveTransformer(phase) {
     private var packageFqName = FqName.ROOT
 
-    override val components: BodyResolveTransformerComponents = BodyResolveTransformerComponents(session, scopeSession, this)
+    final override val context: BodyResolveContext = BodyResolveContext(returnTypeCalculator)
+    final override val components: BodyResolveTransformerComponents =
+        BodyResolveTransformerComponents(session, scopeSession, this, context)
 
     private val expressionsTransformer = FirExpressionsResolveTransformer(this)
     private val declarationsTransformer = FirDeclarationsResolveTransformer(this)
     private val controlFlowStatementsTransformer = FirControlFlowStatementsResolveTransformer(this)
 
     override fun transformFile(file: FirFile, data: ResolutionMode): CompositeTransformResult<FirFile> {
-        components.cleanContextForAnonymousFunction()
+        context.cleanContextForAnonymousFunction()
         @OptIn(PrivateForInline::class)
-        components.file = file
+        context.file = file
         packageFqName = file.packageFqName
-        return withScopeCleanup(components.fileImportsScope) {
-            components.fileImportsScope.addImportingScopes(file, session, components.scopeSession)
+        return withScopeCleanup(context.fileImportsScope) {
+            context.fileImportsScope.addImportingScopes(file, session, components.scopeSession)
             super.transformFile(file, data)
         }
     }

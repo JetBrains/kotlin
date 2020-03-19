@@ -30,7 +30,7 @@ interface SessionHolder {
 
 interface BodyResolveComponents : SessionHolder {
     val returnTypeCalculator: ReturnTypeCalculator
-    val implicitReceiverStack: MutableImplicitReceiverStack
+    val implicitReceiverStack: ImplicitReceiverStack
     val fileImportsScope: List<FirScope>
     val typeParametersScopes: List<FirScope>
     val localScopes: FirLocalScopes
@@ -52,12 +52,10 @@ interface BodyResolveComponents : SessionHolder {
 
     val <D> AbstractFirBasedSymbol<D>.phasedFir: D where D : FirDeclaration, D : FirSymbolOwner<D>
         get() = phasedFir(FirResolvePhase.DECLARATIONS)
-
-    fun saveContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction)
-    fun dropContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction)
 }
 
 typealias FirLocalScopes = PersistentList<FirLocalScope>
+typealias FirTypeParametersScopes = PersistentList<FirScope>
 
 class FirLocalContext(
     val localScopes: FirLocalScopes,

@@ -223,7 +223,7 @@ private class FirDesignatedBodyResolveTransformerForIDE(
     }
 
     override fun transformDeclaration(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
-        return components.withContainer(declaration) {
+        return context.withContainer(declaration) {
             declaration.replaceResolvePhase(transformerPhase)
             transformElement(declaration, data)
         }
