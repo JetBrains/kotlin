@@ -10,7 +10,5 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 object CallCheckers {
     val EXPRESSIONS: List<FirExpressionChecker<FirExpression>> = listOf()
     val QUALIFIED_ACCESS: List<FirQualifiedAccessChecker> = listOf<FirQualifiedAccessChecker>() + EXPRESSIONS
-    val FUNCTION_CALLS: List<FirFunctionCallChecker> = listOf<FirFunctionCallChecker>(
-        FirSuperclassNotAccessibleFromInterfaceChecker
-    ) + QUALIFIED_ACCESS
+    val FUNCTION_CALLS: List<FirFunctionCallChecker> = listOf<FirFunctionCallChecker>() + QUALIFIED_ACCESS
 }
