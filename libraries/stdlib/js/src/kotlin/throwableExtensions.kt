@@ -15,7 +15,7 @@ package kotlin
  * - the detailed description of each throwable in the [Throwable.cause] chain.
  */
 @SinceKotlin("1.4")
-public actual fun Throwable.toStringWithTrace(): String = buildString { dumpStackTraceTo("", "", this, arrayOf()) }
+public actual fun Throwable.toStringWithTrace(): String = ExceptionTraceBuilder().buildFor(this)
 
 /**
  * Adds the specified exception to the list of exceptions that were
@@ -43,49 +43,87 @@ public actual val Throwable.suppressedExceptions: List<Throwable>
     }
 
 
-private fun Array<Throwable>.hasSeen(exception: Throwable): Boolean = any { it === exception }
+private class ExceptionTraceBuilder {
+    private val target = StringBuilder()
+    private val visited = arrayOf<Throwable>()
+    private var topStack: String = ""
+    private var topStackStart: Int = 0
 
-private fun Throwable.dumpStackTraceTo(indent: String, qualifier: String, target: StringBuilder, visited: Array<Throwable>) {
-    this.dumpSelfTrace(indent, qualifier, target, visited) || return
-
-    var cause = this.cause
-    while (cause != null) {
-        // TODO: should skip common stack frames
-        cause.dumpSelfTrace(indent, "Caused by: ", target, visited)
-        cause = cause.cause
+    fun buildFor(exception: Throwable): String {
+        exception.dumpFullTrace("", "")
+        return target.toString()
     }
-}
 
-private fun Throwable.dumpSelfTrace(indent: String, qualifier: String, target: StringBuilder, visited: Array<Throwable>): Boolean {
-    target.append(indent).append(qualifier)
-    if (visited.hasSeen(this)) {
-        target.append("[CIRCULAR REFERENCE, SEE ABOVE: ").append(this).append("]\n")
-        return false
+    private fun hasSeen(exception: Throwable): Boolean = visited.any { it === exception }
+
+    private fun Throwable.dumpFullTrace(indent: String, qualifier: String) {
+        this.dumpSelfTrace(indent, qualifier) || return
+
+        var cause = this.cause
+        while (cause != null) {
+            cause.dumpSelfTrace(indent, "Caused by: ") || return
+            cause = cause.cause
+        }
     }
-    visited.asDynamic().push(this)
 
-    val stack = this.asDynamic().stack as String?
-    if (stack != null) {
-        if (indent.isNotEmpty()) {
-            // indent stack, but avoid indenting exception message lines
-            val messageLines = 1 + (message?.count { c -> c == '\n' } ?: 0)
-            stack.lineSequence().forEachIndexed { index: Int, line: String ->
-                if (index >= messageLines) target.append(indent)
-                target.append(line).append("\n")
+    private fun Throwable.dumpSelfTrace(indent: String, qualifier: String): Boolean {
+        target.append(indent).append(qualifier)
+        if (hasSeen(this)) {
+            target.append("[CIRCULAR REFERENCE, SEE ABOVE: ").append(this).append("]\n")
+            return false
+        }
+        visited.asDynamic().push(this)
+
+        var stack = this.asDynamic().stack as String?
+        if (stack != null) {
+            if (topStack.isEmpty()) {
+                topStack = stack
+                topStackStart = this.toString().length
+            } else {
+                stack = dropCommonFrames(stack, this.toString().length)
+            }
+            if (indent.isNotEmpty()) {
+                // indent stack, but avoid indenting exception message lines
+                val messageLines = 1 + (message?.count { c -> c == '\n' } ?: 0)
+                stack.lineSequence().forEachIndexed { index: Int, line: String ->
+                    if (index >= messageLines) target.append(indent)
+                    target.append(line).append("\n")
+                }
+            } else {
+                target.append(stack).append("\n")
             }
         } else {
-            target.append(stack).append("\n")
+            target.append(this.toString()).append("\n")
         }
-    } else {
-        target.append(this.toString()).append("\n")
+
+        val suppressed = suppressedExceptions
+        if (suppressed.isNotEmpty()) {
+            val suppressedIndent = indent + "    "
+            for (s in suppressed) {
+                s.dumpFullTrace(suppressedIndent, "Suppressed: ")
+            }
+        }
+        return true
     }
 
-    val suppressed = suppressedExceptions
-    if (suppressed.isNotEmpty()) {
-        val suppressedIndent = indent + '\t'
-        for (s in suppressed) {
-            s.dumpStackTraceTo(suppressedIndent, "Suppressed: ", target, visited)
+    private fun dropCommonFrames(stack: String, stackStart: Int): String {
+        var commonFrames: Int = 0
+        var lastBreak: Int = 0
+        var preLastBreak: Int = 0
+        for (pos in 0 until minOf(topStack.length - topStackStart, stack.length - stackStart)) {
+            val c = stack[stack.lastIndex - pos]
+            if (c != topStack[topStack.lastIndex - pos]) break
+            if (c == '\n') {
+                commonFrames += 1
+                preLastBreak = lastBreak
+                lastBreak = pos
+            }
         }
+        if (commonFrames <= 1) return stack
+        while (preLastBreak > 0 && stack[stack.lastIndex - (preLastBreak - 1)] == ' ')
+            preLastBreak -= 1
+
+        // leave 1 common frame to ease matching with the top exception stack
+        return stack.dropLast(preLastBreak) + "... and ${commonFrames - 1} more common stack frames skipped"
     }
-    return true
 }

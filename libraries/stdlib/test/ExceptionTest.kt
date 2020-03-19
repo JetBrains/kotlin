@@ -97,7 +97,8 @@ class ExceptionTest {
             try {
                 root()
             } catch (e: Throwable) {
-                e.addSuppressed(suppressedError(1))
+                for (id in 0..1)
+                    e.addSuppressed(suppressedError(id))
                 throw RuntimeException("Induced", e)
             }
         }
@@ -123,8 +124,9 @@ class ExceptionTest {
         if (supportsSuppressedExceptions) {
             val topLevelSuppressed = e.suppressedExceptions.single()
             assertInTrace(topLevelSuppressed)
-            val causeSuppressed = cause.suppressedExceptions.single()
-            assertInTrace(causeSuppressed)
+            cause.suppressedExceptions.forEach {
+                assertInTrace(it)
+            }
         }
 
 //        fail(topLevelTrace) // to dump the entire trace
@@ -136,6 +138,7 @@ class ExceptionTest {
 
         // Testing an exception of the following structure
         // e1
+        //    -- suppressed: e0 (same stack as e1)
         //    -- suppressed: e3
         //       -- suppressed: e1
         // Caused by: e2
@@ -144,15 +147,22 @@ class ExceptionTest {
 
         val e3 = Exception("e3")
         val e2 = Error("e2", e3)
-        val e1 = RuntimeException("e1", e2)
+        val (e1, e0) = listOf("e1", "e0").map { msg -> RuntimeException(msg, e2.takeIf { msg == "e1" }) }
+        e1.addSuppressed(e0)
         e1.addSuppressed(e3)
         e3.addSuppressed(e1)
         e2.addSuppressed(e1)
 
         val topLevelTrace = e1.toStringWithTrace()
-        assertEquals(3, Regex.fromLiteral(e1.toString()).findAll(topLevelTrace).count(), topLevelTrace)
-        assertEquals(1, Regex.fromLiteral(e2.toString()).findAll(topLevelTrace).count(), topLevelTrace)
-        assertEquals(2, Regex.fromLiteral(e3.toString()).findAll(topLevelTrace).count(), topLevelTrace)
+        fun assertAppearsInTrace(value: Any, count: Int) {
+            if (Regex.fromLiteral(value.toString()).findAll(topLevelTrace).count() != count) {
+                fail("Expected to find $value $count times in $topLevelTrace")
+            }
+        }
+        assertAppearsInTrace(e1, 3)
+        assertAppearsInTrace(e0, 1)
+        assertAppearsInTrace(e2, 1)
+        assertAppearsInTrace(e3, 2)
 //        fail(topLevelTrace) // to dump the entire trace
     }
 
