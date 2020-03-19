@@ -86,7 +86,7 @@ abstract class AbstractCompilerTest : TestCase() {
     protected val defaultClassPath by lazy { systemClassLoaderJars() }
 
     protected fun createClasspath() = defaultClassPath.filter {
-        !it.path.contains("robolectric")
+        !it.path.contains("robolectric") && it.extension != "xml"
     }.toList()
 
     val myTestRootDisposable = TestDisposable()
