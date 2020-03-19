@@ -965,6 +965,12 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 +" = "
                 generate(initializer)
             }
+
+            val delegate = property.delegate
+            if (delegate != null) {
+                keyword(" by ")
+                generate(delegate)
+            }
         }
 
         withIdentLevel {
