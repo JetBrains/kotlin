@@ -18790,6 +18790,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/resolve/invoke/implicitInvoke.kt");
             }
 
+            @TestMetadata("implicitInvokeAfterSafeCall.kt")
+            public void testImplicitInvokeAfterSafeCall() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/invoke/implicitInvokeAfterSafeCall.kt");
+            }
+
             @TestMetadata("invokeAndSmartCast.kt")
             public void testInvokeAndSmartCast() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/resolve/invoke/invokeAndSmartCast.kt");

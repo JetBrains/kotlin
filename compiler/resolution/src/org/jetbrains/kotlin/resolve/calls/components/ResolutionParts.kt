@@ -486,7 +486,7 @@ private fun KotlinResolutionCandidate.checkUnsafeImplicitInvokeAfterSafeCall(arg
         }
     } ?: error("Receiver kind does not match receiver argument")
 
-    if (receiverArgument.isSafeCall && receiverArgument.receiver.stableType.isNullable()) {
+    if (receiverArgument.isSafeCall && receiverArgument.receiver.stableType.isNullable() && resolvedCall.candidateDescriptor.typeParameters.isEmpty()) {
         addDiagnostic(UnsafeCallError(argument, isForImplicitInvoke = true))
         return ImplicitInvokeCheckStatus.UNSAFE_INVOKE_REPORTED
     }
