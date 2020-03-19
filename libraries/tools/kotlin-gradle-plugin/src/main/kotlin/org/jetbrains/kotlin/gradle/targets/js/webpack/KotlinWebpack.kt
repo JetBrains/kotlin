@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.injected
+import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.gradle.utils.provider
 import java.io.File
 import javax.inject.Inject
 
@@ -51,14 +53,17 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     @Input
     var mode: Mode = Mode.DEVELOPMENT
 
+    private var _entry: File? = null
+
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFile
-    var entry: File? = null
-        get() = field ?: compilation.compileKotlinTask.outputFile
+    var entry: File by property(::_entry) {
+        compilation.compileKotlinTask.outputFile
+    }
 
     init {
         onlyIf {
-            entry!!.exists()
+            entry.exists()
         }
     }
 
@@ -84,22 +89,29 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     @get:Internal
     @Deprecated("use destinationDirectory instead", ReplaceWith("destinationDirectory"))
     val outputPath: File
-        get() = destinationDirectory!!
+        get() = destinationDirectory
 
     private val baseConventions: BasePluginConvention?
         get() = project.convention.plugins["base"] as BasePluginConvention?
 
     @get:Internal
-    var destinationDirectory: File? = null
-        get() = field ?: project.buildDir.resolve(baseConventions!!.distsDirName)
+    internal var _destinationDirectory: File? = null
 
     @get:Internal
-    var outputFileName: String? = null
-        get() = field ?: (baseConventions?.archivesBaseName + ".js")
+    val destinationDirectory: File by provider(::_destinationDirectory) {
+        project.buildDir.resolve(baseConventions!!.distsDirName)
+    }
+
+    private var _outputFileName: String? = null
+
+    @get:Internal
+    var outputFileName: String by property(::_outputFileName) {
+        baseConventions?.archivesBaseName + ".js"
+    }
 
     @get:OutputFile
     open val outputFile: File
-        get() = destinationDirectory!!.resolve(outputFileName!!)
+        get() = destinationDirectory.resolve(outputFileName)
 
     open val configDirectory: File?
         @Optional @InputDirectory get() = project.projectDir.resolve("webpack.config.d").takeIf { it.isDirectory }
@@ -108,7 +120,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     var report: Boolean = false
 
     open val reportDir: File
-        @OutputDirectory get() = project.reportsDir.resolve("webpack").resolve(entry!!.nameWithoutExtension)
+        @OutputDirectory get() = project.reportsDir.resolve("webpack").resolve(entry.nameWithoutExtension)
 
     open val evaluatedConfigFile: File
         @OutputFile get() = reportDir.resolve("webpack.config.evaluated.js")
