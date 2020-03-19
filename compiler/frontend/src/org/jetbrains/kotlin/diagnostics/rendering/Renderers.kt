@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newTable
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newText
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.*
@@ -737,6 +738,13 @@ object Renderers {
         val typesAsString = dataFlowTypes.map { DEBUG_TEXT.renderType(it) }.toMutableSet().apply { add(DEBUG_TEXT.renderType(type)) }
 
         return typesAsString.sorted().joinToString(separator = " & ")
+    }
+
+    fun renderCallInfo(fqName: FqNameUnsafe?, typeCall: String?): String {
+        val info = java.lang.StringBuilder()
+        info.append("fqName: ${fqName?.asString() ?: "fqName is unknown"}; ")
+        info.append("typeCall: ${typeCall ?: "typeCall is unknown"}")
+        return info.toString()
     }
 }
 

@@ -19,21 +19,31 @@ import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFa
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactoryWithPsiElement
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtReferenceExpression
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.calls.callUtil.getType
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.oldFashionedDescription
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.AnalyzingUtils
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
+import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import java.util.*
 import java.util.regex.Pattern
 
@@ -176,27 +186,115 @@ object CheckerTestUtil {
             BindingContext.IMPLICIT_EXHAUSTIVE_WHEN to DebugInfoDiagnosticFactory0.IMPLICIT_EXHAUSTIVE
         )
 
+        val kotlinSpecificInfo = KotlinSpecificInfo(
+            platform,
+            withNewInference,
+            languageVersionSettings,
+        )
+        /** for expressions*/
         for ((context, factory) in factoryList) {
-            for ((expression, _) in bindingContext.getSliceContents(context)) {
-                val needRender = !factory.withExplicitDefinitionOnly
-                        || diagnosedRanges?.get(expression.startOffset..expression.endOffset)?.contains(factory.name) == true
-
-                if (PsiTreeUtil.isAncestor(root, expression, false) && needRender) {
-                    val diagnostic = factory.createDiagnostic(
-                        expression,
-                        bindingContext,
-                        dataFlowValueFactory,
-                        languageVersionSettings,
-                        moduleDescriptor
-                    )
-                    debugAnnotations.add(ActualDiagnostic(diagnostic, platform, withNewInference))
-                }
-            }
+            renderDiagnosticsForExpressions(
+                context,
+                factory,
+                root,
+                bindingContext,
+                kotlinSpecificInfo,
+                dataFlowValueFactory,
+                moduleDescriptor,
+                diagnosedRanges,
+                debugAnnotations
+            )
         }
+
+
+        /** for calls*/
+        renderDiagnosticsForCalls(
+            BindingContext.RESOLVED_CALL,
+            DebugInfoDiagnosticFactory1.CALL,
+            root,
+            bindingContext,
+            kotlinSpecificInfo,
+            dataFlowValueFactory,
+            moduleDescriptor,
+            diagnosedRanges,
+            debugAnnotations
+        )
 
         return debugAnnotations
     }
 
+    private class KotlinSpecificInfo(
+        val platform: String?,
+        val withNewInference: Boolean,
+        val languageVersionSettings: LanguageVersionSettings?
+    )
+
+    private fun renderDiagnosticsForCalls(
+        context: WritableSlice<Call, ResolvedCall<*>>, callFactory: DebugInfoDiagnosticFactory1,
+        root: PsiElement, bindingContext: BindingContext, kotlinSpecificInfo: KotlinSpecificInfo,
+        dataFlowValueFactory: DataFlowValueFactory?,
+        moduleDescriptor: ModuleDescriptorImpl?,
+        diagnosedRanges: Map<IntRange, MutableSet<String>>?,
+
+        debugAnnotations: MutableList<ActualDiagnostic>
+    ) {
+        for ((call, _) in bindingContext.getSliceContents(context)) {
+            val callElement = call.callElement as? KtExpression ?: continue
+            renderDiagnostics(
+                callFactory, callElement,
+                root, bindingContext, kotlinSpecificInfo, dataFlowValueFactory, moduleDescriptor, diagnosedRanges,
+                debugAnnotations
+            )
+        }
+    }
+
+    private fun renderDiagnosticsForExpressions(
+        context: WritableSlice<out KtExpression, out Any>, factory: DebugInfoDiagnosticFactory,
+        root: PsiElement,
+        bindingContext: BindingContext,
+        kotlinSpecificInfo: KotlinSpecificInfo,
+
+        dataFlowValueFactory: DataFlowValueFactory?,
+        moduleDescriptor: ModuleDescriptorImpl?,
+        diagnosedRanges: Map<IntRange, MutableSet<String>>?,
+
+        debugAnnotations: MutableList<ActualDiagnostic>
+    ) {
+
+        for ((expression, _) in bindingContext.getSliceContents(context)) {
+            renderDiagnostics(
+                factory, expression,
+                root, bindingContext, kotlinSpecificInfo, dataFlowValueFactory, moduleDescriptor, diagnosedRanges,
+                debugAnnotations
+            )
+        }
+    }
+
+    private fun renderDiagnostics(
+        callFactory: DebugInfoDiagnosticFactory, callElement: KtExpression,
+        root: PsiElement,
+        bindingContext: BindingContext,
+        kotlinSpecificInfo: KotlinSpecificInfo,
+        dataFlowValueFactory: DataFlowValueFactory?,
+        moduleDescriptor: ModuleDescriptorImpl?,
+        diagnosedRanges: Map<IntRange, MutableSet<String>>?,
+
+        debugAnnotations: MutableList<ActualDiagnostic>
+    ) {
+        (callFactory as DiagnosticFactoryWithPsiElement<*, *>)
+        val needRender = !callFactory.withExplicitDefinitionOnly
+                || diagnosedRanges?.get(callElement.startOffset..callElement.endOffset)?.contains(callFactory.name) == true
+        if (PsiTreeUtil.isAncestor(root, callElement, false) && needRender) {
+            val diagnostic = callFactory.createDiagnostic(
+                callElement,
+                bindingContext,
+                dataFlowValueFactory,
+                kotlinSpecificInfo.languageVersionSettings,
+                moduleDescriptor
+            )
+            debugAnnotations.add(ActualDiagnostic(diagnostic, kotlinSpecificInfo.platform, kotlinSpecificInfo.withNewInference))
+        }
+    }
 
     fun diagnosticsDiff(
         expected: List<DiagnosedRange>,
@@ -626,5 +724,52 @@ object CheckerTestUtil {
             }
         }
         return Pair(result, null)
+    }
+
+    fun getCallDebugInfo(
+        expression: PsiElement,
+        bindingContext: BindingContext,
+    ): Pair<FqNameUnsafe?, String?> {
+        val callToTypeOfCall =
+            when (expression) {
+                is KtCallableReferenceExpression -> {
+                    expression.callableReference.getCall(bindingContext) to getTypeOfCall(expression, bindingContext)
+                }
+                is KtExpression -> {
+                    expression.getCall(bindingContext) to getTypeOfCall(expression, bindingContext)
+                }
+                else -> null
+            }
+        val fqNameUnsafe = bindingContext[BindingContext.RESOLVED_CALL, callToTypeOfCall?.first]?.candidateDescriptor?.fqNameUnsafe
+        return fqNameUnsafe to callToTypeOfCall?.second
+
+    }
+
+    /**
+     * if resolvedCall is VariableAsFunctionResolvedCall  -- then typeOfCall is variable + invoke
+     * if resolvedCall.candidateDescriptor is PropertyDescriptor -- then typeOfCall is variable
+     * if resolvedCall.candidateDescriptor is FunctionDescriptor -- then typeOfCall is function
+     */
+    fun getTypeOfCall(expression: KtExpression, bindingContext: BindingContext): String? {
+        val resolvedCall = expression.getResolvedCall(bindingContext) ?: return null
+        return if (resolvedCall is VariableAsFunctionResolvedCall) {
+            "variable&invoke"
+        } else {
+            when (val functionDescriptor = resolvedCall.candidateDescriptor) {
+                is PropertyDescriptor -> {
+                    "variable"
+                }
+                is FunctionDescriptor -> {
+                    return buildString {
+                        if (functionDescriptor.isInline) append("inline ")
+                        if (functionDescriptor.isInfix) append("infix ")
+                        if (functionDescriptor.isOperator) append("operator ")
+                        if (functionDescriptor.isExtension) append("extension ")
+                        append("function")
+                    }
+                }
+                else -> null
+            }
+        }
     }
 }
