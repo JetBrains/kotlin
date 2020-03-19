@@ -45,24 +45,28 @@ public open class Throwable(open val message: String?, open val cause: Throwable
     /**
      * Prints the [detailed description][Throwable.stackTraceToString] of this throwable to the standard output.
      */
-    public fun printStackTrace(): Unit = dumpStackTrace("", "") { println(it) }
+    public fun printStackTrace(): Unit = dumpStackTrace("", "", { println(it) }, mutableSetOf())
 
     internal fun dumpStackTrace(): String = buildString {
-        dumpStackTrace("", "") { appendln(it) }
+        dumpStackTrace("", "", { appendln(it) }, mutableSetOf())
     }
 
-    private fun Throwable.dumpStackTrace(indent: String, qualifier: String, writeln: (String) -> Unit) {
-        this.dumpSelfTrace(indent, qualifier, writeln)
+    private fun Throwable.dumpStackTrace(indent: String, qualifier: String, writeln: (String) -> Unit, visited: MutableSet<Throwable>) {
+        this.dumpSelfTrace(indent, qualifier, writeln, visited) || return
 
         var cause = this.cause
         while (cause != null) {
             // TODO: should skip common stack frames
-            cause.dumpSelfTrace(indent, "Caused by: ", writeln)
+            cause.dumpSelfTrace(indent, "Caused by: ", writeln, visited)
             cause = cause.cause
         }
     }
 
-    private fun Throwable.dumpSelfTrace(indent: String, qualifier: String, writeln: (String) -> Unit) {
+    private fun Throwable.dumpSelfTrace(indent: String, qualifier: String, writeln: (String) -> Unit, visited: MutableSet<Throwable>): Boolean {
+        if (!visited.add(this)) {
+            writeln(indent + qualifier + "[CIRCULAR REFERENCE, SEE ABOVE: $this]")
+            return false
+        }
         writeln(indent + qualifier + this.toString())
         for (element in stackTraceStrings) {
             writeln("$indent\tat $element")
@@ -71,9 +75,10 @@ public open class Throwable(open val message: String?, open val cause: Throwable
         if (!suppressed.isNullOrEmpty()) {
             val suppressedIndent = indent + '\t'
             for (s in suppressed) {
-                s.dumpStackTrace(suppressedIndent, "Suppressed: ", writeln)
+                s.dumpStackTrace(suppressedIndent, "Suppressed: ", writeln, visited)
             }
         }
+        return true
     }
 
 
