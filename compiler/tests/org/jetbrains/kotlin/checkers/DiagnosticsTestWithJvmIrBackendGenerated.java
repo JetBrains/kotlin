@@ -29,14 +29,19 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @TestMetadata("indirectInlineCycle.kt")
-    public void testIndirectInlineCycle() throws Exception {
-        runTest("compiler/testData/diagnostics/testsWithJvmBackend/indirectInlineCycle.kt");
+    @TestMetadata("indirectInlineCycle_ir.kt")
+    public void testIndirectInlineCycle_ir() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/indirectInlineCycle_ir.kt");
     }
 
-    @TestMetadata("inlineCycle.kt")
-    public void testInlineCycle() throws Exception {
-        runTest("compiler/testData/diagnostics/testsWithJvmBackend/inlineCycle.kt");
+    @TestMetadata("inlineCycle_ir.kt")
+    public void testInlineCycle_ir() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/inlineCycle_ir.kt");
+    }
+
+    @TestMetadata("suspendInlineCycle_ir.kt")
+    public void testSuspendInlineCycle_ir() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/suspendInlineCycle_ir.kt");
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature")
