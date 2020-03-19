@@ -5,33 +5,32 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
-import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 
 open class ProviderDelegate<out T : Any>(
-    protected open val backing: KProperty<T?>,
     private val defaultValueProvider: () -> T
 ) {
+    protected open val backing: T? = null
+
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        return backing.getter.call() ?: defaultValueProvider()
+        return backing ?: defaultValueProvider()
     }
 }
 
 class PropertyDelegate<T : Any>(
-    override val backing: KMutableProperty<T?>,
     defaultValueProvider: () -> T
-) : ProviderDelegate<T>(backing, defaultValueProvider) {
+) : ProviderDelegate<T>(defaultValueProvider) {
+    override var backing: T? = null
+
     operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-        backing.setter.call(value)
+        backing = value
     }
 }
 
 fun <T : Any> provider(
-    backing: KProperty<T?>,
     defaultValueProvider: () -> T
-): ProviderDelegate<T> = ProviderDelegate(backing, defaultValueProvider)
+): ProviderDelegate<T> = ProviderDelegate(defaultValueProvider)
 
 fun <T : Any> property(
-    backing: KMutableProperty<T?>,
     defaultValueProvider: () -> T
-): PropertyDelegate<T> = PropertyDelegate(backing, defaultValueProvider)
+): PropertyDelegate<T> = PropertyDelegate(defaultValueProvider)

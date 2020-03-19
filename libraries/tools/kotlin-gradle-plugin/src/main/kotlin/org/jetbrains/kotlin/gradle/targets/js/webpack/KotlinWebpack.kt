@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.injected
 import org.jetbrains.kotlin.gradle.utils.property
-import org.jetbrains.kotlin.gradle.utils.provider
 import java.io.File
 import javax.inject.Inject
 
@@ -53,11 +52,9 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     @Input
     var mode: Mode = Mode.DEVELOPMENT
 
-    private var _entry: File? = null
-
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFile
-    var entry: File by property(::_entry) {
+    var entry: File by property {
         compilation.compileKotlinTask.outputFile
     }
 
@@ -95,17 +92,13 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
         get() = project.convention.plugins["base"] as BasePluginConvention?
 
     @get:Internal
-    internal var _destinationDirectory: File? = null
-
-    @get:Internal
-    val destinationDirectory: File by provider(::_destinationDirectory) {
+    var destinationDirectory: File by property {
         project.buildDir.resolve(baseConventions!!.distsDirName)
     }
-
-    private var _outputFileName: String? = null
+        internal set
 
     @get:Internal
-    var outputFileName: String by property(::_outputFileName) {
+    var outputFileName: String by property {
         baseConventions?.archivesBaseName + ".js"
     }
 

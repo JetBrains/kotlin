@@ -169,7 +169,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     compilation.developmentLinkTask.map { it.outputFile }
                 ).get()
                 it.description = "build webpack ${kind.name.toLowerCase()} bundle"
-                it._destinationDirectory = distribution.directory
+                it.destinationDirectory = distribution.directory!!
 
                 commonWebpackConfigurations.forEach { configure ->
                     it.configure()
