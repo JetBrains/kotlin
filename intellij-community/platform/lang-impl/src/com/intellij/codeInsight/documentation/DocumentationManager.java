@@ -67,12 +67,14 @@ import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.DateFormatUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.concurrency.CancellablePromise;
 
 import javax.swing.*;
 import java.awt.*;
@@ -85,6 +87,10 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class DocumentationManager extends DockablePopupManager<DocumentationComponent> {
   public static final String JAVADOC_LOCATION_AND_SIZE = "javadoc.popup";
@@ -176,8 +182,8 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
   }
 
   @Override
-  public void createToolWindow(@NotNull PsiElement element, PsiElement originalElement) {
-    super.createToolWindow(element, originalElement);
+  public void createToolWindow(@NotNull CompletableFuture<PsiElement> elementFuture, PsiElement originalElement) {
+    super.createToolWindow(elementFuture, originalElement);
 
     if (myToolWindow != null) {
       myToolWindow.getComponent().putClientProperty(ChooseByNameBase.TEMPORARILY_FOCUSABLE_COMPONENT_KEY, Boolean.TRUE);
@@ -288,7 +294,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     if (content == null) return;
     DocumentationComponent component = (DocumentationComponent)content.getComponent();
     myUpdateDocAlarm.cancelAllRequests();
-    doFetchDocInfo(component, new MyCollector(myProject, element, original, null, false))
+    doFetchDocInfo(component, new MyCollector(myProject, CompletableFuture.completedFuture(element), original, null, false))
       .doWhenDone(() -> component.clearHistory());
   }
 
@@ -351,12 +357,14 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
       @Override
       public void updatePopup(Object lookupItemObject) {
         if (lookupItemObject instanceof PsiElement) {
-          doShowJavaDocInfo((PsiElement)lookupItemObject, requestFocus, this, original, null, null, useStoredPopupSize);
+          doShowJavaDocInfo(CompletableFuture.completedFuture((PsiElement)lookupItemObject), requestFocus, this, original, null, null,
+                            useStoredPopupSize);
         }
       }
     };
 
-    doShowJavaDocInfo(element, requestFocus, updateProcessor, original, closeCallback, documentation, useStoredPopupSize);
+    doShowJavaDocInfo(CompletableFuture.completedFuture(element), requestFocus, updateProcessor, original, closeCallback, documentation,
+                      useStoredPopupSize);
   }
 
   public void showJavaDocInfo(Editor editor, @Nullable PsiFile file, boolean requestFocus) {
@@ -374,52 +382,27 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     if (file != null && !file.isValid()) {
       file = null; // commit could invalidate the file
     }
-
-    PsiElement list = ParameterInfoController.findArgumentList(file, editor.getCaretModel().getOffset(), -1);
-    PsiElement expressionList = null;
-    if (list != null) {
-      LookupEx lookup = LookupManager.getInstance(myProject).getActiveLookup();
-      if (lookup != null) {
-        expressionList = null; // take completion variants for documentation then
-      }
-      else {
-        expressionList = list;
-      }
-    }
+    PsiFile finalFile = file;
 
     PsiElement originalElement = getContextElement(editor, file);
-    PsiElement element = assertSameProject(findTargetElement(editor, file));
 
-    if (element == null && expressionList != null) {
-      element = expressionList;
-    }
+    CancellablePromise<PsiElement> elementPromise =
+      ReadAction.nonBlocking(() -> findTargetElementFromContext(editor, finalFile, originalElement)).coalesceBy(this)
+        .submit(AppExecutorUtil.getAppExecutorService());
+    CompletableFuture<PsiElement> elementFuture = toCompletableFuture(elementPromise);
 
-    if (element == null && file == null) return; //file == null for text field editor
-
-    if (element == null) { // look if we are within a javadoc comment
-      element = assertSameProject(originalElement);
-      if (element == null) return;
-
-      PsiComment comment = PsiTreeUtil.getParentOfType(element, PsiComment.class);
-      if (comment == null) return;
-
-      element = comment instanceof PsiDocCommentBase ? ((PsiDocCommentBase)comment).getOwner() : comment.getParent();
-      if (element == null) return;
-      //if (!(element instanceof PsiDocCommentOwner)) return null;
-    }
-
-    PsiElement finalElement = element;
-    PsiFile finalFile = file;
     PopupUpdateProcessor updateProcessor = new PopupUpdateProcessor(project) {
       @Override
       public void updatePopup(Object lookupIteObject) {
         if (lookupIteObject == null) {
-          doShowJavaDocInfo(finalElement, false, this, originalElement, closeCallback, CodeInsightBundle.message("no.documentation.found"),
+          doShowJavaDocInfo(elementFuture, false, this, originalElement, closeCallback,
+                            CodeInsightBundle.message("no.documentation.found"),
                             true);
           return;
         }
         if (lookupIteObject instanceof PsiElement) {
-          doShowJavaDocInfo((PsiElement)lookupIteObject, false, this, originalElement, closeCallback, null, true);
+          doShowJavaDocInfo(CompletableFuture.completedFuture((PsiElement)lookupIteObject), false, this, originalElement, closeCallback,
+                            null, true);
           return;
         }
 
@@ -432,7 +415,8 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
         );
 
         if (element == null) {
-          doShowJavaDocInfo(finalElement, false, this, originalElement, closeCallback, CodeInsightBundle.message("no.documentation.found"),
+          doShowJavaDocInfo(elementFuture, false, this, originalElement, closeCallback,
+                            CodeInsightBundle.message("no.documentation.found"),
                             true);
           return;
         }
@@ -446,12 +430,12 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
           }
         }
         else {
-          doShowJavaDocInfo(element, false, this, originalElement, closeCallback, null, true);
+          doShowJavaDocInfo(elementFuture, false, this, originalElement, closeCallback, null, true);
         }
       }
     };
 
-    doShowJavaDocInfo(element, requestFocus, updateProcessor, originalElement, closeCallback, null, true);
+    doShowJavaDocInfo(elementFuture, requestFocus, updateProcessor, originalElement, closeCallback, null, true);
   }
 
   public PsiElement findTargetElement(Editor editor, PsiFile file) {
@@ -462,39 +446,56 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     return file != null ? file.findElementAt(editor.getCaretModel().getOffset()) : null;
   }
 
-  private void doShowJavaDocInfo(@NotNull PsiElement element,
+  private void doShowJavaDocInfo(@NotNull CompletableFuture<PsiElement> elementFuture,
                                  boolean requestFocus,
                                  @NotNull PopupUpdateProcessor updateProcessor,
                                  PsiElement originalElement,
                                  @Nullable Runnable closeCallback,
                                  @Nullable String documentation,
                                  boolean useStoredPopupSize) {
-    Project project = getProject(element);
-    if (!project.isOpen()) return;
+    if (!myProject.isOpen()) return;
 
-    storeOriginalElement(project, originalElement, element);
+    elementFuture.thenAccept(element -> {
+      ReadAction.run(() -> {
+        assertSameProject(element);
+        storeOriginalElement(myProject, originalElement, element);
+      });
+    });
 
     JBPopup prevHint = getDocInfoHint();
 
+    PsiElement targetElement = null;
+    try {
+      //try to get target element if possible (in case when element can be resolved fast)
+      targetElement = elementFuture.get(50, TimeUnit.MILLISECONDS);
+    }
+    catch (InterruptedException | ExecutionException | TimeoutException e) {
+      LOG.debug("Failed to calculate targetElement in 50ms", e);
+    }
+
     myPrecalculatedDocumentation = documentation;
     if (myToolWindow == null && PropertiesComponent.getInstance().isTrueValue(SHOW_DOCUMENTATION_IN_TOOL_WINDOW)) {
-      createToolWindow(element, originalElement);
+      createToolWindow(elementFuture, originalElement);
     }
     else if (myToolWindow != null) {
       Content content = myToolWindow.getContentManager().getSelectedContent();
       if (content != null) {
+        boolean cancelAndFetchInfo = true;
         DocumentationComponent component = (DocumentationComponent)content.getComponent();
-        boolean sameElement = element.getManager().areElementsEquivalent(component.getElement(), element);
-        if (sameElement) {
-          JComponent preferredFocusableComponent = content.getPreferredFocusableComponent();
-          // focus toolwindow on the second actionPerformed
-          boolean focus = requestFocus || CommandProcessor.getInstance().getCurrentCommand() != null;
-          if (preferredFocusableComponent != null && focus) {
-            IdeFocusManager.getInstance(myProject).requestFocus(preferredFocusableComponent, true);
+        if (targetElement != null) {
+          boolean sameElement = targetElement.getManager().areElementsEquivalent(component.getElement(), targetElement);
+          if (sameElement) {
+            JComponent preferredFocusableComponent = content.getPreferredFocusableComponent();
+            // focus toolwindow on the second actionPerformed
+            boolean focus = requestFocus || CommandProcessor.getInstance().getCurrentCommand() != null;
+            if (preferredFocusableComponent != null && focus) {
+              IdeFocusManager.getInstance(myProject).requestFocus(preferredFocusableComponent, true);
+            }
           }
+          cancelAndFetchInfo = !sameElement || !component.isUpToDate();
         }
-        if (!sameElement || !component.isUpToDate()) {
-          cancelAndFetchDocInfo(component, new MyCollector(myProject, element, originalElement, null, false))
+        if (cancelAndFetchInfo) {
+          cancelAndFetchDocInfo(component, new MyCollector(myProject, elementFuture, originalElement, null, false))
             .doWhenDone(() -> component.clearHistory());
         }
       }
@@ -505,7 +506,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     }
     else if (prevHint != null && prevHint.isVisible() && prevHint instanceof AbstractPopup) {
       DocumentationComponent component = (DocumentationComponent)((AbstractPopup)prevHint).getComponent();
-      ActionCallback result = cancelAndFetchDocInfo(component, new MyCollector(myProject, element, originalElement, null, false));
+      ActionCallback result = cancelAndFetchDocInfo(component, new MyCollector(myProject, elementFuture, originalElement, null, false));
       if (requestFocus) {
         result.doWhenDone(() -> {
           JBPopup hint = getDocInfoHint();
@@ -514,11 +515,11 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
       }
     }
     else {
-      showInPopup(element, requestFocus, updateProcessor, originalElement, closeCallback, useStoredPopupSize);
+      showInPopup(elementFuture, requestFocus, updateProcessor, originalElement, closeCallback, useStoredPopupSize);
     }
   }
 
-  private void showInPopup(@NotNull PsiElement element,
+  private void showInPopup(@NotNull CompletableFuture<PsiElement> elementFuture,
                            boolean requestFocus,
                            PopupUpdateProcessor updateProcessor,
                            PsiElement originalElement,
@@ -530,7 +531,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     DocumentationComponent component = myTestDocumentationComponent == null ? new DocumentationComponent(this, useStoredPopupSize) :
                                        myTestDocumentationComponent;
     ActionListener actionListener = __ -> {
-      createToolWindow(element, originalElement);
+      createToolWindow(elementFuture, originalElement);
       JBPopup hint = getDocInfoHint();
       if (hint != null && hint.isVisible()) hint.cancel();
     };
@@ -544,7 +545,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     boolean hasLookup = LookupManager.getActiveLookup(myEditor) != null;
     AbstractPopup hint = (AbstractPopup)JBPopupFactory
       .getInstance().createComponentPopupBuilder(component, component)
-      .setProject(element.getProject())
+      .setProject(myProject)
       .addListener(updateProcessor)
       .addUserData(updateProcessor)
       .setKeyboardActions(actions)
@@ -583,7 +584,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
 
     component.setHint(hint);
     component.setToolwindowCallback(() -> {
-      createToolWindow(element, originalElement);
+      createToolWindow(elementFuture, originalElement);
       myToolWindow.setAutoHide(false);
       hint.cancel();
     });
@@ -598,7 +599,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
       Lookup lookup = LookupManager.getInstance(myProject).getActiveLookup();
       myEditor = lookup != null ? lookup.getEditor() : null;
     }
-    cancelAndFetchDocInfo(component, new MyCollector(myProject, element, originalElement, null, false));
+    cancelAndFetchDocInfo(component, new MyCollector(myProject, elementFuture, originalElement, null, false));
 
     myDocInfoHintRef = new WeakReference<>(hint);
 
@@ -629,6 +630,39 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     catch (RuntimeException ex) {
       // PsiPackage does not allow putUserData
     }
+  }
+
+  @Nullable
+  private PsiElement findTargetElementFromContext(@NotNull Editor editor, @Nullable PsiFile file, @Nullable PsiElement originalElement) {
+    PsiElement list = ParameterInfoController.findArgumentList(file, editor.getCaretModel().getOffset(), -1);
+    PsiElement expressionList = null;
+    if (list != null) {
+      LookupEx lookup = LookupManager.getInstance(myProject).getActiveLookup();
+      if (lookup != null) {
+        expressionList = null; // take completion variants for documentation then
+      }
+      else {
+        expressionList = list;
+      }
+    }
+    PsiElement element = assertSameProject(findTargetElement(editor, file));
+    if (element == null && expressionList != null) {
+      element = expressionList;
+    }
+    if (element == null && file == null) return null; //file == null for text field editor
+
+    if (element == null) { // look if we are within a javadoc comment
+      element = assertSameProject(originalElement);
+      if (element == null) return null;
+
+      PsiComment comment = PsiTreeUtil.getParentOfType(element, PsiComment.class);
+      if (comment == null) return null;
+
+      element = comment instanceof PsiDocCommentBase ? ((PsiDocCommentBase)comment).getOwner() : comment.getParent();
+      if (element == null) return null;
+      //if (!(element instanceof PsiDocCommentOwner)) return null;
+    }
+    return element;
   }
 
   @Nullable
@@ -719,7 +753,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
   }
 
   public String generateDocumentation(@NotNull PsiElement element, @Nullable PsiElement originalElement, boolean onHover) {
-    return new MyCollector(myProject, element, originalElement, null, onHover).getDocumentation();
+    return new MyCollector(myProject, CompletableFuture.completedFuture(element), originalElement, null, onHover).getDocumentation();
   }
 
   @Nullable
@@ -739,15 +773,14 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
   }
 
   public void fetchDocInfo(@NotNull PsiElement element, @NotNull DocumentationComponent component) {
-    cancelAndFetchDocInfo(component, new MyCollector(myProject, element, null, null, false));
+    cancelAndFetchDocInfo(component, new MyCollector(myProject, CompletableFuture.completedFuture(element), null, null, false));
   }
 
   public ActionCallback queueFetchDocInfo(@NotNull PsiElement element, @NotNull DocumentationComponent component) {
-    return doFetchDocInfo(component, new MyCollector(myProject, element, null, null, false));
+    return doFetchDocInfo(component, new MyCollector(myProject, CompletableFuture.completedFuture(element), null, null, false));
   }
 
   private ActionCallback cancelAndFetchDocInfo(@NotNull DocumentationComponent component, @NotNull DocumentationCollector provider) {
-    updateToolWindowTabName(provider.element);
     myUpdateDocAlarm.cancelAllRequests();
     return doFetchDocInfo(component, provider);
   }
@@ -765,8 +798,12 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     myLastAction = callback;
     if (myPrecalculatedDocumentation != null) {
       LOG.debug("Setting precalculated documentation:\n", myPrecalculatedDocumentation);
-      PsiElement element = collector.element;
-      PsiElement originalElement = collector instanceof MyCollector ? ((MyCollector)collector).originalElement : element;
+      PsiElement element = collector.getElement();
+      if (element == null) {
+        LOG.debug("Element for precalculated documentation is not available anymore");
+        return callback;
+      }
+      PsiElement originalElement = getOriginalElement(collector, element);
       DocumentationProvider provider = ReadAction.compute(() -> getProviderFromElement(element, originalElement));
       component.setData(element, myPrecalculatedDocumentation,
                         collector.effectiveUrl, collector.ref, provider);
@@ -777,7 +814,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     boolean wasEmpty = component.isEmpty();
     component.startWait();
     if (wasEmpty) {
-      component.setText(CodeInsightBundle.message("javadoc.fetching.progress"), collector.element, collector.provider);
+      component.setText(CodeInsightBundle.message("javadoc.fetching.progress"), null, collector.provider);
     }
 
     ModalityState modality = ModalityState.defaultModalityState();
@@ -786,8 +823,8 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
       if (myProject.isDisposed()) return;
       LOG.debug("Started fetching documentation...");
 
-      PsiElement element = ReadAction.compute(() -> collector.element.isValid() ? collector.element : null);
-      if (element == null) {
+      PsiElement element = collector.getElement();
+      if (element == null || !ReadAction.compute(() -> element.isValid())) {
         LOG.debug("Element for which documentation was requested is not available anymore");
         return;
       }
@@ -945,6 +982,10 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     return null;
   }
 
+  private static PsiElement getOriginalElement(@NotNull DocumentationCollector collector, PsiElement targetElement) {
+    return collector instanceof MyCollector ? ((MyCollector)collector).originalElement : targetElement;
+  }
+
   public void navigateByLink(DocumentationComponent component, String url) {
     component.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     PsiElement psiElement = component.getElement();
@@ -980,7 +1021,8 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     else if (url.startsWith(DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL)) {
       Pair<@NotNull PsiElement, @Nullable String> target = getTarget(psiElement, url);
       if (target != null) {
-        cancelAndFetchDocInfo(component, new MyCollector(myProject, target.first, null, target.second, false));
+        cancelAndFetchDocInfo(component,
+                              new MyCollector(myProject, CompletableFuture.completedFuture(target.first), null, target.second, false));
       }
     }
     else {
@@ -1054,8 +1096,15 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
   }
 
   @Override
+  protected void doUpdateComponent(@NotNull CompletableFuture<PsiElement> elementFuture,
+                                   PsiElement originalElement,
+                                   DocumentationComponent component) {
+    cancelAndFetchDocInfo(component, new MyCollector(myProject, elementFuture, originalElement, null, false));
+  }
+
+  @Override
   protected void doUpdateComponent(@NotNull PsiElement element, PsiElement originalElement, DocumentationComponent component) {
-    cancelAndFetchDocInfo(component, new MyCollector(myProject, element, originalElement, null, false));
+    cancelAndFetchDocInfo(component, new MyCollector(myProject, CompletableFuture.completedFuture(element), originalElement, null, false));
   }
 
   @Override
@@ -1107,17 +1156,35 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
   }
 
   private abstract static class DocumentationCollector {
-    final PsiElement element;
+    private final CompletableFuture<PsiElement> myElementFuture;
     final String ref;
 
     volatile DocumentationProvider provider;
     String effectiveUrl;
 
     DocumentationCollector(PsiElement element, String effectiveUrl, String ref, DocumentationProvider provider) {
-      this.element = element;
+      this(CompletableFuture.completedFuture(element), effectiveUrl, ref, provider);
+    }
+
+    DocumentationCollector(@NotNull CompletableFuture<PsiElement> elementFuture,
+                           String effectiveUrl,
+                           String ref,
+                           DocumentationProvider provider) {
+      myElementFuture = elementFuture;
       this.ref = ref;
       this.effectiveUrl = effectiveUrl;
       this.provider = provider;
+    }
+
+    @Nullable
+    public PsiElement getElement() {
+      try {
+        return myElementFuture.get();
+      }
+      catch (InterruptedException | ExecutionException e) {
+        LOG.debug("Cannot get target element", e);
+        return null;
+      }
     }
 
     @Nullable
@@ -1125,13 +1192,16 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
   }
 
   private static class MyCollector extends DocumentationCollector {
-
     final Project project;
     final PsiElement originalElement;
     final boolean onHover;
 
-    MyCollector(@NotNull Project project, @NotNull PsiElement element, PsiElement originalElement, String ref, boolean onHover) {
-      super(element, null, ref, null);
+    MyCollector(@NotNull Project project,
+                @NotNull CompletableFuture<PsiElement> elementSupplier,
+                PsiElement originalElement,
+                String ref,
+                boolean onHover) {
+      super(elementSupplier, null, ref, null);
       this.project = project;
       this.originalElement = originalElement;
       this.onHover = onHover;
@@ -1140,6 +1210,10 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     @Override
     @Nullable
     public String getDocumentation() {
+      PsiElement element = getElement();
+      if (element == null) {
+        return null;
+      }
       provider = ReadAction.compute(() -> getProviderFromElement(element, originalElement));
       LOG.debug("Using provider ", provider);
 
@@ -1243,5 +1317,13 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
       c = c.getParent();
     }
     return Optional.empty();
+  }
+
+  @NotNull
+  private static CompletableFuture<PsiElement> toCompletableFuture(@NotNull CancellablePromise<PsiElement> promise) {
+    CompletableFuture<PsiElement> future = new CompletableFuture<>();
+    promise.onSuccess(element -> future.complete(element));
+    promise.onError(ex -> future.completeExceptionally(ex));
+    return future;
   }
 }

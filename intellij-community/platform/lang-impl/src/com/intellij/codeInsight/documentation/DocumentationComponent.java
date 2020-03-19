@@ -757,6 +757,9 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
     myText = text;
     setElement(element);
+    if (element != null && element.getElement() != null) {
+      myManager.updateToolWindowTabName(element.getElement());
+    }
     myDecoratedText = decorate(text);
 
     showHint(viewRect, ref);
