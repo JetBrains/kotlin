@@ -24,6 +24,7 @@ linkerOpts = -fvisibility-inlines-hidden \
 linkerOpts.osx = -fPIC \
     -Wl,-search_paths_first -Wl,-headerpad_max_install_names \
     -lpthread -lz -lm  -lcurses -Wl,-U,_futimens -Wl,-U,_LLVMDumpType \
+    -Wl,-exported_symbols_list,llvm.list \
     -lLLVMMipsDisassembler -lLLVMMipsCodeGen -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMMipsAsmPrinter \
     -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMX86Desc -lLLVMX86Info -lLLVMX86AsmPrinter \
     -lLLVMX86Utils -lLLVMWebAssemblyDisassembler -lLLVMWebAssemblyCodeGen -lLLVMWebAssemblyDesc \
