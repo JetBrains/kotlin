@@ -96,11 +96,11 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
               RETURN type=kotlin.Nothing from='public final fun <get-anObject> (): <root>.MyEnum.Z.anObject.<no name provided> declared in <root>.MyEnum.Z'
                 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anObject type:<root>.MyEnum.Z.anObject.<no name provided> visibility:private [final]' type=<root>.MyEnum.Z.anObject.<no name provided> origin=null
                   receiver: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z.<get-anObject>' type=<root>.MyEnum.Z origin=null
-    FUN name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.MyEnum>
-      BLOCK_BODY
-    FUN name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.MyEnum
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.MyEnum>
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.MyEnum
       VALUE_PARAMETER name:value index:0 type:kotlin.String
-      BLOCK_BODY
+      SYNTHETIC_BODY kind=ENUM_VALUEOF
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum

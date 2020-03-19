@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.*
@@ -330,6 +331,7 @@ class Fir2IrDeclarationStorage(
         val updatedOrigin = when {
             isLambda -> IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
             function.symbol.callableId.isKFunctionInvoke() -> IrDeclarationOrigin.FAKE_OVERRIDE
+            simpleFunction?.isStatic == true && simpleFunction.name in ENUM_SYNTHETIC_NAMES -> IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
             else -> origin
         }
         classifierStorage.preCacheTypeParameters(function)
@@ -754,5 +756,12 @@ class Fir2IrDeclarationStorage(
                 getIrVariableSymbol(firDeclaration)
             }
         }
+    }
+
+    companion object {
+        internal val ENUM_SYNTHETIC_NAMES = mapOf(
+            Name.identifier("values") to IrSyntheticBodyKind.ENUM_VALUES,
+            Name.identifier("valueOf") to IrSyntheticBodyKind.ENUM_VALUEOF
+        )
     }
 }

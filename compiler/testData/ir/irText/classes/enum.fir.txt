@@ -12,11 +12,11 @@ FILE fqName:<root> fileName:/enum.kt
     ENUM_ENTRY name:TEST2
       init: EXPRESSION_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum1'
-    FUN name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.TestEnum1>
-      BLOCK_BODY
-    FUN name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum1
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.TestEnum1>
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum1
       VALUE_PARAMETER name:value index:0 type:kotlin.String
-      BLOCK_BODY
+      SYNTHETIC_BODY kind=ENUM_VALUEOF
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum
@@ -100,11 +100,11 @@ FILE fqName:<root> fileName:/enum.kt
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.TestEnum2'
               x: CONST Int type=kotlin.Int value=3
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:TEST3 modality:FINAL visibility:private superTypes:[<root>.TestEnum2]'
-    FUN name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.TestEnum2>
-      BLOCK_BODY
-    FUN name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum2
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.TestEnum2>
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum2
       VALUE_PARAMETER name:value index:0 type:kotlin.String
-      BLOCK_BODY
+      SYNTHETIC_BODY kind=ENUM_VALUEOF
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum
@@ -162,11 +162,11 @@ FILE fqName:<root> fileName:/enum.kt
               message: CONST String type=kotlin.String value="Hello, world!"
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.TestEnum3) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum3
-    FUN name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.TestEnum3>
-      BLOCK_BODY
-    FUN name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum3
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.TestEnum3>
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum3
       VALUE_PARAMETER name:value index:0 type:kotlin.String
-      BLOCK_BODY
+      SYNTHETIC_BODY kind=ENUM_VALUEOF
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum
@@ -266,11 +266,11 @@ FILE fqName:<root> fileName:/enum.kt
               message: GET_ENUM 'ENUM_ENTRY name:TEST2' type=<root>.TestEnum4
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.TestEnum4) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum4
-    FUN name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.TestEnum4>
-      BLOCK_BODY
-    FUN name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum4
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.TestEnum4>
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum4
       VALUE_PARAMETER name:value index:0 type:kotlin.String
-      BLOCK_BODY
+      SYNTHETIC_BODY kind=ENUM_VALUEOF
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum
@@ -354,11 +354,11 @@ FILE fqName:<root> fileName:/enum.kt
             ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.TestEnum5'
               x: CONST Int type=kotlin.Int value=0
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:TEST3 modality:FINAL visibility:private superTypes:[<root>.TestEnum5]'
-    FUN name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.TestEnum5>
-      BLOCK_BODY
-    FUN name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum5
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.TestEnum5>
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum5
       VALUE_PARAMETER name:value index:0 type:kotlin.String
-      BLOCK_BODY
+      SYNTHETIC_BODY kind=ENUM_VALUEOF
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum
@@ -439,11 +439,11 @@ FILE fqName:<root> fileName:/enum.kt
               x: CALL 'public final fun f (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
               y: CALL 'public final fun f (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:TEST modality:FINAL visibility:private superTypes:[<root>.TestEnum6]'
-    FUN name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.TestEnum6>
-      BLOCK_BODY
-    FUN name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum6
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.TestEnum6>
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum6
       VALUE_PARAMETER name:value index:0 type:kotlin.String
-      BLOCK_BODY
+      SYNTHETIC_BODY kind=ENUM_VALUEOF
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum

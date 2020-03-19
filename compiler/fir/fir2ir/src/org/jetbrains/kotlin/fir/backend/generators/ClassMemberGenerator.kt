@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -115,7 +116,12 @@ internal class ClassMemberGenerator(
                     irFunction.body = body
                 }
             } else if (irFunction !is IrConstructor) {
-                irFunction.body = firFunction?.body?.let { visitor.convertToIrBlockBody(it) }
+                if (irFunction.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER) {
+                    val kind = Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES.getValue(irFunction.name)
+                    irFunction.body = IrSyntheticBodyImpl(startOffset, endOffset, kind)
+                } else {
+                    irFunction.body = firFunction?.body?.let { visitor.convertToIrBlockBody(it) }
+                }
             }
             if (irFunction !is IrConstructor || !irFunction.isPrimary) {
                 // Scope for primary constructor should be left after class declaration

@@ -42,11 +42,11 @@ FILE fqName:<root> fileName:/enumEntry.kt
             overridden:
               public open fun toString (): kotlin.String declared in kotlin.Any
             $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.Z>
-      BLOCK_BODY
-    FUN name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.Z
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.Z>
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.Z
       VALUE_PARAMETER name:value index:0 type:kotlin.String
-      BLOCK_BODY
+      SYNTHETIC_BODY kind=ENUM_VALUEOF
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum
