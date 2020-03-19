@@ -35,7 +35,7 @@ import static com.intellij.serviceContainer.ComponentManagerImplKt.handleCompone
 
 class FileBasedIndexDataInitialization extends IndexInfrastructure.DataInitialization<IndexConfiguration> {
   private static final NotificationGroup NOTIFICATIONS = new NotificationGroup("Indexing", NotificationDisplayType.BALLOON, false, null, null,
-                                                                               PluginManagerCore.CORE_ID);
+                                                                               null, PluginManagerCore.CORE_ID);
   private static final Logger LOG = Logger.getInstance(FileBasedIndexDataInitialization.class);
 
   private final IndexConfiguration state = new IndexConfiguration();

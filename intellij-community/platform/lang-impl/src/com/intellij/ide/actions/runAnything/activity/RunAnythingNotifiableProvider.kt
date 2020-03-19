@@ -7,6 +7,7 @@ import com.intellij.ide.actions.runAnything.RunAnythingUtil.fetchProject
 import com.intellij.ide.actions.runAnything.activity.RunAnythingNotifiableProvider.ExecutionStatus.ERROR
 import com.intellij.ide.actions.runAnything.activity.RunAnythingNotifiableProvider.ExecutionStatus.SUCCESS
 import com.intellij.notification.Notification
+import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationType.INFORMATION
 import com.intellij.notification.Notifications
 import com.intellij.openapi.actionSystem.AnAction
@@ -21,7 +22,8 @@ import com.intellij.openapi.actionSystem.DataContext
  */
 abstract class RunAnythingNotifiableProvider<V> : RunAnythingProviderBase<V>() {
 
-  private val RUN_ANYTHING_GROUP_ID = IdeBundle.message("run.anything.custom.activity.notification.group.id")
+  private val RUN_ANYTHING_GROUP_ID = NotificationGroup.createIdWithTitle("Run Anything", IdeBundle.message(
+    "run.anything.custom.activity.notification.group.id"))
 
   private val notificationConfigurators = LinkedHashMap<ExecutionStatus, NotificationBuilder.() -> Unit>()
 

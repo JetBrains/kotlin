@@ -5,6 +5,7 @@ import com.intellij.ProjectTopics;
 import com.intellij.diagnostic.Activity;
 import com.intellij.diagnostic.StartUpMeasurer;
 import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
@@ -92,7 +93,7 @@ public class ModuleManagerComponent extends ModuleManagerImpl {
       // it is not modal warning at all
       //Messages.showWarningDialog(myProject, message, ProjectBundle.message("module.unknown.type.title"));
       Notifications.Bus.notify(new Notification(
-        ProjectBundle.message("notification.group.module.manager"),
+        NotificationGroup.createIdWithTitle("Module Manager", ProjectBundle.message("notification.group.module.manager")),
         ProjectBundle.message("module.unknown.type.title"),
         message,
         NotificationType.WARNING
