@@ -44,6 +44,7 @@ val projectsToShadow by extra(listOf(
         ":libraries:tools:new-project-wizard:new-project-wizard-cli",
         ":compiler:psi",
         ":compiler:fir:cones",
+        ":compiler:fir:checkers",
         ":compiler:fir:resolve",
         ":compiler:fir:tree",
         ":compiler:fir:java",
