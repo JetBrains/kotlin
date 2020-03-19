@@ -29,6 +29,8 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 class KtScratchReplExecutor(file: ScratchFile) : SequentialScratchExecutor(file) {
     private val history: ReplHistory = ReplHistory()
+
+    @Volatile
     private var osProcessHandler: OSProcessHandler? = null
 
     override fun startExecution() {
@@ -65,6 +67,8 @@ class KtScratchReplExecutor(file: ScratchFile) : SequentialScratchExecutor(file)
         }
     }
 
+    // There should be some kind of more wise synchronization cause this method is called from non-UI thread (process handler thread)
+    // and actually there could be side effects in handlers
     private fun clearState() {
         history.clear()
         osProcessHandler = null
@@ -145,9 +149,20 @@ class KtScratchReplExecutor(file: ScratchFile) : SequentialScratchExecutor(file)
         }
 
         override fun notifyProcessTerminated(exitCode: Int) {
-            super.notifyProcessTerminated(exitCode)
-
+            // Do state cleaning before notification otherwise KtScratchFileEditorWithPreview.dispose
+            // would try to stop process again (after stop in tests 'stopReplProcess`)
+            // via `stopExecution` (because handler is not null) with next exception:
+            //
+            // Caused by: com.intellij.testFramework.LoggedErrorProcessor$TestLoggerAssertionError: The pipe is being closed
+            // at com.intellij.testFramework.LoggedErrorProcessor.processError(LoggedErrorProcessor.java:66)
+            // at com.intellij.testFramework.TestLogger.error(TestLogger.java:40)
+            // at com.intellij.openapi.diagnostic.Logger.error(Logger.java:170)
+            // at org.jetbrains.kotlin.idea.scratch.ScratchExecutor.errorOccurs(ScratchExecutor.kt:50)
+            // at org.jetbrains.kotlin.idea.scratch.repl.KtScratchReplExecutor.stopExecution(KtScratchReplExecutor.kt:61)
+            // at org.jetbrains.kotlin.idea.scratch.SequentialScratchExecutor.stopExecution$default(ScratchExecutor.kt:90)
             clearState()
+
+            super.notifyProcessTerminated(exitCode)
         }
 
         private fun strToSource(s: String, encoding: Charset = Charsets.UTF_8) = InputSource(ByteArrayInputStream(s.toByteArray(encoding)))
