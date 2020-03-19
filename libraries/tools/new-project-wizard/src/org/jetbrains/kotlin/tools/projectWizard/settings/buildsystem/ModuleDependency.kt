@@ -50,5 +50,8 @@ sealed class ModuleDependencyType(
 
         fun getPossibleDependencyType(from: Module, to: Module): ModuleDependencyType? =
             ALL.firstOrNull { it.accepts(from, to) }
+
+        fun isDependencyPossible(from: Module, to: Module): Boolean =
+            getPossibleDependencyType(from, to) != null
     }
 }

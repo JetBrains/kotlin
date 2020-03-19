@@ -71,6 +71,7 @@ abstract class DynamicComponent(private val context: Context) : Component() {
 
 abstract class TitledComponent(context: Context) : DynamicComponent(context) {
     abstract val title: String?
+    open fun shouldBeShow(): Boolean = true
 }
 
 interface FocusableComponent {

@@ -27,6 +27,7 @@ class ModuleSettingsComponent(
     uiEditorUsagesStats: UiEditorUsageStats
 ) : DynamicComponent(context) {
     private val settingsList = TitledComponentsList(emptyList(), context).asSubComponent()
+    private val moduleDependenciesComponent = ModuleDependenciesComponent(context)
 
     override val component: JComponent = borderPanel {
         addToCenter(settingsList.component)
@@ -43,6 +44,7 @@ class ModuleSettingsComponent(
 
     @OptIn(ExperimentalStdlibApi::class)
     private fun updateModule(module: Module) {
+        moduleDependenciesComponent.module = module
         val moduleSettingComponents = buildList {
             add(ModuleNameComponent(context, module))
             createTemplatesListComponentForModule(module)?.let(::add)
@@ -50,6 +52,7 @@ class ModuleSettingsComponent(
             module.template?.let { template ->
                 addAll(template.settings(module).map { it.createSettingComponent(context) })
             }
+            add(moduleDependenciesComponent)
         }
 
         settingsList.setComponents(moduleSettingComponents)

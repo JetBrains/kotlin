@@ -49,6 +49,7 @@ open class TitledComponentsList(
     companion object {
         private fun createComponentsPanel(components: List<TitledComponent>) = panel {
             components.forEach { component ->
+                if (!component.shouldBeShow()) return@forEach
                 row(component.title?.let { "$it:" }.orEmpty()) {
                     component.component(growX)
                 }
