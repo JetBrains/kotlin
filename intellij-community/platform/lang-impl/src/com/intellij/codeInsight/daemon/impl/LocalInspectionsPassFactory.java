@@ -56,7 +56,7 @@ public final class LocalInspectionsPassFactory implements MainHighlightingPassFa
     }
 
     @Override
-    protected boolean isAcceptableLocalTool(LocalInspectionToolWrapper wrapper) {
+    protected boolean isAcceptableLocalTool(@NotNull LocalInspectionToolWrapper wrapper) {
       return !wrapper.runForWholeFile();
     }
   }

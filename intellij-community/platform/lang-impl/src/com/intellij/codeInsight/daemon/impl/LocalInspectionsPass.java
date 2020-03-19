@@ -733,7 +733,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
     return enabled;
   }
 
-  protected boolean isAcceptableLocalTool(LocalInspectionToolWrapper wrapper) {
+  protected boolean isAcceptableLocalTool(@NotNull LocalInspectionToolWrapper wrapper) {
     return true;
   }
 

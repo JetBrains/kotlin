@@ -91,7 +91,7 @@ final class WholeFileLocalInspectionsPassFactory implements TextEditorHighlighti
     return new LocalInspectionsPass(file, editor.getDocument(), 0, file.getTextLength(), visibleRange, true,
                                     new DefaultHighlightInfoProcessor(), false) {
       @Override
-      protected boolean isAcceptableLocalTool(LocalInspectionToolWrapper wrapper) {
+      protected boolean isAcceptableLocalTool(@NotNull LocalInspectionToolWrapper wrapper) {
         return wrapper.runForWholeFile();
       }
 
