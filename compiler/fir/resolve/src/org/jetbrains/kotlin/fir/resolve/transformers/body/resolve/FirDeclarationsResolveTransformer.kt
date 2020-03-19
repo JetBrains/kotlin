@@ -378,7 +378,10 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         }
     }
 
-    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: ResolutionMode): CompositeTransformResult<FirSimpleFunction> {
+    override fun transformSimpleFunction(
+        simpleFunction: FirSimpleFunction,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirSimpleFunction> {
         if (simpleFunction.resolvePhase == transformerPhase) return simpleFunction.compose()
         if (simpleFunction.resolvePhase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE && transformerPhase == FirResolvePhase.BODY_RESOLVE) {
             simpleFunction.replaceResolvePhase(transformerPhase)
@@ -436,7 +439,10 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         return result.compose()
     }
 
-    override fun <F : FirFunction<F>> transformFunction(function: FirFunction<F>, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+    override fun <F : FirFunction<F>> transformFunction(
+        function: FirFunction<F>,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
         return withLocalScopeCleanup {
             addLocalScope(FirLocalScope())
             dataFlowAnalyzer.enterFunction(function)
@@ -477,8 +483,11 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             valueParameter.replaceResolvePhase(transformerPhase)
             return valueParameter.compose() // TODO
         }
-        val valueParameter = valueParameter.transformInitializer(integerLiteralTypeApproximator, valueParameter.returnTypeRef.coneTypeSafe())
-        return (transformDeclaration(valueParameter, withExpectedType(valueParameter.returnTypeRef)).single as FirStatement).compose()
+        val transformedValueParameter =
+            valueParameter.transformInitializer(integerLiteralTypeApproximator, valueParameter.returnTypeRef.coneTypeSafe())
+        return (transformDeclaration(
+            transformedValueParameter, withExpectedType(transformedValueParameter.returnTypeRef)
+        ).single as FirStatement).compose()
     }
 
     override fun transformAnonymousFunction(
@@ -571,8 +580,13 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                     integerLiteralTypeApproximator
                 )
                 af.transformSingle(writer, expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.toExpectedType())
-                val returnTypes = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(af).mapNotNull { (it as? FirExpression)?.resultType?.coneTypeUnsafe() }
-                af.replaceReturnTypeRef(af.returnTypeRef.resolvedTypeFromPrototype(inferenceComponents.ctx.commonSuperTypeOrNull(returnTypes) ?: session.builtinTypes.unitType.coneTypeUnsafe()))
+                val returnTypes = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(af)
+                    .mapNotNull { (it as? FirExpression)?.resultType?.coneTypeUnsafe() }
+                af.replaceReturnTypeRef(
+                    af.returnTypeRef.resolvedTypeFromPrototype(
+                        inferenceComponents.ctx.commonSuperTypeOrNull(returnTypes) ?: session.builtinTypes.unitType.coneTypeUnsafe()
+                    )
+                )
                 af.replaceTypeRef(af.constructFunctionalTypeRef(session))
                 af.addReturn().compose()
             }
