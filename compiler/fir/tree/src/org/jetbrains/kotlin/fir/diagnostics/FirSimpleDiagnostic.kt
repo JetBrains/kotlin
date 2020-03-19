@@ -7,6 +7,10 @@ package org.jetbrains.kotlin.fir.diagnostics
 
 class FirSimpleDiagnostic(override val reason: String, val kind: DiagnosticKind = DiagnosticKind.Other) : FirDiagnostic()
 
+class FirMessageDiagnostic(override val reason: String, val a: String, val kind: DiagnosticKind = DiagnosticKind.Other) : FirDiagnostic()
+
+class FirDiagnosticWithParameters1<A>(override val reason: String, val a: A, val kind: DiagnosticKind = DiagnosticKind.Other) : FirDiagnostic()
+
 enum class DiagnosticKind {
     Syntax,
     ReturnNotAllowed,
@@ -21,5 +25,6 @@ enum class DiagnosticKind {
     RecursionInSupertypes,
     RecursionInImplicitTypes,
     Java,
+    SuperNotAllowed,
     Other
 }

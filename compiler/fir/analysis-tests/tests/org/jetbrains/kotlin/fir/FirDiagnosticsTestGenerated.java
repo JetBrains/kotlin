@@ -323,11 +323,6 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/analysis-tests/testData/resolve/spreadOperator.kt");
     }
 
-    @TestMetadata("superIsNotAnExpression.kt")
-    public void testSuperIsNotAnExpression() throws Exception {
-        runTest("compiler/fir/resolve/testData/resolve/superIsNotAnExpression.kt");
-    }
-
     @TestMetadata("syntheticsVsNormalProperties.kt")
     public void testSyntheticsVsNormalProperties() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/syntheticsVsNormalProperties.kt");
@@ -743,6 +738,16 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("infixFunctions.kt")
         public void testInfixFunctions() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/infixFunctions.kt");
+        }
+
+        @TestMetadata("superIsNotAnExpression.kt")
+        public void testSuperIsNotAnExpression() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/diagnostics/superIsNotAnExpression.kt");
+        }
+
+        @TestMetadata("superclassNotAccessibleFromInterface.kt")
+        public void testSuperclassNotAccessibleFromInterface() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/diagnostics/superclassNotAccessibleFromInterface.kt");
         }
     }
 

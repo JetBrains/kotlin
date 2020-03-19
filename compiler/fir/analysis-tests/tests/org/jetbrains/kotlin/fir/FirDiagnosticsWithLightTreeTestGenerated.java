@@ -739,6 +739,16 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         public void testInfixFunctions() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/infixFunctions.kt");
         }
+
+        @TestMetadata("superIsNotAnExpression.kt")
+        public void testSuperIsNotAnExpression() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/diagnostics/superIsNotAnExpression.kt");
+        }
+
+        @TestMetadata("superclassNotAccessibleFromInterface.kt")
+        public void testSuperclassNotAccessibleFromInterface() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/diagnostics/superclassNotAccessibleFromInterface.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/expresssions")

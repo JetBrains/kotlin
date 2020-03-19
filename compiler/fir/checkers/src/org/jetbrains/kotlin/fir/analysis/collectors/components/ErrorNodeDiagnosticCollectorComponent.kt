@@ -3,50 +3,47 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.collectors.components
+package org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.onSource
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirStubDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 
 class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollector) : AbstractDiagnosticCollectorComponent(collector) {
-    override fun visitErrorLoop(errorLoop: FirErrorLoop, data: CheckerContext) {
+    override fun visitErrorLoop(errorLoop: FirErrorLoop) {
         val source = errorLoop.source ?: return
         runCheck { reportFirDiagnostic(errorLoop.diagnostic, source, it) }
     }
 
-    override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: CheckerContext) {
+    override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
         val source = errorTypeRef.source ?: return
         runCheck { reportFirDiagnostic(errorTypeRef.diagnostic, source, it) }
     }
 
-    override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: CheckerContext) {
+    override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference) {
         val source = errorNamedReference.source ?: return
         runCheck { reportFirDiagnostic(errorNamedReference.diagnostic, source, it) }
     }
 
-    override fun visitErrorExpression(errorExpression: FirErrorExpression, data: CheckerContext) {
+    override fun visitErrorExpression(errorExpression: FirErrorExpression) {
         val source = errorExpression.source ?: return
         runCheck { reportFirDiagnostic(errorExpression.diagnostic, source, it) }
     }
 
-    override fun visitErrorFunction(errorFunction: FirErrorFunction, data: CheckerContext) {
+    override fun visitErrorFunction(errorFunction: FirErrorFunction) {
         val source = errorFunction.source ?: return
         runCheck { reportFirDiagnostic(errorFunction.diagnostic, source, it) }
     }
@@ -69,7 +66,6 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
     }
 
     private fun FirSimpleDiagnostic.getFactory(): DiagnosticFactory0<PsiElement> {
-        @Suppress("UNCHECKED_CAST")
         return when (kind) {
             DiagnosticKind.Syntax -> FirErrors.SYNTAX_ERROR
             DiagnosticKind.ReturnNotAllowed -> Errors.RETURN_NOT_ALLOWED

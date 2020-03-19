@@ -1,0 +1,23 @@
+FILE: superclassNotAccessibleFromInterface.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun bar(): R|kotlin/Unit| {
+    }
+    public abstract interface B : R|A| {
+        public open fun act(): R|kotlin/Unit| {
+            super<R|A|>.R|/A.foo|()
+            R|/bar|()
+            this@R|/B|.R|/B.fire|()
+        }
+
+        public open fun fire(): R|kotlin/Unit| {
+        }
+
+    }
