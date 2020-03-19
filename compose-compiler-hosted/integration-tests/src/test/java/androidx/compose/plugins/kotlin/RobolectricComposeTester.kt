@@ -18,6 +18,7 @@ package androidx.compose.plugins.kotlin
 
 import android.app.Activity
 import android.os.Bundle
+import android.os.Looper.getMainLooper
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.compose.Composer
@@ -26,6 +27,7 @@ import androidx.compose.compositionFor
 import androidx.ui.node.UiComposer
 import org.robolectric.Robolectric
 import org.robolectric.RuntimeEnvironment
+import org.robolectric.Shadows.shadowOf
 
 const val ROOT_ID = 18284847
 
@@ -52,11 +54,16 @@ class RobolectricComposeTester internal constructor(
         val advance: () -> Unit
     ) {
         fun then(block: (activity: Activity) -> Unit): ActiveTest {
-            val scheduler = RuntimeEnvironment.getMasterScheduler()
-            scheduler.advanceToLastPostedRunnable()
-            advance()
-            scheduler.advanceToLastPostedRunnable()
-            block(activity)
+            try {
+                val scheduler = RuntimeEnvironment.getMasterScheduler()
+                scheduler.advanceToLastPostedRunnable()
+                advance()
+                scheduler.advanceToLastPostedRunnable()
+                block(activity)
+            } catch (e: Throwable) {
+                shadowOf(getMainLooper()).idle()
+                throw e
+            }
             return this
         }
     }

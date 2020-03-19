@@ -16,9 +16,11 @@
 
 package androidx.compose.plugins.kotlin
 
+import android.os.Looper.getMainLooper
 import android.widget.Button
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 @RunWith(ComposeRobolectricTestRunner::class)
@@ -674,6 +676,31 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
         }
     """)
 
+    @Test
+    fun lambdasWithReturnResultsShouldBeUntracked() = skipping("""
+
+        @Composable
+        fun Test1(param: @Composable() () -> String) {
+          workToBeRepeated()
+          param()
+          workToBeRepeated()
+        }
+
+        @Composable
+        fun Test2(param: @Composable() () -> String) {
+          workToBeAvoided()
+          Test1(param)
+          workToBeAvoided()
+        }
+
+        @Composable
+        fun Example(model: String) {
+          val s = state { model }
+          s.value = model
+          Test1({ s.value })
+        }
+    """)
+
     private fun skipping(text: String, dumpClasses: Boolean = false) =
         ensureSetup {
             compose("""
@@ -745,6 +772,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
                 button.performClick()
             }.then {
                 // Wait for test to complete
+                shadowOf(getMainLooper()).idle()
             }
         }
 }
