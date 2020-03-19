@@ -18,16 +18,12 @@ package com.intellij.ide.actions;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.actions.searcheverywhere.FileSearchEverywhereContributor;
-import com.intellij.ide.util.gotoByName.ChooseByNameFilter;
-import com.intellij.ide.util.gotoByName.ChooseByNamePopup;
-import com.intellij.ide.util.gotoByName.GotoFileConfiguration;
-import com.intellij.ide.util.gotoByName.GotoFileModel;
+import com.intellij.ide.util.gotoByName.*;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -35,12 +31,9 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -70,9 +63,9 @@ public class GotoFileAction extends GotoActionBase implements DumbAware {
     FeatureUsageTracker.getInstance().triggerFeatureUsed("navigation.popup.file");
 
     final GotoFileModel gotoFileModel = new GotoFileModel(project);
-    GotoActionCallback<FileType> callback = new GotoActionCallback<FileType>() {
+    GotoActionCallback<FileTypeRef> callback = new GotoActionCallback<FileTypeRef>() {
       @Override
-      protected ChooseByNameFilter<FileType> createFilter(@NotNull ChooseByNamePopup popup) {
+      protected ChooseByNameFilter<FileTypeRef> createFilter(@NotNull ChooseByNamePopup popup) {
         return new GotoFileFilter(popup, gotoFileModel, project);
       }
 
@@ -97,27 +90,24 @@ public class GotoFileAction extends GotoActionBase implements DumbAware {
     showNavigationPopup(e, gotoFileModel, callback, IdeBundle.message("go.to.file.toolwindow.title"), true, true);
   }
 
-  protected static class GotoFileFilter extends ChooseByNameFilter<FileType> {
+  protected static class GotoFileFilter extends ChooseByNameFilter<FileTypeRef> {
     GotoFileFilter(final ChooseByNamePopup popup, GotoFileModel model, final Project project) {
       super(popup, model, GotoFileConfiguration.getInstance(project), project);
     }
 
     @Override
     @NotNull
-    protected List<FileType> getAllFilterValues() {
-      List<FileType> elements = new ArrayList<>();
-      ContainerUtil.addAll(elements, FileTypeManager.getInstance().getRegisteredFileTypes());
-      Collections.sort(elements, FileTypeComparator.INSTANCE);
-      return elements;
+    protected List<FileTypeRef> getAllFilterValues() {
+      return FileTypeRef.forAllFileTypes();
     }
 
     @Override
-    protected String textForFilterValue(@NotNull FileType value) {
+    protected String textForFilterValue(@NotNull FileTypeRef value) {
       return value.getName();
     }
 
     @Override
-    protected Icon iconForFilterValue(@NotNull FileType value) {
+    protected Icon iconForFilterValue(@NotNull FileTypeRef value) {
       return value.getIcon();
     }
   }
