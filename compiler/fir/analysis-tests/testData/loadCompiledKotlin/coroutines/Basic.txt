@@ -1,4 +1,4 @@
-public final fun builder(c: @R|kotlin/ExtensionFunctionType|() R|ERROR CLASS: createSuspendFunctionType not supported|): R|kotlin/Unit|
+public final fun builder(c: R|suspend test/Controller.() -> kotlin/Unit|): R|kotlin/Unit|
 
 public final class Controller : R|kotlin/Any| {
     public final suspend fun suspendFun(): R|kotlin/Unit|
@@ -6,3 +6,4 @@ public final class Controller : R|kotlin/Any| {
     public constructor(): R|test/Controller|
 
 }
+

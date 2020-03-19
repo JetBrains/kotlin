@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.fir.deserialization
 
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -21,6 +24,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
@@ -128,8 +132,7 @@ class FirTypeDeserializer(
         val arguments = proto.collectAllArguments().map(this::typeArgument).toTypedArray()
 
         val simpleType = if (Flags.SUSPEND_TYPE.get(proto.flags)) {
-            //createSuspendFunctionType(annotations, constructor, arguments, proto.nullable)
-            ConeClassErrorType("createSuspendFunctionType not supported")
+            createSuspendFunctionType(constructor, arguments, isNullable = proto.nullable)
         } else {
             ConeClassLikeTypeImpl(constructor, arguments, isNullable = proto.nullable)
         }
@@ -138,6 +141,63 @@ class FirTypeDeserializer(
 
         return simpleType(abbreviatedTypeProto)
 
+    }
+
+    private fun createSuspendFunctionTypeForBasicCase(
+        //annotations: Annotations, TODO?,
+        functionTypeConstructor: ConeClassLikeLookupTag,
+        arguments: Array<ConeTypeProjection>,
+        isNullable: Boolean
+    ): ConeClassLikeType? {
+        fun ConeClassLikeType.isContinuation(): Boolean {
+            if (this.typeArguments.size != 1) return false
+            if (this.lookupTag.classId != CONTINUATION_INTERFACE_CLASS_ID) return false
+            return true
+        }
+
+        val returnType = arguments.lastOrNull()
+        val continuationType = arguments.getOrNull(arguments.lastIndex - 1) as? ConeClassLikeType ?: return null
+
+        if (!continuationType.isContinuation()) return ConeClassLikeTypeImpl(functionTypeConstructor, arguments, isNullable)
+
+        val suspendReturnType = continuationType.typeArguments.single() as ConeKotlinTypeProjection
+
+        val valueParameters = arguments.dropLast(2)
+
+        val kind = FunctionClassDescriptor.Kind.SuspendFunction
+        return ConeClassLikeTypeImpl(
+            ConeClassLikeLookupTagImpl(ClassId(kind.packageFqName, kind.numberedClassName(valueParameters.size))),
+            (valueParameters + suspendReturnType).toTypedArray(),
+            isNullable
+        )
+    }
+
+    private fun createSuspendFunctionType(
+        //annotations: Annotations, TODO?
+        functionTypeConstructor: ConeClassLikeLookupTag,
+        arguments: Array<ConeTypeProjection>,
+        isNullable: Boolean
+    ): ConeClassLikeType {
+        val result =
+            when (functionTypeConstructor.toSymbol(session)!!.firUnsafe<FirTypeParametersOwner>().typeParameters.size - arguments.size) {
+                0 -> createSuspendFunctionTypeForBasicCase(/* annotations, */ functionTypeConstructor, arguments, isNullable)
+//                 This case for types written by eap compiler 1.1
+                1 -> {
+                    val arity = arguments.size - 1
+                    if (arity >= 0) {
+                        val kind = FunctionClassDescriptor.Kind.SuspendFunction
+                        ConeClassLikeTypeImpl(
+                            ConeClassLikeLookupTagImpl(ClassId(kind.packageFqName, kind.numberedClassName(arity))),
+                            arguments,
+                            isNullable
+                        )
+                    } else {
+                        null
+                    }
+                }
+                else -> null
+            }
+        return result ?: ConeClassErrorType("Bad suspend function in metadata with constructor: $functionTypeConstructor")
     }
 
     private fun typeSymbol(proto: ProtoBuf.Type): ConeClassifierLookupTag? {

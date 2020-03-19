@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -219,11 +221,17 @@ fun createFunctionalType(
     receiverType: ConeKotlinType?,
     rawReturnType: ConeKotlinType,
     isKFunctionType: Boolean = false,
+    isSuspend: Boolean = false
 ): ConeLookupTagBasedType {
     val receiverAndParameterTypes = listOfNotNull(receiverType) + parameters + listOf(rawReturnType)
 
-    val postfix = "Function${receiverAndParameterTypes.size - 1}"
-    val functionalTypeId = if (isKFunctionType) StandardClassIds.reflectByName("K$postfix") else StandardClassIds.byName(postfix)
+    val kind = if (isSuspend) {
+        if (isKFunctionType) FunctionClassDescriptor.Kind.KSuspendFunction else FunctionClassDescriptor.Kind.SuspendFunction
+    } else {
+        if (isKFunctionType) FunctionClassDescriptor.Kind.KFunction else FunctionClassDescriptor.Kind.Function
+    }
+
+    val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(receiverAndParameterTypes.size - 1))
     return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(functionalTypeId), receiverAndParameterTypes.toTypedArray(), isNullable = false)
 }
 

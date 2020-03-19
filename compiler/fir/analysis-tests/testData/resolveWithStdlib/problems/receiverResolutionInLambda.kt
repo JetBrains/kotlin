@@ -10,9 +10,9 @@ class Case1() {
 
             val  y = this
             //this is Case1 instead of SequenceScope<String>
-            <!UNRESOLVED_REFERENCE!>yield<!>("") // UNRESOLVED_REFERENCE
+            yield("") // UNRESOLVED_REFERENCE
 
-            this.<!UNRESOLVED_REFERENCE!>yield<!>("") //UNRESOLVED_REFERENCE
+            this.yield("") //UNRESOLVED_REFERENCE
 
             this as SequenceScope<String>
 
@@ -27,14 +27,14 @@ fun case2() {
     val x = sequence<String> {
 
         val  y = this
-        <!UNRESOLVED_REFERENCE!>yield<!>("") // UNRESOLVED_REFERENCE
+        yield("") // UNRESOLVED_REFERENCE
 
-        this.<!UNRESOLVED_REFERENCE!>yield<!>("") //UNRESOLVED_REFERENCE
+        this.yield("") //UNRESOLVED_REFERENCE
 
         this as SequenceScope<String>
 
-        <!UNRESOLVED_REFERENCE!>yield<!>("") // UNRESOLVED_REFERENCE
+        yield("") // UNRESOLVED_REFERENCE
 
-        this.<!UNRESOLVED_REFERENCE!>yield<!>("") // UNRESOLVED_REFERENCE
+        this.yield("") // UNRESOLVED_REFERENCE
     }
 }

@@ -108,7 +108,7 @@ private fun extractInputOutputTypesFromCallableReferenceExpectedType(
     if (expectedType == null) return null
 
     return when {
-        expectedType.isBuiltinFunctionalType(session) || expectedType.isSuspendFunctionType(session) ->
+        expectedType.isBuiltinFunctionalType(session) ->
             extractInputOutputTypesFromFunctionType(expectedType, session)
 
 //        ReflectionTypes.isBaseTypeForNumberedReferenceTypes(expectedType) ->
