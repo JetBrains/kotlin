@@ -21,7 +21,9 @@ class Directives {
         if (value == null) {
             directives[key] = null
         } else {
-            directives.getOrPut(key, { arrayListOf() })!!.add(value)
+            directives.getOrPut(key, { arrayListOf() }).let {
+                it?.add(value) ?: error("Null value was already passed to $key via smth like // $key")
+            }
         }
     }
 
