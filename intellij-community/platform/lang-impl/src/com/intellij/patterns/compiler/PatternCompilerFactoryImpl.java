@@ -15,6 +15,8 @@
  */
 package com.intellij.patterns.compiler;
 
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.extensions.ExtensionPointChangeListener;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ConcurrentFactoryMap;
@@ -44,6 +46,16 @@ public class PatternCompilerFactoryImpl extends PatternCompilerFactory {
   );
   private final Map<List<Class<?>>, PatternCompiler> myCompilers =
     ConcurrentFactoryMap.createMap(key -> new PatternCompilerImpl(key));
+
+  public PatternCompilerFactoryImpl() {
+    PATTERN_CLASS_EP.addExtensionPointListener(new ExtensionPointChangeListener() {
+      @Override
+      public void extensionListChanged() {
+        myClasses.clear();
+        myCompilers.clear();
+      }
+    }, ApplicationManager.getApplication());
+  }
 
   @Override
   public Class @NotNull [] getPatternClasses(String alias) {
