@@ -29,14 +29,19 @@ public class JavaHomeFinderBasic {
   JavaHomeFinderBasic(boolean forceEmbeddedJava, String... paths) {
     myFinders.add(this::checkDefaultLocations);
     myFinders.add(this::findInPATH);
-    myFinders.add(() -> scanAll(
-      Stream.of(paths).map(it -> new File(it)).collect(Collectors.toList()),
-      true)
-    );
+    myFinders.add(() -> findInSpecifiedPaths(paths));
+    myFinders.add(this::findJavaInstalledBySdkMan);
 
     if (forceEmbeddedJava || Registry.is("java.detector.include.embedded", false)) {
       myFinders.add(() -> scanAll(getJavaHome(), false));
     }
+  }
+
+  @NotNull
+  private Set<String> findInSpecifiedPaths(String[] paths) {
+    return scanAll(
+      Stream.of(paths).map(it -> new File(it)).collect(Collectors.toList()),
+      true);
   }
 
   protected void registerFinder(@NotNull Supplier<Set<String>> finder) {
@@ -152,5 +157,52 @@ public class JavaHomeFinderBasic {
 
     File javaHome = new File(property).getParentFile();//actually java.home points to to jre home
     return javaHome == null || !javaHome.isDirectory() ? null : javaHome;
+  }
+
+
+  /**
+   * Finds Java home directories installed by SDKMAN: https://github.com/sdkman
+   */
+  @NotNull
+  private Set<String> findJavaInstalledBySdkMan() {
+    File candidatesDir = findSdkManCandidatesDir();
+    if (candidatesDir == null) return Collections.emptySet();
+    File javasDir = new File(candidatesDir, "java");
+    if (javasDir.isDirectory()) return scanAll(javasDir, true);
+    else return Collections.emptySet();
+  }
+
+  @Nullable
+  private static File findSdkManCandidatesDir() {
+    // first, try the special environment variable
+    String candidatesPath = System.getenv("SDKMAN_CANDIDATES_DIR");
+    if (candidatesPath != null) {
+      File candidatesDir = new File(candidatesPath);
+      if (candidatesDir.isDirectory()) return candidatesDir;
+    }
+
+    // then, try to use its 'primary' variable
+    String primaryPath = System.getenv("SDKMAN_DIR");
+    if (primaryPath != null) {
+      File primaryDir = new File(primaryPath);
+      if (primaryDir.isDirectory()) {
+        File candidatesDir = new File(primaryDir, "candidates");
+        if (candidatesDir.isDirectory()) return candidatesDir;
+      }
+    }
+
+    // finally, try the usual location in Unix or MacOS
+    if (!SystemInfo.isWindows) {
+      String homePath = System.getProperty("user.home");
+      if (homePath != null) {
+        File homeDir = new File(homePath);
+        File primaryDir = new File(homeDir, ".sdkman");
+        File candidatesDir = new File(primaryDir, "candidates");
+        if (candidatesDir.isDirectory()) return candidatesDir;
+      }
+    }
+
+    // no chances
+    return null;
   }
 }
