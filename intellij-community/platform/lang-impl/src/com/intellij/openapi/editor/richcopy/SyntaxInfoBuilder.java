@@ -418,6 +418,7 @@ public final class SyntaxInfoBuilder {
   static class HighlighterRangeIterator implements RangeIterator {
     private static final TextAttributes EMPTY_ATTRIBUTES = new TextAttributes();
 
+    private final EditorHighlighter myHighlighter;
     private final HighlighterIterator myIterator;
     private final int myStartOffset;
     private final int myEndOffset;
@@ -427,6 +428,7 @@ public final class SyntaxInfoBuilder {
     private TextAttributes myCurrentAttributes;
 
     HighlighterRangeIterator(@NotNull EditorHighlighter highlighter, int startOffset, int endOffset) {
+      myHighlighter = highlighter;
       myStartOffset = startOffset;
       myEndOffset = endOffset;
       myIterator = highlighter.createIterator(startOffset);
@@ -449,9 +451,11 @@ public final class SyntaxInfoBuilder {
     public void advance() {
       myCurrentStart = getCurrentStart();
       myCurrentEnd = getCurrentEnd();
-      assert myCurrentStart <= myCurrentEnd : "Unexpected range: " + myCurrentStart + ":" + myCurrentEnd +
-                                              ", target range: " + myStartOffset + ":" + myEndOffset +
-                                              ", iterator: " + myIterator.getStart() + ":" + myIterator.getEnd();
+      assert myCurrentStart <= myCurrentEnd : "Unexpected range returned by highlighter: " +
+                                              myIterator.getStart() + ":" + myIterator.getEnd() +
+                                              ", scanned range: " + myStartOffset + ":" + myEndOffset +
+                                              ", resulting range: " + myCurrentStart + ":" + myCurrentEnd +
+                                              ", highlighter: " + myHighlighter;
       myCurrentAttributes = myIterator.getTokenType() == TokenType.BAD_CHARACTER ? EMPTY_ATTRIBUTES : myIterator.getTextAttributes();
       myIterator.advance();
     }
