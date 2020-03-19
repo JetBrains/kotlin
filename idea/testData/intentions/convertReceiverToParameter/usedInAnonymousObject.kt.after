@@ -1,0 +1,11 @@
+interface A
+
+fun foo(a: A) {}
+
+fun test() {
+    object : A {
+        fun bar() {
+            foo(this)
+        }
+    }
+}
