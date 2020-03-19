@@ -26,11 +26,12 @@ open class FirBodyResolveTransformer(
     phase: FirResolvePhase,
     override var implicitTypeOnly: Boolean,
     scopeSession: ScopeSession,
-    val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve()
+    val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve(),
+    outerBodyResolveContext: BodyResolveContext? = null
 ) : FirAbstractBodyResolveTransformer(phase) {
     private var packageFqName = FqName.ROOT
 
-    final override val context: BodyResolveContext = BodyResolveContext(returnTypeCalculator)
+    final override val context: BodyResolveContext = outerBodyResolveContext ?: BodyResolveContext(returnTypeCalculator)
     final override val components: BodyResolveTransformerComponents =
         BodyResolveTransformerComponents(session, scopeSession, this, context)
 

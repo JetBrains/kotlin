@@ -38,11 +38,14 @@ class FirImplicitTypeBodyResolveTransformerAdapter(private val scopeSession: Sco
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         val session = file.session
-        scopeSession.returnTypeCalculator = ReturnTypeCalculatorWithJump(session, scopeSession, implicitBodyResolveComputationSession)
-        val transformer = FirImplicitBodyResolveTransformer(
+        val returnTypeCalculator = ReturnTypeCalculatorWithJump(session, scopeSession, implicitBodyResolveComputationSession)
+        scopeSession.returnTypeCalculator = returnTypeCalculator
+        val transformer = FirImplicitAwareBodyResolveTransformer(
             session,
             scopeSession,
-            implicitBodyResolveComputationSession
+            implicitBodyResolveComputationSession,
+            FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, implicitTypeOnly = true,
+            returnTypeCalculator
         )
         return file.transform(transformer, ResolutionMode.ContextIndependent)
     }
@@ -51,16 +54,21 @@ class FirImplicitTypeBodyResolveTransformerAdapter(private val scopeSession: Sco
 fun createReturnTypeCalculatorForIDE(session: FirSession, scopeSession: ScopeSession): ReturnTypeCalculator =
     ReturnTypeCalculatorWithJump(session, scopeSession, ImplicitBodyResolveComputationSession())
 
-private open class FirImplicitBodyResolveTransformer(
+private open class FirImplicitAwareBodyResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession,
-    private val implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession
+    private val implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession,
+    phase: FirResolvePhase,
+    implicitTypeOnly: Boolean,
+    returnTypeCalculator: ReturnTypeCalculator,
+    outerBodyResolveContext: BodyResolveContext? = null
 ) : FirBodyResolveTransformer(
     session,
-    phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
-    implicitTypeOnly = true,
-    scopeSession = scopeSession,
-    returnTypeCalculator = ReturnTypeCalculatorWithJump(session, scopeSession, implicitBodyResolveComputationSession)
+    phase,
+    implicitTypeOnly,
+    scopeSession,
+    returnTypeCalculator,
+    outerBodyResolveContext
 ) {
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
@@ -179,11 +187,17 @@ private class FirDesignatedBodyResolveTransformerForReturnTypeCalculator(
     private val designation: Iterator<FirElement>,
     session: FirSession,
     scopeSession: ScopeSession,
-    implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession
-) : FirImplicitBodyResolveTransformer(
+    implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession,
+    returnTypeCalculator: ReturnTypeCalculator,
+    outerBodyResolveContext: BodyResolveContext? = null
+) : FirImplicitAwareBodyResolveTransformer(
     session,
     scopeSession,
-    implicitBodyResolveComputationSession
+    implicitBodyResolveComputationSession,
+    FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
+    implicitTypeOnly = true,
+    returnTypeCalculator,
+    outerBodyResolveContext
 ) {
 
     var lastResult: FirElement? = null
