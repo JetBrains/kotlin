@@ -218,16 +218,16 @@ clean {
     }
 }
 
-TaskCollection<Task> tasksOf(Class<? extends Task> type, Closure<Boolean> filter) {
+TaskCollection<Task> tasksOf(Class<? extends Task> type, Closure<Boolean> filter = { return true }) {
     String prefix = project.findProperty("prefix")
     project.tasks.withType(type)
             .matching { filter(it) && it.enabled && (prefix != null ? it.name.startsWith(prefix) : true) }
 }
 
 run {
-    dependsOn(tasksOf(KonanTest) {})
+    dependsOn(tasksOf(KonanTest))
     // Add framework tests
-    dependsOn(tasksOf(FrameworkTest) {})
+    dependsOn(tasksOf(FrameworkTest))
 }
 
 task sanity {
@@ -406,7 +406,7 @@ task run_external () {
     createTestTasks(externalTestsDir, RunExternalTestGroup) { }
 
     // Set up dependencies.
-    dependsOn(tasksOf(RunExternalTestGroup) {})
+    dependsOn(tasksOf(RunExternalTestGroup))
     dependsOn("stdlibTest")
 }
 
