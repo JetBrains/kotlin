@@ -130,4 +130,30 @@ class ExceptionTest {
 //        fail(topLevelTrace) // to dump the entire trace
     }
 
+    @Test
+    fun circularSuppressedDetailedTrace() {
+        if (!supportsSuppressedExceptions) return
+
+        // Testing an exception of the following structure
+        // e1
+        //    -- suppressed: e3
+        //       -- suppressed: e1
+        // Caused by: e2
+        //    -- suppressed: e1
+        // Caused by: e3
+
+        val e3 = Exception("e3")
+        val e2 = Error("e2", e3)
+        val e1 = RuntimeException("e1", e2)
+        e1.addSuppressed(e3)
+        e3.addSuppressed(e1)
+        e2.addSuppressed(e1)
+
+        val topLevelTrace = e1.toStringWithTrace()
+        assertEquals(3, Regex.fromLiteral(e1.toString()).findAll(topLevelTrace).count(), topLevelTrace)
+        assertEquals(1, Regex.fromLiteral(e2.toString()).findAll(topLevelTrace).count(), topLevelTrace)
+        assertEquals(2, Regex.fromLiteral(e3.toString()).findAll(topLevelTrace).count(), topLevelTrace)
+//        fail(topLevelTrace) // to dump the entire trace
+    }
+
 }

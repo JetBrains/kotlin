@@ -15,7 +15,7 @@ package kotlin
  * - the detailed description of each throwable in the [Throwable.cause] chain.
  */
 @SinceKotlin("1.4")
-public actual fun Throwable.toStringWithTrace(): String = buildString { dumpStackTraceTo("", "", this) }
+public actual fun Throwable.toStringWithTrace(): String = buildString { dumpStackTraceTo("", "", this, arrayOf()) }
 
 /**
  * Adds the specified exception to the list of exceptions that were
@@ -43,19 +43,27 @@ public actual val Throwable.suppressedExceptions: List<Throwable>
     }
 
 
-private fun Throwable.dumpStackTraceTo(indent: String, qualifier: String, target: StringBuilder) {
-    this.dumpSelfTrace(indent, qualifier, target)
+private fun Array<Throwable>.hasSeen(exception: Throwable): Boolean = any { it === exception }
+
+private fun Throwable.dumpStackTraceTo(indent: String, qualifier: String, target: StringBuilder, visited: Array<Throwable>) {
+    this.dumpSelfTrace(indent, qualifier, target, visited) || return
 
     var cause = this.cause
     while (cause != null) {
         // TODO: should skip common stack frames
-        cause.dumpSelfTrace(indent, "Caused by: ", target)
+        cause.dumpSelfTrace(indent, "Caused by: ", target, visited)
         cause = cause.cause
     }
 }
 
-private fun Throwable.dumpSelfTrace(indent: String, qualifier: String, target: StringBuilder) {
+private fun Throwable.dumpSelfTrace(indent: String, qualifier: String, target: StringBuilder, visited: Array<Throwable>): Boolean {
     target.append(indent).append(qualifier)
+    if (visited.hasSeen(this)) {
+        target.append("[CIRCULAR REFERENCE, SEE ABOVE: ").append(this).append("]\n")
+        return false
+    }
+    visited.asDynamic().push(this)
+
     val stack = this.asDynamic().stack as String?
     if (stack != null) {
         if (indent.isNotEmpty()) {
@@ -76,7 +84,8 @@ private fun Throwable.dumpSelfTrace(indent: String, qualifier: String, target: S
     if (suppressed.isNotEmpty()) {
         val suppressedIndent = indent + '\t'
         for (s in suppressed) {
-            s.dumpStackTraceTo(suppressedIndent, "Suppressed: ", target)
+            s.dumpStackTraceTo(suppressedIndent, "Suppressed: ", target, visited)
         }
     }
+    return true
 }
