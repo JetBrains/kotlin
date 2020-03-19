@@ -97,7 +97,7 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
                           newLayout: Boolean,
                           highlightActions: Boolean,
                           limitWidthToScreen: Boolean,
-                          tooltipReloader: TooltipReloader?): LightweightHint {
+                          tooltipReloader: TooltipReloader?): LightweightHint? {
     return super.createHint(editor, p, alignToRight, group, hintHint, newLayout,
                             highlightActions || !(isShowActions() && tooltipAction != null && hintHint.isAwtTooltip),
                             limitWidthToScreen, tooltipReloader)
