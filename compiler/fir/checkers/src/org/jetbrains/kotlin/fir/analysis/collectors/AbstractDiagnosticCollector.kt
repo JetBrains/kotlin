@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.collectors
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
-import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
-import org.jetbrains.kotlin.fir.analysis.collectors.components.DeclarationCheckersDiagnosticComponent
-import org.jetbrains.kotlin.fir.analysis.collectors.components.ErrorNodeDiagnosticCollectorComponent
-import org.jetbrains.kotlin.fir.analysis.collectors.components.ExpressionCheckersDiagnosticComponent
+import org.jetbrains.kotlin.fir.analysis.collectors.components.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.declarations.*
@@ -172,5 +169,6 @@ fun AbstractDiagnosticCollector.registerAllComponents() {
         DeclarationCheckersDiagnosticComponent(this),
         ExpressionCheckersDiagnosticComponent(this),
         ErrorNodeDiagnosticCollectorComponent(this),
+        ControlFlowAnalysisDiagnosticComponent(this),
     )
 }
