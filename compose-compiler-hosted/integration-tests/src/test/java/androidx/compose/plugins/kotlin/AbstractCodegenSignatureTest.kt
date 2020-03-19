@@ -155,8 +155,8 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
 
                 fun invokeComposable(composer: Composer<*>?, fn: @Composable() () -> Unit) {
                     if (composer == null) error("Composer was null")
-                    val composition = Composition({ a, b -> composer }, null)
-                    composition.compose(fn)
+                    val composition = compositionFor(composer) { a, b -> composer }
+                    composition.setContent(fn)
                 }
 
                 class Test {
