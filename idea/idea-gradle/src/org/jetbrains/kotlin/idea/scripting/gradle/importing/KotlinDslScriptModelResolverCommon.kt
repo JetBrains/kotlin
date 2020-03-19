@@ -42,9 +42,17 @@ abstract class KotlinDslScriptModelResolverCommon : AbstractProjectResolverExten
             val messages = mutableListOf<KotlinDslScriptModel.Message>()
 
             model.exceptions.forEach {
+                val fromException = parsePositionFromException(it)
+                if (fromException != null) {
+                    val (filePath, _) = fromException
+                    if (filePath != file.path) return@forEach
+                }
                 messages.add(
                     KotlinDslScriptModel.Message(
-                        KotlinDslScriptModel.Severity.ERROR, it
+                        KotlinDslScriptModel.Severity.ERROR,
+                        it.substringBefore(System.lineSeparator()),
+                        it,
+                        fromException?.second
                     )
                 )
             }
@@ -57,11 +65,9 @@ abstract class KotlinDslScriptModelResolverCommon : AbstractProjectResolverExten
                             else -> KotlinDslScriptModel.Severity.ERROR
                         },
                         it.message,
-                        it.position?.let { position ->
-                            KotlinDslScriptModel
-                                .Position(position.line, position.column)
-                        }
-                    ))
+                        position = KotlinDslScriptModel.Position(it.position?.line ?: 0, it.position?.column ?: 0)
+                    )
+                )
             }
 
             // todo(KT-34440): take inputs snapshot before starting import
