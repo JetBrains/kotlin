@@ -8,13 +8,13 @@
 
   <project-components>
     <component>
-      <implementation-class>com.jetbrains.konan.IdeaKonanWorkspace</implementation-class>
+      <implementation-class>com.jetbrains.mpp.MPPWorkspace</implementation-class>
     </component>
   </project-components>
 
   <extensions defaultExtensionNs="com.intellij">
     <configurationType implementation="com.jetbrains.konan.IdeaKonanRunConfigurationType"/>
-    <executionTargetProvider implementation="com.jetbrains.konan.IdeaKonanExecutionTargetProvider"/>
+    <executionTargetProvider implementation="com.jetbrains.mpp.BinaryExecutionTargetProvider"/>
     <stepsBeforeRunProvider implementation="com.jetbrains.konan.IdeaKonanBuildBeforeRunTaskProvider"/>
     <programRunner implementation="com.jetbrains.konan.IdeaKonanRunner"/>
     <projectTaskRunner implementation="com.jetbrains.konan.IdeaKonanProjectTaskRunner"/>

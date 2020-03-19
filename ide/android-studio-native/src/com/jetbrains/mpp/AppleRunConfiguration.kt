@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,7 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.RunConfigurationWithSuppressedDefaultRunAction
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
+import com.jetbrains.konan.KonanBundle
 import com.jetbrains.mpp.execution.ApplePhysicalDevice
 import com.jetbrains.mpp.execution.Device
 import org.jdom.Element
@@ -46,7 +47,8 @@ class AppleRunConfiguration(project: Project, configurationFactory: MobileConfig
     }
 
     override fun checkConfiguration() {
-        if (xcodeproj == null) throw RuntimeConfigurationError("Can't find xcodeproj. Please, specify path relative to root to xcodeproj in your gradle.properties-file")
+        val propertyKey = KonanBundle.message("property.xcodeproj")
+        if (xcodeproj == null) throw RuntimeConfigurationError("Can't find $propertyKey. Please, specify path relative to root to $propertyKey in your gradle.properties-file")
     }
 
     override fun canRunOn(target: ExecutionTarget): Boolean = target is Device

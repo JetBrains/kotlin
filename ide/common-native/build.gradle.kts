@@ -8,7 +8,7 @@ val intellijBranch: Int by rootProject.extra
 
 addIdeaNativeModuleDeps(project)
 
-if (intellijBranch >= 193) {
+if (intellijBranch >= 192) {
     sourceSets["main"].java.setSrcDirs(listOf("src"))
     sourceSets["main"].resources.setSrcDirs(listOf("resources"))
 } else {

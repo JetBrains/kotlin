@@ -24,7 +24,7 @@
     <applicationService serviceImplementation="com.jetbrains.mpp.execution.DeviceService"/>
 
     <executionTargetProvider implementation="com.jetbrains.mpp.execution.DeviceExecutionTargetProvider"/>
-    <executionTargetProvider implementation="com.jetbrains.konan.BinaryExecutionTargetProvider"/>
+    <executionTargetProvider implementation="com.jetbrains.mpp.BinaryExecutionTargetProvider"/>
     <externalProjectDataService implementation="com.jetbrains.mpp.ProjectDataService"/>
     <configurationType implementation="com.jetbrains.mpp.MobileRunConfigurationType"/>
     <programRunner implementation="com.jetbrains.mpp.execution.AppleRunner"/>

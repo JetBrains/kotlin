@@ -13,10 +13,10 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
-import com.jetbrains.konan.BinaryRunConfigurationBase
+import com.jetbrains.mpp.BinaryRunConfigurationBase
 import com.jetbrains.konan.KonanBundle
-import com.jetbrains.konan.KonanExecutable
-import com.jetbrains.konan.WorkspaceBase
+import com.jetbrains.mpp.KonanExecutable
+import com.jetbrains.mpp.WorkspaceBase
 import com.jetbrains.mpp.AppleLLDBDriverConfiguration
 import com.jetbrains.mpp.ProjectWorkspace
 import java.awt.GridBagLayout

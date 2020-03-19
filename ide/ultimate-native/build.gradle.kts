@@ -4,7 +4,7 @@ plugins {
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
 val intellijBranch: Int by rootProject.extra
-val nativeDebugPluginDir: File by rootProject.extra
+val nativeDebugPluginDir: File? by rootProject.extra
 
 dependencies {
     compileOnly(kotlinStdlib("jdk8"))
@@ -18,14 +18,15 @@ dependencies {
     compileOnly(project(":idea:idea-gradle")) { isTransitive = false }
     compileOnly(project(":kotlin-util-io")) { isTransitive = false }
     compileOnly(project(":native:kotlin-native-utils")) { isTransitive = false }
-    compileOnly(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
-    compileOnly(project(":kotlin-ultimate:ide:common-noncidr-native")) { isTransitive = false }
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijUltimateDep()) { includeJars("platform-api", "platform-impl", "util", "jdom") }
     compileOnly(intellijUltimatePluginDep("gradle"))
     compileOnly(intellijUltimatePluginDep("Groovy"))
     compileOnly(intellijUltimatePluginDep("java")) { includeJars("java-api", "java-impl") }
-    compileOnly(fileTree(nativeDebugPluginDir) { include("**/*.jar") })
+    if (nativeDebugPluginDir != null) {
+        compileOnly(fileTree(nativeDebugPluginDir!!) { include("**/*.jar") })
+    }
+
 
     if (intellijBranch >= 192) {
         compileOnly(intellijUltimateDep()) { includeJars("platform-util-ui") }
@@ -37,6 +38,8 @@ dependencies {
             ) }
         }
     }
+    api(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
+    api(project(":kotlin-ultimate:ide:common-noncidr-native")) { isTransitive = false }
 }
 
 if (intellijBranch >= 192) {

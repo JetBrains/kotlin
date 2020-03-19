@@ -12,7 +12,6 @@ dependencies {
     compileOnly(project(":idea:kotlin-gradle-tooling")) { isTransitive = false }
     compileOnly(project(":kotlin-util-io")) { isTransitive = false }
     compileOnly(project(":native:kotlin-native-utils")) { isTransitive = false }
-    compileOnly(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijPluginDep("gradle"))
     compileOnly(intellijUltimatePluginDep("java")) { includeJars("java-api", "java-impl") }
@@ -33,6 +32,8 @@ dependencies {
     if (nativeDebugPluginDir != null) {
         compileOnly(fileTree(nativeDebugPluginDir!!) { include("**/*.jar") })
     }
+
+    api(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
 }
 
 if (intellijBranch >= 193) {

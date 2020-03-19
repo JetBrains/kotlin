@@ -9,7 +9,7 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper
 import com.jetbrains.cidr.OCPathManagerCustomization
-import com.jetbrains.konan.debugger.LLDBBackendBase.Companion.DEBUG_SERVER_PATH_KEY
+import com.jetbrains.mpp.debugger.LLDBBackendBase.Companion.DEBUG_SERVER_PATH_KEY
 import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
 import org.jetbrains.plugins.gradle.service.task.GradleTaskManagerExtension
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings

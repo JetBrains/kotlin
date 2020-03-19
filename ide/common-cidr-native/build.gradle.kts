@@ -9,11 +9,12 @@ val cidrVersion: String by rootProject.extra
 
 proprietaryRepositories(project)
 
+addIdeaNativeModuleDeps(project)
+
 dependencies {
-    addIdeaNativeModuleDeps(project)
     compileOnly(project(":kotlin-ultimate:ide:cidr-gradle-tooling")) { isTransitive = false }
-    compileOnly(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     compileOnly("com.jetbrains.intellij.cidr:cidr-test-google:$cidrVersion") { isTransitive = false }
+    api(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
 }
 
 the<JavaPluginConvention>().sourceSets["main"].apply {

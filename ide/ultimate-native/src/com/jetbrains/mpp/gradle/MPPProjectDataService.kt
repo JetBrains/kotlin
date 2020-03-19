@@ -3,27 +3,24 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package com.jetbrains.mpp
+package com.jetbrains.mpp.gradle
 
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.service.project.IdeModelsProvider
 import com.intellij.openapi.project.Project
-import com.jetbrains.konan.KonanBundle
-import com.jetbrains.mpp.execution.BinaryRunConfiguration
-import com.jetbrains.mpp.execution.BinaryRunConfigurationType
-import com.jetbrains.mpp.gradle.ProjectDataServiceBase
+import com.jetbrains.mpp.*
 import org.jetbrains.kotlin.idea.configuration.KotlinTargetData
-import org.jetbrains.kotlin.idea.configuration.readGradleProperty
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
-class ProjectDataService : ProjectDataServiceBase() {
-    override val configurationFactory = BinaryRunConfigurationType.instance.factory
+class MPPProjectDataService : ProjectDataServiceBase() {
 
     override fun getTargetDataKey() = KotlinTargetData.KEY
 
+    override val configurationFactory = MPPBinaryRunConfigurationType.instance.factory
+
     override fun binaryConfiguration(project: Project, executable: KonanExecutable) =
-        BinaryRunConfiguration(project, configurationFactory, executable)
+        MPPBinaryRunConfiguration(project, configurationFactory, executable)
 
     override fun onSuccessImport(
         imported: Collection<DataNode<KotlinTargetData>>,
@@ -31,8 +28,7 @@ class ProjectDataService : ProjectDataServiceBase() {
         project: Project,
         modelsProvider: IdeModelsProvider
     ) {
-        val workspace = ProjectWorkspace.getInstance(project)
-        workspace.xcproject = readGradleProperty(project, KonanBundle.message("property.xcodeproj"))
+        val workspace = MPPWorkspace.getInstance(project)
 
         if (projectData?.owner != GradleConstants.SYSTEM_ID) return
 

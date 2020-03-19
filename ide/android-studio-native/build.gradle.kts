@@ -12,8 +12,6 @@ dependencies {
     compileOnly(kotlin("stdlib"))
     compileOnly(project(":compiler:util")) { isTransitive = false }
     compileOnly(project(":idea:idea-gradle")) { isTransitive = false }
-    compileOnly(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
-    compileOnly(project(":kotlin-ultimate:ide:common-noncidr-native")) { isTransitive = false }
     compileOnly(intellijDep()) { includeJars(
         "external-system-rt",
         "extensions",
@@ -35,6 +33,8 @@ dependencies {
 
     compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa-common:$cidrVersion") { isTransitive = false }
     compileOnly("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$cidrVersion") { isTransitive = false }
+    api(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
+    api(project(":kotlin-ultimate:ide:common-noncidr-native")) { isTransitive = false }
 }
 
 
