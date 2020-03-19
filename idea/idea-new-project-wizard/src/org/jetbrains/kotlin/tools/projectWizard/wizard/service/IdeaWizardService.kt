@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.wizard.service
 
-import com.intellij.openapi.module.ModifiableModuleModel
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 
@@ -19,10 +18,9 @@ object IdeaServices {
         IdeaSettingSavingWizardService()
     )
 
-    fun createScopeDependent(project: Project, model: ModifiableModuleModel?) = listOfNotNull(
+    fun createScopeDependent(project: Project) = listOfNotNull(
         IdeaGradleWizardService(project),
         IdeaMavenWizardService(project),
-        model?.let { IdeaJpsWizardService(project, it) },
         IdeaFileFormattingService(project),
         IdeaRunConfigurationsService(project)
     )

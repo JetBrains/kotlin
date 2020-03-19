@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.TitledComponent
 
-class TitledComponentsList(
+open class TitledComponentsList(
     private var components: List<TitledComponent>,
     private val context: Context
 ) : DynamicComponent(context) {

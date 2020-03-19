@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.Plugins
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
+import org.jetbrains.kotlin.tools.projectWizard.wizard.service.IdeaJpsWizardService
 import org.jetbrains.kotlin.tools.projectWizard.wizard.service.IdeaServices
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.asHtml
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep.FirstWizardStepComponent
@@ -82,8 +83,11 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
     ): List<IdeaModule>? {
         val modulesModel = model ?: ModuleManager.getInstance(project).modifiableModel
         val success = wizard.apply(
-            services = IdeaServices.createScopeDependent(project, modulesModel) +
-                    IdeaServices.PROJECT_INDEPENDENT,
+            services = buildList {
+                +IdeaServices.createScopeDependent(project)
+                +IdeaServices.PROJECT_INDEPENDENT
+                +IdeaJpsWizardService(project, modulesModel, this@NewProjectWizardModuleBuilder, wizard)
+            },
             phases = GenerationPhase.startingFrom(GenerationPhase.FIRST_STEP)
         ).onFailure { errors ->
             val errorMessages = errors.joinToString(separator = "\n") { it.message }

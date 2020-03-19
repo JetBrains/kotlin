@@ -72,7 +72,7 @@ abstract class AbstractNewWizardProjectImportTest : PlatformTestCase() {
         val wizard = createWizard(directory, buildSystem, tempDirectory)
 
         val projectDependentServices =
-            IdeaServices.createScopeDependent(project, null) +
+            IdeaServices.createScopeDependent(project) +
                     TestWizardServices.createProjectDependent(project) +
                     TestWizardServices.PROJECT_INDEPENDENT
         wizard.apply(projectDependentServices, GenerationPhase.ALL).assertSuccess()

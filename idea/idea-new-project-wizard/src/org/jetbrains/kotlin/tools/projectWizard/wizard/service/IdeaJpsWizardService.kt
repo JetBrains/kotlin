@@ -6,19 +6,20 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.service
 
 import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix
+import com.intellij.ide.impl.NewProjectUtil
+import com.intellij.ide.util.projectWizard.ModuleBuilder
 import com.intellij.jarRepository.JarRepositoryManager
 import com.intellij.openapi.module.ModifiableModuleModel
 import com.intellij.openapi.module.ModuleTypeId
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.DependencyScope
-import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.roots.ModuleRootModificationUtil
-import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.*
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.PathUtil
 import org.jetbrains.idea.maven.utils.library.RepositoryLibraryProperties
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle.Companion.INSTANCE
+import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ProjectImportingWizardService
@@ -26,12 +27,18 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
+import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeWizard
+import org.jetbrains.kotlin.tools.projectWizard.wizard.NewProjectWizardModuleBuilder
+import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import java.nio.file.Path
+import java.util.*
 import com.intellij.openapi.module.Module as IdeaModule
 
 class IdeaJpsWizardService(
     private val project: Project,
-    private val modulesModel: ModifiableModuleModel
+    private val modulesModel: ModifiableModuleModel,
+    private val modulesBuilder: NewProjectWizardModuleBuilder,
+    private val ideWizard: IdeWizard
 ) : ProjectImportingWizardService, IdeaWizardService {
     override fun isSuitableFor(buildSystemType: BuildSystemType): Boolean =
         buildSystemType == BuildSystemType.Jps
@@ -40,9 +47,26 @@ class IdeaJpsWizardService(
         path: Path,
         modulesIrs: List<ModuleIR>,
         buildSystem: BuildSystemType
-    ): TaskResult<Unit> = runWriteAction {
-        ProjectImporter(project, modulesModel, path, modulesIrs)
-            .import()
+    ): TaskResult<Unit> {
+        ideWizard.jpsData.jdk?.let { jdk -> NewProjectUtil.applyJdkToProject(project, jdk) }
+        KotlinSdkType.setUpIfNeeded()
+        modulesBuilder.addModuleConfigurationUpdater(JpsModuleConfigurationUpdater(ideWizard.jpsData))
+
+        return runWriteAction {
+            ProjectImporter(project, modulesModel, path, modulesIrs).import()
+        }
+    }
+}
+
+private class JpsModuleConfigurationUpdater(private val jpsData: IdeWizard.JpsData) : ModuleBuilder.ModuleConfigurationUpdater() {
+    override fun update(module: IdeaModule, rootModel: ModifiableRootModel) = with(jpsData) {
+        libraryOptionsPanel.apply()?.addLibraries(
+            rootModel,
+            ArrayList(),
+            librariesContainer
+        )
+        libraryDescription.finishLibConfiguration(module, rootModel, true)
+        ProjectCodeStyleImporter.apply(module.project, INSTANCE)
     }
 }
 
@@ -146,13 +170,13 @@ private class ProjectImporter(
 
     private fun downloadLibraryAndGetItsClasses(libraryProperties: RepositoryLibraryProperties) =
         JarRepositoryManager.loadDependenciesModal(
-            project,
-            libraryProperties,
-            false,
-            false,
-            librariesPath.toString(),
-            null
-        ).asSequence()
+                project,
+                libraryProperties,
+                false,
+                false,
+                librariesPath.toString(),
+                null
+            ).asSequence()
             .filter { it.type == OrderRootType.CLASSES }
             .map { PathUtil.getLocalPath(it.file) }
             .toList()

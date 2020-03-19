@@ -1,5 +1,13 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard
 
+import com.intellij.facet.impl.ui.libraries.LibraryOptionsPanel
+import com.intellij.framework.library.FrameworkLibraryVersionFilter
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
+import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesContainer
+import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesContainerFactory
+import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription
 import org.jetbrains.kotlin.tools.projectWizard.core.PluginsCreator
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
@@ -29,6 +37,12 @@ class IdeWizard(
         initPluginSettingsDefaultValues()
     }
 
+    val jpsData = JpsData(
+        JavaRuntimeLibraryDescription(null),
+        LibrariesContainerFactory.createContainer(null as Project?),
+    )
+
+
     var projectPath by setting(StructurePlugin::projectPath.reference)
     var projectName by setting(StructurePlugin::name.reference)
 
@@ -51,5 +65,18 @@ class IdeWizard(
                 reference.notRequiredSettingValue
             }
         }
+
+    data class JpsData(
+        val libraryDescription: JavaRuntimeLibraryDescription,
+        val librariesContainer: LibrariesContainer,
+        var jdk: Sdk? = null,
+        val libraryOptionsPanel: LibraryOptionsPanel = LibraryOptionsPanel(
+            libraryDescription,
+            "",
+            FrameworkLibraryVersionFilter.ALL,
+            librariesContainer,
+            false
+        )
+    )
 }
 
