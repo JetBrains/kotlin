@@ -125,28 +125,28 @@ class BuildProgressImpl<T extends BuildProgressDescriptor> implements BuildProgr
   @NotNull
   @Override
   public BuildProgress<? extends BuildProgressDescriptor> finish() {
-    return finish(System.currentTimeMillis(), false);
+    return finish(false);
   }
 
   @NotNull
   @Override
   public BuildProgress<? extends BuildProgressDescriptor> finish(boolean isUpToDate) {
-    return finish(System.currentTimeMillis(), isUpToDate);
+    return finish(System.currentTimeMillis(), isUpToDate, myDescriptor.getTitle());
   }
 
   @NotNull
   @Override
   public BuildProgress<? extends BuildProgressDescriptor> finish(long timeStamp) {
-    return finish(timeStamp, false);
+    return finish(timeStamp, false, myDescriptor.getTitle());
   }
 
   @NotNull
   @Override
-  public BuildProgress<? extends BuildProgressDescriptor> finish(long timeStamp, boolean isUpToDate) {
+  public BuildProgress<? extends BuildProgressDescriptor> finish(long timeStamp, boolean isUpToDate, @NotNull String message) {
     assertStarted();
     assert myParentProgress != null;
     EventResult result = new SuccessResultImpl(isUpToDate);
-    FinishEvent event = new FinishEventImpl(getId(), myParentProgress.getId(), timeStamp, myDescriptor.getTitle(), result);
+    FinishEvent event = new FinishEventImpl(getId(), myParentProgress.getId(), timeStamp, message, result);
     myListener.onEvent(getBuildId(), event);
     return myParentProgress;
   }

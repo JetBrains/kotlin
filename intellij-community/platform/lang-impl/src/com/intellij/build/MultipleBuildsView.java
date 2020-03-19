@@ -280,7 +280,12 @@ public class MultipleBuildsView implements BuildProgressListener, Disposable {
           consoleComponent.add(tb.getComponent(), BorderLayout.WEST);
 
           myContent = new ContentImpl(consoleComponent, myViewManager.getViewName(), true);
-          Disposer.register(myContent, this);
+          Disposer.register(myContent, new Disposable() {
+            @Override
+            public void dispose() {
+              Disposer.dispose(MultipleBuildsView.this);
+            }
+          });
           Disposer.register(myContent, new Disposable() {
             @Override
             public void dispose() {

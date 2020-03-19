@@ -34,7 +34,7 @@ public interface BuildProgress<T extends BuildProgressDescriptor> {
 
   @NotNull BuildProgress<? extends BuildProgressDescriptor> finish(boolean isUpToDate);
 
-  @NotNull BuildProgress<? extends BuildProgressDescriptor> finish(long timeStamp, boolean isUpToDate);
+  @NotNull BuildProgress<? extends BuildProgressDescriptor> finish(long timeStamp, boolean isUpToDate, @NotNull String message);
 
   @NotNull BuildProgress<? extends BuildProgressDescriptor> fail();
 

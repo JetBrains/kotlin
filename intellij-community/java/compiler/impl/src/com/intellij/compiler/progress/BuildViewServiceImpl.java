@@ -119,11 +119,11 @@ public class BuildViewServiceImpl implements BuildViewService {
   public void onEnd(Object sessionId, ExitStatus exitStatus, long endBuildStamp) {
     String message;
     if (exitStatus == ExitStatus.ERRORS) {
-      message = JavaCompilerBundle.message("compiler.build.messages.failed", wordsToBeginFromLowerCase(myContentName));
+      message = BuildBundle.message("build.messages.failed", wordsToBeginFromLowerCase(myContentName));
       myBuildProgress.fail(endBuildStamp, message);
     }
     else if (exitStatus == ExitStatus.CANCELLED) {
-      message = JavaCompilerBundle.message("compiler.build.messages.cancelled", wordsToBeginFromLowerCase(myContentName));
+      message = BuildBundle.message("build.messages.cancelled", wordsToBeginFromLowerCase(myContentName));
       myBuildProgress.cancel(endBuildStamp, message);
     }
     else {
@@ -136,7 +136,8 @@ public class BuildViewServiceImpl implements BuildViewService {
           myBuildProgress.output(JavaCompilerBundle.message("compiler.build.messages.classes.check.outdated"), true);
         }
       }
-      myBuildProgress.finish(endBuildStamp, isUpToDate);
+      message = BuildBundle.message("build.messages.finished", wordsToBeginFromLowerCase(myContentName));
+      myBuildProgress.finish(endBuildStamp, isUpToDate, message);
     }
   }
 

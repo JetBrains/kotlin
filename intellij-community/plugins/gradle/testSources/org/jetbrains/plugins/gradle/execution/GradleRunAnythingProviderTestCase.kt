@@ -19,11 +19,11 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.testFramework.PlatformTestUtil.dispatchAllEventsInIdeEventQueue
 import com.intellij.testFramework.PlatformTestUtil.waitWhileBusy
+import com.intellij.testFramework.fixtures.BuildViewTestFixture
 import com.intellij.util.TimeoutUtil
 import com.intellij.util.concurrency.Semaphore
 import groovyjarjarcommonscli.Option
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.plugins.gradle.importing.BuildViewMessagesImportingTestCase
 import org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
 import org.jetbrains.plugins.gradle.service.execution.cmd.GradleCommandLineOptionsProvider
 import org.junit.Assert
@@ -170,11 +170,11 @@ abstract class GradleRunAnythingProviderTestCase : GradleImportingTestCase() {
 }
 
 fun BuildView.assertExecutionTree(expected: String): BuildView {
-  BuildViewMessagesImportingTestCase.assertExecutionTree(this, expected, false)
+  BuildViewTestFixture.assertExecutionTree(this, expected, false)
   return this
 }
 
 fun BuildView.assertExecutionTreeNode(nodeText: String, consoleTextChecker: (String?) -> Unit, assertSelected: Boolean = false): BuildView {
-  BuildViewMessagesImportingTestCase.assertExecutionTreeNode(this, nodeText, consoleTextChecker, assertSelected)
+  BuildViewTestFixture.assertExecutionTreeNode(this, nodeText, consoleTextChecker, assertSelected)
   return this
 }

@@ -152,10 +152,11 @@ public class BuildView extends CompositeView<ExecutionConsole>
         Disposer.register(this, runContentDescriptor);
       }
     }
-    if (myExecutionConsole != null) {
-      myExecutionConsole.getComponent(); //create editor to be able to add console editor actions
+    ExecutionConsole executionConsole = myExecutionConsole;
+    if (executionConsole != null) {
+      executionConsole.getComponent(); //create editor to be able to add console editor actions
       if (myViewSettingsProvider.isExecutionViewHidden() || !myViewSettingsProvider.isSideBySideView()) {
-        addViewAndShowIfNeeded(myExecutionConsole, CONSOLE_VIEW_NAME, myViewManager.isConsoleEnabledByDefault());
+        addViewAndShowIfNeeded(executionConsole, CONSOLE_VIEW_NAME, myViewManager.isConsoleEnabledByDefault());
       }
     }
 
