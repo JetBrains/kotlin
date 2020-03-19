@@ -136,7 +136,7 @@ class FirTypeDeserializer(
 
         val abbreviatedTypeProto = proto.abbreviatedType(typeTable) ?: return simpleType
 
-        return ConeClassLikeTypeImpl(typeSymbol(abbreviatedTypeProto) as ConeClassLikeLookupTag, arguments, isNullable = false)
+        return simpleType(abbreviatedTypeProto)
 
     }
 
