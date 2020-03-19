@@ -13,6 +13,7 @@ import com.intellij.openapi.util.Pair
 import org.gradle.tooling.model.kotlin.dsl.EditorReportSeverity
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslModelsParameters.*
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 
 internal val LOG = Logger.getInstance(KotlinDslScriptModelResolverCommon::class.java)
@@ -27,7 +28,7 @@ abstract class KotlinDslScriptModelResolverCommon : AbstractProjectResolverExten
         return listOf(
             Pair(
                 PROVIDER_MODE_SYSTEM_PROPERTY_NAME,
-                STRICT_CLASSPATH_MODE_SYSTEM_PROPERTY_VALUE
+                CLASSPATH_MODE_SYSTEM_PROPERTY_VALUE
             )
         )
     }
@@ -94,6 +95,14 @@ abstract class KotlinDslScriptModelResolverCommon : AbstractProjectResolverExten
             val models = model.toListOfScriptModels()
 
             saveScriptModels(resolverCtx, models)
+
+            if (models.containsErrors()) {
+                throw IllegalStateException(KotlinIdeaGradleBundle.message("title.kotlin.build.script"))
+            }
         }
+    }
+
+    private fun Collection<KotlinDslScriptModel>.containsErrors(): Boolean {
+        return any { it.messages.any { it.severity == KotlinDslScriptModel.Severity.ERROR } }
     }
 }
