@@ -859,7 +859,7 @@ class MethodInliner(
         needReification: Boolean,
         capturesAnonymousObjectThatMustBeRegenerated: Boolean
     ): AnonymousObjectTransformationInfo {
-        // In objects inside non-default lambdas, all reified type parameters are free (not from the function
+        // In objects inside non-default inline lambdas, all reified type parameters are free (not from the function
         // we're inlining into) so there's nothing to reify:
         //
         //     inline fun <reified T> f(x: () -> KClass<T> = { { T::class }() }) = x()
@@ -867,8 +867,8 @@ class MethodInliner(
         //     fun b() = f<Int> { { Int::class }() } // non-default lambda
         //     inline fun <reified V> c() = f<V> { { V::class }() }
         //
-        // -- in a(), the default lambda captures T so a regeneration is needed; but in b() and c(), the non-default
-        // lambda cannot possibly reference it, while V is not yet bound so regenerating the object while inlining
+        // -- in a(), the default inline lambda captures T so a regeneration is needed; but in b() and c(), the non-default
+        // inline lambda cannot possibly reference it, while V is not yet bound so regenerating the object while inlining
         // the lambda into f() is pointless.
         val inNonDefaultLambda = inliningContext.isInliningLambda && inliningContext.lambdaInfo !is DefaultLambda
         val info = AnonymousObjectTransformationInfo(
