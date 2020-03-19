@@ -384,7 +384,10 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         for (valueArgument in valueArgumentsInEvaluationOrder) {
             val valueParameter = valueArgumentsToValueParameters[valueArgument]!!
             val irArgument = call.getValueArgument(valueParameter) ?: continue
-            val irArgumentValue = scope.createTemporaryVariableInBlock(context, irArgument, irBlock, valueParameter.name.asString())
+            val irArgumentValue = if (irArgument.hasNoSideEffects())
+                generateExpressionValue(irArgument.type) { irArgument }    // Computing a lambda has no side effects, can generate in place
+            else
+                scope.createTemporaryVariableInBlock(context, irArgument, irBlock, valueParameter.name.asString())
             irArgumentValues[valueParameter] = irArgumentValue
         }
 
@@ -398,6 +401,12 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         return irBlock
     }
 }
+
+fun IrExpression.hasNoSideEffects() =
+    this is IrFunctionExpression ||
+            (this is IrCallableReference && dispatchReceiver == null && extensionReceiver == null) ||
+            this is IrClassReference ||
+            this is IrConst<*>
 
 fun CallGenerator.generateCall(ktElement: KtElement, call: CallBuilder, origin: IrStatementOrigin? = null) =
     generateCall(ktElement.startOffsetSkippingComments, ktElement.endOffset, call, origin)
