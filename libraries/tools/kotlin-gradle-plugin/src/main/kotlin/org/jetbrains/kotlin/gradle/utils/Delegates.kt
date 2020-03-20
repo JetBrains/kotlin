@@ -10,17 +10,19 @@ import kotlin.reflect.KProperty
 open class ProviderDelegate<out T : Any>(
     private val defaultValueProvider: () -> T
 ) {
-    protected open val backing: T? = null
-
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        return backing ?: defaultValueProvider()
+        return defaultValueProvider()
     }
 }
 
 class PropertyDelegate<T : Any>(
-    defaultValueProvider: () -> T
-) : ProviderDelegate<T>(defaultValueProvider) {
-    override var backing: T? = null
+    private val defaultValueProvider: () -> T
+) {
+    private var backing: T? = null
+
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
+        return backing ?: defaultValueProvider()
+    }
 
     operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
         backing = value
