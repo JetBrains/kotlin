@@ -36,12 +36,9 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
-import kotlin.reflect.KClass
-import kotlin.reflect.KType
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.IllegalCallableAccessException
 import kotlin.reflect.jvm.internal.calls.createAnnotationInstance
-import kotlin.reflect.jvm.jvmErasure
 import org.jetbrains.kotlin.descriptors.runtime.components.ReflectAnnotationSource
 import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeSourceElementFactory
@@ -49,7 +46,6 @@ import org.jetbrains.kotlin.descriptors.runtime.components.tryLoadClass
 import org.jetbrains.kotlin.descriptors.runtime.structure.ReflectJavaAnnotation
 import org.jetbrains.kotlin.descriptors.runtime.structure.ReflectJavaClass
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
-import java.lang.reflect.Array as ReflectArray
 
 internal val JVM_STATIC = FqName("kotlin.jvm.JvmStatic")
 
@@ -199,10 +195,3 @@ internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
     )
     return MemberDeserializer(context).createDescriptor(proto)
 }
-
-@Suppress("UNCHECKED_CAST")
-internal fun KType.asArrayType(): KClass<Array<*>>? = jvmErasure
-    .takeIf { it.java.isArray }
-    ?.let { it as KClass<Array<*>> }
-
-internal fun KClass<Array<*>>.emptyArray() = ReflectArray.newInstance(java.componentType, 0)

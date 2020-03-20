@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
+import java.lang.reflect.Array as ReflectArray
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
@@ -17,6 +18,7 @@ import kotlin.coroutines.Continuation
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.calls.Caller
 import kotlin.reflect.jvm.javaType
+import kotlin.reflect.jvm.jvmErasure
 
 internal abstract class KCallableImpl<out R> : KCallable<R> {
     abstract val descriptor: CallableMemberDescriptor
@@ -135,7 +137,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
                     anyOptional = true
                 }
                 parameter.isVararg -> {
-                    arguments.add(parameter.type.asArrayType()?.emptyArray())
+                    arguments.add(defaultEmptyArray(parameter.type))
                 }
                 else -> {
                     throw IllegalArgumentException("No argument provided for a required parameter: $parameter")
@@ -177,7 +179,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
                     args[parameter] ?: throw IllegalArgumentException("Annotation argument value cannot be null ($parameter)")
                 }
                 parameter.isOptional -> null
-                parameter.isVararg -> parameter.type.asArrayType()?.emptyArray()
+                parameter.isVararg -> defaultEmptyArray(parameter.type)
                 else -> throw IllegalArgumentException("No argument provided for a required parameter: $parameter")
             }
         }
@@ -206,6 +208,14 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
                 else -> throw UnsupportedOperationException("Unknown primitive: $type")
             }
         } else null
+
+    private fun defaultEmptyArray(type: KType): Any = type.jvmErasure.run {
+        if (java.isArray) {
+            return ReflectArray.newInstance(java.componentType, 0)
+        } else {
+            throw KotlinReflectionInternalError("Cannot instantiate the default empty array of type `$simpleName`, because it is not an array type")
+        }
+    }
 
     private fun extractContinuationArgument(): Type? {
         if ((descriptor as? FunctionDescriptor)?.isSuspend == true) {
