@@ -49,6 +49,22 @@ abstract class FirDefaultPropertyAccessor(
     final override var body: FirBlock?
         get() = null
         set(_) {}
+
+    companion object {
+        fun createGetterOrSetter(
+            source: FirSourceElement?,
+            session: FirSession,
+            propertyTypeRef: FirTypeRef,
+            visibility: Visibility,
+            isGetter: Boolean
+        ): FirDefaultPropertyAccessor {
+            return if (isGetter) {
+                FirDefaultPropertyGetter(source, session, propertyTypeRef, visibility)
+            } else {
+                FirDefaultPropertySetter(source, session, propertyTypeRef, visibility)
+            }
+        }
+    }
 }
 
 class FirDefaultPropertyGetter(
