@@ -1973,6 +1973,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/callableReference/classesAreSynthetic.kt");
         }
 
+        @TestMetadata("kt37604.kt")
+        public void testKt37604() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/kt37604.kt");
+        }
+
         @TestMetadata("nested.kt")
         public void testNested() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/nested.kt");
