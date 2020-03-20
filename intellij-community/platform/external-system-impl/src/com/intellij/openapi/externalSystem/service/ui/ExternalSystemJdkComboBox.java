@@ -228,7 +228,7 @@ public class ExternalSystemJdkComboBox extends ComboBoxWithWidePopup<ExternalSys
       ExternalSystemJdkUtil.USE_INTERNAL_JAVA,
       ExternalSystemBundle.message("external.system.java.internal.jre"),
       buildComment(internalJdk),
-      true
+      false
     );
   }
 
