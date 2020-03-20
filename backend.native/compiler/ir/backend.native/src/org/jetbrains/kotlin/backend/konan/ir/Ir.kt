@@ -514,13 +514,13 @@ internal class KonanSymbols(
                     .getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
     )
 
-    override fun functionN(n: Int) = functionIrClassFactory.function(n).symbol
+    override fun functionN(n: Int) = functionIrClassFactory.functionN(n).symbol
 
-    override fun suspendFunctionN(n: Int) = functionIrClassFactory.suspendFunction(n).symbol
+    override fun suspendFunctionN(n: Int) = functionIrClassFactory.suspendFunctionN(n).symbol
 
-    fun kFunctionN(n: Int) = functionIrClassFactory.kFunction(n).symbol
+    fun kFunctionN(n: Int) = functionIrClassFactory.kFunctionN(n).symbol
 
-    fun kSuspendFunctionN(n: Int) = functionIrClassFactory.kSuspendFunction(n).symbol
+    fun kSuspendFunctionN(n: Int) = functionIrClassFactory.kSuspendFunctionN(n).symbol
 
     fun getKFunctionType(returnType: IrType, parameterTypes: List<IrType>) =
             kFunctionN(parameterTypes.size).typeWith(parameterTypes + returnType)

@@ -160,9 +160,10 @@ internal fun ClassDescriptor.inheritsFromCStructVar(interopBuiltIns: InteropBuil
  * CEnum inheritor.
  */
 internal fun IrSymbol.findCEnumDescriptor(interopBuiltIns: InteropBuiltIns): ClassDescriptor? =
-        descriptor.parentsWithSelf
-                .filterIsInstance<ClassDescriptor>()
-                .firstOrNull { it.implementsCEnum(interopBuiltIns) }
+        descriptor.findCEnumDescriptor(interopBuiltIns)
+
+internal fun DeclarationDescriptor.findCEnumDescriptor(interopBuiltIns: InteropBuiltIns): ClassDescriptor? =
+        parentsWithSelf.filterIsInstance<ClassDescriptor>().firstOrNull { it.implementsCEnum(interopBuiltIns) }
 
 /**
  * All structs that come from interop library inherit from CStructVar class.
@@ -170,6 +171,7 @@ internal fun IrSymbol.findCEnumDescriptor(interopBuiltIns: InteropBuiltIns): Cla
  * CStructVar inheritor.
  */
 internal fun IrSymbol.findCStructDescriptor(interopBuiltIns: InteropBuiltIns): ClassDescriptor? =
-        descriptor.parentsWithSelf
-                .filterIsInstance<ClassDescriptor>()
-                .firstOrNull { it.inheritsFromCStructVar(interopBuiltIns) }
+        descriptor.findCStructDescriptor(interopBuiltIns)
+
+internal fun DeclarationDescriptor.findCStructDescriptor(interopBuiltIns: InteropBuiltIns): ClassDescriptor? =
+        parentsWithSelf.filterIsInstance<ClassDescriptor>().firstOrNull { it.inheritsFromCStructVar(interopBuiltIns) }
