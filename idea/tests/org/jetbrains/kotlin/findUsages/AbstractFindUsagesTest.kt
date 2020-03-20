@@ -89,6 +89,11 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
 
         val isPropertiesFile = FileUtilRt.getExtension(path) == "properties"
 
+        InTextDirectivesUtils.findStringWithPrefixes(mainFileText, "// IGNORE: ")?.let {
+            println("test $mainFileName is ignored")
+            return
+        }
+
         val isFindFileUsages = InTextDirectivesUtils.isDirectiveDefined(mainFileText, "## FIND_FILE_USAGES")
 
         @Suppress("UNCHECKED_CAST")

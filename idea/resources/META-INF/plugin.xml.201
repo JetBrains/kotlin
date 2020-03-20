@@ -90,5 +90,8 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
     <completion.ml.model implementation="org.jetbrains.kotlin.idea.completion.ml.KotlinMLRankingProvider"/>
     <suggestedRefactoringSupport language="kotlin" implementationClass="org.jetbrains.kotlin.idea.refactoring.suggested.KotlinSuggestedRefactoringSupport"/>
+
+    <refactoring.moveInnerHandler language="kotlin"
+                                  implementationClass="org.jetbrains.kotlin.idea.refactoring.move.MoveKotlinInnerHandler"/>
   </extensions>
 </idea-plugin>

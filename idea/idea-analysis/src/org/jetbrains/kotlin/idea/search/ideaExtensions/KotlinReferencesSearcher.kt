@@ -17,12 +17,10 @@
 package org.jetbrains.kotlin.idea.search.ideaExtensions
 
 import com.intellij.openapi.application.QueryExecutorBase
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.psi.impl.cache.CacheManager
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.SearchRequestCollector
-import com.intellij.psi.search.SearchScope
-import com.intellij.psi.search.UsageSearchContext
+import com.intellij.psi.search.*
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.Processor
 import com.intellij.util.containers.nullize
@@ -36,8 +34,10 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.*
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions.Companion.Empty
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions.Companion.calculateEffectiveScope
 import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
 import org.jetbrains.kotlin.idea.search.usagesSearch.filterDataClassComponentsIfDisabled
 import org.jetbrains.kotlin.idea.search.usagesSearch.getClassNameForCompanionObject
@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.expectedDeclarationIfAny
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -57,6 +58,7 @@ data class KotlinReferencesSearchOptions(
     val acceptOverloads: Boolean = false,
     val acceptExtensionsOfDeclarationClass: Boolean = false,
     val acceptCompanionObjectMembers: Boolean = false,
+    val acceptImportAlias: Boolean = true,
     val searchForComponentConventions: Boolean = true,
     val searchForOperatorConventions: Boolean = true,
     val searchNamedArguments: Boolean = true,
@@ -66,6 +68,22 @@ data class KotlinReferencesSearchOptions(
 
     companion object {
         val Empty = KotlinReferencesSearchOptions()
+
+        internal fun calculateEffectiveScope(
+            unwrappedElement: PsiNamedElement,
+            parameters: ReferencesSearch.SearchParameters
+        ): SearchScope {
+            val kotlinOptions = (parameters as? KotlinReferencesSearchParameters)?.kotlinOptions ?: Empty
+            val elements = if (unwrappedElement is KtDeclaration && !isOnlyKotlinSearch(parameters.scopeDeterminedByUser)) {
+                unwrappedElement.toLightElements().filterDataClassComponentsIfDisabled(kotlinOptions).nullize()
+            } else {
+                null
+            } ?: listOf(unwrappedElement)
+
+            return elements.fold(parameters.effectiveSearchScope) { scope, e ->
+                scope.unionSafe(parameters.effectiveSearchScope(e))
+            }
+        }
     }
 }
 
@@ -76,6 +94,43 @@ class KotlinReferencesSearchParameters(
     optimizer: SearchRequestCollector? = null,
     val kotlinOptions: KotlinReferencesSearchOptions = Empty
 ) : ReferencesSearch.SearchParameters(elementToSearch, scope, ignoreAccessScope, optimizer)
+
+class KotlinAliasedImportedElementSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>(true) {
+    override fun processQuery(parameters: ReferencesSearch.SearchParameters, consumer: Processor<in PsiReference?>) {
+        val kotlinOptions = (parameters as? KotlinReferencesSearchParameters)?.kotlinOptions ?: Empty
+        if (!kotlinOptions.acceptImportAlias) return
+        val element = parameters.elementToSearch
+        if (!element.isValid) return
+        val unwrappedElement = element.namedUnwrappedElement ?: return
+        val name = unwrappedElement.name
+        if (name == null || StringUtil.isEmptyOrSpaces(name)) return
+        val effectiveSearchScope = calculateEffectiveScope(unwrappedElement, parameters)
+
+        val collector = parameters.optimizer
+        val session = collector.searchSession
+        collector.searchWord(name, effectiveSearchScope, UsageSearchContext.IN_CODE, true, element, AliasProcessor(element, session))
+    }
+
+    private class AliasProcessor(
+        private val myTarget: PsiElement,
+        private val mySession: SearchSession
+    ) : RequestResultProcessor(myTarget) {
+        override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: Processor<in PsiReference>): Boolean {
+            val importStatement = element.parent as? KtImportDirective ?: return true
+            val importAlias = importStatement.alias?.name ?: return true
+
+            val reference = importStatement.importedReference?.getQualifiedElementSelector()?.mainReference ?: return true
+            if (!reference.isReferenceTo(myTarget)) {
+                return true
+            }
+
+            val collector = SearchRequestCollector(mySession)
+            val fileScope: SearchScope = LocalSearchScope(element.containingFile)
+            collector.searchWord(importAlias, fileScope, UsageSearchContext.IN_CODE, true, myTarget)
+            return PsiSearchHelper.getInstance(element.project).processRequests(collector, consumer)
+        }
+    }
+}
 
 class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>() {
 
@@ -108,17 +163,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                     null
                 } ?: unwrappedElement
 
-            val effectiveSearchScope = run {
-                val elements = if (elementToSearch is KtDeclaration && !isOnlyKotlinSearch(queryParameters.scopeDeterminedByUser)) {
-                    elementToSearch.toLightElements().filterDataClassComponentsIfDisabled(kotlinOptions).nullize()
-                } else {
-                    null
-                } ?: listOf(elementToSearch)
-
-                elements.fold(queryParameters.effectiveSearchScope) { scope, e ->
-                    scope.unionSafe(queryParameters.effectiveSearchScope(e))
-                }
-            }
+            val effectiveSearchScope = calculateEffectiveScope(unwrappedElement, queryParameters)
 
             val refFilter: (PsiReference) -> Boolean = when (elementToSearch) {
                 is KtParameter -> ({ ref: PsiReference -> !ref.isNamedArgumentReference()/* they are processed later*/ })
