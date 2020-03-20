@@ -742,12 +742,7 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
 
         @TestMetadata("superIsNotAnExpression.kt")
         public void testSuperIsNotAnExpression() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/diagnostics/superIsNotAnExpression.kt");
-        }
-
-        @TestMetadata("superclassNotAccessibleFromInterface.kt")
-        public void testSuperclassNotAccessibleFromInterface() throws Exception {
-            runTest("compiler/fir/resolve/testData/resolve/diagnostics/superclassNotAccessibleFromInterface.kt");
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/superIsNotAnExpression.kt");
         }
     }
 

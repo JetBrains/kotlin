@@ -3,45 +3,49 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.components
+package org.jetbrains.kotlin.fir.analysis.collectors.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
+import org.jetbrains.kotlin.fir.analysis.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.onSource
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
-import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 
 class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollector) : AbstractDiagnosticCollectorComponent(collector) {
-    override fun visitErrorLoop(errorLoop: FirErrorLoop) {
+    override fun visitErrorLoop(errorLoop: FirErrorLoop, data: CheckerContext) {
         val source = errorLoop.source ?: return
         runCheck { reportFirDiagnostic(errorLoop.diagnostic, source, it) }
     }
 
-    override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
+    override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: CheckerContext) {
         val source = errorTypeRef.source ?: return
         runCheck { reportFirDiagnostic(errorTypeRef.diagnostic, source, it) }
     }
 
-    override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference) {
+    override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: CheckerContext) {
         val source = errorNamedReference.source ?: return
         runCheck { reportFirDiagnostic(errorNamedReference.diagnostic, source, it) }
     }
 
-    override fun visitErrorExpression(errorExpression: FirErrorExpression) {
+    override fun visitErrorExpression(errorExpression: FirErrorExpression, data: CheckerContext) {
         val source = errorExpression.source ?: return
         runCheck { reportFirDiagnostic(errorExpression.diagnostic, source, it) }
     }
 
-    override fun visitErrorFunction(errorFunction: FirErrorFunction) {
+    override fun visitErrorFunction(errorFunction: FirErrorFunction, data: CheckerContext) {
         val source = errorFunction.source ?: return
         runCheck { reportFirDiagnostic(errorFunction.diagnostic, source, it) }
     }
@@ -57,10 +61,7 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             is FirVariableExpectedError -> Errors.VARIABLE_EXPECTED.onSource(source)
             is FirTypeMismatchError -> FirErrors.TYPE_MISMATCH.onSource(source, diagnostic.expectedType, diagnostic.actualType)
             is FirSimpleDiagnostic -> diagnostic.getFactory().onSource(source)
-
-//            is FirDiagnosticWithParameters1<*> -> diagnostic.getFactory().onSource(source, diagnostic.a)
-            is FirMessageDiagnostic -> diagnostic.getFactory().onSource(source, diagnostic.a)
-
+            is FirDiagnosticWithParameters1<*> -> diagnostic.getFactory().tryOnSource(source, diagnostic.a)
             is FirStubDiagnostic -> null
             else -> throw IllegalArgumentException("Unsupported diagnostic type: ${diagnostic.javaClass}")
         }
@@ -68,6 +69,7 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
     }
 
     private fun FirSimpleDiagnostic.getFactory(): DiagnosticFactory0<PsiElement> {
+        @Suppress("UNCHECKED_CAST")
         return when (kind) {
             DiagnosticKind.Syntax -> FirErrors.SYNTAX_ERROR
             DiagnosticKind.ReturnNotAllowed -> Errors.RETURN_NOT_ALLOWED
@@ -87,17 +89,19 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
         } as DiagnosticFactory0<PsiElement>
     }
 
-//    private fun FirDiagnosticWithParameters1<*>.getFactory(): DiagnosticFactory1<PsiElement, *> {
-//        return when (kind) {
-//            DiagnosticKind.SuperNotAllowed -> Errors.SUPER_IS_NOT_AN_EXPRESSION
-//            else -> throw IllegalArgumentException("Unsupported diagnostic kind: $kind at $javaClass")
-//        } as DiagnosticFactory1<PsiElement, *>
-//    }
-
-    private fun FirMessageDiagnostic.getFactory(): DiagnosticFactory1<PsiElement, String> {
+    private fun FirDiagnosticWithParameters1<*>.getFactory(): DiagnosticFactory1<PsiElement, Any?> {
+        @Suppress("UNCHECKED_CAST")
         return when (kind) {
             DiagnosticKind.SuperNotAllowed -> Errors.SUPER_IS_NOT_AN_EXPRESSION
             else -> throw IllegalArgumentException("Unsupported diagnostic kind: $kind at $javaClass")
-        } as DiagnosticFactory1<PsiElement, String>
+        } as DiagnosticFactory1<PsiElement, Any?>
+    }
+
+    private inline fun <reified E : PsiElement, reified A> DiagnosticFactory1<E, A>.tryOnSource(
+        source: FirSourceElement,
+        a: Any?
+    ): ConeDiagnostic? {
+        val aa = a as? A ?: throw IllegalArgumentException("Parameter passed to the factory is of incompatible type!")
+        return onSource(source, aa)
     }
 }
