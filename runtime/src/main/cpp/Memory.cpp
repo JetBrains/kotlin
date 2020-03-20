@@ -451,6 +451,8 @@ struct MemoryState {
   uint64_t allocSinceLastGcThreshold;
 #endif // USE_GC
 
+  KStdUnorderedMap<ObjHeader**, ObjHeader*> initializingSingletons;
+
 #if COLLECT_STATISTIC
   #define CONTAINER_ALLOC_STAT(state, size, container) state->statistic.incAlloc(size, container);
   #define CONTAINER_DESTROY_STAT(state, container) \
@@ -1999,7 +2001,7 @@ OBJ_GETTER(initInstance,
 
 template <bool Strict>
 OBJ_GETTER(initSharedInstance,
-    ObjHeader** location, ObjHeader** localLocation, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
+    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
 #if KONAN_NO_THREADS
   ObjHeader* value = *location;
   if (value != nullptr) {
@@ -2025,25 +2027,32 @@ OBJ_GETTER(initSharedInstance,
   }
 #endif  // KONAN_NO_EXCEPTIONS
 #else  // KONAN_NO_THREADS
-  ObjHeader* value = *localLocation;
-  if (value != nullptr) RETURN_OBJ(value);
+  auto it = memoryState->initializingSingletons.find(location);
+  if (it != memoryState->initializingSingletons.end()) {
+    RETURN_OBJ(it->second);
+  }
 
   ObjHeader* initializing = reinterpret_cast<ObjHeader*>(1);
 
   // Spin lock.
+  ObjHeader* value = nullptr;
   while ((value = __sync_val_compare_and_swap(location, nullptr, initializing)) == initializing);
   if (value != nullptr) {
     // OK'ish, inited by someone else.
     RETURN_OBJ(value);
   }
   ObjHeader* object = AllocInstance(typeInfo, OBJ_RESULT);
-  UpdateHeapRef(localLocation, object);
+  auto insertIt = memoryState->initializingSingletons.insert({location, object});
+  RuntimeCheck(insertIt.second, "object cannot be assigned twice into initializingSingletons");
+  addHeapRef(object);
 #if KONAN_NO_EXCEPTIONS
   ctor(object);
   if (Strict)
     FreezeSubgraph(object);
   UpdateHeapRef(location, object);
   synchronize();
+  memoryState->initializingSingletons.erase(location);
+  releaseHeapRef<Strict>(object);
   return object;
 #else  // KONAN_NO_EXCEPTIONS
   try {
@@ -2052,11 +2061,14 @@ OBJ_GETTER(initSharedInstance,
       FreezeSubgraph(object);
     UpdateHeapRef(location, object);
     synchronize();
+    memoryState->initializingSingletons.erase(location);
+    releaseHeapRef<Strict>(object);
     return object;
   } catch (...) {
     UpdateReturnRef(OBJ_RESULT, nullptr);
     zeroHeapRef(location);
-    zeroHeapRef(localLocation);
+    memoryState->initializingSingletons.erase(location);
+    releaseHeapRef<Strict>(object);
     synchronize();
     throw;
   }
@@ -2803,12 +2815,12 @@ OBJ_GETTER(InitInstanceRelaxed,
 }
 
 OBJ_GETTER(InitSharedInstanceStrict,
-    ObjHeader** location, ObjHeader** localLocation, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-  RETURN_RESULT_OF(initSharedInstance<true>, location, localLocation, typeInfo, ctor);
+    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
+  RETURN_RESULT_OF(initSharedInstance<true>, location, typeInfo, ctor);
 }
 OBJ_GETTER(InitSharedInstanceRelaxed,
-    ObjHeader** location, ObjHeader** localLocation, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-  RETURN_RESULT_OF(initSharedInstance<false>, location, localLocation, typeInfo, ctor);
+    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
+  RETURN_RESULT_OF(initSharedInstance<false>, location, typeInfo, ctor);
 }
 
 void SetStackRefStrict(ObjHeader** location, const ObjHeader* object) {

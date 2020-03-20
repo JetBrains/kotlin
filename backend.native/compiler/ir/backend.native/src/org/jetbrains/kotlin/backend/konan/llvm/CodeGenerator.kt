@@ -921,7 +921,6 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         }
         val singleton = context.llvmDeclarations.forSingleton(irClass)
         val instanceAddress = singleton.instanceStorage
-        val instanceShadowAddress = singleton.instanceShadowStorage
 
         if (storageKind == ObjectStorageKind.PERMANENT) {
             return loadSlot(instanceAddress.getAddress(this), false)
@@ -938,13 +937,13 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         val typeInfo = codegen.typeInfoForAllocation(irClass)
         val defaultConstructor = irClass.constructors.single { it.valueParameters.size == 0 }
         val ctor = codegen.llvmFunction(defaultConstructor)
-        val (initFunction, args) =
+        val initFunction =
                 if (storageKind == ObjectStorageKind.SHARED && context.config.threadsAreAllowed) {
-                    val shadowObjectPtr = instanceShadowAddress!!.getAddress(this)
-                    context.llvm.initSharedInstanceFunction to listOf(objectPtr, shadowObjectPtr, typeInfo, ctor)
+                    context.llvm.initSharedInstanceFunction
                 } else {
-                    context.llvm.initInstanceFunction to listOf(objectPtr, typeInfo, ctor)
+                    context.llvm.initInstanceFunction
                 }
+        val args = listOf(objectPtr, typeInfo, ctor)
         val newValue = call(initFunction, args, Lifetime.GLOBAL, exceptionHandler)
         val bbInitResult = currentBlock
         br(bbExit)
