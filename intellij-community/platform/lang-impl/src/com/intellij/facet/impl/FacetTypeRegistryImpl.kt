@@ -17,7 +17,8 @@ import java.util.*
 class FacetTypeRegistryImpl : FacetTypeRegistry() {
   private val myTypeIds: MutableMap<String, FacetTypeId<*>> = HashMap()
   private val myFacetTypes: MutableMap<FacetTypeId<*>, FacetType<*, *>> = HashMap()
-  private var myExtensionsLoaded = false
+  @Volatile private var myExtensionsLoaded = false
+  private val myTypeRegistrationLock = Object()
 
   @Synchronized
   override fun registerFacetType(facetType: FacetType<*, *>) {
@@ -138,26 +139,31 @@ class FacetTypeRegistryImpl : FacetTypeRegistry() {
     if (myExtensionsLoaded) {
       return
     }
-    FacetType.EP_NAME.forEachExtensionSafe {
-      registerFacetType(it)
-    }
-    myExtensionsLoaded = true
-    FacetType.EP_NAME.addExtensionPointListener(
-      object : ExtensionPointListener<FacetType<*, *>?> {
-        override fun extensionAdded(extension: FacetType<*, *>, pluginDescriptor: PluginDescriptor) {
-          registerFacetType(extension)
-          runWriteAction {
-            ProjectManager.getInstance().openProjects.forEach {
-              loadInvalidFacetsOfType(it, extension)
+
+    synchronized(myTypeRegistrationLock) {
+      if (myExtensionsLoaded) return
+
+      FacetType.EP_NAME.forEachExtensionSafe {
+        registerFacetType(it)
+      }
+      FacetType.EP_NAME.addExtensionPointListener(
+        object : ExtensionPointListener<FacetType<*, *>?> {
+          override fun extensionAdded(extension: FacetType<*, *>, pluginDescriptor: PluginDescriptor) {
+            registerFacetType(extension)
+            runWriteAction {
+              ProjectManager.getInstance().openProjects.forEach {
+                loadInvalidFacetsOfType(it, extension)
+              }
             }
           }
-        }
 
-        override fun extensionRemoved(extension: FacetType<*, *>,
-                                      pluginDescriptor: PluginDescriptor) {
-          unregisterFacetType(extension)
-        }
-      }, null)
+          override fun extensionRemoved(extension: FacetType<*, *>,
+                                        pluginDescriptor: PluginDescriptor) {
+            unregisterFacetType(extension)
+          }
+        }, null)
+      myExtensionsLoaded = true
+    }
   }
 
   companion object {
