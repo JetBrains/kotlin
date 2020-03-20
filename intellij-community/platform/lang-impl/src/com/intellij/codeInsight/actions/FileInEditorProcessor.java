@@ -38,6 +38,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.ui.ColorUtil;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.JBColor;
@@ -57,14 +58,12 @@ public class FileInEditorProcessor {
   private static final Logger LOG = Logger.getInstance(FileInEditorProcessor.class);
 
   private final Editor myEditor;
-  private final boolean myShouldCleanupCode;
 
   private boolean myNoChangesDetected = false;
   private final boolean myProcessChangesTextOnly;
 
-  private final boolean myShouldOptimizeImports;
-  private final boolean myShouldRearrangeCode;
   private final boolean myProcessSelectedText;
+  private final LayoutCodeOptions myOptions;
 
   private final Project myProject;
 
@@ -79,9 +78,7 @@ public class FileInEditorProcessor {
     myProject = file.getProject();
     myEditor = editor;
 
-    myShouldCleanupCode = runOptions.isCodeCleanup();
-    myShouldOptimizeImports = runOptions.isOptimizeImports();
-    myShouldRearrangeCode = runOptions.isRearrangeCode();
+    myOptions = runOptions;
     myProcessSelectedText = myEditor != null && runOptions.getTextRangeType() == SELECTED_TEXT;
     myProcessChangesTextOnly = runOptions.getTextRangeType() == VCS_CHANGED_TEXT;
   }
@@ -94,7 +91,7 @@ public class FileInEditorProcessor {
       return;
     }
 
-    if (myShouldOptimizeImports) {
+    if (myOptions.isOptimizeImports()) {
       myProcessor = new OptimizeImportsProcessor(myProject, myFile);
     }
 
@@ -103,11 +100,11 @@ public class FileInEditorProcessor {
     }
 
     myProcessor = mixWithReformatProcessor(myProcessor);
-    if (myShouldRearrangeCode) {
+    if (myOptions.isRearrangeCode()) {
       myProcessor = mixWithRearrangeProcessor(myProcessor);
     }
 
-    if (myShouldCleanupCode) {
+    if (myOptions.isCodeCleanup()) {
       myProcessor = mixWithCleanupProcessor(myProcessor);
     }
 
@@ -121,6 +118,10 @@ public class FileInEditorProcessor {
     }
 
     myProcessor.run();
+
+    if (myEditor != null && myOptions.getTextRangeType() == TextRangeType.WHOLE_FILE) {
+      CodeStyleSettingsManager.getInstance(myProject).notifyCodeStyleSettingsChanged();
+    }
   }
 
   @NotNull
