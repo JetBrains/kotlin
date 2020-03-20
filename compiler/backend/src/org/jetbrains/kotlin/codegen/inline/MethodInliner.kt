@@ -284,10 +284,11 @@ class MethodInliner(
 
                     val childSourceMapper =
                         if (inliningContext.classRegeneration && !inliningContext.isInliningLambda)
-                            NestedSourceMapper(sourceMapper, lambdaSMAP.intervals, lambdaSMAP.sourceInfo)
-                        else if (info is DefaultLambda) {
-                            NestedSourceMapper(sourceMapper.parent!!, lambdaSMAP.intervals, lambdaSMAP.sourceInfo)
-                        } else InlineLambdaSourceMapper(sourceMapper.parent!!, info.node)
+                            NestedSourceMapper(sourceMapper, lambdaSMAP)
+                        else if (info is DefaultLambda)
+                            NestedSourceMapper(sourceMapper.parent!!, lambdaSMAP)
+                        else
+                            SameFileNestedSourceMapper(sourceMapper.parent!!, info.node.classSMAP)
 
                     val inliner = MethodInliner(
                         info.node.node, lambdaParameters, inliningContext.subInlineLambda(info),
