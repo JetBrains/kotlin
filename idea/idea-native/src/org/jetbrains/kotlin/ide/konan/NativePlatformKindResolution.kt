@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.library.isInterop
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.platform.konan.KonanPlatforms
-import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
@@ -62,7 +61,7 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
         languageVersionSettings: LanguageVersionSettings,
         moduleDescriptor: ModuleDescriptor
     ): PackageFragmentProvider? =
-        createLibraryPackageFragmentProvider(moduleInfo, storageManager, languageVersionSettings, moduleDescriptor)
+        createNativeKlibPackageFragmentProvider(moduleInfo, storageManager, languageVersionSettings, moduleDescriptor)
 
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean =
         virtualFile.isKlibLibraryRootForPlatform(KonanPlatforms.defaultKonanPlatform)
@@ -90,26 +89,20 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
     companion object {
         private val NativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
 
-        fun createLibraryPackageFragmentProvider(
+        fun createNativeKlibPackageFragmentProvider(
             moduleInfo: ModuleInfo,
             storageManager: StorageManager,
             languageVersionSettings: LanguageVersionSettings,
             moduleDescriptor: ModuleDescriptor
         ): PackageFragmentProvider? {
-            val library = (moduleInfo as? NativeKlibLibraryInfo)?.resolvedKotlinLibrary ?: return null
-            if (!library.getCompatibilityInfo().isCompatible) return null
-
-            val packageFragmentNames = CachingIdeKlibMetadataLoader.loadModuleHeader(library).packageFragmentNameList
-
-            return NativeFactories.DefaultDeserializedDescriptorFactory.createPackageFragmentProvider(
-                library = library,
-                packageAccessHandler = CachingIdeKlibMetadataLoader,
-                packageFragmentNames = packageFragmentNames,
-                storageManager = storageManager,
-                moduleDescriptor = moduleDescriptor,
-                configuration = CompilerDeserializationConfiguration(languageVersionSettings),
-                compositePackageFragmentAddend = null
-            )
+            return (moduleInfo as? NativeKlibLibraryInfo)
+                ?.resolvedKotlinLibrary
+                ?.createKlibPackageFragmentProvider(
+                    storageManager = storageManager,
+                    metadataModuleDescriptorFactory = NativeFactories.DefaultDeserializedDescriptorFactory,
+                    languageVersionSettings = languageVersionSettings,
+                    moduleDescriptor = moduleDescriptor
+                )
         }
 
         private fun createKotlinNativeBuiltIns(moduleInfo: ModuleInfo, projectContext: ProjectContext): KotlinBuiltIns {
@@ -131,7 +124,7 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
                 isReleaseCoroutines = false
             )
 
-            val stdlibPackageFragmentProvider = createLibraryPackageFragmentProvider(
+            val stdlibPackageFragmentProvider = createNativeKlibPackageFragmentProvider(
                 stdlibInfo,
                 storageManager,
                 languageVersionSettings,

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
 import org.jetbrains.kotlin.frontend.java.di.configureJavaSpecificComponents
 import org.jetbrains.kotlin.frontend.java.di.initializeJavaSpecificComponents
-import org.jetbrains.kotlin.idea.klib.CachingIdeKlibMetadataLoader
+import org.jetbrains.kotlin.idea.klib.createKlibPackageFragmentProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
@@ -130,11 +130,9 @@ class CompositeResolverForModuleFactory(
         val metadataProvder = container.get<MetadataPackageFragmentProvider>()
         var klibMetadataProvider: PackageFragmentProvider? = null
 
-        if (moduleInfo is CommonKlibLibraryInfo && moduleInfo.compatibilityInfo.isCompatible) {
+        if (moduleInfo is CommonKlibLibraryInfo) {
             val library = moduleInfo.resolvedKotlinLibrary
             val languageVersionSettings = container.get<LanguageVersionSettings>()
-
-            val packageFragmentNames = CachingIdeKlibMetadataLoader.loadModuleHeader(library).packageFragmentNameList
 
             val metadataFactories = KlibMetadataFactories(
                 { DefaultBuiltIns.Instance },
@@ -148,14 +146,11 @@ class CompositeResolverForModuleFactory(
                 metadataFactories.platformDependentTypeTransformer
             )
 
-            klibMetadataProvider = klibMetadataModuleDescriptorFactory.createPackageFragmentProvider(
-                library,
-                packageAccessHandler = CachingIdeKlibMetadataLoader,
-                packageFragmentNames = packageFragmentNames,
-                storageManager = moduleContext.storageManager,
-                moduleDescriptor = moduleDescriptor,
-                configuration = CompilerDeserializationConfiguration(languageVersionSettings),
-                compositePackageFragmentAddend = null
+            klibMetadataProvider = library.createKlibPackageFragmentProvider(
+                moduleContext.storageManager,
+                klibMetadataModuleDescriptorFactory,
+                languageVersionSettings,
+                moduleDescriptor
             )
         }
         return listOfNotNull(metadataProvder, klibMetadataProvider)

@@ -12,6 +12,10 @@ import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataModuleDescriptorFactory
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.library.*
@@ -22,6 +26,8 @@ import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
+import org.jetbrains.kotlin.storage.StorageManager
 import java.io.IOException
 import java.util.*
 
@@ -89,4 +95,25 @@ fun createFileStub(project: Project, text: String): PsiFileStub<*> {
     val psiFileFactory = PsiFileFactory.getInstance(project) as PsiFileFactoryImpl
     val file = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, false, false)!!
     return KtStubElementTypes.FILE.builder.buildStubTree(file) as PsiFileStub<*>
+}
+
+fun KotlinLibrary.createKlibPackageFragmentProvider(
+    storageManager: StorageManager,
+    metadataModuleDescriptorFactory: KlibMetadataModuleDescriptorFactory,
+    languageVersionSettings: LanguageVersionSettings,
+    moduleDescriptor: ModuleDescriptor
+): PackageFragmentProvider? {
+    if (!getCompatibilityInfo().isCompatible) return null
+
+    val packageFragmentNames = CachingIdeKlibMetadataLoader.loadModuleHeader(this).packageFragmentNameList
+
+    return metadataModuleDescriptorFactory.createPackageFragmentProvider(
+        library = this,
+        packageAccessHandler = CachingIdeKlibMetadataLoader,
+        packageFragmentNames = packageFragmentNames,
+        storageManager = storageManager,
+        moduleDescriptor = moduleDescriptor,
+        configuration = CompilerDeserializationConfiguration(languageVersionSettings),
+        compositePackageFragmentAddend = null
+    )
 }
