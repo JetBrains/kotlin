@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.AbstractFirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.constructType
@@ -194,6 +195,7 @@ class JavaSymbolProvider(
                             returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session, javaTypeParameterStack)
                             isVar = !javaField.isFinal
                             isStatic = javaField.isStatic
+                            isEnumEntry = javaField.isEnumEntry
                             addAnnotationsFrom(this@JavaSymbolProvider.session, javaField, javaTypeParameterStack)
                         }
                         declarations += firJavaField
