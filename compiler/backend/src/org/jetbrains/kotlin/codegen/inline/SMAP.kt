@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.codegen.inline.SMAP.Companion.FILE_SECTION
 import org.jetbrains.kotlin.codegen.inline.SMAP.Companion.LINE_SECTION
 import org.jetbrains.kotlin.codegen.inline.SMAP.Companion.STRATA_SECTION
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.util.*
 import kotlin.math.max
 
@@ -86,8 +87,8 @@ class SMAPBuilder(
 }
 
 open class NestedSourceMapper(
-    override val parent: SourceMapper, val ranges: List<RangeMapping>, sourceInfo: SourceInfo
-) : DefaultSourceMapper(sourceInfo) {
+    override val parent: SourceMapper, protected val smap: SMAP
+) : DefaultSourceMapper(smap.sourceInfo) {
 
     private val visitedLines = TIntIntHashMap()
 
@@ -104,7 +105,7 @@ open class NestedSourceMapper(
             mappedLineNumber
         } else {
             val rangeForMapping =
-                (if (lastVisitedRange?.contains(lineNumber) == true) lastVisitedRange!! else findMappingIfExists(lineNumber))
+                (if (lastVisitedRange?.contains(lineNumber) == true) lastVisitedRange!! else smap.findRange(lineNumber))
                     ?: error("Can't find range to map line $lineNumber in ${sourceInfo.source}: ${sourceInfo.pathOrCleanFQN}")
             val sourceLineNumber = rangeForMapping.mapDestToSource(lineNumber)
             val newLineNumber = parent.mapLineNumber(sourceLineNumber, rangeForMapping.parent!!.name, rangeForMapping.parent!!.path)
@@ -115,22 +116,12 @@ open class NestedSourceMapper(
             newLineNumber
         }
     }
-
-    private fun findMappingIfExists(lineNumber: Int): RangeMapping? {
-        val index = ranges.binarySearch(RangeMapping(lineNumber, lineNumber, 1), Comparator { value, key ->
-            if (key.dest in value) 0 else RangeMapping.Comparator.compare(value, key)
-        })
-        return if (index < 0) null else ranges[index]
-    }
 }
 
-open class InlineLambdaSourceMapper(
-    parent: SourceMapper, smap: SMAPAndMethodNode
-) : NestedSourceMapper(parent, smap.sortedRanges, smap.classSMAP.sourceInfo) {
-
+open class SameFileNestedSourceMapper(parent: SourceMapper, smap: SMAP) : NestedSourceMapper(parent, smap) {
     override fun mapLineNumber(lineNumber: Int): Int {
-        if (ranges.firstOrNull()?.contains(lineNumber) == true) {
-            //don't remap origin lambda line numbers
+        if (lineNumber <= smap.sourceInfo.linesInFile) {
+            // assuming the parent source mapper is for the same file, this line number does not need remapping
             return lineNumber
         }
         return super.mapLineNumber(lineNumber)
@@ -250,20 +241,20 @@ open class DefaultSourceMapper(val sourceInfo: SourceInfo) : SourceMapper {
 }
 
 class SMAP(val fileMappings: List<FileMapping>) {
-    init {
+    val sourceInfo: SourceInfo = run {
         assert(fileMappings.isNotEmpty()) { "File Mappings shouldn't be empty" }
+        val defaultFile = fileMappings.first()
+        val defaultRange = defaultFile.lineMappings.first()
+        SourceInfo(defaultFile.name, defaultFile.path, defaultRange.source + defaultRange.range - 1)
     }
 
-    val default: FileMapping
-        get() = fileMappings.first()
+    private val intervals = fileMappings.flatMap { it.lineMappings }.sortedWith(RangeMapping.Comparator)
 
-    val intervals = fileMappings.flatMap { it.lineMappings }.sortedWith(RangeMapping.Comparator)
-
-    val sourceInfo: SourceInfo
-
-    init {
-        val defaultMapping = default.lineMappings.first()
-        sourceInfo = SourceInfo(default.name, default.path, defaultMapping.source + defaultMapping.range - 1)
+    fun findRange(lineNumber: Int): RangeMapping? {
+        val index = intervals.binarySearch(RangeMapping(lineNumber, lineNumber, 1), Comparator { value, key ->
+            if (key.dest in value) 0 else RangeMapping.Comparator.compare(value, key)
+        })
+        return if (index < 0) null else intervals[index]
     }
 
     companion object {
@@ -274,6 +265,7 @@ class SMAP(val fileMappings: List<FileMapping>) {
     }
 }
 
+data class SMAPAndMethodNode(val node: MethodNode, val classSMAP: SMAP)
 
 class RawFileMapping(val name: String, val path: String) {
     private val rangeMappings = arrayListOf<RangeMapping>()
