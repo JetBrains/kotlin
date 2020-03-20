@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
@@ -54,6 +55,7 @@ sealed class ProjectTemplate : DisplayableSettingItem {
             MultiplatformLibrary,
             AndroidApplication,
             IOSApplication,
+            MultiplatformMobileLibrary,
             NativeConsoleApplication,
             JsBrowserApplication
         )
@@ -281,6 +283,43 @@ object IOSApplication : ProjectTemplate() {
                         Sourceset(type, dependencies = emptyList())
                     },
                     subModules = emptyList()
+                )
+            )
+        )
+}
+
+object MultiplatformMobileLibrary : ProjectTemplate() {
+    override val title = "Multiplatform Mobile Library"
+    override val description = "Create a library that supports sharing code between iOS and Android."
+    override val suggestedProjectName = "myMppMobileLibrary"
+    override val projectKind = ProjectKind.Multiplatform
+
+    override val setsPluginSettings: List<SettingWithValue<*, *>>
+        get() = listOf(
+            KotlinPlugin::modules withValue listOf(
+                MultiplatformModule(
+                    "library",
+                    listOf(
+                        ModuleType.common.createDefaultTarget(),
+                        Module(
+                            "android",
+                            AndroidTargetConfigurator,
+                            null,
+                            SourcesetType.ALL.map { type ->
+                                Sourceset(type, dependencies = emptyList())
+                            },
+                            emptyList()
+                        ),
+                        Module(
+                            "ios",
+                            RealNativeTargetConfigurator.configuratorsByModuleType.getValue(ModuleSubType.iosX64),
+                            null,
+                            SourcesetType.ALL.map { type ->
+                                Sourceset(type, dependencies = emptyList())
+                            },
+                            emptyList()
+                        )
+                    )
                 )
             )
         )

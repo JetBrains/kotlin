@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.panel
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
@@ -17,8 +18,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module.Comp
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.isRootModule
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 import org.jetbrains.kotlin.tools.projectWizard.templates.settings
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.TitledComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.DropDownComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.TextFieldComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.label
@@ -123,6 +123,7 @@ private class ModuleTemplateComponent(
     override val needCentering: Boolean = false
     private val templateDescriptionLabel = label("") {
         fontColor = UIUtil.FontColor.BRIGHTER
+        addBorder(JBUI.Borders.empty(4, 4))
     }
 
     override fun onInit() {
@@ -134,10 +135,9 @@ private class ModuleTemplateComponent(
         templateDescriptionLabel.text = template?.description
     }
 
-    override val component = panel {
-        row {
-            dropDown.component(growX, comment = module.template?.description)
-        }
+    override val component = borderPanel {
+        addToCenter(dropDown.component)
+        addToBottom(templateDescriptionLabel)
     }
 
     override val title: String = "Template"

@@ -65,6 +65,11 @@ public class ProjectTemplateNewWizardProjectImportTestGenerated extends Abstract
             runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformLibrary/");
         }
 
+        @TestMetadata("multiplatformMobileLibrary")
+        public void testMultiplatformMobileLibrary() throws Exception {
+            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformMobileLibrary/");
+        }
+
         @TestMetadata("nativeConsoleApplication")
         public void testNativeConsoleApplication() throws Exception {
             runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/nativeConsoleApplication/");
@@ -118,6 +123,11 @@ public class ProjectTemplateNewWizardProjectImportTestGenerated extends Abstract
             runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformLibrary/");
         }
 
+        @TestMetadata("multiplatformMobileLibrary")
+        public void testMultiplatformMobileLibrary() throws Exception {
+            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformMobileLibrary/");
+        }
+
         @TestMetadata("nativeConsoleApplication")
         public void testNativeConsoleApplication() throws Exception {
             runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/nativeConsoleApplication/");
@@ -169,6 +179,11 @@ public class ProjectTemplateNewWizardProjectImportTestGenerated extends Abstract
         @TestMetadata("multiplatformLibrary")
         public void testMultiplatformLibrary() throws Exception {
             runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformLibrary/");
+        }
+
+        @TestMetadata("multiplatformMobileLibrary")
+        public void testMultiplatformMobileLibrary() throws Exception {
+            runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformMobileLibrary/");
         }
 
         @TestMetadata("nativeConsoleApplication")

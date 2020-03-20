@@ -63,6 +63,11 @@ public class ProjectTemplateBuildFileGenerationTestGenerated extends AbstractPro
         runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformLibrary/");
     }
 
+    @TestMetadata("multiplatformMobileLibrary")
+    public void testMultiplatformMobileLibrary() throws Exception {
+        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/multiplatformMobileLibrary/");
+    }
+
     @TestMetadata("nativeConsoleApplication")
     public void testNativeConsoleApplication() throws Exception {
         runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/nativeConsoleApplication/");
