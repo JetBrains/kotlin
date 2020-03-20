@@ -4,7 +4,8 @@ FILE: definetelyNotNullForTypeParameter.kt
     public final fun <X> id(x: R|Out<X>|): R|Out<X>| {
         ^id R|kotlin/TODO|()
     }
-    public final fun <F : R|kotlin/Any|> foo(computable: R|Out<F?>|): R|kotlin/Unit|
+    public final fun <F : R|kotlin/Any|> foo(computable: R|Out<F?>|): R|kotlin/Unit| {
+    }
     public final fun <T : R|kotlin/Any|> bar(computable: R|Out<T?>|): R|kotlin/Unit| {
-        R|/foo|<R|T|>(R|/id|<R|T?|>(R|<local>/computable|))
+        R|/foo|<R|T?!!|>(R|/id|<R|T?|>(R|<local>/computable|))
     }
