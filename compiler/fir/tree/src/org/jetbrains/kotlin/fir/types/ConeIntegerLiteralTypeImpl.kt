@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
     override val possibleTypes: Collection<ConeClassLikeType>
 
-    constructor(value: Long) : super(value) {
+    constructor(value: Long, nullability: ConeNullability = ConeNullability.NOT_NULL) : super(value, nullability) {
         possibleTypes = mutableListOf()
 
         fun checkBoundsAndAddPossibleType(classId: ClassId, range: LongRange) {
@@ -34,7 +34,11 @@ class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
         // TODO: add support of unsigned types
     }
 
-    private constructor(value: Long, possibleTypes: Collection<ConeClassLikeType>) : super(value) {
+    private constructor(
+        value: Long,
+        possibleTypes: Collection<ConeClassLikeType>,
+        nullability: ConeNullability = ConeNullability.NOT_NULL
+    ) : super(value, nullability) {
         this.possibleTypes = possibleTypes
     }
 
@@ -46,10 +50,11 @@ class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
     }
 
     override fun getApproximatedType(expectedType: ConeKotlinType?): ConeClassLikeType {
-        return when (expectedType) {
+        val approximatedType = when (expectedType) {
             null, !in possibleTypes -> possibleTypes.first()
             else -> expectedType as ConeClassLikeType
         }
+        return approximatedType.withNullability(nullability)
     }
 
     companion object {
@@ -122,3 +127,13 @@ fun ConeKotlinType.approximateIntegerLiteralType(expectedType: ConeKotlinType? =
 
 fun ConeKotlinType.approximateIntegerLiteralTypeOrNull(expectedType: ConeKotlinType? = null): ConeKotlinType? =
     (this as? ConeIntegerLiteralType)?.getApproximatedType(expectedType)
+
+private fun ConeClassLikeType.withNullability(nullability: ConeNullability): ConeClassLikeType {
+    if (nullability == this.nullability) return this
+
+    return when (this) {
+        is ConeClassErrorType -> this
+        is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable)
+        else -> error("sealed")
+    }
+}

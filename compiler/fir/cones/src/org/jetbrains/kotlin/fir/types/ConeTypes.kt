@@ -219,12 +219,14 @@ class ConeTypeVariableTypeConstructor(val debugName: String) : ConeClassifierLoo
     override val name: Name get() = Name.identifier(debugName)
 }
 
-abstract class ConeIntegerLiteralType(val value: Long) : ConeSimpleKotlinType(), TypeConstructorMarker {
+abstract class ConeIntegerLiteralType(
+    val value: Long,
+    override val nullability: ConeNullability
+) : ConeSimpleKotlinType(), TypeConstructorMarker {
     abstract val possibleTypes: Collection<ConeClassLikeType>
     abstract val supertypes: List<ConeClassLikeType>
 
     override val typeArguments: Array<out ConeTypeProjection> = emptyArray()
-    override val nullability: ConeNullability = ConeNullability.NOT_NULL
 
     abstract fun getApproximatedType(expectedType: ConeKotlinType? = null): ConeClassLikeType
 

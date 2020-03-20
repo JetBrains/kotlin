@@ -121,34 +121,34 @@ fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability, typeCon
 
     return when (this) {
         is ConeClassErrorType -> this
-        is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable) as T
-        is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullability.isNullable) as T
+        is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable)
+        is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullability.isNullable)
         is ConeFlexibleType -> {
             if (nullability == ConeNullability.UNKNOWN) {
                 if (lowerBound.nullability != upperBound.nullability || lowerBound.nullability == ConeNullability.UNKNOWN) {
                     return this
                 }
             }
-            coneFlexibleOrSimpleType(typeContext, lowerBound.withNullability(nullability), upperBound.withNullability(nullability)) as T
+            coneFlexibleOrSimpleType(typeContext, lowerBound.withNullability(nullability), upperBound.withNullability(nullability))
         }
-        is ConeTypeVariableType -> ConeTypeVariableType(nullability, lookupTag) as T
-        is ConeCapturedType -> ConeCapturedType(captureStatus, lowerType, nullability, constructor) as T
+        is ConeTypeVariableType -> ConeTypeVariableType(nullability, lookupTag)
+        is ConeCapturedType -> ConeCapturedType(captureStatus, lowerType, nullability, constructor)
         is ConeIntersectionType -> when (nullability) {
             ConeNullability.NULLABLE -> this.mapTypes {
                 it.withNullability(nullability)
             }
             ConeNullability.UNKNOWN -> this // TODO: is that correct?
             ConeNullability.NOT_NULL -> this
-        } as T
-        is ConeStubType -> ConeStubType(variable, nullability) as T
+        }
+        is ConeStubType -> ConeStubType(variable, nullability)
         is ConeDefinitelyNotNullType -> when (nullability) {
             ConeNullability.NOT_NULL -> this
             ConeNullability.NULLABLE -> original.withNullability(nullability)
             ConeNullability.UNKNOWN -> original.withNullability(nullability)
-        } as T
-        is ConeIntegerLiteralType -> this
+        }
+        is ConeIntegerLiteralType -> ConeIntegerLiteralTypeImpl(value, nullability)
         else -> error("sealed: ${this::class}")
-    }
+    } as T
 }
 
 fun coneFlexibleOrSimpleType(

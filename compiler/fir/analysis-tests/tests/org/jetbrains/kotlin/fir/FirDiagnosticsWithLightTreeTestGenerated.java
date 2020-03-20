@@ -1288,6 +1288,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/inference/nestedLambdas.kt");
         }
 
+        @TestMetadata("nullableIntegerLiteralType.kt")
+        public void testNullableIntegerLiteralType() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/inference/nullableIntegerLiteralType.kt");
+        }
+
         @TestMetadata("receiverWithCapturedType.kt")
         public void testReceiverWithCapturedType() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/inference/receiverWithCapturedType.kt");
