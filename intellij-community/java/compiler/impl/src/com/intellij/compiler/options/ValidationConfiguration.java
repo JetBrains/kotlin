@@ -1,7 +1,6 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.options;
 
-import com.intellij.openapi.compiler.Compiler;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.compiler.Validator;
 import com.intellij.openapi.compiler.options.ExcludedEntriesConfiguration;
@@ -28,17 +27,17 @@ public class ValidationConfiguration implements PersistentStateComponent<JpsVali
     myProject = project;
   }
 
-  public static boolean shouldValidate(Compiler validator, Project project) {
+  public static boolean shouldValidate(Validator validator, Project project) {
     ValidationConfiguration configuration = getInstance(project);
     return (configuration.myState.VALIDATE_ON_BUILD) && configuration.isSelected(validator);
   }
 
-  public boolean isSelected(Compiler validator) {
-    return isSelected(validator.getDescription());
+  public boolean isSelected(Validator validator) {
+    return isSelected(validator.getId());
   }
 
-  public boolean isSelected(String validatorDescription) {
-    final Boolean selected = myState.VALIDATORS.get(validatorDescription);
+  public boolean isSelected(String validatorId) {
+    final Boolean selected = myState.VALIDATORS.get(validatorId);
     return selected == null || selected.booleanValue();
   }
 
@@ -50,18 +49,18 @@ public class ValidationConfiguration implements PersistentStateComponent<JpsVali
     myState.VALIDATE_ON_BUILD = value;
   }
 
-  public void setSelected(Compiler validator, boolean selected) {
-    setSelected(validator.getDescription(), selected);
+  public void setSelected(Validator validator, boolean selected) {
+    setSelected(validator.getId(), selected);
   }
 
   public void deselectAllValidators() {
     for (Validator validator : CompilerManager.getInstance(myProject).getCompilers(Validator.class)) {
-      myState.VALIDATORS.put(validator.getDescription(), false);
+      myState.VALIDATORS.put(validator.getId(), false);
     }
   }
 
-  public void setSelected(String validatorDescription, boolean selected) {
-    myState.VALIDATORS.put(validatorDescription, selected);
+  public void setSelected(String validatorId, boolean selected) {
+    myState.VALIDATORS.put(validatorId, selected);
   }
 
   public static ValidationConfiguration getInstance(Project project) {

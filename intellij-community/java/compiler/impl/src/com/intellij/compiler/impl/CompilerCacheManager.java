@@ -70,7 +70,7 @@ public final class CompilerCacheManager implements Disposable {
   }
 
   public static String getCompilerIdString(Compiler compiler) {
-    @NonNls String description = compiler.getDescription();
+    @NonNls String description = compiler instanceof Validator ? ((Validator)compiler).getId() : compiler.getDescription();
     return StringUtil.toLowerCase(description.replaceAll("\\s+", "_").replaceAll("[\\.\\?]", "_"));
   }
 

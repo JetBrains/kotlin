@@ -107,12 +107,12 @@ public class ValidationConfigurable implements SearchableConfigurable, Configura
     Set<Validator> set = new THashSet<>(selectedElements, new TObjectHashingStrategy<Validator>() {
       @Override
       public int computeHashCode(Validator object) {
-        return object.getDescription().hashCode();
+        return object.getId().hashCode();
       }
 
       @Override
       public boolean equals(Validator o1, Validator o2) {
-        return o1.getDescription().equals(o2.getDescription());
+        return o1.getId().equals(o2.getId());
       }
     });
     return myConfiguration.isValidateOnBuild() != myValidateBox.isSelected() ||

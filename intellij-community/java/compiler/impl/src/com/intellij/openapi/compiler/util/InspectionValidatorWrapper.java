@@ -254,6 +254,11 @@ public class InspectionValidatorWrapper implements Validator {
     return !hasErrors;
   }
 
+  @Override
+  public String getId() {
+    return myValidator.getId();
+  }
+
   private boolean checkUnderReadAction(final MyValidatorProcessingItem item, final CompileContext context, final Computable<? extends Map<ProblemDescriptor, HighlightDisplayLevel>> runnable) {
     return DumbService.getInstance(context.getProject()).runReadActionInSmartMode(() -> {
       final PsiFile file = item.getPsiFile();

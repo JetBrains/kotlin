@@ -29,6 +29,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,6 +42,7 @@ import java.util.Map;
  */
 public abstract class InspectionValidator {
   public static final ProjectExtensionPointName<InspectionValidator> EP_NAME = new ProjectExtensionPointName<>("com.intellij.compiler.inspectionValidator");
+  private final String myId;
   private final String myDescription;
   private final String myProgressIndicatorText;
 
@@ -49,7 +51,19 @@ public abstract class InspectionValidator {
   @Nullable
   private final InspectionToolProvider myInspectionToolProvider;
 
-  protected InspectionValidator(@NotNull @Nls String description, @NotNull @Nls String progressIndicatorText) {
+  /**
+   * @deprecated use {@link #InspectionValidator(String, String, String)} instead; this constructor uses {@code description} which may
+   * be localized as ID which must not be localized
+   */
+  @Deprecated
+  protected InspectionValidator(@NotNull @Nls String description,
+                                @NotNull @Nls String progressIndicatorText) {
+    this(description, description, progressIndicatorText);
+  }
+
+  protected InspectionValidator(@NotNull @NonNls String id, @NotNull @Nls String description,
+                                @NotNull @Nls String progressIndicatorText) {
+    myId = id;
     myDescription = description;
     myProgressIndicatorText = progressIndicatorText;
     myInspectionToolClasses = null;
@@ -73,6 +87,10 @@ public abstract class InspectionValidator {
 
     assert myInspectionToolProvider != null : "getInspectionToolClasses() must be overridden";
     return myInspectionToolProvider.getInspectionClasses();
+  }
+
+  public final String getId() {
+    return myId;
   }
 
   public final String getDescription() {
