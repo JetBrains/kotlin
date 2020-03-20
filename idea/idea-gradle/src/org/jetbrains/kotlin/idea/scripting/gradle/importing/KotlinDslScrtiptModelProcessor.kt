@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigura
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptInputsWatcher
 import org.jetbrains.kotlin.idea.scripting.gradle.getGradleScriptInputsStamp
-import org.jetbrains.kotlin.idea.scripting.gradle.saveGradleProjectRootsAfterImport
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
@@ -86,7 +85,7 @@ fun saveScriptModels(
         errorReporter.reportError(scriptFile, model)
     }
 
-    saveGradleProjectRootsAfterImport(
+    project.service<GradleScriptInputsWatcher>().saveGradleProjectRootsAfterImport(
         scriptConfigurations.map { it.first.parent.path }.toSet()
     )
 
