@@ -130,7 +130,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     var devServer: KotlinWebpackConfig.DevServer? = null
 
     @Input
-    var devtool: String = KotlinWebpackConfig.Devtool.EVAL_SOURCE_MAP
+    var devtool: String = WebpackDevtool.EVAL_SOURCE_MAP
 
     private fun createRunner() = KotlinWebpackRunner(
         compilation.npmProject,

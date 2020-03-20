@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.gradle.targets.js.subtargets.BrowserDistribution
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Devtool
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
+import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import javax.inject.Inject
 
@@ -190,8 +190,8 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
         devtool = getByKind(
             kind = kind,
-            releaseValue = Devtool.SOURCE_MAP,
-            debugValue = Devtool.EVAL_SOURCE_MAP
+            releaseValue = WebpackDevtool.SOURCE_MAP,
+            debugValue = WebpackDevtool.EVAL_SOURCE_MAP
         )
     }
 

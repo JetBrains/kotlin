@@ -27,7 +27,7 @@ data class KotlinWebpackConfig(
     val bundleAnalyzerReportDir: File? = null,
     val reportEvaluatedConfigFile: File? = null,
     val devServer: DevServer? = null,
-    val devtool: String? = Devtool.EVAL_SOURCE_MAP,
+    val devtool: String? = WebpackDevtool.EVAL_SOURCE_MAP,
     val showProgress: Boolean = false,
     val sourceMaps: Boolean = false,
     val export: Boolean = true,
@@ -78,11 +78,6 @@ data class KotlinWebpackConfig(
         val proxy: Map<String, Any>? = null,
         val contentBase: List<String>
     ) : Serializable
-
-    object Devtool {
-        val EVAL_SOURCE_MAP = "eval-source-map"
-        val SOURCE_MAP = "source-map"
-    }
 
     fun save(configFile: File) {
         configFile.writer().use {
