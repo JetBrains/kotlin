@@ -11,11 +11,12 @@ import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.openapi.util.Pass;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.refactoring.RefactoringBundle;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.*;
 
@@ -23,42 +24,39 @@ import java.util.*;
 // This prevents languages with polyadic expressions or sequences
 // from reusing it, use simpleChooser instead.
 public abstract class OccurrencesChooser<T> {
-  public static final String DEFAULT_CHOOSER_TITLE = "Multiple occurrences found";
-
   public interface BaseReplaceChoice {
-    boolean isMultiple();
-
+    /**
+     * @return true if more than one element is selected
+     */
     boolean isAll();
 
-    String formatDescription(int occurrencesCount);
+    /**
+     * @param occurrencesCount number of occurrences
+     * @return user-readable description of given choice
+     */
+    @Nls String formatDescription(int occurrencesCount);
   }
 
   public enum ReplaceChoice implements BaseReplaceChoice {
-    NO("Replace this occurrence only"), NO_WRITE("Replace all occurrences but write"), ALL("Replace all {0} occurrences");
-
-    private final String myDescription;
-
-    ReplaceChoice(String description) {
-      myDescription = description;
-    }
-
-    public String getDescription() {
-      return myDescription;
-    }
-
-    @Override
-    public boolean isMultiple() {
-      return this == NO_WRITE || this == ALL;
-    }
+    NO, NO_WRITE, ALL;
 
     @Override
     public boolean isAll() {
-      return this == ALL;
+      return this != NO;
     }
 
     @Override
-    public String formatDescription(int occurrencesCount) {
-      return MessageFormat.format(getDescription(), occurrencesCount);
+    public @Nls String formatDescription(int occurrencesCount) {
+      switch (this) {
+        case NO:
+          return RefactoringBundle.message("replace.this.occurrence.only");
+        case NO_WRITE:
+          return RefactoringBundle.message("replace.all.occurrences.but.write");
+        case ALL:
+          return RefactoringBundle.message("replace.all.occurrences", occurrencesCount);
+        default:
+          throw new IllegalStateException("Unexpected value: " + this);
+      }
     }
   }
 
@@ -93,12 +91,12 @@ public abstract class OccurrencesChooser<T> {
   }
 
   public void showChooser(final Pass<? super ReplaceChoice> callback, final Map<ReplaceChoice, List<T>> occurrencesMap) {
-    showChooser(callback, occurrencesMap, DEFAULT_CHOOSER_TITLE);
+    showChooser(callback, occurrencesMap, RefactoringBundle.message("replace.multiple.occurrences.found"));
   }
 
   public <C extends BaseReplaceChoice> void showChooser(final Pass<? super C> callback,
                           final Map<C, List<T>> occurrencesMap,
-                          String title) {
+                          @Nls String title) {
     if (occurrencesMap.size() == 1) {
       callback.pass(occurrencesMap.keySet().iterator().next());
       return;
