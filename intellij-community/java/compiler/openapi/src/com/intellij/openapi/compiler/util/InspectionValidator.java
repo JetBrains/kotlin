@@ -56,37 +56,6 @@ public abstract class InspectionValidator {
     myInspectionToolProvider = null;
   }
 
-  /**
-   * @deprecated Provide inspection classes via {@link #getInspectionToolClasses(CompileContext)} instead.
-   */
-  @Deprecated
-  @SafeVarargs
-  protected InspectionValidator(@NotNull @Nls String description,
-                                @NotNull @Nls String progressIndicatorText,
-                                final Class<? extends LocalInspectionTool>... inspectionToolClasses) {
-    myDescription = description;
-    myProgressIndicatorText = progressIndicatorText;
-    myInspectionToolClasses = inspectionToolClasses;
-    myInspectionToolProvider = null;
-  }
-
-  protected InspectionValidator(@NotNull @Nls String description,
-                                @NotNull @Nls String progressIndicatorText,
-                                final InspectionToolProvider provider) {
-    myDescription = description;
-    myProgressIndicatorText = progressIndicatorText;
-    myInspectionToolClasses = null;
-    myInspectionToolProvider = provider;
-  }
-
-  protected InspectionValidator(@NotNull @Nls String description,
-                                @NotNull @Nls String progressIndicatorText,
-                                final Class<? extends InspectionToolProvider> providerClass)
-    throws IllegalAccessException, InstantiationException {
-    this(description, progressIndicatorText, providerClass.newInstance());
-  }
-
-
   public abstract boolean isAvailableOnScope(@NotNull CompileScope scope);
 
   public abstract Collection<VirtualFile> getFilesToProcess(final Project project, final CompileContext context);
