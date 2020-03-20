@@ -118,6 +118,9 @@ class DropdownSettingComponent(
         labelText = setting.title.takeIf { needLabel },
         onValueUpdate = { newValue -> value = newValue }
     ).asSubComponent()
+
+    override fun shouldBeShow(): Boolean =
+        uiComponent.valuesCount > 1
 }
 
 class BooleanSettingComponent(

@@ -19,7 +19,7 @@ class DropDownComponent<T : DisplayableSettingItem>(
     initialValues: List<T> = emptyList(),
     initiallySelectedValue: T? = null,
     labelText: String? = null,
-    private val filter: (T) -> Boolean = { true },
+    filter: (T) -> Boolean = { true },
     private val validator: SettingValidator<T> = settingValidator { ValidationResult.OK },
     private val iconProvider: (T) -> Icon? = { null },
     onValueUpdate: (T) -> Unit = {}
@@ -68,10 +68,8 @@ class DropDownComponent<T : DisplayableSettingItem>(
         }
     }
 
-    fun setValues(newValues: List<T>) {
-        @Suppress("UNCHECKED_CAST")
-        uiComponent.model = DefaultComboBoxModel(newValues.filter(filter).toTypedArray<DisplayableSettingItem>() as Array<T>)
-    }
+    val valuesCount
+        get() = uiComponent.model.size
 
     override fun updateUiValue(newValue: T) = safeUpdateUi {
         uiComponent.selectedItem = newValue
