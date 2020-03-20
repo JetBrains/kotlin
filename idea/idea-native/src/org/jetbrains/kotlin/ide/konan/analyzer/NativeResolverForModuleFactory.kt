@@ -59,10 +59,9 @@ class NativeResolverForModuleFactory(
 
         val moduleInfo = moduleContent.moduleInfo
 
-        val konanLibrary = moduleInfo.getCapability(NativeLibraryInfo.NATIVE_LIBRARY_CAPABILITY)
-        if (konanLibrary != null) {
+        if (moduleInfo is NativeLibraryInfo) {
             val libPackageFragmentProvider =
-                konanLibrary.createPackageFragmentProvider(
+                moduleInfo.resolvedKotlinLibrary.createPackageFragmentProvider(
                     moduleContext.storageManager,
                     languageVersionSettings,
                     moduleDescriptor
