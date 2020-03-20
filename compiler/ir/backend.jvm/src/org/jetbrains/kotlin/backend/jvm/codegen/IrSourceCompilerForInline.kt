@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.org.objectweb.asm.*
@@ -97,32 +96,10 @@ class IrSourceCompilerForInline(
     override val lazySourceMapper: DefaultSourceMapper
         get() = codegen.smapOverride ?: codegen.classCodegen.getOrCreateSourceMapper()
 
-    private fun makeInlineNode(function: IrFunction, classCodegen: ClassCodegen, isLambda: Boolean): SMAPAndMethodNode {
-        var node: MethodNode? = null
-        val smap = if (isLambda)
-            codegen.context.getSourceMapper(codegen.classCodegen.irClass)
-        else
-            classCodegen.getOrCreateSourceMapper()
-        val functionCodegen = object : FunctionCodegen(function, classCodegen, codegen.takeIf { isLambda }) {
-            override fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
-                val asmMethod = signature.asmMethod
-                node = MethodNode(
-                    Opcodes.API_VERSION,
-                    flags,
-                    asmMethod.name.removeSuffix(FOR_INLINE_SUFFIX),
-                    asmMethod.descriptor,
-                    signature.genericsSignature,
-                    null
-                )
-                return wrapWithMaxLocalCalc(node!!)
-            }
-        }
-        functionCodegen.generate(smap)
-        return SMAPAndMethodNode(node!!, SMAP(smap.resultMappings))
-    }
-
     override fun generateLambdaBody(lambdaInfo: ExpressionLambda): SMAPAndMethodNode {
-        return makeInlineNode((lambdaInfo as IrExpressionLambdaImpl).function, codegen.classCodegen, true)
+        val smap = codegen.context.getSourceMapper(codegen.classCodegen.irClass)
+        val node = FunctionCodegen((lambdaInfo as IrExpressionLambdaImpl).function, codegen.classCodegen, codegen).generate(smap)
+        return SMAPAndMethodNode(node, SMAP(smap.resultMappings))
     }
 
     override fun doCreateMethodNodeFromSource(
@@ -141,7 +118,9 @@ class IrSourceCompilerForInline(
             } ?: callee
         else
             callee
-        return makeInlineNode(forInlineFunction, FakeClassCodegen(forInlineFunction, codegen.classCodegen), false)
+        val fakeCodegen = FakeClassCodegen(forInlineFunction, codegen.classCodegen)
+        val node = FunctionCodegen(forInlineFunction, fakeCodegen).generate()
+        return SMAPAndMethodNode(node, SMAP(fakeCodegen.getOrCreateSourceMapper().resultMappings))
     }
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()
