@@ -27,7 +27,7 @@ internal class SyntheticLibraryIndexableFilesProvider(
   override fun getRootsScanningProgressText(): String {
     val name = getName()
     if (!name.isNullOrEmpty()) {
-      return name
+      return IndexingBundle.message("indexable.files.provider.scanning.library.name", name)
     }
     return IndexingBundle.message("indexable.files.provider.scanning.additional.dependencies")
   }

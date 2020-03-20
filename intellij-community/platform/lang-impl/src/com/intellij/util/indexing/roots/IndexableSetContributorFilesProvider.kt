@@ -22,7 +22,7 @@ internal class IndexableSetContributorFilesProvider(private val indexableSetCont
   override fun getRootsScanningProgressText(): String {
     val name = getName()
     if (!name.isNullOrEmpty()) {
-      return name
+      return IndexingBundle.message("indexable.files.provider.scanning.files.contributor", name)
     }
     return IndexingBundle.message("indexable.files.provider.scanning.additional.dependencies")
   }
