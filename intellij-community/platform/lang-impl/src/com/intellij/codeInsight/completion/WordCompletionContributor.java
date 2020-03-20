@@ -42,12 +42,6 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  * @author peter
  */
 public class WordCompletionContributor extends CompletionContributor implements DumbAware {
-  @Override
-  public void beforeCompletion(@NotNull CompletionInitializationContext context) {
-    if (context.getCompletionType() == CompletionType.BASIC && isWordCompletionDefinitelyEnabled(context.getFile())) {
-      context.setDummyIdentifier("");
-    }
-  }
 
   private static boolean isWordCompletionDefinitelyEnabled(@NotNull PsiFile file) {
     return DumbService.isDumb(file.getProject()) ||
