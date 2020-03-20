@@ -1,14 +1,11 @@
 package org.jetbrains.kotlin.tools.projectWizard.projectTemplates
 
-import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
-import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.templates.*
@@ -16,7 +13,7 @@ import org.jetbrains.kotlin.tools.projectWizard.templates.*
 sealed class ProjectTemplate : DisplayableSettingItem {
     abstract val title: String
     override val text: String get() = title
-    abstract val htmlDescription: String
+    abstract val description: String
     abstract val suggestedProjectName: String
     abstract val projectKind: ProjectKind
     open val id: String
@@ -103,8 +100,8 @@ private fun ModuleType.createDefaultTarget(
 ) = MultiplatformTargetModule(name, defaultTarget, createDefaultSourcesets())
 
 object EmptySingleplatformProjectTemplate : ProjectTemplate() {
-    override val title = "Empty Kotlin/JVM Project"
-    override val htmlDescription = title
+    override val title = "Backend Application"
+    override val description = "Create a backend application with Kotlin/JVM."
     override val suggestedProjectName = "myKotlinJvmProject"
     override val projectKind = ProjectKind.Singleplatform
 
@@ -117,8 +114,8 @@ object EmptySingleplatformProjectTemplate : ProjectTemplate() {
 }
 
 object EmptyMultiplatformProjectTemplate : ProjectTemplate() {
-    override val title = "Empty Kotlin Multiplatform Project"
-    override val htmlDescription = "Multiplatform Gradle project without predefined targets"
+    override val title = "Multiplatform Application"
+    override val description = "Create applications for different platforms that support sharing common code."
     override val suggestedProjectName = "myKotlinMultiplatformProject"
     override val projectKind = ProjectKind.Multiplatform
 
@@ -131,8 +128,8 @@ object EmptyMultiplatformProjectTemplate : ProjectTemplate() {
 }
 
 object JvmConsoleApplication : ProjectTemplate() {
-    override val title = "Kotlin/JVM Console Application"
-    override val htmlDescription = title
+    override val title = "Console Application"
+    override val description = "Create a console application with Kotlin/JVM. Use it for prototyping or testing purposes"
     override val suggestedProjectName = "myConsoleApplication"
     override val projectKind = ProjectKind.Singleplatform
 
@@ -150,13 +147,8 @@ object JvmConsoleApplication : ProjectTemplate() {
 }
 
 object MultiplatformLibrary : ProjectTemplate() {
-    override val title = "Kotlin Multiplatform Library"
-
-    @Language("HTML")
-    override val htmlDescription = """
-        Multiplatform Gradle project allowing reuse of the same Kotlin code between all three main platforms 
-        (<b>JVM</b>, <b>JS</b>, and <b>Native</b>)
-        """.trimIndent()
+    override val title = "Multiplatform Library"
+    override val description = "Create a library for sharing common code among different platforms."
     override val suggestedProjectName = "myMultiplatformLibrary"
     override val projectKind = ProjectKind.Multiplatform
 
@@ -177,9 +169,9 @@ object MultiplatformLibrary : ProjectTemplate() {
 }
 
 object JvmServerJsClient : ProjectTemplate() {
-    override val title: String = "Web Application with Kotlin/JS Client and Kotlin/JVM Server"
-    override val htmlDescription: String =
-        "Multiplatform Gradle project with client module running on Kotlin/JS and server module on Kotlin/JVM"
+    override val title: String = "Full-Stack Web Application"
+    override val description: String = "" +
+            "Create a fully-functional web application using Kotlin/JS for the frontend and Kotlin/JVM for the backend"
     override val suggestedProjectName: String = "myFullStackApplication"
     override val projectKind: ProjectKind = ProjectKind.Multiplatform
     override val setsPluginSettings: List<SettingWithValue<*, *>> = listOf(
@@ -204,10 +196,7 @@ object JvmServerJsClient : ProjectTemplate() {
 object AndroidApplication : ProjectTemplate() {
     override val title = "Android Application"
 
-    @Language("HTML")
-    override val htmlDescription = """
-       Simple <b>Android</b> application with single activity 
-        """.trimIndent()
+    override val description = "Simple Android application with single activity"
     override val suggestedProjectName = "myAndroidApplication"
     override val projectKind = ProjectKind.Android
 
@@ -228,8 +217,9 @@ object AndroidApplication : ProjectTemplate() {
 }
 
 object NativeConsoleApplication : ProjectTemplate() {
-    override val title = "Kotlin/Native Console Application"
-    override val htmlDescription = title
+    override val title = "Native Application"
+    override val description =
+        "Create an application with Kotlin/Native that works as a standalone application under a specific platform."
     override val suggestedProjectName = "myNativeConsoleApp"
     override val projectKind = ProjectKind.Multiplatform
 
@@ -252,8 +242,8 @@ object NativeConsoleApplication : ProjectTemplate() {
 }
 
 object JsBrowserApplication : ProjectTemplate() {
-    override val title = "Kotlin/JS Frontend Application"
-    override val htmlDescription = "Gradle project for a Kotlin/JS frontend web application"
+    override val title = "Frontend Application"
+    override val description = "Create a frontend application with Kotlin/JS if you already have a backend."
     override val suggestedProjectName = "myKotlinJsApplication"
     override val projectKind = ProjectKind.Js
 
@@ -276,10 +266,7 @@ object JsBrowserApplication : ProjectTemplate() {
 object IOSApplication : ProjectTemplate() {
     override val title = "IOS Application"
 
-    @Language("HTML")
-    override val htmlDescription = """
-       Simple <b>IOS</b> application with single screen 
-        """.trimIndent()
+    override val description = "Simple IOS application with single screen "
     override val suggestedProjectName = "myIOSApplication"
     override val projectKind = ProjectKind.Multiplatform
 

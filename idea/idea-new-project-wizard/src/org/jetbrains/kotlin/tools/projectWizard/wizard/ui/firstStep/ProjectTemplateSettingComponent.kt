@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.ProjectTemplate
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ValidationIndicator
+import java.awt.Dimension
 import javax.swing.JComponent
 
 class ProjectTemplateSettingComponent(
@@ -64,10 +65,11 @@ class ProjectTemplateSettingComponent(
 class TemplateDescriptionComponent : Component() {
     private val descriptionLabel = label("").apply {
         fontColor = UIUtil.FontColor.BRIGHTER
+        preferredSize = Dimension(preferredSize.width, 50)
     }
 
     fun setTemplate(template: ProjectTemplate) {
-        descriptionLabel.text = template.description
+        descriptionLabel.text = template.description.asHtml()
     }
 
     override val component: JComponent = descriptionLabel
