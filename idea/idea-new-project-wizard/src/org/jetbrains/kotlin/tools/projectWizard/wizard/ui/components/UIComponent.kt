@@ -70,7 +70,7 @@ abstract class UIComponent<V : Any>(
         allowEventFiring = allowEventFiringSaved
     }
 
-    fun validate(value: V) {
+    open fun validate(value: V) {
         if (validator == null) return
         if (validationIndicator == null) return
         read {

@@ -1,15 +1,18 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
+import com.intellij.ui.components.JBTextField
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.getConfiguratorSettings
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.moduleType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module.Companion.ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.isRootModule
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 import org.jetbrains.kotlin.tools.projectWizard.templates.settings
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
@@ -62,7 +65,7 @@ class ModuleSettingsComponent(
         }
 }
 
-private class ModuleNameComponent(context: Context, module: Module) : TitledComponent(context) {
+private class ModuleNameComponent(context: Context, private val module: Module) : TitledComponent(context) {
     private val textField = TextFieldComponent(
         context,
         labelText = null,
@@ -77,6 +80,14 @@ private class ModuleNameComponent(context: Context, module: Module) : TitledComp
         get() = textField.component
 
     override val title: String = "Name"
+
+    override fun onInit() {
+        super.onInit()
+        val isSingleRootMode = read { KotlinPlugin::modules.settingValue }.size == 1
+        if (isSingleRootMode && module.isRootModule) {
+            textField.disable("[The same as the project name]")
+        }
+    }
 
     companion object {
         private val validateModuleName =

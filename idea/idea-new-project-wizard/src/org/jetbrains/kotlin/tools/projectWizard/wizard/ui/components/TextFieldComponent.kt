@@ -1,6 +1,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components
 
 import com.intellij.ui.components.JBTextField
+import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.textField
@@ -17,11 +19,27 @@ class TextFieldComponent(
     validator,
     onValueUpdate
 ) {
+    private var isDisabled: Boolean = false
+    private var cachedValueWhenDisabled: String? = null
+
     override val uiComponent: JBTextField = textField(initialValue.orEmpty(), ::fireValueUpdated)
 
     override fun updateUiValue(newValue: String) = safeUpdateUi {
         uiComponent.text = newValue
     }
 
-    override fun getUiValue(): String = uiComponent.text
+    fun disable(message: String) {
+        cachedValueWhenDisabled = getUiValue()
+        uiComponent.isEditable = false
+        uiComponent.foreground = UIUtil.getLabelFontColor(UIUtil.FontColor.BRIGHTER)
+        isDisabled = true
+        updateUiValue(message)
+    }
+
+    override fun validate(value: String) {
+        if (isDisabled) return
+        super.validate(value)
+    }
+
+    override fun getUiValue(): String = cachedValueWhenDisabled ?: uiComponent.text
 }
