@@ -179,7 +179,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
       @Override
       public void appWillBeClosed(boolean isRestart) {
         if (!myRegisteredIndexes.areIndexesReady()) {
-          ProgressManager.getInstance().run(new Task.Modal(null, "Preparing Indexes to Shutdown", false) {
+          ProgressManager.getInstance().run(new Task.Modal(null, IndexingBundle.message("indexes.preparing.to.shutdown.message"), false) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
               myRegisteredIndexes.waitUntilAllIndicesAreInitialized();
@@ -429,7 +429,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
   @NotNull
   private static <K, V> VfsAwareIndexStorage<K, V> createPersistentStorage(FileBasedIndexExtension<K, V> extension) throws IOException {
     boolean createSnapshotStorage = VfsAwareMapReduceIndex.hasSnapshotMapping(extension) && extension instanceof SingleEntryFileBasedIndexExtension;
-    return createSnapshotStorage ? new SnapshotSingleValueIndexStorage<K, V>() : new VfsAwareMapIndexStorage<>(
+    return createSnapshotStorage ? new SnapshotSingleValueIndexStorage<>() : new VfsAwareMapIndexStorage<>(
       IndexInfrastructure.getStorageFile(extension.getName()).toPath(),
       extension.getKeyDescriptor(),
       extension.getValueExternalizer(),

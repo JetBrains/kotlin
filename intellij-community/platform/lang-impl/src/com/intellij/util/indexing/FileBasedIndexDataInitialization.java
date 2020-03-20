@@ -125,10 +125,10 @@ class FileBasedIndexDataInitialization extends IndexInfrastructure.DataInitializ
       String rebuildNotification = null;
 
       if (currentVersionCorrupted) {
-        rebuildNotification = "Index files on disk are corrupted. Indices will be rebuilt.";
+        rebuildNotification = IndexingBundle.message("index.corrupted.notification.text");
       }
       else if (!changedIndicesText.isEmpty()) {
-        rebuildNotification = "Index file format has changed for " + changedIndicesText + " indices. These indices will be rebuilt.";
+        rebuildNotification = IndexingBundle.message("index.format.changed.notification.text", changedIndicesText);
       }
 
       registrationResultSink.logChangedAndFullyBuiltIndices(
@@ -139,7 +139,7 @@ class FileBasedIndexDataInitialization extends IndexInfrastructure.DataInitializ
       if (rebuildNotification != null
           && !ApplicationManager.getApplication().isHeadlessEnvironment()
           && Registry.is("ide.showIndexRebuildMessage")) {
-        NOTIFICATIONS.createNotification("Index Rebuild", rebuildNotification, NotificationType.INFORMATION, null).notify(null);
+        NOTIFICATIONS.createNotification(IndexingBundle.message("index.rebuild.notification.title"), rebuildNotification, NotificationType.INFORMATION, null).notify(null);
       }
 
       state.freeze();
