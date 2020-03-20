@@ -297,6 +297,11 @@ class ComposerLambdaMemoization(
         // Do not wrap target of an inline function
         if (expression.isInlineArgument()) return functionExpression
 
+        // Do not wrap composable lambdas with return results
+        if (!functionExpression.function.descriptor.returnType.let { it == null || it.isUnit() }) {
+            return functionExpression
+        }
+
         return wrapFunctionExpression(declarationContext, functionExpression)
     }
 
