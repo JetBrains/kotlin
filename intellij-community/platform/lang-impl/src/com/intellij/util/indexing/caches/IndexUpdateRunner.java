@@ -20,11 +20,13 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ArchiveFileSystem;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Consumer;
+import com.intellij.util.PathUtil;
 import com.intellij.util.indexing.UnindexedFilesUpdater;
 import com.intellij.util.progress.SubTaskProgressIndicator;
 import gnu.trove.THashSet;
@@ -120,12 +122,13 @@ public final class IndexUpdateRunner {
   @NotNull
   private static String getProjectRelativeOrAbsolutePath(@NotNull Project project, @NotNull VirtualFile file) {
     String projectBase = project.getBasePath();
-    if (projectBase != null) {
+    if (StringUtil.isNotEmpty(projectBase)) {
       String filePath = file.getPath();
       if (FileUtil.isAncestor(projectBase, filePath, true)) {
+        String projectDirName = PathUtil.getFileName(projectBase);
         String relativePath = FileUtil.getRelativePath(projectBase, filePath, '/');
-        if (relativePath != null) {
-          return relativePath;
+        if (StringUtil.isNotEmpty(projectDirName) && StringUtil.isNotEmpty(relativePath)) {
+          return projectDirName + "/" + relativePath;
         }
       }
     }
