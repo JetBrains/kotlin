@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -46,7 +46,7 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class IrSourceCompilerForInline(
     override val state: GenerationState,
-    override val callElement: IrMemberAccessExpression,
+    override val callElement: IrFunctionAccessExpression,
     private val callee: IrFunction,
     internal val codegen: ExpressionCodegen,
     private val data: BlockInfo
@@ -78,7 +78,7 @@ class IrSourceCompilerForInline(
         get() = codegen.context.psiSourceManager.getKtFile(codegen.irFunction.fileParent)
 
     override val contextKind: OwnerKind
-        get() = OwnerKind.getMemberOwnerKind(callElement.symbol.descriptor.containingDeclaration!!)
+        get() = OwnerKind.getMemberOwnerKind(callElement.symbol.descriptor.containingDeclaration)
 
     override val inlineCallSiteInfo: InlineCallSiteInfo
         get() {
@@ -118,9 +118,9 @@ class IrSourceCompilerForInline(
             } ?: callee
         else
             callee
-        val fakeCodegen = FakeClassCodegen(forInlineFunction, codegen.classCodegen)
-        val node = FunctionCodegen(forInlineFunction, fakeCodegen).generate()
-        return SMAPAndMethodNode(node, SMAP(fakeCodegen.getOrCreateSourceMapper().resultMappings))
+        val classCodegen = FakeClassCodegen(forInlineFunction, codegen.classCodegen)
+        val node = FunctionCodegen(forInlineFunction, classCodegen).generate()
+        return SMAPAndMethodNode(node, SMAP(classCodegen.getOrCreateSourceMapper().resultMappings))
     }
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()
@@ -148,10 +148,10 @@ class IrSourceCompilerForInline(
     }
 
     override val compilationContextDescriptor: DeclarationDescriptor
-        get() = callElement.symbol.descriptor
+        get() = compilationContextFunctionDescriptor
 
     override val compilationContextFunctionDescriptor: FunctionDescriptor
-        get() = callElement.symbol.descriptor as FunctionDescriptor
+        get() = generateSequence(codegen) { it.inlinedInto }.last().irFunction.descriptor
 
     override fun getContextLabels(): Set<String> {
         val name = codegen.irFunction.name.asString()
