@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
@@ -431,10 +433,14 @@ class Fir2IrDeclarationStorage(
         endOffset: Int
     ): IrSimpleFunction {
         val propertyDescriptor = correspondingProperty.descriptor
-        val descriptor =
-            if (propertyDescriptor is WrappedPropertyDescriptorWithContainerSource)
+        val descriptor = when {
+            propertyDescriptor is WrappedPropertyDescriptorWithContainerSource ->
                 WrappedFunctionDescriptorWithContainerSource(propertyDescriptor.containerSource)
-            else WrappedSimpleFunctionDescriptor()
+            isSetter ->
+                WrappedPropertySetterDescriptor(Annotations.EMPTY, SourceElement.NO_SOURCE)
+            else ->
+                WrappedPropertyGetterDescriptor(Annotations.EMPTY, SourceElement.NO_SOURCE)
+        }
         val prefix = if (isSetter) "set" else "get"
         return symbolTable.declareSimpleFunction(
             propertyAccessor?.psi?.startOffsetSkippingComments ?: startOffset,
