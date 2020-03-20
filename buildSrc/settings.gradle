@@ -39,9 +39,12 @@ if (target_AppCode_Clion) {
     logger.info("Including modules for AC and CL in buildSrc/settings.gradle")
 
     include ":prepare-deps:kotlin-native-platform-deps"
+    include ":prepare-deps:native-debug-plugin"
 
     project(":prepare-deps:kotlin-native-platform-deps").projectDir =
             file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/kotlin-native-platform-deps")
+    project(":prepare-deps:native-debug-plugin").projectDir =
+            file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/native-debug-plugin")
 } else if (target_AndroidStudio) {
     logger.info("Including modules for AS (mobile plugin) in buildSrc/settings.gradle")
 
