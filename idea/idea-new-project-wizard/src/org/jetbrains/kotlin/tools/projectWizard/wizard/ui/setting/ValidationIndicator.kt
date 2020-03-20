@@ -18,15 +18,20 @@ import javax.swing.JPanel
 
 interface ValidationIndicator {
     fun updateValidationState(newState: ValidationResult)
+    val validationState: ValidationResult
 }
 
 class IdeaBasedComponentValidator(
     parentDisposable: Disposable,
     private val jComponent: JComponent
 ) : ValidationIndicator {
+    override var validationState: ValidationResult = ValidationResult.OK
+        private set
+
     private val validator = ComponentValidator(parentDisposable).installOn(jComponent)
 
     override fun updateValidationState(newState: ValidationResult) {
+        validationState = newState
         validator.updateInfo(
             newState.safeAs<ValidationResult.ValidationError>()
                 ?.messages
