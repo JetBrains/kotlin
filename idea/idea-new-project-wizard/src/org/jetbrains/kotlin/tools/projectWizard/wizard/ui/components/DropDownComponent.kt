@@ -78,4 +78,3 @@ class DropDownComponent<T : DisplayableSettingItem>(
     @Suppress("UNCHECKED_CAST")
     override fun getUiValue(): T? = uiComponent.selectedItem as? T
 }
-

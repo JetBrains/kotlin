@@ -1,6 +1,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep
 
 import com.intellij.ui.components.JBTextField
+import com.intellij.ui.layout.panel
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.TitledComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.DropDownComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.TextFieldComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.label
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.TitledComponentsList
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.createSettingComponent
 import javax.swing.JComponent
@@ -98,7 +101,7 @@ private class ModuleNameComponent(context: Context, private val module: Module) 
 
 private class ModuleTemplateComponent(
     context: Context,
-    module: Module,
+    private val module: Module,
     templates: List<Template>,
     onTemplateChanged: () -> Unit
 ) : TitledComponent(context) {
@@ -113,11 +116,29 @@ private class ModuleTemplateComponent(
         labelText = null,
     ) { value ->
         module.template = value.takeIf { it != NoneTemplate }
+        changeTemplateDescription(module.template)
         onTemplateChanged()
     }.asSubComponent()
 
-    override val component: JComponent
-        get() = dropDown.component
+    override val needCentering: Boolean = false
+    private val templateDescriptionLabel = label("") {
+        fontColor = UIUtil.FontColor.BRIGHTER
+    }
+
+    override fun onInit() {
+        super.onInit()
+        changeTemplateDescription(module.template)
+    }
+
+    private fun changeTemplateDescription(template: Template?) {
+        templateDescriptionLabel.text = template?.description
+    }
+
+    override val component = panel {
+        row {
+            dropDown.component(growX, comment = module.template?.description)
+        }
+    }
 
     override val title: String = "Template"
 
