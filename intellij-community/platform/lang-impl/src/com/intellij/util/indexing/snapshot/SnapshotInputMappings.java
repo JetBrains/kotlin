@@ -249,7 +249,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
     }
   }
 
-  private ByteArraySequence readContents(Integer hashId) throws IOException {
+  private ByteArraySequence readContents(int hashId) throws IOException {
     if (SharedIndicesData.ourFileSharedIndicesEnabled) {
       if (SharedIndicesData.DO_CHECKS) {
         synchronized (myContents) {
