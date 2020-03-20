@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper
 import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
@@ -38,7 +39,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 open class FunctionCodegen(
     private val irFunction: IrFunction,
     private val classCodegen: ClassCodegen,
-    private val inlinedInto: ExpressionCodegen? = null,
+    private val inlinedInto: ExpressionCodegen? = null
 ) {
     val context = classCodegen.context
     val state = classCodegen.state
@@ -47,14 +48,14 @@ open class FunctionCodegen(
         classCodegen.createLocalClassCodegen(irFunction.continuationClass(), irFunction).also { it.generate() }
     }
 
-    fun generate(): JvmMethodGenericSignature =
+    fun generate(smapOverride: DefaultSourceMapper? = null): JvmMethodGenericSignature =
         try {
-            doGenerate()
+            doGenerate(smapOverride)
         } catch (e: Throwable) {
             throw RuntimeException("Exception while generating code for:\n${irFunction.dump()}", e)
         }
 
-    private fun doGenerate(): JvmMethodGenericSignature {
+    private fun doGenerate(smapOverride: DefaultSourceMapper?): JvmMethodGenericSignature {
         val signature = classCodegen.methodSignatureMapper.mapSignatureWithGeneric(irFunction)
 
         val flags = calculateMethodFlags(irFunction.isStatic)
@@ -113,7 +114,8 @@ open class FunctionCodegen(
             }
             context.state.globalInlineContext.enterDeclaration(irFunction.suspendFunctionOriginal().descriptor)
             try {
-                ExpressionCodegen(irFunction, signature, frameMap, InstructionAdapter(methodVisitor), classCodegen, inlinedInto).generate()
+                val adapter = InstructionAdapter(methodVisitor)
+                ExpressionCodegen(irFunction, signature, frameMap, adapter, classCodegen, inlinedInto, smapOverride).generate()
             } finally {
                 context.state.globalInlineContext.exitDeclaration()
             }

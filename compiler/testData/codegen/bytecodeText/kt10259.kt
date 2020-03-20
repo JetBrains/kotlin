@@ -17,9 +17,8 @@ inline fun test(s: () -> Unit) {
     s()
 }
 
-// 4 INNERCLASS
-
 // JVM_TEMPLATES
+// 4 INNERCLASS
 // 2 INNERCLASS Kt10259Kt\$box\$\$inlined\$test\$lambda\$1\s
 // 2 INNERCLASS Kt10259Kt\$box\$\$inlined\$test\$lambda\$1\$1
 
@@ -28,7 +27,8 @@ inline fun test(s: () -> Unit) {
 // this behavior is equivalent to javac and seems to be correct.
 
 // JVM_IR_TEMPLATES
-// 2 INNERCLASS Kt10259Kt\$box\$1\$1\s
+// 5 INNERCLASS
+// 3 INNERCLASS Kt10259Kt\$box\$1\$1\s
 // 2 INNERCLASS Kt10259Kt\$box\$1\$1\$1
 // 1 class Kt10259Kt\$box\$1\$1\ extends
 // 1 class Kt10259Kt\$box\$1\$1\$1 extends
