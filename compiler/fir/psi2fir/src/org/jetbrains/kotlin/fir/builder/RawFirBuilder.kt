@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -242,13 +243,16 @@ class RawFirBuilder(
             propertyTypeRef: FirTypeRef,
             isGetter: Boolean,
         ): FirPropertyAccessor {
-            if (this == null) {
+            if (this == null || !hasBody()) {
                 val propertySource = property.toFirSourceElement()
-                return if (isGetter) {
-                    FirDefaultPropertyGetter(propertySource, baseSession, propertyTypeRef, property.visibility)
-                } else {
-                    FirDefaultPropertySetter(propertySource, baseSession, propertyTypeRef, property.visibility)
-                }
+                val accessorVisibility = this?.visibility ?: property.visibility
+                return FirDefaultPropertyAccessor
+                    .createGetterOrSetter(propertySource, baseSession, propertyTypeRef, accessorVisibility, isGetter)
+                    .also {
+                        if (this != null) {
+                            it.extractAnnotationsFrom(this)
+                        }
+                    }
             }
             val source = this.toFirSourceElement()
             val accessorTarget = FirFunctionTarget(labelName = null, isLambda = false)
@@ -341,6 +345,10 @@ class RawFirBuilder(
                 setter = if (isMutable) FirDefaultPropertySetter(propertySource, baseSession, type, visibility) else null
                 extractAnnotationsTo(this)
             }
+        }
+
+        private fun FirDefaultPropertyAccessor.extractAnnotationsFrom(annotated: KtAnnotated) {
+            annotated.extractAnnotationsTo(this.annotations)
         }
 
         private fun KtAnnotated.extractAnnotationsTo(container: MutableList<FirAnnotationCall>) {

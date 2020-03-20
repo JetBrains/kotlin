@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.builder.generateAccessorsByDelegate
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -1010,6 +1011,19 @@ class DeclarationsConverter(
                 BLOCK -> block = it
                 else -> if (it.isExpression()) expression = it
             }
+        }
+
+        if (block == null && expression == null) {
+            return FirDefaultPropertyAccessor
+                .createGetterOrSetter(
+                    getterOrSetter.toFirSourceElement(),
+                    baseSession,
+                    propertyTypeRef,
+                    modifiers.getVisibility(),
+                    isGetter
+                ).apply {
+                    annotations += modifiers.annotations
+                }
         }
 
         val target = FirFunctionTarget(labelName = null, isLambda = false)
