@@ -85,9 +85,9 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
             }
     }
 
-    private fun getLibrariesToNotifyAbout(): Map<String, NativeLibraryInfo> {
+    private fun getLibrariesToNotifyAbout(): Map<String, NativeKlibLibraryInfo> {
         val incompatibleLibraries = getModuleInfosFromIdeaModel(project).asSequence()
-            .filterIsInstance<NativeLibraryInfo>()
+            .filterIsInstance<NativeKlibLibraryInfo>()
             .filter { !it.compatibilityInfo.isCompatible }
             .associateBy { it.libraryRoot }
 
@@ -102,7 +102,7 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
         return newEntries
     }
 
-    private fun prepareNotifications(librariesToNotify: Map<String, NativeLibraryInfo>): List<Notification> {
+    private fun prepareNotifications(librariesToNotify: Map<String, NativeKlibLibraryInfo>): List<Notification> {
         if (librariesToNotify.isEmpty())
             return emptyList()
 
@@ -186,7 +186,7 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
     }
 
     // returns pair of library name and library group
-    private fun parseIDELibraryName(libraryInfo: NativeLibraryInfo): Pair<String, LibraryGroup> {
+    private fun parseIDELibraryName(libraryInfo: NativeKlibLibraryInfo): Pair<String, LibraryGroup> {
         val ideLibraryName = libraryInfo.library.name?.takeIf(String::isNotEmpty)
         if (ideLibraryName != null) {
             parseIDELibraryName(ideLibraryName)?.let { (kotlinVersion, libraryName) ->

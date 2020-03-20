@@ -80,7 +80,7 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
         return library.getFiles(OrderRootType.CLASSES).mapNotNull { file ->
             if (!isLibraryFileForPlatform(file)) return@createLibraryInfo emptyList()
             val path = PathUtil.getLocalPath(file) ?: return@createLibraryInfo emptyList()
-            NativeLibraryInfo(project, library, path)
+            NativeKlibLibraryInfo(project, library, path)
         }
     }
 
@@ -90,7 +90,7 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
         languageVersionSettings: LanguageVersionSettings,
         moduleDescriptor: ModuleDescriptor
     ): PackageFragmentProvider? {
-        val library = (moduleInfo as? NativeLibraryInfo)?.resolvedKotlinLibrary ?: return null
+        val library = (moduleInfo as? NativeKlibLibraryInfo)?.resolvedKotlinLibrary ?: return null
         return library.createPackageFragmentProvider(
             storageManager,
             languageVersionSettings,
@@ -168,12 +168,13 @@ private fun createKotlinNativeBuiltIns(moduleInfo: ModuleInfo, projectContext: P
     return builtInsModule.builtIns
 }
 
-private fun ModuleInfo.findNativeStdlib(): NativeLibraryInfo? =
+private fun ModuleInfo.findNativeStdlib(): NativeKlibLibraryInfo? =
     dependencies().lazyClosure { it.dependencies() }
-        .filterIsInstance<NativeLibraryInfo>()
+        .filterIsInstance<NativeKlibLibraryInfo>()
         .firstOrNull { it.isStdlib && it.compatibilityInfo.isCompatible }
 
-class NativeLibraryInfo(project: Project, library: Library, libraryRoot: String) : AbstractKlibLibraryInfo(project, library, libraryRoot) {
+class NativeKlibLibraryInfo(project: Project, library: Library, libraryRoot: String) :
+    AbstractKlibLibraryInfo(project, library, libraryRoot) {
 
     val isStdlib get() = libraryRoot.endsWith(KONAN_STDLIB_NAME)
 

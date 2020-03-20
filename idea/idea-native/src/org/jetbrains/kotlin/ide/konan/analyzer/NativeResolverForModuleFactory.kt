@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
-import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo
+import org.jetbrains.kotlin.ide.konan.NativeKlibLibraryInfo
 import org.jetbrains.kotlin.ide.konan.createPackageFragmentProvider
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.konan.KonanPlatforms
@@ -59,7 +59,7 @@ class NativeResolverForModuleFactory(
 
         val moduleInfo = moduleContent.moduleInfo
 
-        if (moduleInfo is NativeLibraryInfo) {
+        if (moduleInfo is NativeKlibLibraryInfo) {
             val libPackageFragmentProvider =
                 moduleInfo.resolvedKotlinLibrary.createPackageFragmentProvider(
                     moduleContext.storageManager,
