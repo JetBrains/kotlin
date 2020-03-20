@@ -13,12 +13,7 @@ import com.intellij.lang.documentation.DocumentationMarkup.*
 import com.intellij.lang.java.JavaDocumentationProvider
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.DumbService
-import com.intellij.openapi.project.IndexNotReadyException
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.descriptors.*
@@ -30,7 +25,7 @@ import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.decompiler.navigation.SourceNavigationHelper
 import org.jetbrains.kotlin.idea.kdoc.*
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer.appendKDocContent
-import org.jetbrains.kotlin.idea.kdoc.KDocRenderer.appendKDocSection
+import org.jetbrains.kotlin.idea.kdoc.KDocRenderer.appendKDocSections
 import org.jetbrains.kotlin.idea.kdoc.KDocTemplate.DescriptionBodyTemplate
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.frontendService
@@ -38,6 +33,7 @@ import org.jetbrains.kotlin.idea.util.isRunningInCidrIde
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -120,11 +116,9 @@ class WrapValueParameterHandler(val base: DescriptorRenderer.ValueParametersHand
         }
         base.appendAfterValueParameters(parameterCount, builder)
     }
-
 }
 
-
-class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
+open class KotlinQuickDocumentationProviderCompatBase : AbstractDocumentationProvider() {
 
     override fun getCustomDocumentationElement(editor: Editor, fil: PsiFile, contextElement: PsiElement?): PsiElement? {
         return if (contextElement.isModifier()) contextElement else null
@@ -173,6 +167,17 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             boldOnlyForNamesInHtml = true
         }
 
+        fun StringBuilder.renderKDoc(contentTag: KDocTag, sections: List<KDocSection>) {
+            insert(DescriptionBodyTemplate.Kotlin()) {
+                content {
+                    appendKDocContent(contentTag)
+                }
+                sections {
+                    appendKDocSections(sections)
+                }
+            }
+        }
+
         private fun renderEnumSpecialFunction(element: KtClass, functionDescriptor: FunctionDescriptor, quickNavigation: Boolean): String {
             val kdoc = run {
                 val declarationDescriptor = element.resolveToDescriptorIfAny()
@@ -188,23 +193,14 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 }
             }
 
-            val section = kdoc?.getDefaultSection()
-
             return buildString {
                 insert(KDocTemplate()) {
                     definition {
                         renderDefinition(functionDescriptor, DESCRIPTOR_RENDERER)
                     }
-                    if (!quickNavigation && section != null) {
+                    if (!quickNavigation && kdoc != null) {
                         description {
-                            insert(DescriptionBodyTemplate.Kotlin()) {
-                                content {
-                                    appendKDocContent(section)
-                                }
-                                sections {
-                                    appendKDocSection(section)
-                                }
-                            }
+                            renderKDoc(kdoc.getDefaultSection(), listOf(kdoc.getDefaultSection()))
                         }
                     }
                 }
@@ -255,7 +251,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 // element is not an KtReferenceExpression, but KtClass of enum
                 return renderEnum(element, originalElement, quickNavigation)
             } else if (element is KtEnumEntry && !quickNavigation) {
-                val ordinal = element.containingClassOrObject?.getBody()?.run { getChildrenOfType<KtEnumEntry>().indexOf(element) }
+                val ordinal = element.containingClassOrObject?.body?.run { getChildrenOfType<KtEnumEntry>().indexOf(element) }
 
                 return buildString {
                     insert(buildKotlinDeclaration(element, quickNavigation)) {
@@ -360,14 +356,8 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                     description {
                         val comment = declarationDescriptor.findKDoc { DescriptorToSourceUtilsIde.getAnyDeclaration(ktElement.project, it) }
                         if (comment != null) {
-                            insert(DescriptionBodyTemplate.Kotlin()) {
-                                content {
-                                    appendKDocContent(comment)
-                                }
-                                sections {
-                                    if (comment is KDocSection) appendKDocSection(comment)
-                                }
-                            }
+                            val sectionList = if (comment is KDocSection) listOf(comment) else emptyList()
+                            renderKDoc(comment, sectionList)
                         } else if (declarationDescriptor is CallableDescriptor) { // If we couldn't find KDoc, try to find javadoc in one of super's
                             insert(DescriptionBodyTemplate.FromJava()) {
                                 body = extractJavaDescription(declarationDescriptor)

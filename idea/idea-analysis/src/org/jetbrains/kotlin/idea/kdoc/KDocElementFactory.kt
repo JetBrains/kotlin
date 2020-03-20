@@ -37,6 +37,6 @@ class KDocElementFactory(val project: Project) {
         val section = kdoc.getDefaultSection()
         val tag = section.findTagByName("param")
         val link = tag?.getSubjectLink() ?: throw IllegalArgumentException("Cannot find subject link in doc comment '$kdocText'")
-        return link.getChildOfType<KDocName>()!!
+        return link.getChildOfType()!!
     }
 }
