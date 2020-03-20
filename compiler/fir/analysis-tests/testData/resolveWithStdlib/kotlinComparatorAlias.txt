@@ -1,6 +1,6 @@
 FILE: kotlinComparatorAlias.kt
     public final fun test_1(): R|kotlin/Unit| {
-        lval comp: R|java/util/Comparator<kotlin/Int>| = R|java/util/Comparator|<R|kotlin/Int|>(<L> = Comparator@fun <anonymous>(x: R|kotlin/Int|, y: R|kotlin/Int|): R|kotlin/Int| {
+        lval comp: R|java/util/Comparator<kotlin/Int>| = R|java/util/Comparator|<R|kotlin/Int|>(<L> = Comparator@fun <anonymous>(x: R|ft<kotlin/Int, kotlin/Int?>!|, y: R|ft<kotlin/Int, kotlin/Int?>!|): R|kotlin/Int| {
             ^ Int(1)
         }
         )

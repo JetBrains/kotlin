@@ -556,6 +556,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         public void testComplexConstraintSystem() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/complexConstraintSystem.kt");
         }
+
+        @TestMetadata("flexibleTypeInSystem.kt")
+        public void testFlexibleTypeInSystem() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/flexibleTypeInSystem.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k")

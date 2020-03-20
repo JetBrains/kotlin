@@ -107,7 +107,7 @@ open class ConeFlexibleType(val lowerBound: ConeKotlinType, val upperBound: Cone
     }
 
     override val typeArguments: Array<out ConeTypeProjection>
-        get() = emptyArray()
+        get() = lowerBound.typeArguments
 
     override val nullability: ConeNullability
         get() = lowerBound.nullability.takeIf { it == upperBound.nullability } ?: ConeNullability.UNKNOWN
