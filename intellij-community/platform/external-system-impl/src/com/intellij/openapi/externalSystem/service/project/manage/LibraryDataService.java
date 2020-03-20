@@ -21,6 +21,7 @@ import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.RootPolicy;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -84,8 +85,9 @@ public final class LibraryDataService extends AbstractProjectDataService<Library
       return;
     }
     library = modelsProvider.createLibrary(libraryName, ExternalSystemApiUtil.toExternalSource(toImport.getOwner()));
-    final Library.ModifiableModel libraryModel = modelsProvider.getModifiableLibraryModel(library);
-    registerPaths(toImport.isUnresolved(), libraryFiles, libraryModel, libraryName);
+    Library.ModifiableModel libraryModel = modelsProvider.getModifiableLibraryModel(library);
+    Set<String> excludedPaths = toImport.getPaths(LibraryPathType.EXCLUDED);
+    registerPaths(toImport.isUnresolved(), libraryFiles, excludedPaths, libraryModel, libraryName);
   }
 
   @NotNull
@@ -107,6 +109,7 @@ public final class LibraryDataService extends AbstractProjectDataService<Library
 
   static void registerPaths(boolean unresolved,
                             @NotNull Map<OrderRootType, Collection<File>> libraryFiles,
+                            @NotNull Set<String> excludedPaths,
                             @NotNull Library.ModifiableModel model,
                             @NotNull String libraryName) {
     for (Map.Entry<OrderRootType, Collection<File>> entry: libraryFiles.entrySet()) {
@@ -147,6 +150,17 @@ public final class LibraryDataService extends AbstractProjectDataService<Library
           if (!ArrayUtil.contains(root, files)) {
             model.addRoot(root, entry.getKey());
           }
+        }
+      }
+    }
+
+    if (model instanceof LibraryEx.ModifiableModelEx) {
+      LibraryEx.ModifiableModelEx modelEx = (LibraryEx.ModifiableModelEx)model;
+      for (String excludedPath : excludedPaths) {
+        String url = VfsUtil.getUrlForLibraryRoot(new File(excludedPath));
+        String[] urls = modelEx.getExcludedRootUrls();
+        if (!ArrayUtil.contains(url, urls)) {
+          modelEx.addExcludedRoot(url);
         }
       }
     }
@@ -258,10 +272,11 @@ public final class LibraryDataService extends AbstractProjectDataService<Library
       }
     }
 
+    Set<String> excludedPaths = externalLibrary.getPaths(LibraryPathType.EXCLUDED);
     for (Map.Entry<OrderRootType, Set<String>> entry: toAdd.entrySet()) {
       Map<OrderRootType, Collection<File>> roots = new HashMap<>();
       roots.put(entry.getKey(), ContainerUtil.map(entry.getValue(), PATH_TO_FILE));
-      registerPaths(externalLibrary.isUnresolved(), roots, libraryModel, externalLibrary.getInternalName());
+      registerPaths(externalLibrary.isUnresolved(), roots, excludedPaths, libraryModel, externalLibrary.getInternalName());
     }
   }
 }

@@ -757,6 +757,10 @@ public class GradleProjectResolverUtil {
 
         for (File file: ((FileCollectionDependency)mergedDependency).getFiles()) {
           library.addPath(LibraryPathType.BINARY, file.getAbsolutePath());
+          if (mergedDependency instanceof DefaultFileCollectionDependency &&
+              ((DefaultFileCollectionDependency)mergedDependency).isExcludedFromIndexing()) {
+            library.addPath(LibraryPathType.EXCLUDED, file.getAbsolutePath());
+          }
         }
 
         ownerDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, libraryDependencyData);

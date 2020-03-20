@@ -458,6 +458,7 @@ public class DependencyResolverImpl implements DependencyResolver {
     if (!runtimeOutputDirs.isEmpty()) {
       DefaultFileCollectionDependency runtimeOutputDirsDependency = new DefaultFileCollectionDependency(runtimeOutputDirs);
       runtimeOutputDirsDependency.setScope(RUNTIME_SCOPE);
+      runtimeOutputDirsDependency.setExcludedFromIndexing(true);
       return runtimeOutputDirsDependency;
     }
     return null;

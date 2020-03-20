@@ -297,6 +297,9 @@ public class ExternalProjectSerializationService implements SerializationService
           writer.writeString(FileCollectionDependency.class.getSimpleName());
           writeDependencyCommonFields(writer, context, dependency);
           writeFiles(writer, "files", dependency.getFiles());
+          if (dependency instanceof DefaultFileCollectionDependency) {
+            writeBoolean(writer, "excludedFromIndexing", ((DefaultFileCollectionDependency)dependency).isExcludedFromIndexing());
+          }
         }
         writer.stepOut();
       }
@@ -629,6 +632,7 @@ public class ExternalProjectSerializationService implements SerializationService
           else if (externalDependency instanceof DefaultFileCollectionDependency) {
             DefaultFileCollectionDependency fileCollectionDependency = (DefaultFileCollectionDependency)externalDependency;
             fileCollectionDependency.getFiles().addAll(readFiles(reader));
+            fileCollectionDependency.setExcludedFromIndexing(readBoolean(reader, "excludedFromIndexing"));
           }
           else if (externalDependency instanceof DefaultUnresolvedExternalDependency) {
             DefaultUnresolvedExternalDependency unresolvedExternalDependency = (DefaultUnresolvedExternalDependency)externalDependency;

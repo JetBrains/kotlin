@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.gradle.model;
 
 import org.gradle.internal.impldep.com.google.common.base.Objects;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.DefaultExternalDependencyId;
 import org.jetbrains.plugins.gradle.tooling.util.BooleanBiFunction;
@@ -15,6 +16,7 @@ public final class DefaultFileCollectionDependency extends AbstractExternalDepen
   private static final long serialVersionUID = 1L;
 
   private final Collection<File> files;
+  private boolean excludedFromIndexing;
 
   public DefaultFileCollectionDependency() {
     this(new ArrayList<File>());
@@ -34,6 +36,16 @@ public final class DefaultFileCollectionDependency extends AbstractExternalDepen
   @Override
   public Collection<File> getFiles() {
     return files;
+  }
+
+  @ApiStatus.Experimental
+  public boolean isExcludedFromIndexing() {
+    return excludedFromIndexing;
+  }
+
+  @ApiStatus.Experimental
+  public void setExcludedFromIndexing(boolean excludedFromIndexing) {
+    this.excludedFromIndexing = excludedFromIndexing;
   }
 
   @Override

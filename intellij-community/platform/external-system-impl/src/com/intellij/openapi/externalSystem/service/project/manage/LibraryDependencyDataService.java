@@ -209,7 +209,8 @@ public class LibraryDependencyDataService extends AbstractDependencyDataService<
     final LibraryData libraryDependencyDataTarget = libraryDependencyData.getTarget();
     Map<OrderRootType, Collection<File>> files = ProjectDataService.EP_NAME.findExtensionOrFail(LibraryDataService.class)
       .prepareLibraryFiles(libraryDependencyDataTarget);
-    LibraryDataService.registerPaths(libraryDependencyDataTarget.isUnresolved(), files, libraryModel, libraryName);
+    Set<String> excludedPaths = libraryDependencyDataTarget.getPaths(LibraryPathType.EXCLUDED);
+    LibraryDataService.registerPaths(libraryDependencyDataTarget.isUnresolved(), files, excludedPaths, libraryModel, libraryName);
     LibraryOrderEntry orderEntry = findLibraryOrderEntry(moduleRootModel, library, libraryDependencyData.getScope());
 
     assert orderEntry != null;
