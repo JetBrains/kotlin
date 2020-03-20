@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
 
 open class ClassCodegen protected constructor(
@@ -352,8 +353,11 @@ open class ClassCodegen protected constructor(
             return
         }
 
-        val signature = FunctionCodegen(method, this).generate().asmMethod
-        jvmSignatureClashDetector.trackMethod(method, RawSignature(signature.name, signature.descriptor, MemberKind.METHOD))
+        val node = FunctionCodegen(method, this).generate()
+        node.accept(with(node) { visitor.newMethod(method.OtherOrigin, access, name, desc, signature, exceptions.toTypedArray()) })
+        jvmSignatureClashDetector.trackMethod(method, RawSignature(node.name, node.desc, MemberKind.METHOD))
+
+        val signature = Method(node.name, node.desc)
         when (val metadata = method.metadata) {
             is MetadataSource.Property -> {
                 // We can't check for JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS because for interface methods

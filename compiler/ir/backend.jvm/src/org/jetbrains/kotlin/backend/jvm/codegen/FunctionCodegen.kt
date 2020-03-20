@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper
+import org.jetbrains.kotlin.codegen.inline.wrapWithMaxLocalCalc
 import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
@@ -28,31 +29,39 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.STRICTFP_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.SYNCHRONIZED_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-open class FunctionCodegen(
+class FunctionCodegen(
     private val irFunction: IrFunction,
     private val classCodegen: ClassCodegen,
     private val inlinedInto: ExpressionCodegen? = null
 ) {
     private val context = classCodegen.context
 
-    fun generate(smapOverride: DefaultSourceMapper? = null): JvmMethodGenericSignature =
+    fun generate(smapOverride: DefaultSourceMapper? = null): MethodNode =
         try {
             doGenerate(smapOverride)
         } catch (e: Throwable) {
             throw RuntimeException("Exception while generating code for:\n${irFunction.dump()}", e)
         }
 
-    private fun doGenerate(smapOverride: DefaultSourceMapper?): JvmMethodGenericSignature {
+    private fun doGenerate(smapOverride: DefaultSourceMapper?): MethodNode {
         val signature = context.methodSignatureMapper.mapSignatureWithGeneric(irFunction)
         val flags = irFunction.calculateMethodFlags()
-        var methodVisitor = createMethod(flags, signature)
+        val methodNode = MethodNode(
+            Opcodes.API_VERSION,
+            flags,
+            signature.asmMethod.name,
+            signature.asmMethod.descriptor,
+            signature.genericsSignature.takeIf { flags.and(Opcodes.ACC_SYNTHETIC) == 0 },
+            getThrownExceptions(irFunction)?.toTypedArray()
+        )
+        var methodVisitor: MethodVisitor = wrapWithMaxLocalCalc(methodNode)
 
         if (context.state.generateParametersMetadata && flags.and(Opcodes.ACC_SYNTHETIC) == 0) {
             generateParameterNames(irFunction, methodVisitor, signature, context.state)
@@ -103,7 +112,7 @@ open class FunctionCodegen(
         if (continuationClassCodegen.isInitialized() || irFunction.alwaysNeedsContinuation()) {
             continuationClassCodegen.value.done()
         }
-        return signature
+        return methodNode
     }
 
     // Since the only arguments to anonymous object constructors are captured variables and complex
@@ -155,16 +164,6 @@ open class FunctionCodegen(
                 (if (isStrict) Opcodes.ACC_STRICT else 0) or
                 (if (isSynchronized) Opcodes.ACC_SYNCHRONIZED else 0)
     }
-
-    protected open fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor =
-        classCodegen.visitor.newMethod(
-            irFunction.OtherOrigin,
-            flags,
-            signature.asmMethod.name,
-            signature.asmMethod.descriptor,
-            signature.genericsSignature.takeIf { flags.and(Opcodes.ACC_SYNTHETIC) == 0 },
-            getThrownExceptions(irFunction)?.toTypedArray()
-        )
 
     private fun getThrownExceptions(function: IrFunction): List<String>? {
         if (context.state.languageVersionSettings.supportsFeature(LanguageFeature.DoNotGenerateThrowsForDelegatedKotlinMembers) &&
