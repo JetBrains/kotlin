@@ -245,11 +245,7 @@ abstract class AbstractCompilerTest : TestCase() {
 }
 
 private fun systemClassLoaderJars(): List<File> {
-    val classpath = System.getProperty("java.class.path")!!.split(
-        System.getProperty("path.separator")!!
-    )
-    val urls = classpath.map { URL("file://$it") }
-    val result = URLClassLoader(urls.toTypedArray()).urLs?.filter {
+    val result = (ClassLoader.getSystemClassLoader() as? URLClassLoader)?.urLs?.filter {
         it.protocol == "file"
     }?.map {
         File(it.path)
