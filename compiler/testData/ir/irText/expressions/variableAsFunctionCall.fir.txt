@@ -31,6 +31,28 @@ FILE fqName:<root> fileName:/variableAsFunctionCall.kt
     VALUE_PARAMETER name:ns index:0 type:kotlin.String?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (ns: kotlin.String?): kotlin.String? declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.String? origin=INVOKE
-          $this: CALL 'public final fun k (): kotlin.Function0<kotlin.String> declared in <root>' type=kotlin.Function0<kotlin.String>? origin=null
-            $receiver: GET_VAR 'ns: kotlin.String? declared in <root>.test4' type=kotlin.String? origin=null
+        BLOCK type=kotlin.String? origin=SAFE_CALL
+          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Function0<kotlin.String>? [val]
+            BLOCK type=kotlin.Function0<kotlin.String>? origin=SAFE_CALL
+              VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.String? [val]
+                GET_VAR 'ns: kotlin.String? declared in <root>.test4' type=kotlin.String? origin=null
+              WHEN type=kotlin.Function0<kotlin.String>? origin=null
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    arg0: GET_VAR 'val tmp_1: kotlin.String? [val] declared in <root>.test4' type=kotlin.String? origin=null
+                    arg1: CONST Null type=kotlin.Nothing? value=null
+                  then: CONST Null type=kotlin.Nothing? value=null
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value=true
+                  then: CALL 'public final fun k (): kotlin.Function0<kotlin.String> declared in <root>' type=kotlin.Function0<kotlin.String> origin=null
+                    $receiver: GET_VAR 'val tmp_1: kotlin.String? [val] declared in <root>.test4' type=kotlin.String? origin=null
+          WHEN type=kotlin.String? origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'val tmp_0: kotlin.Function0<kotlin.String>? [val] declared in <root>.test4' type=kotlin.Function0<kotlin.String>? origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.String origin=INVOKE
+                $this: GET_VAR 'val tmp_0: kotlin.Function0<kotlin.String>? [val] declared in <root>.test4' type=kotlin.Function0<kotlin.String>? origin=null

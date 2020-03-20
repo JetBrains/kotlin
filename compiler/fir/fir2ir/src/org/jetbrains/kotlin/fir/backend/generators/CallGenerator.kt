@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.defaultType
 
 internal class CallGenerator(
@@ -43,7 +44,49 @@ internal class CallGenerator(
     private fun ConeKotlinType.toIrType(): IrType = with(typeConverter) { toIrType() }
 
     fun convertToIrCall(qualifiedAccess: FirQualifiedAccess, typeRef: FirTypeRef): IrExpression {
-        val type = typeRef.toIrType()
+        val explicitReceiver = qualifiedAccess.explicitReceiver
+        if (!qualifiedAccess.safe || explicitReceiver == null) {
+            return convertToUnsafeIrCall(qualifiedAccess, typeRef)
+        }
+        return qualifiedAccess.convertWithOffsets { startOffset, endOffset ->
+            val type = typeRef.toIrType()
+            val callableSymbol = (qualifiedAccess.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirCallableSymbol<*>
+            val typeShouldBeNotNull = callableSymbol?.fir?.returnTypeRef?.coneTypeSafe<ConeKotlinType>()?.isNullable == false
+            val unsafeIrCall = convertToUnsafeIrCall(qualifiedAccess, typeRef, makeNotNull = typeShouldBeNotNull)
+            IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.SAFE_CALL).apply {
+                val receiver = visitor.convertToIrExpression(explicitReceiver)
+                val receiverVariable = declarationStorage.declareTemporaryVariable(receiver).apply {
+                    parent = conversionScope.parentFromStack()
+                }
+                statements += receiverVariable
+                statements += IrWhenImpl(startOffset, endOffset, type).apply {
+                    val variableSymbol = symbolTable.referenceValue(receiverVariable.descriptor)
+                    val condition = IrCallImpl(
+                        startOffset, endOffset, irBuiltIns.booleanType, irBuiltIns.eqeqSymbol, origin = IrStatementOrigin.EQEQ
+                    ).apply {
+                        putValueArgument(0, IrGetValueImpl(startOffset, endOffset, variableSymbol))
+                        putValueArgument(1, IrConstImpl.constNull(startOffset, endOffset, irBuiltIns.nothingNType))
+                    }
+                    branches += IrBranchImpl(
+                        condition, IrConstImpl.constNull(startOffset, endOffset, irBuiltIns.nothingNType)
+                    )
+                    val newReceiver = IrGetValueImpl(startOffset, endOffset, variableSymbol)
+                    val replacedCall = unsafeIrCall.replaceReceiver(
+                        newReceiver, isDispatch = explicitReceiver == qualifiedAccess.dispatchReceiver
+                    )
+                    branches += IrElseBranchImpl(
+                        IrConstImpl.boolean(startOffset, endOffset, irBuiltIns.booleanType, true),
+                        replacedCall
+                    )
+                }
+            }
+        }
+    }
+
+    private fun convertToUnsafeIrCall(
+        qualifiedAccess: FirQualifiedAccess, typeRef: FirTypeRef, makeNotNull: Boolean = false
+    ): IrExpression {
+        val type = typeRef.toIrType().let { if (makeNotNull) it.makeNotNull() else it }
         val symbol = qualifiedAccess.calleeReference.toSymbol(
             session,
             classifierStorage,
@@ -291,6 +334,22 @@ internal class CallGenerator(
             }
             else -> this
         }
+    }
+
+    private fun IrExpression.replaceReceiver(newReceiver: IrExpression, isDispatch: Boolean): IrExpression {
+        when (this) {
+            is IrCallImpl -> {
+                if (!isDispatch) {
+                    extensionReceiver = newReceiver
+                } else {
+                    dispatchReceiver = newReceiver
+                }
+            }
+            is IrFieldExpressionBase -> {
+                receiver = newReceiver
+            }
+        }
+        return this
     }
 
     private fun generateErrorCallExpression(

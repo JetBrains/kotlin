@@ -4,6 +4,17 @@ FILE fqName:<root> fileName:/extFunSafeInvoke.kt
     VALUE_PARAMETER name:fn index:1 type:kotlin.Function3<kotlin.Any, kotlin.Int, kotlin.String, kotlin.Unit>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (receiver: kotlin.Any?, fn: kotlin.Function3<kotlin.Any, kotlin.Int, kotlin.String, kotlin.Unit>): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/Function3.invoke]>#' type=IrErrorType
-          CONST Int type=kotlin.Int value=42
-          CONST String type=kotlin.String value="Hello"
+        BLOCK type=IrErrorType origin=SAFE_CALL
+          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Any? [val]
+            GET_VAR 'receiver: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
+          WHEN type=IrErrorType origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.test' type=kotlin.Any? origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/Function3.invoke]>#' type=IrErrorType
+                CONST Int type=kotlin.Int value=42
+                CONST String type=kotlin.String value="Hello"
