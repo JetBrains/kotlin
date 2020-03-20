@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.project.lazyClosure
 import org.jetbrains.kotlin.idea.caches.resolve.BuiltInsCacheKey
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
+import org.jetbrains.kotlin.idea.klib.*
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.isInterop
@@ -44,10 +45,6 @@ import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.serialization.konan.impl.KlibMetadataModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.idea.klib.getCompatibilityInfo
-import org.jetbrains.kotlin.idea.klib.readSafe
-import org.jetbrains.kotlin.idea.klib.AbstractKlibLibraryInfo
-import org.jetbrains.kotlin.idea.klib.isKlibLibraryRootForPlatform
 
 class NativePlatformKindResolution : IdePlatformKindResolution {
 
@@ -102,17 +99,16 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
             val library = (moduleInfo as? NativeKlibLibraryInfo)?.resolvedKotlinLibrary ?: return null
             if (!library.getCompatibilityInfo().isCompatible) return null
 
-            val libraryProto = CachingIdeKonanLibraryMetadataLoader.loadModuleHeader(library)
-            val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
+            val packageFragmentNames = CachingIdeKlibMetadataLoader.loadModuleHeader(library).packageFragmentNameList
 
             return NativeFactories.DefaultDeserializedDescriptorFactory.createPackageFragmentProvider(
-                library,
-                CachingIdeKonanLibraryMetadataLoader,
-                libraryProto.packageFragmentNameList,
-                storageManager,
-                moduleDescriptor,
-                deserializationConfiguration,
-                null
+                library = library,
+                packageAccessHandler = CachingIdeKlibMetadataLoader,
+                packageFragmentNames = packageFragmentNames,
+                storageManager = storageManager,
+                moduleDescriptor = moduleDescriptor,
+                configuration = CompilerDeserializationConfiguration(languageVersionSettings),
+                compositePackageFragmentAddend = null
             )
         }
 

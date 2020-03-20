@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
 import org.jetbrains.kotlin.frontend.java.di.configureJavaSpecificComponents
 import org.jetbrains.kotlin.frontend.java.di.initializeJavaSpecificComponents
+import org.jetbrains.kotlin.idea.klib.CachingIdeKlibMetadataLoader
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
-import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -134,7 +134,7 @@ class CompositeResolverForModuleFactory(
             val library = moduleInfo.resolvedKotlinLibrary
             val languageVersionSettings = container.get<LanguageVersionSettings>()
 
-            val packageFragmentNames = parseModuleHeader(library.moduleHeaderData).packageFragmentNameList
+            val packageFragmentNames = CachingIdeKlibMetadataLoader.loadModuleHeader(library).packageFragmentNameList
 
             val metadataFactories = KlibMetadataFactories(
                 { DefaultBuiltIns.Instance },
@@ -150,7 +150,7 @@ class CompositeResolverForModuleFactory(
 
             klibMetadataProvider = klibMetadataModuleDescriptorFactory.createPackageFragmentProvider(
                 library,
-                packageAccessHandler = null,
+                packageAccessHandler = CachingIdeKlibMetadataLoader,
                 packageFragmentNames = packageFragmentNames,
                 storageManager = moduleContext.storageManager,
                 moduleDescriptor = moduleDescriptor,
