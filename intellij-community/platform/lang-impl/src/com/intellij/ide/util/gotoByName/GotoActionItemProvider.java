@@ -171,8 +171,8 @@ public final class GotoActionItemProvider implements ChooseByNameItemProvider {
         for (ActionFromOptionDescriptorProvider converter : ActionFromOptionDescriptorProvider.EP.getExtensions()) {
           AnAction action = converter.provide(description);
           if (action != null) options.add(new ActionWrapper(action, null, MatchMode.NAME, dataContext, myModel));
-          options.add(description);
         }
+        options.add(description);
       }
     }
     return processItems(pattern, JBIterable.from(options), consumer);
