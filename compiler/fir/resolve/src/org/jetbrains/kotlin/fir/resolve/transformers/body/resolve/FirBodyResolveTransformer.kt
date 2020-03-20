@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.scopes.addImportingScopes
@@ -31,7 +32,8 @@ open class FirBodyResolveTransformer(
 ) : FirAbstractBodyResolveTransformer(phase) {
     private var packageFqName = FqName.ROOT
 
-    final override val context: BodyResolveContext = outerBodyResolveContext ?: BodyResolveContext(returnTypeCalculator)
+    final override val context: BodyResolveContext =
+        outerBodyResolveContext ?: BodyResolveContext(returnTypeCalculator, DataFlowAnalyzerContext.empty(session))
     final override val components: BodyResolveTransformerComponents =
         BodyResolveTransformerComponents(session, scopeSession, this, context)
 

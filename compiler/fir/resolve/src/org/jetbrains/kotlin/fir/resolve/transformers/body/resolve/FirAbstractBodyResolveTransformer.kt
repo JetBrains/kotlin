@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionStageRunner
+import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
+import org.jetbrains.kotlin.fir.resolve.dfa.PersistentFlow
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.transformers.*
@@ -101,6 +103,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
 
     class BodyResolveContext(
         val returnTypeCalculator: ReturnTypeCalculator,
+        val dataFlowAnalyzerContext: DataFlowAnalyzerContext<PersistentFlow>,
         val targetedLocalClasses: Set<FirClass<*>> = emptySet()
     ) {
         val fileImportsScope: MutableList<FirScope> = mutableListOf()
@@ -197,7 +200,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         fun createSnapshotForLocalClasses(
             returnTypeCalculator: ReturnTypeCalculator,
             targetedLocalClasses: Set<FirClass<*>>
-        ) = BodyResolveContext(returnTypeCalculator, targetedLocalClasses).apply {
+        ) = BodyResolveContext(returnTypeCalculator, dataFlowAnalyzerContext, targetedLocalClasses).apply {
             fileImportsScope.addAll(this@BodyResolveContext.fileImportsScope)
             typeParametersScopes = this@BodyResolveContext.typeParametersScopes
             localScopes = this@BodyResolveContext.localScopes
@@ -239,7 +242,8 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             FirTypeResolveScopeForBodyResolve(this), session
         )
         override val callCompleter: FirCallCompleter = FirCallCompleter(transformer, this)
-        override val dataFlowAnalyzer: FirDataFlowAnalyzer<*> = FirDataFlowAnalyzer.createFirDataFlowAnalyzer(this)
+        override val dataFlowAnalyzer: FirDataFlowAnalyzer<*> =
+            FirDataFlowAnalyzer.createFirDataFlowAnalyzer(this, context.dataFlowAnalyzerContext)
         override val syntheticCallGenerator: FirSyntheticCallGenerator = FirSyntheticCallGenerator(this)
         override val integerLiteralTypeApproximator: IntegerLiteralTypeApproximationTransformer =
             IntegerLiteralTypeApproximationTransformer(symbolProvider, inferenceComponents.ctx)
