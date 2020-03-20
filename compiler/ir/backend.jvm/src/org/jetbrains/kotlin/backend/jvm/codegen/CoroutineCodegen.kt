@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_IMPL_NAME_SUFFIX
 import org.jetbrains.kotlin.codegen.coroutines.reportSuspensionPointInsideMonitor
+import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -39,17 +40,20 @@ internal fun generateStateMachine(
     methodVisitor: MethodVisitor,
     access: Int,
     signature: JvmMethodGenericSignature,
-    obtainContinuationClassBuilder: () -> ClassBuilder,
-    element: KtElement
+    obtainContinuationClassBuilder: () -> ClassBuilder
 ): MethodVisitor {
     val state = classCodegen.context.state
     val languageVersionSettings = state.languageVersionSettings
     assert(languageVersionSettings.isReleaseCoroutines()) { "Experimental coroutines are unsupported in JVM_IR backend" }
+    val element = if (irFunction.isSuspend)
+        irFunction.symbol.descriptor.psiElement ?: classCodegen.irClass.descriptor.psiElement
+    else
+        classCodegen.context.suspendLambdaToOriginalFunctionMap[classCodegen.irClass.attributeOwnerId]!!.symbol.descriptor.psiElement
     return CoroutineTransformerMethodVisitor(
         methodVisitor, access, signature.asmMethod.name, signature.asmMethod.descriptor, signature.genericsSignature, null,
         obtainClassBuilderForCoroutineState = obtainContinuationClassBuilder,
-        reportSuspensionPointInsideMonitor = { reportSuspensionPointInsideMonitor(element, state, it) },
-        lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0,
+        reportSuspensionPointInsideMonitor = { reportSuspensionPointInsideMonitor(element as KtElement, state, it) },
+        lineNumber = element?.let { CodegenUtil.getLineNumberForElement(it, false) } ?: 0,
         sourceFile = classCodegen.irClass.file.name,
         languageVersionSettings = languageVersionSettings,
         shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
@@ -70,6 +74,26 @@ internal fun IrFunction.anyOfOverriddenFunctionsReturnsNonUnit(): Boolean {
         functions.isNotEmpty() && functions.any { !it.returnType.isUnit() }
     } == true
 }
+
+internal fun IrFunction.suspendForInlineToOriginal(): IrSimpleFunction? {
+    if (origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE &&
+        origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
+    ) return null
+    return parentAsClass.declarations.find {
+        it is IrSimpleFunction && it.attributeOwnerId == (this as IrSimpleFunction).attributeOwnerId &&
+                it.name.asString() + FOR_INLINE_SUFFIX == name.asString()
+    } as IrSimpleFunction?
+}
+
+internal fun IrFunction.alwaysNeedsContinuation(): Boolean =
+    this is IrSimpleFunction && hasContinuation() && parentAsClass.declarations.any {
+        it is IrSimpleFunction && it.attributeOwnerId == attributeOwnerId &&
+                it.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
+    }
+
+internal fun IrFunction.continuationClass(): IrClass? =
+    (body as? IrBlockBody)?.statements?.find { it is IrClass && it.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS }
+            as IrClass?
 
 internal fun IrFunction.continuationParameter(): IrValueParameter? = when {
     isInvokeSuspendOfLambda() || isInvokeSuspendForInlineOfLambda() -> dispatchReceiverParameter
