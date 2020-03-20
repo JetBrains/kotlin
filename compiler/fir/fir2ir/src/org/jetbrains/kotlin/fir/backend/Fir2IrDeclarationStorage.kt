@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
+import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
@@ -53,6 +55,8 @@ class Fir2IrDeclarationStorage(
     private val firProvider = session.firProvider
 
     private val fragmentCache = mutableMapOf<FqName, IrExternalPackageFragment>()
+
+    private val builtInsFragmentCache = mutableMapOf<FqName, IrExternalPackageFragment>()
 
     private val fileCache = mutableMapOf<FirFile, IrFile>()
 
@@ -110,9 +114,19 @@ class Fir2IrDeclarationStorage(
     private fun ConeKotlinType.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType =
         with(typeConverter) { toIrType(typeContext) }
 
+    private fun getIrExternalOrBuiltInsPackageFragment(fqName: FqName): IrExternalPackageFragment {
+        val isBuiltIn = fqName in BUILT_INS_PACKAGE_FQ_NAMES
+        return if (isBuiltIn) getIrBuiltInsPackageFragment(fqName) else getIrExternalPackageFragment(fqName)
+    }
+
+    private fun getIrBuiltInsPackageFragment(fqName: FqName): IrExternalPackageFragment {
+        return builtInsFragmentCache.getOrPut(fqName) {
+            return symbolTable.declareExternalPackageFragment(FirBuiltInsPackageFragment(fqName, moduleDescriptor))
+        }
+    }
+
     private fun getIrExternalPackageFragment(fqName: FqName): IrExternalPackageFragment {
         return fragmentCache.getOrPut(fqName) {
-            // TODO: module descriptor is wrong here
             return symbolTable.declareExternalPackageFragment(FirPackageFragmentDescriptor(fqName, moduleDescriptor))
         }
     }
@@ -187,10 +201,12 @@ class Fir2IrDeclarationStorage(
                 else -> throw AssertionError("Unexpected: $firBasedSymbol")
             }
 
-            if (containerFile != null) {
-                fileCache[containerFile]
-            } else {
-                getIrExternalPackageFragment(packageFqName)
+            when {
+                containerFile != null -> fileCache[containerFile]
+                firBasedSymbol is FirCallableSymbol -> getIrExternalPackageFragment(packageFqName)
+                // TODO: All classes from BUILT_INS_PACKAGE_FQ_NAMES are considered built-ins now,
+                // which is not exact and can lead to some problems
+                else -> getIrExternalOrBuiltInsPackageFragment(packageFqName)
             }
         }
     }
