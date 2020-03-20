@@ -99,7 +99,10 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             else -> null
         }
 
-    class BodyResolveContext(val returnTypeCalculator: ReturnTypeCalculator) {
+    class BodyResolveContext(
+        val returnTypeCalculator: ReturnTypeCalculator,
+        val targetedLocalClasses: Set<FirClass<*>> = emptySet()
+    ) {
         val fileImportsScope: MutableList<FirScope> = mutableListOf()
 
         @set:PrivateForInline
@@ -189,13 +192,27 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             val lastScope = localScopes.lastOrNull() ?: return
             localScopes = localScopes.set(localScopes.size - 1, lastScope.transform())
         }
+
+        @OptIn(PrivateForInline::class)
+        fun createSnapshotForLocalClasses(
+            returnTypeCalculator: ReturnTypeCalculator,
+            targetedLocalClasses: Set<FirClass<*>>
+        ) = BodyResolveContext(returnTypeCalculator, targetedLocalClasses).apply {
+            fileImportsScope.addAll(this@BodyResolveContext.fileImportsScope)
+            typeParametersScopes = this@BodyResolveContext.typeParametersScopes
+            localScopes = this@BodyResolveContext.localScopes
+            file = this@BodyResolveContext.file
+            implicitReceiverStack = this@BodyResolveContext.implicitReceiverStack
+            localContextForAnonymousFunctions.putAll(this@BodyResolveContext.localContextForAnonymousFunctions)
+            containerIfAny = this@BodyResolveContext.containerIfAny
+        }
     }
 
     class BodyResolveTransformerComponents(
         override val session: FirSession,
         override val scopeSession: ScopeSession,
         val transformer: FirBodyResolveTransformer,
-        private val context: BodyResolveContext
+        val context: BodyResolveContext
     ) : BodyResolveComponents {
         override val fileImportsScope: List<FirScope> get() = context.fileImportsScope
         override val typeParametersScopes: List<FirScope> get() = context.typeParametersScopes

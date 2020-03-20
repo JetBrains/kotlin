@@ -309,6 +309,14 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+        if (regularClass.symbol.classId.isLocal && regularClass !in context.targetedLocalClasses) {
+            return FirImplicitTypeBodyResolveTransformerAdapterForLocalClasses(
+                components, data
+            ).transformRegularClass(regularClass, null).also {
+                context.storeClass(regularClass)
+            }
+        }
+
         context.storeClass(regularClass)
         return withTypeParametersOf(regularClass) {
             if (regularClass.symbol.classId.isLocal) {
@@ -338,7 +346,16 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         }
     }
 
-    override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+    override fun transformAnonymousObject(
+        anonymousObject: FirAnonymousObject,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
+        if (anonymousObject !in context.targetedLocalClasses) {
+            return FirImplicitTypeBodyResolveTransformerAdapterForLocalClasses(
+                components, data
+            ).transformAnonymousObject(anonymousObject, null)
+        }
+
         prepareLocalClassForBodyResolve(anonymousObject)
         val type = anonymousObject.defaultType()
         anonymousObject.resultType = buildResolvedTypeRef {
@@ -640,17 +657,17 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     ): T {
         val (implicitReceiverValue, implicitCompanionValues) = components.collectImplicitReceivers(type, owner)
         implicitCompanionValues.forEach { value ->
-            implicitReceiverStack.add(null, value)
+            context.implicitReceiverStack.add(null, value)
         }
-        implicitReceiverValue?.let { implicitReceiverStack.add(labelName, it) }
+        implicitReceiverValue?.let { context.implicitReceiverStack.add(labelName, it) }
 
         try {
             return block()
         } finally {
             if (type != null) {
-                implicitReceiverStack.pop(labelName)
+                context.implicitReceiverStack.pop(labelName)
                 for (i in implicitCompanionValues.indices)
-                    implicitReceiverStack.pop(null)
+                    context.implicitReceiverStack.pop(null)
             }
         }
     }
