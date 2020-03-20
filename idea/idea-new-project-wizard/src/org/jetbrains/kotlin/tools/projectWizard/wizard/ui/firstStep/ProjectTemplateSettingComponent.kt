@@ -67,7 +67,7 @@ class TemplateDescriptionComponent : Component() {
     }
 
     fun setTemplate(template: ProjectTemplate) {
-        descriptionLabel.text = template.htmlDescription
+        descriptionLabel.text = template.description
     }
 
     override val component: JComponent = descriptionLabel

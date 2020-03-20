@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui
 
-import TemplateTag
 import com.intellij.icons.AllIcons
 import com.intellij.ide.plugins.newui.TagComponent
 import com.intellij.openapi.actionSystem.ActionManager
@@ -179,15 +178,6 @@ fun <C : JComponent> C.bordered(
 
 fun <C : JComponent> C.addBorder(border: Border): C = apply {
     this.border = BorderFactory.createCompoundBorder(border, this.border)
-}
-
-class TemplateTagUIComponent(tag: TemplateTag) : TagComponent(tag.text) {
-    override fun isInClickableArea(pt: Point?) = false
-
-    init {
-        RelativeFont.TINY.install(this)
-        tag.tooltip?.let { toolTipText = it }
-    }
 }
 
 fun <T> runWithProgressBar(title: String, action: () -> T): T =

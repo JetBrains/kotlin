@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.tools.projectWizard.projectTemplates
 
-import TemplateTag
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
@@ -14,21 +13,6 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.templates.*
 
-private fun Module.createTag(): TemplateTag? = when (configurator) {
-    is MppModuleConfigurator -> TemplateTag.MPP
-    is AndroidModuleConfigurator -> TemplateTag.ANDROID
-    is JSConfigurator -> TemplateTag.JS
-    is ModuleConfiguratorWithModuleType -> when (configurator.moduleType) {
-        ModuleType.jvm -> TemplateTag.JVM
-        ModuleType.js -> TemplateTag.JS
-        ModuleType.native -> TemplateTag.NATIVE
-        ModuleType.android -> TemplateTag.ANDROID
-        ModuleType.common -> null
-        null -> null
-    }
-    else -> null
-}
-
 sealed class ProjectTemplate : DisplayableSettingItem {
     abstract val title: String
     override val text: String get() = title
@@ -37,16 +21,6 @@ sealed class ProjectTemplate : DisplayableSettingItem {
     abstract val projectKind: ProjectKind
     open val id: String
         get() = this::class.simpleName.toString().removeSuffix("Template").removeSuffix("Project")
-    val tags: List<TemplateTag>
-        get() = setsPluginSettings
-            .firstOrNull { it.setting == KotlinPlugin::modules.reference }
-            ?.value
-            ?.safeAs<List<Module>>()
-            ?.withAllSubModules(includeSourcesets = true)
-            ?.mapNotNull(Module::createTag)
-            ?.distinct()
-            ?.sortedBy(TemplateTag::priority)
-            .orEmpty()
 
     private val setsDefaultValues: List<SettingWithValue<*, *>>
         get() = listOf(KotlinPlugin::projectKind.reference withValue projectKind)
@@ -177,6 +151,7 @@ object JvmConsoleApplication : ProjectTemplate() {
 
 object MultiplatformLibrary : ProjectTemplate() {
     override val title = "Kotlin Multiplatform Library"
+
     @Language("HTML")
     override val htmlDescription = """
         Multiplatform Gradle project allowing reuse of the same Kotlin code between all three main platforms 
@@ -228,6 +203,7 @@ object JvmServerJsClient : ProjectTemplate() {
 
 object AndroidApplication : ProjectTemplate() {
     override val title = "Android Application"
+
     @Language("HTML")
     override val htmlDescription = """
        Simple <b>Android</b> application with single activity 
@@ -299,6 +275,7 @@ object JsBrowserApplication : ProjectTemplate() {
 
 object IOSApplication : ProjectTemplate() {
     override val title = "IOS Application"
+
     @Language("HTML")
     override val htmlDescription = """
        Simple <b>IOS</b> application with single screen 
