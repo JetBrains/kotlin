@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingCompone
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ValidationIndicator
 import java.awt.Dimension
 import javax.swing.JComponent
+import javax.swing.SwingConstants
 
 class ProjectTemplateSettingComponent(
     context: Context
@@ -38,7 +39,7 @@ class ProjectTemplateSettingComponent(
 
     override val component: JComponent = borderPanel {
         addToCenter(borderPanel { addToCenter(list) }.addBorder(JBUI.Borders.empty(0,/*left*/ 3, 0, /*right*/ 3)))
-        addToBottom(templateDescriptionComponent.component.addBorder(JBUI.Borders.empty(/*top*/8,/*left*/ 3, /*bottom*/10, 0)))
+        addToBottom(templateDescriptionComponent.component.addBorder(JBUI.Borders.empty(/*top*/8,/*left*/ 3, 0, 0)))
     }
 
     private fun applySelectedTemplate() = modify {
@@ -65,7 +66,8 @@ class ProjectTemplateSettingComponent(
 class TemplateDescriptionComponent : Component() {
     private val descriptionLabel = label("").apply {
         fontColor = UIUtil.FontColor.BRIGHTER
-        preferredSize = Dimension(preferredSize.width, 50)
+        preferredSize = Dimension(preferredSize.width, 55)
+        verticalAlignment = SwingConstants.TOP
     }
 
     fun setTemplate(template: ProjectTemplate) {

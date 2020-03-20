@@ -123,7 +123,7 @@ private class ModuleTemplateComponent(
 
     private object NoneTemplate : Template() {
         override val title = "None"
-        override val htmlDescription: String = ""
+        override val description: String = ""
         override val moduleTypes: Set<ModuleType> = ModuleType.ALL
         override val id: String = "none"
     }

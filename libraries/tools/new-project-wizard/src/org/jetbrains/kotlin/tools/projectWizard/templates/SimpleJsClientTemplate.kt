@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.Templa
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.interceptTemplate
 
 class SimpleJsClientTemplate : Template() {
-    override val title: String = "JS client"
-    override val htmlDescription: String = title
+    override val title: String = "Frontend Application"
+    override val description: String = "Configurable Kotlin/JS frontend application"
     override val moduleTypes: Set<ModuleType> = setOf(ModuleType.js)
     override val id: String = "simpleJsClient"
 

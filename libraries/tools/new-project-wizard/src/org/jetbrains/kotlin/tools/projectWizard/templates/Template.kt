@@ -67,7 +67,7 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor, DisplayableSet
     }
 
     abstract val title: String
-    abstract val htmlDescription: String
+    abstract val description: String
     abstract val moduleTypes: Set<ModuleType>
 
     override val text: String get() = title

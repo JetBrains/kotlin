@@ -13,10 +13,8 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetTy
 
 class ConsoleJvmApplicationTemplate : Template() {
     override val id: String = "consoleJvmApp"
-    override val title: String = "Console JVM Module with main method"
-    override val htmlDescription: String = """
-        Console JVM module with main method and run task generated
-    """.trimIndent()
+    override val title: String = "Console Application"
+    override val description: String = """Simple “Hello World!” Kotlin/JVM application that works in the console"""
     override val moduleTypes: Set<ModuleType> = setOf(ModuleType.jvm)
 
     override fun Writer.getIrsToAddToBuildFile(

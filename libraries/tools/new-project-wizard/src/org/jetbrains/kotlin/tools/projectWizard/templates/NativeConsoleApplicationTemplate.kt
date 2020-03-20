@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 
 class NativeConsoleApplicationTemplate : Template() {
-    override val title: String = "Native Console Application"
-    override val htmlDescription: String = title
+    override val title: String = "Native Application"
+    override val description: String = "Simple Kotlin/Native application for your operating system"
     override val moduleTypes: Set<ModuleType> = setOf(ModuleType.native)
     override val id: String = "nativeConsoleApp"
 

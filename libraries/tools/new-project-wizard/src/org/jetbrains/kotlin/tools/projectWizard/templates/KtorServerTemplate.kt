@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.InterceptionPoint
 
 class KtorServerTemplate : Template() {
-    override val title: String = "Ktor-based Server"
-    override val htmlDescription: String = title
+    override val title: String = "Ktor Server"
+    override val description: String = "Configurable Ktor web server for building web applications"
     override val moduleTypes: Set<ModuleType> = setOf(ModuleType.jvm)
     override val id: String = "ktorServer"
 
