@@ -27,6 +27,12 @@ dependencies {
     
     excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) }
 
+    excludeInAndroidStudio(rootProject) {
+        Platform[202].orHigher {
+            compileOnly(intellijPluginDep("maven-model"))
+        }
+    }
+
     testCompile(projectTests(":idea"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":idea:idea-test-framework"))
@@ -35,6 +41,11 @@ dependencies {
     if (Ide.IJ()) {
         testCompileOnly(intellijPluginDep("maven"))
         testRuntime(intellijPluginDep("maven"))
+
+        Platform[202].orHigher {
+            testCompileOnly(intellijPluginDep("maven-model"))
+            testRuntime(intellijPluginDep("maven-model"))
+        }
 
         if (Ide.IJ201.orHigher()) {
             testRuntime(intellijPluginDep("repository-search"))

@@ -63,7 +63,7 @@ abstract class SignatureCollectingClassBuilderFactory(
             return super.newField(origin, access, name, desc, signature, value)
         }
 
-        override fun newMethod(origin: JvmDeclarationOrigin, access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor {
+        override fun newMethod(origin: JvmDeclarationOrigin, access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String?>?): MethodVisitor {
             signatures.putValue(RawSignature(name, desc, MemberKind.METHOD), origin)
             if (!shouldGenerate(origin)) {
                 return AbstractClassBuilder.EMPTY_METHOD_VISITOR

@@ -140,7 +140,6 @@ public abstract class KtParsingTestCase extends KtPlatformLiteFixture {
         // That's for reparse routines
         final PomModelImpl pomModel = new PomModelImpl(myProject);
         myProject.registerService(PomModel.class, pomModel);
-        new TreeAspect(pomModel);
     }
 
     public void configureFromParserDefinition(ParserDefinition definition, String extension) {

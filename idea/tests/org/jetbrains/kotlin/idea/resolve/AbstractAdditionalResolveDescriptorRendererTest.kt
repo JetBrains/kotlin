@@ -31,7 +31,7 @@ abstract class AbstractAdditionalResolveDescriptorRendererTest : AbstractDescrip
         super.setUp()
 
         val pomModelImpl = PomModelImpl(project)
-        val treeAspect = TreeAspect(pomModelImpl)
+        val treeAspect = TreeAspect.getInstance(project)
 
         (project as MockProject).registerService(PomModel::class.java, pomModelImpl)
         (project.picoContainer as MutablePicoContainer).registerComponentInstance(

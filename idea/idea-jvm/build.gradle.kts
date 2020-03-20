@@ -22,7 +22,7 @@ dependencies {
     compileOnly(intellijPluginDep("testng"))
     compileOnly(intellijPluginDep("coverage"))
     compileOnly(intellijPluginDep("java-decompiler"))
-    if (Platform[201].orHigher()) {
+    if (Platform[201]()) {
         compileOnly(intellijPluginDep("platform-langInjection"))
     } else {
         compileOnly(intellijPluginDep("IntelliLang"))

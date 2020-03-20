@@ -49,7 +49,7 @@ dependencies {
     testRuntime(project(":kotlinx-serialization-ide-plugin"))
     testRuntime(project(":plugins:lint"))
     testRuntime(intellijPluginDep("junit"))
-    if (Platform[201].orHigher()) {
+    if (Platform[201]()) {
         testRuntime(intellijPluginDep("platform-langInjection"))
     } else {
         testRuntime(intellijPluginDep("IntelliLang"))

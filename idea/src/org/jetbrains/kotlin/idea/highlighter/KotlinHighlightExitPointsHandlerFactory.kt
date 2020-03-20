@@ -78,11 +78,11 @@ class KotlinHighlightExitPointsHandlerFactory : HighlightUsagesHandlerFactoryBas
 
         override fun getTargets() = listOf(target)
 
-        override fun selectTargets(targets: MutableList<PsiElement>, selectionConsumer: Consumer<MutableList<PsiElement>>) {
+        override fun selectTargets(targets: MutableList<out PsiElement>, selectionConsumer: Consumer<in MutableList<out PsiElement>>) {
             selectionConsumer.consume(targets)
         }
 
-        override fun computeUsages(targets: MutableList<PsiElement>?) {
+        override fun computeUsages(targets: MutableList<out PsiElement>) {
             val relevantFunction: KtDeclarationWithBody? =
                 if (target is KtFunctionLiteral) {
                     target
