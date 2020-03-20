@@ -158,8 +158,7 @@ public class ValidationConfigurable implements SearchableConfigurable, Configura
     myValidators = new ElementsChooser<Validator>(true) {
       @Override
       protected String getItemText(@NotNull final Validator validator) {
-        final String description = validator.getDescription();
-        return description.replace(" Validator", "").replace(" validator", "");
+        return validator.getDescription();
       }
     };
   }
