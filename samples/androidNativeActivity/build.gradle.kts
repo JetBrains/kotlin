@@ -12,7 +12,7 @@ repositories {
 
 plugins {
     kotlin("multiplatform")
-    id("com.android.application") version("3.3.1")
+    id("com.android.application") version("3.6.0")
 }
 
 val appDir = buildDir.resolve("Polyhedron")
