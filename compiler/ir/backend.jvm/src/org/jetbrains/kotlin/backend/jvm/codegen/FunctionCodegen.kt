@@ -41,10 +41,9 @@ open class FunctionCodegen(
     private val classCodegen: ClassCodegen,
     private val inlinedInto: ExpressionCodegen? = null
 ) {
-    val context = classCodegen.context
-    val state = classCodegen.state
+    private val context = classCodegen.context
 
-    val continuationClassCodegen = lazy {
+    private val continuationClassCodegen = lazy {
         classCodegen.createLocalClassCodegen(irFunction.continuationClass(), irFunction).also { it.generate() }
     }
 
@@ -56,13 +55,13 @@ open class FunctionCodegen(
         }
 
     private fun doGenerate(smapOverride: DefaultSourceMapper?): JvmMethodGenericSignature {
-        val signature = classCodegen.methodSignatureMapper.mapSignatureWithGeneric(irFunction)
+        val signature = context.methodSignatureMapper.mapSignatureWithGeneric(irFunction)
 
         val flags = calculateMethodFlags(irFunction.isStatic)
         var methodVisitor = createMethod(flags, signature)
 
-        if (state.generateParametersMetadata && flags.and(Opcodes.ACC_SYNTHETIC) == 0) {
-            generateParameterNames(irFunction, methodVisitor, signature, state)
+        if (context.state.generateParametersMetadata && flags.and(Opcodes.ACC_SYNTHETIC) == 0) {
+            generateParameterNames(irFunction, methodVisitor, signature, context.state)
         }
 
         if (irFunction.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
@@ -88,7 +87,7 @@ open class FunctionCodegen(
             }
         }
 
-        if (!state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0 || irFunction.isExternal) {
+        if (!context.state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0 || irFunction.isExternal) {
             generateAnnotationDefaultValueIfNeeded(methodVisitor)
         } else {
             val frameMap = createFrameMapWithReceivers()
@@ -211,14 +210,14 @@ open class FunctionCodegen(
         )
 
     private fun getThrownExceptions(function: IrFunction): List<String>? {
-        if (state.languageVersionSettings.supportsFeature(LanguageFeature.DoNotGenerateThrowsForDelegatedKotlinMembers) &&
+        if (context.state.languageVersionSettings.supportsFeature(LanguageFeature.DoNotGenerateThrowsForDelegatedKotlinMembers) &&
             function.origin == IrDeclarationOrigin.DELEGATED_MEMBER
         ) return null
 
         // @Throws(vararg exceptionClasses: KClass<out Throwable>)
         val exceptionClasses = function.getAnnotation(FqName("kotlin.jvm.Throws"))?.getValueArgument(0) ?: return null
         return (exceptionClasses as IrVararg).elements.map { exceptionClass ->
-            classCodegen.typeMapper.mapType((exceptionClass as IrClassReference).classType).internalName
+            context.typeMapper.mapType((exceptionClass as IrClassReference).classType).internalName
         }
     }
 
@@ -251,7 +250,7 @@ open class FunctionCodegen(
     }
 
     private fun IrFrameMap.enterDispatchReceiver(parameter: IrValueParameter) {
-        val type = classCodegen.typeMapper.mapTypeAsDeclaration(parameter.type)
+        val type = context.typeMapper.mapTypeAsDeclaration(parameter.type)
         enter(parameter, type)
     }
 
@@ -264,10 +263,10 @@ open class FunctionCodegen(
             frameMap.enterDispatchReceiver(irFunction.dispatchReceiverParameter!!)
         }
         irFunction.extensionReceiverParameter?.let {
-            frameMap.enter(it, classCodegen.typeMapper.mapType(it))
+            frameMap.enter(it, context.typeMapper.mapType(it))
         }
         for (parameter in irFunction.valueParameters) {
-            frameMap.enter(parameter, classCodegen.typeMapper.mapType(parameter.type))
+            frameMap.enter(parameter, context.typeMapper.mapType(parameter.type))
         }
 
         return frameMap

@@ -119,7 +119,7 @@ class ExpressionCodegen(
     val typeMapper = context.typeMapper
     val methodSignatureMapper = context.methodSignatureMapper
 
-    val state = classCodegen.state
+    val state = context.state
 
     private val fileEntry = classCodegen.context.psiSourceManager.getFileEntry(irFunction.fileParent)
 
@@ -636,9 +636,8 @@ class ExpressionCodegen(
 
     override fun visitClass(declaration: IrClass, data: BlockInfo): PromisedValue {
         if (declaration.origin != JvmLoweredDeclarationOrigin.CONTINUATION_CLASS) {
-            classCodegen.generateLocalClass(declaration, generateSequence(this) { it.inlinedInto }.last().irFunction).also {
-                closureReifiedMarkers[declaration] = it
-            }
+            closureReifiedMarkers[declaration] =
+                classCodegen.createLocalClassCodegen(declaration, generateSequence(this) { it.inlinedInto }.last().irFunction).generate()
         }
         return unitValue
     }

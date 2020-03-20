@@ -42,7 +42,7 @@ internal fun generateStateMachine(
     obtainContinuationClassBuilder: () -> ClassBuilder,
     element: KtElement
 ): MethodVisitor {
-    val state = classCodegen.state
+    val state = classCodegen.context.state
     val languageVersionSettings = state.languageVersionSettings
     assert(languageVersionSettings.isReleaseCoroutines()) { "Experimental coroutines are unsupported in JVM_IR backend" }
     return CoroutineTransformerMethodVisitor(
