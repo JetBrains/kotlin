@@ -92,10 +92,11 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
         get() = project.convention.plugins["base"] as BasePluginConvention?
 
     @get:Internal
-    var destinationDirectory: File by property {
-        project.buildDir.resolve(baseConventions!!.distsDirName)
-    }
-        internal set
+    internal var _destinationDirectory: File? = null
+
+    @get:Internal
+    val destinationDirectory: File
+        get() = _destinationDirectory ?: project.buildDir.resolve(baseConventions!!.distsDirName)
 
     @get:Internal
     var outputFileName: String by property {

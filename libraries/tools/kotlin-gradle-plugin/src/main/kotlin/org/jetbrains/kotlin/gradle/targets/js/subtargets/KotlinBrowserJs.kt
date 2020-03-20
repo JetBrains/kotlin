@@ -194,7 +194,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
                     it.compilation = compilation
                     it.description = "build webpack ${type.name.toLowerCase()} bundle"
-                    it.destinationDirectory = distribution.directory
+                    it._destinationDirectory = distribution.directory
 
                     when (type) {
                         KotlinJsBinaryType.PRODUCTION -> {
