@@ -34,7 +34,7 @@ final class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector
 
   @Override
   public int getVersion() {
-    return 3;
+    return 4;
   }
 
   @NotNull
@@ -81,6 +81,7 @@ final class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector
     addBoolIfDiffers(set, es, esDefault, s -> s.isBreadcrumbsAbove(), "breadcrumbsAbove");
     addBoolIfDiffers(set, es, esDefault, s -> s.isBreadcrumbsShown(), "all.breadcrumbs");
     addBoolIfDiffers(set, es, esDefault, s -> s.isShowIntentionBulb(), "intentionBulb");
+    addBoolIfDiffers(set, es, esDefault, s -> s.isDocCommentRenderingEnabled(), "renderDoc");
 
     for (String language : es.getOptions().getLanguageBreadcrumbsMap().keySet()) {
       final FeatureUsageData data = new FeatureUsageData().addLanguage(language);
