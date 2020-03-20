@@ -8,7 +8,7 @@ package codegen.ktype.ktype1
 import kotlin.test.*
 import kotlin.reflect.*
 
-@UseExperimental(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalStdlibApi::class)
 inline fun <reified R> kType() = typeOf<R>()
 
 inline fun <reified R> kType(obj: R) = kType<R>()

@@ -11,10 +11,10 @@ import kotlin.native.internal.*
  * The experimental marker for associated objects API.
  *
  * Any usage of a declaration annotated with `@ExperimentalAssociatedObjects` must be accepted either by
- * annotating that usage with the [UseExperimental] annotation, e.g. `@UseExperimental(ExperimentalAssociatedObjects::class)`,
- * or by using the compiler argument `-Xuse-experimental=kotlin.reflect.ExperimentalAssociatedObjects`.
+ * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalAssociatedObjects::class)`,
+ * or by using the compiler argument `-Xopt-in=kotlin.reflect.ExperimentalAssociatedObjects`.
  */
-@Experimental(level = Experimental.Level.ERROR)
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @Retention(value = AnnotationRetention.BINARY)
 public annotation class ExperimentalAssociatedObjects
 

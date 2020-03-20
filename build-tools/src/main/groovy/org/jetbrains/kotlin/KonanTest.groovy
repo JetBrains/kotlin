@@ -332,7 +332,7 @@ class RunExternalTestGroup extends OldKonanTest {
         def experimentalSettings = findLinesWithPrefixesRemoved(text, "// !USE_EXPERIMENTAL: ")
         if (experimentalSettings.size() != 0) {
             experimentalSettings.forEach { line ->
-                line.split(" ").toList().forEach { flags.add("-Xuse-experimental=$it") }
+                line.split(" ").toList().forEach { flags.add("-Xopt-in=$it") }
             }
         }
     }

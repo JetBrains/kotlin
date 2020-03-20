@@ -9,7 +9,7 @@ import kotlin.test.*
 import kotlin.reflect.*
 
 @Test
-@UseExperimental(ExperimentalAssociatedObjects::class)
+@OptIn(ExperimentalAssociatedObjects::class)
 fun testBasics1() {
     assertSame(Bar, Foo::class.findAssociatedObject<Associated1>())
     assertSame(Baz, Foo::class.findAssociatedObject<Associated2>())
@@ -18,17 +18,17 @@ fun testBasics1() {
     assertSame(null, Bar::class.findAssociatedObject<Associated1>())
 }
 
-@UseExperimental(ExperimentalAssociatedObjects::class)
+@OptIn(ExperimentalAssociatedObjects::class)
 @AssociatedObjectKey
 @Retention(AnnotationRetention.BINARY)
 annotation class Associated1(val kClass: KClass<*>)
 
-@UseExperimental(ExperimentalAssociatedObjects::class)
+@OptIn(ExperimentalAssociatedObjects::class)
 @AssociatedObjectKey
 @Retention(AnnotationRetention.BINARY)
 annotation class Associated2(val kClass: KClass<*>)
 
-@UseExperimental(ExperimentalAssociatedObjects::class)
+@OptIn(ExperimentalAssociatedObjects::class)
 @AssociatedObjectKey
 @Retention(AnnotationRetention.BINARY)
 annotation class Associated3(val kClass: KClass<*>)
@@ -41,7 +41,7 @@ object Bar
 object Baz
 
 @Test
-@UseExperimental(ExperimentalAssociatedObjects::class)
+@OptIn(ExperimentalAssociatedObjects::class)
 fun testGlobalOptimizations1() {
     val i1 = I1ImplHolder::class.findAssociatedObject<Associated1>()!! as I1
     assertEquals(42, i1.foo())
@@ -68,7 +68,7 @@ private object I1Impl : I1 {
 private class I1ImplHolder
 
 @Test
-@UseExperimental(ExperimentalAssociatedObjects::class)
+@OptIn(ExperimentalAssociatedObjects::class)
 fun testGlobalOptimizations2() {
     val i2 = I2ImplHolder()::class.findAssociatedObject<Associated1>()!! as I2
     assertEquals(17, i2.foo())

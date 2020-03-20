@@ -4,7 +4,7 @@ import kotlin.contracts.*
 open class S
 class P(val str: String = "P") : S()
 
-@UseExperimental(kotlin.contracts.ExperimentalContracts::class)
+@OptIn(kotlin.contracts.ExperimentalContracts::class)
 fun check(actual: Boolean) {
     contract { returns() implies actual }
     assertTrue(actual)

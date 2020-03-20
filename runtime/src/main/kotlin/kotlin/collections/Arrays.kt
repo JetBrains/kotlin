@@ -45,7 +45,7 @@ public inline fun <T> Array<out T>.subarrayContentToString(offset: Int, length: 
  * If any of arrays contains itself on any nesting level the behavior is undefined.
  */
 @SinceKotlin("1.1")
-@UseExperimental(ExperimentalUnsignedTypes::class)
+@OptIn(ExperimentalUnsignedTypes::class)
 internal fun <T> Array<out T>?.contentDeepHashCodeImpl(): Int {
     if (this == null) return 0
     var result = 1

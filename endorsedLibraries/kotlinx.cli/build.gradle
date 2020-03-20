@@ -60,7 +60,7 @@ kotlin {
 
         jvm().compilations.all {
             kotlinOptions {
-                freeCompilerArgs = ["-Xuse-experimental=kotlinx.cli.ExperimentalCli"]
+                freeCompilerArgs = ["-Xopt-in=kotlinx.cli.ExperimentalCli"]
                 suppressWarnings = true
             }
         }
@@ -92,8 +92,8 @@ targetList.each { target ->
         args = [*konanArgs,
                 '-output', project.file("build/${target}KotlinxCli"),
                 '-produce', 'library', '-module-name', 'kotlinx-cli', '-XXLanguage:+AllowContractsForCustomFunctions',
-                '-Xmulti-platform', '-Xuse-experimental=kotlinx.cli.ExperimentalCli',
-                '-Xuse-experimental=kotlin.ExperimentalMultiplatform',
+                '-Xmulti-platform', '-Xopt-in=kotlinx.cli.ExperimentalCli',
+                '-Xopt-in=kotlin.ExperimentalMultiplatform',
                 '-Xallow-result-return-type',
                 commonSrc.absolutePath,
                 "-Xcommon-sources=${commonSrc.absolutePath}",

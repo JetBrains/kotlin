@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:UseExperimental(ExperimentalCli::class)
+@file:OptIn(ExperimentalCli::class)
 import org.jetbrains.analyzer.sendGetRequest
 import org.jetbrains.analyzer.readFile
 import org.jetbrains.analyzer.SummaryBenchmarksReport

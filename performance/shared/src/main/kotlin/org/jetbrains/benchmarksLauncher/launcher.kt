@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:UseExperimental(ExperimentalCli::class)
+@file:OptIn(ExperimentalCli::class)
 package org.jetbrains.benchmarksLauncher
 
 import org.jetbrains.report.BenchmarkResult

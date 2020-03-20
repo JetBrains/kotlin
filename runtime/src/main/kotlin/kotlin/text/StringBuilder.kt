@@ -58,7 +58,7 @@ actual class StringBuilder private constructor (
         return append(toAppend, 0, toAppend.length)
     }
 
-    @UseExperimental(ExperimentalStdlibApi::class)
+    @OptIn(ExperimentalStdlibApi::class)
     actual override fun append(value: CharSequence?, startIndex: Int, endIndex: Int): StringBuilder = this.appendRange(value, startIndex, endIndex)
 
     /**
@@ -319,7 +319,7 @@ actual class StringBuilder private constructor (
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
-    @UseExperimental(ExperimentalStdlibApi::class)
+    @OptIn(ExperimentalStdlibApi::class)
     actual fun insert(index: Int, value: CharSequence?): StringBuilder {
         // Kotlin/JVM inserts the "null" string if the argument is null.
         val toInsert = value ?: "null"
@@ -887,7 +887,7 @@ public inline fun StringBuilder.setLength(l: Int) = this.setLength(newLength = l
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [start] or [end] is out of range of the [csq] character sequence indices or when `start > end`.
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
-@UseExperimental(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.insert(index: Int, csq: CharSequence?, start: Int, end: Int): StringBuilder =
         this.insertRange(index, csq, start, end)
@@ -905,6 +905,6 @@ public inline fun StringBuilder.setCharAt(index: Int, value: Char) = this.set(in
  *
  * @throws IndexOutOfBoundsException if [index] is out of bounds of this string builder.
  */
-@UseExperimental(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun StringBuilder.deleteCharAt(index: Int) = this.deleteAt(index)

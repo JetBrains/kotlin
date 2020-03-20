@@ -512,10 +512,10 @@ actual class HashMap<K, V> private constructor(
         const val INITIAL_MAX_PROBE_DISTANCE = 2
         const val TOMBSTONE = -1
 
-        @UseExperimental(ExperimentalStdlibApi::class)
+        @OptIn(ExperimentalStdlibApi::class)
         fun computeHashSize(capacity: Int): Int = (capacity.coerceAtLeast(1) * 3).takeHighestOneBit()
 
-        @UseExperimental(ExperimentalStdlibApi::class)
+        @OptIn(ExperimentalStdlibApi::class)
         fun computeShift(hashSize: Int): Int = hashSize.countLeadingZeroBits() + 1
     }
 

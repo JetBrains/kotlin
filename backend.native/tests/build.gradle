@@ -1446,7 +1446,7 @@ linkTest("classDelegation_linkTest") {
 }
 
 standaloneTest("contracts") {
-    flags = [ '-Xuse-experimental=kotlin.Experimental', '-tr' ]
+    flags = [ '-Xopt-in=kotlin.RequiresOptIn', '-tr' ]
     source = "codegen/contracts/contracts.kt"
 }
 
@@ -4180,7 +4180,7 @@ KotlinNativeTestKt.createTest(project, 'stdlibTest', KonanGTest) { task ->
             baseDir "$testOutputStdlib/stdlibTest"
             enableMultiplatform true
             extraOpts '-tr',
-                    '-Xuse-experimental=kotlin.Experimental,kotlin.ExperimentalStdlibApi',
+                    '-Xopt-in=kotlin.RequiresOptIn,kotlin.ExperimentalStdlibApi',
                     "-friend-modules", project.rootProject.file("${project.properties['konan.home']}/klib/common/stdlib").absolutePath
             extraOpts project.globalTestArgs
         }
