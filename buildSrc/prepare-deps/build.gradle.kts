@@ -87,6 +87,8 @@ repositories {
         }
     }
 
+    maven("file:///Users/yan/jb/repo")
+
     maven("https://www.jetbrains.com/intellij-repository/$intellijReleaseType")
     maven("https://plugins.jetbrains.com/maven")
     maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")

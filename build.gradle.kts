@@ -347,6 +347,8 @@ allprojects {
         maven("https://dl.google.com/dl/android/maven2")
         bootstrapKotlinRepo?.let(::maven)
         internalKotlinRepo?.let(::maven)
+
+        maven("file:///Users/yan/jb/repo")
     }
 
     configureJvmProject(javaHome!!, jvmTarget!!)
