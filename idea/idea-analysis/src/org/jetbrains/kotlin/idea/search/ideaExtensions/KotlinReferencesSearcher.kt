@@ -70,15 +70,15 @@ data class KotlinReferencesSearchOptions(
         val Empty = KotlinReferencesSearchOptions()
 
         internal fun calculateEffectiveScope(
-            unwrappedElement: PsiNamedElement,
+            elementToSearch: PsiNamedElement,
             parameters: ReferencesSearch.SearchParameters
         ): SearchScope {
             val kotlinOptions = (parameters as? KotlinReferencesSearchParameters)?.kotlinOptions ?: Empty
-            val elements = if (unwrappedElement is KtDeclaration && !isOnlyKotlinSearch(parameters.scopeDeterminedByUser)) {
-                unwrappedElement.toLightElements().filterDataClassComponentsIfDisabled(kotlinOptions).nullize()
+            val elements = if (elementToSearch is KtDeclaration && !isOnlyKotlinSearch(parameters.scopeDeterminedByUser)) {
+                elementToSearch.toLightElements().filterDataClassComponentsIfDisabled(kotlinOptions).nullize()
             } else {
                 null
-            } ?: listOf(unwrappedElement)
+            } ?: listOf(elementToSearch)
 
             return elements.fold(parameters.effectiveSearchScope) { scope, e ->
                 scope.unionSafe(parameters.effectiveSearchScope(e))
@@ -163,7 +163,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                     null
                 } ?: unwrappedElement
 
-            val effectiveSearchScope = calculateEffectiveScope(unwrappedElement, queryParameters)
+            val effectiveSearchScope = calculateEffectiveScope(elementToSearch, queryParameters)
 
             val refFilter: (PsiReference) -> Boolean = when (elementToSearch) {
                 is KtParameter -> ({ ref: PsiReference -> !ref.isNamedArgumentReference()/* they are processed later*/ })
