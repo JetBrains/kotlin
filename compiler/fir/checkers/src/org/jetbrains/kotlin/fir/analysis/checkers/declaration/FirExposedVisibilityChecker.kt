@@ -19,6 +19,7 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
         when (declaration) {
             is FirTypeAlias -> checkTypeAlias(declaration, context, reporter)
             is FirProperty -> checkProperty(declaration, context, reporter)
+            is FirFunction<*> -> checkFunction(declaration, context, reporter)
         }
     }
 
@@ -28,6 +29,17 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
         val restricting = expandedType?.leastPermissiveDescriptor(declaration.session, declaration.effectiveVisibility)
         if (restricting != null) {
             reporter.reportExposure(Error.EXPOSED_TYPEALIAS_EXPANDED_TYPE, declaration.source)
+        }
+    }
+
+    private fun checkFunction(declaration: FirFunction<*>, context: CheckerContext, reporter: DiagnosticReporter) {
+        val functionVisibility = (declaration as FirMemberDeclaration).effectiveVisibility
+        if (declaration !is FirConstructor) {
+            val restricting = declaration.returnTypeRef.coneTypeSafe<ConeClassLikeType>()
+                ?.leastPermissiveDescriptor(declaration.session, functionVisibility)
+            if (restricting != null) {
+                reporter.reportExposure(Error.EXPOSED_FUNCTION_RETURN_TYPE, declaration.source)
+            }
         }
     }
 
@@ -58,6 +70,7 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
         EXPOSED_TYPEALIAS_EXPANDED_TYPE,
         EXPOSED_PROPERTY_TYPE,
         EXPOSED_RECEIVER_TYPE,
+        EXPOSED_FUNCTION_RETURN_TYPE
     }
 
     private fun DiagnosticReporter.reportExposure(
@@ -78,6 +91,11 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
             Error.EXPOSED_RECEIVER_TYPE -> {
                 source?.let {
                     report(Errors.FIR_EXPOSED_RECEIVER_TYPE.onSource(it))
+                }
+            }
+            Error.EXPOSED_FUNCTION_RETURN_TYPE -> {
+                source?.let {
+                    report(Errors.FIR_EXPOSED_FUNCTION_RETURN_TYPE.onSource(it))
                 }
             }
         }
