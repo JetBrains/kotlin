@@ -2120,6 +2120,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/visibility"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("exposedFunctionParameterType.kt")
+        public void testExposedFunctionParameterType() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/visibility/exposedFunctionParameterType.kt");
+        }
+
         @TestMetadata("exposedFunctionReturnType.kt")
         public void testExposedFunctionReturnType() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/visibility/exposedFunctionReturnType.kt");
