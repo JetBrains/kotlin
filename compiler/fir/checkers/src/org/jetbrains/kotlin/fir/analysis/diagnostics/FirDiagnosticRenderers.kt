@@ -23,5 +23,7 @@ object FirDiagnosticRenderers {
         }
     }
 
-    val TO_STRING = Renderer<Any> { it.toString() }
+    val TO_STRING = Renderer { element: Any ->
+        element.toString()
+    }
 }
