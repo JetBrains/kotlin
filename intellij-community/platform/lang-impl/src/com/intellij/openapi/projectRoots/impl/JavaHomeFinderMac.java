@@ -14,9 +14,11 @@ import java.util.*;
 class JavaHomeFinderMac extends JavaHomeFinderBasic {
   public static final String JAVA_HOME_FIND_UTIL = "/usr/libexec/java_home";
 
+  static String defaultJavaLocation = "/Library/Java/JavaVirtualMachines";
+
   JavaHomeFinderMac(boolean forceEmbeddedJava) {
     super(forceEmbeddedJava,
-          "/Library/Java/JavaVirtualMachines",
+          defaultJavaLocation,
           "/System/Library/Java/JavaVirtualMachines",
           FileUtil.expandUserHome("~/Library/Java/JavaVirtualMachines")
     );

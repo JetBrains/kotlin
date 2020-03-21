@@ -6,6 +6,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.util.lang.JavaVersion;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,11 +41,12 @@ public abstract class JavaHomeFinder {
     return paths;
   }
 
+  private static boolean isDetectorEnabled(boolean forceEmbeddedJava) {
+    return forceEmbeddedJava || Registry.is("java.detector.enabled", true);
+  }
+
   private static JavaHomeFinderBasic getFinder(boolean forceEmbeddedJava) {
-    boolean detectorIsEnabled = forceEmbeddedJava || Registry.is("java.detector.enabled", true);
-    if (!detectorIsEnabled) {
-      return null;
-    }
+    if (!isDetectorEnabled(forceEmbeddedJava)) return null;
 
     if (SystemInfo.isWindows) {
       return new JavaHomeFinderWindows(forceEmbeddedJava);
@@ -60,5 +62,25 @@ public abstract class JavaHomeFinder {
     }
 
     return new JavaHomeFinderBasic(forceEmbeddedJava);
+  }
+
+  @Nullable
+  public static String defaultJavaLocation() {
+    if (SystemInfo.isWindows) {
+      return JavaHomeFinderWindows.defaultJavaLocation;
+    }
+    if (SystemInfo.isMac) {
+      return JavaHomeFinderMac.defaultJavaLocation;
+    }
+
+    if (SystemInfo.isLinux) {
+      return "/opt/java";
+    }
+
+    if (SystemInfo.isSolaris) {
+      return "/usr/jdk";
+    }
+
+    return null;
   }
 }

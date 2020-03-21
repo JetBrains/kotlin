@@ -3,6 +3,7 @@ package com.intellij.openapi.projectRoots.impl;
 
 import com.intellij.openapi.projectRoots.JdkFinder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -11,5 +12,11 @@ public class JdkFinderImpl implements JdkFinder {
   @Override
   public List<String> suggestHomePaths() {
     return JavaHomeFinder.suggestHomePaths();
+  }
+
+  @Nullable
+  @Override
+  public String defaultJavaLocation() {
+    return JavaHomeFinder.defaultJavaLocation();
   }
 }

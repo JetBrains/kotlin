@@ -15,6 +15,7 @@ import kotlin.text.RegexOption.MULTILINE
 class JavaHomeFinderWindows : JavaHomeFinderBasic {
 
   companion object {
+    const val defaultJavaLocation = "C:\\Program Files"
 
     @Suppress("SpellCheckingInspection")
     private const val regCommand = """reg query HKLM\SOFTWARE\JavaSoft\JDK /s /v JavaHome"""
@@ -39,7 +40,6 @@ class JavaHomeFinderWindows : JavaHomeFinderBasic {
       }
       return paths
     }
-
   }
 
   constructor(forceEmbeddedJava: Boolean) : super(forceEmbeddedJava) {
