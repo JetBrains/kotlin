@@ -12,8 +12,11 @@ import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+<<<<<<< HEAD
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+=======
+>>>>>>> d43c780e5de... [FIR] Fixed EXPOSED_RECEIVER_TYPE
 
 object FirErrors {
     val UNRESOLVED_REFERENCE by error1<FirSourceElement, PsiElement, String?>()
