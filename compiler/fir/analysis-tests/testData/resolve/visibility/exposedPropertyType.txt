@@ -1,0 +1,72 @@
+FILE: exposedPropertyType.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final class AInnerPrivate : R|kotlin/Any| {
+            public[private] constructor(str: R|kotlin/String|): R|A.AInnerPrivate| {
+                super<R|kotlin/Any|>()
+            }
+
+            public[private] final val str: R|kotlin/String| = R|<local>/str|
+                public get(): R|kotlin/String|
+
+        }
+
+        protected final enum class AInnerProtectedEnum : R|kotlin/Enum<A.AInnerProtectedEnum>| {
+            private constructor(): R|A.AInnerProtectedEnum| {
+                super<R|kotlin/Enum<A.AInnerProtectedEnum>|>()
+            }
+
+            public final static enum entry A: R|A.AInnerProtectedEnum|
+            public final static enum entry B: R|A.AInnerProtectedEnum|
+            public final static fun values(): R|kotlin/Array<A.AInnerProtectedEnum>| {
+            }
+
+            public final static fun valueOf(value: R|kotlin/String|): R|A.AInnerProtectedEnum| {
+            }
+
+        }
+
+        public final class AInnerPublic : R|kotlin/Any| {
+            public constructor(str: R|kotlin/String|): R|A.AInnerPublic| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val str: R|kotlin/String| = R|<local>/str|
+                public get(): R|kotlin/String|
+
+        }
+
+    }
+    public final class Property : R|kotlin/Any| {
+        public constructor(): R|Property| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var var1: R|kotlin/String|
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        public final var var2: R|kotlin/String|
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        public final var var3: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final var var4: R|A.AInnerPrivate|
+            public get(): R|A.AInnerPrivate|
+            public set(value: R|A.AInnerPrivate|): R|kotlin/Unit|
+
+        public final var var5: R|A.AInnerPublic|
+            public get(): R|A.AInnerPublic|
+            public set(value: R|A.AInnerPublic|): R|kotlin/Unit|
+
+        public final var var6: R|A.AInnerProtectedEnum|
+            public get(): R|A.AInnerProtectedEnum|
+            public set(value: R|A.AInnerProtectedEnum|): R|kotlin/Unit|
+
+    }
