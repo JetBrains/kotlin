@@ -16,7 +16,7 @@ class RestoreDefaultSettingsAction : DumbAwareAction() {
       return;
     }
 
-    writeCustomConfigMigrationFile(null)
+    CustomConfigMigrationOption.writeCustomConfigMigrationFile(null)
 
     invokeLater {
       (ApplicationManager.getApplication() as ApplicationEx).restart(true)

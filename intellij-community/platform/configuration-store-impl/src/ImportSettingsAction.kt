@@ -137,7 +137,7 @@ open class ImportSettingsAction : AnAction(), DumbAware {
       ConfigurationStoreBundle.message("restore.default.settings.confirmation.message", ConfigImportHelper.getBackupPath())
 
     if (confirmRestart(confirmationMessage)) {
-      writeCustomConfigMigrationFile(saveFile)
+      CustomConfigMigrationOption.writeCustomConfigMigrationFile(saveFile)
       restart()
     }
   }
