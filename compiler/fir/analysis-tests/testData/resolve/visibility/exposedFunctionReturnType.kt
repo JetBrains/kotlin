@@ -5,5 +5,5 @@ class A {
 }
 
 abstract class B {
-    <!FIR_EXPOSED_FUNCTION_RETURN_TYPE!>fun foo(str: String): A.InnerA<!>
+    <!EXPOSED_FUNCTION_RETURN_TYPE!>fun foo(str: String): A.InnerA<!>
 }
