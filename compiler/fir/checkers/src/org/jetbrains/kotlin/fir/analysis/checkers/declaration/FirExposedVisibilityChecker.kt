@@ -38,11 +38,26 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
         if (restricting != null) {
             reporter.reportExposure(Error.EXPOSED_PROPERTY_TYPE, declaration.source)
         }
+        checkMemberReceiver(declaration.receiverTypeRef?.coneTypeSafe(), declaration, reporter)
+    }
+
+    private fun checkMemberReceiver(
+        typeRef: ConeClassLikeType?,
+        memberDeclaration: FirCallableMemberDeclaration<*>, reporter: DiagnosticReporter
+    ) {
+        if (typeRef == null) return
+        val receiverParameterType = memberDeclaration.receiverTypeRef?.coneTypeSafe<ConeClassLikeType>()
+        val memberVisibility = memberDeclaration.effectiveVisibility
+        val restricting = receiverParameterType?.leastPermissiveDescriptor(memberDeclaration.session, memberVisibility)
+        if (restricting != null) {
+            reporter.reportExposure(Error.EXPOSED_RECEIVER_TYPE, memberDeclaration.source)
+        }
     }
 
     private enum class Error {
         EXPOSED_TYPEALIAS_EXPANDED_TYPE,
         EXPOSED_PROPERTY_TYPE,
+        EXPOSED_RECEIVER_TYPE,
     }
 
     private fun DiagnosticReporter.reportExposure(
@@ -58,6 +73,11 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
             Error.EXPOSED_PROPERTY_TYPE -> {
                 source?.let {
                     report(Errors.FIR_EXPOSED_TYPEALIAS_EXPANDED_TYPE.onSource(it))
+                }
+            }
+            Error.EXPOSED_RECEIVER_TYPE -> {
+                source?.let {
+                    report(Errors.FIR_EXPOSED_RECEIVER_TYPE.onSource(it))
                 }
             }
         }
