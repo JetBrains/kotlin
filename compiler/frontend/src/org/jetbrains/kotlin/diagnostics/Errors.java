@@ -139,6 +139,7 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> FIR_EXPOSED_TYPEALIAS_EXPANDED_TYPE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> FIR_EXPOSED_PROPERTY_TYPE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeParameter> FIR_EXPOSED_RECEIVER_TYPE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> FIR_EXPOSED_FUNCTION_RETURN_TYPE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory2<KtExpression, KotlinType, Collection<ClassDescriptor>> INACCESSIBLE_TYPE = DiagnosticFactory2.create(WARNING);
 
