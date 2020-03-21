@@ -44,6 +44,16 @@ internal class JdkDownloader : SdkDownload, JdkDownloaderBase {
     } ?: return
 
     if (project?.isDisposed == true) return
+
+    if (items.isEmpty()) {
+      Messages.showMessageDialog(project,
+                                 "No JDK packages are available for download",
+                                 JdkDownloadDialog.DIALOG_TITLE,
+                                 Messages.getErrorIcon()
+      )
+      return
+    }
+
     val (jdkItem, jdkHome) = JdkDownloadDialog(project, parentComponent, sdkTypeId, items).selectJdkAndPath() ?: return
 
     /// prepare the JDK to be installed (e.g. create home dir, write marker file)
