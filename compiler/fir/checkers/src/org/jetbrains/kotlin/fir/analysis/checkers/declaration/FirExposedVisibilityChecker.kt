@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.onSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 
 object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>() {
@@ -30,7 +31,13 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
         val typeAliasVisibility = declaration.firEffectiveVisibility(declaration.session)
         val restricting = expandedType?.leastPermissiveDescriptor(declaration.session, typeAliasVisibility)
         if (restricting != null) {
-            reporter.reportExposure(FirErrors.EXPOSED_TYPEALIAS_EXPANDED_TYPE, declaration, restricting)
+            reporter.reportExposure(
+                FirErrors.EXPOSED_TYPEALIAS_EXPANDED_TYPE,
+                restricting,
+                typeAliasVisibility,
+                restricting.firEffectiveVisibility(declaration.session),
+                declaration.source
+            )
         }
     }
 
@@ -40,7 +47,13 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
             val restricting = declaration.returnTypeRef.coneTypeSafe<ConeClassLikeType>()
                 ?.leastPermissiveDescriptor(declaration.session, functionVisibility)
             if (restricting != null) {
-                reporter.reportExposure(FirErrors.EXPOSED_FUNCTION_RETURN_TYPE, declaration, restricting)
+                reporter.reportExposure(
+                    FirErrors.EXPOSED_FUNCTION_RETURN_TYPE,
+                    restricting,
+                    functionVisibility,
+                    restricting.firEffectiveVisibility(declaration.session),
+                    declaration.source
+                )
             }
         }
     }
@@ -50,38 +63,50 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
         val restricting =
             declaration.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.leastPermissiveDescriptor(declaration.session, propertyVisibility)
         if (restricting != null) {
-            reporter.reportExposure(FirErrors.EXPOSED_PROPERTY_TYPE, declaration, restricting)
+            reporter.reportExposure(
+                FirErrors.EXPOSED_PROPERTY_TYPE,
+                restricting,
+                propertyVisibility,
+                restricting.firEffectiveVisibility(declaration.session),
+                declaration.source
+            )
         }
-        checkMemberReceiver(declaration.receiverTypeRef?.coneTypeSafe(), declaration, reporter)
+        checkMemberReceiver(declaration.receiverTypeRef, declaration, reporter)
     }
 
     private fun checkMemberReceiver(
-        typeRef: ConeClassLikeType?,
+        typeRef: FirTypeRef?,
         memberDeclaration: FirCallableMemberDeclaration<*>, reporter: DiagnosticReporter
     ) {
         if (typeRef == null) return
-        val receiverParameterType = memberDeclaration.receiverTypeRef?.coneTypeSafe<ConeClassLikeType>()
-        val memberVisibility = memberDeclaration.effectiveVisibility
+        val receiverParameterType = typeRef.coneTypeSafe<ConeClassLikeType>()
+        val memberVisibility = memberDeclaration.firEffectiveVisibility(memberDeclaration.session)
         val restricting = receiverParameterType?.leastPermissiveDescriptor(memberDeclaration.session, memberVisibility)
         if (restricting != null) {
-            reporter.reportExposure(FirErrors.EXPOSED_RECEIVER_TYPE, memberDeclaration, restricting)
+            reporter.reportExposure(
+                FirErrors.EXPOSED_RECEIVER_TYPE,
+                restricting,
+                memberVisibility,
+                restricting.firEffectiveVisibility(memberDeclaration.session),
+                typeRef.source
+            )
         }
     }
 
-    private inline fun <E : FirMemberDeclaration, reified P : PsiElement> DiagnosticReporter.reportExposure(
-        er: DiagnosticFactory3<P, FirEffectiveVisibility, DeclarationWithRelation, FirEffectiveVisibility>,
-        element: E,
+    private inline fun <reified E : PsiElement> DiagnosticReporter.reportExposure(
+        error: DiagnosticFactory3<E, FirEffectiveVisibility, DeclarationWithRelation, FirEffectiveVisibility>,
         restrictingDeclaration: DeclarationWithRelation,
-        elementVisibility: FirEffectiveVisibility = element.effectiveVisibility,
-        source: FirSourceElement? = element.source
+        elementVisibility: FirEffectiveVisibility,
+        restrictingVisibility: FirEffectiveVisibility,
+        source: FirSourceElement?
     ) {
         source?.let {
             report(
-                er.onSource(
+                error.onSource(
                     it,
                     elementVisibility,
                     restrictingDeclaration,
-                    restrictingDeclaration.firEffectiveVisibility(element.session)
+                    restrictingVisibility
                 )
             )
         }
