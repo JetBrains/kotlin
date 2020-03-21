@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_TYPEALIAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_FUNCTION_RETURN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_PROPERTY_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_RECEIVER_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_PARAMETER_TYPE
 
 @Suppress("unused")
 class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
@@ -42,7 +43,6 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
     }
 
     companion object {
-<<<<<<< HEAD:compiler/fir/checkers/src/org/jetbrains/kotlin/fir/analysis/diagnostics/FirDefaultErrorMessages.kt
         val MAP = FirDiagnosticFactoryToRendererMap("FIR").also { map ->
             map.put(UNRESOLVED_REFERENCE, "Unresolved reference: {0}", NULLABLE_STRING)
             map.put(INAPPLICABLE_CANDIDATE, "Inapplicable candidate(s): {0}", SYMBOLS)
@@ -70,6 +70,6 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(EXPOSED_PROPERTY_TYPE, "{0} property exposes its {2} type{1}", TO_STRING, TO_STRING, TO_STRING)
             map.put(EXPOSED_FUNCTION_RETURN_TYPE, "{0} function exposes its {2} return type{1}", TO_STRING, TO_STRING, TO_STRING)
             map.put(EXPOSED_RECEIVER_TYPE, "{0} member exposes its {2} receiver type{1}", TO_STRING, TO_STRING, TO_STRING)
-        }
+            map.put(EXPOSED_PARAMETER_TYPE, "{0} function exposes its {2} parameter type{1}", TO_STRING, TO_STRING, TO_STRING)
     }
 }
