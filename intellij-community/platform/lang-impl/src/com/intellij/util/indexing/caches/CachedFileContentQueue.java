@@ -154,7 +154,7 @@ public final class CachedFileContentQueue {
           LOG.info(e);
         }
       }
-      else {
+      else if (!(e instanceof ProcessCanceledException)) {
         LOG.error(e);
       }
 
