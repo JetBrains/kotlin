@@ -5,24 +5,20 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.onSource
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 
 object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>() {
     override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration is FirTypeAlias) {
-            checkTypeAlias(declaration, context, reporter)
+        when (declaration) {
+            is FirTypeAlias -> checkTypeAlias(declaration, context, reporter)
+            is FirProperty -> checkProperty(declaration, context, reporter)
         }
     }
 
@@ -35,8 +31,18 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
         }
     }
 
+    private fun checkProperty(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
+        val propertyVisibility = declaration.effectiveVisibility
+        val restricting =
+            declaration.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.leastPermissiveDescriptor(declaration.session, propertyVisibility)
+        if (restricting != null) {
+            reporter.reportExposure(Error.EXPOSED_PROPERTY_TYPE, declaration.source)
+        }
+    }
+
     private enum class Error {
-        EXPOSED_TYPEALIAS_EXPANDED_TYPE
+        EXPOSED_TYPEALIAS_EXPANDED_TYPE,
+        EXPOSED_PROPERTY_TYPE,
     }
 
     private fun DiagnosticReporter.reportExposure(
@@ -45,6 +51,11 @@ object FirExposedVisibilityChecker : FirDeclarationChecker<FirMemberDeclaration>
     ) {
         when (error) {
             Error.EXPOSED_TYPEALIAS_EXPANDED_TYPE -> {
+                source?.let {
+                    report(Errors.FIR_EXPOSED_TYPEALIAS_EXPANDED_TYPE.onSource(it))
+                }
+            }
+            Error.EXPOSED_PROPERTY_TYPE -> {
                 source?.let {
                     report(Errors.FIR_EXPOSED_TYPEALIAS_EXPANDED_TYPE.onSource(it))
                 }
