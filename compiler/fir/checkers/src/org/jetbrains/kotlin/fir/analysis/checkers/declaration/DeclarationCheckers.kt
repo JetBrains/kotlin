@@ -14,7 +14,8 @@ object DeclarationCheckers {
         FirModifierChecker
     )
     val MEMBER_DECLARATIONS: List<FirDeclarationChecker<FirMemberDeclaration>> = DECLARATIONS + listOf(
-        FirInfixFunctionDeclarationChecker
+        FirInfixFunctionDeclarationChecker,
+        FirExposedVisibilityChecker
     )
     val CONSTRUCTORS: List<FirDeclarationChecker<FirConstructor>> = MEMBER_DECLARATIONS + listOf(
         FirConstructorChecker
