@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATIONS
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy
@@ -165,6 +166,7 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
             withDefinedIn = false
             eachAnnotationOnNewLine = true
             boldOnlyForNamesInHtml = true
+            excludedTypeAnnotationClasses = NULLABILITY_ANNOTATIONS
         }
 
         fun StringBuilder.renderKDoc(contentTag: KDocTag, sections: List<KDocSection>) {
