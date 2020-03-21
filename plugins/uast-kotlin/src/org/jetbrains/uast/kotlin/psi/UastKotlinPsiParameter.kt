@@ -19,13 +19,13 @@ import org.jetbrains.uast.kotlin.analyze
 import org.jetbrains.uast.kotlin.toPsiType
 
 class UastKotlinPsiParameter(
-        name: String,
-        type: PsiType,
-        parent: PsiElement,
-        language: Language,
-        isVarArgs: Boolean,
-        val ktDefaultValue: KtExpression?,
-        val ktParameter: KtParameter
+    name: String,
+    type: PsiType,
+    private val parent: PsiElement,
+    language: Language,
+    isVarArgs: Boolean,
+    val ktDefaultValue: KtExpression?,
+    val ktParameter: KtParameter
 ) : LightParameter(name, type, parent, language, isVarArgs) {
     companion object {
         fun create(parameter: KtParameter, parent: PsiElement, containingElement: UElement, index: Int): PsiParameter {
@@ -41,6 +41,8 @@ class UastKotlinPsiParameter(
                     parameter)
         }
     }
+
+    override fun getParent(): PsiElement = parent
 
     override fun getContainingFile(): PsiFile? = ktParameter.containingFile
 
