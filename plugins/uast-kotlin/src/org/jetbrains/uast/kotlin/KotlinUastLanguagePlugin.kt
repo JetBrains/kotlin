@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.*
 import org.jetbrains.uast.expressions.UInjectionHost
 import org.jetbrains.uast.kotlin.KotlinConverter.convertDeclaration
@@ -195,6 +196,7 @@ internal object KotlinConverter {
         is KtLightParameterList -> unwrapElements(element.parent)
         is KtTypeElement -> unwrapElements(element.parent)
         is KtSuperTypeList -> unwrapElements(element.parent)
+        is KtFinallySection -> unwrapElements(element.parent)
         else -> element
     }
 
@@ -625,6 +627,10 @@ internal object KotlinConverter {
             } ?: return@uParam null
             val lightParameter = lightMethod.parameterList.parameters.find { it.name == element.name } ?: return@uParam null
             KotlinUParameter(lightParameter, element, givenParent)
+        },
+        alternative catch@{
+            val uCatchClause = element.parent?.parent?.safeAs<KtCatchClause>()?.toUElementOfType<UCatchClause>() ?: return@catch null
+            uCatchClause.parameters.firstOrNull { it.sourcePsi == element }
         },
         *convertToPropertyAlternatives(LightClassUtil.getLightClassPropertyMethods(element), givenParent)
     )
