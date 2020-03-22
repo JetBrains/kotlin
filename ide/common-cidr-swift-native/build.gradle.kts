@@ -38,4 +38,5 @@ the<JavaPluginConvention>().sourceSets["main"].apply {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-Xjvm-default=enable"
+    kotlinOptions.freeCompilerArgs += "-Xskip-metadata-version-check"
 }
