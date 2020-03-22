@@ -2,6 +2,7 @@
 package com.intellij.refactoring.rename.naming;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.NlsUI;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.refactoring.rename.RenameProcessor;
@@ -9,6 +10,7 @@ import com.intellij.refactoring.rename.RenameUtil;
 import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.nls.NlsContexts;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 
@@ -159,10 +161,10 @@ public abstract class AutomaticRenamer {
     return false;
   }
 
-  @Nls(capitalization = Nls.Capitalization.Title)
+  @Nls @NlsContexts.DialogTitle
   public abstract String getDialogTitle();
 
-  @Nls(capitalization = Nls.Capitalization.Sentence)
+  @Nls @NlsUI.Button
   public abstract String getDialogDescription();
 
   public abstract String entityName();

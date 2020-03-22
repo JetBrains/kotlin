@@ -2,6 +2,7 @@
 package com.intellij.refactoring.rename.naming;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.util.NlsUI;
 import com.intellij.psi.PsiElement;
 import com.intellij.usageView.UsageInfo;
 import org.jetbrains.annotations.Nls;
@@ -34,7 +35,7 @@ public interface AutomaticRenamerFactory {
    * @return the checkbox title.
    */
   @Nullable
-  @Nls(capitalization = Nls.Capitalization.Sentence)
+  @Nls @NlsUI.Checkbox
   String getOptionName();
 
   /**

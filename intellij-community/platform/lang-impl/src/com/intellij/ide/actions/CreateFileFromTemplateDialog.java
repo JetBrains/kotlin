@@ -13,6 +13,7 @@ import com.intellij.openapi.ui.InputValidatorEx;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.NlsUI;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
@@ -31,6 +32,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static com.intellij.util.nls.NlsContexts.CommandName;
+import static com.intellij.util.nls.NlsContexts.DialogTitle;
 
 /**
  * @author peter
@@ -313,17 +317,15 @@ public class CreateFileFromTemplateDialog extends DialogWrapper {
   }
 
   public interface Builder {
-    Builder setTitle(@Nls(capitalization = Nls.Capitalization.Title) String title);
+    Builder setTitle(@Nls @DialogTitle String title);
     Builder setValidator(InputValidator validator);
-    Builder addKind(@Nls(capitalization = Nls.Capitalization.Sentence) @NotNull String kind,
-                    @Nullable Icon icon,
-                    @NonNls @NotNull String templateName);
+    Builder addKind(@Nls @NlsUI.ListItem @NotNull String kind, @Nullable Icon icon, @NonNls @NotNull String templateName);
     @Nullable
-    <T extends PsiElement> T show(@Nls(capitalization = Nls.Capitalization.Title) @NotNull String errorTitle,
+    <T extends PsiElement> T show(@Nls @DialogTitle @NotNull String errorTitle,
                                   @NonNls @Nullable String selectedItem,
                                   @NotNull FileCreator<T> creator);
 
-    <T extends PsiElement> void show(@Nls(capitalization = Nls.Capitalization.Title) @NotNull String errorTitle,
+    <T extends PsiElement> void show(@Nls @DialogTitle @NotNull String errorTitle,
                                      @NonNls @Nullable String selectedItem,
                                      @NotNull FileCreator<T> creator,
                                      Consumer<? super T> elementConsumer);
@@ -337,7 +339,7 @@ public class CreateFileFromTemplateDialog extends DialogWrapper {
     @Nullable
     T createFile(@NonNls @NotNull String name, @NonNls @NotNull String templateName);
 
-    @Nls
+    @Nls @CommandName
     @NotNull
     String getActionName(@NonNls @NotNull String name, @NonNls @NotNull String templateName);
 

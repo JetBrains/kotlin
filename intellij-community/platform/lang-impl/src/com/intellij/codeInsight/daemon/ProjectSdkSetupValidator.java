@@ -4,6 +4,7 @@ package com.intellij.codeInsight.daemon;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsUI;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.EditorNotificationPanel;
@@ -23,7 +24,7 @@ public interface ProjectSdkSetupValidator {
   boolean isApplicableFor(@NotNull Project project, @NotNull VirtualFile file);
 
   @Nullable
-  @Nls(capitalization = Nls.Capitalization.Sentence)
+  @Nls @NlsUI.Label
   String getErrorMessage(@NotNull Project project, @NotNull VirtualFile file);
 
   /**

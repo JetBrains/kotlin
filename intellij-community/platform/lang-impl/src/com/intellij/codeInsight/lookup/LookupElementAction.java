@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+import static com.intellij.openapi.util.NlsUI.ListItem;
+
 /**
  * @author peter
  */
@@ -28,8 +30,7 @@ public abstract class LookupElementAction {
   private final Icon myIcon;
   private final String myText;
 
-  protected LookupElementAction(@Nullable Icon icon,
-                                @NotNull @Nls(capitalization = Nls.Capitalization.Sentence) String text) {
+  protected LookupElementAction(@Nullable Icon icon, @NotNull @Nls @ListItem String text) {
     myIcon = icon;
     myText = text;
   }
