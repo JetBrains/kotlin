@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.CommonTargetConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.getConfiguratorSettings
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.moduleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
@@ -87,8 +88,14 @@ private class ModuleNameComponent(context: Context, private val module: Module) 
     override fun onInit() {
         super.onInit()
         val isSingleRootMode = read { KotlinPlugin::modules.settingValue }.size == 1
-        if (isSingleRootMode && module.isRootModule) {
-            textField.disable("[The same as the project name]")
+        when {
+            isSingleRootMode && module.isRootModule -> {
+                textField.disable("[The same as the project name]")
+            }
+            module.configurator == CommonTargetConfigurator -> {
+                //String concatination to not to forget localisation for localisation
+                textField.disable("common" + " " + "[Can not be modified]")
+            }
         }
     }
 

@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.textField
@@ -28,7 +29,7 @@ class TextFieldComponent(
         uiComponent.text = newValue
     }
 
-    fun disable(message: String) {
+    fun disable(@Nls message: String) {
         cachedValueWhenDisabled = getUiValue()
         uiComponent.isEditable = false
         uiComponent.foreground = UIUtil.getLabelFontColor(UIUtil.FontColor.BRIGHTER)
