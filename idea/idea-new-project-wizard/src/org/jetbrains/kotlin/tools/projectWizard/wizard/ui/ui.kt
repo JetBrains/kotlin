@@ -6,7 +6,10 @@ import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.ThrowableComputable
-import com.intellij.ui.*
+import com.intellij.ui.ColorUtil
+import com.intellij.ui.PopupHandler
+import com.intellij.ui.SimpleTextAttributes
+import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.UIUtil
@@ -22,13 +25,9 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.UiConstants.GAP_BORDER_SIZE
 import java.awt.BorderLayout
-import java.awt.Cursor
 import java.awt.Font
 import java.awt.LayoutManager
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
 import javax.swing.*
 import javax.swing.border.Border
 import javax.swing.event.DocumentEvent
@@ -55,17 +54,6 @@ fun <F : JTextField> F.withOnUpdatedListener(onUpdated: (value: String) -> Unit)
         override fun removeUpdate(e: DocumentEvent?) = onUpdated(this@apply.text)
         override fun changedUpdate(e: DocumentEvent?) = onUpdated(this@apply.text)
     })
-}
-
-internal fun hyperlinkLabel(
-    text: String,
-    onClick: () -> Unit
-) = DescriptionPanel().apply {
-    cursor = Cursor(Cursor.HAND_CURSOR)
-    addMouseListener(object : MouseAdapter() {
-        override fun mouseClicked(e: MouseEvent?) = onClick()
-    })
-    updateText("<a href='javascript:void(0)'>$text</a>".asHtml())
 }
 
 internal fun String.asHtml() = "<html><body>$this</body></html>"
@@ -139,30 +127,6 @@ fun ToolbarDecorator.createPanelWithPopupHandler(popupTarget: JComponent) = crea
     )
 }
 
-fun <C : JComponent> C.bordered(
-    needTopEmptyBorder: Boolean = true,
-    needBottomEmptyBorder: Boolean = true,
-    needInnerEmptyBorder: Boolean = true,
-    needLineBorder: Boolean = true
-) = apply {
-    val lineBorder = if (needLineBorder) BorderFactory.createLineBorder(JBColor.border()) else null
-    border = BorderFactory.createCompoundBorder(
-        BorderFactory.createEmptyBorder(
-            if (needTopEmptyBorder) GAP_BORDER_SIZE else 0,
-            0,
-            if (needBottomEmptyBorder) GAP_BORDER_SIZE else 0,
-            0
-        ),
-        when {
-            needInnerEmptyBorder -> BorderFactory.createCompoundBorder(
-                lineBorder,
-                BorderFactory.createEmptyBorder(GAP_BORDER_SIZE, GAP_BORDER_SIZE, GAP_BORDER_SIZE, GAP_BORDER_SIZE)
-            )
-            else -> lineBorder
-        }
-    )
-}
-
 fun <C : JComponent> C.addBorder(border: Border): C = apply {
     this.border = BorderFactory.createCompoundBorder(border, this.border)
 }
@@ -174,12 +138,6 @@ fun <T> runWithProgressBar(title: String, action: () -> T): T =
         true,
         null
     )
-
-
-object UiConstants {
-    const val GAP_BORDER_SIZE = 5
-}
-
 
 val DisplayableSettingItem.fullTextHtml
     get() = buildString {
