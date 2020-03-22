@@ -16,7 +16,9 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.FieldPanel
+import com.intellij.util.nls.NlsContexts
 import gnu.trove.THashSet
+import org.jetbrains.annotations.Nls
 import org.jetbrains.concurrency.AsyncPromise
 import org.jetbrains.concurrency.Promise
 import java.awt.Component
@@ -102,7 +104,10 @@ fun chooseSettingsFile(oldPath: String?, parent: Component?, title: String, desc
   return result
 }
 
-internal class ChooseComponentsToExportDialog(fileToComponents: Map<Path, List<ExportableItem>>, private val isShowFilePath: Boolean, title: String, private val description: String) : DialogWrapper(false) {
+internal class ChooseComponentsToExportDialog(fileToComponents: Map<Path, List<ExportableItem>>,
+                                              private val isShowFilePath: Boolean,
+                                              title: @Nls @NlsContexts.DialogTitle String,
+                                              private val description: String) : DialogWrapper(false) {
   private val chooser: ElementsChooser<ComponentElementProperties>
   private val pathPanel = FieldPanel(ConfigurationStoreBundle.message("editbox.export.settings.to"), null, { browse() }, null)
 

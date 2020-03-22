@@ -7,6 +7,8 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.util.nls.NlsContexts;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -16,7 +18,7 @@ class TypeEditor<T extends UserFileType<T>> extends DialogWrapper {
   private final T myFileType;
   private final SettingsEditor<T> myEditor;
 
-  TypeEditor(@NotNull Component parent, @NotNull T fileType, @NotNull String title) {
+  TypeEditor(@NotNull Component parent, @NotNull T fileType, @NotNull @Nls @NlsContexts.DialogTitle String title) {
     super(parent, false);
     myFileType = fileType;
     myEditor = fileType.getEditor();

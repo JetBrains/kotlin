@@ -40,8 +40,10 @@ import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.nls.NlsContexts;
 import com.intellij.util.ui.JBUI;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,7 +83,7 @@ public final class TreeFileChooserDialog extends DialogWrapper implements TreeFi
   private boolean mySelectSearchByNameTab = false;
 
   public TreeFileChooserDialog(@NotNull Project project,
-                               String title,
+                               @Nls @NlsContexts.DialogTitle String title,
                                @Nullable final PsiFile initialFile,
                                @Nullable FileType fileType,
                                @Nullable PsiFileFilter filter,

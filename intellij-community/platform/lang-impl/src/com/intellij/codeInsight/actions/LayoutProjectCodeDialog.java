@@ -11,8 +11,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.NlsUI;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.ui.IdeBorderFactory;
+import com.intellij.util.nls.NlsContexts;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,8 +55,8 @@ public class LayoutProjectCodeDialog extends DialogWrapper implements ReformatFi
   private JCheckBox myCbCleanupCode;
 
   public LayoutProjectCodeDialog(@NotNull Project project,
-                                 @NotNull String title,
-                                 @NotNull String text,
+                                 @NotNull @Nls @NlsContexts.DialogTitle String title,
+                                 @NotNull @Nls @NlsUI.Label String text,
                                  boolean enableOnlyVCSChangedTextCb)
   {
     super(project, false);

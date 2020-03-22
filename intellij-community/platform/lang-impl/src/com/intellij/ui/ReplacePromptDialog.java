@@ -20,6 +20,8 @@ import com.intellij.find.FindManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.util.nls.NlsContexts;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,11 +33,11 @@ public class ReplacePromptDialog extends DialogWrapper {
   private final boolean myIsMultiple;
   @Nullable private final FindManager.MalformedReplacementStringException myException;
 
-  public ReplacePromptDialog(boolean isMultipleFiles, String title, Project project) {
+  public ReplacePromptDialog(boolean isMultipleFiles, @Nls @NlsContexts.DialogTitle String title, Project project) {
     this(isMultipleFiles, title, project, null);
   }
 
-  public ReplacePromptDialog(boolean isMultipleFiles, String title, Project project, @Nullable FindManager.MalformedReplacementStringException exception) {
+  public ReplacePromptDialog(boolean isMultipleFiles, @Nls @NlsContexts.DialogTitle String title, Project project, @Nullable FindManager.MalformedReplacementStringException exception) {
     super(project, true);
     myIsMultiple = isMultipleFiles;
     myException = exception;
