@@ -44,7 +44,7 @@ class ModuleDependenciesComponent(
         setRemoveAction {
             dependenciesList.removeSelected()
         }
-        setAddActionName("Remove module dependency")
+        setRemoveActionName("Remove module dependency")
         setMoveDownAction(null)
         setMoveUpAction(null)
     }
