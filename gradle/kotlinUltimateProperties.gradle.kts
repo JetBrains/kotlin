@@ -48,6 +48,7 @@ val clionJavaPluginDownloadUrl: URL by rootProject.extra(
 )
 
 val kotlinNativeBackendVersion: String by rootProject.extra(rootProject.extra["versions.kotlinNativeBackend"] as String)
+val kotlinNativeBackendRepo: String by rootProject.extra(rootProject.extra["versions.kotlinNativeBackend.repo"] as String)
 val appcodeVersion: String by rootProject.extra(rootProject.extra["versions.appcode"] as String)
 val appcodeVersionStrict: Boolean by rootProject.extra(rootProject.extra["versions.appcode.strict"].toBoolean())
 val appcodeFriendlyVersion: String by rootProject.extra(cidrProductFriendlyVersion("AppCode", appcodeVersion))

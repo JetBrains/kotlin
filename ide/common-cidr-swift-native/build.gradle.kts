@@ -12,6 +12,7 @@ val addIdeaNativeModuleDeps: (Project) -> Unit by ultimateTools
 
 val cidrVersion: String by rootProject.extra
 val kotlinNativeBackendVersion: String by rootProject.extra
+val kotlinNativeBackendRepo: String by rootProject.extra
 
 repositories {
     maven("https://repo.labs.intellij.net/intellij-proprietary-modules")
@@ -27,7 +28,7 @@ dependencies {
     compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa:$cidrVersion")
     compileOnly("com.jetbrains.intellij.platform:external-system-rt:$cidrVersion")
     compileOnly("com.esotericsoftware.kryo:kryo:2.24.0")
-    compileOnly(tc("Kotlin_KotlinNative_Development_KotlinNativeLinuxBundle:$kotlinNativeBackendVersion:backend.native.jar"))
+    compileOnly(tc("$kotlinNativeBackendRepo:$kotlinNativeBackendVersion:backend.native.jar"))
 }
 
 the<JavaPluginConvention>().sourceSets["main"].apply {

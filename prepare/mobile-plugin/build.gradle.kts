@@ -12,6 +12,7 @@ val mobilePluginZipPath: File by rootProject.extra
 val cidrVersion: String by rootProject.extra
 val kotlinAndroidExtensionsVersion: String by rootProject.extra(rootProject.extra["versions.kotlinAndroidExtensions"] as String)
 val kotlinNativeBackendVersion: String by rootProject.extra
+val kotlinNativeBackendRepo: String by rootProject.extra
 val isStandaloneBuild: Boolean by rootProject.extra
 
 repositories {
@@ -41,8 +42,8 @@ dependencies {
         exclude("com.google.guava", "guava")
     }
     runtime(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api")) { isTransitive = false }
-    runtime(tc("Kotlin_KotlinNative_Development_KotlinNativeLinuxBundle:${kotlinNativeBackendVersion}:backend.native.jar"))
-    runtime(tc("Kotlin_KotlinNative_Development_KotlinNativeLinuxBundle:${kotlinNativeBackendVersion}:konan.serializer.jar")) // required for backend.native
+    runtime(tc("$kotlinNativeBackendRepo:${kotlinNativeBackendVersion}:backend.native.jar"))
+    runtime(tc("$kotlinNativeBackendRepo:${kotlinNativeBackendVersion}:konan.serializer.jar")) // required for backend.native
 }
 
 val pluginJarTask: Task by tasks.named<Jar>("jar") {
