@@ -6,6 +6,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkType
+import com.intellij.openapi.util.NlsProgress.ProgressTitle
 import org.jetbrains.annotations.Contract
 import org.jetbrains.annotations.Nls
 
@@ -45,7 +46,7 @@ interface SdkLookupBuilder {
   fun withProject(project: Project?): SdkLookupBuilder
 
   @Contract(pure = true)
-  fun withProgressMessageTitle(@Nls message: String): SdkLookupBuilder
+  fun withProgressMessageTitle(@Nls message: @ProgressTitle String): SdkLookupBuilder
 
   /**
    * Use these SDKs to test first, the [withSdkName] option has a higher priority

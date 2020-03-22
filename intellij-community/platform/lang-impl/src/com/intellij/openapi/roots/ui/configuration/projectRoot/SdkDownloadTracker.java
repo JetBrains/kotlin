@@ -19,7 +19,6 @@ import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.wm.ex.ProgressIndicatorEx;
 import com.intellij.util.Consumer;
@@ -309,11 +308,7 @@ public class SdkDownloadTracker implements Disposable {
             if (!myProgressIndicator.isCanceled()) {
               LOG.warn("SDK Download failed. " + e.getMessage(), e);
               myModalityTracker.invokeLater(() -> {
-                String actualMessage = e.getMessage();
-                if (StringUtil.isEmptyOrSpaces(actualMessage)) {
-                  actualMessage = "Failed to download " + type.getPresentableName();
-                }
-                Messages.showErrorDialog(actualMessage, getTitle());
+                Messages.showErrorDialog(ProjectBundle.message("error.message.sdk.download.failed", type.getPresentableName()), getTitle());
               });
             }
             onSdkDownloadCompleted(true);

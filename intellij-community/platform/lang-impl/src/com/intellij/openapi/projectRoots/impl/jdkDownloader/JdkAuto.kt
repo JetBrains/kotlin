@@ -10,6 +10,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectBundle
 import com.intellij.openapi.projectRoots.JdkUtil
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.SdkType
@@ -70,7 +71,7 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
     return object : UnknownSdkLookup {
       val lazyDownloadModel: List<JdkItem> by lazy {
         indicator.pushState()
-        indicator.text = "Downloading JDK list..."
+        indicator.text = ProjectBundle.message("progress.title.downloading.jdk.list")
         try {
           JdkListDownloader.getInstance().downloadModelForJdkInstaller(indicator)
         } catch(e: ProcessCanceledException) {
@@ -110,7 +111,7 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
       private fun resolveHintPath(sdk: UnknownSdk, indicator: ProgressIndicator) :UnknownSdkLocalSdkFix? {
         val hint = resolveHint(sdk)
         val path = hint?.path ?: return null
-        indicator.text = "Resolving hint path: $path..."
+        indicator.text = ProjectBundle.message("progress.text.resolving.hint.path", path)
         if (!File(path).isDirectory) return null
 
         val version = runCatching {
@@ -157,7 +158,7 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
       }
 
       val lazyLocalJdks by lazy {
-        indicator.text = "Detecting local JDKs..."
+        indicator.text = ProjectBundle.message("progress.text.detecting.local.jdks")
         val result = mutableListOf<JavaLocalSdkFix>()
 
         SdkDetector.getInstance().detectSdks(sdkType, indicator, object : DetectedSdkListener {
@@ -187,7 +188,7 @@ class JdkAuto : UnknownSdkResolver, JdkDownloaderBase {
       }
 
       private fun tryUsingExistingSdk(req: JdkRequirement, sdkType: SdkType, indicator: ProgressIndicator): List<JavaLocalSdkFix> {
-        indicator.text = "Checking existing SDKs..."
+        indicator.text = ProjectBundle.message("progress.text.checking.existing.jdks")
 
         val result = mutableListOf<JavaLocalSdkFix>()
         for (it in runReadAction { ProjectJdkTable.getInstance().allJdks }) {

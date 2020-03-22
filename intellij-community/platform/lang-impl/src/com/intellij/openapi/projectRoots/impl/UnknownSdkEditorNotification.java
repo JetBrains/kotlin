@@ -149,14 +149,13 @@ public class UnknownSdkEditorNotification {
       }
 
       String sdkTypeName = mySdkType.getPresentableName();
-      String quotedSdkName = "\"" + mySdkName + "\"";
-      String notificationText = ProjectBundle.message("config.unknown.sdk.notification.text", sdkTypeName, quotedSdkName);
+      String notificationText = ProjectBundle.message("config.unknown.sdk.notification.text", sdkTypeName, mySdkName);
       String configureText = ProjectBundle.message("config.unknown.sdk.configure");
 
       boolean hasDownload = myFix != null && mySdk != null;
       String downloadText = hasDownload ? ProjectBundle.message("config.unknown.sdk.download", myFix.getDownloadDescription()) : "";
       String intentionActionText =
-        hasDownload ? downloadText : ProjectBundle.message("config.unknown.sdk.configure.missing", sdkTypeName, quotedSdkName);
+        hasDownload ? downloadText : ProjectBundle.message("config.unknown.sdk.configure.missing", sdkTypeName, mySdkName);
 
       EditorNotificationPanel notification = new EditorNotificationPanel() {
         @Override

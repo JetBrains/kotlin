@@ -3,6 +3,7 @@ package com.intellij.openapi.projectRoots.impl.jdkDownloader
 
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectBundle
 import com.intellij.openapi.projectRoots.SdkTypeId
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
@@ -28,9 +29,6 @@ class JdkDownloadDialog(
   val sdkType: SdkTypeId,
   val items: List<JdkItem>
 ) : DialogWrapper(project, parentComponent, false, IdeModalityType.PROJECT) {
-  companion object {
-    const val DIALOG_TITLE = "Download JDK"
-  }
 
   private val panel: JComponent
   private var installDirTextField: TextFieldWithBrowseButton
@@ -39,7 +37,7 @@ class JdkDownloadDialog(
   private lateinit var selectedPath: String
 
   init {
-    title = DIALOG_TITLE
+    title = ProjectBundle.message("dialog.title.download.jdk")
     setResizable(false)
 
     val defaultItem = items.filter { it.isDefaultItem }.firstOrNull() /*pick the newest default JDK */
@@ -78,7 +76,7 @@ class JdkDownloadDialog(
 
     installDirTextField = textFieldWithBrowseButton(
       project = project,
-      browseDialogTitle = "Select Path to Install JDK",
+      browseDialogTitle = ProjectBundle.message("dialog.title.select.path.to.install.jdk"),
       fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor()
     )
 
@@ -94,12 +92,12 @@ class JdkDownloadDialog(
     }
 
     panel = panel {
-      row("Vendor:") { vendorComboBox.invoke().sizeGroup("combo").focused() }
-      row("Version:") { versionComboBox.invoke().sizeGroup("combo") }
-      row("Location:") { installDirTextField.invoke() }
+      row(ProjectBundle.message("dialog.row.jdk.vendor")) { vendorComboBox.invoke().sizeGroup("combo").focused() }
+      row(ProjectBundle.message("dialog.row.jdk.version")) { versionComboBox.invoke().sizeGroup("combo") }
+      row(ProjectBundle.message("dialog.row.jdk.location")) { installDirTextField.invoke() }
     }
 
-    myOKAction.putValue(Action.NAME, "Download")
+    myOKAction.putValue(Action.NAME, ProjectBundle.message("dialog.button.download.jdk"))
 
     init()
     selectVersions(defaultItem.product)

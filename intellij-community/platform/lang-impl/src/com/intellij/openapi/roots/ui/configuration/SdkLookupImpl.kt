@@ -12,6 +12,7 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.progress.util.ProgressIndicatorBase
 import com.intellij.openapi.progress.util.ProgressIndicatorListenerAdapter
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectBundle
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkType
@@ -19,6 +20,7 @@ import com.intellij.openapi.projectRoots.impl.UnknownSdkTracker
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkResolver.UnknownSdkLookup
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTracker
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.NlsProgress.ProgressTitle
 import com.intellij.openapi.wm.ex.ProgressIndicatorEx
 import com.intellij.util.Consumer
 import org.jetbrains.annotations.Nls
@@ -28,7 +30,8 @@ import java.util.function.Predicate
 private data class SdkLookupBuilderImpl(
   val project: Project? = null,
 
-  val progressMessageTitle: String? = null,
+  @Nls
+  val progressMessageTitle: @ProgressTitle String? = null,
   val progressIndicator: ProgressIndicator? = null,
 
   val sdkName: String? = null,
@@ -48,7 +51,7 @@ private data class SdkLookupBuilderImpl(
   private val onSdkResolved: (Sdk?) -> Unit = { }
 ) : SdkLookupBuilder {
   override fun withProject(project: Project?) = copy(project = project)
-  override fun withProgressMessageTitle(@Nls message: String) = copy(progressMessageTitle = message)
+  override fun withProgressMessageTitle(@Nls message: @ProgressTitle String) = copy(progressMessageTitle = message)
   override fun withSdkName(name: String) = copy(sdkName = name)
   override fun withSdkType(sdkType: SdkType) = copy(sdkType = sdkType)
   override fun withVersionFilter(filter: (String) -> Boolean) = copy(versionFilter = filter)
@@ -251,7 +254,8 @@ internal class SdkLookupImpl : SdkLookup {
   private fun SdkLookupBuilderImpl.runWithProgress(rootProgressIndicator: ProgressIndicatorBase,
                                                    onCancelled: () -> Unit,
                                                    action: (ProgressIndicator) -> Unit) {
-    val title = progressMessageTitle ?: "Resolving" + (sdkType?.presentableName ?: "SDK") + "..."
+    val sdkTypeName = sdkType?.presentableName ?: ProjectBundle.message("sdk")
+    val title = progressMessageTitle ?: ProjectBundle.message("sdk.lookup.resolving.sdk.progress", sdkTypeName)
     ProgressManager.getInstance().run(object : Task.Backgroundable(project, title, true, ALWAYS_BACKGROUND) {
       override fun run(indicator: ProgressIndicator) {
         val middleMan = object : ProgressIndicatorBase() {

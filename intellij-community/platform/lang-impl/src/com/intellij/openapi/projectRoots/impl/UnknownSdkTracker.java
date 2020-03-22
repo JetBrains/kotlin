@@ -164,7 +164,7 @@ public class UnknownSdkTracker {
                                  @NotNull Consumer<? super Sdk> onSdkNameReady,
                                  @NotNull Consumer<? super Sdk> onCompleted) {
     SdkDownloadTask task;
-    String title = "Configuring SDK";
+    String title = ProjectBundle.message("progress.title.downloading.sdk");
     try {
       task = ProgressManager.getInstance().run(new Task.WithResult<SdkDownloadTask, RuntimeException>(project, title, true) {
         @Override

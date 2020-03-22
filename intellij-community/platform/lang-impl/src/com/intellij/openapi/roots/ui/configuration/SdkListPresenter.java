@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.roots.ui.configuration;
 
 import com.intellij.icons.AllIcons;
@@ -129,11 +129,11 @@ public final class SdkListPresenter extends ColoredListCellRenderer<SdkListItem>
       if (sdk != null) {
         setIcon(((SdkType)sdk.getSdkType()).getIcon());
         append(ProjectBundle.message("project.roots.project.jdk.inherited"), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-        append(" " + sdk.getName(), SimpleTextAttributes.GRAYED_ATTRIBUTES);
+        append(" ");
+        append(sdk.getName(), SimpleTextAttributes.GRAYED_ATTRIBUTES);
       }
       else {
-        String str = ProjectBundle.message("jdk.combo.box.project.item");
-        append(str, SimpleTextAttributes.ERROR_ATTRIBUTES);
+        append(ProjectBundle.message("jdk.combo.box.project.item"), SimpleTextAttributes.ERROR_ATTRIBUTES);
       }
     }
     else if (value instanceof SuggestedItem) {
@@ -142,13 +142,13 @@ public final class SdkListPresenter extends ColoredListCellRenderer<SdkListItem>
       String home = item.getHomePath();
       String version = item.getVersion();
 
-      Icon icon1 = type.getIconForAddAction();
-      if (Objects.equals(icon1, IconUtil.getAddIcon())) icon1 = type.getIcon();
-      if (icon1 == null) icon1 = IconUtil.getAddIcon();
-      Icon icon = icon1;
+      Icon icon = type.getIconForAddAction();
+      if (Objects.equals(icon, IconUtil.getAddIcon())) icon = type.getIcon();
+      if (icon == null) icon = IconUtil.getAddIcon();
       setIcon(icon);
       append(presentDetectedSdkPath(home));
-      append(" " + version, SimpleTextAttributes.GRAYED_ATTRIBUTES);
+      append(" ");
+      append(version, SimpleTextAttributes.GRAYED_ATTRIBUTES);
     }
     else if (value instanceof ActionItem) {
       ActionItem item = (ActionItem)value;
@@ -162,11 +162,11 @@ public final class SdkListPresenter extends ColoredListCellRenderer<SdkListItem>
             Icon icon = sdkType.getIcon();
             if (icon == null) icon = AllIcons.General.Add;
             setIcon(icon);
-            append(sdkType.getPresentableName() + "...");
+            append(ProjectBundle.message("sdk.configure.add.sdkType.subAction", sdkType.getPresentableName()));
             break;
           case DOWNLOAD:
             setIcon(template.getIcon());
-            append("Download " + sdkType.getPresentableName() + "...");
+            append(ProjectBundle.message("sdk.configure.download.subAction", sdkType.getPresentableName()));
             break;
         }
       }
@@ -174,11 +174,11 @@ public final class SdkListPresenter extends ColoredListCellRenderer<SdkListItem>
         switch (item.myRole) {
           case ADD:
             setIcon(template.getIcon());
-            append("Add " + sdkType.getPresentableName() + "...");
+            append(ProjectBundle.message("sdk.configure.add.sdkType.action", sdkType.getPresentableName()));
             break;
           case DOWNLOAD:
             setIcon(template.getIcon());
-            append("Download " + sdkType.getPresentableName() + "...");
+            append(ProjectBundle.message("sdk.configure.download.action", sdkType.getPresentableName()));
             break;
         }
       }
@@ -196,7 +196,8 @@ public final class SdkListPresenter extends ColoredListCellRenderer<SdkListItem>
 
       String version = sdk.getVersionString();
       if (version == null) version = ((SdkType)sdk.getSdkType()).getPresentableName();
-      append(" " + version, SimpleTextAttributes.GRAYED_ATTRIBUTES);
+      append(" ");
+      append(version, SimpleTextAttributes.GRAYED_ATTRIBUTES);
     }
     else if (value instanceof NoneSdkItem) {
       SdkAppearanceService.getInstance()
@@ -211,7 +212,8 @@ public final class SdkListPresenter extends ColoredListCellRenderer<SdkListItem>
 
       String version = item.getVersionString();
       if (version == null) version = item.getSdkType().getPresentableName();
-      append(" " + version, SimpleTextAttributes.GRAYED_ATTRIBUTES);
+      append(" ");
+      append(version, SimpleTextAttributes.GRAYED_ATTRIBUTES);
     }
     else {
       SdkAppearanceService.getInstance()

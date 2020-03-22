@@ -1,10 +1,11 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.projectRoots.impl;
 
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService;
 import com.intellij.openapi.roots.ui.configuration.SdkListPresenter;
 import com.intellij.openapi.roots.ui.configuration.UnknownSdk;
@@ -43,10 +44,8 @@ public class UnknownSdkBalloonNotification {
     Set<String> usages = new TreeSet<>();
     for (Map.Entry<? extends UnknownSdk, UnknownSdkLocalSdkFix> entry : localFixes.entrySet()) {
       UnknownSdkLocalSdkFix fix = entry.getValue();
-      String usage = "\"" + entry.getKey().getSdkName() + "\"" +
-                     " is set to " +
-                     fix.getVersionString() +
-                     " <br/> " +
+      String usageText = ProjectBundle.message("notification.text.sdk.usage.is.set.to", entry.getKey().getSdkName(), fix.getVersionString());
+      String usage = usageText + "<br/>" +
                      SdkListPresenter.presentDetectedSdkPath(fix.getExistingSdkHome());
       usages.add(usage);
     }
@@ -56,12 +55,12 @@ public class UnknownSdkBalloonNotification {
       Map.Entry<? extends UnknownSdk, UnknownSdkLocalSdkFix> entry = localFixes.entrySet().iterator().next();
       UnknownSdk info = entry.getKey();
       String sdkTypeName = info.getSdkType().getPresentableName();
-      title = sdkTypeName + " is configured";
-      change = "Change " + sdkTypeName + "...";
+      title = ProjectBundle.message("notification.title.sdk.configured", sdkTypeName);
+      change = ProjectBundle.message("notification.link.change.sdk", sdkTypeName);
     }
     else {
-      title = "SDKs are configured";
-      change = "Change SDKs...";
+      title = ProjectBundle.message("notification.title.sdks.configured");
+      change = ProjectBundle.message("notification.link.change.sdks");
     }
 
     SDK_CONFIGURED_GROUP.createNotification(title, message.toString(), NotificationType.INFORMATION, null)

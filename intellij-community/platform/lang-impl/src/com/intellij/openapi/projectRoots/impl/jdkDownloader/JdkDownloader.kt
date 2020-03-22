@@ -4,19 +4,21 @@ package com.intellij.openapi.projectRoots.impl.jdkDownloader
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.invokeLater
+import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectBundle
 import com.intellij.openapi.projectRoots.*
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType.notSimpleJavaSdkTypeIfAlternativeExistsAndNotDependentSdkType
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownload
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTask
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.NlsProgress.ProgressTitle
 import com.intellij.openapi.util.registry.Registry
+import org.jetbrains.annotations.Nls
 import java.util.function.Consumer
 import javax.swing.JComponent
 
@@ -37,18 +39,23 @@ internal class JdkDownloader : SdkDownload, JdkDownloaderBase {
     val project = CommonDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext(parentComponent))
     if (project?.isDisposed == true) return
 
-    val items = runTaskAndReportError(project,
-                                      "Downloading the list of available JDKs...",
-                                      "Failed to download the list of installable JDKs") {
-      JdkListDownloader.getInstance().downloadForUI(it)
-    } ?: return
+    val items = try {
+        computeInBackground(project, ProjectBundle.message("progress.title.downloading.jdk.list")) {
+          JdkListDownloader.getInstance().downloadForUI(it)
+        }
+      }
+      catch (e: Throwable) {
+        if (e is ControlFlowException) throw e
+        LOG.warn("Failed to download the list of installable JDKs. ${e.message}", e)
+        null
+      }
 
     if (project?.isDisposed == true) return
 
-    if (items.isEmpty()) {
+    if (items.isNullOrEmpty()) {
       Messages.showMessageDialog(project,
-                                 "No JDK packages are available for download",
-                                 JdkDownloadDialog.DIALOG_TITLE,
+                                 ProjectBundle.message("error.message.no.jdk.for.download"),
+                                 ProjectBundle.message("error.message.title.download.jdk"),
                                  Messages.getErrorIcon()
       )
       return
@@ -57,42 +64,30 @@ internal class JdkDownloader : SdkDownload, JdkDownloaderBase {
     val (jdkItem, jdkHome) = JdkDownloadDialog(project, parentComponent, sdkTypeId, items).selectJdkAndPath() ?: return
 
     /// prepare the JDK to be installed (e.g. create home dir, write marker file)
-    val request = runTaskAndReportError(project, "Preparing JDK target folder...", "Failed to prepare JDK installation to $jdkHome") {
-      JdkInstaller.getInstance().prepareJdkInstallation(jdkItem, jdkHome)
-    } ?: return
+    val request = try {
+      computeInBackground(project, ProjectBundle.message("progress.title.preparing.jdk")) {
+        JdkInstaller.getInstance().prepareJdkInstallation(jdkItem, jdkHome)
+      }
+    } catch (e: Throwable) {
+      if (e is ControlFlowException) throw e
+      LOG.warn("Failed to prepare JDK installation to $jdkHome. ${e.message}", e)
+      Messages.showMessageDialog(project,
+                                 ProjectBundle.message("error.message.text.jdk.install.failed", jdkHome),
+                                 ProjectBundle.message("error.message.title.download.jdk"),
+                                 Messages.getErrorIcon()
+      )
+      return
+    }
 
     sdkCreatedCallback.accept(newDownloadTask(request, project))
   }
 
-  private inline fun <T : Any> runTaskAndReportError(project: Project?,
-                                                     title: String,
-                                                     errorMessage: String,
-                                                     crossinline action: (ProgressIndicator) -> T): T? {
-    val task = object : Task.WithResult<T?, Exception>(project, title, true) {
-      override fun compute(indicator: ProgressIndicator): T? {
-        try {
-          return action(indicator)
-        }
-        catch (e: ProcessCanceledException) {
-          throw e
-        }
-        catch (e: Exception) {
-          val msg = "$errorMessage. ${e.message}"
-          LOG.warn(msg, e)
-          invokeLater {
-            Messages.showMessageDialog(project,
-                                       msg,
-                                       JdkDownloadDialog.DIALOG_TITLE,
-                                       Messages.getErrorIcon()
-            )
-          }
-          return null
-        }
-      }
-    }
-
-    return ProgressManager.getInstance().run(task)
-  }
+  private inline fun <T : Any> computeInBackground(project: Project?,
+                                                   @Nls title: @ProgressTitle String,
+                                                   crossinline action: (ProgressIndicator) -> T): T =
+    ProgressManager.getInstance().run(object : Task.WithResult<T, Exception>(project, title, true) {
+      override fun compute(indicator: ProgressIndicator) = action(indicator)
+    })
 }
 
 internal interface JdkDownloaderBase {
