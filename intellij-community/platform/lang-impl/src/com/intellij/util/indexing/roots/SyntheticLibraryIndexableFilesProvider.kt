@@ -16,6 +16,8 @@ internal class SyntheticLibraryIndexableFilesProvider(
 
   private fun getName() = (syntheticLibrary as? ItemPresentation)?.presentableText
 
+  override fun getDebugName() = getName().takeUnless { it.isNullOrEmpty() } ?: syntheticLibrary.toString()
+
   override fun getIndexingProgressText(): @Nullable String {
     val name = getName()
     if (!name.isNullOrEmpty()) {
