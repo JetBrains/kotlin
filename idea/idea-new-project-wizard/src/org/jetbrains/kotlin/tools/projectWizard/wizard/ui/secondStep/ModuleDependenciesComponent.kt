@@ -84,7 +84,7 @@ private class AddModulesPopUp(
     private val onChosenCallBack: (Module) -> Unit
 ) : BaseListPopupStep<Module>(null, modules) {
     override fun getIconFor(value: Module?): Icon? = value?.icon
-    override fun getTextFor(value: Module): String = value.text
+    override fun getTextFor(value: Module): String = value.fullTextHtml
 
 
     override fun onChosen(selectedValue: Module?, finalChoice: Boolean): PopupStep<*>? {

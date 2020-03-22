@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui
 
 import com.intellij.icons.AllIcons
-import com.intellij.ide.plugins.newui.TagComponent
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.DefaultActionGroup
@@ -24,7 +23,10 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.UiConstants.GAP_BORDER_SIZE
-import java.awt.*
+import java.awt.BorderLayout
+import java.awt.Cursor
+import java.awt.Font
+import java.awt.LayoutManager
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
@@ -177,3 +179,15 @@ fun <T> runWithProgressBar(title: String, action: () -> T): T =
 object UiConstants {
     const val GAP_BORDER_SIZE = 5
 }
+
+
+val DisplayableSettingItem.fullTextHtml
+    get() = buildString {
+        append(text)
+        greyText?.let { grey ->
+            append(" ")
+            append("""<span style="color:${ColorUtil.toHtmlColor(SimpleTextAttributes.GRAYED_ATTRIBUTES.fgColor)};">""")
+            append(grey)
+            append("</span>")
+        }
+    }.asHtml()

@@ -5,6 +5,3 @@ interface DisplayableSettingItem {
     val greyText: String?
         get() = null
 }
-
-val DisplayableSettingItem.fullText
-    get() = text + greyText?.let { "($it)" }.orEmpty()
