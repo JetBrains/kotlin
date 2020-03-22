@@ -40,7 +40,7 @@ open class ImportSettingsAction : AnAction(), DumbAware {
       .onSuccess {
         val saveFile = Paths.get(it.path)
         try {
-          doImport(saveFile, e.project)
+          doImport(saveFile)
         }
         catch (e1: ZipException) {
           Messages.showErrorDialog(
@@ -64,10 +64,6 @@ open class ImportSettingsAction : AnAction(), DumbAware {
   }
 
   protected open fun doImport(saveFile: Path) {
-    doImport(saveFile, null)
-  }
-
-  protected open fun doImport(saveFile: Path, project: Project?) {
     if (!saveFile.exists()) {
       Messages.showErrorDialog(ConfigurationStoreBundle.message("error.cannot.find.file", saveFile), ConfigurationStoreBundle.message("title.file.not.found"))
       return
