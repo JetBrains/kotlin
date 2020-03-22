@@ -10,6 +10,8 @@ import com.intellij.util.containers.ConcurrentBitSet
 import com.intellij.util.indexing.IndexingBundle
 
 internal class LibraryIndexableFilesProvider(val library: Library) : IndexableFilesProvider {
+  override fun getDebugName() = library.name.takeUnless { it.isNullOrEmpty() } ?: library.toString()
+
   override fun getIndexingProgressText(): String? {
     val libraryName = library.name
     if (!libraryName.isNullOrEmpty()) {

@@ -17,6 +17,11 @@ import org.jetbrains.annotations.ApiStatus;
 public interface IndexableFilesProvider {
 
   /**
+   * Presentable name that can be shown in logs and used for debugging purposes.
+   */
+  String getDebugName();
+
+  /**
    * Presentable text shown in progress indicator during indexing of files of this provider.
    */
   String getIndexingProgressText();

@@ -10,6 +10,7 @@ import com.intellij.util.indexing.IndexableSetContributor
 import com.intellij.util.indexing.IndexingBundle
 
 internal class IndexableSetContributorFilesProvider(private val indexableSetContributor: IndexableSetContributor) : IndexableFilesProvider {
+  override fun getDebugName() = getName() ?: indexableSetContributor.toString()
 
   override fun getIndexingProgressText(): String {
     val name = getName()

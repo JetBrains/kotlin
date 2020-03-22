@@ -12,6 +12,8 @@ import org.jetbrains.annotations.ApiStatus
 
 @ApiStatus.Internal
 class SdkIndexableFilesProvider(val sdk: Sdk) : IndexableFilesProvider {
+  override fun getDebugName() = sdk.name
+
   override fun getIndexingProgressText() = IndexingBundle.message("indexable.files.provider.indexing.sdk.name", sdk.name)
 
   override fun getRootsScanningProgressText() = IndexingBundle.message("indexable.files.provider.scanning.sdk.name", sdk.name)
