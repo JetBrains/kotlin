@@ -5,7 +5,6 @@ import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -332,8 +331,7 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
 
   @Override
   public void iterateIndexableFiles(@NotNull ContentIterator processor, @NotNull Project project, @Nullable ProgressIndicator indicator) {
-    final ProgressIndicator finalIndicator = indicator == null ? new EmptyProgressIndicator() : indicator;
-    List<IndexableFilesProvider> providers = getOrderedIndexableFilesProviders(project, finalIndicator);
+    List<IndexableFilesProvider> providers = getOrderedIndexableFilesProviders(project);
     ConcurrentBitSet visitedFileSet = new ConcurrentBitSet();
     for (IndexableFilesProvider provider : providers) {
       if (!provider.iterateFiles(project, processor, visitedFileSet)) {
@@ -346,8 +344,7 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
    * Returns providers of files to be indexed. Indexing is performed in the order corresponding to the resulting list.
    */
   @NotNull
-  public List<IndexableFilesProvider> getOrderedIndexableFilesProviders(@NotNull Project project,
-                                                                        @NotNull ProgressIndicator indicator) {
+  public List<IndexableFilesProvider> getOrderedIndexableFilesProviders(@NotNull Project project) {
     if (LightEdit.owns(project)) {
       return Collections.emptyList();
     }
@@ -358,7 +355,6 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
 
       Set<Library> seenLibraries = new HashSet<>();
       Set<Sdk> seenSdks = new HashSet<>();
-      Set<OrderEntry> allEntries = new THashSet<>();
 
       List<IndexableFilesProvider> providers = new ArrayList<>();
       Module[] modules = ModuleManager.getInstance(project).getSortedModules();
@@ -367,7 +363,6 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
 
         OrderEntry[] orderEntries = ModuleRootManager.getInstance(module).getOrderEntries();
         for (OrderEntry orderEntry : orderEntries) {
-          allEntries.add(orderEntry);
           if (orderEntry instanceof LibraryOrderEntry) {
             Library library = ((LibraryOrderEntry)orderEntry).getLibrary();
             if (library != null && seenLibraries.add(library)) {
@@ -392,8 +387,6 @@ public abstract class FileBasedIndexEx extends FileBasedIndex {
           providers.add(new SyntheticLibraryIndexableFilesProvider(library));
         }
       }
-
-      FileBasedIndexInfrastructureExtension.EP_NAME.extensions().forEach(ex -> ex.processProjectEntries(project, allEntries, indicator));
 
       return providers;
     });
