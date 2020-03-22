@@ -131,8 +131,8 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
     private val cacheForIncorporationConfigToSuperDirection = ConcurrentHashMap<KotlinTypeMarker, ApproximationResult>()
     private val cacheForIncorporationConfigToSubtypeDirection = ConcurrentHashMap<KotlinTypeMarker, ApproximationResult>()
 
-    private val referenceApproximateToSuperType = this::approximateSimpleToSuperType
-    private val referenceApproximateToSubType = this::approximateSimpleToSubType
+    private val referenceApproximateToSuperType get() = this::approximateSimpleToSuperType
+    private val referenceApproximateToSubType get() = this::approximateSimpleToSubType
 
     companion object {
         const val CACHE_FOR_INCORPORATION_MAX_SIZE = 500
