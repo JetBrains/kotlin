@@ -1,6 +1,6 @@
 // COMPILER_ARGUMENTS: -XXLanguage:+NewInference
 // PROBLEM: none
-// ERROR: Type mismatch: inferred type is List<{Comparable<{Int & Long}> & Number}> but MutableList<Int> was expected
+// ERROR: Type mismatch: inferred type is List<{Comparable<*> & Number}> but MutableList<Int> was expected
 // ERROR: Val cannot be reassigned
 // WITH_RUNTIME
 

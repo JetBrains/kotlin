@@ -56,7 +56,13 @@ object KotlinTypeFactory {
                     )
             }
             is TypeAliasDescriptor -> ErrorUtils.createErrorScope("Scope for abbreviation: ${descriptor.name}", true)
-            else -> throw IllegalStateException("Unsupported classifier: $descriptor for constructor: $constructor")
+            else -> {
+                if (constructor is IntersectionTypeConstructor) {
+                    return constructor.createScopeForKotlinType()
+                }
+
+                throw IllegalStateException("Unsupported classifier: $descriptor for constructor: $constructor")
+            }
         }
     }
 

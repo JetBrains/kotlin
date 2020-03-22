@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.types.TypeApproximatorConfiguration.IntersectionStra
 import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.model.CaptureStatus.*
+import org.jetbrains.kotlin.types.typeUtil.isSignedOrUnsignedNumberType
 import java.util.concurrent.ConcurrentHashMap
 
 
@@ -42,6 +43,7 @@ open class TypeApproximatorConfiguration {
     open val integerLiteralType: Boolean = false // IntegerLiteralTypeConstructor
     open val definitelyNotNullType get() = true
     open val intersection: IntersectionStrategy = TO_COMMON_SUPERTYPE
+    open val intersectionTypesInContravariantPositions = false
 
     open val typeVariable: (TypeVariableTypeConstructorMarker) -> Boolean = { false }
     open fun capturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean =
@@ -60,6 +62,7 @@ open class TypeApproximatorConfiguration {
         override val intersection get() = ALLOWED
         override val errorType get() = true
         override val integerLiteralType: Boolean get() = true
+        override val intersectionTypesInContravariantPositions: Boolean get() = true
     }
 
     object PublicDeclaration : AllFlexibleSameValue() {
@@ -67,6 +70,7 @@ open class TypeApproximatorConfiguration {
         override val errorType get() = true
         override val definitelyNotNullType get() = false
         override val integerLiteralType: Boolean get() = true
+        override val intersectionTypesInContravariantPositions: Boolean get() = true
     }
 
     abstract class AbstractCapturedTypesApproximation(val approximatedCapturedStatus: CaptureStatus) :
@@ -84,13 +88,15 @@ open class TypeApproximatorConfiguration {
 
     object IncorporationConfiguration : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FOR_INCORPORATION)
     object SubtypeCapturedTypesApproximation : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FOR_SUBTYPING)
-    object CapturedAndIntegerLiteralsTypesApproximation : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FROM_EXPRESSION) {
+    object InternalTypesApproximation : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FROM_EXPRESSION) {
         override val integerLiteralType: Boolean get() = true
+        override val intersectionTypesInContravariantPositions: Boolean get() = true
     }
 
     object FinalApproximationAfterResolutionAndInference :
         TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(FROM_EXPRESSION) {
         override val integerLiteralType: Boolean get() = true
+        override val intersectionTypesInContravariantPositions: Boolean get() = true
     }
 
     object IntegerLiteralsTypesApproximation : TypeApproximatorConfiguration.AllFlexibleSameValue() {
@@ -277,6 +283,13 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
             }
             else -> error("sealed")
         }
+    }
+
+    private fun isIntersectionTypeEffectivelyNothing(constructor: IntersectionTypeConstructor): Boolean {
+        // We consider intersection as Nothing only if one of it's component is a primitive number type
+        // It's intentional we're not trying to prove population of some type as it was in OI
+
+        return constructor.supertypes.any { !it.isMarkedNullable && it.isSignedOrUnsignedNumberType() }
     }
 
     private fun approximateIntersectionType(
@@ -512,6 +525,18 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
                     } else type.defaultResult(toSuper)
                 }
                 TypeVariance.OUT, TypeVariance.IN -> {
+                    if (
+                        conf.intersectionTypesInContravariantPositions &&
+                        effectiveVariance == TypeVariance.IN &&
+                        argumentType.typeConstructor().isIntersection()
+                    ) {
+                        val intersectionTypeConstructor = argumentType.typeConstructor() as? IntersectionTypeConstructor
+                        if (intersectionTypeConstructor != null && isIntersectionTypeEffectivelyNothing(intersectionTypeConstructor)) {
+                            newArguments[index] = createStarProjection(parameter)
+                            continue@loop
+                        }
+                    }
+
                     /**
                      * Out<Foo> <: Out<superType(Foo)>
                      * Inv<out Foo> <: Inv<out superType(Foo)>

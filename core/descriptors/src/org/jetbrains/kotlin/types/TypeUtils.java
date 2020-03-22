@@ -545,7 +545,7 @@ public class TypeUtils {
             return literalTypeConstructor.getApproximatedType();
         }
 
-        // If approximated type does not mathc expected type then expected type is very
+        // If approximated type does not match expected type then expected type is very
         //  specific type (e.g. Comparable<Byte>), so only one of possible types could match it
         KotlinType approximatedType = literalTypeConstructor.getApproximatedType();
         if (KotlinTypeChecker.DEFAULT.isSubtypeOf(approximatedType, expectedType)) {

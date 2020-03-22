@@ -149,7 +149,7 @@ class ResultTypeResolver(
 
             return typeApproximator.approximateToSuperType(
                 commonSuperType,
-                TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation
+                TypeApproximatorConfiguration.InternalTypesApproximation
             ) ?: commonSuperType
         }
 
@@ -202,7 +202,7 @@ class ResultTypeResolver(
 
             return typeApproximator.approximateToSubType(
                 upperType,
-                TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation
+                TypeApproximatorConfiguration.InternalTypesApproximation
             ) ?: upperType
         }
         return null

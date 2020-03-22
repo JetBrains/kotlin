@@ -2803,7 +2803,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             KotlinType approximatedType =
                     CapturedTypeConstructorKt.isCaptured(type) ?
                     (KotlinType) approximator.approximateToSuperType(
-                            type, TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation.INSTANCE
+                            type, TypeApproximatorConfiguration.InternalTypesApproximation.INSTANCE
                     ) : null;
             return approximatedType != null ? approximatedType : type;
         } else {

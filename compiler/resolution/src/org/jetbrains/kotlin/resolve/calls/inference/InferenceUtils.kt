@@ -94,7 +94,7 @@ fun CallableDescriptor.substituteAndApproximateTypes(
             }
     }
 
-    return substitute(TypeSubstitutor.create(wrappedSubstitution))
+    return substitute(TypeSubstitutor.create(wrappedSubstitution)) ?: this
 }
 
 internal fun <E> MutableList<E>.trimToSize(newSize: Int) = subList(newSize, size).clear()
