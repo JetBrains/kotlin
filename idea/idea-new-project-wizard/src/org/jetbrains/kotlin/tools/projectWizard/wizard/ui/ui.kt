@@ -77,20 +77,6 @@ fun ValidationResult.ValidationError.asHtml() = when (messages.size) {
     }
 }
 
-val DisplayableSettingItem.htmlText
-    get() = (text + greyText?.let { " <i>($greyText)</i>" }.orEmpty()).asHtml()
-
-fun splitterFor(
-    vararg components: JComponent,
-    vertical: Boolean = false
-) = components.reduce { left, right ->
-    JBSplitter(vertical, 1f / components.size).apply {
-        firstComponent = left
-        secondComponent = right
-        dividerWidth = 1
-    }
-}
-
 val ModuleType.icon: Icon
     get() = when (this) {
         ModuleType.jvm -> KotlinIcons.SMALL_LOGO

@@ -126,7 +126,7 @@ object AndroidTargetConfigurator : TargetConfigurator,
     SingleCoexistenceTargetConfigurator,
     ModuleConfiguratorSettings() {
     override val moduleSubType = ModuleSubType.android
-    override val moduleType = ModuleType.jvm
+    override val moduleType = ModuleType.android
 
     override fun Reader.createAndroidPlugin(module: Module): AndroidGradlePlugin =
         withSettingsOf(module) { androidPlugin.reference.settingValue }

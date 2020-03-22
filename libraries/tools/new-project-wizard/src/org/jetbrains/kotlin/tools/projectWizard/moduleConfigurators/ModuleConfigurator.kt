@@ -15,19 +15,21 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.correspondingStdl
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModulePath
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
+import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
 import java.nio.file.Path
 import kotlin.properties.ReadOnlyProperty
 
 
-sealed class ModuleCondifuratorSettingsEnvironment {
-    abstract val <V : Any, T : SettingType<V>> ModuleConfiguratorSetting<V, T>.reference: ModuleConfiguratorSettingReference<V, T>
+interface ModuleConfiguratorSettingsEnvironment {
+    val <V : Any, T : SettingType<V>> ModuleConfiguratorSetting<V, T>.reference: ModuleConfiguratorSettingReference<V, T>
 }
 
 class ModuleBasedConfiguratorSettingsEnvironment(
     private val configurator: ModuleConfigurator,
     private val module: Module
-) : ModuleCondifuratorSettingsEnvironment() {
+) : ModuleConfiguratorSettingsEnvironment {
     override val <V : Any, T : SettingType<V>> ModuleConfiguratorSetting<V, T>.reference: ModuleConfiguratorSettingReference<V, T>
         get() = ModuleBasedConfiguratorSettingReference(configurator, module, this)
 }
@@ -35,7 +37,7 @@ class ModuleBasedConfiguratorSettingsEnvironment(
 class IdBasedConfiguratorSettingsEnvironment(
     private val configurator: ModuleConfigurator,
     private val moduleId: Identificator
-) : ModuleCondifuratorSettingsEnvironment() {
+) : ModuleConfiguratorSettingsEnvironment {
     override val <V : Any, T : SettingType<V>> ModuleConfiguratorSetting<V, T>.reference: ModuleConfiguratorSettingReference<V, T>
         get() = IdBasedConfiguratorSettingReference(configurator, moduleId, this)
 }
@@ -43,13 +45,13 @@ class IdBasedConfiguratorSettingsEnvironment(
 fun <T> withSettingsOf(
     moduleId: Identificator,
     configurator: ModuleConfigurator,
-    function: ModuleCondifuratorSettingsEnvironment.() -> T
+    function: ModuleConfiguratorSettingsEnvironment.() -> T
 ): T = function(IdBasedConfiguratorSettingsEnvironment(configurator, moduleId))
 
 fun <T> withSettingsOf(
     module: Module,
     configurator: ModuleConfigurator = module.configurator,
-    function: ModuleCondifuratorSettingsEnvironment.() -> T
+    function: ModuleConfiguratorSettingsEnvironment.() -> T
 ): T = function(ModuleBasedConfiguratorSettingsEnvironment(configurator, module))
 
 
@@ -230,6 +232,12 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
         module: Module,
         modulePath: Path
     ): TaskResult<Unit> = UNIT_SUCCESS
+
+    fun Reader.createTemplates(
+        configurationData: ModulesToIrConversionData,
+        module: Module,
+        modulePath: Path
+    ): List<FileTemplate> = emptyList()
 
     companion object {
         val ALL = buildList<ModuleConfigurator> {

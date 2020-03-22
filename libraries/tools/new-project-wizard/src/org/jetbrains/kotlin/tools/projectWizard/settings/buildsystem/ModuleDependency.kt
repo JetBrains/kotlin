@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem
 
+import org.jetbrains.kotlin.tools.projectWizard.core.*
+import org.jetbrains.kotlin.tools.projectWizard.core.asSingletonList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyType
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.GradleRootProjectDependencyIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleDependencyIR
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JvmSinglePlatformModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import kotlin.reflect.KClass
@@ -22,7 +23,7 @@ sealed class ModuleDependencyType(
     fun accepts(from: Module, to: Module) =
         this.from.isInstance(from.configurator) && this.to.isInstance(to.configurator)
 
-    open fun createDependencyIrs(from: Module, to: Module, data: ModulesToIrConversionData): BuildSystemIR {
+    open fun createDependencyIrs(from: Module, to: Module, data: ModulesToIrConversionData): List<BuildSystemIR> {
         val path = to.path
         val modulePomIr = data.pomIr.copy(artifactId = to.name)
         return when {
@@ -34,18 +35,45 @@ sealed class ModuleDependencyType(
                 modulePomIr,
                 DependencyType.MAIN
             )
-        }
+        }.asSingletonList()
     }
 
+    open fun SettingsWriter.runArbitraryTask(from: Module, to: Module, data: ModulesToIrConversionData): TaskResult<Unit> =
+        UNIT_SUCCESS
 
     object JVMSinglePlatformToJVMSinglePlatform : ModuleDependencyType(
         from = JvmSinglePlatformModuleConfigurator::class,
         to = JvmSinglePlatformModuleConfigurator::class
     )
 
+    object AndroidSinglePlatformToMPP : ModuleDependencyType(
+        from = AndroidSinglePlatformModuleConfigurator::class,
+        to = MppModuleConfigurator::class
+    )
+
+    object IOSToMppSinglePlatformToMPP : ModuleDependencyType(
+        from = IOSSinglePlatformModuleConfigurator::class,
+        to = MppModuleConfigurator::class
+    ) {
+        override fun createDependencyIrs(from: Module, to: Module, data: ModulesToIrConversionData): List<BuildSystemIR> =
+            emptyList()
+
+        override fun SettingsWriter.runArbitraryTask(
+            from: Module,
+            to: Module,
+            data: ModulesToIrConversionData
+        ): TaskResult<Unit> = withSettingsOf(from) {
+            IOSSinglePlatformModuleConfigurator.dependentModule.reference
+                .setValue(IOSSinglePlatformModuleConfigurator.DependentModuleReference(to))
+            UNIT_SUCCESS
+        }
+    }
+
     companion object {
         private val ALL = listOf(
-            JVMSinglePlatformToJVMSinglePlatform
+            JVMSinglePlatformToJVMSinglePlatform,
+            AndroidSinglePlatformToMPP,
+            IOSToMppSinglePlatformToMPP
         )
 
         fun getPossibleDependencyType(from: Module, to: Module): ModuleDependencyType? =

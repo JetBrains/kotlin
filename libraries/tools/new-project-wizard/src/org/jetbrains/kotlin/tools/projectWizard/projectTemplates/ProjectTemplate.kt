@@ -23,23 +23,38 @@ sealed class ProjectTemplate : DisplayableSettingItem {
     private val setsDefaultValues: List<SettingWithValue<*, *>>
         get() = listOf(KotlinPlugin::projectKind.reference withValue projectKind)
 
-    protected abstract val setsPluginSettings: List<SettingWithValue<*, *>>
+    protected open val setsPluginSettings: List<SettingWithValue<*, *>> = emptyList()
+    protected open val setsModules: List<Module> = emptyList()
     private val setsAdditionalSettingValues = mutableListOf<SettingWithValue<*, *>>()
 
     val setsValues: List<SettingWithValue<*, *>>
         get() = buildList {
+            setsModules.takeIf { it.isNotEmpty() }?.let { modules ->
+                +(KotlinPlugin::modules withValue modules)
+            }
             +setsDefaultValues
             +setsPluginSettings
             +setsAdditionalSettingValues
         }
 
 
-    fun <T : Template> Module.withTemplate(
+    protected fun <T : Template> Module.withTemplate(
         template: T,
         createSettings: TemplateSettingsBuilder<T>.() -> Unit = {}
     ) = apply {
         this.template = template
         with(TemplateSettingsBuilder(this, template)) {
+            createSettings()
+            setsAdditionalSettingValues += setsSettings
+        }
+    }
+
+    protected fun <C : ModuleConfigurator> Module.withConfiguratorSettings(
+        configurator: C,
+        createSettings: ConfiguratorSettingsBuilder<C>.() -> Unit = {}
+    ) = apply {
+        assert(this.configurator === configurator)
+        with(ConfiguratorSettingsBuilder(this, configurator)) {
             createSettings()
             setsAdditionalSettingValues += setsSettings
         }
@@ -55,6 +70,7 @@ sealed class ProjectTemplate : DisplayableSettingItem {
             MultiplatformLibrary,
             AndroidApplication,
             IOSApplication,
+            MPPMobileApplication,
             MultiplatformMobileLibrary,
             NativeConsoleApplication,
             JsBrowserApplication
@@ -77,6 +93,23 @@ class TemplateSettingsBuilder<Q : Template>(
     infix fun <V : Any, T : SettingType<V>> TemplateSetting<V, T>.withValue(value: V) {
         settings += SettingWithValue(reference, value)
     }
+}
+
+class ConfiguratorSettingsBuilder<C : ModuleConfigurator>(
+    val module: Module,
+    val configurator: C
+) : ModuleConfiguratorSettingsEnvironment by ModuleBasedConfiguratorSettingsEnvironment(configurator, module) {
+    init {
+        assert(module.configurator === configurator)
+    }
+
+    private val settings = mutableListOf<SettingWithValue<*, *>>()
+    val setsSettings: List<SettingWithValue<*, *>>
+        get() = settings
+
+    infix fun <V : Any, T : SettingType<V>> ModuleConfiguratorSetting<V, T>.withValue(value: V) {
+        settings += SettingWithValue(reference, value)
+    }
 
 }
 
@@ -89,7 +122,7 @@ inline infix fun <V : Any, reified T : SettingType<V>> PluginSettingPropertyRefe
     value: V
 ): SettingWithValue<V, T> = reference.withValue(value)
 
-private fun ModuleType.createDefaultSourcesets() =
+private fun createDefaultSourcesets() =
     SourcesetType.values().map { sourcesetType ->
         Sourceset(
             sourcesetType,
@@ -110,7 +143,7 @@ object EmptySingleplatformProjectTemplate : ProjectTemplate() {
     override val setsPluginSettings: List<SettingWithValue<*, *>>
         get() = listOf(
             KotlinPlugin::modules withValue listOf(
-                SingleplatformModule("mainModule", ModuleType.jvm.createDefaultSourcesets())
+                SingleplatformModule("mainModule", createDefaultSourcesets())
             )
         )
 }
@@ -140,7 +173,7 @@ object JvmConsoleApplication : ProjectTemplate() {
             KotlinPlugin::modules withValue listOf(
                 SingleplatformModule(
                     "consoleApp",
-                    ModuleType.jvm.createDefaultSourcesets()
+                    createDefaultSourcesets()
                 ).apply {
                     withTemplate(ConsoleJvmApplicationTemplate())
                 }
@@ -173,7 +206,7 @@ object MultiplatformLibrary : ProjectTemplate() {
 object JvmServerJsClient : ProjectTemplate() {
     override val title: String = "Full-Stack Web Application"
     override val description: String = "" +
-            "Create a fully-functional web application using Kotlin/JS for the frontend and Kotlin/JVM for the backend"
+            "Create a fully-functional web application using Kotlin/JS for the frontend and Kotlin/JVM for the backend."
     override val suggestedProjectName: String = "myFullStackApplication"
     override val projectKind: ProjectKind = ProjectKind.Multiplatform
     override val setsPluginSettings: List<SettingWithValue<*, *>> = listOf(
@@ -288,6 +321,57 @@ object IOSApplication : ProjectTemplate() {
         )
 }
 
+object MPPMobileApplication : ProjectTemplate() {
+    override val title = "Multiplatform Mobile Application"
+
+    override val description =
+        "Create mobile applications for iOS and Android with Kotlin Multiplatform Mobile, which supports sharing common code between platforms."
+    override val suggestedProjectName = "myIOSApplication"
+    override val projectKind = ProjectKind.Multiplatform
+
+    override val setsModules: List<Module> = buildList {
+        val shared = MultiplatformModule(
+            "shared",
+            listOf(
+                ModuleType.common.createDefaultTarget(),
+                Module(
+                    "android",
+                    AndroidTargetConfigurator,
+                    null,
+                    sourcesets = createDefaultSourcesets(),
+                    subModules = emptyList()
+                ).withConfiguratorSettings(AndroidTargetConfigurator) {
+                    configurator.androidPlugin withValue AndroidGradlePlugin.APPLICATION
+                },
+                Module(
+                    "ios",
+                    RealNativeTargetConfigurator.configuratorsByModuleType.getValue(ModuleSubType.iosX64),
+                    null,
+                    sourcesets = createDefaultSourcesets(),
+                    subModules = emptyList()
+                )
+            )
+        )
+        +shared
+        +Module(
+            "iosApp",
+            IOSSinglePlatformModuleConfigurator,
+            template = null,
+            sourcesets = createDefaultSourcesets(),
+            subModules = emptyList(),
+            dependencies = mutableListOf(ModuleReference.ByModule(shared))
+        )
+        +Module(
+            "androidApp",
+            AndroidSinglePlatformModuleConfigurator,
+            template = null,
+            sourcesets = createDefaultSourcesets(),
+            subModules = emptyList(),
+            dependencies = mutableListOf(ModuleReference.ByModule(shared))
+        )
+    }
+}
+
 object MultiplatformMobileLibrary : ProjectTemplate() {
     override val title = "Multiplatform Mobile Library"
     override val description = "Create a library that supports sharing code between iOS and Android."
@@ -309,7 +393,9 @@ object MultiplatformMobileLibrary : ProjectTemplate() {
                                 Sourceset(type, dependencies = emptyList())
                             },
                             emptyList()
-                        ),
+                        ).withConfiguratorSettings(AndroidTargetConfigurator) {
+                            configurator.androidPlugin withValue AndroidGradlePlugin.LIBRARY
+                        },
                         Module(
                             "ios",
                             RealNativeTargetConfigurator.configuratorsByModuleType.getValue(ModuleSubType.iosX64),

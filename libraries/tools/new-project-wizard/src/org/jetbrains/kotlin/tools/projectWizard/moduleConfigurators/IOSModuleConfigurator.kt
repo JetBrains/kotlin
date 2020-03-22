@@ -6,17 +6,16 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-
+import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
+import java.io.File
 import java.nio.file.Path
 
-object IOSSinglePlatformModuleConfigurator :
-    SinglePlatformModuleConfigurator {
+object IOSSinglePlatformModuleConfigurator : SinglePlatformModuleConfigurator, ModuleConfiguratorSettings() {
     override val id = "IOS Module"
     override val suggestedModuleName = "ios"
     override val moduleKind: ModuleKind = ModuleKind.singleplatformJvm
@@ -25,20 +24,16 @@ object IOSSinglePlatformModuleConfigurator :
     override val needCreateBuildFile: Boolean = false
     override val requiresRootBuildFile: Boolean = true
 
-    override fun Writer.runArbitraryTask(
+    override fun Reader.createTemplates(
         configurationData: ModulesToIrConversionData,
         module: Module,
         modulePath: Path
-    ): TaskResult<Unit> {
-        val settings = mapOf<String, Any?>(
-            "moduleName" to module.name,
-            "sharedModuleName" to "SHARED",
-            "pathToSharedModule" to "../SHARED"
-        )
+    ): List<FileTemplate> {
+        val settings = createTemplatesSettingValues(module, configurationData)
 
         fun fileTemplate(path: Path) = FileTemplate(descriptor(path, module.name), modulePath, settings)
 
-        return TemplatesPlugin::addFileTemplates.execute(buildList {
+        return buildList {
             +fileTemplate("$DEFAULT_APP_NAME.xcodeproj" / "project.pbxproj")
 
             +fileTemplate(DEFAULT_APP_NAME / "AppDelegate.swift")
@@ -56,7 +51,27 @@ object IOSSinglePlatformModuleConfigurator :
 
             +fileTemplate("${DEFAULT_APP_NAME}UITests" / "Info.plist")
             +fileTemplate("${DEFAULT_APP_NAME}UITests" / "${DEFAULT_APP_NAME}UITests.swift")
-        })
+        }
+    }
+
+    private fun Reader.createTemplatesSettingValues(
+        module: Module,
+        configurationData: ModulesToIrConversionData
+    ): Map<String, Any?> {
+        val dependentModule = withSettingsOf(module) {
+            dependentModule.reference.notRequiredSettingValue?.module
+        }
+        val dependentModulePath = dependentModule
+            ?.path
+            ?.considerSingleRootModuleMode(configurationData.isSingleRootModuleMode)
+            ?.asString(separator = File.separator)
+            ?.asPath()
+
+        return mapOf(
+            "moduleName" to module.name,
+            "sharedModuleName" to dependentModule?.name,
+            "pathToSharedModule" to dependentModulePath
+        )
     }
 
     private fun descriptor(path: Path, moduleName: String) =
@@ -66,4 +81,18 @@ object IOSSinglePlatformModuleConfigurator :
         )
 
     private const val DEFAULT_APP_NAME = "moduleName"
+
+    val dependentModule by valueSetting<DependentModuleReference>(
+        "",
+        GenerationPhase.PROJECT_GENERATION,
+        alwaysFailingParser("Dependent module setting should not be parsed")
+    ) {
+        defaultValue = value(DependentModuleReference.EMPTY)
+    }
+
+    data class DependentModuleReference(val module: Module?) {
+        companion object {
+            val EMPTY = DependentModuleReference(module = null)
+        }
+    }
 }

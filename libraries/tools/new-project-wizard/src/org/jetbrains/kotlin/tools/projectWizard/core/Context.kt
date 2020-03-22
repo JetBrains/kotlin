@@ -196,6 +196,10 @@ class Context private constructor(
     }
 
     open inner class Writer : Reader() {
+        @Deprecated("Allows to get SettingsWriter where it is not supposed to be")
+        val unsafeSettingWriter: SettingsWriter
+            get() = settingWritingContext
+
         val eventManager: EventManager
             get() = settingContext.eventManager
 
@@ -235,7 +239,7 @@ class Context private constructor(
                 setValue(defaultValue)
             }
         }
-        
+
         @JvmName("writeSettings")
         inline operator fun <T> invoke(writer: SettingsWriter.() -> T): T = writer()
     }

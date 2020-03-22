@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
+import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import java.nio.file.Path
@@ -106,8 +107,13 @@ class ModulesToIRsConverter(
             val to = data.moduleByPath.getValue(dependency.path)
             val (dependencyType) = ModuleDependencyType.getPossibleDependencyType(module, to)
                 .toResult { InvalidModuleDependencyError(module, to) }
-            dependencyType.createDependencyIrs(module, to, data)
-        }.sequence()
+
+            with(dependencyType) {
+                @Suppress("DEPRECATION")
+                with(unsafeSettingWriter) { runArbitraryTask(module, to, data).ensure() }
+                createDependencyIrs(module, to, data)
+            }
+        }.sequence().map { it.flatten() }
         mutateProjectStructureByModuleConfigurator(module, modulePath)
         val buildFileIR = run {
             if (!configurator.needCreateBuildFile) return@run null
@@ -237,6 +243,7 @@ class ModulesToIRsConverter(
         compute {
             rootBuildFileIrs += createRootBuildFileIrs(data)
             runArbitraryTask(data, module, modulePath).ensure()
+            TemplatesPlugin::addFileTemplates.execute(createTemplates(data, module, modulePath)).ensure()
             if (this@with is GradleModuleConfigurator) {
                 GradlePlugin::settingsGradleFileIRs.addValues(createSettingsGradleIRs(module)).ensure()
             }

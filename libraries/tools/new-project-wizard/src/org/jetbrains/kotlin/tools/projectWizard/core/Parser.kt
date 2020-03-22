@@ -25,6 +25,14 @@ abstract class Parser<out T : Any> {
     abstract fun ParsingContext.parse(value: Any?, path: String): TaskResult<T>
 }
 
+fun <T : Any> alwaysFailingParser(errorMessage: String) = object : Parser<T>() {
+    override fun ParsingContext.parse(value: Any?, path: String): TaskResult<T> =
+        Failure(object : Error() {
+            override val message: String get() = errorMessage
+        })
+}
+
+
 fun <T : Any> Parser<T>.parse(context: ParsingContext, value: Any?, path: String) =
     with(context) { parse(value, path) }
 

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.htmlText
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.fullTextHtml
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.icon
 import javax.swing.Icon
 
@@ -46,7 +46,7 @@ class CreateModuleOrTargetPopup private constructor(
         }
     ) {
         override fun getIconFor(value: ModuleConfigurator): Icon = value.icon
-        override fun getTextFor(value: ModuleConfigurator): String = value.htmlText
+        override fun getTextFor(value: ModuleConfigurator): String = value.fullTextHtml
 
         override fun onChosen(selectedValue: ModuleConfigurator?, finalChoice: Boolean): PopupStep<*>? =
             when (selectedValue) {
@@ -71,7 +71,7 @@ class CreateModuleOrTargetPopup private constructor(
             else -> null
         }
 
-        override fun getTextFor(value: DisplayableSettingItem): String = value.htmlText
+        override fun getTextFor(value: DisplayableSettingItem): String = value.fullTextHtml
 
         override fun onChosen(selectedValue: DisplayableSettingItem?, finalChoice: Boolean): PopupStep<*>? {
             when {
