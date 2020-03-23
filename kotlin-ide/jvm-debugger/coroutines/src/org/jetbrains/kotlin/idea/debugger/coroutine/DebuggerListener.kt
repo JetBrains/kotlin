@@ -33,9 +33,7 @@ class CoroutineDebuggerListener(val project: Project) : DebuggerListener {
         val isExternalSystemRunConfiguration = configuration is ExternalSystemRunConfiguration
         val isGradleConfiguration = gradleConfiguration(configuration.type.id)
 
-        if (runnerSettings == null || isExternalSystemRunConfiguration || isGradleConfiguration) {
-            log.warn("Coroutine debugger in standalone mode for ${configuration.name} ${configuration.javaClass} / ${params?.javaClass} / ${runnerSettings?.javaClass} (if enabled)")
-        } else if (runnerSettings is DebuggingRunnerData?)
+        if (runnerSettings is DebuggingRunnerData && !isExternalSystemRunConfiguration && !isGradleConfiguration)
             return DebuggerConnection(project, configuration, params, runnerSettings)
         return null
     }

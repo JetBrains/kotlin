@@ -10,6 +10,7 @@ import com.intellij.debugger.engine.JavaStackFrame
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.memory.utils.StackFrameItem
+import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.PreCoroutineStackFrameItem
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineStackFrameItem
@@ -30,26 +31,25 @@ class CoroutineAsyncStackTraceProvider : AsyncStackTraceProvider {
         else stackFrameList
     }
 
-    fun lookupForAfterPreflight(
+    private fun lookupForAfterPreflight(
         stackFrame: CoroutinePreflightStackFrame,
         suspendContext: SuspendContextImpl
     ): List<CoroutineStackFrameItem>? {
-        val resumeWithFrame = stackFrame.resumeWithFrame
+        val resumeWithFrame = stackFrame.threadPreCoroutineFrames.firstOrNull()
 
         if (threadAndContextSupportsEvaluation(suspendContext, resumeWithFrame)) {
             val stackFrames = mutableListOf<CoroutineStackFrameItem>()
-            stackFrames.addAll(
-                stackFrame.restoredStackFrame.drop(1).dropLast(1)
-            ) // because first frame has been generated via CoroutinePreflightStackFrame
+            stackFrames.addAll(stackFrame.coroutineInfoData.stackTrace)
 
-            val lastRestoredFrame = stackFrame.restoredStackFrame.last()
+//            val lastRestoredFrame = stackFrame.coroutineInfoData.stackTrace.first()
 
             stackFrames.addAll(stackFrame.threadPreCoroutineFrames.mapIndexed { index, stackFrameProxyImpl ->
-                if (index == 0)
-                    PreCoroutineStackFrameItem(stackFrameProxyImpl, lastRestoredFrame) // get location and variables also from restored part
-                else
+//                if (index == 0)
+//                    PreCoroutineStackFrameItem(stackFrameProxyImpl, lastRestoredFrame) // get location and variables also from restored part
+//                else
                     PreCoroutineStackFrameItem(stackFrameProxyImpl)
             })
+            stackFrames.addAll(stackFrame.coroutineInfoData.creationStackTrace)
             return stackFrames
         }
         return null
@@ -57,19 +57,19 @@ class CoroutineAsyncStackTraceProvider : AsyncStackTraceProvider {
 
     fun lookupForResumeContinuation(
         frameProxy: StackFrameProxyImpl,
-        suspendContext: SuspendContextImpl
-    ): List<CoroutineStackFrameItem>? {
+        suspendContext: SuspendContextImpl,
+        framesLeft: List<StackFrameProxyImpl>
+    ): CoroutinePreflightStackFrame? {
         val location = frameProxy.location()
         if (!location.isInKotlinSources())
             return null
 
         if (threadAndContextSupportsEvaluation(suspendContext, frameProxy))
-            return ContinuationHolder.lookupForResumeMethodContinuation(suspendContext, frameProxy)
-                ?.getAsyncStackTraceIfAny()?.stackFrameItems
+            return ContinuationHolder.lookupContinuation(suspendContext, frameProxy, framesLeft)
         return null
     }
 
-    private fun threadAndContextSupportsEvaluation(suspendContext: SuspendContextImpl, frameProxy: StackFrameProxyImpl) =
-        suspendContext.supportsEvaluation() && frameProxy.threadProxy().supportsEvaluation()
+    private fun threadAndContextSupportsEvaluation(suspendContext: SuspendContextImpl, frameProxy: StackFrameProxyImpl?) =
+        suspendContext.supportsEvaluation() && frameProxy?.threadProxy()?.supportsEvaluation() ?: false
 }
 

@@ -128,6 +128,9 @@ sealed class BaseExecutionContext(val evaluationContext: EvaluationContextImpl) 
     fun findClassSafe(className: String): ClassType? =
         hopelessAware { findClass(className) as? ClassType }
 
+    fun invokeMethodSafe(type: ClassType, method: Method, args: List<Value?>): Value? {
+        return hopelessAware { debugProcess.invokeMethod(evaluationContext, type, method, args) }
+    }
 
     fun invokeMethodAsString(instance: ObjectReference, methodName: String): String? =
         (findAndInvoke(instance, instance.referenceType(), methodName, "()Ljava/lang/String;") as? StringReference)?.value() ?: null

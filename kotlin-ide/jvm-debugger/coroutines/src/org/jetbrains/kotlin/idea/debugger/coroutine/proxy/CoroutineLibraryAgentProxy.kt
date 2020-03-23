@@ -13,6 +13,8 @@ import com.intellij.util.containers.ContainerUtil
 import com.sun.jdi.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.CoroutineContext
+import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.CoroutineInfo
+import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.DebugProbesImpl
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.JavaLangMirror
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
@@ -83,11 +85,11 @@ class CoroutineLibraryAgentProxy(private val debugProbesClsRef: ClassType, priva
         val creationStackTraceFrameItems = creationStackTrace.map {
             CreationCoroutineStackFrameItem(it, createLocation(it))
         }
-        val key = CoroutineNameIdState(name,"", State.valueOf(state))
+        val key = CoroutineNameIdState(name, "", State.valueOf(state), "")
 
         return CoroutineInfoData(
             key,
-            coroutineStackTraceFrameItems,
+            coroutineStackTraceFrameItems.toMutableList(),
             creationStackTraceFrameItems,
             thread,
             lastObservedFrameFieldRef

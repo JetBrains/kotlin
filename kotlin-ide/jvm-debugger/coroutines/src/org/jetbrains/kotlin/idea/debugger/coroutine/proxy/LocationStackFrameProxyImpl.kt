@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.idea.debugger.coroutine.proxy
 
 import com.intellij.debugger.jdi.StackFrameProxyImpl
+import com.intellij.debugger.jdi.ThreadReferenceProxyImpl
 import com.sun.jdi.Location
+import com.sun.jdi.StackFrame
 
 class LocationStackFrameProxyImpl(val location: Location, frame: StackFrameProxyImpl) :
     StackFrameProxyImpl(frame.threadProxy(), frame.stackFrame, frame.indexFromBottom) {
@@ -14,3 +16,7 @@ class LocationStackFrameProxyImpl(val location: Location, frame: StackFrameProxy
         return location
     }
 }
+
+
+class SkipCoroutineStackFrameProxyImpl(frame: StackFrameProxyImpl) :
+    StackFrameProxyImpl(frame.threadProxy(), frame.stackFrame, frame.indexFromBottom)
