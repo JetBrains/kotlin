@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -14,19 +18,26 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.firEffectiveVisibility
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 
-class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationStatus?>(phase = FirResolvePhase.STATUS) {
-    private val classes = mutableListOf<FirRegularClass>()
-
-    private val containingClass: FirRegularClass? get() = classes.lastOrNull()
-
-    override lateinit var session: FirSession
-
-    override fun transformFile(file: FirFile, data: FirDeclarationStatus?): CompositeTransformResult<FirFile> {
-        session = file.session
-        return super.transformFile(file, data)
+@Deprecated("Should be used just once from createTransformerByPhase", level = DeprecationLevel.WARNING)
+class FirStatusResolveTransformerAdapter : FirTransformer<Nothing?>() {
+    override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
+        error("Should not be called for ${element::class}, only for files")
     }
+
+    override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        val transformer = FirStatusResolveTransformer(file.session)
+        return file.transform(transformer, null)
+    }
+}
+
+class FirStatusResolveTransformer(override val session: FirSession) :
+    FirAbstractTreeTransformer<FirDeclarationStatus?>(phase = FirResolvePhase.STATUS) {
+    private val classes = mutableListOf<FirClass<*>>()
+
+    private val containingClass: FirClass<*>? get() = classes.lastOrNull()
 
     override fun transformDeclarationStatus(
         declarationStatus: FirDeclarationStatus,
@@ -109,7 +120,7 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationSta
     companion object {
         fun FirDeclaration.resolveStatus(
             status: FirDeclarationStatus,
-            containingClass: FirRegularClass?,
+            containingClass: FirClass<*>?,
             isLocal: Boolean
         ): FirDeclarationStatus {
             if (status.visibility == Visibilities.UNKNOWN || status.modality == null) {
@@ -126,7 +137,7 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationSta
             return status
         }
 
-        private fun FirDeclaration.resolveVisibility(containingClass: FirRegularClass?): Visibility {
+        private fun FirDeclaration.resolveVisibility(containingClass: FirClass<*>?): Visibility {
             if (this is FirConstructor) {
                 if (containingClass != null &&
                     (containingClass.classKind == ClassKind.ENUM_CLASS || containingClass.modality == Modality.SEALED)
@@ -137,7 +148,7 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationSta
             return Visibilities.PUBLIC // TODO (overrides)
         }
 
-        private fun FirDeclaration.resolveModality(containingClass: FirRegularClass?): Modality {
+        private fun FirDeclaration.resolveModality(containingClass: FirClass<*>?): Modality {
             return when (this) {
                 is FirRegularClass -> if (classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
                 is FirCallableMemberDeclaration<*> -> {
@@ -165,3 +176,17 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationSta
         }
     }
 }
+
+private val <F : FirClass<F>> FirClass<F>.effectiveVisibility: FirEffectiveVisibility
+    get() = when (this) {
+        is FirRegularClass -> status.effectiveVisibility
+        is FirAnonymousObject -> FirEffectiveVisibility.Local
+        else -> error("Unknown kind of class: ${this::class}")
+    }
+
+private val <F : FirClass<F>> FirClass<F>.modality: Modality?
+    get() = when (this) {
+        is FirRegularClass -> status.modality
+        is FirAnonymousObject -> Modality.FINAL
+        else -> error("Unknown kind of class: ${this::class}")
+    }
