@@ -44,4 +44,6 @@ public interface LfeSearchManager {
   List<SearchResult> getSearchResultsInPage(Page page);
 
   boolean isSearchWorkingNow();
+
+  boolean canShowRegexSearchWarning();
 }

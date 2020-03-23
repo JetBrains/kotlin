@@ -30,6 +30,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.CollectionListModel;
+import com.intellij.ui.EditorNotifications;
 import com.intellij.ui.LightweightHint;
 import com.intellij.ui.components.JBList;
 import org.jetbrains.annotations.CalledInAwt;
@@ -136,6 +137,8 @@ public class LfeSearchManagerImpl implements LfeSearchManager, CloseSearchTask.C
   }
 
   private void launchNewRangeSearch(SearchTaskOptions searchTaskOptions) {
+    showRegexSearchWarningIfNeed();
+
     RangeSearch rangeSearch = rangeSearchCreator.createContent(
       largeFileEditor.getProject(), largeFileEditor.getVirtualFile(),
       largeFileEditor.getVirtualFile().getName());
@@ -177,9 +180,16 @@ public class LfeSearchManagerImpl implements LfeSearchManager, CloseSearchTask.C
     }
 
     stopSearchTaskIfItExists();
+
+    showRegexSearchWarningIfNeed();
+
     lastExecutedCloseSearchTask = new CloseSearchTask(
       options, largeFileEditor.getProject(), fileDataProviderForSearch, this);
     ApplicationManager.getApplication().executeOnPooledThread(lastExecutedCloseSearchTask);
+  }
+
+  private void showRegexSearchWarningIfNeed() {
+    EditorNotifications.getInstance(largeFileEditor.getProject()).updateNotifications(largeFileEditor.getVirtualFile());
   }
 
   private boolean launchLoopedCloseSearchTaskIfNeeded(SearchTaskOptions normalCloseSearchOptions) {
@@ -477,6 +487,23 @@ public class LfeSearchManagerImpl implements LfeSearchManager, CloseSearchTask.C
   @Override
   public boolean isSearchWorkingNow() {
     return (lastExecutedCloseSearchTask != null && !lastExecutedCloseSearchTask.isFinished());
+  }
+
+  @Override
+  public boolean canShowRegexSearchWarning() {
+    if (!myToggleRegularExpression.isSelected(null)) return false;
+
+    String stringToFind = mySearchReplaceComponent.getSearchTextComponent().getText();
+
+    // "pageSize / 10", because it's strictly shorter then even full page consisted of only 4-byte symbols and much longer then simple stringsToFind
+    if (stringToFind.length() > largeFileEditor.getPageSize() / 10 ||
+        stringToFind.contains("*") ||
+        stringToFind.contains("+") ||
+        stringToFind.contains("{")) {
+      return true;
+    }
+
+    return false;
   }
 
   private void createActions() {

@@ -42,4 +42,6 @@ public interface LargeFileEditor extends FileEditor {
 
   @NotNull
   EditorModel getEditorModel();
+
+  int getPageSize();
 }

@@ -305,6 +305,11 @@ public class LargeFileEditorImpl extends UserDataHolderBase implements LargeFile
     return editorModel;
   }
 
+  @Override
+  public int getPageSize() {
+    return fileManager.getPageSize();
+  }
+
   private static DocumentEx createSpecialDocument(VirtualFile vFile) {
     DocumentEx doc = new DocumentImpl("", false, false); // restrict "\r\n" line separators
     doc.putUserData(FileDocumentManagerImpl.NOT_RELOADABLE_DOCUMENT_KEY, new Object());  // to protect document from illegal content changes (see usages of the key)
