@@ -13,50 +13,90 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
 abstract class BaseMirror<T>(val name: String, context: DefaultExecutionContext) {
     val log by logger
-    protected val cls = context.findClass(name) ?: throw IllegalStateException("Can't find class ${name} in remote jvm.")
+    protected val cls = context.findClassSafe(name)
 
-    fun makeField(fieldName: String): Field =
-        cls.fieldByName(fieldName) // childContinuation
+    fun makeField(fieldName: String): Field? =
+        cls?.let { it.fieldByName(fieldName) }
 
-    fun makeMethod(methodName: String): Method =
-        cls.methodsByName(methodName).single()
+    fun makeMethod(methodName: String): Method? =
+        cls?.let { it.methodsByName(methodName).single() }
+
+    fun makeMethod(methodName: String, signature: String): Method? =
+        cls?.let { it.methodsByName(methodName, signature).single() }
 
     fun isCompatible(value: ObjectReference) =
         value.referenceType().isSubTypeOrSame(name)
 
-    fun mirror(value: ObjectReference, context: DefaultExecutionContext): T? {
+    fun mirror(value: ObjectReference?, context: DefaultExecutionContext): T? {
+        value ?: return null
         if (!isCompatible(value)) {
-            log.warn("Value ${value.referenceType()} is not compatible with $name.")
+            log.trace("Value ${value.referenceType()} is not compatible with $name.")
             return null
         } else
             return fetchMirror(value, context)
     }
 
-    fun staticObjectValue(fieldName: String): ObjectReference {
+    fun staticObjectValue(fieldName: String): ObjectReference? {
         val keyFieldRef = makeField(fieldName)
-        return cls.getValue(keyFieldRef) as ObjectReference
+        return cls?.let { it.getValue(keyFieldRef) as? ObjectReference }
     }
 
-    fun stringValue(value: ObjectReference, field: Field) =
-        (value.getValue(field) as StringReference).value()
+    fun staticMethodValue(instance: ObjectReference?, method: Method?, context: DefaultExecutionContext, vararg values: Value?) =
+        instance?.let {
+            method?.let { m ->
+                context.invokeMethod(it, m, values.asList()) as? ObjectReference
+            }
+        }
 
-    fun stringValue(value: ObjectReference, method: Method, context: DefaultExecutionContext) =
-        (context.invokeMethod(value, method, emptyList()) as StringReference).value()
+    fun staticMethodValue(method: Method?, context: DefaultExecutionContext, vararg values: Value?) =
+        cls?.let {
+            method?.let {
+                context.invokeMethodSafe(cls, method, values.asList()) as? ObjectReference
+            }
+        }
 
-    fun objectValue(value: ObjectReference, method: Method, context: DefaultExecutionContext, vararg values: Value) =
-        context.invokeMethodAsObject(value, method, *values)
+    fun stringValue(value: ObjectReference, field: Field?) =
+        (value.getValue(field) as? StringReference)?.value()
 
-    fun longValue(value: ObjectReference, method: Method, context: DefaultExecutionContext, vararg values: Value) =
-        (context.invokeMethodAsObject(value, method, *values) as LongValue).longValue()
+    fun byteValue(value: ObjectReference, field: Field?) =
+        (value.getValue(field) as? ByteValue)?.value()
 
-    fun objectValue(value: ObjectReference, field: Field) =
-        value.getValue(field) as ObjectReference
+    fun threadValue(value: ObjectReference, field: Field?) =
+        value.getValue(field) as? ThreadReference
 
-    fun intValue(value: ObjectReference, field: Field) =
-        (value.getValue(field) as IntegerValue).intValue()
+    fun stringValue(value: ObjectReference, method: Method?, context: DefaultExecutionContext) =
+        method?.let { (context.invokeMethod(value, it, emptyList()) as? StringReference)?.value() }
 
-    fun longValue(value: ObjectReference, field: Field) =
-        (value.getValue(field) as LongValue).longValue()
+    fun objectValue(value: ObjectReference?, method: Method?, context: DefaultExecutionContext, vararg values: Value) =
+        value?.let {
+            method?.let {
+                context.invokeMethodAsObject(value, method, *values)
+            }
+        }
+
+    fun longValue(value: ObjectReference, method: Method?, context: DefaultExecutionContext, vararg values: Value) =
+        method?.let { (context.invokeMethod(value, it, values.asList()) as? LongValue)?.longValue() }
+
+    fun intValue(value: ObjectReference, method: Method?, context: DefaultExecutionContext, vararg values: Value) =
+        method?.let { (context.invokeMethod(value, it, values.asList()) as? IntegerValue)?.intValue() }
+
+    fun booleanValue(value: ObjectReference?, method: Method?, context: DefaultExecutionContext, vararg values: Value): Boolean? {
+        value ?: return null
+        method ?: return null
+        return (context.invokeMethod(value, method, values.asList()) as? BooleanValue)?.booleanValue()
+    }
+
+    fun objectValue(value: ObjectReference, field: Field?) =
+        field?.let { value.getValue(it) as ObjectReference? }
+
+    fun intValue(value: ObjectReference, field: Field?) =
+        field?.let { (value.getValue(it) as? IntegerValue)?.intValue() }
+
+    fun longValue(value: ObjectReference, field: Field?) =
+        field?.let { (value.getValue(it) as? LongValue)?.longValue() }
+
+    fun booleanValue(value: ObjectReference?, field: Field?) =
+        field?.let { (value?.getValue(field) as? BooleanValue)?.booleanValue() }
 
     protected abstract fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): T?
 }
@@ -65,8 +105,8 @@ class StandaloneCoroutine(context: DefaultExecutionContext) :
     BaseMirror<MirrorOfStandaloneCoroutine>("kotlinx.coroutines.StandaloneCoroutine", context) {
     private val coroutineContextMirror = CoroutineContext(context)
     private val childContinuationMirror = ChildContinuation(context)
-    private val stateFieldRef: Field = makeField("_state") // childContinuation
-    private val contextFieldRef: Field = makeField("context")
+    private val stateFieldRef = makeField("_state") // childContinuation
+    private val contextFieldRef = makeField("context")
 
     override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfStandaloneCoroutine {
         val state = objectValue(value, stateFieldRef)
@@ -76,6 +116,15 @@ class StandaloneCoroutine(context: DefaultExecutionContext) :
         return MirrorOfStandaloneCoroutine(value, childcontinuation, coroutineContext)
     }
 
+    companion object {
+        fun instance(context: DefaultExecutionContext): StandaloneCoroutine? {
+            val sc = StandaloneCoroutine(context)
+            if (sc.cls == null)
+                return null
+            else
+                return sc
+        }
+    }
 }
 
 data class MirrorOfStandaloneCoroutine(
@@ -87,7 +136,7 @@ data class MirrorOfStandaloneCoroutine(
 class ChildContinuation(context: DefaultExecutionContext) :
     BaseMirror<MirrorOfChildContinuation>("kotlinx.coroutines.ChildContinuation", context) {
     private val childContinuationMirror = CancellableContinuationImpl(context)
-    private val childFieldRef: Field = makeField("child") // cancellableContinuationImpl
+    private val childFieldRef = makeField("child") // cancellableContinuationImpl
 
     override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfChildContinuation? {
         val child = objectValue(value, childFieldRef)
@@ -104,11 +153,11 @@ class CancellableContinuationImpl(context: DefaultExecutionContext) :
     BaseMirror<MirrorOfCancellableContinuationImpl>("kotlinx.coroutines.CancellableContinuationImpl", context) {
     private val coroutineContextMirror = CoroutineContext(context)
     private val dispatchedContinuationtMirror = DispatchedContinuation(context)
-    private val decisionFieldRef: Field = makeField("_decision")
-    private val delegateFieldRef: Field = makeField("delegate") // DispatchedContinuation
-    private val resumeModeFieldRef: Field = makeField("resumeMode")
-    private val submissionTimeFieldRef: Field = makeField("submissionTime")
-    private val contextFieldRef: Field = makeField("context")
+    private val decisionFieldRef = makeField("_decision")
+    private val delegateFieldRef = makeField("delegate") // DispatchedContinuation
+    private val resumeModeFieldRef = makeField("resumeMode")
+    private val submissionTimeFieldRef = makeField("submissionTime")
+    private val contextFieldRef = makeField("context")
 
     override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfCancellableContinuationImpl? {
         val decision = intValue(value, decisionFieldRef)
@@ -123,16 +172,16 @@ class CancellableContinuationImpl(context: DefaultExecutionContext) :
 
 data class MirrorOfCancellableContinuationImpl(
     val that: ObjectReference,
-    val decision: Int,
+    val decision: Int?,
     val delegate: MirrorOfDispatchedContinuation?,
-    val resumeMode: Int,
-    val submissionTyme: Long,
+    val resumeMode: Int?,
+    val submissionTyme: Long?,
     val jobContext: MirrorOfCoroutineContext?
 )
 
 class DispatchedContinuation(context: DefaultExecutionContext) :
     BaseMirror<MirrorOfDispatchedContinuation>("kotlinx.coroutines.DispatchedContinuation", context) {
-    private val decisionFieldRef: Field = makeField("continuation")
+    private val decisionFieldRef = makeField("continuation")
 
     override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfDispatchedContinuation? {
         val continuation = objectValue(value, decisionFieldRef)

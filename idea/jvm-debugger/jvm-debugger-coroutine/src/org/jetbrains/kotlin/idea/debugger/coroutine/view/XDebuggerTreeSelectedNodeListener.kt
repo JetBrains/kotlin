@@ -66,22 +66,23 @@ class XDebuggerTreeSelectedNodeListener(val session: XDebugSession, val tree: XD
                             debugProcess,
                             isCurrentContext
                         )
-                        val jStackFrame = executionStack.createStackFrame(stackFrameItem.frame)
-                        createStackAndSetFrame(threadProxy, { jStackFrame }, isCurrentContext)
+                        createStackAndSetFrame(threadProxy, { executionStack.createStackFrame(stackFrameItem.frame) }, isCurrentContext)
                     }
                     is CreationCoroutineStackFrameItem -> {
                         val position = stackFrameItem.stackTraceElement.findPosition(session.project) ?: return false
                         val threadProxy = suspendContext.thread ?: return false
-                        val realFrame = threadProxy.forceFrames().first() ?: return false
                         createStackAndSetFrame(threadProxy, {
+                            val realFrame = threadProxy.forceFrames().first() ?: return@createStackAndSetFrame null
                             SyntheticStackFrame(stackFrameItem.emptyDescriptor(realFrame), emptyList(), position)
                         })
                     }
                     is SuspendCoroutineStackFrameItem -> {
                         val threadProxy = suspendContext.thread ?: return false
-                        val realFrame = threadProxy.forceFrames().first() ?: return false
                         val lastFrame = valueContainer.infoData.lastObservedFrameFieldRef ?: return false
-                        createStackAndSetFrame(threadProxy, { createSyntheticStackFrame(suspendContext, stackFrameItem, realFrame, lastFrame) })
+                        createStackAndSetFrame(threadProxy, {
+                            val realFrame = threadProxy.forceFrames().first() ?: return@createStackAndSetFrame null
+                            createSyntheticStackFrame(suspendContext, stackFrameItem, realFrame, lastFrame)
+                        })
                     }
                     is RestoredCoroutineStackFrameItem -> {
                         val threadProxy = stackFrameItem.frame.threadProxy()
@@ -95,8 +96,8 @@ class XDebuggerTreeSelectedNodeListener(val session: XDebugSession, val tree: XD
                         val threadProxy = suspendContext.thread ?: return false
                         val position = stackFrameItem.location.findPosition(session.project)
                             ?: return false
-                        val realFrame = threadProxy.forceFrames().first() ?: return false
                         createStackAndSetFrame(threadProxy, {
+                            val realFrame = threadProxy.forceFrames().first() ?: return@createStackAndSetFrame null
                             SyntheticStackFrame(stackFrameItem.emptyDescriptor(realFrame), stackFrameItem.spilledVariables, position)
                         })
                     }

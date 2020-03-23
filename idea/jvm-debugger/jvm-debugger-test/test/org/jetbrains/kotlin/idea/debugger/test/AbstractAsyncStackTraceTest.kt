@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.idea.debugger.test
 
 import com.intellij.debugger.engine.AsyncStackTraceProvider
-import com.intellij.debugger.engine.JavaStackFrame
 import com.intellij.debugger.engine.JavaValue
 import com.intellij.debugger.memory.utils.StackFrameItem
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.extensions.Extensions
-import io.ktor.util.findAllSupertypes
 import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineAsyncStackTraceProvider
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferences
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -38,9 +36,10 @@ abstract class AbstractAsyncStackTraceTest : KotlinDescriptorTestCaseWithSteppin
             val frameProxy = this.frameProxy
             if (frameProxy != null) {
                 try {
-                    val stackTrace = asyncStackTraceProvider.lookupForResumeContinuation(frameProxy, this)
-                    if (stackTrace != null && stackTrace.isNotEmpty()) {
-                        print(renderAsyncStackTrace(stackTrace), ProcessOutputTypes.SYSTEM)
+                    val coroutineInfoData =
+                        asyncStackTraceProvider.lookupForResumeContinuation(frameProxy, this, emptyList())?.coroutineInfoData
+                    if (coroutineInfoData != null && coroutineInfoData.stackTrace.isNotEmpty()) {
+                        print(renderAsyncStackTrace(coroutineInfoData.stackTrace), ProcessOutputTypes.SYSTEM)
                     } else {
                         println("No async stack trace available", ProcessOutputTypes.SYSTEM)
                     }

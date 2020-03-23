@@ -24,7 +24,7 @@ import javax.swing.Icon
 class CoroutineDescriptorImpl(val infoData: CoroutineInfoData) : NodeDescriptorImpl() {
     lateinit var icon: Icon
 
-    override fun getName() = infoData.key.name
+    override fun getName() = infoData.key?.name
 
     @Throws(EvaluateException::class)
     override fun calcRepresentation(context: EvaluationContextImpl?, labelListener: DescriptorLabelListener): String {

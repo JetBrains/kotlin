@@ -75,7 +75,7 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
                 val index = selectedIndex
                 if (index >= 0) {
                     val selection = model.getElementAt(index) as CoroutineInfoData
-                    AnalyzeStacktraceUtil.printStacktrace(consoleView, selection.stringStackTrace)
+                    AnalyzeStacktraceUtil.printStacktrace(consoleView, stringStackTrace(selection))
                 } else {
                     AnalyzeStacktraceUtil.printStacktrace(consoleView, "")
                 }
@@ -144,7 +144,7 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
         var index = 0
         val states = if (UISettings.instance.state.mergeEqualStackTraces) mergedDump else dump
         for (state in states) {
-            if (StringUtil.containsIgnoreCase(state.stringStackTrace, text) || StringUtil.containsIgnoreCase(state.key.name, text)) {
+            if (StringUtil.containsIgnoreCase(stringStackTrace(state), text) || StringUtil.containsIgnoreCase(state.key.name, text)) {
                 model.addElement(state)
                 if (selection === state) {
                     selectedIndex = index
@@ -263,7 +263,7 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
             val buf = StringBuilder()
             buf.append(KotlinDebuggerCoroutinesBundle.message("coroutine.dump.full.title")).append("\n\n")
             for (state in myCoroutinesDump) {
-                buf.append(state.stringStackTrace).append("\n\n")
+                buf.append(stringStackTrace(state)).append("\n\n")
             }
             CopyPasteManager.getInstance().setContents(StringSelection(buf.toString()))
 
@@ -283,7 +283,7 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
 
         override fun getReportText() = buildString {
             for (state in infoData)
-                append(state.stringStackTrace).append("\n\n")
+                append(stringStackTrace(state)).append("\n\n")
         }
 
         override fun getDefaultFilePath() = (myProject.basePath ?: "") + File.separator + defaultReportFileName
@@ -293,3 +293,12 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
         private val defaultReportFileName = "coroutines_report.txt"
     }
 }
+
+private fun stringStackTrace(info: CoroutineInfoData) =
+    buildString {
+        appendln("\"${info.key.name}\", state: ${info.key.state}")
+        info.stackTrace.forEach {
+            appendln("\t$it")
+        }
+    }
+
