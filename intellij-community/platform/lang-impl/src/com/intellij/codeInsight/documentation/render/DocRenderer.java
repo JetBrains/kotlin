@@ -328,7 +328,6 @@ class DocRenderer implements EditorCustomElementRenderer {
         "ul { padding: 0 16px 0 0; }" +
         "li { padding: 1px 0 2px 0; }" +
         "table p { padding-bottom: 0}" +
-        "td { margin: 4px 0 0 0; padding: 0; }" +
         "th { text-align: left; }"
       );
       ourCachedStyleSheetLinkColor = linkColorHex;
