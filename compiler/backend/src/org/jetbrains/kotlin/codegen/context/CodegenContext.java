@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
-import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor;
+import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
