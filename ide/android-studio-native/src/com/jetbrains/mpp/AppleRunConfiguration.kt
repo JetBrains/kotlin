@@ -46,7 +46,7 @@ class AppleRunConfiguration(project: Project, configurationFactory: MobileConfig
     }
 
     override fun checkConfiguration() {
-        if (xcodeproj == null) throw RuntimeConfigurationError("Can't find xcproj. Please, specify path relative to root to xcproj in your gradle.properties-file")
+        if (xcodeproj == null) throw RuntimeConfigurationError("Can't find xcodeproj. Please, specify path relative to root to xcodeproj in your gradle.properties-file")
     }
 
     override fun canRunOn(target: ExecutionTarget): Boolean = target is Device
