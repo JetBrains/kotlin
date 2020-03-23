@@ -28,21 +28,21 @@ public interface BuildProgress<T extends BuildProgressDescriptor> {
                                         @NotNull MessageEvent.Kind kind,
                                         @NotNull FilePosition filePosition);
 
-  @NotNull BuildProgress<? extends BuildProgressDescriptor> finish();
+  @NotNull BuildProgress<BuildProgressDescriptor> finish();
 
-  @NotNull BuildProgress<? extends BuildProgressDescriptor> finish(long timeStamp);
+  @NotNull BuildProgress<BuildProgressDescriptor> finish(long timeStamp);
 
-  @NotNull BuildProgress<? extends BuildProgressDescriptor> finish(boolean isUpToDate);
+  @NotNull BuildProgress<BuildProgressDescriptor> finish(boolean isUpToDate);
 
-  @NotNull BuildProgress<? extends BuildProgressDescriptor> finish(long timeStamp, boolean isUpToDate, @NotNull String message);
+  @NotNull BuildProgress<BuildProgressDescriptor> finish(long timeStamp, boolean isUpToDate, @NotNull String message);
 
-  @NotNull BuildProgress<? extends BuildProgressDescriptor> fail();
+  @NotNull BuildProgress<BuildProgressDescriptor> fail();
 
-  @NotNull BuildProgress<? extends BuildProgressDescriptor> fail(long timeStamp, @NotNull String message);
+  @NotNull BuildProgress<BuildProgressDescriptor> fail(long timeStamp, @NotNull String message);
 
-  @NotNull BuildProgress<? extends BuildProgressDescriptor> cancel();
+  @NotNull BuildProgress<BuildProgressDescriptor> cancel();
 
-  @NotNull BuildProgress<? extends BuildProgressDescriptor> cancel(long timeStamp, @NotNull String message);
+  @NotNull BuildProgress<BuildProgressDescriptor> cancel(long timeStamp, @NotNull String message);
 
-  @NotNull BuildProgress<? extends BuildProgressDescriptor> startChildProgress(@NotNull String title);
+  @NotNull BuildProgress<BuildProgressDescriptor> startChildProgress(@NotNull String title);
 }

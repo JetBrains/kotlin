@@ -11,8 +11,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @ApiStatus.Internal
-public class BuildRootProgressImpl extends BuildProgressImpl<BuildProgressDescriptor> {
-  private BuildProgressListener myListener;
+public class BuildRootProgressImpl extends BuildProgressImpl {
+  private final BuildProgressListener myListener;
 
   public BuildRootProgressImpl(BuildProgressListener buildProgressListener) {
     super(buildProgressListener, null);
@@ -32,13 +32,13 @@ public class BuildRootProgressImpl extends BuildProgressImpl<BuildProgressDescri
   }
 
   @Override
-  public @NotNull BuildProgress<? extends BuildProgressDescriptor> finish() {
+  public @NotNull BuildProgress<BuildProgressDescriptor> finish() {
     return finish(System.currentTimeMillis(), false, BuildBundle.message("build.status.finished"));
   }
 
   @NotNull
   @Override
-  public BuildProgress<? extends BuildProgressDescriptor> finish(long timeStamp, boolean isUpToDate, @NotNull String message) {
+  public BuildProgress<BuildProgressDescriptor> finish(long timeStamp, boolean isUpToDate, @NotNull String message) {
     assertStarted();
     FinishEvent event = new FinishBuildEventImpl(getId(), null, timeStamp, message, new SuccessResultImpl(isUpToDate));
     myListener.onEvent(getBuildId(), event);

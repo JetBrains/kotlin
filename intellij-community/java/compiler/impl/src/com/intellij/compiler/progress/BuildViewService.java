@@ -6,6 +6,11 @@ import com.intellij.openapi.compiler.CompilerMessage;
 import com.intellij.openapi.progress.ProgressIndicator;
 import org.jetbrains.annotations.ApiStatus;
 
+/**
+ * {@link BuildViewService} implementations are expected to visualize somehow compiler progress/messages for {@link CompilerTask}.
+ *
+ * @see CompilerTask
+ */
 @ApiStatus.Internal
 public interface BuildViewService {
   void onStart(Object sessionId, long startCompilationStamp, Runnable restartWork, ProgressIndicator indicator);
