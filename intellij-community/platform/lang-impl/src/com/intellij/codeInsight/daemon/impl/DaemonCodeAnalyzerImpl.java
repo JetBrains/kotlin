@@ -521,13 +521,13 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
 
   @Override
   public void restart() {
-    doRestart();
+    doRestart("Global restart");
   }
 
   // return true if the progress was really canceled
-  boolean doRestart() {
-    myFileStatusMap.markAllFilesDirty("Global restart");
-    return stopProcess(true, "Global restart");
+  boolean doRestart(@NotNull String reason) {
+    myFileStatusMap.markAllFilesDirty(reason);
+    return stopProcess(true, reason);
   }
 
   @Override
@@ -963,6 +963,7 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
 
   @ApiStatus.Internal
   public void runLocalInspectionPassAfterCompletionOfGeneralHighlightPass(boolean flag) {
+    doRestart("runLocalInspectionPassAfterCompletionOfGeneralHighlightPass("+flag+") called");
     runInspectionsAfterCompletionOfGeneralHighlightPass = flag;
     TextEditorHighlightingPassRegistrarImpl registrar =
       (TextEditorHighlightingPassRegistrarImpl)TextEditorHighlightingPassRegistrar.getInstance(myProject);

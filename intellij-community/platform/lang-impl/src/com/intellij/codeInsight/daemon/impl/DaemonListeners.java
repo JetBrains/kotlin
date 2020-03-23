@@ -638,7 +638,7 @@ public final class DaemonListeners implements Disposable {
   }
 
   private void stopDaemonAndRestartAllFiles(@NotNull String reason) {
-    if (myDaemonCodeAnalyzer.doRestart() && !myProject.isDisposed()) {
+    if (myDaemonCodeAnalyzer.doRestart(reason) && !myProject.isDisposed()) {
       myDaemonEventPublisher.daemonCancelEventOccurred(reason);
     }
   }
