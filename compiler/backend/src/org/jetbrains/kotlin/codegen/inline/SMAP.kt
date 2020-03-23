@@ -23,7 +23,8 @@ const val KOTLIN_DEBUG_STRATA_NAME = "KotlinDebug"
 class SMAPBuilder(
     val source: String,
     val path: String,
-    private val fileMappings: List<FileMapping>
+    private val fileMappings: List<FileMapping>,
+    private val backwardsCompatibleSyntax: Boolean
 ) {
     private val header = "SMAP\n$source\nKotlin"
 
@@ -39,25 +40,25 @@ class SMAPBuilder(
 
         val defaultStrata = generateDefaultStrata(realMappings)
         val debugStrata = generateDebugStrata(realMappings)
-
-        return "$header\n$defaultStrata$debugStrata"
+        if (backwardsCompatibleSyntax && defaultStrata.isNotEmpty() && debugStrata.isNotEmpty()) {
+            // Old versions of kotlinc might fail if there is no END between defaultStrata and debugStrata.
+            // This is not actually correct syntax according to JSR-045.
+            return "$header\n$defaultStrata$END\n$debugStrata$END\n"
+        }
+        return "$header\n$defaultStrata$debugStrata$END\n"
     }
 
     private fun generateDefaultStrata(realMappings: List<FileMapping>): String {
         val fileIds = FILE_SECTION + realMappings.mapIndexed { id, file -> "\n${file.toSMAPFile(id + 1)}" }.joinToString("")
         val lineMappings = LINE_SECTION + realMappings.joinToString("") { it.toSMAPMapping() }
-        return "$STRATA_SECTION $KOTLIN_STRATA_NAME\n$fileIds\n$lineMappings\n$END\n"
+        return "$STRATA_SECTION $KOTLIN_STRATA_NAME\n$fileIds\n$lineMappings\n"
     }
 
     private fun generateDebugStrata(realMappings: List<FileMapping>): String {
         val combinedMapping = FileMapping(source, path)
         realMappings.forEach { fileMapping ->
             fileMapping.lineMappings.filter { it.callSiteMarker != null }.forEach { (_, dest, range, callSiteMarker) ->
-                combinedMapping.addRangeMapping(
-                    RangeMapping(
-                        callSiteMarker!!.lineNumber, dest, range
-                    )
-                )
+                combinedMapping.addRangeMapping(RangeMapping(callSiteMarker!!.lineNumber, dest, range))
             }
         }
 
@@ -66,7 +67,7 @@ class SMAPBuilder(
         val newMappings = listOf(combinedMapping)
         val fileIds = FILE_SECTION + newMappings.mapIndexed { id, file -> "\n${file.toSMAPFile(id + 1)}" }.joinToString("")
         val lineMappings = LINE_SECTION + newMappings.joinToString("") { it.toSMAPMapping() }
-        return "$STRATA_SECTION $KOTLIN_DEBUG_STRATA_NAME\n$fileIds\n$lineMappings\n$END\n"
+        return "$STRATA_SECTION $KOTLIN_DEBUG_STRATA_NAME\n$fileIds\n$lineMappings\n"
     }
 
     private fun RangeMapping.toSMAP(fileId: Int): String {
@@ -153,10 +154,6 @@ interface SourceMapper {
     }
 
     companion object {
-        fun flushToClassBuilder(mapper: SourceMapper, v: ClassBuilder) {
-            mapper.resultMappings.forEach { fileMapping -> v.addSMAP(fileMapping) }
-        }
-
         fun createFromSmap(smap: SMAP): SourceMapper {
             return DefaultSourceMapper(smap.sourceInfo, smap.fileMappings)
         }

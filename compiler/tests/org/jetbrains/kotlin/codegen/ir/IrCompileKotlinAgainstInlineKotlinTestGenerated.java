@@ -3280,6 +3280,16 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
             runTest("compiler/testData/codegen/boxInline/smap/smap.kt");
         }
 
+        @TestMetadata("smapWithNewSyntax.kt")
+        public void testSmapWithNewSyntax() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/smapWithNewSyntax.kt");
+        }
+
+        @TestMetadata("smapWithOldSyntax.kt")
+        public void testSmapWithOldSyntax() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/smapWithOldSyntax.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/smap/anonymous")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
