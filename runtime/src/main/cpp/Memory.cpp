@@ -451,7 +451,9 @@ struct MemoryState {
   uint64_t allocSinceLastGcThreshold;
 #endif // USE_GC
 
-  KStdUnorderedMap<ObjHeader**, ObjHeader*> initializingSingletons;
+  // This map is expected to be small, std::map consumes less memory than
+  // std::unordered_map and is just as efficient.
+  KStdOrderedMap<ObjHeader**, ObjHeader*> initializingSingletons;
 
 #if COLLECT_STATISTIC
   #define CONTAINER_ALLOC_STAT(state, size, container) state->statistic.incAlloc(size, container);
