@@ -43,21 +43,24 @@ inline fun html(init: () -> Unit) {
 
 // LINENUMBERS
 // test.kt:19
-// test.kt:7
-// test.kt:9
-// 1.kt:18
-// 1.kt:6
-// test.kt:10
-// 1.kt:14
-// 1.kt:10
-// 1.kt:11
-// test.kt:11
-// test.kt:12
-// 1.kt:12
-// 1.kt:14
-// test.kt:13
-// 1.kt:7
-// 1.kt:18
-// test.kt:15
+// test.kt:7 @ test.kt:19
+// test.kt:9 @ test.kt:19
+// 1.kt:18 @ test.kt:19
+// 1.kt:6 @ test.kt:19
+// test.kt:10 @ test.kt:19
+// 1.kt:14 @ test.kt:19
+// 1.kt:10 @ test.kt:19
+// 1.kt:11 @ test.kt:19
+// test.kt:11 @ test.kt:19
+// test.kt:12 @ test.kt:19
+// 1.kt:12 @ test.kt:19
+// 1.kt:14 @ test.kt:19
+// test.kt:13 @ test.kt:19
+// 1.kt:7 @ test.kt:19
+// 1.kt:18 @ test.kt:19
+// test.kt:15 @ test.kt:19
 // test.kt:19
 // test.kt:21
+
+// some lines have incorrect call sites (:20 and :21)
+// IGNORE_BACKEND: JVM, JVM_IR

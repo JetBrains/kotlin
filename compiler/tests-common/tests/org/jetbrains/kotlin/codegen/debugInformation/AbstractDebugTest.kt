@@ -15,9 +15,12 @@ import com.sun.jdi.request.EventRequest.SUSPEND_ALL
 import com.sun.jdi.request.StepRequest
 import com.sun.tools.jdi.SocketAttachingConnector
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
+import org.jetbrains.kotlin.checkers.forceEnableFeatures
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.clientserver.TestProcessServer
@@ -118,6 +121,11 @@ abstract class AbstractDebugTest : CodegenTestCase() {
     @After
     public override fun tearDown() {
         super.tearDown()
+    }
+
+    override fun updateConfiguration(configuration: CompilerConfiguration) {
+        super.updateConfiguration(configuration)
+        configuration.forceEnableFeatures(LanguageFeature.CorrectSourceMappingSyntax)
     }
 
     internal fun invokeBoxInSeparateProcess(classLoader: URLClassLoader, aClass: Class<*>, port: Int): String {

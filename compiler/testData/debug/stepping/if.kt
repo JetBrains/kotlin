@@ -15,10 +15,10 @@ inline fun getB(): Int {
 
 // LINENUMBERS
 // test.kt:4
-// test.kt:13
+// test.kt:13 @ test.kt:4
 // test.kt:5
 // test.kt:10
 // test.kt:5
 // test.kt:7
-// test.kt:13
+// test.kt:13 @ test.kt:7
 // test.kt:7

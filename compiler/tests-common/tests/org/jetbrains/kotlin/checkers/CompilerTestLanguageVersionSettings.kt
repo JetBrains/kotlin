@@ -44,6 +44,21 @@ data class CompilerTestLanguageVersionSettings(
     override fun <T> getFlag(flag: AnalysisFlag<T>): T = analysisFlags[flag] as T? ?: flag.defaultValue
 }
 
+private class LanguageFeatureOverride(
+    private val delegate: LanguageVersionSettings,
+    private val override: Map<LanguageFeature, LanguageFeature.State>,
+) : LanguageVersionSettings by delegate {
+    override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State =
+        override[feature] ?: delegate.getFeatureSupport(feature)
+
+    override fun supportsFeature(feature: LanguageFeature): Boolean =
+        super.supportsFeature(feature)
+}
+
+fun CompilerConfiguration.forceEnableFeatures(vararg features: LanguageFeature) {
+    languageVersionSettings = LanguageFeatureOverride(languageVersionSettings, features.associate { it to LanguageFeature.State.ENABLED })
+}
+
 private fun specificFeaturesForTests(): Map<LanguageFeature, LanguageFeature.State> {
     return if (System.getProperty("kotlin.ni") == "true")
         mapOf(LanguageFeature.NewInference to LanguageFeature.State.ENABLED)

@@ -74,6 +74,12 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     }
 
     @Test
+    @TestMetadata("inlineCallsInInlineLambda.kt")
+    public void testInlineCallsInInlineLambda() throws Exception {
+        runTest("compiler/testData/debug/stepping/inlineCallsInInlineLambda.kt");
+    }
+
+    @Test
     @TestMetadata("inlineNamedCallableReference.kt")
     public void testInlineNamedCallableReference() throws Exception {
         runTest("compiler/testData/debug/stepping/inlineNamedCallableReference.kt");
