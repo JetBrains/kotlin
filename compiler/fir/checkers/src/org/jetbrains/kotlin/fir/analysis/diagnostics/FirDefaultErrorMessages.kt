@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 
 @Suppress("unused")
-class DefaultErrorMessagesFir : DefaultErrorMessages.Extension {
+class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
 
     override fun getMap(): DiagnosticFactoryToRendererMap {
         return MAP
