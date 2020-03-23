@@ -120,6 +120,7 @@ class KotlinDeserializedJvmSymbolsProvider(
                 FirDeserializationContext.createForPackage(
                     packageFqName, packageProto, nameResolver, session,
                     JvmBinaryAnnotationDeserializer(session),
+                    source
                 ),
                 source,
             )
@@ -332,7 +333,8 @@ class KotlinDeserializedJvmSymbolsProvider(
                 classId, classProto, symbol, nameResolver, session,
                 JvmBinaryAnnotationDeserializer(session),
                 kotlinScopeProvider,
-                parentContext, this::findAndDeserializeClass,
+                parentContext, KotlinJvmBinarySourceElement(kotlinJvmBinaryClass),
+                this::findAndDeserializeClass
             )
 
             classesCache[classId] = symbol
@@ -360,7 +362,7 @@ class KotlinDeserializedJvmSymbolsProvider(
         val functionIds = part.topLevelFunctionNameIndex[name] ?: return emptyList()
         return functionIds.map { part.proto.getFunction(it) }
             .map {
-                val firNamedFunction = part.context.memberDeserializer.loadFunction(it, containerSource = part.source) as FirSimpleFunctionImpl
+                val firNamedFunction = part.context.memberDeserializer.loadFunction(it) as FirSimpleFunctionImpl
                 firNamedFunction.symbol
             }
     }
@@ -369,7 +371,7 @@ class KotlinDeserializedJvmSymbolsProvider(
         val propertyIds = part.topLevelPropertyNameIndex[name] ?: return emptyList()
         return propertyIds.map { part.proto.getProperty(it) }
             .map {
-                val firProperty = part.context.memberDeserializer.loadProperty(it, containerSource = part.source)
+                val firProperty = part.context.memberDeserializer.loadProperty(it)
                 firProperty.symbol
             }
     }

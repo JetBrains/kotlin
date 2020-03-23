@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.metadata.deserialization.supertypes
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getName
 
 fun deserializeClassToSymbol(
@@ -45,6 +46,7 @@ fun deserializeClassToSymbol(
     defaultAnnotationDeserializer: AbstractAnnotationDeserializer?,
     scopeProvider: KotlinScopeProvider,
     parentContext: FirDeserializationContext? = null,
+    containerSource: DeserializedContainerSource? = null,
     deserializeNestedClass: (ClassId, FirDeserializationContext) -> FirRegularClassSymbol?
 ) {
     val flags = classProto.flags
@@ -71,7 +73,8 @@ fun deserializeClassToSymbol(
             classId.relativeClassName
         ) ?: FirDeserializationContext.createForClass(
             classId, classProto, nameResolver, session,
-            defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session)
+            defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session),
+            containerSource
         )
     classBuilder.apply {
         this.session = session
