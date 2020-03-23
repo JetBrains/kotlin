@@ -25,6 +25,7 @@ import com.intellij.util.KeyedLazyInstance;
 import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.DebugAssertions;
 import com.intellij.util.indexing.impl.IndexStorage;
+import com.intellij.util.indexing.impl.InputData;
 import com.intellij.util.indexing.impl.InputDataDiffBuilder;
 import com.intellij.util.indexing.impl.forward.EmptyForwardIndex;
 import com.intellij.util.io.*;
@@ -166,17 +167,6 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
             LOG.error("Error indexing:" + inputData.getFile(), t);
           }
 
-          if (serializedStubTree == null) return null;
-
-          VirtualFile file = inputData.getFile();
-          boolean isBinary = file.getFileType().isBinary();
-          int contentLength = isBinary ? -1 : inputData.getPsiFile().getTextLength();
-          long byteLength = file.getLength();
-          rememberIndexingStamp(file, isBinary, byteLength, contentLength);
-
-          if (LOG.isDebugEnabled()) {
-            LOG.debug("Indexing " + file + "; " + IndexingStampInfo.dumpSize(byteLength, contentLength));
-          }
           return serializedStubTree;
         });
       }
@@ -200,6 +190,18 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
 
   private static final byte IS_BINARY_MASK = 1;
   private static final byte BYTE_AND_CHAR_LENGTHS_ARE_THE_SAME_MASK = 1 << 1;
+  private static void rememberIndexingStamp(@NotNull FileContent content) {
+    VirtualFile file = content.getFile();
+    boolean isBinary = file.getFileType().isBinary();
+    int contentLength = isBinary ? -1 : content.getPsiFile().getTextLength();
+    long byteLength = file.getLength();
+    rememberIndexingStamp(file, isBinary, byteLength, contentLength);
+
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Indexing stubs for " + file + "; " + IndexingStampInfo.dumpSize(byteLength, contentLength));
+    }
+  }
+
   private static void rememberIndexingStamp(@NotNull VirtualFile file, boolean isBinary, long contentByteLength, int contentCharLength) {
     try (DataOutputStream stream = INDEXED_STAMP.writeAttribute(file)) {
       DataInputOutputUtil.writeTIME(stream, file.getTimeStamp());
@@ -345,6 +347,15 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
         myStubIndex = index = (StubIndexImpl)StubIndex.getInstance();
       }
       return index;
+    }
+
+    @Override
+    protected @NotNull InputData<Integer, SerializedStubTree> mapInput(int inputId, @Nullable FileContent content) {
+      InputData<Integer, SerializedStubTree> data = super.mapInput(inputId, content);
+      if (content != null && !data.getKeyValues().isEmpty()) {
+        rememberIndexingStamp(content);
+      }
+      return data;
     }
 
     @Override
