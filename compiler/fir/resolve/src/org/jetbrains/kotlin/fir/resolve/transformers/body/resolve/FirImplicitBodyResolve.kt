@@ -7,7 +7,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 
@@ -71,9 +69,8 @@ class FirImplicitTypeBodyResolveTransformerAdapterForLocalClasses(
     }
 
     override fun <F : FirClass<F>> transformClass(klass: FirClass<F>, data: Nothing?): CompositeTransformResult<FirStatement> {
-        val (designationMap, targetedClasses) = CollectingVisitor().run {
-            visitClass(klass)
-            resultingMap to targetedClasses
+        val (designationMap, targetedClasses) = klass.collectLocalClassesNavigationInfo().run {
+            designationMap to parentForClass.keys + klass
         }
 
         val implicitBodyResolveComputationSession =
@@ -99,47 +96,6 @@ class FirImplicitTypeBodyResolveTransformerAdapterForLocalClasses(
         )
 
         return klass.transform(transformer, resolutionMode)
-    }
-}
-
-private class CollectingVisitor : FirDefaultVisitorVoid() {
-    val resultingMap = mutableMapOf<FirCallableMemberDeclaration<*>, List<FirClass<*>>>()
-    val targetedClasses = mutableSetOf<FirClass<*>>()
-    private var currentPath = persistentListOf<FirClass<*>>()
-
-    override fun visitElement(element: FirElement) {}
-
-    override fun visitRegularClass(regularClass: FirRegularClass) {
-        visitClass(regularClass)
-    }
-
-    override fun visitAnonymousObject(anonymousObject: FirAnonymousObject) {
-        visitClass(anonymousObject)
-    }
-
-    override fun <F : FirClass<F>> visitClass(klass: FirClass<F>) {
-        targetedClasses.add(klass)
-        val prev = currentPath
-        currentPath = currentPath.add(klass)
-
-        klass.acceptChildren(this)
-
-        currentPath = prev
-    }
-
-    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
-        visitCallableMemberDeclaration(simpleFunction)
-    }
-
-    override fun visitProperty(property: FirProperty) {
-        visitCallableMemberDeclaration(property)
-    }
-
-    override fun <F : FirCallableMemberDeclaration<F>> visitCallableMemberDeclaration(
-        callableMemberDeclaration: FirCallableMemberDeclaration<F>
-    ) {
-        if (callableMemberDeclaration.returnTypeRef !is FirImplicitTypeRef) return
-        resultingMap[callableMemberDeclaration] = currentPath
     }
 }
 
