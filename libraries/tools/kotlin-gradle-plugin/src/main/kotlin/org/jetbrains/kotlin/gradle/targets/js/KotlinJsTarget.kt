@@ -42,6 +42,8 @@ constructor(
     override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
         internal set
 
+    override var moduleName: String? = null
+
     val disambiguationClassifierInPlatform: String?
         get() = disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY)
 

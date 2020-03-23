@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import java.io.File
@@ -93,24 +94,37 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
 
     private fun buildNpmProjectName(): String {
         val project = target.project
-        val name = StringBuilder()
 
-        name.append(project.rootProject.name)
+        val moduleName = (target as KotlinJsTargetDsl).moduleName
 
-        if (project != project.rootProject) {
-            name.append("-")
-            name.append(project.name)
+        val compilationName = if (compilation.name != KotlinCompilation.MAIN_COMPILATION_NAME) {
+            compilation.name
+        } else null
+
+        if (moduleName != null) {
+            return sequenceOf(moduleName, compilationName)
+                .filterNotNull()
+                .joinToString("-")
         }
 
-        if (target.name.isNotEmpty() && target.name.toLowerCase() != "js") {
-            name.append("-").append(target.name)
-        }
+        val rootProjectName = project.rootProject.name
 
-        if (compilation.name != KotlinCompilation.MAIN_COMPILATION_NAME) {
-            name.append("-").append(compilation.name)
-        }
+        val localName = if (project != project.rootProject) {
+            project.name
+        } else null
 
-        return name.toString()
+        val targetName = if (target.name.isNotEmpty() && target.name.toLowerCase() != "js") {
+            target.name
+        } else null
+
+        return sequenceOf(
+            rootProjectName,
+            localName,
+            targetName,
+            compilationName
+        )
+            .filterNotNull()
+            .joinToString("-")
     }
 
     override fun toString() = "NpmProject($name)"

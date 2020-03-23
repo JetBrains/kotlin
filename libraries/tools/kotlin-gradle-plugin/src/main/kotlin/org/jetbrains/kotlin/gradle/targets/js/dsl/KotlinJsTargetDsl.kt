@@ -33,6 +33,8 @@ interface KotlinJsSubTargetContainerDsl : KotlinTarget {
 }
 
 interface KotlinJsTargetDsl : KotlinTarget {
+    var moduleName: String?
+
     fun browser() = browser { }
     fun browser(body: KotlinJsBrowserDsl.() -> Unit)
     fun browser(fn: Closure<*>) {
