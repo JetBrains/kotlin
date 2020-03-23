@@ -36,7 +36,7 @@ class CoroutineDebugProbesProxy(val suspendContext: SuspendContextImpl) {
     }
 
     private fun findProvider(executionContext: DefaultExecutionContext) =
-        CoroutineLibraryAgentProxy.instance(executionContext) ?: CoroutineNoLibraryProxy(executionContext)
+        CoroutineLibraryAgent2Proxy.instance(executionContext) ?: CoroutineNoLibraryProxy(executionContext)
 
     fun frameBuilder() = CoroutineBuilder(suspendContext)
 }

@@ -64,12 +64,13 @@ class DebuggerConnection(
         connection?.subscribe(XDebuggerManager.TOPIC, this)
     }
 
-    override fun processStarted(debugProcess: XDebugProcess) =
+    override fun processStarted(debugProcess: XDebugProcess) {
         DebuggerInvocationUtil.swingInvokeLater(project) {
             if (debugProcess is JavaDebugProcess) {
                 disposable = registerXCoroutinesPanel(debugProcess.session)
             }
         }
+    }
 
     override fun processStopped(debugProcess: XDebugProcess) {
         val rootDisposable = disposable

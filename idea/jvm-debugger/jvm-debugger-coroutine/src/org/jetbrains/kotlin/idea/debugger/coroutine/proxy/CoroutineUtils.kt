@@ -64,14 +64,17 @@ fun StackFrameProxyImpl.variableValue(variableName: String): ObjectReference? {
 fun StackFrameProxyImpl.completionVariableValue(): ObjectReference? =
     variableValue("completion")
 
+fun StackFrameProxyImpl.completion1VariableValue(): ObjectReference? =
+    variableValue("completion")
+
+fun StackFrameProxyImpl.thisVariableValue(): ObjectReference? =
+    this.thisObject()
+
 private fun Method.isGetCOROUTINE_SUSPENDED() =
     signature() == "()Ljava/lang/Object;" && name() == "getCOROUTINE_SUSPENDED" && declaringType().name() == "kotlin.coroutines.intrinsics.IntrinsicsKt__IntrinsicsKt"
 
 fun DefaultExecutionContext.findCoroutineMetadataType() =
     debugProcess.invokeInManagerThread { findClassSafe("kotlin.coroutines.jvm.internal.DebugMetadataKt") }
-
-fun DefaultExecutionContext.findCoroutineAnnotationMetadataType() =
-    debugProcess.invokeInManagerThread { findClassSafe("kotlin.coroutines.jvm.internal.DebugMetadata") as InterfaceType? }
 
 fun DefaultExecutionContext.findDispatchedContinuationReferenceType(): List<ReferenceType>? =
     vm.classesByName("kotlinx.coroutines.DispatchedContinuation")
@@ -79,7 +82,7 @@ fun DefaultExecutionContext.findDispatchedContinuationReferenceType(): List<Refe
 fun DefaultExecutionContext.findCancellableContinuationImplReferenceType(): List<ReferenceType>? =
     vm.classesByName("kotlinx.coroutines.CancellableContinuationImpl")
 
-fun findGetCoroutineSuspended(frames: List<StackFrameProxyImpl>) =
+fun hasGetCoroutineSuspended(frames: List<StackFrameProxyImpl>) =
     frames.indexOfFirst { it.safeLocation()?.safeMethod()?.isGetCOROUTINE_SUSPENDED() == true }
 
 fun StackTraceElement.isCreationSeparatorFrame() =
@@ -92,7 +95,7 @@ fun Location.findPosition(project: Project) =
     getPosition(project, declaringType().name(), lineNumber())
 
 fun ClassType.completionField() =
-    fieldByName("completion") as Field?
+    fieldByName("completion")
 
 private fun getPosition(project: Project, className: String, lineNumber: Int): XSourcePosition? {
     val psiFacade = JavaPsiFacade.getInstance(project)

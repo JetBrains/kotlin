@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.debugger.coroutine.data
 
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
+import com.intellij.debugger.jdi.ThreadReferenceProxyImpl
 import com.intellij.debugger.memory.utils.StackFrameItem
 import com.intellij.debugger.ui.impl.watch.MethodsTracker
 import com.intellij.debugger.ui.impl.watch.StackFrameDescriptorImpl
@@ -17,11 +18,32 @@ import com.intellij.xdebugger.frame.XNamedValue
 import com.intellij.xdebugger.frame.XStackFrame
 import com.sun.jdi.Location
 import com.sun.jdi.ObjectReference
+import com.sun.jdi.StackFrame
 import org.jetbrains.kotlin.idea.debugger.*
+import org.jetbrains.kotlin.idea.debugger.coroutine.KotlinDebuggerCoroutinesBundle
 import org.jetbrains.kotlin.idea.debugger.coroutine.coroutineDebuggerTraceEnabled
+import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.SkipCoroutineStackFrameProxyImpl
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 
-class CreationCoroutineStackFrameItem(
+
+class FirstCreationCoroutineStackFrameItem(
+    stackTraceElement: StackTraceElement,
+    location: Location
+) : CreationCoroutineStackFrameItem(stackTraceElement, location) {
+    override fun createFrame(debugProcess: DebugProcessImpl): CapturedStackFrame {
+        return CreationCoroutineStackFrame(debugProcess, this)
+    }
+}
+
+class CreationCoroutineStackFrame(debugProcess: DebugProcessImpl, item: StackFrameItem) : CoroutineStackFrame(debugProcess, item) {
+    override fun getCaptionAboveOf() = KotlinDebuggerCoroutinesBundle.message("coroutine.dump.creation.trace")
+
+    override fun hasSeparatorAbove(): Boolean =
+        true
+}
+
+
+open class CreationCoroutineStackFrameItem(
     val stackTraceElement: StackTraceElement,
     location: Location
 ) : CoroutineStackFrameItem(location, emptyList()) {
@@ -97,13 +119,14 @@ class PreCoroutineStackFrameItem(val frame: StackFrameProxyImpl, location: Locat
 }
 
 /**
- * Can act as a joint frame, take variables form restored frame and information from the original one.
+ * Can act as a joint frame, take variables from restored frame and information from the original one.
  */
 class PreCoroutineStackFrame(val frame: StackFrameProxyImpl, val debugProcess: DebugProcessImpl, item: StackFrameItem) :
     CoroutineStackFrame(debugProcess, item) {
     override fun computeChildren(node: XCompositeNode) {
         debugProcess.invokeInManagerThread {
-            debugProcess.getPositionManager().createStackFrame(frame, debugProcess, frame.location())
+            val skipCoroutineFrame = SkipCoroutineStackFrameProxyImpl(frame)
+            debugProcess.getPositionManager().createStackFrame(skipCoroutineFrame, debugProcess, frame.location())
                 ?.computeChildren(node) // hack but works
         }
         super.computeChildren(node)
@@ -114,7 +137,7 @@ open class CoroutineStackFrame(debugProcess: DebugProcessImpl, val item: StackFr
     StackFrameItem.CapturedStackFrame(debugProcess, item) {
     override fun customizePresentation(component: ColoredTextContainer) {
         if (coroutineDebuggerTraceEnabled())
-            component.append("${item.javaClass.simpleName} / ${this.javaClass.simpleName}", SimpleTextAttributes.GRAYED_ATTRIBUTES)
+            component.append("${item.javaClass.simpleName} / ${this.javaClass.simpleName} ", SimpleTextAttributes.GRAYED_ATTRIBUTES)
         super.customizePresentation(component)
     }
 

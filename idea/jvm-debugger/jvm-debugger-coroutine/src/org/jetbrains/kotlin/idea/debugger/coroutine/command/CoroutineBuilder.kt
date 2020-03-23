@@ -5,17 +5,14 @@
 
 package org.jetbrains.kotlin.idea.debugger.coroutine.command
 
-import com.intellij.debugger.engine.DebugProcess
-import com.intellij.debugger.engine.JavaExecutionStack
 import com.intellij.debugger.engine.SuspendContextImpl
-import com.intellij.debugger.jdi.ClassesByNameProvider
-import com.intellij.debugger.jdi.GeneratedLocation
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl
-import com.intellij.util.containers.ContainerUtil
 import com.sun.jdi.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineAsyncStackTraceProvider
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.*
+import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.ContinuationHolder.Companion.leftThreadStack
+import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.CoroutinePreflightStackFrame
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.isPreFlight
 import org.jetbrains.kotlin.idea.debugger.safeLineNumber
 import org.jetbrains.kotlin.idea.debugger.safeLocation
@@ -25,7 +22,6 @@ import org.jetbrains.kotlin.idea.debugger.safeMethod
 class CoroutineBuilder(val suspendContext: SuspendContextImpl) {
     private val coroutineStackFrameProvider = CoroutineAsyncStackTraceProvider()
     val debugProcess = suspendContext.debugProcess
-    private val virtualMachineProxy = debugProcess.virtualMachineProxy
 
     companion object {
         const val CREATION_STACK_TRACE_SEPARATOR = "\b\b\b" // the "\b\b\b" is used as creation stacktrace separator in kotlinx.coroutines
@@ -38,45 +34,28 @@ class CoroutineBuilder(val suspendContext: SuspendContextImpl) {
             val threadReferenceProxyImpl = ThreadReferenceProxyImpl(debugProcess.virtualMachineProxy, coroutine.activeThread)
 
             val realFrames = threadReferenceProxyImpl.forceFrames()
-            var coroutineStackInserted = false
-            var preflightFound = false
             for (runningStackFrameProxy in realFrames) {
                 if (runningStackFrameProxy.location().isPreFlight()) {
-                    preflightFound = true
-                    continue
-                }
-                if (preflightFound) {
-                    val coroutineStack = coroutineStackFrameProvider.lookupForResumeContinuation(runningStackFrameProxy, suspendContext)
-                    if (coroutineStack?.isNotEmpty() == true) {
-                        // clue coroutine stack into the thread's real stack
-
-                        for (asyncFrame in coroutineStack) {
-                            coroutineStackFrameList.add(
-                                RestoredCoroutineStackFrameItem(
-                                    runningStackFrameProxy,
-                                    asyncFrame.location,
-                                    asyncFrame.spilledVariables
-                                )
-                            )
-                            coroutineStackInserted = true
-                        }
+                    val leftThreadStack = leftThreadStack(runningStackFrameProxy) ?: continue
+                    val coroutineStack =
+                        coroutineStackFrameProvider.lookupForResumeContinuation(runningStackFrameProxy, suspendContext, leftThreadStack) ?: continue
+                    coroutineStackFrameList.add(RunningCoroutineStackFrameItem(coroutineStack.stackFrameProxy))
+                    // clue coroutine stack into the thread's real stack
+                    val stackFrameItems = coroutineStack.coroutineInfoData.stackTrace.map {
+                        RestoredCoroutineStackFrameItem(
+                            runningStackFrameProxy,
+                            it.location,
+                            it.spilledVariables
+                        )
                     }
-                    preflightFound = false
-                }
-                if (!(coroutineStackInserted && isInvokeSuspendNegativeLineMethodFrame(runningStackFrameProxy)))
+                    coroutineStackFrameList.addAll(stackFrameItems)
+                } else
                     coroutineStackFrameList.add(RunningCoroutineStackFrameItem(runningStackFrameProxy))
-                coroutineStackInserted = false
             }
-        } else if ((coroutine.isSuspended() || coroutine.activeThread == null) && coroutine.lastObservedFrameFieldRef is ObjectReference)
+        } else if (coroutine.isSuspended())
             coroutineStackFrameList.addAll(coroutine.stackTrace)
 
         coroutineStackFrameList.addAll(coroutine.creationStackTrace)
-        coroutine.stackFrameList.addAll(coroutineStackFrameList)
         return coroutineStackFrameList
     }
-
-    private fun isInvokeSuspendNegativeLineMethodFrame(frame: StackFrameProxyImpl) =
-        frame.safeLocation()?.safeMethod()?.name() == "invokeSuspend" &&
-                frame.safeLocation()?.safeMethod()?.signature() == "(Ljava/lang/Object;)Ljava/lang/Object;" &&
-                frame.safeLocation()?.safeLineNumber() ?: 0 < 0
 }
