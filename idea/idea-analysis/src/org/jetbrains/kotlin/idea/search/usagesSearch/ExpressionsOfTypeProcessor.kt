@@ -927,6 +927,7 @@ class ExpressionsOfTypeProcessor(
 
     private fun searchReferences(parameters: ReferencesSearch.SearchParameters, processor: (PsiReference) -> Boolean) {
         ReferencesSearch.search(parameters).forEach(Processor { ref ->
+            ProgressManager.checkCanceled()
             runReadAction {
                 if (ref.element.isValid) {
                     processor(ref)
