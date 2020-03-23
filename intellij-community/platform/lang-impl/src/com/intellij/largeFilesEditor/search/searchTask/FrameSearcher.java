@@ -4,6 +4,7 @@ package com.intellij.largeFilesEditor.search.searchTask;
 
 import com.intellij.find.FindModel;
 import com.intellij.find.FindResult;
+import com.intellij.largeFilesEditor.Utils;
 import com.intellij.largeFilesEditor.search.Position;
 import com.intellij.largeFilesEditor.search.SearchResult;
 import org.jetbrains.annotations.NotNull;
@@ -98,7 +99,7 @@ class FrameSearcher {
         resultEndPos.pageNumber,
         resultEndPos.symbolOffsetInPage,
         contextPrefix,
-        foundString,
+        Utils.cutToMaxLength(foundString, 100),
         contextPostfix));
 
       offset = ijFindResult.getEndOffset();

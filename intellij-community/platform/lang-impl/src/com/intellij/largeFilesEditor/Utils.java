@@ -16,4 +16,14 @@ public class Utils {
     }
     return progressValue;
   }
+
+  public static String cutToMaxLength(String whatToCut, int maxLength) {
+    if (whatToCut.length() > maxLength) {
+      return whatToCut.substring(0, maxLength / 2 - 1) + "..." +
+             whatToCut.substring(whatToCut.length() - 1 - maxLength / 2);
+    }
+    else {
+      return whatToCut;
+    }
+  }
 }

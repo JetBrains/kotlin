@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.largeFilesEditor.search.searchTask;
 
+import com.intellij.largeFilesEditor.Utils;
 import com.intellij.largeFilesEditor.search.SearchResult;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.EditorBundle;
@@ -30,9 +31,9 @@ public class RangeSearchTask extends SearchTaskBase {
     final int maxStrToFindLength = 16;
     final int maxFileNameLength = 20;
 
-    String strToFind = cutToMaxLength(
+    String strToFind = Utils.cutToMaxLength(
       options.stringToFind, maxStrToFindLength);
-    String fileName = cutToMaxLength(
+    String fileName = Utils.cutToMaxLength(
       fileDataProviderForSearch.getName(), maxFileNameLength);
 
     return EditorBundle.message("large.file.editor.title.searching.for.some.string.in.some.file", strToFind, fileName);
@@ -144,16 +145,6 @@ public class RangeSearchTask extends SearchTaskBase {
     catch (IOException e) {
       logger.warn(e);
       myCallback.tellSearchCatchedException(this, e);
-    }
-  }
-
-  private static String cutToMaxLength(String whatToCut, int maxLength) {
-    if (whatToCut.length() > maxLength) {
-      return whatToCut.substring(0, maxLength / 2 - 1) + "..." +
-             whatToCut.substring(whatToCut.length() - 1 - maxLength / 2);
-    }
-    else {
-      return whatToCut;
     }
   }
 
