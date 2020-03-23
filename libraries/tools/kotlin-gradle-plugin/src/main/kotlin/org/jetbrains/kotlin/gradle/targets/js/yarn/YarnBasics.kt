@@ -98,58 +98,60 @@ abstract class YarnBasics : NpmApi {
         nodeWorkDir: File,
         srcDependenciesList: Collection<NpmDependency>
     ) {
-        val yarnLock = nodeWorkDir.resolve("yarn.lock")
-        if (yarnLock.isFile) {
-            val byKey = YarnLock.parse(yarnLock).entries.associateBy { it.dependencyKey }
-            val visited = mutableMapOf<NpmDependency, NpmDependency>()
+        val yarnLock = nodeWorkDir
+            .resolve("yarn.lock")
+            .takeIf { it.isFile }
+            ?: return
 
-            fun resolveRecursively(src: NpmDependency): NpmDependency {
-                val copy = visited[src]
-                if (copy != null) {
-                    src.resolvedVersion = copy.resolvedVersion
-                    src.integrity = copy.integrity
-                    src.dependencies.addAll(copy.dependencies)
-                    return src
-                }
-                visited[src] = src
+        val byKey = YarnLock.parse(yarnLock).entries.associateBy { it.dependencyKey }
+        val visited = mutableMapOf<NpmDependency, NpmDependency>()
 
-                val key = dependencyKey(src.key, src.version)
-                val deps = if (src.version != "*") {
-                    byKey[key]
-                } else {
-                    val searchKey = dependencyKey(src.key, "")
-                    byKey.entries
-                        .firstOrNull { it.key.startsWith(searchKey) }
-                        ?.value
-                }
-
-                if (deps == null) {
-                    error("Cannot find $key in yarn.lock")
-                }
-
-                src.resolvedVersion = deps.version
-                src.integrity = deps.integrity
-
-                deps.dependencies.mapTo(src.dependencies) { dep ->
-                    val scopedName = dep.scopedName
-                    val child = NpmDependency(
-                        project = src.project,
-                        name = scopedName.toString(),
-                        version = dep.version ?: "*"
-                    )
-                    child.parent = src
-
-                    resolveRecursively(child)
-
-                    child
-                }
-
+        fun resolveRecursively(src: NpmDependency): NpmDependency {
+            val copy = visited[src]
+            if (copy != null) {
+                src.resolvedVersion = copy.resolvedVersion
+                src.integrity = copy.integrity
+                src.dependencies.addAll(copy.dependencies)
                 return src
             }
+            visited[src] = src
 
-            srcDependenciesList.forEach { src ->
-                resolveRecursively(src)
+            val key = dependencyKey(src.key, src.version)
+            val deps = if (src.version != "*") {
+                byKey[key]
+            } else {
+                val searchKey = dependencyKey(src.key, "")
+                byKey.entries
+                    .firstOrNull { it.key.startsWith(searchKey) }
+                    ?.value
             }
+
+            if (deps == null) {
+                error("Cannot find $key in yarn.lock")
+            }
+
+            src.resolvedVersion = deps.version
+            src.integrity = deps.integrity
+
+            deps.dependencies.mapTo(src.dependencies) { dep ->
+                val scopedName = dep.scopedName
+                val child = NpmDependency(
+                    project = src.project,
+                    name = scopedName.toString(),
+                    version = dep.version ?: "*"
+                )
+                child.parent = src
+
+                resolveRecursively(child)
+
+                child
+            }
+
+            return src
+        }
+
+        srcDependenciesList.forEach { src ->
+            resolveRecursively(src)
         }
     }
 }
