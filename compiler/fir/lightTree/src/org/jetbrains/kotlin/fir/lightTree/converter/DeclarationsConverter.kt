@@ -52,9 +52,10 @@ class DeclarationsConverter(
     private val baseScopeProvider: FirScopeProvider,
     private val stubMode: Boolean,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
+    offset: Int = 0,
     context: Context<LighterASTNode> = Context()
-) : BaseConverter(session, tree, context) {
-    private val expressionConverter = ExpressionsConverter(session, stubMode, tree, this, context)
+) : BaseConverter(session, tree, offset, context) {
+    private val expressionConverter = ExpressionsConverter(session, stubMode, tree, this, offset + 1, context)
 
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFile]
@@ -1194,7 +1195,7 @@ class DeclarationsConverter(
         return if (!stubMode) {
             val blockTree = LightTree2Fir.buildLightTreeBlockExpression(block.asText)
             return DeclarationsConverter(
-                baseSession, baseScopeProvider, stubMode, blockTree, context
+                baseSession, baseScopeProvider, stubMode, blockTree, offset = tree.getStartOffset(block), context
             ).convertBlockExpression(blockTree.root)
         } else {
             FirSingleExpressionBlock(

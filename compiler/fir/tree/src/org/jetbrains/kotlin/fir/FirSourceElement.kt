@@ -12,17 +12,32 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 sealed class FirSourceElement {
     abstract val elementType: IElementType
+    abstract val startOffset: Int
+    abstract val endOffset: Int
 }
 
 class FirPsiSourceElement(val psi: PsiElement) : FirSourceElement() {
     override val elementType: IElementType
         get() = psi.node.elementType
+
+    override val startOffset: Int
+        get() = psi.startOffset
+
+    override val endOffset: Int
+        get() = psi.endOffset
 }
 
-class FirLightSourceElement(val element: LighterASTNode, val tree: FlyweightCapableTreeStructure<LighterASTNode>) : FirSourceElement() {
+class FirLightSourceElement(
+    val element: LighterASTNode,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    val tree: FlyweightCapableTreeStructure<LighterASTNode>
+) : FirSourceElement() {
     override val elementType: IElementType
         get() = element.tokenType
 }

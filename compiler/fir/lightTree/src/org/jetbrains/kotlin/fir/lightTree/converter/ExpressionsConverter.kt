@@ -50,8 +50,9 @@ class ExpressionsConverter(
     private val stubMode: Boolean,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     private val declarationsConverter: DeclarationsConverter,
+    offset: Int,
     context: Context<LighterASTNode> = Context()
-) : BaseConverter(session, tree, context) {
+) : BaseConverter(session, tree, offset, context) {
 
     inline fun <reified R : FirElement> getAsFirExpression(expression: LighterASTNode?, errorReason: String = ""): R {
         return expression?.let { convertExpression(it, errorReason) } as? R ?: (buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.Syntax)) as R)
@@ -63,7 +64,7 @@ class ExpressionsConverter(
             return when (expression.tokenType) {
                 LAMBDA_EXPRESSION -> {
                     val lambdaTree = LightTree2Fir.buildLightTreeLambdaExpression(expression.asText)
-                    ExpressionsConverter(baseSession, stubMode, lambdaTree, declarationsConverter, context)
+                    ExpressionsConverter(baseSession, stubMode, lambdaTree, declarationsConverter, offset, context)
                         .convertLambdaExpression(lambdaTree.root)
                 }
                 BINARY_EXPRESSION -> convertBinaryExpression(expression)

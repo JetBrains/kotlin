@@ -21,18 +21,19 @@ import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
 import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 
 open class BaseConverter(
     baseSession: FirSession,
-    private val tree: FlyweightCapableTreeStructure<LighterASTNode>,
+    val tree: FlyweightCapableTreeStructure<LighterASTNode>,
+    val offset: Int,
     context: Context<LighterASTNode> = Context()
 ) : BaseFirBuilder<LighterASTNode>(baseSession, context) {
     protected val implicitType = buildImplicitTypeRef()
 
     override fun LighterASTNode.toFirSourceElement(): FirSourceElement {
-        return FirLightSourceElement(this, tree)
+        val startOffset = offset + tree.getStartOffset(this)
+        val endOffset = offset + tree.getEndOffset(this)
+        return FirLightSourceElement(this, startOffset, endOffset, tree)
     }
 
     override val LighterASTNode.elementType: IElementType
