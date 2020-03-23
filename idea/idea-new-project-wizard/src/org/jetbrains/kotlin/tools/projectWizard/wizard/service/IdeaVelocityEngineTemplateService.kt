@@ -16,5 +16,4 @@ class IdeaVelocityEngineTemplateService : TemplateEngineService, IdeaWizardServi
         val templateText = Template::class.java.getResource(templatePath).readText()
         return FileTemplateUtil.mergeTemplate(data, templateText, false)
     }
-
 }

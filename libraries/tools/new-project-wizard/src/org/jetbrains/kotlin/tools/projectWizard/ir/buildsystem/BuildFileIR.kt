@@ -32,18 +32,10 @@ data class BuildFileIR(
         modules.withModulesUpdated(updater).map { newModules -> copy(modules = newModules) }
 
     private fun distinctRepositories(): List<RepositoryIR> =
-        irsOfType<RepositoryIR>()
-            .distinctBy(RepositoryIR::repository)
-            .sortedBy { repositoryIR ->
-                if (repositoryIR.repository is DefaultRepository) 0 else 1
-            }
+        irsOfType<RepositoryIR>().distinctAndSorted()
 
     private fun distinctPluginRepositories(): List<PluginRepositoryMavenIR> =
-        irsOfType<PluginRepositoryMavenIR>()
-            .distinctBy(PluginRepositoryMavenIR::repository)
-            .sortedBy { repositoryIR ->
-                if (repositoryIR.repository is DefaultRepository) 0 else 1
-            }
+        irsOfType<PluginRepositoryMavenIR>().distinctAndSorted()
 
     private fun distinctImportsOrNull(): List<GradleImportIR>? =
         irsOfTypeOrNull<GradleImportIR>()

@@ -21,11 +21,11 @@ data class SettingsGradleFileIR(
             sectionCall("pluginManagement", needIndent = true) {
                 pluginManagementIrs.irsOfTypeOrNull<PluginManagementRepositoryIR>()?.let { repositories ->
                     sectionCall("repositories") {
-                        repositories.listNl()
+                        repositories.distinctAndSorted().listNl()
                     }
                 }
                 nl()
-                freeIrs().listNl()
+                freeIrs().removeSingleIRDuplicates().listNl()
             }
         }
         nl()

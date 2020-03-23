@@ -52,11 +52,17 @@ class CreateGradleValueIR(val name: String, val body: GradleIR) : GradleIR {
 
 data class GradleCallIr(
     val name: String,
-    val parameters: List<BuildSystemIR> = emptyList()
+    val parameters: List<BuildSystemIR> = emptyList(),
+    val isConstructorCall: Boolean = false,
 ) : GradleIR {
-    constructor(name: String, vararg parameters: BuildSystemIR) : this(name, parameters.toList())
+    constructor(
+        name: String,
+        vararg parameters: BuildSystemIR,
+        isConstructorCall: Boolean = false
+    ) : this(name, parameters.toList(), isConstructorCall)
 
     override fun GradlePrinter.renderGradle() {
+        if (isConstructorCall && dsl == GradlePrinter.GradleDsl.GROOVY) +"new "
         call(name, forceBrackets = true) {
             parameters.list { it.render(this) }
         }
@@ -82,6 +88,11 @@ data class GradleSectionIR(
     val name: String,
     val body: BodyIR
 ) : GradleIR, FreeIR {
+    constructor(name: String, bodyBuilder: MutableList<BuildSystemIR>.() -> Unit) : this(
+        name,
+        BodyIR(mutableListOf<BuildSystemIR>().apply(bodyBuilder))
+    )
+
     override fun GradlePrinter.renderGradle() {
         +name
         +" "

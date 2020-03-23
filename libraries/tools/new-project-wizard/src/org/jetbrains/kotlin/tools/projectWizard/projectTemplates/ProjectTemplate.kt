@@ -341,7 +341,7 @@ object MPPMobileApplication : ProjectTemplate() {
                     sourcesets = createDefaultSourcesets(),
                     subModules = emptyList()
                 ).withConfiguratorSettings(AndroidTargetConfigurator) {
-                    configurator.androidPlugin withValue AndroidGradlePlugin.APPLICATION
+                    configurator.androidPlugin withValue AndroidGradlePlugin.LIBRARY
                 },
                 Module(
                     "ios",

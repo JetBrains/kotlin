@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem
 
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 
 interface PluginManagementIR : GradleIR
 
 data class AndroidResolutionStrategyIR(
     val androidGradlePluginVersion: Version
-) : PluginManagementIR, FreeIR {
+) : PluginManagementIR, FreeIR, SingleIR {
     override fun GradlePrinter.renderGradle() {
         sectionCall("resolutionStrategy", needIndent = true) {
             sectionCall("eachPlugin", needIndent = true) {
@@ -35,8 +36,11 @@ data class AndroidResolutionStrategyIR(
     }
 }
 
-data class PluginManagementRepositoryIR(val repositoryIR: RepositoryIR) : PluginManagementIR {
+data class PluginManagementRepositoryIR(val repositoryIR: RepositoryIR) : PluginManagementIR, RepositoryWrapper {
     override fun GradlePrinter.renderGradle() {
         repositoryIR.render(this)
     }
+
+    override val repository: Repository
+        get() = repositoryIR.repository
 }

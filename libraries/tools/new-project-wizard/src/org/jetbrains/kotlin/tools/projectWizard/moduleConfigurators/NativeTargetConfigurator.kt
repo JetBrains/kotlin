@@ -5,14 +5,13 @@ import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.CreateGradleValueIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleImportIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.RawGradleIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.NonDefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.isIOS
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 
@@ -21,6 +20,18 @@ interface NativeTargetConfigurator : TargetConfigurator
 class RealNativeTargetConfigurator private constructor(
     override val moduleSubType: ModuleSubType
 ) : NativeTargetConfigurator, SimpleTargetConfigurator {
+    override fun createInnerTargetIrs(reader: Reader, module: Module): List<BuildSystemIR> = if (moduleSubType.isIOS) {
+        listOf(
+            GradleSectionIR("binaries") {
+                add(
+                    GradleSectionIR("framework") {
+                        add(GradleAssignmentIR("baseName", GradleStringConstIR(module.parent!!.name)))
+                    }
+                )
+            }
+        )
+    } else emptyList()
+
     companion object {
         val configurators = ModuleSubType.values()
             .filter { it.moduleType == ModuleType.native }

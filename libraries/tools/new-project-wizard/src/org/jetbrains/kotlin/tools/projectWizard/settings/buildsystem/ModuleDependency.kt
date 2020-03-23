@@ -98,10 +98,10 @@ sealed class ModuleDependencyType(
                     CreateGradleValueIR(
                         "framework",
                         RawGradleIR {
-                            +"kotlin.targets"
+                            +"kotlin.targets."
                             when (dsl) {
-                                GradlePrinter.GradleDsl.KOTLIN -> +""".getByName<KotlinNativeTarget>("$iosTargetName")"""
-                                GradlePrinter.GradleDsl.GROOVY -> +"['$iosTargetName']"
+                                GradlePrinter.GradleDsl.KOTLIN -> +"""getByName<KotlinNativeTarget>("$iosTargetName")"""
+                                GradlePrinter.GradleDsl.GROOVY -> +iosTargetName
                             }
                             +".binaries.getFramework(mode)"
 
@@ -113,19 +113,14 @@ sealed class ModuleDependencyType(
                 add(
                     CreateGradleValueIR(
                         "targetDir",
-                        GradleCallIr("File", rawIR("buildDir"), GradleStringConstIR("xcode-frameworks"))
+                        GradleCallIr("File", rawIR("buildDir"), GradleStringConstIR("xcode-frameworks"), isConstructorCall = true)
                     )
                 )
                 addRawIR { "from({ framework.outputDirectory })" }
                 addRawIR { "into(targetDir)" }
             }
 
-            val dependency = rawIR {
-                when (dsl) {
-                    GradlePrinter.GradleDsl.KOTLIN -> """tasks.getByName("build").dependsOn(packForXcode)"""
-                    GradlePrinter.GradleDsl.GROOVY -> "tasks['build'].dependsOn(packForXcode)"
-                }
-            }
+            val dependency = rawIR { """tasks.getByName("build").dependsOn(packForXcode)""" }
 
             return buildList {
                 add(packForXcodeTask)
