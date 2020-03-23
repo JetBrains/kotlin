@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.FirIterableScope
@@ -266,7 +266,7 @@ private class FirSupertypeResolverVisitor(
 
 private fun createErrorTypeRef(fir: FirElement, message: String) = buildErrorTypeRef {
     source = fir.source
-    diagnostic = FirSimpleDiagnostic(message)
+    diagnostic = ConeSimpleDiagnostic(message)
 }
 
 private class SupertypeComputationSession {

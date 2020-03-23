@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
@@ -423,7 +423,7 @@ private fun JavaAnnotationArgument.toFirExpression(
                 }
                 this.calleeReference = calleeReference
                     ?: buildErrorNamedReference {
-                        diagnostic = FirSimpleDiagnostic("Strange Java enum value: $classId.$entryName", DiagnosticKind.Java)
+                        diagnostic = ConeSimpleDiagnostic("Strange Java enum value: $classId.$entryName", DiagnosticKind.Java)
                     }
             }
         }
@@ -437,7 +437,7 @@ private fun JavaAnnotationArgument.toFirExpression(
         }
         is JavaAnnotationAsAnnotationArgument -> getAnnotation().toFirAnnotationCall(session, javaTypeParameterStack)
         else -> buildErrorExpression {
-            diagnostic = FirSimpleDiagnostic("Unknown JavaAnnotationArgument: ${this::class.java}", DiagnosticKind.Java)
+            diagnostic = ConeSimpleDiagnostic("Unknown JavaAnnotationArgument: ${this::class.java}", DiagnosticKind.Java)
         }
     }
 }
@@ -475,7 +475,7 @@ internal fun Any?.createConstant(session: FirSession): FirExpression {
         null -> buildConstExpression(null, FirConstKind.Null, null)
 
         else -> buildErrorExpression {
-            diagnostic = FirSimpleDiagnostic("Unknown value in JavaLiteralAnnotationArgument: $this", DiagnosticKind.Java)
+            diagnostic = ConeSimpleDiagnostic("Unknown value in JavaLiteralAnnotationArgument: $this", DiagnosticKind.Java)
         }
     }
 }

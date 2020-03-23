@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
-import org.jetbrains.kotlin.fir.analysis.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -196,7 +196,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         }
 
     protected fun TestFile.getActualText(
-        coneDiagnostics: Iterable<ConeDiagnostic>,
+        firDiagnostics: Iterable<FirDiagnostic>,
         actualText: StringBuilder
     ): Boolean {
         val ktFile = this.ktFile
@@ -211,7 +211,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         // TODO: report JVM signature diagnostics also for implementing modules
 
         val ok = booleanArrayOf(true)
-        val diagnostics = coneDiagnostics.toActualDiagnostic(ktFile)
+        val diagnostics = firDiagnostics.toActualDiagnostic(ktFile)
         val filteredDiagnostics = diagnostics // TODO
 
         actualDiagnostics.addAll(filteredDiagnostics)
@@ -308,7 +308,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         return ok[0]
     }
 
-    private fun Iterable<ConeDiagnostic>.toActualDiagnostic(root: PsiElement): List<ActualDiagnostic> {
+    private fun Iterable<FirDiagnostic>.toActualDiagnostic(root: PsiElement): List<ActualDiagnostic> {
         val result = mutableListOf<ActualDiagnostic>()
         filter { it.diagnostic.factory != FirErrors.SYNTAX_ERROR }.mapTo(result) { ActualDiagnostic(it.diagnostic, null, true) }
         for (errorElement in AnalyzingUtils.getSyntaxErrorRanges(root)) {

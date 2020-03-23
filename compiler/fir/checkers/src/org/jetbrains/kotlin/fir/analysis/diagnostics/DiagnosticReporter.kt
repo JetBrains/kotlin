@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 abstract class DiagnosticReporter {
-    abstract fun report(diagnostic: ConeDiagnostic?)
+    abstract fun report(diagnostic: FirDiagnostic?)
 }
 
 class SimpleDiagnosticReporter : DiagnosticReporter() {
-    val diagnostics: MutableList<ConeDiagnostic> = mutableListOf()
+    val diagnostics: MutableList<FirDiagnostic> = mutableListOf()
 
-    override fun report(diagnostic: ConeDiagnostic?) {
+    override fun report(diagnostic: FirDiagnostic?) {
         if (diagnostic == null) return
         diagnostics += diagnostic
     }

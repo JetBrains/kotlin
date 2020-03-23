@@ -9,7 +9,7 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.invoke
@@ -52,7 +51,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             val type = buildErrorTypeRef {
                 source = expression.source
                 diagnostic =
-                    FirSimpleDiagnostic("Type calculating for ${expression::class} is not supported", DiagnosticKind.InferenceError)
+                    ConeSimpleDiagnostic("Type calculating for ${expression::class} is not supported", DiagnosticKind.InferenceError)
             }
             expression.resultType = type
         }
@@ -94,7 +93,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                             superTypeRefs?.isNotEmpty() != true -> {
                                 buildErrorTypeRef {
                                     source = qualifiedAccessExpression.source
-                                    diagnostic = FirSimpleDiagnostic("No super type", DiagnosticKind.NoSupertype)
+                                    diagnostic = ConeSimpleDiagnostic("No super type", DiagnosticKind.NoSupertype)
                                 }
                             }
                             superTypeRefs.size == 1 -> {
@@ -210,7 +209,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             block.resultType.resolvedTypeFromPrototype(session.builtinTypes.unitType.type)
         } else {
             (resultExpression.resultType as? FirResolvedTypeRef) ?: buildErrorTypeRef {
-                diagnostic = FirSimpleDiagnostic("No type for block", DiagnosticKind.InferenceError)
+                diagnostic = ConeSimpleDiagnostic("No type for block", DiagnosticKind.InferenceError)
             }
         }
         dataFlowAnalyzer.exitBlock(block)
@@ -290,14 +289,14 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                             else
                                 buildErrorNamedReference {
                                     source = operatorCall.argument.source
-                                    diagnostic = FirVariableExpectedError()
+                                    diagnostic = ConeVariableExpectedError()
                                 }
                         }
                     assignment.transform(transformer, ResolutionMode.ContextIndependent)
                 }
                 else -> buildErrorExpression {
                     source = operatorCall.source
-                    diagnostic = FirOperatorAmbiguityError(listOf(operatorCallReference.resolvedSymbol, assignCallReference.resolvedSymbol))
+                    diagnostic = ConeOperatorAmbiguityError(listOf(operatorCallReference.resolvedSymbol, assignCallReference.resolvedSymbol))
                 }.compose()
             }
         }
@@ -383,7 +382,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         } ?: run {
             checkNotNullCall.resultType =
                 buildErrorTypeRef {
-                    diagnostic = FirSimpleDiagnostic("Can't resolve !! operator call", DiagnosticKind.InferenceError)
+                    diagnostic = ConeSimpleDiagnostic("Can't resolve !! operator call", DiagnosticKind.InferenceError)
                 }
             callCompleted = true
             checkNotNullCall
@@ -532,7 +531,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                         dataFlowAnalyzer.exitConstExpresion(constExpression as FirConstExpression<*>)
                         constExpression.resultType = buildErrorTypeRef {
                             source = constExpression.source
-                            diagnostic = FirTypeMismatchError(expectedType, integerLiteralType.getApproximatedType())
+                            diagnostic = ConeTypeMismatchError(expectedType, integerLiteralType.getApproximatedType())
                         }
                         return constExpression.compose()
                     }
@@ -671,7 +670,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                         buildErrorNamedReference {
                             // TODO: add better diagnostic
                             source = augmentedArraySetCall.source
-                            diagnostic = FirAmbiguityError(operatorName, emptyList())
+                            diagnostic = ConeAmbiguityError(operatorName, emptyList())
                         }
                     )
                 }
@@ -683,7 +682,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                     it.replaceCalleeReference(
                         buildErrorNamedReference {
                             source = augmentedArraySetCall.source
-                            diagnostic = FirUnresolvedNameError(operatorName)
+                            diagnostic = ConeUnresolvedNameError(operatorName)
                         }
                     )
                 }

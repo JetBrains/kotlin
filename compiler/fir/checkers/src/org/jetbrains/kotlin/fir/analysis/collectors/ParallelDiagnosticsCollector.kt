@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.collectors
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.SimpleDiagnosticReporter
 import java.util.*
@@ -42,10 +42,10 @@ class ParallelDiagnosticsCollector(session: FirSession, private val numberOfThre
         futures.clear()
     }
 
-    override fun getCollectedDiagnostics(): Iterable<ConeDiagnostic> {
+    override fun getCollectedDiagnostics(): Iterable<FirDiagnostic> {
         futures.forEach { it.get() }
         return Iterable {
-            object : Iterator<ConeDiagnostic> {
+            object : Iterator<FirDiagnostic> {
                 private val globalIterator = reporters.iterator()
                 private var localIterator = globalIterator.next().diagnostics.iterator()
 
@@ -60,7 +60,7 @@ class ParallelDiagnosticsCollector(session: FirSession, private val numberOfThre
                     return localIterator.hasNext()
                 }
 
-                override fun next(): ConeDiagnostic {
+                override fun next(): FirDiagnostic {
                     update()
                     return localIterator.next()
                 }

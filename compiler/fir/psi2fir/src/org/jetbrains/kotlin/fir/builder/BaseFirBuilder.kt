@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
@@ -108,7 +108,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     buildErrorFunction {
                         source = baseSource
                         session = this@BaseFirBuilder.baseSession
-                        diagnostic = FirSimpleDiagnostic(message, kind)
+                        diagnostic = ConeSimpleDiagnostic(message, kind)
                         symbol = FirErrorFunctionSymbol()
                     }
                 )
@@ -178,7 +178,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 bind(
                     buildErrorLoop(
                         expression.getSourceOrNull(),
-                        FirSimpleDiagnostic("Cannot bind unlabeled jump to a loop", DiagnosticKind.Syntax)
+                        ConeSimpleDiagnostic("Cannot bind unlabeled jump to a loop", DiagnosticKind.Syntax)
                     )
                 )
             }
@@ -192,7 +192,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             target = FirLoopTarget(labelName).apply {
                 bind(
                     buildErrorLoop(
-                        expression.getSourceOrNull(), FirSimpleDiagnostic("Cannot bind label $labelName to a loop", DiagnosticKind.Syntax)
+                        expression.getSourceOrNull(), ConeSimpleDiagnostic("Cannot bind label $labelName to a loop", DiagnosticKind.Syntax)
                     )
                 )
             }
@@ -218,7 +218,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 val kind = when {
                     convertedText !is Long -> return buildErrorExpression {
                         source = expression.getSourceOrNull()
-                        diagnostic = FirSimpleDiagnostic(
+                        diagnostic = ConeSimpleDiagnostic(
                             "Incorrect constant expression: $text",
                             DiagnosticKind.IllegalConstExpression
                         )
@@ -243,7 +243,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     expression.getSourceOrNull(),
                     kind,
                     convertedText,
-                    FirSimpleDiagnostic("Incorrect integer literal: $text", DiagnosticKind.Syntax)
+                    ConeSimpleDiagnostic("Incorrect integer literal: $text", DiagnosticKind.Syntax)
                 )
             }
             FLOAT_CONSTANT ->
@@ -252,14 +252,14 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                         expression.getSourceOrNull(),
                         FirConstKind.Float,
                         convertedText,
-                        FirSimpleDiagnostic("Incorrect float: $text", DiagnosticKind.Syntax)
+                        ConeSimpleDiagnostic("Incorrect float: $text", DiagnosticKind.Syntax)
                     )
                 } else {
                     buildConstOrErrorExpression(
                         expression.getSourceOrNull(),
                         FirConstKind.Double,
                         convertedText as Double,
-                        FirSimpleDiagnostic("Incorrect double: $text", DiagnosticKind.Syntax)
+                        ConeSimpleDiagnostic("Incorrect double: $text", DiagnosticKind.Syntax)
                     )
                 }
             CHARACTER_CONSTANT ->
@@ -267,7 +267,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     expression.getSourceOrNull(),
                     FirConstKind.Char,
                     text.parseCharacter(),
-                    FirSimpleDiagnostic("Incorrect character: $text", DiagnosticKind.Syntax)
+                    ConeSimpleDiagnostic("Incorrect character: $text", DiagnosticKind.Syntax)
                 )
             BOOLEAN_CONSTANT ->
                 buildConstExpression(
@@ -323,7 +323,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                             hasExpressions = true
                             buildErrorExpression {
                                 source = entry.getSourceOrNull()
-                                diagnostic = FirSimpleDiagnostic("Incorrect template entry: ${entry.asText}", DiagnosticKind.Syntax)
+                                diagnostic = ConeSimpleDiagnostic("Incorrect template entry: ${entry.asText}", DiagnosticKind.Syntax)
                             }
                         }
                     }
@@ -370,7 +370,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         if (argument == null) {
             return buildErrorExpression {
                 source = argument
-                diagnostic = FirSimpleDiagnostic("Inc/dec without operand", DiagnosticKind.Syntax)
+                diagnostic = ConeSimpleDiagnostic("Inc/dec without operand", DiagnosticKind.Syntax)
             }
         }
         return buildBlock {
@@ -451,7 +451,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     } else {
                         buildErrorNamedReference {
                             source = left.getSourceOrNull()
-                            diagnostic = FirSimpleDiagnostic("Unsupported qualified LValue: ${left.asText}", DiagnosticKind.Syntax)
+                            diagnostic = ConeSimpleDiagnostic("Unsupported qualified LValue: ${left.asText}", DiagnosticKind.Syntax)
                         }
                     }
                 }
@@ -462,7 +462,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
         return buildErrorNamedReference {
             source = left.getSourceOrNull()
-            diagnostic = FirSimpleDiagnostic("Unsupported LValue: $tokenType", DiagnosticKind.Syntax)
+            diagnostic = ConeSimpleDiagnostic("Unsupported LValue: $tokenType", DiagnosticKind.Syntax)
         }
     }
 
@@ -497,7 +497,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 argumentList = buildBinaryArgumentList(
                     this@generateAssignment?.convert() ?: buildErrorExpression {
                         source = null
-                        diagnostic = FirSimpleDiagnostic("Unsupported left value of assignment: ${baseSource?.psi?.text}", DiagnosticKind.Syntax)
+                        diagnostic = ConeSimpleDiagnostic("Unsupported left value of assignment: ${baseSource?.psi?.text}", DiagnosticKind.Syntax)
                     },
                     value
                 )
@@ -543,7 +543,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             argumentList = buildArgumentList {
                 arguments += rhs?.convert() ?: buildErrorExpression(
                     null,
-                    FirSimpleDiagnostic("No value for array set", DiagnosticKind.Syntax)
+                    ConeSimpleDiagnostic("No value for array set", DiagnosticKind.Syntax)
                 )
             }
         }
@@ -574,7 +574,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 "<array>",
                 baseCall.explicitReceiver ?: buildErrorExpression {
                     source = baseSource
-                    diagnostic = FirSimpleDiagnostic("No receiver for array access", DiagnosticKind.Syntax)
+                    diagnostic = ConeSimpleDiagnostic("No receiver for array access", DiagnosticKind.Syntax)
                 }
             )
             statements += arrayVariable
@@ -613,7 +613,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                         argumentList = buildArgumentList {
                             arguments += rhs?.convert() ?: buildErrorExpression(
                                 null,
-                                FirSimpleDiagnostic(
+                                ConeSimpleDiagnostic(
                                     "No value for array set",
                                     DiagnosticKind.Syntax
                                 )

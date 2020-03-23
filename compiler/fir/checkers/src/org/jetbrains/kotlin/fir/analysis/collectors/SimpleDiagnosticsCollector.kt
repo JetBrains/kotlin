@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.collectors
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.SimpleDiagnosticReporter
 
@@ -17,7 +17,7 @@ class SimpleDiagnosticsCollector(session: FirSession) : AbstractDiagnosticCollec
         reporter = SimpleDiagnosticReporter()
     }
 
-    override fun getCollectedDiagnostics(): Iterable<ConeDiagnostic> {
+    override fun getCollectedDiagnostics(): Iterable<FirDiagnostic> {
         return reporter.diagnostics
     }
 

@@ -5,15 +5,12 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir
 
-import org.jetbrains.kotlin.fir.FirWhenSubject
 import org.jetbrains.kotlin.fir.builder.generateLazyLogicalOperation
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirOperatorCall
 import org.jetbrains.kotlin.fir.expressions.buildErrorExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildWhenSubjectExpression
 
 data class WhenEntry(
     val conditions: List<FirExpression>,
@@ -39,7 +36,7 @@ data class WhenEntry(
     fun toFirWhenConditionWithoutSubject(): FirExpression {
         return when (val condition = conditions.firstOrNull()) {
 //            is FirOperatorCall -> condition.arguments.first()
-            null -> buildErrorExpression(null, FirSimpleDiagnostic("No expression in condition with expression", DiagnosticKind.Syntax))
+            null -> buildErrorExpression(null, ConeSimpleDiagnostic("No expression in condition with expression", DiagnosticKind.Syntax))
             else -> condition
         }
     }

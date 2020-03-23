@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.diagnostics.FirAmbiguityError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.FirInapplicableCandidateError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedNameError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
@@ -392,15 +392,15 @@ class FirCallResolver(
         return when {
             candidates.isEmpty() -> buildErrorNamedReference {
                 this.source = source
-                diagnostic = FirUnresolvedNameError(name)
+                diagnostic = ConeUnresolvedNameError(name)
             }
             applicability < CandidateApplicability.SYNTHETIC_RESOLVED -> {
                 buildErrorNamedReference {
                     this.source = source
-                    diagnostic = FirInapplicableCandidateError(
+                    diagnostic = ConeInapplicableCandidateError(
                         applicability,
                         candidates.map {
-                            FirInapplicableCandidateError.CandidateInfo(
+                            ConeInapplicableCandidateError.CandidateInfo(
                                 it.symbol,
                                 if (it.systemInitialized) it.system.diagnostics else emptyList(),
                             )
@@ -432,7 +432,7 @@ class FirCallResolver(
             }
             else -> buildErrorNamedReference {
                 this.source = source
-                diagnostic = FirAmbiguityError(name, candidates.map { it.symbol })
+                diagnostic = ConeAmbiguityError(name, candidates.map { it.symbol })
             }
         }
     }

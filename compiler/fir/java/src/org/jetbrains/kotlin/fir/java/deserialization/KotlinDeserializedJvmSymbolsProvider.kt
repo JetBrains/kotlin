@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
@@ -167,7 +167,7 @@ class KotlinDeserializedJvmSymbolsProvider(
             buildResolvedTypeRef {
                 type = it.constructType(emptyList(), isNullable = false)
             }
-        } ?: buildErrorTypeRef { diagnostic = FirSimpleDiagnostic("Symbol not found for $classId", DiagnosticKind.Java) }
+        } ?: buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Symbol not found for $classId", DiagnosticKind.Java) }
 
     }
 
@@ -210,7 +210,7 @@ class KotlinDeserializedJvmSymbolsProvider(
                         }
                         else -> {
                             buildErrorNamedReference {
-                                diagnostic = FirSimpleDiagnostic(
+                                diagnostic = ConeSimpleDiagnostic(
                                     "Strange deserialized enum value: ${this@toEnumEntryReferenceExpression}.$name",
                                     DiagnosticKind.Java,
                                 )

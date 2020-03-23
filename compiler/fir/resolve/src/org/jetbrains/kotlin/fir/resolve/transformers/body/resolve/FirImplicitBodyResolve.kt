@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -155,7 +155,7 @@ private class ReturnTypeCalculatorWithJump(
             declaration.transformReturnTypeRef(
                 TransformImplicitType,
                 buildErrorTypeRef {
-                    diagnostic = FirSimpleDiagnostic("Unsupported: implicit VP type")
+                    diagnostic = ConeSimpleDiagnostic("Unsupported: implicit VP type")
                 }
             )
         }
@@ -168,7 +168,7 @@ private class ReturnTypeCalculatorWithJump(
         return when (val status = implicitBodyResolveComputationSession.getStatus(declaration.symbol)) {
             is ImplicitBodyResolveComputationStatus.Computed -> status.resolvedTypeRef
             is ImplicitBodyResolveComputationStatus.Computing ->
-                buildErrorTypeRef {diagnostic = FirSimpleDiagnostic("cycle", DiagnosticKind.RecursionInImplicitTypes) }
+                buildErrorTypeRef {diagnostic = ConeSimpleDiagnostic("cycle", DiagnosticKind.RecursionInImplicitTypes) }
             else -> computeReturnTypeRef(declaration)
         }
     }
@@ -187,7 +187,7 @@ private class ReturnTypeCalculatorWithJump(
 
         if (file == null || outerClasses.any { it == null }) {
             return buildErrorTypeRef {
-                diagnostic = FirSimpleDiagnostic(
+                diagnostic = ConeSimpleDiagnostic(
                     "Cannot calculate return type (local class/object?)",
                     DiagnosticKind.InferenceError
                 )

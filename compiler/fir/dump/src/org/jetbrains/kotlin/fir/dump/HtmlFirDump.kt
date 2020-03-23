@@ -17,14 +17,14 @@ import org.jetbrains.kotlin.fir.backend.left
 import org.jetbrains.kotlin.fir.backend.right
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.resolve.diagnostics.FirAmbiguityError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.FirInapplicableCandidateError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -1183,9 +1183,9 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-    private fun FlowContent.generate(diagnostic: FirDiagnostic) {
+    private fun FlowContent.generate(diagnostic: ConeDiagnostic) {
         when (diagnostic) {
-            is FirInapplicableCandidateError -> {
+            is ConeInapplicableCandidateError -> {
                 for (candidate in diagnostic.candidates) {
                     describeVerbose(candidate.symbol)
                     br
@@ -1210,7 +1210,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                     }
                 }
             }
-            is FirAmbiguityError -> {
+            is ConeAmbiguityError -> {
                 +"Ambiguity: "
                 br
                 for (candidate in diagnostic.candidates) {

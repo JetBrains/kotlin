@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticWithParameters1
-import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnosticWithParameters1
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
@@ -55,7 +55,7 @@ class ExpressionsConverter(
 ) : BaseConverter(session, tree, context) {
 
     inline fun <reified R : FirElement> getAsFirExpression(expression: LighterASTNode?, errorReason: String = ""): R {
-        return expression?.let { convertExpression(it, errorReason) } as? R ?: (buildErrorExpression(null, FirSimpleDiagnostic(errorReason, DiagnosticKind.Syntax)) as R)
+        return expression?.let { convertExpression(it, errorReason) } as? R ?: (buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.Syntax)) as R)
     }
 
     /*****    EXPRESSIONS    *****/
@@ -103,7 +103,7 @@ class ExpressionsConverter(
 
                 OBJECT_LITERAL -> declarationsConverter.convertObjectLiteral(expression)
                 FUN -> declarationsConverter.convertFunctionDeclaration(expression)
-                else -> buildErrorExpression(null, FirSimpleDiagnostic(errorReason, DiagnosticKind.Syntax))
+                else -> buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.Syntax))
             }
         }
 
@@ -176,7 +176,7 @@ class ExpressionsConverter(
                     }
                 }.build()
             } else {
-                buildSingleExpressionBlock(buildErrorExpression(null, FirSimpleDiagnostic("Lambda has no body", DiagnosticKind.Syntax)))
+                buildSingleExpressionBlock(buildErrorExpression(null, ConeSimpleDiagnostic("Lambda has no body", DiagnosticKind.Syntax)))
             }
             context.firFunctionTargets.removeLast()
         }.also { 
@@ -192,7 +192,7 @@ class ExpressionsConverter(
         var isLeftArgument = true
         lateinit var operationTokenName: String
         var leftArgNode: LighterASTNode? = null
-        var rightArgAsFir: FirExpression = buildErrorExpression(null, FirSimpleDiagnostic("No right operand", DiagnosticKind.Syntax))
+        var rightArgAsFir: FirExpression = buildErrorExpression(null, ConeSimpleDiagnostic("No right operand", DiagnosticKind.Syntax))
         var rightArg: LighterASTNode? = null
         binaryExpression.forEachChildren {
             when (it.tokenType) {
@@ -265,7 +265,7 @@ class ExpressionsConverter(
         toFirOperation: String.() -> FirOperation
     ): FirTypeOperatorCall {
         lateinit var operationTokenName: String
-        var leftArgAsFir: FirExpression = buildErrorExpression(null, FirSimpleDiagnostic("No left operand", DiagnosticKind.Syntax))
+        var leftArgAsFir: FirExpression = buildErrorExpression(null, ConeSimpleDiagnostic("No left operand", DiagnosticKind.Syntax))
         lateinit var firType: FirTypeRef
         binaryExpression.forEachChildren {
             when (it.tokenType) {
@@ -303,7 +303,7 @@ class ExpressionsConverter(
             context.firLabels.removeLast()
             //println("Unused label: ${labeledExpression.getAsString()}")
         }
-        return firExpression ?: buildErrorExpression(null, FirSimpleDiagnostic("Empty label", DiagnosticKind.Syntax))
+        return firExpression ?: buildErrorExpression(null, ConeSimpleDiagnostic("Empty label", DiagnosticKind.Syntax))
     }
 
     /**
@@ -375,7 +375,7 @@ class ExpressionsConverter(
         return firExpression?.also {
             require(it is FirAnnotationContainer)
             (it.annotations as MutableList<FirAnnotationCall>) += firAnnotationList
-        } ?: buildErrorExpression(null, FirSimpleDiagnostic("Strange annotated expression: ${firExpression?.render()}", DiagnosticKind.Syntax))
+        } ?: buildErrorExpression(null, ConeSimpleDiagnostic("Strange annotated expression: ${firExpression?.render()}", DiagnosticKind.Syntax))
     }
 
     /**
@@ -383,7 +383,7 @@ class ExpressionsConverter(
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitClassLiteralExpression
      */
     private fun convertClassLiteralExpression(classLiteralExpression: LighterASTNode): FirExpression {
-        var firReceiverExpression: FirExpression = buildErrorExpression(null, FirSimpleDiagnostic("No receiver in class literal", DiagnosticKind.Syntax))
+        var firReceiverExpression: FirExpression = buildErrorExpression(null, ConeSimpleDiagnostic("No receiver in class literal", DiagnosticKind.Syntax))
         classLiteralExpression.forEachChildren {
             if (it.isExpression()) firReceiverExpression = getAsFirExpression(it, "No receiver in class literal")
         }
@@ -432,7 +432,7 @@ class ExpressionsConverter(
     private fun convertQualifiedExpression(dotQualifiedExpression: LighterASTNode): FirExpression {
         var isSelector = false
         var isSafe = false
-        var firSelector: FirExpression = buildErrorExpression(null, FirSimpleDiagnostic("Qualified expression without selector", DiagnosticKind.Syntax)) //after dot
+        var firSelector: FirExpression = buildErrorExpression(null, ConeSimpleDiagnostic("Qualified expression without selector", DiagnosticKind.Syntax)) //after dot
         var firReceiver: FirExpression? = null //before dot
         dotQualifiedExpression.forEachChildren {
             when (it.tokenType) {
@@ -504,11 +504,11 @@ class ExpressionsConverter(
                 buildErrorNamedReference {
                     val node = superNode!!
                     source = node.toFirSourceElement()
-                    diagnostic = FirDiagnosticWithParameters1("Super cannot be a callee", node.asText, DiagnosticKind.SuperNotAllowed)
+                    diagnostic = ConeSimpleDiagnosticWithParameters1("Super cannot be a callee", node.asText, DiagnosticKind.SuperNotAllowed)
                 } to null
             }
             else -> buildErrorNamedReference {
-                diagnostic = FirSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax)
+                diagnostic = ConeSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax)
             } to null
         }
 
@@ -541,7 +541,7 @@ class ExpressionsConverter(
     }
 
     private fun LighterASTNode?.convertShortOrLongStringTemplate(errorReason: String): FirExpression {
-        var firExpression: FirExpression = buildErrorExpression(null, FirSimpleDiagnostic(errorReason, DiagnosticKind.Syntax))
+        var firExpression: FirExpression = buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.Syntax))
         this?.forEachChildren(LONG_TEMPLATE_ENTRY_START, LONG_TEMPLATE_ENTRY_END) {
             firExpression = getAsFirExpression(it, errorReason)
         }
@@ -647,7 +647,7 @@ class ExpressionsConverter(
     }
 
     private fun convertWhenConditionExpression(whenCondition: LighterASTNode, subject: FirWhenSubject?): FirExpression {
-        var firExpression: FirExpression = buildErrorExpression(null, FirSimpleDiagnostic("No expression in condition with expression", DiagnosticKind.Syntax))
+        var firExpression: FirExpression = buildErrorExpression(null, ConeSimpleDiagnostic("No expression in condition with expression", DiagnosticKind.Syntax))
         whenCondition.forEachChildren {
             when (it.tokenType) {
                 else -> if (it.isExpression()) firExpression = getAsFirExpression(it, "No expression in condition with expression")
@@ -671,7 +671,7 @@ class ExpressionsConverter(
 
     private fun convertWhenConditionInRange(whenCondition: LighterASTNode, subject: FirWhenSubject?): FirExpression {
         var isNegate = false
-        var firExpression: FirExpression = buildErrorExpression(null, FirSimpleDiagnostic("No range in condition with range", DiagnosticKind.Syntax))
+        var firExpression: FirExpression = buildErrorExpression(null, ConeSimpleDiagnostic("No range in condition with range", DiagnosticKind.Syntax))
         whenCondition.forEachChildren {
             when {
                 it.tokenType == OPERATION_REFERENCE && it.asText == NOT_IN.value -> isNegate = true
@@ -686,7 +686,7 @@ class ExpressionsConverter(
         } else {
             return buildErrorExpression {
                 source = whenCondition.toFirSourceElement()
-                diagnostic = FirSimpleDiagnostic("No expression in condition with expression", DiagnosticKind.Syntax)
+                diagnostic = ConeSimpleDiagnostic("No expression in condition with expression", DiagnosticKind.Syntax)
             }
         }
 
@@ -716,7 +716,7 @@ class ExpressionsConverter(
         } else {
             return buildErrorExpression {
                 source = whenCondition.toFirSourceElement()
-                diagnostic = FirSimpleDiagnostic("No expression in condition with expression", DiagnosticKind.Syntax)
+                diagnostic = ConeSimpleDiagnostic("No expression in condition with expression", DiagnosticKind.Syntax)
             }
         }
 
@@ -733,7 +733,7 @@ class ExpressionsConverter(
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitArrayAccessExpression
      */
     private fun convertArrayAccessExpression(arrayAccess: LighterASTNode): FirFunctionCall {
-        var firExpression: FirExpression = buildErrorExpression(null, FirSimpleDiagnostic("No array expression", DiagnosticKind.Syntax))
+        var firExpression: FirExpression = buildErrorExpression(null, ConeSimpleDiagnostic("No array expression", DiagnosticKind.Syntax))
         val indices: MutableList<FirExpression> = mutableListOf()
         arrayAccess.forEachChildren {
             when (it.tokenType) {
@@ -801,7 +801,7 @@ class ExpressionsConverter(
      */
     private fun convertDoWhile(doWhileLoop: LighterASTNode): FirElement {
         var block: LighterASTNode? = null
-        var firCondition: FirExpression = buildErrorExpression(null, FirSimpleDiagnostic("No condition in do-while loop", DiagnosticKind.Syntax))
+        var firCondition: FirExpression = buildErrorExpression(null, ConeSimpleDiagnostic("No condition in do-while loop", DiagnosticKind.Syntax))
         doWhileLoop.forEachChildren {
             when (it.tokenType) {
                 BODY -> block = it
@@ -821,7 +821,7 @@ class ExpressionsConverter(
      */
     private fun convertWhile(whileLoop: LighterASTNode): FirElement {
         var block: LighterASTNode? = null
-        var firCondition: FirExpression = buildErrorExpression(null, FirSimpleDiagnostic("No condition in while loop", DiagnosticKind.Syntax))
+        var firCondition: FirExpression = buildErrorExpression(null, ConeSimpleDiagnostic("No condition in while loop", DiagnosticKind.Syntax))
         whileLoop.forEachChildren {
             when (it.tokenType) {
                 BODY -> block = it
@@ -841,7 +841,7 @@ class ExpressionsConverter(
      */
     private fun convertFor(forLoop: LighterASTNode): FirElement {
         var parameter: ValueParameter? = null
-        var rangeExpression: FirExpression = buildErrorExpression(null, FirSimpleDiagnostic("No range in for loop", DiagnosticKind.Syntax))
+        var rangeExpression: FirExpression = buildErrorExpression(null, ConeSimpleDiagnostic("No range in for loop", DiagnosticKind.Syntax))
         var blockNode: LighterASTNode? = null
         forLoop.forEachChildren {
             when (it.tokenType) {
@@ -989,7 +989,7 @@ class ExpressionsConverter(
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitIfExpression
      */
     private fun convertIfExpression(ifExpression: LighterASTNode): FirExpression {
-        var firCondition: FirExpression = buildErrorExpression(null, FirSimpleDiagnostic("If statement should have condition", DiagnosticKind.Syntax))
+        var firCondition: FirExpression = buildErrorExpression(null, ConeSimpleDiagnostic("If statement should have condition", DiagnosticKind.Syntax))
         var thenBlock: LighterASTNode? = null
         var elseBlock: LighterASTNode? = null
         ifExpression.forEachChildren {
@@ -1061,7 +1061,7 @@ class ExpressionsConverter(
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitThrowExpression
      */
     private fun convertThrow(throwExpression: LighterASTNode): FirExpression {
-        var firExpression: FirExpression = buildErrorExpression(null, FirSimpleDiagnostic("Nothing to throw", DiagnosticKind.Syntax))
+        var firExpression: FirExpression = buildErrorExpression(null, ConeSimpleDiagnostic("Nothing to throw", DiagnosticKind.Syntax))
         throwExpression.forEachChildren {
             if (it.isExpression()) firExpression = getAsFirExpression(it, "Nothing to throw")
         }
@@ -1128,7 +1128,7 @@ class ExpressionsConverter(
     private fun convertValueArgument(valueArgument: LighterASTNode): FirExpression {
         var identifier: String? = null
         var isSpread = false
-        var firExpression: FirExpression = buildErrorExpression(null, FirSimpleDiagnostic("Argument is absent", DiagnosticKind.Syntax))
+        var firExpression: FirExpression = buildErrorExpression(null, ConeSimpleDiagnostic("Argument is absent", DiagnosticKind.Syntax))
         valueArgument.forEachChildren {
             when (it.tokenType) {
                 VALUE_ARGUMENT_NAME -> identifier = it.asText

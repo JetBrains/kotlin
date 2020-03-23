@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -23,7 +23,7 @@ class ReturnTypeCalculatorForFullBodyResolve : ReturnTypeCalculator {
         if (returnTypeRef is FirResolvedTypeRef) return returnTypeRef
 
         return buildErrorTypeRef {
-            diagnostic = FirSimpleDiagnostic(
+            diagnostic = ConeSimpleDiagnostic(
                 "Cannot calculate return type during full-body resolution (local class/object?): ${declaration.render()}",
                 DiagnosticKind.InferenceError
             )

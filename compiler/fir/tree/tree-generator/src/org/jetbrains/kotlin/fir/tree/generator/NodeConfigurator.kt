@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.tree.generator
 
-import org.jetbrains.kotlin.descriptors.effectiveVisibility
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.annotations
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.arguments
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.body
@@ -58,7 +57,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         diagnosticHolder.configure {
-            +field("diagnostic", firDiagnosticType)
+            +field("diagnostic", coneDiagnosticType)
         }
 
         declaration.configure {

@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
-import org.jetbrains.kotlin.fir.analysis.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.onSource
+import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
@@ -50,25 +47,25 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
         runCheck { reportFirDiagnostic(errorFunction.diagnostic, source, it) }
     }
 
-    private fun reportFirDiagnostic(diagnostic: FirDiagnostic, source: FirSourceElement, reporter: DiagnosticReporter) {
+    private fun reportFirDiagnostic(diagnostic: ConeDiagnostic, source: FirSourceElement, reporter: DiagnosticReporter) {
         val coneDiagnostic = when (diagnostic) {
-            is FirUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.onSource(source, diagnostic.name?.asString())
-            is FirUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.onSource(source, diagnostic.classId.asString())
-            is FirUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.onSource(source, diagnostic.name.asString())
-            is FirInapplicableCandidateError -> FirErrors.INAPPLICABLE_CANDIDATE.onSource(source, diagnostic.candidates.map { it.symbol })
-            is FirAmbiguityError -> FirErrors.AMBIGUITY.onSource(source, diagnostic.candidates)
-            is FirOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.onSource(source, diagnostic.candidates)
-            is FirVariableExpectedError -> Errors.VARIABLE_EXPECTED.onSource(source)
-            is FirTypeMismatchError -> FirErrors.TYPE_MISMATCH.onSource(source, diagnostic.expectedType, diagnostic.actualType)
-            is FirSimpleDiagnostic -> diagnostic.getFactory().onSource(source)
-            is FirDiagnosticWithParameters1<*> -> diagnostic.getFactory().tryOnSource(source, diagnostic.a)
-            is FirStubDiagnostic -> null
+            is ConeUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.onSource(source, diagnostic.name?.asString())
+            is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.onSource(source, diagnostic.classId.asString())
+            is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.onSource(source, diagnostic.name.asString())
+            is ConeInapplicableCandidateError -> FirErrors.INAPPLICABLE_CANDIDATE.onSource(source, diagnostic.candidates.map { it.symbol })
+            is ConeAmbiguityError -> FirErrors.AMBIGUITY.onSource(source, diagnostic.candidates)
+            is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.onSource(source, diagnostic.candidates)
+            is ConeVariableExpectedError -> Errors.VARIABLE_EXPECTED.onSource(source)
+            is ConeTypeMismatchError -> FirErrors.TYPE_MISMATCH.onSource(source, diagnostic.expectedType, diagnostic.actualType)
+            is ConeSimpleDiagnostic -> diagnostic.getFactory().onSource(source)
+            is ConeSimpleDiagnosticWithParameters1<*> -> diagnostic.getFactory().tryOnSource(source, diagnostic.a)
+            is ConeStubDiagnostic -> null
             else -> throw IllegalArgumentException("Unsupported diagnostic type: ${diagnostic.javaClass}")
         }
         reporter.report(coneDiagnostic)
     }
 
-    private fun FirSimpleDiagnostic.getFactory(): DiagnosticFactory0<PsiElement> {
+    private fun ConeSimpleDiagnostic.getFactory(): DiagnosticFactory0<PsiElement> {
         @Suppress("UNCHECKED_CAST")
         return when (kind) {
             DiagnosticKind.Syntax -> FirErrors.SYNTAX_ERROR
@@ -89,19 +86,11 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
         } as DiagnosticFactory0<PsiElement>
     }
 
-    private fun FirDiagnosticWithParameters1<*>.getFactory(): DiagnosticFactory1<PsiElement, Any?> {
+    private fun ConeSimpleDiagnosticWithParameters1<*>.getFactory(): DiagnosticFactory1<PsiElement, Any?> {
         @Suppress("UNCHECKED_CAST")
         return when (kind) {
             DiagnosticKind.SuperNotAllowed -> Errors.SUPER_IS_NOT_AN_EXPRESSION
             else -> throw IllegalArgumentException("Unsupported diagnostic kind: $kind at $javaClass")
         } as DiagnosticFactory1<PsiElement, Any?>
-    }
-
-    private inline fun <reified E : PsiElement, reified A> DiagnosticFactory1<E, A>.tryOnSource(
-        source: FirSourceElement,
-        a: Any?
-    ): ConeDiagnostic? {
-        val aa = a as? A ?: throw IllegalArgumentException("Parameter passed to the factory is of incompatible type!")
-        return onSource(source, aa)
     }
 }
