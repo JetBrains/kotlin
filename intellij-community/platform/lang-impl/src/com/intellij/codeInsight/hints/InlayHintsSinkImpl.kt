@@ -26,7 +26,6 @@ class InlayHintsSinkImpl(val editor: Editor) : InlayHintsSink {
                                showAbove: Boolean,
                                priority: Int,
                                presentation: InlayPresentation) {
-    if (editor.isDisposed) return
     val line = document.getLineNumber(offset)
     val root = RecursivelyUpdatingRootPresentation(presentation)
     addBlockElement(line, showAbove, root, BlockConstraints(relatesToPrecedingText, priority)) // TODO here lines are applied
