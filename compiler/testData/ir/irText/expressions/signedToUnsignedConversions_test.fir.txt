@@ -57,14 +57,14 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
   PROPERTY name:UINT_CONST visibility:public modality:FINAL [const,val]
     annotations:
       ImplicitIntegerCoercion
-    FIELD PROPERTY_BACKING_FIELD name:UINT_CONST type:kotlin.Long visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:UINT_CONST type:kotlin.UInt visibility:private [final,static]
       EXPRESSION_BODY
-        CONST Long type=kotlin.Long value=42
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-UINT_CONST> visibility:public modality:FINAL <> () returnType:kotlin.Long
+        CONST Int type=kotlin.UInt value=42
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-UINT_CONST> visibility:public modality:FINAL <> () returnType:kotlin.UInt
       correspondingProperty: PROPERTY name:UINT_CONST visibility:public modality:FINAL [const,val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-UINT_CONST> (): kotlin.Long declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:UINT_CONST type:kotlin.Long visibility:private [final,static]' type=kotlin.Long origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-UINT_CONST> (): kotlin.UInt declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:UINT_CONST type:kotlin.UInt visibility:private [final,static]' type=kotlin.UInt origin=null
   FUN name:takeUByte visibility:public modality:FINAL <> (u:kotlin.UByte) returnType:kotlin.Unit
     VALUE_PARAMETER name:u index:0 type:kotlin.UByte
     BLOCK_BODY
@@ -100,4 +100,4 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
       ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/takeUBytes]>#' type=IrErrorType
         CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
         CALL 'public final fun <get-EXPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
-        CONST Long type=kotlin.Long value=42
+        CONST Int type=kotlin.UInt value=42
