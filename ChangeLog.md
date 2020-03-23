@@ -57,8 +57,6 @@
 ### Tools. Gradle. JS
 
 - [`KT-36196`](https://youtrack.jetbrains.com/issue/KT-36196) Investigate performance problems while resolving in projects with npm dependencies
-- [`KT-37240`](https://youtrack.jetbrains.com/issue/KT-37240) KJS. Nondeterministic execution order for webpack scripts (from folder 'webpack.config.d')
-- [`KT-37582`](https://youtrack.jetbrains.com/issue/KT-37582) Kotlin/JS: KotlinWebpack non-nullable properties are shown as nullable in Gradle configuration
 
 ### Tools. Gradle. Multiplatform
 
