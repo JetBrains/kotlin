@@ -278,7 +278,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             }
             "hashCode" -> {
                 if (irFunction.parentAsClass.isEnumClass) {
-                    calculateBuiltIns(irFunction.getLastOverridden() as IrFunctionImpl, data)
+                    calculateBuiltIns(irFunction.getLastOverridden() as IrSimpleFunction, data)
                 } else {
                     throw AssertionError("Hash code function intrinsic is supported only for enum class")
                 }
@@ -305,12 +305,12 @@ class IrInterpreter(irModule: IrModuleFragment) {
         return irFunction.body!!.interpret(data)
     }
 
-    private suspend fun calculateOverridden(owner: IrFunctionImpl, data: Frame): Code {
+    private suspend fun calculateOverridden(owner: IrSimpleFunction, data: Frame): Code {
         val variableDescriptor = owner.symbol.getReceiver()!!
         val superQualifier = (data.getVariableState(variableDescriptor) as? Complex)?.superType
         if (superQualifier == null) {
             // superQualifier is null for exception state => find method in builtins
-            return calculateBuiltIns(owner.getLastOverridden() as IrFunctionImpl, data)
+            return calculateBuiltIns(owner.getLastOverridden() as IrSimpleFunction, data)
         }
         val overridden = owner.overriddenSymbols.first { it.getReceiver()?.equalTo(superQualifier.getReceiver()) == true }
 
@@ -319,7 +319,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             .map { Variable(it.second.descriptor, data.getVariableState(it.first.descriptor)) }
             .forEach { newStates.addVar(it) }
 
-        val overriddenOwner = overridden.owner as IrFunctionImpl
+        val overriddenOwner = overridden.owner
         return when {
             overriddenOwner.body != null -> overriddenOwner.interpret(newStates)
             superQualifier.superType == null -> calculateBuiltIns(overriddenOwner, newStates)
@@ -329,7 +329,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
     private suspend fun calculateBuiltIns(irFunction: IrFunction, data: Frame): Code {
         val descriptor = irFunction.descriptor
-        val methodName = when (val property = (irFunction as? IrFunctionImpl)?.correspondingPropertySymbol) {
+        val methodName = when (val property = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol) {
             null -> descriptor.name.asString()
             else -> property.owner.name.asString()
         }
@@ -432,7 +432,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             isWrapper && !isInterfaceDefaultMethod -> (dispatchReceiver as Wrapper).getMethod(irFunction).invokeMethod(irFunction, newFrame)
             irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction, newFrame)
             irFunction.isAbstract() -> calculateAbstract(irFunction, newFrame) //abstract check must be before fake overridden check
-            irFunction.isFakeOverridden() -> calculateOverridden(irFunction as IrFunctionImpl, newFrame)
+            irFunction.isFakeOverridden() -> calculateOverridden(irFunction as IrSimpleFunction, newFrame)
             irFunction.body == null || dispatchReceiver is Primitive<*> -> calculateBuiltIns(irFunction, newFrame)
             else -> irFunction.interpret(newFrame)
         }
