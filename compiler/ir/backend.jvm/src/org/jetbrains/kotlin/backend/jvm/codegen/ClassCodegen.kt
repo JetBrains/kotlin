@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -185,7 +186,7 @@ open class ClassCodegen protected constructor(
         generateInnerAndOuterClasses()
 
         sourceMapper?.let {
-            SourceMapper.flushToClassBuilder(it, visitor)
+            visitor.visitSMAP(it, !context.state.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
         }
 
         visitor.done()

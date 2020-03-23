@@ -237,15 +237,15 @@ class IrSourceCompilerForInline(
                     TODO("not implemented")
                 }
 
+                override fun visitSMAP(smap: SourceMapper, backwardsCompatibleSyntax: Boolean) {
+                    TODO("not implemented")
+                }
+
                 override fun visitInnerClass(name: String, outerName: String?, innerName: String?, access: Int) {
                     TODO("not implemented")
                 }
 
                 override fun getThisName(): String {
-                    TODO("not implemented")
-                }
-
-                override fun addSMAP(mapping: FileMapping?) {
                     TODO("not implemented")
                 }
             }
