@@ -103,7 +103,7 @@ abstract class YarnBasics : NpmApi {
             .takeIf { it.isFile }
             ?: return
 
-        val byKey = YarnLock.parse(yarnLock).entries.associateBy { it.dependencyKey }
+        val entryRegistry = YarnEntryRegistry(yarnLock)
         val visited = mutableMapOf<NpmDependency, NpmDependency>()
 
         fun resolveRecursively(src: NpmDependency): NpmDependency {
@@ -116,19 +116,7 @@ abstract class YarnBasics : NpmApi {
             }
             visited[src] = src
 
-            val key = dependencyKey(src.key, src.version)
-            val deps = if (src.version != "*") {
-                byKey[key]
-            } else {
-                val searchKey = dependencyKey(src.key, "")
-                byKey.entries
-                    .firstOrNull { it.key.startsWith(searchKey) }
-                    ?.value
-            }
-
-            if (deps == null) {
-                error("Cannot find $key in yarn.lock")
-            }
+            val deps = entryRegistry.find(src.key, src.version)
 
             src.resolvedVersion = deps.version
             src.integrity = deps.integrity
@@ -152,6 +140,28 @@ abstract class YarnBasics : NpmApi {
 
         srcDependenciesList.forEach { src ->
             resolveRecursively(src)
+        }
+    }
+}
+
+private class YarnEntryRegistry(lockFile: File) {
+    val entryMap = YarnLock.parse(lockFile)
+        .entries
+        .associateBy { it.dependencyKey }
+
+    fun find(packageKey: String, version: String): YarnLock.Entry {
+        val key = dependencyKey(packageKey, version)
+        var entry = entryMap[key]
+
+        if (entry == null && version == "*") {
+            val searchKey = dependencyKey(packageKey, "")
+            entry = entryMap.entries
+                .firstOrNull { it.key.startsWith(searchKey) }
+                ?.value
+        }
+
+        return checkNotNull(entry) {
+            "Cannot find $key in yarn.lock"
         }
     }
 }
