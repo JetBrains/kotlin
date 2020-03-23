@@ -145,14 +145,21 @@ private fun FirConstKind<*>.toIrConstKind(): IrConstKind<*> = when (this) {
     FirConstKind.Null -> IrConstKind.Null
     FirConstKind.Boolean -> IrConstKind.Boolean
     FirConstKind.Char -> IrConstKind.Char
+
     FirConstKind.Byte -> IrConstKind.Byte
     FirConstKind.Short -> IrConstKind.Short
     FirConstKind.Int -> IrConstKind.Int
     FirConstKind.Long -> IrConstKind.Long
+
+    FirConstKind.UnsignedByte -> IrConstKind.Byte
+    FirConstKind.UnsignedShort -> IrConstKind.Short
+    FirConstKind.UnsignedInt -> IrConstKind.Int
+    FirConstKind.UnsignedLong -> IrConstKind.Long
+
     FirConstKind.String -> IrConstKind.String
     FirConstKind.Float -> IrConstKind.Float
     FirConstKind.Double -> IrConstKind.Double
-    FirConstKind.IntegerLiteral -> throw IllegalArgumentException()
+    FirConstKind.IntegerLiteral, FirConstKind.UnsignedIntegerLiteral -> throw IllegalArgumentException()
 }
 
 internal fun FirClass<*>.collectCallableNamesFromSupertypes(session: FirSession, result: MutableList<Name> = mutableListOf()): List<Name> {

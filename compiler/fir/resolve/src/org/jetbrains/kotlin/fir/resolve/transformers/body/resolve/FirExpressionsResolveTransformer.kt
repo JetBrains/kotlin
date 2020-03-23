@@ -504,44 +504,51 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         data: ResolutionMode,
     ): CompositeTransformResult<FirStatement> {
         constExpression.annotations.forEach { it.accept(this, data) }
-        val kind = constExpression.kind
-        val symbol = when (kind) {
-            FirConstKind.Null -> StandardClassIds.Nothing(symbolProvider)
-            FirConstKind.Boolean -> StandardClassIds.Boolean(symbolProvider)
-            FirConstKind.Char -> StandardClassIds.Char(symbolProvider)
-            FirConstKind.Byte -> StandardClassIds.Byte(symbolProvider)
-            FirConstKind.Short -> StandardClassIds.Short(symbolProvider)
-            FirConstKind.Int -> StandardClassIds.Int(symbolProvider)
-            FirConstKind.Long -> StandardClassIds.Long(symbolProvider)
-            FirConstKind.String -> StandardClassIds.String(symbolProvider)
-            FirConstKind.Float -> StandardClassIds.Float(symbolProvider)
-            FirConstKind.Double -> StandardClassIds.Double(symbolProvider)
-            FirConstKind.IntegerLiteral -> null
+        fun constructLiteralType(classId: ClassId, isNullable: Boolean = false): ConeKotlinType {
+            val symbol = symbolProvider.getClassLikeSymbolByFqName(classId) ?: return ConeClassErrorType("Missing stdlib class: ${classId}")
+            return symbol.toLookupTag().constructClassType(emptyArray(), isNullable)
         }
 
-        val type = if (symbol != null) {
-            ConeClassLikeTypeImpl(symbol.toLookupTag(), emptyArray(), isNullable = kind == FirConstKind.Null)
-        } else {
-            val integerLiteralType = ConeIntegerLiteralTypeImpl(constExpression.value as Long)
-            val expectedType = data.expectedType?.coneTypeSafe<ConeKotlinType>()
-            if (expectedType != null) {
-                val approximatedType = integerLiteralType.getApproximatedType(expectedType)
-                val newConstKind = approximatedType.toConstKind()
-                if (newConstKind == null) {
-                    constExpression.replaceKind(FirConstKind.Int as FirConstKind<T>)
-                    dataFlowAnalyzer.exitConstExpresion(constExpression as FirConstExpression<*>)
-                    constExpression.resultType = buildErrorTypeRef {
-                        source = constExpression.source
-                        diagnostic = FirTypeMismatchError(expectedType, integerLiteralType.getApproximatedType())
+        val kind = constExpression.kind
+        val type = when (kind) {
+            FirConstKind.Null -> session.builtinTypes.nullableNothingType.type
+            FirConstKind.Boolean -> session.builtinTypes.booleanType.type
+            FirConstKind.Char -> constructLiteralType(StandardClassIds.Char)
+            FirConstKind.Byte -> constructLiteralType(StandardClassIds.Byte)
+            FirConstKind.Short -> constructLiteralType(StandardClassIds.Short)
+            FirConstKind.Int -> constructLiteralType(StandardClassIds.Int)
+            FirConstKind.Long -> constructLiteralType(StandardClassIds.Long)
+            FirConstKind.String -> constructLiteralType(StandardClassIds.String)
+            FirConstKind.Float -> constructLiteralType(StandardClassIds.Float)
+            FirConstKind.Double -> constructLiteralType(StandardClassIds.Double)
+            FirConstKind.IntegerLiteral, FirConstKind.UnsignedIntegerLiteral -> {
+                val integerLiteralType = ConeIntegerLiteralTypeImpl(constExpression.value as Long, isUnsigned = kind == FirConstKind.UnsignedIntegerLiteral)
+                val expectedType = data.expectedType?.coneTypeSafe<ConeKotlinType>()
+                if (expectedType != null) {
+                    val approximatedType = integerLiteralType.getApproximatedType(expectedType)
+                    val newConstKind = approximatedType.toConstKind()
+                    if (newConstKind == null) {
+                        constExpression.replaceKind(FirConstKind.Int as FirConstKind<T>)
+                        dataFlowAnalyzer.exitConstExpresion(constExpression as FirConstExpression<*>)
+                        constExpression.resultType = buildErrorTypeRef {
+                            source = constExpression.source
+                            diagnostic = FirTypeMismatchError(expectedType, integerLiteralType.getApproximatedType())
+                        }
+                        return constExpression.compose()
                     }
-                    return constExpression.compose()
+                    constExpression.replaceKind(newConstKind as FirConstKind<T>)
+                    approximatedType
+                } else {
+                    integerLiteralType
                 }
-                constExpression.replaceKind(newConstKind as FirConstKind<T>)
-                approximatedType
-            } else {
-                integerLiteralType
             }
+
+            FirConstKind.UnsignedByte -> constructLiteralType(StandardClassIds.UByte)
+            FirConstKind.UnsignedShort -> constructLiteralType(StandardClassIds.UShort)
+            FirConstKind.UnsignedInt -> constructLiteralType(StandardClassIds.UInt)
+            FirConstKind.UnsignedLong -> constructLiteralType(StandardClassIds.ULong)
         }
+
         dataFlowAnalyzer.exitConstExpresion(constExpression as FirConstExpression<*>)
         constExpression.resultType = constExpression.resultType.resolvedTypeFromPrototype(type)
         return constExpression.compose()

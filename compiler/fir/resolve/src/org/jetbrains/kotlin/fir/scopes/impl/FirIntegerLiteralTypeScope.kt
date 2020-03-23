@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeImpl
@@ -32,45 +30,19 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-private object FirIntegerLiteralTypeClassifierSymbol : FirClassifierSymbol<FirIntegerLiteralTypeClassifier>() {
-    override fun toLookupTag(): ConeClassifierLookupTag {
-        throw IllegalStateException("Should not be called")
-    }
-}
 
-private object FirIntegerLiteralTypeClassifier : FirDeclaration, FirSymbolOwner<FirIntegerLiteralTypeClassifier> {
-    override val symbol: AbstractFirBasedSymbol<FirIntegerLiteralTypeClassifier>
-        get() = FirIntegerLiteralTypeClassifierSymbol
-
-    override val source: FirSourceElement? get() = throw IllegalStateException("Should not be called")
-    override val session: FirSession get() = throw IllegalStateException("Should not be called")
-    override val resolvePhase: FirResolvePhase get() = throw IllegalStateException("Should not be called")
-
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R {
-        throw IllegalStateException("Should not be called")
+class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned: Boolean) : FirScope() {
+    sealed class ILTKey {
+        object Signed : ILTKey()
+        object Unsigned : ILTKey()
     }
 
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        throw IllegalStateException("Should not be called")
-    }
-
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        throw IllegalStateException("Should not be called")
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        throw IllegalStateException("Should not be called")
-    }
-}
-
-class FirIntegerLiteralTypeScope(private val session: FirSession) : FirScope() {
     companion object {
         val BINARY_OPERATOR_NAMES = FirIntegerOperator.Kind.values().filterNot { it.unary }.map { it.operatorName }
         val UNARY_OPERATOR_NAMES = FirIntegerOperator.Kind.values().filter { it.unary }.map { it.operatorName }
         private val ALL_OPERATORS = FirIntegerOperator.Kind.values().map { it.operatorName to it }.toMap()
 
-        val ILT_SYMBOL: FirClassifierSymbol<*> = FirIntegerLiteralTypeClassifierSymbol
-        val SCOPE_SESSION_KEY = scopeSessionKey<FirClassifierSymbol<*>, FirIntegerLiteralTypeScope>()
+        val SCOPE_SESSION_KEY = scopeSessionKey<ILTKey, FirIntegerLiteralTypeScope>()
     }
 
     private val BINARY_OPERATOR_SYMBOLS = BINARY_OPERATOR_NAMES.map { name ->
@@ -80,7 +52,7 @@ class FirIntegerLiteralTypeScope(private val session: FirSession) : FirScope() {
                 valueParameters += buildValueParameter {
                     source = null
                     session = this@FirIntegerLiteralTypeScope.session
-                    returnTypeRef = FirILTTypeRefPlaceHolder()
+                    returnTypeRef = FirILTTypeRefPlaceHolder(isUnsigned)
                     this.name = valueParameterName
                     symbol = FirVariableSymbol(valueParameterName)
                     defaultValue = null
@@ -100,7 +72,7 @@ class FirIntegerLiteralTypeScope(private val session: FirSession) : FirScope() {
     private fun createFirFunction(name: Name, symbol: FirNamedFunctionSymbol): FirSimpleFunctionImpl = FirIntegerOperator(
         source = null,
         session,
-        FirILTTypeRefPlaceHolder(),
+        FirILTTypeRefPlaceHolder(isUnsigned),
         receiverTypeRef = null,
         ALL_OPERATORS.getValue(name),
         FirResolvedDeclarationStatusImpl(Visibilities.PUBLIC, FirEffectiveVisibility.Public, Modality.FINAL),
@@ -166,10 +138,10 @@ class FirIntegerOperator @FirImplementationDetail constructor(
     }
 }
 
-class FirILTTypeRefPlaceHolder : FirResolvedTypeRef() {
+class FirILTTypeRefPlaceHolder(isUnsigned: Boolean) : FirResolvedTypeRef() {
     override val source: FirSourceElement? get() = null
     override val annotations: List<FirAnnotationCall> get() = emptyList()
-    override var type: ConeIntegerLiteralType = ConeIntegerLiteralTypeImpl(0)
+    override var type: ConeIntegerLiteralType = ConeIntegerLiteralTypeImpl(0, isUnsigned)
     override val delegatedTypeRef: FirTypeRef? get() = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}

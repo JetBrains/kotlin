@@ -224,8 +224,14 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                         )
                     }
 
-                    hasLongSuffix(text) || hasUnsignedSuffix(text) || hasUnsignedLongSuffix(text) -> {
+                    hasUnsignedLongSuffix(text) -> {
+                        FirConstKind.UnsignedLong
+                    }
+                    hasLongSuffix(text) -> {
                         FirConstKind.Long
+                    }
+                    hasUnsignedSuffix(text) -> {
+                        FirConstKind.UnsignedIntegerLiteral
                     }
 
                     else -> {

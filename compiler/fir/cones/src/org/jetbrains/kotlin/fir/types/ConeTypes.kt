@@ -221,6 +221,7 @@ class ConeTypeVariableTypeConstructor(val debugName: String) : ConeClassifierLoo
 
 abstract class ConeIntegerLiteralType(
     val value: Long,
+    val isUnsigned: Boolean,
     override val nullability: ConeNullability
 ) : ConeSimpleKotlinType(), TypeConstructorMarker {
     abstract val possibleTypes: Collection<ConeClassLikeType>

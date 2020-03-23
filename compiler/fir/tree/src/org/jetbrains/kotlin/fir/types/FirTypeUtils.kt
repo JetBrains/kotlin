@@ -59,5 +59,10 @@ fun ConeClassLikeType.toConstKind(): FirConstKind<*>? = when (lookupTag.classId)
     StandardClassIds.Short -> FirConstKind.Short
     StandardClassIds.Int -> FirConstKind.Int
     StandardClassIds.Long -> FirConstKind.Long
+
+    StandardClassIds.UInt -> FirConstKind.UnsignedInt
+    StandardClassIds.ULong -> FirConstKind.UnsignedLong
+    StandardClassIds.UShort -> FirConstKind.UnsignedShort
+    StandardClassIds.UByte -> FirConstKind.UnsignedByte
     else -> null
 }
