@@ -25,27 +25,31 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
+import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.Collections;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.NO_FLAG_PACKAGE_PRIVATE;
-import static org.jetbrains.kotlin.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
+import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class SamWrapperCodegen {
-    public static final String FUNCTION_FIELD_NAME = "function";
+    private static final String FUNCTION_FIELD_NAME = "function";
+    private static final Method GET_FUNCTION_DELEGATE = new Method("getFunctionDelegate", FUNCTION, new Type[0]);
 
     private final GenerationState state;
     private final boolean isInsideInline;
@@ -81,6 +85,8 @@ public class SamWrapperCodegen {
         // e.g. (T, T) -> Int
         KotlinType functionType = samType.getKotlinFunctionType();
 
+        boolean isKotlinFunInterface = !(samType.getClassDescriptor() instanceof JavaClassDescriptor);
+
         ClassDescriptor classDescriptor = new ClassDescriptorImpl(
                 samType.getClassDescriptor().getContainingDeclaration(),
                 fqName.shortName(),
@@ -101,13 +107,18 @@ public class SamWrapperCodegen {
         );
 
         ClassBuilder cv = state.getFactory().newVisitor(JvmDeclarationOriginKt.OtherOrigin(erasedInterfaceFunction), asmType, file);
-        cv.defineClass(file,
-                       state.getClassFileVersion(),
-                       ACC_FINAL | ACC_SUPER | visibility,
-                       asmType.getInternalName(),
-                       null,
-                       OBJECT_TYPE.getInternalName(),
-                       new String[]{ typeMapper.mapType(samType.getType()).getInternalName() }
+        Type samAsmType = typeMapper.mapType(samType.getType());
+        String[] superInterfaces = isKotlinFunInterface
+                                   ? new String[] {samAsmType.getInternalName(), FUNCTION_ADAPTER.getInternalName()}
+                                   : new String[] {samAsmType.getInternalName()};
+        cv.defineClass(
+                file,
+                state.getClassFileVersion(),
+                ACC_FINAL | ACC_SUPER | visibility,
+                asmType.getInternalName(),
+                null,
+                OBJECT_TYPE.getInternalName(),
+                superInterfaces
         );
         cv.visitSource(file.getName(), null);
 
@@ -125,6 +136,12 @@ public class SamWrapperCodegen {
 
         generateConstructor(asmType, functionAsmType, cv);
         generateMethod(asmType, functionAsmType, cv, erasedInterfaceFunction, functionType);
+
+        if (isKotlinFunInterface) {
+            generateGetFunctionDelegate(cv, asmType, functionAsmType);
+            generateEquals(cv, asmType, functionAsmType, samAsmType);
+            generateHashCode(cv, asmType, functionAsmType);
+        }
 
         cv.done();
 
@@ -173,6 +190,62 @@ public class SamWrapperCodegen {
         // TODO: erasedInterfaceFunction is actually not an interface function, but function in generated class
         SimpleFunctionDescriptor originalInterfaceErased = samType.getOriginalAbstractMethod();
         ClosureCodegen.generateBridgesForSAM(originalInterfaceErased, erasedInterfaceFunction, codegen);
+    }
+
+    private static void generateEquals(
+            @NotNull ClassBuilder cv, @NotNull Type asmType, @NotNull Type functionAsmType, @NotNull Type samAsmType
+    ) {
+        MethodVisitor mv = cv.newMethod(JvmDeclarationOrigin.NO_ORIGIN, ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
+        InstructionAdapter iv = new InstructionAdapter(mv);
+
+        Label notEqual = new Label();
+        iv.load(1, OBJECT_TYPE);
+        iv.instanceOf(samAsmType);
+        iv.ifeq(notEqual);
+        iv.load(1, OBJECT_TYPE);
+        iv.instanceOf(FUNCTION_ADAPTER);
+        iv.ifeq(notEqual);
+
+        iv.load(0, OBJECT_TYPE);
+        iv.getfield(asmType.getInternalName(), FUNCTION_FIELD_NAME, functionAsmType.getDescriptor());
+        iv.load(1, OBJECT_TYPE);
+        iv.checkcast(FUNCTION_ADAPTER);
+        iv.invokeinterface(FUNCTION_ADAPTER.getInternalName(), GET_FUNCTION_DELEGATE.getName(), GET_FUNCTION_DELEGATE.getDescriptor());
+        genAreEqualCall(iv);
+        iv.ifeq(notEqual);
+
+        iv.iconst(1);
+        Label exit = new Label();
+        iv.goTo(exit);
+
+        iv.visitLabel(notEqual);
+        iv.iconst(0);
+
+        iv.visitLabel(exit);
+        iv.areturn(Type.BOOLEAN_TYPE);
+        FunctionCodegen.endVisit(iv, "equals of SAM wrapper");
+    }
+
+    private static void generateHashCode(@NotNull ClassBuilder cv, @NotNull Type asmType, @NotNull Type functionAsmType) {
+        MethodVisitor mv = cv.newMethod(JvmDeclarationOrigin.NO_ORIGIN, ACC_PUBLIC, "hashCode", "()I", null, null);
+        InstructionAdapter iv = new InstructionAdapter(mv);
+        iv.load(0, OBJECT_TYPE);
+        iv.getfield(asmType.getInternalName(), FUNCTION_FIELD_NAME, functionAsmType.getDescriptor());
+        iv.invokevirtual(OBJECT_TYPE.getInternalName(), "hashCode", "()I", false);
+        iv.areturn(Type.INT_TYPE);
+        FunctionCodegen.endVisit(iv, "hashCode of SAM wrapper");
+    }
+
+    private static void generateGetFunctionDelegate(@NotNull ClassBuilder cv, @NotNull Type asmType, @NotNull Type functionAsmType) {
+        MethodVisitor mv = cv.newMethod(
+                JvmDeclarationOrigin.NO_ORIGIN, ACC_PUBLIC,
+                GET_FUNCTION_DELEGATE.getName(), GET_FUNCTION_DELEGATE.getDescriptor(), null, null
+        );
+        InstructionAdapter iv = new InstructionAdapter(mv);
+        iv.load(0, asmType);
+        iv.getfield(asmType.getInternalName(), FUNCTION_FIELD_NAME, functionAsmType.getDescriptor());
+        iv.areturn(OBJECT_TYPE);
+        FunctionCodegen.endVisit(iv, "getFunctionDelegate of SAM wrapper");
     }
 
     @NotNull

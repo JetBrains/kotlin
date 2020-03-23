@@ -163,7 +163,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             setSourceRange(createFor)
         }.apply {
             createImplicitParameterDeclarationWithWrappedDescriptor()
-            superTypes += superType
+            superTypes = listOf(superType) + getAdditionalSupertypes(superType)
             parent = enclosingContainer!!
         }
 
@@ -202,7 +202,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             isSuspend = superMethod.isSuspend
             setSourceRange(createFor)
         }.apply {
-            overriddenSymbols += superMethod.symbol
+            overriddenSymbols = listOf(superMethod.symbol)
             dispatchReceiverParameter = subclass.thisReceiver!!.copyTo(this)
             valueParameters = superMethod.valueParameters.map { it.copyTo(this) }
             body = context.createIrBuilder(symbol).irBlockBody {
@@ -213,8 +213,14 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             }
         }
 
+        generateEqualsHashCode(subclass, superType, field)
+
         subclass.addFakeOverrides()
 
         return subclass
     }
+
+    protected open fun getAdditionalSupertypes(supertype: IrType): List<IrType> = emptyList()
+
+    protected open fun generateEqualsHashCode(klass: IrClass, supertype: IrType, functionDelegateField: IrField) {}
 }

@@ -29,6 +29,7 @@ public class AsmTypes {
     public static final Type UNIT_TYPE = Type.getObjectType("kotlin/Unit");
 
     public static final Type LAMBDA = Type.getObjectType("kotlin/jvm/internal/Lambda");
+    public static final Type FUNCTION_ADAPTER = Type.getObjectType("kotlin/jvm/internal/FunctionAdapter");
 
     public static final Type FUNCTION_REFERENCE = Type.getObjectType("kotlin/jvm/internal/FunctionReference");
     public static final Type FUNCTION_REFERENCE_IMPL = Type.getObjectType("kotlin/jvm/internal/FunctionReferenceImpl");
@@ -40,6 +41,7 @@ public class AsmTypes {
     public static final Type MUTABLE_PROPERTY_REFERENCE1 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference1");
     public static final Type MUTABLE_PROPERTY_REFERENCE2 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference2");
 
+    public static final Type FUNCTION = Type.getObjectType("kotlin/Function");
     public static final Type FUNCTION0 = Type.getObjectType("kotlin/jvm/functions/Function0");
     public static final Type FUNCTION1 = Type.getObjectType("kotlin/jvm/functions/Function1");
 

@@ -3451,6 +3451,10 @@ public final class kotlin/jvm/internal/FloatSpreadBuilder : kotlin/jvm/internal/
 	public final fun toArray ()[F
 }
 
+public abstract interface class kotlin/jvm/internal/FunctionAdapter {
+	public abstract fun getFunctionDelegate ()Lkotlin/Function;
+}
+
 public abstract interface class kotlin/jvm/internal/FunctionBase : kotlin/Function {
 	public abstract fun getArity ()I
 }

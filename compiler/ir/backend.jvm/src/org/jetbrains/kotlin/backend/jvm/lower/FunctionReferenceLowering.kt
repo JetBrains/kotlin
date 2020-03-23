@@ -152,6 +152,11 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
         }
 
+        private val needToGenerateSamEqualsHashCodeMethods =
+            samSuperType != null &&
+                    samSuperType.getClass()?.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB &&
+                    (adaptedReferenceOriginalTarget != null || !isLambda)
+
         private val superType =
             samSuperType ?: when {
                 adaptedReferenceOriginalTarget != null -> context.ir.symbols.adaptedFunctionReference
@@ -169,10 +174,18 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             name = SpecialNames.NO_NAME_PROVIDED
         }.apply {
             parent = currentDeclarationParent ?: error("No current declaration parent at ${irFunctionReference.dump()}")
-            superTypes += superType
-            if (samSuperType == null)
-                superTypes += functionSuperClass.typeWith(parameterTypes)
-            if (irFunctionReference.isSuspend) superTypes += context.ir.symbols.suspendFunctionInterface.defaultType
+            superTypes = listOfNotNull(
+                superType,
+                if (samSuperType == null)
+                    functionSuperClass.typeWith(parameterTypes)
+                else null,
+                if (irFunctionReference.isSuspend)
+                    context.ir.symbols.suspendFunctionInterface.defaultType
+                else null,
+                if (needToGenerateSamEqualsHashCodeMethods)
+                    context.ir.symbols.functionAdapter.defaultType
+                else null,
+            )
             createImplicitParameterDeclarationWithWrappedDescriptor()
             copyAttributes(irFunctionReference)
             if (isLambda) {
@@ -195,11 +208,11 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         fun build(): IrExpression = context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
             irBlock(irFunctionReference.startOffset, irFunctionReference.endOffset) {
                 val constructor = createConstructor()
-                createInvokeMethod(
+                val boundReceiverVar =
                     if (samSuperType != null && boundReceiver != null) {
                         irTemporary(boundReceiver.second)
                     } else null
-                )
+                createInvokeMethod(boundReceiverVar)
 
                 if (!isLambda && samSuperType == null && !useOptimizedSuperClass) {
                     createLegacyMethodOverride(irSymbols.functionReferenceGetSignature.owner) {
@@ -213,11 +226,49 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     }
                 }
 
+                if (needToGenerateSamEqualsHashCodeMethods) {
+                    generateSamEqualsHashCodeMethods(boundReceiverVar)
+                }
+
                 +functionReferenceClass
                 +irCall(constructor.symbol).apply {
                     if (valueArgumentsCount > 0) putValueArgument(0, boundReceiver!!.second)
                 }
             }
+        }
+
+        private fun JvmIrBuilder.generateSamEqualsHashCodeMethods(boundReceiverVar: IrVariable?) {
+            checkNotNull(samSuperType) { "equals/hashCode can only be generated for fun interface wrappers: ${callee.render()}" }
+
+            if (!useOptimizedSuperClass) {
+                // This is the case of a fun interface wrapper over a (maybe adapted) function reference,
+                // with `-Xno-optimized-callable-referenced` enabled. We can't use constructors of FunctionReferenceImpl,
+                // so we'd need to basically generate a full class for a reference inheriting from FunctionReference,
+                // effectively disabling the optimization of fun interface wrappers over references.
+                // This scenario is probably not very popular because it involves using equals/hashCode on function references
+                // and enabling the mentioned internal compiler argument.
+                // Right now we generate them as abstract so that any call would result in AbstractMethodError.
+                // TODO: generate getFunctionDelegate, equals and hashCode properly in this case
+                functionReferenceClass.addFunction("equals", backendContext.irBuiltIns.booleanType, Modality.ABSTRACT).apply {
+                    addValueParameter("other", backendContext.irBuiltIns.anyNType)
+                }
+                functionReferenceClass.addFunction("hashCode", backendContext.irBuiltIns.intType, Modality.ABSTRACT)
+                return
+            }
+
+            SamEqualsHashCodeMethodsGenerator(backendContext, functionReferenceClass, samSuperType) { receiver ->
+                val internalClass = when {
+                    adaptedReferenceOriginalTarget != null -> backendContext.ir.symbols.adaptedFunctionReference
+                    else -> backendContext.ir.symbols.functionReferenceImpl
+                }
+                val constructor = internalClass.owner.constructors.single {
+                    // arity, [receiver], owner, name, signature, flags
+                    it.valueParameters.size == 1 + (if (boundReceiver != null) 1 else 0) + 4
+                }
+                irCallConstructor(constructor.symbol, emptyList()).apply {
+                    generateConstructorCallArguments(this) { irGet(boundReceiverVar!!) }
+                }
+            }.generate()
         }
 
         private fun createConstructor(): IrConstructor =

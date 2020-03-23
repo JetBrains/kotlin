@@ -1010,7 +1010,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @NotNull
     private StackValue genClosure(KtDeclarationWithBody declaration, @Nullable SamType samType) {
-        FunctionDescriptor descriptor = bindingContext.get(FUNCTION, declaration);
+        FunctionDescriptor descriptor = bindingContext.get(BindingContext.FUNCTION, declaration);
         assert descriptor != null : "Function is not resolved to descriptor: " + declaration.getText();
 
         return genClosure(
@@ -3280,7 +3280,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         StackValue receiver = generateCallableReferenceReceiver(resolvedCall);
 
-        FunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
+        FunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, expression);
         if (functionDescriptor != null) {
             FunctionReferenceGenerationStrategy strategy = new FunctionReferenceGenerationStrategy(
                     state, functionDescriptor, resolvedCall,

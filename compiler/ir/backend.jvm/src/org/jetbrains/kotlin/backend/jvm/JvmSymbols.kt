@@ -499,6 +499,10 @@ class JvmSymbols(
         }
     }
 
+    val functionAdapter: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.FunctionAdapter"), ClassKind.INTERFACE) { klass ->
+        klass.addFunction("getFunctionDelegate", irBuiltIns.functionClass.starProjectedType, Modality.ABSTRACT)
+    }
+
     val getOrCreateKotlinPackage: IrSimpleFunctionSymbol =
         reflection.functionByName("getOrCreateKotlinPackage")
 
