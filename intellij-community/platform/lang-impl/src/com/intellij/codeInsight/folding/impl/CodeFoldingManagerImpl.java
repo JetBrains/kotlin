@@ -3,6 +3,7 @@ package com.intellij.codeInsight.folding.impl;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.folding.CodeFoldingManager;
+import com.intellij.lang.folding.CustomFoldingProvider;
 import com.intellij.lang.folding.FoldingBuilder;
 import com.intellij.lang.folding.LanguageFolding;
 import com.intellij.lang.injection.MultiHostInjector;
@@ -79,6 +80,7 @@ public class CodeFoldingManagerImpl extends CodeFoldingManager implements Dispos
     };
     MultiHostInjector.MULTIHOST_INJECTOR_EP_NAME.getPoint(project).addExtensionPointListener(listener, false, this);
     LanguageInjector.EXTENSION_POINT_NAME.addExtensionPointListener(listener, this);
+    CustomFoldingProvider.EP_NAME.addExtensionPointListener(listener, this);
   }
 
   @Override

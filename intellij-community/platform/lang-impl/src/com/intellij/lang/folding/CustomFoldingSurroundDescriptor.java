@@ -34,10 +34,11 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.intellij.psi.util.PsiTreeUtil.skipParentsOfType;
@@ -48,17 +49,8 @@ import static com.intellij.psi.util.PsiTreeUtil.skipParentsOfType;
 public class CustomFoldingSurroundDescriptor implements SurroundDescriptor {
 
   public final static CustomFoldingSurroundDescriptor INSTANCE = new CustomFoldingSurroundDescriptor();
-  public final static CustomFoldingRegionSurrounder[] SURROUNDERS;
 
   private final static String DEFAULT_DESC_TEXT = "Description";
-
-  static {
-    List<CustomFoldingRegionSurrounder> surrounderList = new ArrayList<>();
-    for (CustomFoldingProvider provider : CustomFoldingProvider.getAllProviders()) {
-      surrounderList.add(new CustomFoldingRegionSurrounder(provider));
-    }
-    SURROUNDERS = surrounderList.toArray(new CustomFoldingRegionSurrounder[0]);
-  }
 
   @Override
   public PsiElement @NotNull [] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
@@ -236,7 +228,15 @@ public class CustomFoldingSurroundDescriptor implements SurroundDescriptor {
 
   @Override
   public Surrounder @NotNull [] getSurrounders() {
-    return SURROUNDERS;
+    //noinspection TestOnlyProblems
+    return getAllSurrounders().toArray(new CustomFoldingRegionSurrounder[0]);
+  }
+
+  @TestOnly
+  @NotNull
+  public static List<CustomFoldingRegionSurrounder> getAllSurrounders() {
+    return ContainerUtil.map(
+      CustomFoldingProvider.getAllProviders(), provider -> new CustomFoldingRegionSurrounder(provider));
   }
 
   @Override
