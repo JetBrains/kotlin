@@ -39,7 +39,7 @@ import static com.intellij.openapi.util.text.StringUtil.*;
 import static com.intellij.openapi.vfs.VfsUtilCore.virtualToIoFile;
 
 @ApiStatus.Internal
-public class BuildViewServiceImpl implements BuildViewService {
+public class BuildOutputService implements BuildViewService {
   private static final String ANSI_RESET = "\u001B[0m"; //NON-NLS
   private static final String ANSI_RED = "\u001B[31m"; //NON-NLS
   private static final String ANSI_YELLOW = "\u001B[33m"; //NON-NLS
@@ -48,7 +48,7 @@ public class BuildViewServiceImpl implements BuildViewService {
   private final @NotNull BuildProgress<BuildProgressDescriptor> myBuildProgress;
   private final @NotNull String myContentName;
 
-  public BuildViewServiceImpl(@NotNull Project project, @NotNull String contentName) {
+  public BuildOutputService(@NotNull Project project, @NotNull String contentName) {
     myProject = project;
     myContentName = contentName;
     myBuildProgress = BuildViewManager.createBuildProgress(project);
