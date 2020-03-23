@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.idea.util.IJLoggerAdapter
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
+import org.jetbrains.kotlin.platform.TargetPlatform
 
 abstract class AbstractKlibLibraryInfo(project: Project, library: Library, val libraryRoot: String) : LibraryInfo(project, library) {
 
@@ -23,7 +24,11 @@ abstract class AbstractKlibLibraryInfo(project: Project, library: Library, val l
 
     val compatibilityInfo by lazy { resolvedKotlinLibrary.getCompatibilityInfo() }
 
-    override fun getLibraryRoots() = listOf(libraryRoot)
+    final override fun getLibraryRoots() = listOf(libraryRoot)
+
+    final override fun toString() = "${this::class.simpleName}(libraryName=${library.name}, libraryRoot=$libraryRoot)"
+
+    abstract override val platform: TargetPlatform // must override
 
     companion object {
         private val LOG = IJLoggerAdapter.getInstance(AbstractKlibLibraryInfo::class.java)

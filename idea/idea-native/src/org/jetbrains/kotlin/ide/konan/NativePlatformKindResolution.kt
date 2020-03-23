@@ -169,6 +169,4 @@ class NativeKlibLibraryInfo(project: Project, library: Library, libraryRoot: Str
 
     override val platform: TargetPlatform
         get() = KonanPlatforms.defaultKonanPlatform
-
-    override fun toString() = "Native" + super.toString()
 }

@@ -78,7 +78,9 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
     }
 }
 
-class CommonKlibLibraryInfo(project: Project, library: Library, libraryRoot: String) : AbstractKlibLibraryInfo(project, library, libraryRoot) {
+class CommonKlibLibraryInfo(project: Project, library: Library, libraryRoot: String) :
+    AbstractKlibLibraryInfo(project, library, libraryRoot) {
+
     override val platform: TargetPlatform
         get() = CommonPlatforms.defaultCommonPlatform
 }
