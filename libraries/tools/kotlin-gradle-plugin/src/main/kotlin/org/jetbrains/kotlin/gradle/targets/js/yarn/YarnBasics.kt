@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLock.Companion.dependencyKey
 import java.io.File
 
 abstract class YarnBasics : NpmApi {
@@ -99,7 +100,7 @@ abstract class YarnBasics : NpmApi {
     ) {
         val yarnLock = nodeWorkDir.resolve("yarn.lock")
         if (yarnLock.isFile) {
-            val byKey = YarnLock.parse(yarnLock).entries.associateBy { it.key }
+            val byKey = YarnLock.parse(yarnLock).entries.associateBy { it.dependencyKey }
             val visited = mutableMapOf<NpmDependency, NpmDependency>()
 
             fun resolveRecursively(src: NpmDependency): NpmDependency {
@@ -112,10 +113,10 @@ abstract class YarnBasics : NpmApi {
                 }
                 visited[src] = src
 
-                val key = YarnLock.key(src.key, src.version)
+                val key = dependencyKey(src.key, src.version)
                 val deps = byKey[key]
                     ?: if (src.version == "*") byKey.entries
-                        .firstOrNull { it.key.startsWith(YarnLock.key(src.key, "")) }
+                        .firstOrNull { it.key.startsWith(dependencyKey(src.key, "")) }
                         ?.value
                     else null
 
