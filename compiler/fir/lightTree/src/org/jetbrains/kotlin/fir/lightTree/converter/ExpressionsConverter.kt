@@ -236,6 +236,7 @@ class ExpressionsConverter(
             buildFunctionCall {
                 source = binaryExpression.toFirSourceElement()
                 calleeReference = buildSimpleNamedReference {
+                    source = this@buildFunctionCall.source
                     name = conventionCallName ?: operationTokenName.nameAsSafeName()
                 }
                 explicitReceiver = leftArgAsFir
@@ -342,7 +343,10 @@ class ExpressionsConverter(
                 }
                 buildFunctionCall {
                     source = unaryExpression.toFirSourceElement()
-                    calleeReference = buildSimpleNamedReference { name = conventionCallName }
+                    calleeReference = buildSimpleNamedReference {
+                        source = this@buildFunctionCall.source
+                        name = conventionCallName
+                    }
                     explicitReceiver = getAsFirExpression(argument, "No operand")
                 }
             }
@@ -495,26 +499,38 @@ class ExpressionsConverter(
             process(child)
         }
 
+        val source = callSuffix.toFirSourceElement()
+
         val (calleeReference, explicitReceiver) = when {
-            name != null -> buildSimpleNamedReference { this.name = name.nameAsSafeName() } to null
+            name != null -> buildSimpleNamedReference {
+                this.source = source
+                this.name = name.nameAsSafeName()
+            } to null
+
             additionalArgument != null -> {
-                buildSimpleNamedReference { this.name = OperatorNameConventions.INVOKE } to additionalArgument!!
+                buildSimpleNamedReference {
+                    this.source = source
+                    this.name = OperatorNameConventions.INVOKE
+                } to additionalArgument!!
             }
+
             superNode != null -> {
                 buildErrorNamedReference {
                     val node = superNode!!
-                    source = node.toFirSourceElement()
+                    this.source = node.toFirSourceElement()
                     diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed)
                 } to null
             }
+
             else -> buildErrorNamedReference {
+                this.source = source
                 diagnostic = ConeSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax)
             } to null
         }
 
         val builder: FirQualifiedAccessBuilder = if (hasArguments) {
             FirFunctionCallBuilder().apply {
-                source = callSuffix.toFirSourceElement()
+                this.source = source
                 this.calleeReference = calleeReference
 
                 context.firFunctionCalls += this
@@ -523,7 +539,7 @@ class ExpressionsConverter(
             }
         } else {
             FirQualifiedAccessExpressionBuilder().apply {
-                source = callSuffix.toFirSourceElement()
+                this.source = source
                 this.calleeReference = calleeReference
             }
         }
@@ -745,6 +761,7 @@ class ExpressionsConverter(
         return buildFunctionCall {
             source = arrayAccess.toFirSourceElement()
             calleeReference = buildSimpleNamedReference {
+                source = this@buildFunctionCall.source
                 name = if (getArgument == null) OperatorNameConventions.GET else OperatorNameConventions.SET
             }
             explicitReceiver = firExpression
@@ -791,7 +808,10 @@ class ExpressionsConverter(
     private fun convertSimpleNameExpression(referenceExpression: LighterASTNode): FirQualifiedAccessExpression {
         return buildQualifiedAccessExpression {
             source = referenceExpression.toFirSourceElement()
-            calleeReference = buildSimpleNamedReference { name = referenceExpression.asText.nameAsSafeName() }
+            calleeReference = buildSimpleNamedReference {
+                source = this@buildQualifiedAccessExpression.source
+                name = referenceExpression.asText.nameAsSafeName()
+            }
         }
     }
 
