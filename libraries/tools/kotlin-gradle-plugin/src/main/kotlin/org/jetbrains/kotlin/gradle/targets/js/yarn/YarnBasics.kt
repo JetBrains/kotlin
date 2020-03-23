@@ -117,8 +117,9 @@ abstract class YarnBasics : NpmApi {
                 val deps = if (src.version != "*") {
                     byKey[key]
                 } else {
+                    val searchKey = dependencyKey(src.key, "")
                     byKey.entries
-                        .firstOrNull { it.key.startsWith(dependencyKey(src.key, "")) }
+                        .firstOrNull { it.key.startsWith(searchKey) }
                         ?.value
                 }
 
