@@ -5,32 +5,33 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
-import org.jetbrains.kotlin.diagnostics.*
-import org.jetbrains.kotlin.diagnostics.Severity.ERROR
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.psi.KtElement
 
 object FirErrors {
-    val UNRESOLVED_REFERENCE = DiagnosticFactory1.create<KtElement, String?>(ERROR)
-    val INAPPLICABLE_CANDIDATE = DiagnosticFactory1.create<KtElement, Collection<AbstractFirBasedSymbol<*>>>(ERROR)
-    val AMBIGUITY = DiagnosticFactory1.create<KtElement, Collection<AbstractFirBasedSymbol<*>>>(ERROR)
-    val ASSIGN_OPERATOR_AMBIGUITY = DiagnosticFactory1.create<KtElement, Collection<AbstractFirBasedSymbol<*>>>(ERROR)
-    val SYNTAX_ERROR = DiagnosticFactory0.create<KtElement>(ERROR)
-    val UNRESOLVED_LABEL = DiagnosticFactory0.create<KtElement>(ERROR)
-    val ILLEGAL_CONST_EXPRESSION = DiagnosticFactory0.create<KtElement>(ERROR)
-    val DESERIALIZATION_ERROR = DiagnosticFactory0.create<KtElement>(ERROR)
-    val INFERENCE_ERROR = DiagnosticFactory0.create<KtElement>(ERROR)
-    val NO_SUPERTYPE = DiagnosticFactory0.create<KtElement>(ERROR)
-    val TYPE_PARAMETER_AS_SUPERTYPE = DiagnosticFactory0.create<KtElement>(ERROR)
-    val ENUM_AS_SUPERTYPE = DiagnosticFactory0.create<KtElement>(ERROR)
-    val RECURSION_IN_SUPERTYPES = DiagnosticFactory0.create<KtElement>(ERROR)
-    val RECURSION_IN_IMPLICIT_TYPES = DiagnosticFactory0.create<KtElement>(ERROR)
-    val ERROR_FROM_JAVA_RESOLUTION = DiagnosticFactory0.create<KtElement>(ERROR)
-    val OTHER_ERROR = DiagnosticFactory0.create<KtElement>(ERROR)
-    val TYPE_MISMATCH = DiagnosticFactory2.create<KtElement, ConeKotlinType, ConeKotlinType>(ERROR)
+    val UNRESOLVED_REFERENCE by error1<FirSourceElement, String?>()
+    val INAPPLICABLE_CANDIDATE by error1<FirSourceElement, Collection<AbstractFirBasedSymbol<*>>>()
+    val AMBIGUITY by error1<FirSourceElement, Collection<AbstractFirBasedSymbol<*>>>()
+    val ASSIGN_OPERATOR_AMBIGUITY by error1<FirSourceElement, Collection<AbstractFirBasedSymbol<*>>>()
+    val SYNTAX_ERROR by error0<FirSourceElement>()
+    val UNRESOLVED_LABEL by error0<FirSourceElement>()
+    val ILLEGAL_CONST_EXPRESSION by error0<FirSourceElement>()
+    val DESERIALIZATION_ERROR by error0<FirSourceElement>()
+    val INFERENCE_ERROR by error0<FirSourceElement>()
+    val NO_SUPERTYPE by error0<FirSourceElement>()
+    val TYPE_PARAMETER_AS_SUPERTYPE by error0<FirSourceElement>()
+    val ENUM_AS_SUPERTYPE by error0<FirSourceElement>()
+    val RECURSION_IN_SUPERTYPES by error0<FirSourceElement>()
+    val RECURSION_IN_IMPLICIT_TYPES by error0<FirSourceElement>()
+    val ERROR_FROM_JAVA_RESOLUTION by error0<FirSourceElement>()
+    val OTHER_ERROR by error0<FirSourceElement>()
+    val TYPE_MISMATCH by error2<FirSourceElement, ConeKotlinType, ConeKotlinType>()
+    val VARIABLE_EXPECTED by error0<FirSourceElement>()
+    val RETURN_NOT_ALLOWED by error0<FirSourceElement>()
+    val CONSTRUCTOR_IN_OBJECT by error0<FirSourceElement>()
+    val SUPER_IS_NOT_AN_EXPRESSION by error0<FirSourceElement>()
 
-    init {
-        registerExternalFactories()
-    }
+    val INAPPLICABLE_INFIX_MODIFIER by existing<FirSourceElement, String>(Errors.INAPPLICABLE_INFIX_MODIFIER)
 }

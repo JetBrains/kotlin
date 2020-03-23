@@ -85,8 +85,8 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
             if (firFile != null) {
                 val session = firFile.session
                 val collector = collectors.computeIfAbsent(session) { createCollector(session) }
-                val coneDiagnostics = collector.collectDiagnostics(firFile)
-                testFile.getActualText(coneDiagnostics, actualText)
+                val firDiagnostics = collector.collectDiagnostics(firFile)
+                testFile.getActualText(firDiagnostics, actualText)
             } else {
                 actualText.append(testFile.expectedText)
             }

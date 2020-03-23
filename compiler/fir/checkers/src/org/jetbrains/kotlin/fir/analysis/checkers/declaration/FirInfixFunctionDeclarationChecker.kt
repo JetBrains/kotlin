@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.onSource
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.isInfix
@@ -28,6 +27,6 @@ object FirInfixFunctionDeclarationChecker : FirDeclarationChecker<FirMemberDecla
     }
 
     private fun DiagnosticReporter.report(source: FirSourceElement?) {
-        source?.let { report(Errors.INAPPLICABLE_INFIX_MODIFIER.onSource(it, "Inapplicable infix modifier")) }
+        source?.let { report(FirErrors.INAPPLICABLE_INFIX_MODIFIER.on(it, "Inapplicable infix modifier")) }
     }
 }

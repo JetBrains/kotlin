@@ -18,9 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnosticWithParameters1
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
@@ -1493,7 +1492,7 @@ class RawFirBuilder(
                 is KtSuperExpression -> {
                     buildErrorNamedReference {
                         source = calleeExpression.toFirSourceElement()
-                        diagnostic = ConeSimpleDiagnosticWithParameters1("Super cannot be a callee", calleeExpression.text, DiagnosticKind.SuperNotAllowed)
+                        diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed)
                     } to null
                 }
 

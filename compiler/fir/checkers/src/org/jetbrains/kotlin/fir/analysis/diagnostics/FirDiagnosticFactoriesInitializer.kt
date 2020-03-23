@@ -7,13 +7,10 @@
 
 package org.jetbrains.kotlin.diagnostics
 
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import kotlin.reflect.full.memberProperties
-
-fun FirErrors.registerExternalFactories() {
-    val klass = FirErrors::class
-    for (property in klass.memberProperties) {
-        val factory = property.get(this) as? DiagnosticFactory<*> ?: continue
-        factory.name = property.name
-    }
+/**
+ * This methods should me in `org.jetbrains.kotlin.diagnostics` package
+ *   because of `DiagnosticFactory.setName` is package private
+ */
+fun DiagnosticFactory<*>.initializeName(name: String) {
+    this.name = name
 }

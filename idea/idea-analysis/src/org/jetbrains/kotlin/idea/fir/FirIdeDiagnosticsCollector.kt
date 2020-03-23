@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.idea.fir
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.registerAllComponents
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.psi.KtElement
 
 class FirIdeDiagnosticsCollector(session: FirSession, private val resolveState: FirModuleResolveState) : AbstractDiagnosticCollector(session) {
@@ -20,12 +20,11 @@ class FirIdeDiagnosticsCollector(session: FirSession, private val resolveState: 
     }
 
     private inner class Reporter : DiagnosticReporter() {
-        override fun report(diagnostic: FirDiagnostic?) {
-            if (diagnostic == null) return
-            val psi = diagnostic.source.psi as? KtElement ?: return
-            resolveState.record(psi, diagnostic.diagnostic)
+        override fun report(diagnostic: FirDiagnostic<*>?) {
+            if (diagnostic !is FirPsiDiagnostic<*>) return
+            val psi = diagnostic.element.psi as? KtElement ?: return
+            resolveState.record(psi, diagnostic.asPsiBasedDiagnostic())
         }
-
     }
 
     private lateinit var reporter: Reporter
@@ -34,7 +33,7 @@ class FirIdeDiagnosticsCollector(session: FirSession, private val resolveState: 
         reporter = Reporter()
     }
 
-    override fun getCollectedDiagnostics(): Iterable<FirDiagnostic> {
+    override fun getCollectedDiagnostics(): Iterable<FirDiagnostic<*>> {
         // Not necessary in IDE
         return emptyList()
     }

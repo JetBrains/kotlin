@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
@@ -196,7 +197,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         }
 
     protected fun TestFile.getActualText(
-        firDiagnostics: Iterable<FirDiagnostic>,
+        firDiagnostics: Iterable<FirDiagnostic<*>>,
         actualText: StringBuilder
     ): Boolean {
         val ktFile = this.ktFile
@@ -308,9 +309,12 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         return ok[0]
     }
 
-    private fun Iterable<FirDiagnostic>.toActualDiagnostic(root: PsiElement): List<ActualDiagnostic> {
+    private fun Iterable<FirDiagnostic<*>>.toActualDiagnostic(root: PsiElement): List<ActualDiagnostic> {
         val result = mutableListOf<ActualDiagnostic>()
-        filter { it.diagnostic.factory != FirErrors.SYNTAX_ERROR }.mapTo(result) { ActualDiagnostic(it.diagnostic, null, true) }
+        filter { it.factory != FirErrors.SYNTAX_ERROR }.mapTo(result) {
+            val oldDiagnostic = (it as FirPsiDiagnostic<*>).asPsiBasedDiagnostic()
+            ActualDiagnostic(oldDiagnostic, null, true)
+        }
         for (errorElement in AnalyzingUtils.getSyntaxErrorRanges(root)) {
             result.add(ActualDiagnostic(SyntaxErrorDiagnostic(errorElement), null, true))
         }

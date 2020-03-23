@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.components.*
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
@@ -27,7 +27,7 @@ abstract class AbstractDiagnosticCollector(
     override val session: FirSession,
     override val scopeSession: ScopeSession = ScopeSession()
 ) : SessionHolder {
-    fun collectDiagnostics(firFile: FirFile): Iterable<FirDiagnostic> {
+    fun collectDiagnostics(firFile: FirFile): Iterable<FirDiagnostic<*>> {
         if (!componentsInitialized) {
             throw IllegalStateException("Components are not initialized")
         }
@@ -37,7 +37,7 @@ abstract class AbstractDiagnosticCollector(
     }
 
     protected abstract fun initializeCollector()
-    protected abstract fun getCollectedDiagnostics(): Iterable<FirDiagnostic>
+    protected abstract fun getCollectedDiagnostics(): Iterable<FirDiagnostic<*>>
     abstract fun runCheck(block: (DiagnosticReporter) -> Unit)
 
     private val components: MutableList<AbstractDiagnosticCollectorComponent> = mutableListOf()
