@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.arrayElementType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
@@ -38,8 +35,11 @@ import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -72,10 +72,60 @@ class Fir2IrDeclarationStorage(
 
     private val localStorage = Fir2IrLocalStorage()
 
-    internal fun preCacheBuiltinClassConstructorIfAny(firClass: FirRegularClass, irClass: IrClass) {
-        val primaryConstructor = firClass.getPrimaryConstructorIfAny() ?: return
-        val irConstructor = irClass.constructors.firstOrNull() ?: return
-        constructorCache[primaryConstructor] = irConstructor
+    private fun areCompatible(firFunction: FirFunction<*>, irFunction: IrFunction): Boolean {
+        if (firFunction is FirSimpleFunction && irFunction is IrSimpleFunction) {
+            if (irFunction.name != firFunction.name) return false
+        }
+        return irFunction.valueParameters.size == firFunction.valueParameters.size &&
+                irFunction.valueParameters.zip(firFunction.valueParameters).all { (irParameter, firParameter) ->
+                    val irType = irParameter.type
+                    val firType = (firParameter.returnTypeRef as FirResolvedTypeRef).type
+                    if (irType is IrSimpleType) {
+                        when (val irClassifierSymbol = irType.classifier) {
+                            is IrTypeParameterSymbol -> {
+                                firType is ConeTypeParameterType
+                            }
+                            is IrClassSymbol -> {
+                                val irClass = irClassifierSymbol.owner
+                                firType is ConeClassLikeType && irClass.name == firType.lookupTag.name
+                            }
+                            else -> {
+                                false
+                            }
+                        }
+                    } else {
+                        false
+                    }
+                }
+    }
+
+    internal fun preCacheBuiltinClassMembers(firClass: FirRegularClass, irClass: IrClass) {
+        for (declaration in firClass.declarations) {
+            when (declaration) {
+                is FirProperty -> {
+                    val irProperty = irClass.properties.find { it.name == declaration.name }
+                    if (irProperty != null) {
+                        propertyCache[declaration] = irProperty
+                    }
+                }
+                is FirSimpleFunction -> {
+                    val irFunction = irClass.functions.find {
+                        areCompatible(declaration, it)
+                    }
+                    if (irFunction != null) {
+                        functionCache[declaration] = irFunction
+                    }
+                }
+                is FirConstructor -> {
+                    val irConstructor = irClass.constructors.find {
+                        areCompatible(declaration, it)
+                    }
+                    if (irConstructor != null) {
+                        constructorCache[declaration] = irConstructor
+                    }
+                }
+            }
+        }
     }
 
     fun registerFile(firFile: FirFile, irFile: IrFile) {

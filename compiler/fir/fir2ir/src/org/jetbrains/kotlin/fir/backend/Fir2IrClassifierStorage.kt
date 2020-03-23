@@ -53,7 +53,7 @@ class Fir2IrClassifierStorage(
             val irClass = irBuiltinSymbol.owner
             classCache[firClass] = irClass
             processClassHeader(firClass, irClass)
-            declarationStorage.preCacheBuiltinClassConstructorIfAny(firClass, irClass)
+            declarationStorage.preCacheBuiltinClassMembers(firClass, irClass)
         }
         for ((primitiveClassId, primitiveArrayId) in StandardClassIds.primitiveArrayTypeByElementType) {
             val firClass = ConeClassLikeLookupTagImpl(primitiveArrayId).toSymbol(session)!!.fir as FirRegularClass
@@ -61,7 +61,7 @@ class Fir2IrClassifierStorage(
             val irClass = irBuiltIns.primitiveArrayForType[irType]!!.owner
             classCache[firClass] = irClass
             processClassHeader(firClass, irClass)
-            declarationStorage.preCacheBuiltinClassConstructorIfAny(firClass, irClass)
+            declarationStorage.preCacheBuiltinClassMembers(firClass, irClass)
         }
     }
 
