@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.ir.builders.irCallOp
 import org.jetbrains.kotlin.ir.builders.irFalse
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.builders.irString
+import org.jetbrains.kotlin.ir.builders.parent
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.path
@@ -114,7 +115,7 @@ class PowerAssertCallTransformer(
           val title = when {
             messageArgument is IrConst<*> -> messageArgument
             messageArgument is IrStringConcatenation -> messageArgument
-            lambda != null -> lambda.inline()
+            lambda != null -> lambda.inline(parent)
             messageArgument != null -> {
               val invoke = messageArgument.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
               irCallOp(invoke.symbol, invoke.returnType, messageArgument)
