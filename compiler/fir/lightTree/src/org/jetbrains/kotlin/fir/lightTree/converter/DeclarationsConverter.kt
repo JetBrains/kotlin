@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.builder.generateAccessorsByDelegate
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -1012,9 +1013,17 @@ class DeclarationsConverter(
             }
         }
 
+        val sourceElement = getterOrSetter.toFirSourceElement()
+        if (block == null && expression == null) {
+            return FirDefaultPropertyAccessor
+                .createGetterOrSetter(sourceElement, baseSession, propertyTypeRef, modifiers.getVisibility(), isGetter)
+                .also {
+                    it.annotations += modifiers.annotations
+                }
+        }
         val target = FirFunctionTarget(labelName = null, isLambda = false)
         return buildPropertyAccessor {
-            source = getterOrSetter.toFirSourceElement()
+            source = sourceElement
             session = baseSession
             returnTypeRef = returnType ?: if (isGetter) propertyTypeRef else implicitUnitType
             symbol = FirPropertyAccessorSymbol()
