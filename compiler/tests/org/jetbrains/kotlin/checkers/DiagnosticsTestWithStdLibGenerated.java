@@ -1922,6 +1922,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/correctMember.kt");
             }
 
+            @TestMetadata("doubleColonExpressionToClassWithParameters.kt")
+            public void testDoubleColonExpressionToClassWithParameters() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/doubleColonExpressionToClassWithParameters.kt");
+            }
+
             @TestMetadata("elvisOperatorAgainstFlexibleType.kt")
             public void testElvisOperatorAgainstFlexibleType() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/elvisOperatorAgainstFlexibleType.kt");

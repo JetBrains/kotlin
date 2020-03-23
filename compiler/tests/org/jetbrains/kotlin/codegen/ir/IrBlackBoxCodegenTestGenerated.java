@@ -6140,6 +6140,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/dispatchResume.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("doubleColonExpressionsGenerationInBuilderInference.kt")
+        public void testDoubleColonExpressionsGenerationInBuilderInference() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/doubleColonExpressionsGenerationInBuilderInference.kt");
+        }
+
         @TestMetadata("emptyClosure.kt")
         public void testEmptyClosure_1_3() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/emptyClosure.kt", "kotlin.coroutines");
