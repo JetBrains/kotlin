@@ -15,13 +15,11 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
-import org.jetbrains.kotlin.idea.klib.getCompatibilityInfo
+import org.jetbrains.kotlin.idea.klib.createKlibPackageFragmentProvider
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
-import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
@@ -79,10 +77,14 @@ internal fun <M : ModuleInfo> createPackageFragmentProvider(
     moduleDescriptor: ModuleDescriptorImpl
 ): List<PackageFragmentProvider> = when (moduleInfo) {
     is JsKlibLibraryInfo -> {
-        val library = moduleInfo.kotlinLibrary
+        if (moduleInfo.compatibilityInfo.isCompatible) {
+            val library = moduleInfo.resolvedKotlinLibrary
+            val languageVersionSettings = container.get<LanguageVersionSettings>()
 
-        if (library.getCompatibilityInfo().isCompatible) {
-            val metadataFactories = KlibMetadataFactories({ DefaultBuiltIns.Instance }, DynamicTypeDeserializer)
+            val metadataFactories = KlibMetadataFactories(
+                { DefaultBuiltIns.Instance },
+                DynamicTypeDeserializer
+            )
 
             val klibMetadataModuleDescriptorFactory = KlibMetadataModuleDescriptorFactoryImpl(
                 metadataFactories.DefaultDescriptorFactory,
@@ -91,19 +93,14 @@ internal fun <M : ModuleInfo> createPackageFragmentProvider(
                 metadataFactories.platformDependentTypeTransformer
             )
 
-            val packageFragmentNames = parseModuleHeader(library.moduleHeaderData).packageFragmentNameList
-
-            val klibBasedPackageFragmentProvider = klibMetadataModuleDescriptorFactory.createPackageFragmentProvider(
-                library,
-                packageAccessHandler = null,
-                packageFragmentNames = packageFragmentNames,
-                storageManager = moduleContext.storageManager,
-                moduleDescriptor = moduleDescriptor,
-                configuration = CompilerDeserializationConfiguration(container.get()),
-                compositePackageFragmentAddend = null
+            val klibBasedPackageFragmentProvider = library.createKlibPackageFragmentProvider(
+                moduleContext.storageManager,
+                klibMetadataModuleDescriptorFactory,
+                languageVersionSettings,
+                moduleDescriptor
             )
 
-            listOf(klibBasedPackageFragmentProvider)
+            listOfNotNull(klibBasedPackageFragmentProvider)
         } else {
             emptyList()
         }
