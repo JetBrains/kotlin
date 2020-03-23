@@ -251,7 +251,10 @@ public class BuildOutputService implements BuildViewService {
       final int colonIndex = line1.indexOf(':');
       if (colonIndex > 0) {
         String part1 = line1.substring(0, colonIndex).trim();
-        // jikes
+        // extract symbol information from the compiler message of the following template:
+        // java: cannot find symbol
+        //  symbol:   class AClass
+        //  location: class AnotherClass
         if ("symbol".equals(part1)) {
           String symbol = line1.substring(colonIndex + 1).trim();
           message = line0 + " " + symbol;
