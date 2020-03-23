@@ -25,10 +25,7 @@ open class RunJvmTask : JavaExec() {
     @Option(option = "verbose", description = "Verbose mode of running benchmarks")
     var verbose: Boolean = false
 
-    override fun configure(configureClosure: Closure<Any>): Task {
-        return super.configure(configureClosure)
-    }
-
+    @JvmOverloads
     private fun executeTask(output: java.io.OutputStream? = null) {
         val filterArgs = filter.splitCommaSeparatedOption("-f")
         val filterRegexArgs = filterRegex.splitCommaSeparatedOption("-fr")
@@ -37,11 +34,11 @@ open class RunJvmTask : JavaExec() {
         if (verbose) {
             args("-v")
         }
-        exec()
+        super.exec()
     }
 
     @TaskAction
-    fun run() {
+    override fun exec() {
         if (outputFileName != null)
             File(outputFileName).outputStream().use { output -> executeTask(output) }
         else

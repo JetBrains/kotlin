@@ -65,7 +65,7 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
 
     override fun Project.configureJvmTask(): Task {
         return tasks.create("jvmRun", RunJvmTask::class.java) { task ->
-            task.dependsOn("build")
+            task.dependsOn("jvmJar")
             val mainCompilation = kotlin.jvm().compilations.getByName("main")
             val runtimeDependencies = configurations.getByName(mainCompilation.runtimeDependencyConfigurationName)
             task.classpath(files(mainCompilation.output.allOutputs, runtimeDependencies))
