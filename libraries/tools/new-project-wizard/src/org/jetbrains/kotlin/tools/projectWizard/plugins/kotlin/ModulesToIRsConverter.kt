@@ -65,12 +65,13 @@ class ModulesToIRsConverter(
 
     fun Writer.createBuildFiles(): TaskResult<List<BuildFileIR>> = with(data) {
         val needExplicitRootBuildFile = !needFlattening
-        val parentModuleHasTransitivelySpecifiedKotlinVersion = allModules.any { modules ->
-            modules.configurator == AndroidSinglePlatformModuleConfigurator
-        }
-        val initialState = ModulesToIrsState(projectPath, parentModuleHasTransitivelySpecifiedKotlinVersion)
-        rootModules.mapSequence {
-            createBuildFileForModule(it, initialState)
+        val initialState = ModulesToIrsState(projectPath, parentModuleHasTransitivelySpecifiedKotlinVersion = false)
+        rootModules.mapSequence { module ->
+            val parentModuleHasKotlinVersion = module.configurator == AndroidSinglePlatformModuleConfigurator
+            createBuildFileForModule(
+                module,
+                initialState.copy(parentModuleHasTransitivelySpecifiedKotlinVersion = parentModuleHasKotlinVersion)
+            )
         }.map { it.flatten() }.map { buildFiles ->
             if (needExplicitRootBuildFile) buildFiles + createRootBuildFile()
             else buildFiles
