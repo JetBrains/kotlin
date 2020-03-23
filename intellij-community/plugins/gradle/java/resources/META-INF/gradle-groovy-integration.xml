@@ -51,7 +51,7 @@
     <positionManagerDelegate implementation="org.jetbrains.plugins.gradle.config.GradlePositionManager"/>
     <scriptTypeDetector implementation="org.jetbrains.plugins.gradle.config.GradleScriptTypeDetector"/>
     <importContributor implementation="org.jetbrains.plugins.gradle.config.GradleDefaultImportContributor"/>
-    <variableEnhancer order="first" implementation="org.jetbrains.plugins.gradle.service.resolve.GradleClosureAsAnonymousParameterEnhancer"/>
+    <variableEnhancer order="first" implementation="org.jetbrains.plugins.gradle.service.resolve.GradleClosureSamParameterEnhancer"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleSettingsScriptContributor"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleScriptMembersContributor"/>
     <membersContributor implementation="org.jetbrains.plugins.gradle.service.resolve.GradleProjectExtensionContributor"/>
