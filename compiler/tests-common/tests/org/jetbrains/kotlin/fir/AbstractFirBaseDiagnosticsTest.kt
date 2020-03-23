@@ -46,13 +46,16 @@ import java.util.*
 abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
     override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
         try {
-            analyzeAndCheckUnhandled(testDataFile, files)
+            analyzeAndCheckUnhandled(testDataFile, files, useLightTree)
         } catch (t: AssertionError) {
             throw t
         } catch (t: Throwable) {
             throw t
         }
     }
+
+    protected open val useLightTree: Boolean
+        get() = false
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         Extensions.getArea(environment.project)

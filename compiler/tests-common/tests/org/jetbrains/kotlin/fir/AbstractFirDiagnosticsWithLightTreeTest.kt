@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-abstract class AbstractFirDiagnosticsWithLightTreeTest : AbstractFirDiagnosticsTest(), FirDiagnosticsTestLightTreeHelper {
+abstract class AbstractFirDiagnosticsWithLightTreeTest : AbstractFirDiagnosticsTest() {
     override fun doTest(filePath: String) {
         val file = createTestFileFromPath(filePath)
         val expectedText = KotlinTestUtils.doLoadFile(file)
@@ -18,7 +18,6 @@ abstract class AbstractFirDiagnosticsWithLightTreeTest : AbstractFirDiagnosticsT
         super.doTest(filePath)
     }
 
-    override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
-        super<FirDiagnosticsTestLightTreeHelper>.analyzeAndCheck(testDataFile, files)
-    }
+    override val useLightTree: Boolean
+        get() = true
 }
