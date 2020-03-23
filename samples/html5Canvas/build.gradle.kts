@@ -44,7 +44,7 @@ val jsinterop by tasks.creating(Exec::class) {
     workingDir = projectDir
 
     val ext = if (isWindows) ".bat" else ""
-    val distributionPath = project.properties["org.jetbrains.kotlin.native.home"] as String?
+    val distributionPath = project.properties["kotlin.native.home"] as String?
 
     if (distributionPath != null) {
         val jsinteropCommand = file(distributionPath).resolve("bin").resolve("jsinterop$ext")
@@ -66,7 +66,7 @@ val jsinterop by tasks.creating(Exec::class) {
                 """
                     |
                     |Kotlin/Native distribution path must be specified to build the JavaScript interop.
-                    |Use 'org.jetbrains.kotlin.native.home' project property to specify it.
+                    |Use 'kotlin.native.home' project property to specify it.
                 """.trimMargin()
             )
         }

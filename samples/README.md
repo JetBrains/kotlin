@@ -30,7 +30,7 @@ the sources is used. So you must build the compiler and the necessary platform l
 `./gradlew bundle` from the Kotlin/Native root directory before building samples (see
 [README.md](https://github.com/JetBrains/kotlin-native/blob/master/README.md) for details).
 
-Alternatively you may remove a line `org.jetbrains.kotlin.native.home=<...>` from all `gradle.properties` files.
+Alternatively you may remove a line `kotlin.native.home=<...>` from all `gradle.properties` files.
 In this case the Gradle plugin downloads and uses a default compiler for this plugin version.
 
 One may also build all the samples with one command. To build them using Gradle run:
