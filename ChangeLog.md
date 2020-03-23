@@ -7,8 +7,6 @@
 - [`KT-36095`](https://youtrack.jetbrains.com/issue/KT-36095) 201: False positive OVERLOAD_RESOLUTION_AMBIGUITY with Java `Enum.valueOf` and `Enum.values()` reference
 - [`KT-37040`](https://youtrack.jetbrains.com/issue/KT-37040) 'No explicit visibility in API mode' should not be reported on enum members
 - [`KT-37204`](https://youtrack.jetbrains.com/issue/KT-37204) AssertionError: "No delegated property metadata owner for" with lazy inside inline function
-- [`KT-37546`](https://youtrack.jetbrains.com/issue/KT-37546) NI: high memory and CPU consumption due to creating useless captured types (storing in approximated types cache, unneeded computations)
-- [`KT-37579`](https://youtrack.jetbrains.com/issue/KT-37579) NI: inconsistent behaviour with OI around implicit invoke convention after safe call with additional implicit receiver
 
 ### Docs & Examples
 
@@ -35,7 +33,6 @@
 
 - [`KT-36478`](https://youtrack.jetbrains.com/issue/KT-36478) IDE suggests to use 'OptIn' annotation when it is not available in the used version of kotlin-stdlib
 - [`KT-37294`](https://youtrack.jetbrains.com/issue/KT-37294) False positive "Unused unary operator" on negative long annotation value
-- [`KT-37609`](https://youtrack.jetbrains.com/issue/KT-37609) NoClassDefFoundError: Could not initialize class org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages in master
 
 ### IDE. Navigation
 
