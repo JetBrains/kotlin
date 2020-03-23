@@ -129,7 +129,8 @@ abstract class YarnBasics : NpmApi {
 
                 src.resolvedVersion = deps.version
                 src.integrity = deps.integrity
-                src.dependencies.addAll(deps.dependencies.map { dep ->
+
+                deps.dependencies.mapTo(src.dependencies) { dep ->
                     val scopedName = dep.scopedName
                     val child = NpmDependency(
                         project = src.project,
@@ -141,7 +142,7 @@ abstract class YarnBasics : NpmApi {
                     resolveRecursively(child)
 
                     child
-                })
+                }
 
                 return src
             }
