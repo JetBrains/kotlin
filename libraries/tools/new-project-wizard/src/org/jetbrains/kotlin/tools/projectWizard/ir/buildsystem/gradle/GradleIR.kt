@@ -22,7 +22,15 @@ data class RawGradleIR(
     override fun GradlePrinter.renderGradle() = renderer()
 }
 
-data class CreateGradleValueIR(val name: String, val body: GradleIR) : GradleIR {
+fun rawIR(ir: String) = RawGradleIR { +ir }
+fun rawIR(ir: GradlePrinter.() -> String) = RawGradleIR { +ir() }
+
+fun MutableList<BuildSystemIR>.addRawIR(ir: GradlePrinter.() -> String) {
+    add(RawGradleIR { +ir() })
+}
+
+
+class CreateGradleValueIR(val name: String, val body: GradleIR) : GradleIR {
     override fun GradlePrinter.renderGradle() {
         when (dsl) {
             GradlePrinter.GradleDsl.KOTLIN -> {
@@ -46,6 +54,8 @@ data class GradleCallIr(
     val name: String,
     val parameters: List<BuildSystemIR> = emptyList()
 ) : GradleIR {
+    constructor(name: String, vararg parameters: BuildSystemIR) : this(name, parameters.toList())
+
     override fun GradlePrinter.renderGradle() {
         call(name, forceBrackets = true) {
             parameters.list { it.render(this) }
@@ -66,8 +76,6 @@ data class GradleNewInstanceCall(
         }
     }
 }
-
-
 
 
 data class GradleSectionIR(
@@ -133,6 +141,14 @@ data class GradleImportIR(val import: String) : GradleIR {
     override fun GradlePrinter.renderGradle() {
         +"import "
         +import
+    }
+}
+
+data class GradleBinaryExpressionIR(val left: BuildSystemIR, val op: String, val right: BuildSystemIR) : GradleIR {
+    override fun GradlePrinter.renderGradle() {
+        left.render(this)
+        +" $op "
+        right.render(this)
     }
 }
 

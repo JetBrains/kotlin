@@ -52,6 +52,9 @@ inline fun <A : Any, B : Any, R : Any> TaskResult<A>.mappendM(
 infix fun <T : Any> TaskResult<*>.andThen(other: TaskResult<T>): TaskResult<T> =
     mappendM(other) { _, _ -> other }
 
+infix fun <T : Any> TaskResult<T>.andThenIgnoring(other: TaskResult<Unit>): TaskResult<T> =
+    mappendM(other) { _, _ -> this }
+
 operator fun <T : Any> TaskResult<List<T>>.plus(other: TaskResult<List<T>>): TaskResult<Unit> =
     mappend(other) { _, _ -> Unit }
 

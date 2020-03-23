@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin
 
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.StdlibType
+import java.util.*
 
 //TODO maybe split into interfaces like it made with module configurators
 @Suppress("EnumEntryName")
@@ -32,6 +33,9 @@ enum class ModuleSubType(val moduleType: ModuleType) {
     mingwX64(ModuleType.native), mingwX86(ModuleType.native),
     common(ModuleType.common)
 }
+
+val ModuleSubType.isIOS: Boolean
+    get() = this in EnumSet.of(ModuleSubType.iosX64, ModuleSubType.iosArm32, ModuleSubType.iosArm64)
 
 fun ModuleType.correspondingStdlib(): StdlibType? = when (this) {
     ModuleType.jvm -> StdlibType.StdlibJdk8

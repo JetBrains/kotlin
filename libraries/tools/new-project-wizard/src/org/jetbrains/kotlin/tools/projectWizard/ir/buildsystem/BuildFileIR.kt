@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.MavenPrinter
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import java.nio.file.Path
 
 interface FileIR : BuildSystemIR, IrsOwner
@@ -20,6 +21,7 @@ data class BuildFileIR(
     val name: String,
     val directoryPath: Path,
     val modules: ModulesStructureIR,
+    val fromModules: List<Module>,
     val pom: PomIR,
     override val irs: PersistentList<BuildSystemIR>
 ) : FileIR {

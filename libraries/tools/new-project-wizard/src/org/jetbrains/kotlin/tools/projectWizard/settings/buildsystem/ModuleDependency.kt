@@ -11,9 +11,13 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyType
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.GradleRootProjectDependencyIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleDependencyIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.isIOS
+import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
+import kotlin.collections.buildList
 import kotlin.reflect.KClass
 
 sealed class ModuleDependencyType(
@@ -41,6 +45,9 @@ sealed class ModuleDependencyType(
     open fun SettingsWriter.runArbitraryTask(from: Module, to: Module, data: ModulesToIrConversionData): TaskResult<Unit> =
         UNIT_SUCCESS
 
+    open fun Reader.createToIRs(from: Module, to: Module, data: ModulesToIrConversionData): TaskResult<List<BuildSystemIR>> =
+        Success(emptyList())
+
     object JVMSinglePlatformToJVMSinglePlatform : ModuleDependencyType(
         from = JvmSinglePlatformModuleConfigurator::class,
         to = JvmSinglePlatformModuleConfigurator::class
@@ -66,6 +73,65 @@ sealed class ModuleDependencyType(
             IOSSinglePlatformModuleConfigurator.dependentModule.reference
                 .setValue(IOSSinglePlatformModuleConfigurator.DependentModuleReference(to))
             UNIT_SUCCESS
+        }
+
+        @OptIn(ExperimentalStdlibApi::class)
+        override fun Reader.createToIRs(from: Module, to: Module, data: ModulesToIrConversionData): TaskResult<List<BuildSystemIR>> {
+            val iosTargetName = to.subModules.firstOrNull { module ->
+                module.configurator.safeAs<SimpleTargetConfigurator>()?.moduleSubType?.isIOS == true
+            }?.name ?: return Failure(InvalidModuleDependencyError(from, to, "Module ${to.name} should contain at least one iOS target"))
+
+            val packForXcodeTask = GradleConfigureTaskIR(GradleByClassTasksCreateIR("packForXcode", "Sync")) {
+                add(GradleAssignmentIR("group", GradleStringConstIR("build")))
+                add(
+                    CreateGradleValueIR(
+                        "mode",
+                        GradleBinaryExpressionIR(
+                            RawGradleIR { +"System.getenv("; +"CONFIGURATION".quotified; +")" },
+                            "?:",
+                            GradleStringConstIR("DEBUG")
+                        )
+                    )
+                )
+
+                add(
+                    CreateGradleValueIR(
+                        "framework",
+                        RawGradleIR {
+                            +"kotlin.targets"
+                            when (dsl) {
+                                GradlePrinter.GradleDsl.KOTLIN -> +""".getByName<KotlinNativeTarget>("$iosTargetName")"""
+                                GradlePrinter.GradleDsl.GROOVY -> +"['$iosTargetName']"
+                            }
+                            +".binaries.getFramework(mode)"
+
+                        }
+                    )
+                )
+                addRawIR { "inputs.property(${"mode".quotified}, mode)" }
+                addRawIR { "dependsOn(framework.linkTask)" }
+                add(
+                    CreateGradleValueIR(
+                        "targetDir",
+                        GradleCallIr("File", rawIR("buildDir"), GradleStringConstIR("xcode-frameworks"))
+                    )
+                )
+                addRawIR { "from({ framework.outputDirectory })" }
+                addRawIR { "into(targetDir)" }
+            }
+
+            val dependency = rawIR {
+                when (dsl) {
+                    GradlePrinter.GradleDsl.KOTLIN -> """tasks.getByName("build").dependsOn(packForXcode)"""
+                    GradlePrinter.GradleDsl.GROOVY -> "tasks['build'].dependsOn(packForXcode)"
+                }
+            }
+
+            return buildList {
+                add(packForXcodeTask)
+                add(dependency)
+                add(GradleImportIR("org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget"))
+            }.asSuccess()
         }
     }
 

@@ -58,6 +58,9 @@ class ModulesToIRsConverter(
             return data.isSingleRootModuleMode
         }
 
+    private val irsToAddToModules = hashMapOf<Module, MutableList<BuildSystemIR>>()
+    private val moduleToBuildFile = hashMapOf<Module, BuildFileIR>()
+
     private fun calculatePathForModule(module: Module, rootPath: Path) = when {
         needFlattening && module.isRootModule -> data.projectPath
         else -> rootPath / module.name
@@ -75,6 +78,11 @@ class ModulesToIRsConverter(
         }.map { it.flatten() }.map { buildFiles ->
             if (needExplicitRootBuildFile) buildFiles + createRootBuildFile()
             else buildFiles
+        }.map { buildFiles ->
+            buildFiles.map { buildFile ->
+                val irs = buildFile.fromModules.flatMap { irsToAddToModules[it]?.toList() ?: emptyList() }
+                buildFile.withIrs(irs)
+            }
         }
     }
 
@@ -83,6 +91,7 @@ class ModulesToIRsConverter(
             projectName,
             projectPath,
             RootFileModuleStructureIR(persistentListOf()),
+            emptyList(),
             pomIr,
             rootBuildFileIrs.toPersistentList()
         )
@@ -112,6 +121,7 @@ class ModulesToIRsConverter(
             with(dependencyType) {
                 @Suppress("DEPRECATION")
                 with(unsafeSettingWriter) { runArbitraryTask(module, to, data).ensure() }
+                irsToAddToModules.getOrPut(to) { mutableListOf() } += createToIRs(module, to, data).get()
                 createDependencyIrs(module, to, data)
             }
         }.sequence().map { it.flatten() }
@@ -155,9 +165,12 @@ class ModulesToIRsConverter(
                     moduleIr,
                     persistentListOf()
                 ),
+                listOf(module),
                 data.pomIr.copy(artifactId = module.name),
                 createBuildFileIRs(module, state)
-            )
+            ).also {
+                moduleToBuildFile[module] = it
+            }
         }
 
         module.subModules.mapSequence { subModule ->
@@ -193,12 +206,19 @@ class ModulesToIRsConverter(
                 targetModuleIrs,
                 persistentListOf()
             ),
+            module.subModules + module,
             pomIr,
             buildPersistenceList {
                 +createBuildFileIRs(module, state)
                 module.subModules.forEach { +createBuildFileIRs(it, state) }
             }
-        ).asSingletonList().asSuccess()
+        ).also { buildFile ->
+            moduleToBuildFile[module] = buildFile
+            module.subModules.forEach { subModule ->
+                moduleToBuildFile[subModule] = buildFile
+            }
+        }.asSingletonList().asSuccess()
+
     }
 
     private fun Writer.createTargetModule(target: Module, modulePath: Path): MultiplatformModuleIR {
