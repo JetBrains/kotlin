@@ -426,6 +426,8 @@ class IrInterpreter(irModule: IrModuleFragment) {
             }
         }
 
+        if (irFunction.isInline || irFunction.isLocal) newFrame.addAll(data.getAll())
+
         val isWrapper = dispatchReceiver is Wrapper && rawExtensionReceiver == null
         val isInterfaceDefaultMethod = irFunction.body != null && (irFunction.parent as? IrClass)?.isInterface == true
         val code = when {
