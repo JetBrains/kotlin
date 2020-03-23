@@ -306,6 +306,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
     for (CompletionContributor contributor : CompletionContributor.forParameters(parameters)) {
       if (!myLookup.isCalculating() && !myLookup.isVisible()) return;
 
+      //noinspection deprecation
       String s = contributor.advertise(parameters);
       if (s != null) {
         addAdvertisement(s, null);
@@ -644,7 +645,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
   }
 
   void restorePrefix(@NotNull Runnable customRestore) {
-    WriteCommandAction.runWriteCommandAction(getProject(), () -> {
+    WriteCommandAction.runWriteCommandAction(getProject(), null, null, () -> {
       setMergeCommand();
       customRestore.run();
     });
@@ -856,6 +857,9 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
     ourInsertSingleItemTimeSpan = timeSpan;
   }
 
+  /**
+   * @deprecated intended for Rider
+   */
   @Deprecated
   public static void setAutopopupTriggerTime(int timeSpan) {
     ourShowPopupGroupingTime = timeSpan;
