@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.PARTIAL
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
@@ -53,7 +54,8 @@ class VariableFixationFinder(
     enum class TypeVariableFixationReadiness {
         FORBIDDEN,
         WITHOUT_PROPER_ARGUMENT_CONSTRAINT, // proper constraint from arguments -- not from upper bound for type parameters
-        WITH_COMPLEX_DEPENDENCY, // if type variable T has constraint with non fixed type variable inside (non-top-level): T <: Foo<S>
+        WITH_COMPLEX_DEPENDENCY_LOWER, // if type variable T has constraint with non fixed type variable inside (non-top-level): T <: Foo<S>
+        WITH_COMPLEX_DEPENDENCY_UPPER, // Foo<S> <: T
         WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS, // proper trivial constraint from arguments, Nothing <: T
         RELATED_TO_ANY_OUTPUT_TYPE,
         READY_FOR_FIXATION,
@@ -67,7 +69,8 @@ class VariableFixationFinder(
         !notFixedTypeVariables.contains(variable) ||
                 dependencyProvider.isVariableRelatedToTopLevelType(variable) -> TypeVariableFixationReadiness.FORBIDDEN
         !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
-        hasDependencyToOtherTypeVariables(variable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
+        hasDependencyToOtherTypeVariables(variable, ConstraintKind.LOWER) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_LOWER
+        hasDependencyToOtherTypeVariables(variable, ConstraintKind.UPPER) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_UPPER
         variableHasTrivialOrNonProperConstraints(variable) -> TypeVariableFixationReadiness.WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS
         dependencyProvider.isVariableRelatedToAnyOutputType(variable) -> TypeVariableFixationReadiness.RELATED_TO_ANY_OUTPUT_TYPE
         isReified(variable) -> TypeVariableFixationReadiness.READY_FOR_FIXATION_REIFIED
@@ -118,8 +121,9 @@ class VariableFixationFinder(
         }
     }
 
-    private fun Context.hasDependencyToOtherTypeVariables(typeVariable: TypeConstructorMarker): Boolean {
+    private fun Context.hasDependencyToOtherTypeVariables(typeVariable: TypeConstructorMarker, kind: ConstraintKind): Boolean {
         for (constraint in notFixedTypeVariables[typeVariable]?.constraints ?: return false) {
+            if (constraint.kind != kind || constraint.kind == ConstraintKind.EQUALITY) continue
             if (constraint.type.lowerBoundIfFlexible().argumentsCount() != 0 && constraint.type.contains { notFixedTypeVariables.containsKey(it.typeConstructor()) }) {
                 return true
             }
