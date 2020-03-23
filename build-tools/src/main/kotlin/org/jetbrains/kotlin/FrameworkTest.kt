@@ -33,7 +33,13 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
     lateinit var frameworkNames: List<String>
 
     @Input
+    lateinit var frameworkArtifactNames: List<String>
+
+    @Input
     var fullBitcode: Boolean = false
+
+    @Input
+    var codesign: Boolean = true
 
     val testOutput: String = project.testOutputFramework
 
@@ -57,6 +63,11 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
         }
         check(::testName.isInitialized) { "Test name should be set" }
         check(::frameworkNames.isInitialized) { "Framework names should be set" }
+
+        if (!::frameworkArtifactNames.isInitialized) {
+            frameworkArtifactNames = frameworkNames
+        }
+
         frameworkNames.forEach { frameworkName ->
             val compileTask = project.tasks.getByName("compileKonan$frameworkName")
             doBeforeBuild?.let { compileTask.doFirst(it) }
@@ -71,11 +82,11 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
 
     private fun buildTestExecutable() {
         val frameworkParentDirPath = "$testOutput/$testName/${project.testTarget.name}"
-        frameworkNames.forEach { frameworkName ->
+        frameworkArtifactNames.forEach { frameworkName ->
             val frameworkPath = "$frameworkParentDirPath/$frameworkName.framework"
             val frameworkBinaryPath = "$frameworkPath/$frameworkName"
             validateBitcodeEmbedding(frameworkBinaryPath)
-            codesign(project, frameworkPath)
+            if (codesign) codesign(project, frameworkPath)
         }
 
         // create a test provider and get main entry point

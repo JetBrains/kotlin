@@ -3882,6 +3882,38 @@ if (isAppleTarget(project)) {
         }*.absolutePath
     }
 
+    task testObjCExportStatic(type: FrameworkTest) {
+        final String frameworkName = 'KtStatic'
+        final String frameworkArtifactName = 'Kt'
+        testName = "ObjCExportStatic"
+        frameworkNames = [frameworkName]
+        frameworkArtifactNames = [frameworkArtifactName]
+
+        codesign = false
+
+        final String dir = "$testOutputFramework/$testName"
+
+        konanArtifacts {
+            framework(frameworkName, targets: [target.name]) {
+                srcDir 'objcexport'
+                baseDir dir
+
+                if (!useCustomDist) {
+                    dependsOn ":${target.name}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
+                }
+
+                extraOpts "-Xembed-bitcode-marker"
+                extraOpts "-Xstatic-framework"
+                extraOpts project.globalTestArgs
+
+                artifactName frameworkArtifactName
+            }
+        }
+        swiftSources = fileTree('objcexport') {
+            include '*.swift'
+        }*.absolutePath
+    }
+
     task testValuesGenericsFramework(type: FrameworkTest) {
         final String frameworkName = 'ValuesGenerics'
         testName = frameworkName
