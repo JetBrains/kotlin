@@ -1757,6 +1757,7 @@
                      enabledByDefault="false"
                      level="WEAK WARNING"
                      language="kotlin"
+                     runForWholeFile="true"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceCollectionCountWithSizeInspection"
@@ -1982,6 +1983,7 @@
                      enabledByDefault="false"
                      level="WARNING"
                      language="kotlin"
+                     runForWholeFile="true"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.refactoring.move.changePackage.PackageDirectoryMismatchInspection"

@@ -111,8 +111,6 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
         }
     }
 
-    override fun runForWholeFile() = true
-
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<out ProblemDescriptor>? {
         if (file !is KtFile) return null
         val data = analyzeImports(file) ?: return null

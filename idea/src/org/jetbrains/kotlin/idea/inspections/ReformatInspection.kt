@@ -38,8 +38,6 @@ class ReformatInspection : LocalInspectionTool() {
     @XmlAttribute
     var processChangedFilesOnly: Boolean = false
 
-    override fun runForWholeFile(): Boolean = true
-
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<out ProblemDescriptor>? {
         return checkFile(file, isOnTheFly)?.toTypedArray()
     }

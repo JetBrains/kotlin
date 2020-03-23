@@ -198,8 +198,6 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         }
     }
 
-    override fun runForWholeFile() = true
-
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return namedDeclarationVisitor(fun(declaration) {
             ProgressManager.checkCanceled()

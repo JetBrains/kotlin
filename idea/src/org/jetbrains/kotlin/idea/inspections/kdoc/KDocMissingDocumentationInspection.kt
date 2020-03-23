@@ -52,8 +52,6 @@ class KDocMissingDocumentationInspection : AbstractKotlinInspection() {
 
         }
 
-    override fun runForWholeFile(): Boolean = true
-
     class AddDocumentationFix : LocalQuickFix {
         override fun getName(): String = KotlinBundle.message("add.documentation.fix.text")
 
