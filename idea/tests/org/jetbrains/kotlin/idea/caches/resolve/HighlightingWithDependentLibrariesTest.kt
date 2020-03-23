@@ -15,9 +15,12 @@ import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.junit.runner.RunWith
 import java.io.File
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class HighlightingWithDependentLibrariesTest : KotlinLightCodeInsightFixtureTestCase() {
     private val TEST_DATA_PATH = PluginTestCaseBase.TEST_DATA_DIR + "/highlightingWithDependentLibraries"
 
