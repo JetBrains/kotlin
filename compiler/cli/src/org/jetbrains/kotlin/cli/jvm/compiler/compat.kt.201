@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 fun setupIdeaStandaloneExecution() {
-    System.getProperties().setProperty("idea.home.path",  System.getProperty("java.io.tmpdir"))
+    System.getProperties().setProperty("idea.plugins.compatible.build", "201.6487")
     System.getProperties().setProperty("project.structure.add.tools.jar.to.new.jdk", "false")
     System.getProperties().setProperty("psi.track.invalidation", "true")
     System.getProperties().setProperty("psi.incremental.reparse.depth.limit", "1000")
