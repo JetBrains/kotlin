@@ -174,12 +174,14 @@ public class CodeStyleSchemesConfigurable extends SearchableConfigurable.Parent.
     super.apply();
     myModel.apply();
 
-    for (Configurable panel : myPanels) {
-      if (panel instanceof CodeStyleConfigurableWrapper) {
-        ((CodeStyleConfigurableWrapper)panel).applyPanel();
-      }
-      else {
-        panel.apply();
+    if (myPanels != null) {
+      for (Configurable panel : myPanels) {
+        if (panel instanceof CodeStyleConfigurableWrapper) {
+          ((CodeStyleConfigurableWrapper)panel).applyPanel();
+        }
+        else {
+          panel.apply();
+        }
       }
     }
 
@@ -255,8 +257,10 @@ public class CodeStyleSchemesConfigurable extends SearchableConfigurable.Parent.
   @Override
   public boolean isModified() {
     if (myModel.containsModifiedCodeStyleSettings()) return true;
-    for (Configurable panel : myPanels) {
-      if (panel.isModified()) return true;
+    if (myPanels != null) {
+      for (Configurable panel : myPanels) {
+        if (panel.isModified()) return true;
+      }
     }
     boolean schemeListModified = myModel.isSchemeListModified();
     if (schemeListModified) {
