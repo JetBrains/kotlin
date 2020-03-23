@@ -40,9 +40,13 @@ fun VirtualFile.isKlibLibraryRootForPlatform(targetPlatform: TargetPlatform): Bo
 
     // run check for library root too
     // this is necessary to recognize old style KLIBs that do not have components, and report tem to user appropriately
+    // (relevant only for Kotlin/Native KLIBs)
     val requestedBuiltInsPlatform = targetPlatform.toBuiltInsPlatform()
-    return checkKlibComponent(this, requestedBuiltInsPlatform) ||
-            children?.any { checkKlibComponent(it, requestedBuiltInsPlatform) } == true
+    if (requestedBuiltInsPlatform == BuiltInsPlatform.NATIVE && checkKlibComponent(this, requestedBuiltInsPlatform)) {
+        return true
+    }
+
+    return children?.any { checkKlibComponent(it, requestedBuiltInsPlatform) } == true
 }
 
 private fun checkKlibComponent(componentFile: VirtualFile, requestedBuiltInsPlatform: BuiltInsPlatform): Boolean {
