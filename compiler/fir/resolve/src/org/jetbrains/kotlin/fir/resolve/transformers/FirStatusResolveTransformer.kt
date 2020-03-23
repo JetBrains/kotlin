@@ -116,65 +116,6 @@ class FirStatusResolveTransformer(override val session: FirSession) :
     override fun transformBlock(block: FirBlock, data: FirDeclarationStatus?): CompositeTransformResult<FirStatement> {
         return block.compose()
     }
-
-    companion object {
-        fun FirDeclaration.resolveStatus(
-            status: FirDeclarationStatus,
-            containingClass: FirClass<*>?,
-            isLocal: Boolean
-        ): FirDeclarationStatus {
-            if (status.visibility == Visibilities.UNKNOWN || status.modality == null) {
-                val visibility = when (status.visibility) {
-                    Visibilities.UNKNOWN -> if (isLocal) Visibilities.LOCAL else resolveVisibility(containingClass)
-                    else -> status.visibility
-                }
-                val modality = status.modality ?: resolveModality(containingClass)
-                val containerEffectiveVisibility = containingClass?.effectiveVisibility ?: FirEffectiveVisibility.Public
-                val effectiveVisibility =
-                    visibility.firEffectiveVisibility(session, this as? FirMemberDeclaration).lowerBound(containerEffectiveVisibility)
-                return (status as FirDeclarationStatusImpl).resolved(visibility, effectiveVisibility, modality)
-            }
-            return status
-        }
-
-        private fun FirDeclaration.resolveVisibility(containingClass: FirClass<*>?): Visibility {
-            if (this is FirConstructor) {
-                if (containingClass != null &&
-                    (containingClass.classKind == ClassKind.ENUM_CLASS || containingClass.modality == Modality.SEALED)
-                ) {
-                    return Visibilities.PRIVATE
-                }
-            }
-            return Visibilities.PUBLIC // TODO (overrides)
-        }
-
-        private fun FirDeclaration.resolveModality(containingClass: FirClass<*>?): Modality {
-            return when (this) {
-                is FirRegularClass -> if (classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
-                is FirCallableMemberDeclaration<*> -> {
-                    when {
-                        containingClass == null -> Modality.FINAL
-                        containingClass.classKind == ClassKind.INTERFACE -> {
-                            when {
-                                visibility == Visibilities.PRIVATE ->
-                                    Modality.FINAL
-                                this is FirSimpleFunction && body == null ->
-                                    Modality.ABSTRACT
-                                this is FirProperty && initializer == null && getter?.body == null && setter?.body == null ->
-                                    Modality.ABSTRACT
-                                else ->
-                                    Modality.OPEN
-                            }
-                        }
-                        else -> {
-                            if (isOverride && containingClass.modality != Modality.FINAL) Modality.OPEN else Modality.FINAL
-                        }
-                    }
-                }
-                else -> Modality.FINAL
-            }
-        }
-    }
 }
 
 private val <F : FirClass<F>> FirClass<F>.effectiveVisibility: FirEffectiveVisibility
@@ -190,3 +131,60 @@ private val <F : FirClass<F>> FirClass<F>.modality: Modality?
         is FirAnonymousObject -> Modality.FINAL
         else -> error("Unknown kind of class: ${this::class}")
     }
+
+fun FirDeclaration.resolveStatus(
+    status: FirDeclarationStatus,
+    containingClass: FirClass<*>?,
+    isLocal: Boolean
+): FirDeclarationStatus {
+    if (status.visibility == Visibilities.UNKNOWN || status.modality == null) {
+        val visibility = when (status.visibility) {
+            Visibilities.UNKNOWN -> if (isLocal) Visibilities.LOCAL else resolveVisibility(containingClass)
+            else -> status.visibility
+        }
+        val modality = status.modality ?: resolveModality(containingClass)
+        val containerEffectiveVisibility = containingClass?.effectiveVisibility ?: FirEffectiveVisibility.Public
+        val effectiveVisibility =
+            visibility.firEffectiveVisibility(session, this as? FirMemberDeclaration).lowerBound(containerEffectiveVisibility)
+        return (status as FirDeclarationStatusImpl).resolved(visibility, effectiveVisibility, modality)
+    }
+    return status
+}
+
+private fun FirDeclaration.resolveVisibility(containingClass: FirClass<*>?): Visibility {
+    if (this is FirConstructor) {
+        if (containingClass != null &&
+            (containingClass.classKind == ClassKind.ENUM_CLASS || containingClass.modality == Modality.SEALED)
+        ) {
+            return Visibilities.PRIVATE
+        }
+    }
+    return Visibilities.PUBLIC // TODO (overrides)
+}
+
+private fun FirDeclaration.resolveModality(containingClass: FirClass<*>?): Modality {
+    return when (this) {
+        is FirRegularClass -> if (classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
+        is FirCallableMemberDeclaration<*> -> {
+            when {
+                containingClass == null -> Modality.FINAL
+                containingClass.classKind == ClassKind.INTERFACE -> {
+                    when {
+                        visibility == Visibilities.PRIVATE ->
+                            Modality.FINAL
+                        this is FirSimpleFunction && body == null ->
+                            Modality.ABSTRACT
+                        this is FirProperty && initializer == null && getter?.body == null && setter?.body == null ->
+                            Modality.ABSTRACT
+                        else ->
+                            Modality.OPEN
+                    }
+                }
+                else -> {
+                    if (isOverride && containingClass.modality != Modality.FINAL) Modality.OPEN else Modality.FINAL
+                }
+            }
+        }
+        else -> Modality.FINAL
+    }
+}
