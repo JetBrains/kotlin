@@ -126,17 +126,11 @@ class ConstraintIncorporator(
             if (needApproximation) approximateCapturedTypes(typeWithSubstitution, toSuper) else typeWithSubstitution
         }
 
-        when (baseConstraint.kind) {
-            ConstraintKind.EQUALITY -> {
-                addNewConstraint(targetVariable, baseConstraint, otherVariable, otherConstraint, typeWithSubstitution, isSubtype = false)
-                addNewConstraint(targetVariable, baseConstraint, otherVariable, otherConstraint, typeWithSubstitution, isSubtype = true)
-            }
-            ConstraintKind.UPPER -> {
-                addNewConstraint(targetVariable, baseConstraint, otherVariable, otherConstraint, prepareType(true), isSubtype = false)
-            }
-            ConstraintKind.LOWER -> {
-                addNewConstraint(targetVariable, baseConstraint, otherVariable, otherConstraint, prepareType(false), isSubtype = true)
-            }
+        if (baseConstraint.kind != ConstraintKind.LOWER) {
+            addNewConstraint(targetVariable, baseConstraint, otherVariable, otherConstraint, prepareType(true), isSubtype = false)
+        }
+        if (baseConstraint.kind != ConstraintKind.UPPER) {
+            addNewConstraint(targetVariable, baseConstraint, otherVariable, otherConstraint, prepareType(false), isSubtype = true)
         }
     }
 
@@ -150,7 +144,7 @@ class ConstraintIncorporator(
         val isOtherCapturedType = otherConstraint.type.isCapturedType()
         val (type, needApproximation) = when (otherConstraint.kind) {
             ConstraintKind.EQUALITY -> {
-                otherConstraint.type to true
+                otherConstraint.type to false
             }
             ConstraintKind.UPPER -> {
                 /*
