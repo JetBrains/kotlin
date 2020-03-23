@@ -51,7 +51,7 @@ public class BuildViewServiceImpl implements BuildViewService {
   public BuildViewServiceImpl(@NotNull Project project, @NotNull String contentName) {
     myProject = project;
     myContentName = contentName;
-    myBuildProgress = BuildViewManager.newBuildProgress(project);
+    myBuildProgress = BuildViewManager.createBuildProgress(project);
   }
 
   @Override

@@ -24,7 +24,7 @@ public class SyncViewManager extends AbstractViewManager {
   }
 
   @ApiStatus.Experimental
-  public static BuildProgress<BuildProgressDescriptor> newBuildProgress(@NotNull Project project) {
+  public static BuildProgress<BuildProgressDescriptor> createBuildProgress(@NotNull Project project) {
     return new BuildRootProgressImpl(ServiceManager.getService(project, SyncViewManager.class));
   }
 }

@@ -43,7 +43,7 @@ class BuildViewTest : LightPlatformTestCase() {
 
     // @formatter:off
     BuildViewManager
-      .newBuildProgress(project)
+      .createBuildProgress(project)
       .start(progressDescriptor)
         .message("Root message", "Tex of the root message console", INFO, null)
         .progress("Running ...")
@@ -87,7 +87,7 @@ class BuildViewTest : LightPlatformTestCase() {
 
     // @formatter:off
     BuildViewManager
-      .newBuildProgress(project)
+      .createBuildProgress(project)
       .start(progressDescriptor)
         .message("Root message", "Tex of the root message console", INFO, null)
         .progress("Running ...")
@@ -130,7 +130,7 @@ class BuildViewTest : LightPlatformTestCase() {
 
     // @formatter:off
     BuildViewManager
-      .newBuildProgress(project)
+      .createBuildProgress(project)
       .start(progressDescriptor)
         .message("Root message", "Tex of the root message console", INFO, null)
         .progress("Running ...")
