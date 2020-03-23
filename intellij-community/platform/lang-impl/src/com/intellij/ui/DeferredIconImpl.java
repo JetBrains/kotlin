@@ -130,7 +130,7 @@ public final class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIco
   }
 
   @NotNull
-  private static Icon nonNull(final Icon icon) {
+  private static Icon nonNull(@Nullable Icon icon) {
     return icon == null ? EMPTY_ICON : icon;
   }
 
