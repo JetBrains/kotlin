@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -52,51 +51,38 @@ class FirImplicitTypeBodyResolveTransformerAdapter(private val scopeSession: Sco
     }
 }
 
-class FirImplicitTypeBodyResolveTransformerAdapterForLocalClasses(
-    private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
-    private val resolutionMode: ResolutionMode,
-) : FirTransformer<Nothing?>() {
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
-        return element.compose()
+fun <F : FirClass<F>> F.runBodiesResolutionForLocalClass(
+    components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
+    resolutionMode: ResolutionMode,
+    localClassesNavigationInfo: LocalClassesNavigationInfo,
+): F {
+    val (designationMap, targetedClasses) = localClassesNavigationInfo.run {
+        designationMap to parentForClass.keys + this@runBodiesResolutionForLocalClass
     }
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): CompositeTransformResult<FirStatement> {
-        return transformClass(regularClass, data)
-    }
+    val implicitBodyResolveComputationSession =
+        ((components.returnTypeCalculator as? ReturnTypeCalculatorWithJump)?.implicitBodyResolveComputationSession
+            ?: ImplicitBodyResolveComputationSession())
+    val returnTypeCalculator = ReturnTypeCalculatorWithJump(
+        components.session,
+        components.scopeSession,
+        implicitBodyResolveComputationSession,
+        designationMap,
+    )
 
-    override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Nothing?): CompositeTransformResult<FirStatement> {
-        return transformClass(anonymousObject, data)
-    }
+    val newContext = components.context.createSnapshotForLocalClasses(returnTypeCalculator, targetedClasses)
+    returnTypeCalculator.outerBodyResolveContext = newContext
 
-    override fun <F : FirClass<F>> transformClass(klass: FirClass<F>, data: Nothing?): CompositeTransformResult<FirStatement> {
-        val (designationMap, targetedClasses) = klass.collectLocalClassesNavigationInfo().run {
-            designationMap to parentForClass.keys + klass
-        }
+    val transformer = FirImplicitAwareBodyResolveTransformer(
+        components.session, components.scopeSession,
+        implicitBodyResolveComputationSession,
+        FirResolvePhase.BODY_RESOLVE,
+        outerBodyResolveContext = newContext,
+        implicitTypeOnly = false,
+        returnTypeCalculator
+    )
 
-        val implicitBodyResolveComputationSession =
-            ((components.returnTypeCalculator as? ReturnTypeCalculatorWithJump)?.implicitBodyResolveComputationSession
-                ?: ImplicitBodyResolveComputationSession())
-        val returnTypeCalculator = ReturnTypeCalculatorWithJump(
-            components.session,
-            components.scopeSession,
-            implicitBodyResolveComputationSession,
-            designationMap,
-        )
-
-        val newContext = components.context.createSnapshotForLocalClasses(returnTypeCalculator, targetedClasses)
-        returnTypeCalculator.outerBodyResolveContext = newContext
-
-        val transformer = FirImplicitAwareBodyResolveTransformer(
-            components.session, components.scopeSession,
-            implicitBodyResolveComputationSession,
-            FirResolvePhase.BODY_RESOLVE,
-            outerBodyResolveContext = newContext,
-            implicitTypeOnly = false,
-            returnTypeCalculator
-        )
-
-        return klass.transform(transformer, resolutionMode)
-    }
+    return this.transform<F, ResolutionMode>(transformer, resolutionMode).single
 }
 
 fun createReturnTypeCalculatorForIDE(session: FirSession, scopeSession: ScopeSession): ReturnTypeCalculator =
