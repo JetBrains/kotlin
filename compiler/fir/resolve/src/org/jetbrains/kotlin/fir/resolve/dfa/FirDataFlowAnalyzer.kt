@@ -915,7 +915,13 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     // ----------------------------------- Init block -----------------------------------
 
     fun enterInitBlock(initBlock: FirAnonymousInitializer) {
-        graphBuilder.enterInitBlock(initBlock).mergeIncomingFlow()
+        graphBuilder.enterInitBlock(initBlock).let { (node, prevNode) ->
+            if (prevNode != null) {
+                node.flow = logicSystem.forkFlow(prevNode.flow)
+            } else {
+                node.mergeIncomingFlow()
+            }
+        }
     }
 
     fun exitInitBlock(initBlock: FirAnonymousInitializer) {

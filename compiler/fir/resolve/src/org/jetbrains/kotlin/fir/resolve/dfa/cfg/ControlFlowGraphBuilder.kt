@@ -728,7 +728,8 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Block -----------------------------------
 
-    fun enterInitBlock(initBlock: FirAnonymousInitializer): InitBlockEnterNode {
+    fun enterInitBlock(initBlock: FirAnonymousInitializer): Pair<InitBlockEnterNode, CFGNode<*>?> {
+        val lastNode = lastNodes.topOrNull()
         graphs.push(ControlFlowGraph(initBlock, "init block", ControlFlowGraph.Kind.ClassInitializer))
         val enterNode = createInitBlockEnterNode(initBlock).also {
             lexicalScopes.push(stackOf(it))
@@ -737,7 +738,7 @@ class ControlFlowGraphBuilder {
         initBlockExitNodes.push(exitNode)
         exitNodes.push(exitNode)
         levelCounter++
-        return enterNode
+        return enterNode to lastNode
     }
 
     fun exitInitBlock(initBlock: FirAnonymousInitializer): InitBlockExitNode {
