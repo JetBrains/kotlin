@@ -114,11 +114,13 @@ abstract class YarnBasics : NpmApi {
                 visited[src] = src
 
                 val key = dependencyKey(src.key, src.version)
-                val deps = byKey[key]
-                    ?: if (src.version == "*") byKey.entries
+                val deps = if (src.version != "*") {
+                    byKey[key]
+                } else {
+                    byKey.entries
                         .firstOrNull { it.key.startsWith(dependencyKey(src.key, "")) }
                         ?.value
-                    else null
+                }
 
                 if (deps == null) {
                     error("Cannot find $key in yarn.lock")
