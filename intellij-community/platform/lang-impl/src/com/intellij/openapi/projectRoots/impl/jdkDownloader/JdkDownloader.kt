@@ -53,10 +53,9 @@ internal class JdkDownloader : SdkDownload, JdkDownloaderBase {
     if (project?.isDisposed == true) return
 
     if (items.isNullOrEmpty()) {
-      Messages.showMessageDialog(project,
+      Messages.showErrorDialog(project,
                                  ProjectBundle.message("error.message.no.jdk.for.download"),
-                                 ProjectBundle.message("error.message.title.download.jdk"),
-                                 Messages.getErrorIcon()
+                                 ProjectBundle.message("error.message.title.download.jdk")
       )
       return
     }
@@ -71,10 +70,9 @@ internal class JdkDownloader : SdkDownload, JdkDownloaderBase {
     } catch (e: Throwable) {
       if (e is ControlFlowException) throw e
       LOG.warn("Failed to prepare JDK installation to $jdkHome. ${e.message}", e)
-      Messages.showMessageDialog(project,
+      Messages.showErrorDialog(project,
                                  ProjectBundle.message("error.message.text.jdk.install.failed", jdkHome),
-                                 ProjectBundle.message("error.message.title.download.jdk"),
-                                 Messages.getErrorIcon()
+                                 ProjectBundle.message("error.message.title.download.jdk")
       )
       return
     }
