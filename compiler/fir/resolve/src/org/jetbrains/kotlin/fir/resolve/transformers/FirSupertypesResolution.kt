@@ -97,24 +97,24 @@ private fun FirClassLikeDeclaration<*>.typeParametersScope(): FirScope? {
 }
 
 private fun createScopesForNestedClasses(
-    regularClass: FirRegularClass,
+    klass: FirClass<*>,
     session: FirSession,
     supertypeComputationSession: SupertypeComputationSession
 ): Collection<FirScope> =
     mutableListOf<FirScope>().apply {
         lookupSuperTypes(
-            regularClass,
+            klass,
             lookupInterfaces = false, deep = true, useSiteSession = session,
             supertypeSupplier = supertypeComputationSession.supertypesSupplier
         ).asReversed().mapNotNullTo(this) {
             session.firSymbolProvider.getNestedClassifierScope(it.lookupTag.classId)
         }
-        addIfNotNull(regularClass.typeParametersScope())
-        val companionObjects = regularClass.declarations.filterIsInstance<FirRegularClass>().filter { it.isCompanion }
+        addIfNotNull(klass.typeParametersScope())
+        val companionObjects = klass.declarations.filterIsInstance<FirRegularClass>().filter { it.isCompanion }
         for (companionObject in companionObjects) {
             add(nestedClassifierScope(companionObject))
         }
-        add(nestedClassifierScope(regularClass))
+        add(nestedClassifierScope(klass))
     }
 
 fun FirRegularClass.resolveSupertypesInTheAir(session: FirSession): List<FirTypeRef> {
@@ -135,13 +135,13 @@ private class FirSupertypeResolverVisitor(
         }
     }
 
-    private fun prepareScopeForNestedClasses(regularClass: FirRegularClass): FirImmutableCompositeScope {
-        return supertypeComputationSession.getOrPutScopeForNestedClasses(regularClass) {
-            val scope = prepareScope(regularClass)
+    private fun prepareScopeForNestedClasses(klass: FirClass<*>): FirImmutableCompositeScope {
+        return supertypeComputationSession.getOrPutScopeForNestedClasses(klass) {
+            val scope = prepareScope(klass)
 
-            resolveAllSupertypes(regularClass, regularClass.superTypeRefs)
+            resolveAllSupertypes(klass, klass.superTypeRefs)
 
-            scope.childScope(createScopesForNestedClasses(regularClass, session, supertypeComputationSession))
+            scope.childScope(createScopesForNestedClasses(klass, session, supertypeComputationSession))
         }
     }
 
@@ -271,7 +271,7 @@ private fun createErrorTypeRef(fir: FirElement, message: String) = buildErrorTyp
 
 private class SupertypeComputationSession {
     private val fileScopesMap = hashMapOf<FirFile, FirImmutableCompositeScope>()
-    private val scopesForNestedClassesMap = hashMapOf<FirRegularClass, FirImmutableCompositeScope>()
+    private val scopesForNestedClassesMap = hashMapOf<FirClass<*>, FirImmutableCompositeScope>()
     private val supertypeStatusMap = linkedMapOf<FirClassLikeDeclaration<*>, SupertypeComputationStatus>()
 
     val supertypesSupplier = object : SupertypeSupplier() {
@@ -296,8 +296,8 @@ private class SupertypeComputationSession {
     fun getOrPutFileScope(file: FirFile, scope: () -> FirImmutableCompositeScope): FirImmutableCompositeScope =
         fileScopesMap.getOrPut(file) { scope() }
 
-    fun getOrPutScopeForNestedClasses(regularClass: FirRegularClass, scope: () -> FirImmutableCompositeScope): FirImmutableCompositeScope =
-        scopesForNestedClassesMap.getOrPut(regularClass) { scope() }
+    fun getOrPutScopeForNestedClasses(klass: FirClass<*>, scope: () -> FirImmutableCompositeScope): FirImmutableCompositeScope =
+        scopesForNestedClassesMap.getOrPut(klass) { scope() }
 
     fun startComputingSupertypes(classLikeDeclaration: FirClassLikeDeclaration<*>) {
         require(supertypeStatusMap[classLikeDeclaration] == null) {
