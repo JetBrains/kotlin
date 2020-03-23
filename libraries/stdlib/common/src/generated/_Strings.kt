@@ -1415,7 +1415,7 @@ public inline fun CharSequence.sumByDouble(selector: (Char) -> Double): Double {
  * 
  * @param size the number of elements to take in each string, must be positive and can be greater than the number of elements in this char sequence.
  * 
- * @sample samples.collections.Collections.Transformations.chunked
+ * @sample samples.text.Strings.chunked
  */
 @SinceKotlin("1.2")
 public fun CharSequence.chunked(size: Int): List<String> {

@@ -50,6 +50,15 @@ class Strings {
     }
 
     @Sample
+    fun chunked() {
+        val dnaFragment = "ATTCGCGGCCGCCAA"
+
+        val codons = dnaFragment.chunked(3)
+
+        assertPrints(codons, "[ATT, CGC, GGC, CGC, CAA]")
+    }
+
+    @Sample
     fun chunkedTransform() {
         val codonTable = mapOf("ATT" to "Isoleucine", "CAA" to "Glutamine", "CGC" to "Arginine", "GGC" to "Glycine")
         val dnaFragment = "ATTCGCGGCCGCCAA"
