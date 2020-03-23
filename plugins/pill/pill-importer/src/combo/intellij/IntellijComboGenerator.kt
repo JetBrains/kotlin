@@ -229,7 +229,7 @@ class IntellijComboGenerator(private val kotlinProjectDir: File) : ComboGenerato
         for (module in ideaProjectModuleManager.getElementsByTagName("module").elements) {
             val filePath = module.getAttribute("filepath") ?: continue
             val file = File(ideaPathContext.substituteWithValues(filePath)).canonicalFile
-            val newModule = createModuleElement(comboPathContext.substituteWithVariables(file), comboPathContext.getUrlWithVariables(file))
+            val newModule = createModuleElement(comboPathContext.getUrlWithVariables(file), comboPathContext.substituteWithVariables(file))
             module.parentNode.replaceChild(newModule, module)
         }
 
@@ -240,7 +240,8 @@ class IntellijComboGenerator(private val kotlinProjectDir: File) : ComboGenerato
             val fileUrl = module.getAttribute("fileurl") ?: continue
             val filePath = module.getAttribute("filepath") ?: continue
 
-            if (filePath == "\$PROJECT_DIR\$/kotlin.iml") {
+            if (filePath == "\$PROJECT_DIR\$/kotlin.iml" ||
+                filePath == "\$PROJECT_DIR\$\\kotlin.iml") {
                 continue
             }
 

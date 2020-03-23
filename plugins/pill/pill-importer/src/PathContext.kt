@@ -21,6 +21,7 @@ private fun String.applyVariable(variableName: String, value: String): String {
     return when {
         this == value -> variableText
         startsWith("$value/") -> variableText + "/" + this.drop(value.length + 1)
+        startsWith("$value\\") -> variableText + "\\" + this.drop(value.length + 1)
         else -> this
     }
 }
@@ -30,6 +31,7 @@ private fun String.substituteVariable(variableName: String, value: String): Stri
     return when {
         this == variableText -> value
         this.startsWith("$variableText/") -> value + "/" + this.drop(variableText.length + 1)
+        this.startsWith("$variableText\\") -> value + "\\" + this.drop(variableText.length + 1)
         else -> this
     }
 }
