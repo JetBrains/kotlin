@@ -6,11 +6,10 @@ import com.intellij.codeInsight.documentation.DocumentationComponent;
 import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.codeInsight.documentation.QuickDocUtil;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.ActionGroup;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.event.CaretEvent;
@@ -18,10 +17,13 @@ import com.intellij.openapi.editor.event.CaretListener;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.keymap.KeymapManager;
+import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiDocCommentBase;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.AppUIUtil;
@@ -44,6 +46,7 @@ import javax.swing.text.View;
 import javax.swing.text.html.ImageView;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.awt.image.ImageObserver;
 import java.util.HashMap;
@@ -219,51 +222,81 @@ class DocRenderer implements EditorCustomElementRenderer {
   }
 
   private void activateLink(HyperlinkEvent event) {
-    Editor editor = myItem.editor;
-    Project project = editor.getProject();
     Element element = event.getSourceElement();
-    if (project != null && element != null) {
-      Rectangle location = null;
-      try {
-        location = myPane.modelToView(element.getStartOffset());
+    if (element == null) return;
+
+    Rectangle location = null;
+    try {
+      location = myPane.modelToView(element.getStartOffset());
+    }
+    catch (BadLocationException ignored) {}
+    if (location == null) return;
+
+    PsiDocCommentBase comment = myItem.getComment();
+    PsiElement owner = comment == null ? null : comment.getOwner();
+    if (owner == null) return;
+
+    String url = event.getDescription();
+    if (isGotoDeclarationEvent()) {
+      navigateToDeclaration(owner, url);
+    }
+    else {
+      showDocumentation(myItem.editor, owner, url, location);
+    }
+  }
+
+  private static boolean isGotoDeclarationEvent() {
+    KeymapManager keymapManager = KeymapManager.getInstance();
+    if (keymapManager == null) return false;
+    AWTEvent event = IdeEventQueue.getInstance().getTrueCurrentEvent();
+    if (!(event instanceof MouseEvent)) return false;
+    MouseShortcut mouseShortcut = KeymapUtil.createMouseShortcut((MouseEvent)event);
+    return keymapManager.getActiveKeymap().getActionIds(mouseShortcut).contains(IdeActions.ACTION_GOTO_DECLARATION);
+  }
+
+  private static void navigateToDeclaration(@NotNull PsiElement context, @NotNull String linkUrl) {
+    PsiElement targetElement = DocumentationManager.getInstance(context.getProject()).getTargetElement(context, linkUrl);
+    if (targetElement instanceof Navigatable) {
+      ((Navigatable)targetElement).navigate(true);
+    }
+  }
+
+  private void showDocumentation(@NotNull Editor editor,
+                                 @NotNull PsiElement context,
+                                 @NotNull String linkUrl,
+                                 @NotNull Rectangle linkLocationWithinInlay) {
+    Project project = context.getProject();
+    DocumentationManager documentationManager = DocumentationManager.getInstance(project);
+    if (QuickDocUtil.getActiveDocComponent(project) == null) {
+      Point inlayPosition = Objects.requireNonNull(myItem.inlay.getBounds()).getLocation();
+      Point relativePosition = getEditorPaneLocationWithinInlay();
+      editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POINT,
+                         new Point(inlayPosition.x + relativePosition.x + linkLocationWithinInlay.x,
+                                   inlayPosition.y + relativePosition.y + linkLocationWithinInlay.y + linkLocationWithinInlay.height));
+      documentationManager.showJavaDocInfo(editor, context, context, () -> {
+        editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POINT, null);
+      }, "", false, true);
+    }
+    DocumentationComponent component = QuickDocUtil.getActiveDocComponent(project);
+    if (component != null) {
+      if (!documentationManager.hasActiveDockedDocWindow()) {
+        component.startWait();
       }
-      catch (BadLocationException ignored) {}
-      PsiDocCommentBase comment = myItem.getComment();
-      PsiElement owner = comment == null ? null : comment.getOwner();
-      if (owner != null && location != null) {
-        DocumentationManager documentationManager = DocumentationManager.getInstance(project);
-        if (QuickDocUtil.getActiveDocComponent(project) == null) {
-          Point inlayPosition = Objects.requireNonNull(myItem.inlay.getBounds()).getLocation();
-          Point relativePosition = getEditorPaneLocationWithinInlay();
-          editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POINT,
-                             new Point(inlayPosition.x + relativePosition.x + location.x,
-                                       inlayPosition.y + relativePosition.y + location.y + location.height));
-          documentationManager.showJavaDocInfo(editor, owner, owner, () -> {
-            editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POINT, null);
-          }, "", false, true);
+      documentationManager.navigateByLink(component, linkUrl);
+    }
+    if (documentationManager.getDocInfoHint() == null) {
+      editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POINT, null);
+    }
+    if (documentationManager.hasActiveDockedDocWindow()) {
+      documentationManager.setAllowContentUpdateFromContext(false);
+      Disposable disposable = Disposer.newDisposable();
+      editor.getCaretModel().addCaretListener(new CaretListener() {
+        @Override
+        public void caretPositionChanged(@NotNull CaretEvent e) {
+          documentationManager.resetAutoUpdateState();
+          Disposer.dispose(disposable);
         }
-        DocumentationComponent component = QuickDocUtil.getActiveDocComponent(project);
-        if (component != null) {
-          if (!documentationManager.hasActiveDockedDocWindow()) {
-            component.startWait();
-          }
-          documentationManager.navigateByLink(component, event.getDescription());
-        }
-        if (documentationManager.getDocInfoHint() == null) {
-          editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POINT, null);
-        }
-        if (documentationManager.hasActiveDockedDocWindow()) {
-          documentationManager.setAllowContentUpdateFromContext(false);
-          Disposable disposable = Disposer.newDisposable();
-          editor.getCaretModel().addCaretListener(new CaretListener() {
-            @Override
-            public void caretPositionChanged(@NotNull CaretEvent e) {
-              documentationManager.resetAutoUpdateState();
-              Disposer.dispose(disposable);
-            }
-          }, disposable);
-        }
-      }
+      }, disposable);
     }
   }
 

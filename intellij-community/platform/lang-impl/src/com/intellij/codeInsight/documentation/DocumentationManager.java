@@ -901,6 +901,49 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     return originalElementPointer != null ? originalElementPointer.getElement() : null;
   }
 
+  public @Nullable PsiElement getTargetElement(@Nullable PsiElement context, @Nullable String url) {
+    Pair<@NotNull PsiElement, @Nullable String> target = getTarget(context, url);
+    return target == null ? null : target.first;
+  }
+
+  private @Nullable Pair<@NotNull PsiElement, @Nullable String> getTarget(@Nullable PsiElement context, @Nullable String url) {
+    if (context != null && url != null && url.startsWith(DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL)) {
+      PsiManager manager = PsiManager.getInstance(getProject(context));
+      String refText = url.substring(DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL.length());
+      int separatorPos = refText.lastIndexOf(DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL_REF_SEPARATOR);
+      String ref = null;
+      if (separatorPos >= 0) {
+        ref = refText.substring(separatorPos + DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL_REF_SEPARATOR.length());
+        refText = refText.substring(0, separatorPos);
+      }
+      DocumentationProvider provider = getProviderFromElement(context);
+      PsiElement targetElement = provider.getDocumentationElementForLink(manager, refText, context);
+      if (targetElement == null) {
+        for (DocumentationProvider documentationProvider : DocumentationProvider.EP_NAME.getExtensionList()) {
+          targetElement = documentationProvider.getDocumentationElementForLink(manager, refText, context);
+          if (targetElement != null) {
+            break;
+          }
+        }
+      }
+      if (targetElement == null) {
+        for (Language language : Language.getRegisteredLanguages()) {
+          DocumentationProvider documentationProvider = LanguageDocumentation.INSTANCE.forLanguage(language);
+          if (documentationProvider != null) {
+            targetElement = documentationProvider.getDocumentationElementForLink(manager, refText, context);
+            if (targetElement != null) {
+              break;
+            }
+          }
+        }
+      }
+      if (targetElement != null) {
+        return Pair.create(targetElement, ref);
+      }
+    }
+    return null;
+  }
+
   public void navigateByLink(DocumentationComponent component, String url) {
     component.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     PsiElement psiElement = component.getElement();
@@ -934,36 +977,9 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
       }
     }
     else if (url.startsWith(DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL)) {
-      String refText = url.substring(DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL.length());
-      int separatorPos = refText.lastIndexOf(DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL_REF_SEPARATOR);
-      String ref = null;
-      if (separatorPos >= 0) {
-        ref = refText.substring(separatorPos + DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL_REF_SEPARATOR.length());
-        refText = refText.substring(0, separatorPos);
-      }
-      DocumentationProvider provider = getProviderFromElement(psiElement);
-      PsiElement targetElement = provider.getDocumentationElementForLink(manager, refText, psiElement);
-      if (targetElement == null) {
-        for (DocumentationProvider documentationProvider : DocumentationProvider.EP_NAME.getExtensionList()) {
-          targetElement = documentationProvider.getDocumentationElementForLink(manager, refText, psiElement);
-          if (targetElement != null) {
-            break;
-          }
-        }
-      }
-      if (targetElement == null) {
-        for (Language language : Language.getRegisteredLanguages()) {
-          DocumentationProvider documentationProvider = LanguageDocumentation.INSTANCE.forLanguage(language);
-          if (documentationProvider != null) {
-            targetElement = documentationProvider.getDocumentationElementForLink(manager, refText, psiElement);
-            if (targetElement != null) {
-              break;
-            }
-          }
-        }
-      }
-      if (targetElement != null) {
-        cancelAndFetchDocInfo(component, new MyCollector(myProject, targetElement, null, ref, false));
+      Pair<@NotNull PsiElement, @Nullable String> target = getTarget(psiElement, url);
+      if (target != null) {
+        cancelAndFetchDocInfo(component, new MyCollector(myProject, target.first, null, target.second, false));
       }
     }
     else {

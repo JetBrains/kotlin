@@ -73,7 +73,10 @@ class DocRenderMouseEventBridge implements EditorMouseListener, EditorMouseMotio
       int y = mousePoint.y - inlayBounds.y - relativeLocation.y;
       JEditorPane editorPane = renderer.myPane;
       if (x >= 0 && x < editorPane.getWidth() && y >= 0 && y < editorPane.getHeight()) {
-        dispatchEvent(inlay, new MouseEvent(editorPane, eventId, 0, 0, x, y, mouseEvent.getClickCount(), false, mouseEvent.getButton()));
+        int button = mouseEvent.getButton();
+        dispatchEvent(inlay, new MouseEvent(editorPane, eventId, 0, 0, x, y, mouseEvent.getClickCount(), false,
+                                            // hack to process middle-button clicks (JEditorPane ignores them)
+                                            button == MouseEvent.BUTTON2 ? MouseEvent.BUTTON1 : button));
         return inlay;
       }
     }
