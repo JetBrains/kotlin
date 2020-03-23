@@ -868,10 +868,18 @@ object Generators : TemplateGroupBase() {
             @param size the number of elements to take in each ${f.snapshotResult}, must be positive and can be greater than the number of elements in this ${f.collection}.
             """
         }
-        sample("samples.collections.Collections.Transformations.chunked")
-        specialFor(Iterables) { returns("List<List<T>>") }
-        specialFor(Sequences) { returns("Sequence<List<T>>") }
-        specialFor(CharSequences) { returns("List<String>") }
+        specialFor(Iterables) {
+            sample("samples.collections.Collections.Transformations.chunked")
+            returns("List<List<T>>")
+        }
+        specialFor(Sequences) {
+            sample("samples.collections.Collections.Transformations.chunked")
+            returns("Sequence<List<T>>")
+        }
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.chunked")
+            returns("List<String>")
+        }
 
         sequenceClassification(intermediate, stateful)
 
