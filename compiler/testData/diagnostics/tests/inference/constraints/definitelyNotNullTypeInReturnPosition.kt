@@ -245,8 +245,8 @@ class Main<L>(x: L?, y: L) {
     val x420 = <!DEBUG_INFO_EXPRESSION_TYPE("IFoo<L>")!>foo42(x)<!>
     val x421 = <!DEBUG_INFO_EXPRESSION_TYPE("IFoo<L>")!>foo42(y)<!>
 
-    val x430 = <!DEBUG_INFO_EXPRESSION_TYPE("{IBar<L> & IFoo<L>}")!>foo43(x)<!>
-    val x431 = <!DEBUG_INFO_EXPRESSION_TYPE("{IBar<L> & IFoo<L>}")!>foo43(y)<!>
+    val x430 = <!DEBUG_INFO_EXPRESSION_TYPE("{IBar<L> & IBar<out L> & IFoo<L> & IFoo<out L>}")!>foo43(x)<!>
+    val x431 = <!DEBUG_INFO_EXPRESSION_TYPE("{IBar<L> & IBar<out L> & IFoo<L> & IFoo<out L>}")!>foo43(y)<!>
 
     // Change after fix KT-37380
     val x440 = <!DEBUG_INFO_EXPRESSION_TYPE("{IBar<L> & IFoo<String>}")!>foo44(x)<!>

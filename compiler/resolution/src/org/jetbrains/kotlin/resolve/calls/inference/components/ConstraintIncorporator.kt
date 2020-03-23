@@ -209,8 +209,14 @@ class ConstraintIncorporator(
 
         val isUsefulForNullabilityConstraint =
             isPotentialUsefulNullabilityConstraint(newConstraint, otherConstraint.type, otherConstraint.kind)
+        val isFromVariableFixation = baseConstraint.position.from is FixVariableConstraintPosition
+                || otherConstraint.position.from is FixVariableConstraintPosition
 
-        if (!isUsefulForNullabilityConstraint && !containsConstrainingTypeWithoutProjection(newConstraint, otherConstraint)) return
+        if (!containsConstrainingTypeWithoutProjection(newConstraint, otherConstraint)
+            && !isUsefulForNullabilityConstraint
+            && !isFromVariableFixation
+        ) return
+
         if (trivialConstraintTypeInferenceOracle.isGeneratedConstraintTrivial(
                 baseConstraint, otherConstraint, newConstraint, isSubtype
             )
