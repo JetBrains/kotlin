@@ -140,7 +140,7 @@ class ProjectSdksModelTest : LightPlatformTestCase() {
       error("Exception was expected from the Dialog")
     }
     catch (t: Exception) {
-      assertThat(t.message).contains("Download task has to fail")
+      assertThat(t.message).withFailMessage(t.message).contains("Failed to download JDK")
     }
     LaterInvocator.dispatchPendingFlushes()
     assertThat(model.sdks).withFailMessage("SDK should NOT added to the model after cancellation").noneMatch { it.name == sdkName }
