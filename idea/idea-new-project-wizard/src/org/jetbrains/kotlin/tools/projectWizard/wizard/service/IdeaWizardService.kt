@@ -15,7 +15,8 @@ object IdeaServices {
         IdeaFileSystemWizardService(),
         IdeaBuildSystemAvailabilityWizardService(),
         IdeaKotlinVersionProviderService(),
-        IdeaSettingSavingWizardService()
+        IdeaSettingSavingWizardService(),
+        IdeaVelocityEngineTemplateService()
     )
 
     fun createScopeDependent(project: Project) = listOfNotNull(
