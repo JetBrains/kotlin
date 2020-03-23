@@ -258,6 +258,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:fir:psi2fir",
     ":compiler:fir:lightTree",
     ":compiler:fir:fir2ir",
+    ":compiler:fir:fir2ir:jvm-backend",
     ":compiler:fir:java",
     ":compiler:fir:jvm",
     ":compiler:fir:checkers",

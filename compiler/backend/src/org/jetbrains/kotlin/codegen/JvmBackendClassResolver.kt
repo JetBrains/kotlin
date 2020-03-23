@@ -40,13 +40,18 @@ class JvmBackendClassResolverForModuleWithDependencies(
     override fun resolveToClassDescriptors(type: Type): List<ClassDescriptor> {
         if (type.sort != Type.OBJECT) return emptyList()
 
-        val className = type.className
-        val lastDotIndex = className.lastIndexOf('.')
-        val packageFQN = if (lastDotIndex >= 0) FqName(className.substring(0, lastDotIndex)) else FqName.ROOT
-        val classRelativeNameWithDollars = if (lastDotIndex >= 0) className.substring(lastDotIndex + 1) else className
-        val classFQN = FqName(classRelativeNameWithDollars.replace('$', '.'))
-        val platformClass = moduleDescriptor.findClassAcrossModuleDependencies(ClassId(packageFQN, classFQN, false)) ?: return emptyList()
+        val platformClass = moduleDescriptor.findClassAcrossModuleDependencies(type.classId) ?: return emptyList()
 
         return JavaToKotlinClassMap.mapPlatformClass(platformClass) + platformClass
     }
 }
+
+val Type.classId: ClassId
+    get() {
+        val className = this.className
+        val lastDotIndex = className.lastIndexOf('.')
+        val packageFQN = if (lastDotIndex >= 0) FqName(className.substring(0, lastDotIndex)) else FqName.ROOT
+        val classRelativeNameWithDollars = if (lastDotIndex >= 0) className.substring(lastDotIndex + 1) else className
+        val classFQN = FqName(classRelativeNameWithDollars.replace('$', '.'))
+        return ClassId(packageFQN, classFQN, false)
+    }

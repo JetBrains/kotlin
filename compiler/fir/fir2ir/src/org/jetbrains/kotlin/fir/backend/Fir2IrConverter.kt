@@ -204,7 +204,7 @@ class Fir2IrConverter(
             }
 
             externalDependenciesGenerator.generateUnboundSymbolsAsDependencies()
-            return Fir2IrResult(irModuleFragment, symbolTable, sourceManager)
+            return Fir2IrResult(irModuleFragment, symbolTable, sourceManager, components)
         }
     }
 }

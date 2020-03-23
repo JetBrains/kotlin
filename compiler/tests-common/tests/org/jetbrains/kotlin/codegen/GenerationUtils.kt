@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.createSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
@@ -131,7 +132,7 @@ object GenerationUtils {
                 throw e
             }
         }
-        val (moduleFragment, symbolTable, sourceManager) =
+        val (moduleFragment, symbolTable, sourceManager, components) =
             Fir2IrConverter.createModuleFragment(session, firFiles, configuration.languageVersionSettings, signaturer = IdSignatureDescriptor(
                 JvmManglerDesc()))
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
@@ -143,6 +144,8 @@ object GenerationUtils {
             codegenFactory
         ).isIrBackend(
             true
+        ).jvmBackendClassResolver(
+            FirJvmBackendClassResolver(components)
         ).build()
 
         generationState.beforeCompile()

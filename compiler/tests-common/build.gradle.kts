@@ -15,6 +15,8 @@ dependencies {
     testCompile(project(":compiler:fir:psi2fir"))
     testCompile(project(":compiler:fir:lightTree"))
     testCompile(project(":compiler:fir:fir2ir"))
+    testCompile(project(":compiler:fir:jvm"))
+    testCompile(project(":compiler:fir:fir2ir:jvm-backend"))
     testCompile(project(":compiler:fir:cones"))
     testCompile(project(":compiler:fir:resolve"))
     testCompile(project(":compiler:fir:checkers"))
