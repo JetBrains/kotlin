@@ -120,25 +120,25 @@ abstract class YarnBasics : NpmApi {
                         ?.value
                     else null
 
-                if (deps != null) {
-                    src.resolvedVersion = deps.version
-                    src.integrity = deps.integrity
-                    src.dependencies.addAll(deps.dependencies.map { dep ->
-                        val scopedName = dep.scopedName
-                        val child = NpmDependency(
-                            src.project,
-                            scopedName.toString(),
-                            dep.version ?: "*"
-                        )
-                        child.parent = src
-
-                        resolveRecursively(child)
-
-                        child
-                    })
-                } else {
+                if (deps == null) {
                     error("Cannot find $key in yarn.lock")
                 }
+
+                src.resolvedVersion = deps.version
+                src.integrity = deps.integrity
+                src.dependencies.addAll(deps.dependencies.map { dep ->
+                    val scopedName = dep.scopedName
+                    val child = NpmDependency(
+                        src.project,
+                        scopedName.toString(),
+                        dep.version ?: "*"
+                    )
+                    child.parent = src
+
+                    resolveRecursively(child)
+
+                    child
+                })
 
                 return src
             }
