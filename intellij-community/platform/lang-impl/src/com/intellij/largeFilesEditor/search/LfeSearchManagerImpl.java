@@ -496,14 +496,10 @@ public class LfeSearchManagerImpl implements LfeSearchManager, CloseSearchTask.C
     String stringToFind = mySearchReplaceComponent.getSearchTextComponent().getText();
 
     // "pageSize / 10", because it's strictly shorter then even full page consisted of only 4-byte symbols and much longer then simple stringsToFind
-    if (stringToFind.length() > largeFileEditor.getPageSize() / 10 ||
-        stringToFind.contains("*") ||
-        stringToFind.contains("+") ||
-        stringToFind.contains("{")) {
-      return true;
-    }
-
-    return false;
+    return stringToFind.length() > largeFileEditor.getPageSize() / 10 ||
+           stringToFind.contains("*") ||
+           stringToFind.contains("+") ||
+           stringToFind.contains("{");
   }
 
   private void createActions() {

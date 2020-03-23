@@ -42,8 +42,10 @@ public final class LargeFileRegexSearchNotificationProvider extends EditorNotifi
       update(file, project);
     });
 
-    // "200 Kb", because it's the length of 2 pages (regex search realization specificities)
-    return panel.text(EditorBundle.message("message.warning.about.regex.search.limitations", String.valueOf(200)));
+    return panel.text(EditorBundle.message("message.warning.about.regex.search.limitations", String.valueOf(
+      // 2 pages "*2" and bytes to Kbytes "/1000" gives "/500" (see regex search realization specificities)
+      largeFileEditor.getPageSize() / 500
+    )));
   }
 
   private static void update(@NotNull VirtualFile file, @NotNull Project project) {
