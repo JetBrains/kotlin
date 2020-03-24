@@ -44,7 +44,7 @@ class RealNativeTargetConfigurator private constructor(
 object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenceTargetConfigurator {
     override val moduleType = ModuleType.native
     override val id = "nativeForCurrentSystem"
-    override val text = "For Current System"
+    override val text = "Your system"
 
 
     override fun Reader.createTargetIrs(

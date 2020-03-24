@@ -23,7 +23,8 @@ class ModuleDependenciesComponent(
 ) : TitledComponent(context) {
     override val title: String = "Module dependencies"
     private val dependenciesList = ModuleDependenciesList()
-    override val needCentering: Boolean = false
+    override val forceLabelCenteringOffset: Int? = 4
+    override val additionalComponentPadding: Int = 1
     override val maximumWidth: Int = 500
 
     private val toolbarDecorator: ToolbarDecorator = ToolbarDecorator.createDecorator(dependenciesList).apply {

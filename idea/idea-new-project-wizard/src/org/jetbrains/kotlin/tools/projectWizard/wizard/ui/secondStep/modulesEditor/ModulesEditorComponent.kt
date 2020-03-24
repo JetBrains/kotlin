@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.UIConstants
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.addBorder
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.customPanel
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ValidationIndicator
@@ -44,7 +46,9 @@ class ModulesEditorComponent(
                 )?.showInCenterOf(component)
             }
         ).apply {
-            border = JBUI.Borders.emptyRight(10)
+            if (editable) {
+                border = JBUI.Borders.emptyRight(10)
+            }
         }
 
     private val model = TargetsModel(tree, ::value, context, uiEditorUsagesStats)

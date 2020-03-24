@@ -10,7 +10,6 @@ import com.intellij.ui.TitledSeparator
 import com.intellij.ui.layout.panel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.components.BorderLayoutPanel
-import org.jetbrains.kotlin.idea.framework.KotlinModuleBuilder
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.path
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
@@ -43,7 +42,9 @@ class FirstWizardStepComponent(ideWizard: IdeWizard) : WizardStepComponent(ideWi
 class ProjectSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizard.context) {
     private val context = ideWizard.context
     private val projectTemplateComponent = ProjectTemplateSettingComponent(context).asSubComponent()
-    private val buildSystemSetting = BuildSystemTypeSettingComponent(context).asSubComponent()
+    private val buildSystemSetting = BuildSystemTypeSettingComponent(context).asSubComponent().apply {
+        component.addBorder(JBUI.Borders.empty(0, /*left&right*/4))
+    }
     private val buildSystemAdditionalSettingsComponent = BuildSystemAdditionalSettingsComponent(ideWizard).asSubComponent()
 
     private val nameAndLocationComponent = TitledComponentsList(
@@ -66,7 +67,7 @@ class ProjectSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizar
             row {
                 buildSystemAdditionalSettingsComponent.component(growX)
             }
-        }
+        }.addBorder(JBUI.Borders.emptyRight(UIConstants.PADDING))
     }
 
     private var locationWasUpdatedByHand: Boolean = false
@@ -234,10 +235,10 @@ class ProjectPreviewComponent(context: Context) : DynamicComponent(context) {
     ).asSubComponent()
 
     override val component: JComponent = borderPanel {
-        border = JBUI.Borders.empty(10)
         addToTop(label("Preview", bold = true).addBorder(JBUI.Borders.emptyBottom(5)))
         addToCenter(modulesEditorComponent.component)
-    }.addBorder(JBUI.Borders.customLine(JBColor.border(), 0, /*left*/1, 0, 0))
+    }.addBorder(JBUI.Borders.empty(UIConstants.PADDING,  /*left*/UIConstants.PADDING * 2, UIConstants.PADDING, UIConstants.PADDING))
+        .addBorder(JBUI.Borders.customLine(JBColor.border(), 0,  /*left*/1, 0, 0))
 
     override fun onValueUpdated(reference: SettingReference<*, *>?) {
         super.onValueUpdated(reference)

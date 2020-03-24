@@ -70,7 +70,8 @@ abstract class DynamicComponent(private val context: Context) : Component() {
 }
 
 abstract class TitledComponent(context: Context) : DynamicComponent(context) {
-    open val needCentering: Boolean = true
+    open val forceLabelCenteringOffset: Int? = null
+    open val additionalComponentPadding: Int = 0
     open val maximumWidth: Int? = null
     abstract val title: String?
     open fun shouldBeShow(): Boolean = true

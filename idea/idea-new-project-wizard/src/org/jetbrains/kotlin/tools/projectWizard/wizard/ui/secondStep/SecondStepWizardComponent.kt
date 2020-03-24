@@ -53,7 +53,7 @@ class ProjectStructureEditorComponent(
     ).asSubComponent()
 
     override val component = borderPanel {
-        addToCenter(moduleSettingComponent.component)
+        addToCenter(moduleSettingComponent.component.addBorder(JBUI.Borders.empty(UIConstants.PADDING)))
     }
 }
 

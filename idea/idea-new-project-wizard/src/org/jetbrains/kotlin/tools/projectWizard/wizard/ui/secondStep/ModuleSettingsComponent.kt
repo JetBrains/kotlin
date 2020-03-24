@@ -127,7 +127,7 @@ private class ModuleTemplateComponent(
         onTemplateChanged()
     }.asSubComponent()
 
-    override val needCentering: Boolean = false
+    override val forceLabelCenteringOffset: Int? = 4
     private val templateDescriptionLabel = label("") {
         fontColor = UIUtil.FontColor.BRIGHTER
         addBorder(JBUI.Borders.empty(4, 4))

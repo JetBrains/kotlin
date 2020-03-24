@@ -38,6 +38,7 @@ class BuildSystemTypeSettingComponent(
     BuildSystemPlugin::type.reference,
     context
 ), Disposable {
+    override val forceLabelCenteringOffset: Int? = 2
     private val buttons = setting.type.values.map(::BuildSystemChooseButton)
     override val component = panel {
         row {

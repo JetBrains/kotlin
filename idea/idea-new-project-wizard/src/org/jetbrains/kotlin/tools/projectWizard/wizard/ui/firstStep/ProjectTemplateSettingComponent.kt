@@ -24,7 +24,7 @@ class ProjectTemplateSettingComponent(
     context
 ) {
     override val validationIndicator: ValidationIndicator? get() = null
-    override val needCentering: Boolean = false
+    override val forceLabelCenteringOffset: Int? = 4
     private val templateDescriptionComponent = TemplateDescriptionComponent().asSubComponent()
 
     private val list = ImmutableSingleSelectableListWithIcon(
@@ -64,9 +64,9 @@ class ProjectTemplateSettingComponent(
 }
 
 class TemplateDescriptionComponent : Component() {
-    private val descriptionLabel = label("").apply {
+    private val descriptionLabel = label("") {
         fontColor = UIUtil.FontColor.BRIGHTER
-        preferredSize = Dimension(preferredSize.width, 55)
+        preferredSize = Dimension(preferredSize.width, 45)
         verticalAlignment = SwingConstants.TOP
     }
 

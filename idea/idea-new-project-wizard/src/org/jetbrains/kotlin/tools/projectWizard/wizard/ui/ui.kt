@@ -149,3 +149,7 @@ val DisplayableSettingItem.fullTextHtml
             append("</span>")
         }
     }.asHtml()
+
+object UIConstants {
+    const val PADDING = 8
+}

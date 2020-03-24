@@ -53,20 +53,21 @@ open class TitledComponentsList(
             TitledComponentData(
                 label.also { add(it) }.constraints(),
                 component.component.also { add(it) }.constraints(),
-                component.needCentering,
+                component.forceLabelCenteringOffset,
+                component.additionalComponentPadding,
                 component.maximumWidth
             )
         }
 
         fun TitledComponentData.centerConstraint() =
-            if (needCentering) component.height * .5f - label.height * .5f
-            else 4.asSpring()
+            if (forceCenteringOffset == null) component.height * .5f - label.height * .5f
+            else forceCenteringOffset.asSpring()
 
         val labelWidth = componentsWithLabels.fold(componentsWithLabels.first().label.width) { spring, row ->
             Spring.max(spring, row.label.width)
         }
 
-        componentsWithLabels.forEach { (label, component, _, componentMaxWidth) ->
+        componentsWithLabels.forEach { (label, component, _, _, componentMaxWidth) ->
             label.width = labelWidth
             val maxWidth = componentMaxWidth ?: globalMaxWidth
             if (maxWidth == null) {
@@ -85,7 +86,7 @@ open class TitledComponentsList(
             component.x = label[SpringLayout.EAST] + xGap
 
             if (lastComponent != null && lastLabel != null) {
-                val constraint = lastComponent[SpringLayout.SOUTH] + yGap
+                val constraint = lastComponent[SpringLayout.SOUTH] + yGap + data.additionalComponentGap
                 label.y = constraint + data.centerConstraint()
                 component.y = constraint
             } else {
@@ -106,15 +107,16 @@ open class TitledComponentsList(
         private const val xGap = 5
         private const val yGapSmall = 6
         private const val yGapBig = 12
-        private const val xPanelPadding = 16
-        private const val yPanelPadding = 16
+        private const val xPanelPadding = UIConstants.PADDING
+        private const val yPanelPadding = UIConstants.PADDING
     }
 
     private data class TitledComponentData(
         val label: SpringLayout.Constraints,
         val component: SpringLayout.Constraints,
-        val needCentering: Boolean,
-        val maximumWidth: Int?,
+        val forceCenteringOffset: Int?,
+        val additionalComponentGap: Int,
+        val maximumWidth: Int?
     )
 }
 
