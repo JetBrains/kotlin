@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 //KT-10934 compiler throws UninferredParameterTypeConstructor in when block that covers all types
 
 class Parser<TInput, TValue>(val f: (TInput) -> Result<TInput, TValue>) {
