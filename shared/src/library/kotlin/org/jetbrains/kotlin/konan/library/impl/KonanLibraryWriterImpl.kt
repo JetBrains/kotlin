@@ -30,10 +30,11 @@ class KonanLibraryWriterImpl(
         target: KonanTarget,
         builtInsPlatform: BuiltInsPlatform,
         nopack: Boolean = false,
+        shortName: String? = null,
 
         val layout: KonanLibraryLayoutForWriter = KonanLibraryLayoutForWriter(libDir, target),
 
-        base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nopack),
+        base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nopack, shortName),
         bitcode: BitcodeWriter = BitcodeWriterImpl(layout),
         metadata: MetadataWriter = MetadataWriterImpl(layout),
         ir: IrWriter = IrMonoliticWriterImpl(layout)
@@ -51,11 +52,20 @@ fun buildLibrary(
     output: String,
     moduleName: String,
     nopack: Boolean,
+    shortName: String?,
     manifestProperties: Properties?,
     dataFlowGraph: ByteArray?
 ): KonanLibraryLayout {
 
-    val library = KonanLibraryWriterImpl(File(output), moduleName, versions, target, BuiltInsPlatform.NATIVE, nopack)
+    val library = KonanLibraryWriterImpl(
+            File(output),
+            moduleName,
+            versions,
+            target,
+            BuiltInsPlatform.NATIVE,
+            nopack,
+            shortName
+    )
 
     library.addMetadata(metadata)
     if (ir != null) {

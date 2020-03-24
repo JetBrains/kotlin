@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.native.interop.tool.CommonInteropArguments.Companion.DEFAULT_MODE
 import org.jetbrains.kotlin.native.interop.tool.CommonInteropArguments.Companion.MODE_METADATA
 import org.jetbrains.kotlin.native.interop.tool.CommonInteropArguments.Companion.MODE_SOURCECODE
+import org.jetbrains.kotlin.native.interop.tool.SHORT_MODULE_NAME
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.concurrent.atomic.AtomicInteger
@@ -167,6 +168,9 @@ private class DefFile(val name: String, val depends: MutableList<DefFile>) {
 
     val libraryName: String
         get() = "${PlatformLibsInfo.namePrefix}$name"
+
+    val shortLibraryName: String
+        get() = name
 }
 
 private fun createTempDir(prefix: String, parent: File): File =
@@ -236,6 +240,7 @@ private fun generateLibrary(
                 "-repo", outputDirectory.absolutePath,
                 "-no-default-libs", "-no-endorsed-libs", "-Xpurge-user-libs", "-nopack",
                 "-mode", mode,
+                "-$SHORT_MODULE_NAME", def.shortLibraryName,
                 *def.depends.flatMap { listOf("-l", "$outputDirectory/${it.libraryName}") }.toTypedArray()
         )
         logger.verbose("Run cinterop with args: ${cinteropArgs.joinToString(separator = " ")}")

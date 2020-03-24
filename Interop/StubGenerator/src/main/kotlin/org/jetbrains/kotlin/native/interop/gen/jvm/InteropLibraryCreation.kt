@@ -32,7 +32,8 @@ fun createInteropLibrary(
         target: KonanTarget,
         manifest: Properties,
         dependencies: List<KotlinLibrary>,
-        nopack: Boolean
+        nopack: Boolean,
+        shortName: String?
 ) {
     val version = KotlinLibraryVersioning(
             libraryVersion = null,
@@ -49,7 +50,8 @@ fun createInteropLibrary(
             target,
 
             BuiltInsPlatform.NATIVE,
-            nopack = nopack
+            nopack = nopack,
+            shortName = shortName
     ).apply {
         val metadata = metadata.write(ChunkingWriteStrategy())
         addMetadata(SerializedMetadata(metadata.header, metadata.fragments, metadata.fragmentNames))

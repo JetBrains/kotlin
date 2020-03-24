@@ -94,6 +94,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val moduleId: String
         get() = configuration.get(KonanConfigKeys.MODULE_NAME) ?: File(outputFiles.outputName).name
 
+    val shortModuleName: String?
+        get() = configuration.get(KonanConfigKeys.SHORT_MODULE_NAME)
+
     val infoArgsOnly = configuration.kotlinSourceRoots.isEmpty()
             && configuration[KonanConfigKeys.INCLUDED_LIBRARIES].isNullOrEmpty()
             && librariesToCache.isEmpty()

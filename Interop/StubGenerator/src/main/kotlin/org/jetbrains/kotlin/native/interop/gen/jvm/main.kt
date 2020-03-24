@@ -374,7 +374,8 @@ private fun processCLib(flavorName: String, cinteropArguments: CInteropArguments
                     outputPath = cinteropArguments.output,
                     manifest = def.manifestAddendProperties,
                     dependencies = stdlibDependency + imports.requiredLibraries.toList(),
-                    nopack = cinteropArguments.nopack
+                    nopack = cinteropArguments.nopack,
+                    shortName = cinteropArguments.shortModuleName
             )
             return null
         }

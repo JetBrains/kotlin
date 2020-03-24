@@ -28,6 +28,7 @@ const val PURGE_USER_LIBS = "Xpurge-user-libs"
 const val TEMP_DIR = "Xtemporary-files-dir"
 const val NOPACK = "nopack"
 const val COMPILE_SOURCES = "Xcompile-source"
+const val SHORT_MODULE_NAME = "Xshort-module-name"
 
 // TODO: unify camel and snake cases.
 // Possible solution is to accept both cases
@@ -108,6 +109,11 @@ open class CInteropArguments(argParser: ArgParser =
             fullName = "Xsource-compiler-option",
             description = "compiler options for sources provided via -$COMPILE_SOURCES"
     ).multiple()
+
+    val shortModuleName by argParser.option(ArgType.String,
+            fullName = SHORT_MODULE_NAME,
+            description = "A short name used to denote this library in the IDE and during Objective-C export"
+    )
 }
 
 class JSInteropArguments(argParser: ArgParser = ArgParser("jsinterop",

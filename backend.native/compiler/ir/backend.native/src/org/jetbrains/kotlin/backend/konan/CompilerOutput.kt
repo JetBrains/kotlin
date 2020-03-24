@@ -131,6 +131,7 @@ internal fun produceOutput(context: Context) {
         CompilerOutputKind.LIBRARY -> {
             val output = context.config.outputFiles.outputName
             val libraryName = context.config.moduleId
+            val shortLibraryName = context.config.shortModuleName
             val neededLibraries = context.librariesWithDependencies
             val abiVersion = KotlinAbiVersion.CURRENT
             val compilerVersion = CompilerVersion.CURRENT.toString()
@@ -159,6 +160,7 @@ internal fun produceOutput(context: Context) {
                     output,
                     libraryName,
                     nopack,
+                    shortLibraryName,
                     manifestProperties,
                     context.dataFlowGraph)
 

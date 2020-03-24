@@ -85,7 +85,7 @@ project.rootProject.ext.platformManager.enabled.each { target ->
                         "${fileNamePrefix}${it}".toString()
                     }
                 }
-                extraOpts '-Xpurge-user-libs'
+                extraOpts '-Xpurge-user-libs', "-Xshort-module-name", df.name
                 compilerOpts "-fmodules-cache-path=${project.buildDir}/clangModulesCache"
             }
         }

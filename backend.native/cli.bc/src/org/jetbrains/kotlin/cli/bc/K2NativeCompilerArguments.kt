@@ -195,9 +195,16 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = INCLUDE_ARG,
         valueDescription = "<path>",
-        description = "A path to an intermediate library that should be processed in the same manner as source files.\n"
+        description = "A path to an intermediate library that should be processed in the same manner as source files"
     )
     var includes: Array<String>? = null
+
+    @Argument(
+        value = "-Xshort-module-name",
+        valueDescription = "<name>",
+        description = "A short name used to denote this library in the IDE and during Objective-C export"
+    )
+    var shortModuleName: String? = null
 
     @Argument(value = STATIC_FRAMEWORK_FLAG, description = "Create a framework with a static library instead of a dynamic one")
     var staticFramework: Boolean = false

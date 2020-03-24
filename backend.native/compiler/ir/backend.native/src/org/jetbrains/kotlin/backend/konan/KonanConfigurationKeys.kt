@@ -114,6 +114,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey("klibs processed in the same manner as source files")
         val SOURCE_MAP: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("generate source map")
+        val SHORT_MODULE_NAME: CompilerConfigurationKey<String?>
+                = CompilerConfigurationKey("short module name for IDE and export")
         val STATIC_FRAMEWORK: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("produce a static library for a framework")
         val TARGET: CompilerConfigurationKey<String?>
