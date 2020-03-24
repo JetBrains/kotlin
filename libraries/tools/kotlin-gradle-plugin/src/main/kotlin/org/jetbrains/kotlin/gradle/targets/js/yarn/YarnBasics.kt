@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
+import com.github.gundy.semver4j.SemVer
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
@@ -156,7 +157,10 @@ private class YarnEntryRegistry(lockFile: File) {
         if (entry == null && version == "*") {
             val searchKey = dependencyKey(packageKey, "")
             entry = entryMap.entries
-                .firstOrNull { it.key.startsWith(searchKey) }
+                .filter { it.key.startsWith(searchKey) }
+                .firstOrNull {
+                    SemVer.satisfies(it.key.removePrefix(searchKey), "*")
+                }
                 ?.value
         }
 
