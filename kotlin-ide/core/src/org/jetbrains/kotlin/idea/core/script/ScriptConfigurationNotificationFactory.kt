@@ -17,6 +17,7 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.HyperlinkLabel
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
+import org.jetbrains.kotlin.idea.core.util.KotlinIdeaCoreBundle
 import org.jetbrains.kotlin.psi.UserDataProperty
 
 interface ScriptConfigurationNotificationFactory {
@@ -88,13 +89,12 @@ class DefaultScriptConfigurationNotificationFactory : ScriptConfigurationNotific
     ) : EditorNotificationPanel() {
 
         init {
-            setText("Script Configuration might be changed")
-            createComponentActionLabel("Load configuration") {
+            setText(KotlinIdeaCoreBundle.message("notification.text.script.configuration.has.been.changed"))
+            createComponentActionLabel(KotlinIdeaCoreBundle.message("notification.action.text.load.script.configuration")) {
                 onClick()
-
             }
 
-            createComponentActionLabel("Enable auto-reload") {
+            createComponentActionLabel(KotlinIdeaCoreBundle.message("notification.action.text.enable.auto.reload")) {
                 onClick()
                 KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled = true
             }
