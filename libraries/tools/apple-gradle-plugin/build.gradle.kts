@@ -23,9 +23,12 @@ repositories {
     google()
 }
 
-dependencies {
-    shadow(gradleApi())
+// needed to prevent inclusion of gradle-api into shadow JAR
+configurations.named(JavaPlugin.API_CONFIGURATION_NAME) {
+    dependencies.remove(project.dependencies.gradleApi())
+}
 
+dependencies {
     shadow("com.jetbrains.intellij.platform:core:$intellijVersion")
     shadow("com.jetbrains.intellij.platform:util:$intellijVersion")
     shadow("com.jetbrains.intellij.platform:util-rt:$intellijVersion")
