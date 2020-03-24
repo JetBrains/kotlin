@@ -94,7 +94,7 @@ interface KotlinCompilationArguments : Serializable {
 }
 
 interface KotlinNativeCompilationExtensions : Serializable {
-    val konanTarget: String?
+    val konanTarget: String? // represents org.jetbrains.kotlin.konan.target.KonanTarget
 }
 
 interface KotlinCompilation : KotlinModule {
@@ -148,7 +148,7 @@ interface KotlinTarget : Serializable {
     val compilations: Collection<KotlinCompilation>
     val testTasks: Collection<KotlinTestTask>
     val jar: KotlinTargetJar?
-    val konanArtifacts: List<KonanArtifactModel>
+    val konanArtifacts: List<KonanArtifactModel> // TODO: move K/N artifacts under KotlinNativeCompilationExtensions
 
     companion object {
         const val METADATA_TARGET_NAME = "metadata"
@@ -179,11 +179,11 @@ interface KotlinMPPGradleModel : Serializable {
 }
 
 interface KonanArtifactModel : Serializable {
-    val targetName: String
-    val executableName: String
-    val type: String // represents org.jetbrains.kotlin.konan.target.CompilerOutputKind
-    val targetPlatform: String
-    val file: File
+    val targetName: String // represents org.jetbrains.kotlin.gradle.plugin.KotlinTarget.name, ex: "iosX64", "iosArm64"
+    val executableName: String // a base name for the output binary file
+    val type: String // represents org.jetbrains.kotlin.konan.target.CompilerOutputKind.name, ex: "PROGRAM", "FRAMEWORK"
+    val targetPlatform: String // represents org.jetbrains.kotlin.konan.target.KonanTarget.name
+    val file: File // the output binary file
     val buildTaskPath: String
     val runConfiguration: KonanRunConfigurationModel
     val isTests: Boolean
