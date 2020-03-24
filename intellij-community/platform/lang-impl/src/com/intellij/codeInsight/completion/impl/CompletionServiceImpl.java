@@ -44,7 +44,7 @@ public final class CompletionServiceImpl extends BaseCompletionService {
     });
   }
 
-  @SuppressWarnings({"MethodOverridesStaticMethodOfSuperclass"})
+  @SuppressWarnings("MethodOverridesStaticMethodOfSuperclass")
   public static CompletionServiceImpl getCompletionService() {
     return (CompletionServiceImpl)CompletionService.getCompletionService();
   }
@@ -105,8 +105,7 @@ public final class CompletionServiceImpl extends BaseCompletionService {
     @NotNull
     @Override
     public CompletionResultSet withRelevanceSorter(@NotNull CompletionSorter sorter) {
-      return new CompletionResultSetImpl(getConsumer(), getPrefixMatcher(), myContributor, myParameters, (CompletionSorterImpl)sorter,
-                                         this);
+      return new CompletionResultSetImpl(getConsumer(), getPrefixMatcher(), myContributor, myParameters, sorter, this);
     }
 
     @Override
@@ -141,6 +140,7 @@ public final class CompletionServiceImpl extends BaseCompletionService {
 
   private static void reportPhase() {
     LOG.error(ourPhase + (ourPhaseTrace != null ? "; set at " + ExceptionUtil.getThrowableText(ourPhaseTrace) : ""));
+    ourTracePhases = true; // let's have more diagnostics in case the exception happens again in this session
   }
 
   @SafeVarargs
