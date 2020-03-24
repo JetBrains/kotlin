@@ -45,8 +45,8 @@ FILE: constructorInObject.kt
 
     }
     public? final? val anonObject: <implicit> = object : R|kotlin/Any| {
-        public? constructor(): <ERROR TYPE REF: Constructor in object> {
-            super<<ERROR TYPE REF: No super type>>()
+        public? constructor(): R|anonymous| {
+            super<R|kotlin/Any|>()
         }
 
     }

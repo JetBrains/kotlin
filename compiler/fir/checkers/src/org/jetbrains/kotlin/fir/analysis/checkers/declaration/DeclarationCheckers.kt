@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 
@@ -14,5 +15,8 @@ object DeclarationCheckers {
     )
     val MEMBER_DECLARATIONS: List<FirDeclarationChecker<FirMemberDeclaration>> = DECLARATIONS + listOf(
         FirInfixFunctionDeclarationChecker
+    )
+    val CONSTRUCTORS: List<FirDeclarationChecker<FirConstructor>> = MEMBER_DECLARATIONS + listOf(
+        FirConstructorChecker
     )
 }

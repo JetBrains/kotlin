@@ -71,6 +71,14 @@ open class BaseConverter(
         return null
     }
 
+    override fun LighterASTNode.getAnnotatedExpression(): LighterASTNode? {
+        this.forEachChildren {
+            if (it.isExpression()) return it
+        }
+
+        return null
+    }
+
     override fun LighterASTNode.getChildNodeByType(type: IElementType): LighterASTNode? {
         return this.getChildNodesByType(type).firstOrNull()
     }

@@ -34,7 +34,7 @@ class DeclarationCheckersDiagnosticComponent(collector: AbstractDiagnosticCollec
     }
 
     override fun visitConstructor(constructor: FirConstructor, data: CheckerContext) {
-        runCheck { DeclarationCheckers.MEMBER_DECLARATIONS.check(constructor, data, it) }
+        runCheck { DeclarationCheckers.CONSTRUCTORS.check(constructor, data, it) }
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: CheckerContext) {

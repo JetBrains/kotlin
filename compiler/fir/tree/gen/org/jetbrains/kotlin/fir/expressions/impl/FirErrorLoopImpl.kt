@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
@@ -27,7 +28,7 @@ internal class FirErrorLoopImpl(
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorLoop() {
     override var block: FirBlock = FirEmptyExpressionBlock()
-    override var condition: FirExpression = FirErrorExpressionImpl(source, diagnostic)
+    override var condition: FirExpression = FirErrorExpressionImpl(source, ConeStubDiagnostic(diagnostic))
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

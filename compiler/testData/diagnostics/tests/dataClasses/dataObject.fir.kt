@@ -1,1 +1,1 @@
-data object Object(val x: Int, val y: Int)
+data object Object<!CONSTRUCTOR_IN_OBJECT!>(val x: Int, val y: Int)<!>

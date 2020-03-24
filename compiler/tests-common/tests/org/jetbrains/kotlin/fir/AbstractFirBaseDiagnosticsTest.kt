@@ -311,7 +311,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
 
     private fun Iterable<FirDiagnostic<*>>.toActualDiagnostic(root: PsiElement): List<ActualDiagnostic> {
         val result = mutableListOf<ActualDiagnostic>()
-        filter { it.factory != FirErrors.SYNTAX_ERROR }.mapTo(result) {
+        mapTo(result) {
             val oldDiagnostic = (it as FirPsiDiagnostic<*>).asPsiBasedDiagnostic()
             ActualDiagnostic(oldDiagnostic, null, true)
         }

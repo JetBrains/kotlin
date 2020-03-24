@@ -29,6 +29,9 @@ object FirErrors {
     val RECURSION_IN_SUPERTYPES by error0<FirSourceElement, PsiElement>()
     val RECURSION_IN_IMPLICIT_TYPES by error0<FirSourceElement, PsiElement>()
     val ERROR_FROM_JAVA_RESOLUTION by error0<FirSourceElement, PsiElement>()
+    val EXPRESSION_REQUIRED by error0<FirSourceElement, PsiElement>()
+    val BREAK_OR_CONTINUE_OUTSIDE_A_LOOP by error0<FirSourceElement, PsiElement>()
+    val NOT_A_LOOP_LABEL by error0<FirSourceElement, PsiElement>()
     val OTHER_ERROR by error0<FirSourceElement, PsiElement>()
     val TYPE_MISMATCH by error2<FirSourceElement, PsiElement, ConeKotlinType, ConeKotlinType>()
     val VARIABLE_EXPECTED by error0<FirSourceElement, PsiElement>()
@@ -37,9 +40,12 @@ object FirErrors {
 
     val INAPPLICABLE_INFIX_MODIFIER by existing<FirSourceElement, PsiElement, String>(Errors.INAPPLICABLE_INFIX_MODIFIER)
     val CONSTRUCTOR_IN_OBJECT by existing<FirSourceElement, KtDeclaration>(Errors.CONSTRUCTOR_IN_OBJECT)
+    val CONSTRUCTOR_IN_INTERFACE by existing<FirSourceElement, KtDeclaration>(Errors.CONSTRUCTOR_IN_INTERFACE)
+    val NON_PRIVATE_CONSTRUCTOR_IN_ENUM by existing<FirSourceElement, PsiElement>(Errors.NON_PRIVATE_CONSTRUCTOR_IN_ENUM)
+    val NON_PRIVATE_CONSTRUCTOR_IN_SEALED by existing<FirSourceElement, PsiElement>(Errors.NON_PRIVATE_CONSTRUCTOR_IN_SEALED)
 
-    val REPEATED_MODIFIER by error1<FirSourceElement, KtModifierKeywordToken>()
-    val REDUNDANT_MODIFIER by error2<FirSourceElement, KtModifierKeywordToken, KtModifierKeywordToken>()
-    val DEPRECATED_MODIFIER_PAIR by error2<FirSourceElement, KtModifierKeywordToken, KtModifierKeywordToken>()
-    val INCOMPATIBLE_MODIFIERS by error2<FirSourceElement, KtModifierKeywordToken, KtModifierKeywordToken>()
+    val REPEATED_MODIFIER by error1<FirSourceElement, PsiElement, KtModifierKeywordToken>()
+    val REDUNDANT_MODIFIER by error2<FirSourceElement, PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
+    val DEPRECATED_MODIFIER_PAIR by error2<FirSourceElement, PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
+    val INCOMPATIBLE_MODIFIERS by error2<FirSourceElement, PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
 }

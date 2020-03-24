@@ -462,7 +462,7 @@ class DeclarationsConverter(
                         baseSession, this, context.packageFqName, context.className, firPrimaryConstructor
                     )
                     zippedParameters.generateCopyFunction(
-                        baseSession, null, this, context.packageFqName, context.className, firPrimaryConstructor
+                        baseSession, classNode, this, context.packageFqName, context.className, firPrimaryConstructor
                     )
                     // TODO: equals, hashCode, toString
                 }
@@ -718,15 +718,7 @@ class DeclarationsConverter(
             }
         }
 
-        val delegatedSelfTypeRef =
-            if (classWrapper.isObjectLiteral()) buildErrorTypeRef {
-                source = secondaryConstructor.toFirSourceElement()
-                diagnostic = ConeSimpleDiagnostic(
-                    "Constructor in object",
-                    DiagnosticKind.ConstructorInObject
-                )
-            }
-            else classWrapper.delegatedSelfTypeRef
+        val delegatedSelfTypeRef = classWrapper.delegatedSelfTypeRef
 
         val explicitVisibility = modifiers.getVisibility()
         val status = FirDeclarationStatusImpl(explicitVisibility, Modality.FINAL).apply {
@@ -777,15 +769,7 @@ class DeclarationsConverter(
         val isImplicit = constructorDelegationCall.asText.isEmpty()
         val isThis = (isImplicit && classWrapper.hasPrimaryConstructor) || thisKeywordPresent
         val delegatedType =
-            if (classWrapper.isObjectLiteral() || classWrapper.isInterface()) when {
-                isThis -> buildErrorTypeRef {
-                    diagnostic = ConeSimpleDiagnostic("Constructor in object", DiagnosticKind.ConstructorInObject)
-                }
-                else -> buildErrorTypeRef {
-                    diagnostic = ConeSimpleDiagnostic("No super type", DiagnosticKind.Syntax)
-                }
-            }
-            else when {
+            when {
                 isThis -> classWrapper.delegatedSelfTypeRef
                 else -> classWrapper.delegatedSuperTypeRef
             }
