@@ -271,13 +271,12 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+        context.storeClass(regularClass)
+
         if (regularClass.symbol.classId.isLocal && regularClass !in context.targetedLocalClasses) {
-            return regularClass.runAllPhasesForLocalClass(components, data).also {
-                context.storeClass(it)
-            }.compose()
+            return regularClass.runAllPhasesForLocalClass(components, data).compose()
         }
 
-        context.storeClass(regularClass)
         return withTypeParametersOf(regularClass) {
             val oldConstructorScope = primaryConstructorParametersScope
             val oldContainingClass = containingClass
