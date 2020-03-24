@@ -108,7 +108,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
         get() = destinationDirectory.resolve(outputFileName)
 
     open val configDirectory: File?
-        @Optional @InputDirectory get() = project.projectDir.resolve("webpack.config.d")
+        @Optional @InputDirectory get() = project.projectDir.resolve("webpack.config.d").takeIf { it.isDirectory }
 
     @Input
     var report: Boolean = false
