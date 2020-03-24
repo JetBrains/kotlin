@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.*
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
+import org.jetbrains.kotlin.gradle.utils.property
 import org.slf4j.Logger
 import java.io.File
 
@@ -43,7 +44,9 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
     private val envJsCollector = mutableMapOf<String, String>()
     private val confJsWriters = mutableListOf<(Appendable) -> Unit>()
     private var sourceMaps = false
-    private var configDirectory: File? = project.projectDir.resolve("karma.config.d").takeIf { it.isDirectory }
+    private var configDirectory: File by property {
+        project.projectDir.resolve("karma.config.d")
+    }
 
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
         get() = requiredDependencies.toList()
@@ -440,10 +443,8 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
     }
 
     private fun Appendable.appendFromConfigDir() {
-        val configDirectory = configDirectory ?: return
-
-        check(configDirectory.isDirectory) {
-            "\"$configDirectory\" is not a directory"
+        if (!configDirectory.isDirectory) {
+            return
         }
 
         appendln()
