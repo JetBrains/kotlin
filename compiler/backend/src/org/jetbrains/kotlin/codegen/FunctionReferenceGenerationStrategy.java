@@ -190,7 +190,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
             }
             else {
                 //noinspection ConstantConditions
-                Type constructedType = codegen.typeMapper.mapTypeAsDeclaration(referencedFunction.getReturnType());
+                Type constructedType = codegen.typeMapper.mapType(referencedFunction.getReturnType());
                 result = codegen.generateConstructorCall(fakeResolvedCall, constructedType);
             }
         }
