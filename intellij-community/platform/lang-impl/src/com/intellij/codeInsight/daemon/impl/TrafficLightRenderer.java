@@ -481,11 +481,11 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     protected DefaultUIController() {
       PsiFile psiFile = getPsiFile();
       if (psiFile != null) {
-        ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
+        ProjectFileIndex fileIndex = ProjectRootManager.getInstance(getProject()).getFileIndex();
         VirtualFile virtualFile = psiFile.getVirtualFile();
         assert virtualFile != null;
         inLibrary = fileIndex.isInLibrary(virtualFile) && !fileIndex.isInContent(virtualFile);
-        myAdditionalPanels = HectorComponentPanelsProvider.EP_NAME.extensions(myProject).
+        myAdditionalPanels = HectorComponentPanelsProvider.EP_NAME.extensions(getProject()).
           map(hp -> hp.createConfigurable(psiFile)).filter(p -> p != null).collect(Collectors.toList());
       }
       else {
@@ -500,62 +500,63 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     @NotNull
     protected List<AnAction> initActions() {
       List<AnAction> result = new ArrayList<>();
-      PsiFile psiFile = getPsiFile();
-      if (psiFile != null) { // Configure inspections
-        result.add(new DumbAwareAction(EditorBundle.message("iw.configure.inspections")) {
-          @Override
-          public void update(@NotNull AnActionEvent e) {
-            e.getPresentation().setEnabled(myDaemonCodeAnalyzer.isHighlightingAvailable(psiFile));
-          }
+      result.add(new DumbAwareAction(EditorBundle.message("iw.configure.inspections")) {
+        @Override
+        public void update(@NotNull AnActionEvent e) {
+          e.getPresentation().setEnabled(myDaemonCodeAnalyzer.isHighlightingAvailable(getPsiFile()));
+        }
 
-          @Override
-          public void actionPerformed(@NotNull AnActionEvent e) {
-            if (!myProject.isDisposed()) {
-              Configurable projectConfigurable = ConfigurableExtensionPointUtil.createProjectConfigurableForProvider(myProject, ErrorsConfigurableProvider.class);
-              if (projectConfigurable != null) {
-                ShowSettingsUtil.getInstance().editConfigurable(getProject(), projectConfigurable);
-              }
+        @Override
+        public void actionPerformed(@NotNull AnActionEvent e) {
+          if (!getProject().isDisposed()) {
+            Configurable projectConfigurable = ConfigurableExtensionPointUtil.createProjectConfigurableForProvider(getProject(),
+                                                                                                       ErrorsConfigurableProvider.class);
+            if (projectConfigurable != null) {
+              ShowSettingsUtil.getInstance().editConfigurable(getProject(), projectConfigurable);
             }
           }
-        });
-      }
+        }
+      });
 
       result.add(DaemonEditorPopup.createGotoGroup());
 
-      if (psiFile != null) { // Import popup
-        result.add(Separator.create());
-        result.add(new ToggleAction(EditorBundle.message("iw.show.import.tooltip")) {
-          @Override
-          public boolean isSelected(@NotNull AnActionEvent e) {
-            return myDaemonCodeAnalyzer.isImportHintsEnabled(psiFile);
-          }
+      result.add(Separator.create());
+      result.add(new ToggleAction(EditorBundle.message("iw.show.import.tooltip")) {
+        @Override
+        public boolean isSelected(@NotNull AnActionEvent e) {
+          PsiFile psiFile = getPsiFile();
+          return psiFile != null && myDaemonCodeAnalyzer.isImportHintsEnabled(psiFile);
+        }
 
-          @Override
-          public void setSelected(@NotNull AnActionEvent e, boolean state) {
+        @Override
+        public void setSelected(@NotNull AnActionEvent e, boolean state) {
+          PsiFile psiFile = getPsiFile();
+          if (psiFile != null) {
             myDaemonCodeAnalyzer.setImportHintsEnabled(psiFile, state);
           }
+        }
 
-          @Override
-          public void update(@NotNull AnActionEvent e) {
-            super.update(e);
-            e.getPresentation().setEnabled(myDaemonCodeAnalyzer.isAutohintsAvailable(psiFile));
-          }
+        @Override
+        public void update(@NotNull AnActionEvent e) {
+          super.update(e);
+          e.getPresentation().setEnabled(myDaemonCodeAnalyzer.isAutohintsAvailable(getPsiFile()));
+        }
 
-          @Override
-          public boolean isDumbAware() {
-            return true;
-          }
-        });
-      }
+        @Override
+        public boolean isDumbAware() {
+          return true;
+        }
+      });
+
       return result;
     }
 
     private @NotNull List<LanguageHighlightLevel> initLevels() {
       List<LanguageHighlightLevel> result = new ArrayList<>();
       PsiFile psiFile = getPsiFile();
-      if (psiFile != null && !myProject.isDisposed()) {
+      if (psiFile != null && !getProject().isDisposed()) {
         FileViewProvider viewProvider = psiFile.getViewProvider();
-        HighlightingLevelManager hlManager = HighlightingLevelManager.getInstance(myProject);
+        HighlightingLevelManager hlManager = HighlightingLevelManager.getInstance(getProject());
         for (Language language : viewProvider.getLanguages()) {
           PsiFile psiRoot = viewProvider.getPsi(language);
           result.add(new LanguageHighlightLevel(language, getHighlightLevel(hlManager.shouldHighlight(psiRoot), hlManager.shouldInspect(psiRoot))));
@@ -585,7 +586,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
     @Override
     public void setHighLightLevel(@NotNull LanguageHighlightLevel level) {
       PsiFile psiFile = getPsiFile();
-      if (psiFile != null && !myProject.isDisposed() && !myLevelsList.contains(level)) {
+      if (psiFile != null && !getProject().isDisposed() && !myLevelsList.contains(level)) {
         FileViewProvider viewProvider = psiFile.getViewProvider();
 
         PsiElement root = viewProvider.getPsi(level.getLanguage());
@@ -601,7 +602,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
 
         myLevelsList.replaceAll(l -> l.getLanguage().equals(level.getLanguage()) ? level : l);
 
-        InjectedLanguageManager.getInstance(myProject).dropFileCaches(psiFile);
+        InjectedLanguageManager.getInstance(getProject()).dropFileCaches(psiFile);
         myDaemonCodeAnalyzer.restart();
       }
     }
@@ -637,7 +638,7 @@ public class TrafficLightRenderer implements ErrorStripeRenderer, Disposable {
         PsiFile psiFile = getPsiFile();
         if (myAdditionalPanels.stream().filter(p -> p.isModified()).peek(TrafficLightRenderer::applyPanel).count() > 0) {
           if (psiFile != null) {
-            InjectedLanguageManager.getInstance(myProject).dropFileCaches(psiFile);
+            InjectedLanguageManager.getInstance(getProject()).dropFileCaches(psiFile);
           }
           myDaemonCodeAnalyzer.restart();
         }
