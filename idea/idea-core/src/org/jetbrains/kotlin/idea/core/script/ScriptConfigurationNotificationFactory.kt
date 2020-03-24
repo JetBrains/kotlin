@@ -58,9 +58,8 @@ class DefaultScriptConfigurationNotificationFactory : ScriptConfigurationNotific
         withSelectedEditor(project) { manager ->
             val existingPanel = notificationPanel
             if (existingPanel != null) {
-                notificationPanel?.let {
-                    manager.removeTopComponent(this, it)
-                }
+                existingPanel.onClick = onClick
+                return@withSelectedEditor
             }
 
             val panel = NewLoadConfigurationNotificationPanel(onClick, project)
@@ -84,7 +83,7 @@ class DefaultScriptConfigurationNotificationFactory : ScriptConfigurationNotific
             by UserDataProperty<FileEditor, NewLoadConfigurationNotificationPanel>(Key.create("load.script.configuration.panel"))
 
     private class NewLoadConfigurationNotificationPanel(
-        val onClick: () -> Unit,
+        var onClick: () -> Unit,
         project: Project
     ) : EditorNotificationPanel() {
 
