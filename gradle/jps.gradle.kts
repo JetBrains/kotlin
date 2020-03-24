@@ -1,7 +1,10 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.gradle.ext.*
+import org.jetbrains.gradle.ext.ActionDelegationConfig
+import org.jetbrains.gradle.ext.JUnit
+import org.jetbrains.gradle.ext.RecursiveArtifact
+import org.jetbrains.gradle.ext.TopLevelArtifact
 import org.jetbrains.kotlin.ideaExt.*
 
 
@@ -22,13 +25,15 @@ fun JUnit.configureForKotlin(xmx: String = "1600m") {
         "-XX:+UseCodeCacheFlushing",
         "-XX:ReservedCodeCacheSize=128m",
         "-Djna.nosys=true",
+        if (Platform[201].orHigher()) "-Didea.platform.prefix=Idea" else null,
         "-Didea.is.unit.test=true",
         "-Didea.home.path=$ideaSdkPath",
         "-Djps.kotlin.home=${ideaPluginDir.absolutePath}",
         "-Dkotlin.ni=" + if (rootProject.hasProperty("newInferenceTests")) "true" else "false",
         "-Duse.jps=true",
         "-Djava.awt.headless=true"
-    ).joinToString(" ")
+    ).filterNotNull().joinToString(" ")
+
     envs = mapOf(
         "NO_FS_ROOTS_ACCESS_CHECK" to "true",
         "PROJECT_CLASSES_DIRS" to "out/test/org.jetbrains.kotlin.compiler.test"

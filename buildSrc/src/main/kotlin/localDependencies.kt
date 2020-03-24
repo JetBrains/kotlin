@@ -174,7 +174,6 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
             "-XX:ReservedCodeCacheSize=240m",
             "-XX:+HeapDumpOnOutOfMemoryError",
             "-ea",
-            "-Didea.platform.prefix=Idea",
             "-Didea.debug.mode=true",
             "-Didea.system.path=$ideaSandboxDir",
             "-Didea.config.path=$ideaSandboxConfigDir",
@@ -183,6 +182,10 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
             "-Dsun.io.useCanonCaches=false",
             "-Dplugin.path=${ideaPluginDir.absolutePath}"
         )
+
+        if (Platform[201].orHigher()) {
+            jvmArgs("-Didea.platform.prefix=Idea")
+        }
 
         if (rootProject.findProperty("versions.androidStudioRelease") != null) {
             jvmArgs("-Didea.platform.prefix=AndroidStudio")
