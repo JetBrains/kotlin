@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard
 
 import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.util.projectWizard.*
+import com.intellij.ide.wizard.AbstractWizard
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.module.ModifiableModuleModel
@@ -115,7 +116,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
     private fun clickFinishButton() {
         if (finishButtonClicked) return
         finishButtonClicked = true
-        wizardContext?.getActionButtonWithText("Finish", "Next")?.doClick()
+        wizardContext?.getNextButton()?.doClick()
     }
 
     override fun modifySettingsStep(settingsStep: SettingsStep): ModuleWizardStep? {
@@ -227,10 +228,7 @@ class ModuleNewWizardSecondStep(
     }
 
     override fun getPreferredFocusedComponent(): JComponent? {
-        wizardContext.getActionButtonWithText("Next")?.apply {
-            text = "Finish"
-            updateUI()
-        }
+        wizardContext.getNextButton()?.text = "Finish"
         return super.getPreferredFocusedComponent()
     }
 
@@ -239,9 +237,10 @@ class ModuleNewWizardSecondStep(
     }
 }
 
-private fun WizardContext.getActionButtonWithText(text: String, alternativeText: String? = null): JButton? =
-    wizard?.cancelButton?.parent?.components?.find { child ->
-        child.safeAs<JButton>()?.let { button ->
-            button.text == text || alternativeText != null && button.text == alternativeText
-        } == true
-    } as? JButton
+private fun WizardContext.getNextButton() = try {
+    AbstractWizard::class.java.getDeclaredMethod("getNextButton")
+        .also { it.isAccessible = true }
+        .invoke(wizard) as? JButton
+} catch (_: Throwable) {
+    null
+}
