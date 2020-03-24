@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // FILE: kt36973.kt
 import other.*
 
