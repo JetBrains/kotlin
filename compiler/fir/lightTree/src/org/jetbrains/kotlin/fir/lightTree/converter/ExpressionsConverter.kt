@@ -194,11 +194,13 @@ class ExpressionsConverter(
         var leftArgNode: LighterASTNode? = null
         var rightArgAsFir: FirExpression = buildErrorExpression(null, ConeSimpleDiagnostic("No right operand", DiagnosticKind.Syntax))
         var rightArg: LighterASTNode? = null
+        var operationReferenceSource: FirLightSourceElement? = null
         binaryExpression.forEachChildren {
             when (it.tokenType) {
                 OPERATION_REFERENCE -> {
                     isLeftArgument = false
                     operationTokenName = it.asText
+                    operationReferenceSource = it.toFirSourceElement()
                 }
                 else -> if (it.isExpression()) {
                     if (isLeftArgument) {
@@ -211,25 +213,18 @@ class ExpressionsConverter(
             }
         }
 
+        val baseSource = binaryExpression.toFirSourceElement()
         val operationToken = operationTokenName.getOperationSymbol()
         val leftArgAsFir = getAsFirExpression<FirExpression>(leftArgNode, "No left operand")
         when (operationToken) {
             ELVIS ->
-                return leftArgAsFir.generateNotNullOrOther(
-                    baseSession, rightArgAsFir, "elvis", null
-                )
+                return leftArgAsFir.generateNotNullOrOther(baseSession, rightArgAsFir, "elvis", baseSource)
             ANDAND, OROR ->
-                return leftArgAsFir.generateLazyLogicalOperation(
-                    rightArgAsFir, operationToken == ANDAND, null
-                )
+                return leftArgAsFir.generateLazyLogicalOperation(rightArgAsFir, operationToken == ANDAND, baseSource)
             in OperatorConventions.IN_OPERATIONS ->
-                return rightArgAsFir.generateContainsOperation(
-                    leftArgAsFir, operationToken == NOT_IN, null, null
-                )
+                return rightArgAsFir.generateContainsOperation(leftArgAsFir, operationToken == NOT_IN, baseSource, operationReferenceSource)
             in OperatorConventions.COMPARISON_OPERATIONS ->
-                return leftArgAsFir.generateComparisonExpression(
-                    rightArgAsFir, operationToken, null, null
-                )
+                return leftArgAsFir.generateComparisonExpression(rightArgAsFir, operationToken, baseSource, operationReferenceSource)
         }
         val conventionCallName = operationToken.toBinaryName()
         return if (conventionCallName != null || operationToken == IDENTIFIER) {
@@ -245,7 +240,7 @@ class ExpressionsConverter(
         } else {
             val firOperation = operationToken.toFirOperation()
             if (firOperation in FirOperation.ASSIGNMENTS) {
-                return leftArgNode.generateAssignment(null, rightArg, rightArgAsFir, firOperation) { getAsFirExpression(this) }
+                return leftArgNode.generateAssignment(binaryExpression.toFirSourceElement(), rightArg, rightArgAsFir, firOperation) { getAsFirExpression(this) }
             } else {
                 buildOperatorCall {
                     source = binaryExpression.toFirSourceElement()
@@ -688,9 +683,13 @@ class ExpressionsConverter(
     private fun convertWhenConditionInRange(whenCondition: LighterASTNode, subject: FirWhenSubject?): FirExpression {
         var isNegate = false
         var firExpression: FirExpression = buildErrorExpression(null, ConeSimpleDiagnostic("No range in condition with range", DiagnosticKind.Syntax))
+        var conditionSource: FirLightSourceElement? = null
         whenCondition.forEachChildren {
             when {
-                it.tokenType == OPERATION_REFERENCE && it.asText == NOT_IN.value -> isNegate = true
+                it.tokenType == OPERATION_REFERENCE && it.asText == NOT_IN.value -> {
+                    conditionSource = it.toFirSourceElement()
+                    isNegate = true
+                }
                 else -> if (it.isExpression()) firExpression = getAsFirExpression(it)
             }
         }
@@ -709,8 +708,8 @@ class ExpressionsConverter(
         return firExpression.generateContainsOperation(
             subjectExpression,
             inverted = isNegate,
-            base = null, // TODO: replace with FirSourceElement
-            operationReference = null
+            baseSource = whenCondition.toFirSourceElement(),
+            operationReferenceSource = conditionSource
         )
     }
 

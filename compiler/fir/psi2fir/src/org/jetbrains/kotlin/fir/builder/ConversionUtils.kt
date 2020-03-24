@@ -217,7 +217,12 @@ internal fun KtWhenCondition.toFirWhenCondition(
         }
         is KtWhenConditionInRange -> {
             val firRange = rangeExpression.convert("No range in condition with range")
-            firRange.generateContainsOperation(firSubjectExpression, isNegated, rangeExpression, operationReference)
+            firRange.generateContainsOperation(
+                firSubjectExpression,
+                isNegated,
+                rangeExpression?.toFirSourceElement(),
+                operationReference.toFirSourceElement()
+            )
         }
         is KtWhenConditionIsPattern -> {
             buildTypeOperatorCall {
@@ -255,14 +260,12 @@ internal fun Array<KtWhenCondition>.toFirWhenCondition(
 fun FirExpression.generateContainsOperation(
     argument: FirExpression,
     inverted: Boolean,
-    base: KtExpression?,
-    operationReference: KtOperationReferenceExpression?,
+    baseSource: FirSourceElement?,
+    operationReferenceSource: FirSourceElement?
 ): FirFunctionCall {
-    val baseSource = base?.toFirSourceElement()
-    val containsCall = createConventionCall(operationReference, baseSource, argument, OperatorNameConventions.CONTAINS)
+    val containsCall = createConventionCall(operationReferenceSource, baseSource, argument, OperatorNameConventions.CONTAINS)
     if (!inverted) return containsCall
 
-    val operationReferenceSource = operationReference?.toFirSourceElement()
     return buildFunctionCall {
         source = baseSource
         calleeReference = buildSimpleNamedReference {
@@ -276,15 +279,14 @@ fun FirExpression.generateContainsOperation(
 fun FirExpression.generateComparisonExpression(
     argument: FirExpression,
     operatorToken: IElementType,
-    base: KtExpression?,
-    operationReference: KtOperationReferenceExpression?,
+    baseSource: FirSourceElement?,
+    operationReferenceSource: FirSourceElement?,
 ): FirComparisonExpression {
     require(operatorToken in OperatorConventions.COMPARISON_OPERATIONS) {
         "$operatorToken is not in ${OperatorConventions.COMPARISON_OPERATIONS}"
     }
 
-    val baseSource = base?.toFirSourceElement()
-    val compareToCall = createConventionCall(operationReference, baseSource, argument, OperatorNameConventions.COMPARE_TO)
+    val compareToCall = createConventionCall(operationReferenceSource, baseSource, argument, OperatorNameConventions.COMPARE_TO)
 
     val firOperation = when (operatorToken) {
         KtTokens.LT -> FirOperation.LT
@@ -302,12 +304,11 @@ fun FirExpression.generateComparisonExpression(
 }
 
 private fun FirExpression.createConventionCall(
-    operationReference: KtOperationReferenceExpression?,
-    baseSource: FirPsiSourceElement?,
+    operationReferenceSource: FirSourceElement?,
+    baseSource: FirSourceElement?,
     argument: FirExpression,
     conventionName: Name
 ): FirFunctionCall {
-    val operationReferenceSource = operationReference?.toFirSourceElement()
     return buildFunctionCall {
         source = baseSource
         calleeReference = buildSimpleNamedReference {
