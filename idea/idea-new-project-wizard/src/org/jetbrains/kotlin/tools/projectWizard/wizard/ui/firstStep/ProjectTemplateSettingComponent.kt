@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 
-import com.intellij.ui.JBColor
+import com.intellij.ui.ScrollPaneFactory
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
@@ -34,11 +34,14 @@ class ProjectTemplateSettingComponent(
             append(value.title)
         },
         onValueSelected = { value = it }
-    ).addBorder(JBUI.Borders.customLine(JBColor.border()))
+    )
 
+    private val scrollPane = ScrollPaneFactory.createScrollPane(list).apply {
+        preferredSize = Dimension(minimumSize.width, HEIGHT)
+    }
 
     override val component: JComponent = borderPanel {
-        addToCenter(borderPanel { addToCenter(list) }.addBorder(JBUI.Borders.empty(0,/*left*/ 3, 0, /*right*/ 3)))
+        addToCenter(borderPanel { addToCenter(scrollPane) }.addBorder(JBUI.Borders.empty(0,/*left*/ 3, 0, /*right*/ 3)))
         addToBottom(templateDescriptionComponent.component.addBorder(JBUI.Borders.empty(/*top*/8,/*left*/ 3, 0, 0)))
     }
 
@@ -60,6 +63,10 @@ class ProjectTemplateSettingComponent(
             list.selectedIndex = 0
             value = setting.type.values.firstOrNull()
         }
+    }
+
+    companion object {
+        private const val HEIGHT = 230
     }
 }
 
