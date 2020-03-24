@@ -30,7 +30,7 @@ open class BaseConverter(
 ) : BaseFirBuilder<LighterASTNode>(baseSession, context) {
     protected val implicitType = buildImplicitTypeRef()
 
-    override fun LighterASTNode.toFirSourceElement(): FirSourceElement {
+    override fun LighterASTNode.toFirSourceElement(): FirLightSourceElement {
         val startOffset = offset + tree.getStartOffset(this)
         val endOffset = offset + tree.getEndOffset(this)
         return FirLightSourceElement(this, startOffset, endOffset, tree)
