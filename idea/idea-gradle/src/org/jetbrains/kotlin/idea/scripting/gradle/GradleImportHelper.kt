@@ -46,8 +46,13 @@ fun showNotificationForProjectImport(project: Project, callback: () -> Unit) {
         callback()
     })
     notification.addAction(NotificationAction.createSimple(KotlinIdeaGradleBundle.message("action.label.enable.auto.import")) {
-        callback()
-        KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled = true
+        val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
+        val projectSettings = gradleSettings.getLinkedProjectsSettings()
+            .filterIsInstance<GradleProjectSettings>()
+            .firstOrNull()
+        if (projectSettings != null) {
+            projectSettings.isUseAutoImport = true
+        }
     })
     project.notificationPanel = notification
     notification.notify(project)
