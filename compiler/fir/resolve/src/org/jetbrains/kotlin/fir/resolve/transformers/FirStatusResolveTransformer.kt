@@ -33,7 +33,13 @@ class FirStatusResolveTransformerAdapter : FirTransformer<Nothing?>() {
     }
 }
 
-class FirStatusResolveTransformer(override val session: FirSession) :
+fun <F : FirClass<F>> F.runStatusResolveForLocalClass(session: FirSession): F {
+    val transformer = FirStatusResolveTransformer(session)
+
+    return this.transform<F, Nothing?>(transformer, null).single
+}
+
+private class FirStatusResolveTransformer(override val session: FirSession) :
     FirAbstractTreeTransformer<FirDeclarationStatus?>(phase = FirResolvePhase.STATUS) {
     private val classes = mutableListOf<FirClass<*>>()
 

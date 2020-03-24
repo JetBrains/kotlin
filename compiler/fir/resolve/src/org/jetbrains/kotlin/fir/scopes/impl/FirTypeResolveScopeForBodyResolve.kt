@@ -14,13 +14,16 @@ class FirTypeResolveScopeForBodyResolve(
     private val components: BodyResolveComponents
 ) : FirIterableScope() {
     override val scopes: Iterable<FirScope>
-        get() = mutableListOf<FirScope>().apply {
-            addAll(components.localScopes.asReversed())
-            components.implicitReceiverStack.receiversAsReversed().mapNotNullTo(this) {
-                (it as? ImplicitDispatchReceiverValue)?.implicitScope
-            }
-
-            addAll(components.typeParametersScopes.asReversed())
-            addAll(components.fileImportsScope.asReversed())
-        }
+        get() = components.createCurrentScopeList()
 }
+
+fun BodyResolveComponents.createCurrentScopeList(): List<FirScope> =
+    mutableListOf<FirScope>().apply {
+        addAll(localScopes.asReversed())
+        implicitReceiverStack.receiversAsReversed().mapNotNullTo(this) {
+            (it as? ImplicitDispatchReceiverValue)?.implicitScope
+        }
+
+        addAll(typeParametersScopes.asReversed())
+        addAll(fileImportsScope.asReversed())
+    }

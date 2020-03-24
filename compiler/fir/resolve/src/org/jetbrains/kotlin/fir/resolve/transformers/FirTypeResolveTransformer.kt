@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -33,13 +34,28 @@ class FirTypeResolveTransformerAdapter(
     }
 }
 
-class FirTypeResolveTransformer(
+fun <F : FirClass<F>> F.runTypeResolvePhaseForLocalClass(
+    session: FirSession,
+    scopeSession: ScopeSession,
+    currentScopeList: List<FirScope>,
+): F {
+    val transformer = FirTypeResolveTransformer(scopeSession, session, currentScopeList)
+
+    return this.transform<F, Nothing?>(transformer, null).single
+}
+
+private class FirTypeResolveTransformer(
     private val scopeSession: ScopeSession,
     override val session: FirSession,
+    initialScopes: List<FirScope> = emptyList()
 ) : FirAbstractTreeTransformerWithSuperTypes(
     phase = FirResolvePhase.TYPES,
     reversedScopePriority = true
 ) {
+
+    init {
+        towerScope.addScopes(initialScopes.asReversed())
+    }
 
     private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(towerScope, session)
 

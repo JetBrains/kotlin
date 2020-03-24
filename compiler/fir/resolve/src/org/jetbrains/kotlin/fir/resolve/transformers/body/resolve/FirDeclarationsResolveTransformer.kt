@@ -270,43 +270,6 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         )
     }
 
-    private fun prepareLocalClassForBodyResolve(klass: FirClass<*>) {
-        if (klass.superTypeRefs.any { it !is FirResolvedTypeRef }) {
-            klass.replaceSuperTypeRefs(
-                klass.superTypeRefs.map { superTypeRef ->
-                    this.transformer.transformTypeRef(superTypeRef, ResolutionMode.ContextIndependent).single
-                }
-            )
-        }
-        if (klass is FirRegularClass) {
-            klass.transformStatus(transformer, klass.resolveStatus(klass.status).mode())
-        }
-        // This is necessary because of possible jumps from implicit bodies inside
-        for (declaration in klass.declarations) {
-            when (declaration) {
-                is FirRegularClass -> {
-                    prepareLocalClassForBodyResolve(declaration)
-                }
-                is FirCallableMemberDeclaration<*> -> {
-                    withTypeParametersOf(declaration) {
-                        prepareSignatureForBodyResolve(declaration)
-                        declaration.transformStatus(transformer, declaration.resolveStatus(declaration.status, klass).mode())
-                        if (declaration is FirProperty) {
-                            declaration.getter?.let { it.transformStatus(this, it.resolveStatus(it.status, klass).mode()) }
-                            declaration.setter?.let { it.transformStatus(this, it.resolveStatus(it.status, klass).mode()) }
-                        }
-                    }
-                }
-            }
-            declaration.replaceResolvePhase(FirResolvePhase.STATUS)
-        }
-        if (klass is FirRegularClass) {
-            for (typeParameter in klass.typeParameters) {
-                typeParameter.replaceResolvePhase(FirResolvePhase.STATUS)
-            }
-        }
-    }
-
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         if (regularClass.symbol.classId.isLocal && regularClass !in context.targetedLocalClasses) {
             return regularClass.runAllPhasesForLocalClass(components, data).also {
@@ -316,10 +279,6 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
 
         context.storeClass(regularClass)
         return withTypeParametersOf(regularClass) {
-            if (regularClass.symbol.classId.isLocal) {
-                prepareLocalClassForBodyResolve(regularClass)
-            }
-
             val oldConstructorScope = primaryConstructorParametersScope
             val oldContainingClass = containingClass
             primaryConstructorParametersScope = null
@@ -351,7 +310,6 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             return anonymousObject.runAllPhasesForLocalClass(components, data).compose()
         }
 
-        prepareLocalClassForBodyResolve(anonymousObject)
         val type = anonymousObject.defaultType()
         anonymousObject.resultType = buildResolvedTypeRef {
             source = anonymousObject.source
