@@ -15,7 +15,6 @@ import com.intellij.openapi.roots.LanguageLevelProjectExtension
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.pom.java.LanguageLevel
-import org.gradle.util.GradleVersion
 
 abstract class GradleJavaImportingTestCase : GradleImportingTestCase() {
 
