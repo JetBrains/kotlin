@@ -18,16 +18,16 @@ package org.jetbrains.kotlin.idea.configuration.ui
 
 import com.intellij.notification.NotificationDisplayType
 import com.intellij.notification.NotificationsConfiguration
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ReadAction.nonBlocking
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
+import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.kotlin.idea.configuration.getModulesWithKotlinFiles
 import org.jetbrains.kotlin.idea.configuration.notifyOutdatedBundledCompilerIfNecessary
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.notifyKotlinStyleUpdateIfNeeded
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
-import org.jetbrains.kotlin.idea.util.runReadActionInSmartMode
 import java.util.concurrent.atomic.AtomicInteger
 
 class KotlinConfigurationCheckerStartupActivity : StartupActivity.DumbAware {
@@ -53,17 +53,16 @@ class KotlinConfigurationCheckerService(val project: Project) {
     private val syncDepth = AtomicInteger()
 
     fun performProjectPostOpenActions() {
-        ApplicationManager.getApplication().executeOnPooledThread {
-            val modulesWithKotlinFiles = project.runReadActionInSmartMode {
-                getModulesWithKotlinFiles(project)
-            }
+        nonBlocking {
+            val modulesWithKotlinFiles = getModulesWithKotlinFiles(project)
             for (module in modulesWithKotlinFiles) {
-                runReadAction {
-                    if (project.isDisposed) return@runReadAction
-                    module.getAndCacheLanguageLevelByDependencies()
-                }
+                module.getAndCacheLanguageLevelByDependencies()
             }
         }
+            .inSmartMode(project)
+            .expireWith(project)
+            .coalesceBy(this)
+            .submit(AppExecutorUtil.getAppExecutorService())
     }
 
     val isSyncing: Boolean get() = syncDepth.get() > 0
