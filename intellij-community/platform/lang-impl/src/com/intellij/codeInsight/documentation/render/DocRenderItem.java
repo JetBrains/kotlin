@@ -14,6 +14,7 @@ import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.EditorEx;
+import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
 import com.intellij.openapi.editor.ex.FoldingModelEx;
 import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper;
 import com.intellij.openapi.editor.impl.FontInfo;
@@ -278,6 +279,10 @@ class DocRenderItem {
       }
       Disposer.dispose(inlay);
       inlay = null;
+      if (!EditorSettingsExternalizable.getInstance().isDocCommentRenderingEnabled()) {
+        // the value won't be updated by DocRenderPass on document modification, so we shouldn't cache the value
+        textToRender = null;
+      }
     }
     return true;
   }
