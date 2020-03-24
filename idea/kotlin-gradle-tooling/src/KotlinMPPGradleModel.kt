@@ -94,7 +94,7 @@ interface KotlinCompilationArguments : Serializable {
 }
 
 interface KotlinNativeCompilationExtensions : Serializable {
-    val konanTarget: String? // represents org.jetbrains.kotlin.konan.target.KonanTarget
+    val konanTarget: String // represents org.jetbrains.kotlin.konan.target.KonanTarget
 }
 
 interface KotlinCompilation : KotlinModule {
@@ -105,7 +105,7 @@ interface KotlinCompilation : KotlinModule {
     val disambiguationClassifier: String?
     val platform: KotlinPlatform
     val kotlinTaskProperties: KotlinTaskProperties
-    val nativeExtensions: KotlinNativeCompilationExtensions
+    val nativeExtensions: KotlinNativeCompilationExtensions?
 
     companion object {
         const val MAIN_COMPILATION_NAME = "main"
