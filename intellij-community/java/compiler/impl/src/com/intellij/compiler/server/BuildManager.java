@@ -996,7 +996,7 @@ public final class BuildManager implements Disposable {
   }
 
   private OSProcessHandler launchBuildProcess(@NotNull Project project, final int port, @NotNull UUID sessionId, boolean requestProjectPreload) throws ExecutionException {
-    String compilerPath;
+    String compilerPath = null;
     final String vmExecutablePath;
     JavaSdkVersion sdkVersion = null;
 
@@ -1009,33 +1009,36 @@ public final class BuildManager implements Disposable {
       sdkVersion = pair.second;
 
       final Sdk internalJdk = JavaAwareProjectJdkTableImpl.getInstanceEx().getInternalJdk();
-      // validate tools.jar presence
       final JavaSdkType projectJdkType = (JavaSdkType)projectJdk.getSdkType();
-      if (FileUtil.pathsEqual(projectJdk.getHomePath(), internalJdk.getHomePath())) {
-        // important: because internal JDK can be either JDK or JRE,
-        // this is the most universal way to obtain tools.jar path in this particular case
-        final JavaCompiler systemCompiler = ToolProvider.getSystemJavaCompiler();
-        if (systemCompiler == null) {
-          //temporary workaround for IDEA-169747
-          try {
-            compilerPath = ClasspathBootstrap.getResourcePath(Class.forName("com.sun.tools.javac.api.JavacTool", false, BuildManager.class.getClassLoader()));
+
+      // validate tools.jar presence for jdk8 and older
+      if (!JavaSdkUtil.isJdkAtLeast(projectJdk, JavaSdkVersion.JDK_1_9)) {
+        if (FileUtil.pathsEqual(projectJdk.getHomePath(), internalJdk.getHomePath())) {
+          // important: because internal JDK can be either JDK or JRE,
+          // this is the most universal way to obtain tools.jar path in this particular case
+          final JavaCompiler systemCompiler = ToolProvider.getSystemJavaCompiler();
+          if (systemCompiler == null) {
+            //temporary workaround for IDEA-169747
+            try {
+              compilerPath = ClasspathBootstrap.getResourcePath(Class.forName("com.sun.tools.javac.api.JavacTool", false, BuildManager.class.getClassLoader()));
+            }
+            catch (Throwable t) {
+              LOG.info(t);
+              compilerPath = null;
+            }
+            if (compilerPath == null) {
+              throw new ExecutionException("No system java compiler is provided by the JRE. Make sure tools.jar is present in IntelliJ IDEA classpath.");
+            }
           }
-          catch (Throwable t) {
-            LOG.info(t);
-            compilerPath = null;
-          }
-          if (compilerPath == null) {
-            throw new ExecutionException("No system java compiler is provided by the JRE. Make sure tools.jar is present in IntelliJ IDEA classpath.");
+          else {
+            compilerPath = ClasspathBootstrap.getResourcePath(systemCompiler.getClass());
           }
         }
         else {
-          compilerPath = ClasspathBootstrap.getResourcePath(systemCompiler.getClass());
-        }
-      }
-      else {
-        compilerPath = projectJdkType.getToolsPath(projectJdk);
-        if (compilerPath == null && !JavaSdkUtil.isJdkAtLeast(projectJdk, JavaSdkVersion.JDK_1_9)) {
-          throw new ExecutionException("Cannot determine path to 'tools.jar' library for " + projectJdk.getName() + " (" + projectJdk.getHomePath() + ")");
+          compilerPath = projectJdkType.getToolsPath(projectJdk);
+          if (compilerPath == null) {
+            throw new ExecutionException("Cannot determine path to 'tools.jar' library for " + projectJdk.getName() + " (" + projectJdk.getHomePath() + ")");
+          }
         }
       }
 
