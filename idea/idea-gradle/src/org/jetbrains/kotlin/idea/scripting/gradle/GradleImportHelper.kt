@@ -15,7 +15,6 @@ import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
 fun runPartialGradleImport(project: Project) {
-    // TODO: partial import
     val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
     val projectSettings = gradleSettings.getLinkedProjectsSettings()
         .filterIsInstance<GradleProjectSettings>()
