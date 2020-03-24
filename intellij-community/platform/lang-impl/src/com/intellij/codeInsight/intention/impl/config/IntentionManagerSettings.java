@@ -5,6 +5,8 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.IntentionActionBean;
 import com.intellij.codeInsight.intention.IntentionManager;
 import com.intellij.ide.ui.TopHitCache;
+import com.intellij.ide.ui.search.SearchableOptionContributor;
+import com.intellij.ide.ui.search.SearchableOptionProcessor;
 import com.intellij.ide.ui.search.SearchableOptionsRegistrar;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
@@ -67,7 +69,7 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
         unregisterMetaDataForEP(extension);
         TopHitCache.getInstance().invalidateCachedOptions(IntentionsOptionsTopHitProvider.class);
       }
-    }, true, this);
+    }, false, this);
   }
 
   @Override
@@ -226,5 +228,13 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
     MetaDataKey key = myExtensionMapping.remove(extension);
     assert key != null : extension;
     myMetaData.remove(key);
+  }
+
+  private static class IntentionSearchableOptionContributor extends SearchableOptionContributor {
+    @Override
+    public void processOptions(@NotNull SearchableOptionProcessor processor) {
+      IntentionManagerSettings settings = getInstance();
+      IntentionManager.EP_INTENTION_ACTIONS.forEachExtensionSafe(bean -> settings.registerMetaDataForEP(bean));
+    }
   }
 }
