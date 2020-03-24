@@ -114,6 +114,12 @@ class VariableFixationFinder(
         return when (candidateReadiness) {
             TypeVariableFixationReadiness.FORBIDDEN -> null
             TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT -> VariableForFixation(candidate, false)
+            TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_UPPER,
+            TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_LOWER -> VariableForFixation(
+                candidate,
+                hasProperConstraint = variableHasProperArgumentConstraints(candidate),
+                hasOnlyTrivialProperConstraint = variableHasTrivialOrNonProperConstraints(candidate)
+            )
             TypeVariableFixationReadiness.WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS ->
                 VariableForFixation(candidate, hasProperConstraint = true, hasOnlyTrivialProperConstraint = true)
 

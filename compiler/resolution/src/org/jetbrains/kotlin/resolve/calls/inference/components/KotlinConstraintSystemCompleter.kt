@@ -214,10 +214,9 @@ class KotlinConstraintSystemCompleter(
         val expectedTypeVariable =
             expectedTypeAtom?.constructor?.takeIf { it in allTypeVariables } ?: variable
 
-        val shouldAnalyzeByEqualityExpectedTypeToVariable =
-            hasProperAtom || !variableForFixation.hasProperConstraint || variableForFixation.hasOnlyTrivialProperConstraint
+        val shouldAnalyze = hasProperAtom || !variableForFixation.hasProperConstraint || variableForFixation.hasOnlyTrivialProperConstraint
 
-        if (!shouldAnalyzeByEqualityExpectedTypeToVariable)
+        if (!shouldAnalyze)
             return false
 
         analyze(preparePostponedAtom(expectedTypeVariable, postponedAtom, variable.builtIns, diagnosticsHolder) ?: return false)
