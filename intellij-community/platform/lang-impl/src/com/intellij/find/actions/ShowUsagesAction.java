@@ -92,11 +92,18 @@ import static com.intellij.find.actions.ShowUsagesActionHandler.showUsagesInMaxi
 public class ShowUsagesAction extends AnAction implements PopupAction, HintManagerImpl.ActionToIgnore {
   public static final String ID = "ShowUsages";
 
-  private static class Holder {
-    private static final UsageNode USAGES_OUTSIDE_SCOPE_NODE = new UsageNode(null, ShowUsagesTable.USAGES_OUTSIDE_SCOPE_SEPARATOR);
-    private static final UsageNode MORE_USAGES_SEPARATOR_NODE = UsageViewImpl.NULL_NODE;
+  public ShowUsagesAction() {
+    setInjectedContext(true);
+  }
 
-    private static final Comparator<UsageNode> USAGE_NODE_COMPARATOR = (c1, c2) -> {
+  private static class UsageNodeComparator implements Comparator<UsageNode> {
+    private final ShowUsagesTable myTable;
+
+    private UsageNodeComparator(@NotNull ShowUsagesTable table) {
+      this.myTable = table;
+    }
+    @Override
+    public int compare(UsageNode c1, UsageNode c2) {
       if (c1 instanceof StringNode || c2 instanceof StringNode) {
         if (c1 instanceof StringNode && c2 instanceof StringNode) {
           return Comparing.compare(c1.toString(), c2.toString());
@@ -106,8 +113,8 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
 
       Usage o1 = c1.getUsage();
       Usage o2 = c2.getUsage();
-      int weight1 = o1 == ShowUsagesTable.USAGES_OUTSIDE_SCOPE_SEPARATOR ? 2 : o1 == ShowUsagesTable.MORE_USAGES_SEPARATOR ? 1 : 0;
-      int weight2 = o2 == ShowUsagesTable.USAGES_OUTSIDE_SCOPE_SEPARATOR ? 2 : o2 == ShowUsagesTable.MORE_USAGES_SEPARATOR ? 1 : 0;
+      int weight1 = o1 == myTable.USAGES_OUTSIDE_SCOPE_SEPARATOR ? 2 : o1 == myTable.MORE_USAGES_SEPARATOR ? 1 : 0;
+      int weight2 = o2 == myTable.USAGES_OUTSIDE_SCOPE_SEPARATOR ? 2 : o2 == myTable.MORE_USAGES_SEPARATOR ? 1 : 0;
       if (weight1 != weight2) return weight1 - weight2;
 
       if (o1 instanceof Comparable && o2 instanceof Comparable) {
@@ -131,15 +138,11 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
         String path2 = v2 == null ? null : v2.getPath();
         return Comparing.compare(path1, path2);
       }
-    };
+    }
   }
 
   public static int getUsagesPageSize() {
     return Math.max(1, Registry.intValue("ide.usages.page.size", 100));
-  }
-
-  public ShowUsagesAction() {
-    setInjectedContext(true);
   }
 
   @Override
@@ -351,6 +354,9 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
       }, 300, TimeUnit.MILLISECONDS);
     }
 
+    UsageNode USAGES_OUTSIDE_SCOPE_NODE = new UsageNode(null, table.USAGES_OUTSIDE_SCOPE_SEPARATOR);
+    UsageNode MORE_USAGES_SEPARATOR_NODE = UsageViewImpl.NULL_NODE;
+
     PingEDT pingEDT = new PingEDT("Rebuild popup in EDT", o -> popup != null && popup.isDisposed(), 100, () -> {
       if (popup != null && popup.isDisposed()) return;
 
@@ -365,20 +371,20 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
         copy = new ArrayList<>(usages);
       }
 
-      boolean shouldShowMoreSeparator = copy.contains(ShowUsagesTable.MORE_USAGES_SEPARATOR);
+      boolean shouldShowMoreSeparator = copy.contains(table.MORE_USAGES_SEPARATOR);
       if (shouldShowMoreSeparator) {
-        nodes.add(Holder.MORE_USAGES_SEPARATOR_NODE);
+        nodes.add(MORE_USAGES_SEPARATOR_NODE);
       }
-      boolean hasOutsideScopeUsages = copy.contains(ShowUsagesTable.USAGES_OUTSIDE_SCOPE_SEPARATOR);
+      boolean hasOutsideScopeUsages = copy.contains(table.USAGES_OUTSIDE_SCOPE_SEPARATOR);
       if (hasOutsideScopeUsages && !shouldShowMoreSeparator) {
-        nodes.add(Holder.USAGES_OUTSIDE_SCOPE_NODE);
+        nodes.add(USAGES_OUTSIDE_SCOPE_NODE);
       }
       List<UsageNode> data = new ArrayList<>(nodes);
       int filteredCount = filtered(copy, usageView);
       if (filteredCount != 0) {
         data.add(createStringNode(UsageViewBundle.message("usages.were.filtered.out", filteredCount)));
       }
-      data.sort(Holder.USAGE_NODE_COMPARATOR);
+      data.sort(new UsageNodeComparator(table));
 
       boolean hasMore = shouldShowMoreSeparator || hasOutsideScopeUsages;
       int totalCount = copy.size();
@@ -393,8 +399,8 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     Processor<Usage> collect = usage -> {
       if (!UsageViewManagerImpl.isInScope(usage, searchScope)) {
         if (outOfScopeUsages.getAndIncrement() == 0) {
-          visibleNodes.add(Holder.USAGES_OUTSIDE_SCOPE_NODE);
-          usages.add(ShowUsagesTable.USAGES_OUTSIDE_SCOPE_SEPARATOR);
+          visibleNodes.add(USAGES_OUTSIDE_SCOPE_NODE);
+          usages.add(table.USAGES_OUTSIDE_SCOPE_SEPARATOR);
         }
         return true;
       }
@@ -406,8 +412,8 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
           visibleNodes.add(node);
           boolean continueSearch = true;
           if (visibleNodes.size() == maxUsages) {
-            visibleNodes.add(Holder.MORE_USAGES_SEPARATOR_NODE);
-            usages.add(ShowUsagesTable.MORE_USAGES_SEPARATOR);
+            visibleNodes.add(MORE_USAGES_SEPARATOR_NODE);
+            usages.add(table.MORE_USAGES_SEPARATOR);
             continueSearch = false;
           }
           pingEDT.ping();
@@ -441,7 +447,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
             if (usages.size() == 1) {
               //the only usage
               Usage usage = visibleNodes.iterator().next().getUsage();
-              if (usage == ShowUsagesTable.USAGES_OUTSIDE_SCOPE_SEPARATOR) {
+              if (usage == table.USAGES_OUTSIDE_SCOPE_SEPARATOR) {
                 String hint = UsageViewManagerImpl.outOfScopeMessage(outOfScopeUsages.get(), searchScope);
                 hint(project, editor, popupPosition, true, hint, actionHandler);
               }
@@ -1017,7 +1023,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
   public void startFindUsages(@NotNull PsiElement element,
                               @NotNull RelativePoint popupPosition,
                               @Nullable Editor editor,
-                              @SuppressWarnings("unused") int maxUsages) {
+                              int maxUsages) {
     startFindUsages(element, popupPosition, editor);
   }
 }
