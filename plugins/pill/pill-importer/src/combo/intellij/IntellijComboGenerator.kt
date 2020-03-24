@@ -290,6 +290,7 @@ class IntellijComboGenerator(private val kotlinProjectDir: File) : ComboGenerato
 
             patchUrlEntity(contentRoot)
             contentRoot.getElementsByTagName("sourceFolder").elements.forEach { patchUrlEntity(it) }
+            contentRoot.getElementsByTagName("excludeFolder").elements.forEach { patchUrlEntity(it) }
         }
 
         val oldOrderEntryElements = moduleRootManager.getElementsByTagName("orderEntry").elements
