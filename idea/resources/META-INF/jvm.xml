@@ -189,26 +189,15 @@
                    description="Enable bytecode instrumentation for Kotlin classes"
                    defaultValue="false"
                    restartRequired="false"/>
-      <registryKey key="kotlin.debugger.coroutines.standalone"
-                   description="Enable debugging for coroutines in Kotlin/JVM with no library support"
+      <registryKey key="kotlin.debugger.coroutines"
+                   description="Enable debugging for coroutines in Kotlin/JVM"
                    defaultValue="false"
-                   restartRequired="false"/>
-      <registryKey key="kotlin.debugger.coroutines.trace"
-                   description="Trace coroutines debugger output"
-                   defaultValue="false"
-                   restartRequired="false"/>
-      <registryKey key="kotlin.debugger.coroutines.max"
-                   description="Maximum amount of coroutines for debug"
-                   defaultValue="1000"
-                   restartRequired="false"/>
-      <registryKey key="kotlin.debugger.coroutines.switch"
-                   description="Continuation information provider possible values are: DISPATCHED_CONTINUATION, CANCELLABLE_CONTINUATION."
-                   defaultValue="DISPATCHED_CONTINUATION"
                    restartRequired="false"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.uast">
         <uastLanguagePlugin implementation="org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin"/>
+        <generate.uastCodeGenerationPlugin implementation="org.jetbrains.uast.kotlin.generate.KotlinUastCodeGenerationPlugin"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
