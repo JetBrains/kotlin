@@ -8,11 +8,14 @@
 package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.notification.*
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.rt.coverage.data.ProjectData
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
@@ -36,15 +39,17 @@ private var Project.notificationPanel: Notification?
 
 
 fun showNotificationForProjectImport(project: Project, callback: () -> Unit) {
-    if (project.notificationPanel != null) return
+    val existingPanel = project.notificationPanel
+    if (existingPanel != null) {
+        existingPanel.actions.filterIsInstance<LoadConfigurationAction>().forEach { it.onClick = callback }
+        return
+    }
 
     val notification = getNotificationGroup().createNotification(
         KotlinIdeaGradleBundle.message("notification.text.script.configuration.has.been.changed"),
         NotificationType.INFORMATION
     )
-    notification.addAction(NotificationAction.createSimple(KotlinIdeaGradleBundle.message("action.label.import.project")) {
-        callback()
-    })
+    notification.addAction(LoadConfigurationAction(callback))
     notification.addAction(NotificationAction.createSimple(KotlinIdeaGradleBundle.message("action.label.enable.auto.import")) {
         val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
         val projectSettings = gradleSettings.getLinkedProjectsSettings()
@@ -67,4 +72,10 @@ fun hideNotificationForProjectImport(project: Project): Boolean {
 private fun getNotificationGroup(): NotificationGroup {
     return NotificationGroup.findRegisteredGroup("Kotlin DSL script configurations")
         ?: NotificationGroup("Kotlin DSL script configurations", NotificationDisplayType.STICKY_BALLOON, true)
+}
+
+private class LoadConfigurationAction(var onClick: () -> Unit) : AnAction(KotlinIdeaGradleBundle.message("action.label.import.project")) {
+    override fun actionPerformed(e: AnActionEvent) {
+        onClick()
+    }
 }
