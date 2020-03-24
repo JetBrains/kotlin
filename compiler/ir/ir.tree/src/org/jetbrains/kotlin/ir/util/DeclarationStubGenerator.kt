@@ -44,7 +44,7 @@ class DeclarationStubGenerator(
 ) : IrProvider {
     private val lazyTable = symbolTable.lazyWrapper
 
-    internal var unboundSymbolGeneration: Boolean
+    var unboundSymbolGeneration: Boolean
         get() = lazyTable.stubGenerator != null
         set(value) {
             lazyTable.stubGenerator = if (value) this else null
@@ -136,7 +136,7 @@ class DeclarationStubGenerator(
     private fun computeOrigin(descriptor: DeclarationDescriptor): IrDeclarationOrigin =
         extensions.computeExternalDeclarationOrigin(descriptor) ?: IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
 
-    internal fun generatePropertyStub(
+    fun generatePropertyStub(
         descriptor: PropertyDescriptor,
         bindingContext: BindingContext? = null
     ): IrProperty {
@@ -224,7 +224,7 @@ class DeclarationStubGenerator(
         }
     }
 
-    internal fun generateConstructorStub(descriptor: ClassConstructorDescriptor): IrConstructor {
+    fun generateConstructorStub(descriptor: ClassConstructorDescriptor): IrConstructor {
         val referenced = symbolTable.referenceConstructor(descriptor)
         if (referenced.isBound) {
             return referenced.owner
@@ -263,7 +263,7 @@ class DeclarationStubGenerator(
         }
     }
 
-    internal fun generateClassStub(descriptor: ClassDescriptor): IrClass {
+    fun generateClassStub(descriptor: ClassDescriptor): IrClass {
         val referenceClass = symbolTable.referenceClass(descriptor)
         if (referenceClass.isBound) {
             return referenceClass.owner
@@ -287,7 +287,7 @@ class DeclarationStubGenerator(
         }
     }
 
-    internal fun generateEnumEntryStub(descriptor: ClassDescriptor): IrEnumEntry {
+    fun generateEnumEntryStub(descriptor: ClassDescriptor): IrEnumEntry {
         val referenced = symbolTable.referenceEnumEntry(descriptor)
         if (referenced.isBound) {
             return referenced.owner
@@ -339,7 +339,7 @@ class DeclarationStubGenerator(
         }
     }
 
-    internal fun generateTypeAliasStub(descriptor: TypeAliasDescriptor): IrTypeAlias {
+    fun generateTypeAliasStub(descriptor: TypeAliasDescriptor): IrTypeAlias {
         val referenced = symbolTable.referenceTypeAlias(descriptor)
         if (referenced.isBound) {
             return referenced.owner
