@@ -17,7 +17,10 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.impl.ApplicationInfoImpl;
 import com.intellij.openapi.application.impl.NonBlockingReadActionImpl;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -93,7 +96,6 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
   @NonNls private static final String FILE_TAG = "file";
   @NonNls private static final String URL_ATT = "url";
   private final PassExecutorService myPassExecutorService;
-  private boolean runInspectionsAfterCompletionOfGeneralHighlightPass;
 
   public DaemonCodeAnalyzerImpl(@NotNull Project project) {
     // DependencyValidationManagerImpl adds scope listener, so, we need to force service creation
@@ -128,6 +130,7 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
       myDisposed = true;
       myLastSettings = null;
     });
+    myPassExecutorService.resetNextPassId();
   }
 
   @Override
@@ -964,14 +967,9 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
   @ApiStatus.Internal
   public void runLocalInspectionPassAfterCompletionOfGeneralHighlightPass(boolean flag) {
     doRestart("runLocalInspectionPassAfterCompletionOfGeneralHighlightPass("+flag+") called");
-    runInspectionsAfterCompletionOfGeneralHighlightPass = flag;
     TextEditorHighlightingPassRegistrarImpl registrar =
       (TextEditorHighlightingPassRegistrarImpl)TextEditorHighlightingPassRegistrar.getInstance(myProject);
-    registrar.reregisterFactories();
-  }
-
-  @ApiStatus.Internal
-  boolean isRunInspectionsAfterCompletionOfGeneralHighlightPass() {
-    return runInspectionsAfterCompletionOfGeneralHighlightPass;
+    registrar.runInspectionsAfterCompletionOfGeneralHighlightPass(flag);
+    myPassExecutorService.resetNextPassId();
   }
 }

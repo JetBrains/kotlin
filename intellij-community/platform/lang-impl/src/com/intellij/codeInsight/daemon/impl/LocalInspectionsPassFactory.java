@@ -3,7 +3,6 @@
 package com.intellij.codeInsight.daemon.impl;
 
 import com.intellij.codeHighlighting.*;
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -21,7 +20,7 @@ public final class LocalInspectionsPassFactory implements MainHighlightingPassFa
   public void registerHighlightingPassFactory(@NotNull TextEditorHighlightingPassRegistrar registrar, @NotNull Project project) {
     int[] GHP = {Pass.UPDATE_ALL};
     boolean runInspectionsAfterCompletionOfGeneralHighlightPass =
-      ((DaemonCodeAnalyzerImpl)DaemonCodeAnalyzer.getInstance(project)).isRunInspectionsAfterCompletionOfGeneralHighlightPass();
+      ((TextEditorHighlightingPassRegistrarImpl)registrar).isRunInspectionsAfterCompletionOfGeneralHighlightPass();
     registrar.registerTextEditorHighlightingPass(this, runInspectionsAfterCompletionOfGeneralHighlightPass ? GHP : null,
                                                  runInspectionsAfterCompletionOfGeneralHighlightPass ? null : GHP, true, Pass.LOCAL_INSPECTIONS);
   }
