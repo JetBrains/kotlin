@@ -169,7 +169,6 @@ abstract class IntentionBasedInspection<TElement : PsiElement> private construct
         }
 
         override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
-            PsiDocumentManager.getInstance(project).commitAllDocuments()
             applyFix()
         }
 
