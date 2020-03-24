@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
 import org.jetbrains.kotlin.idea.configuration.getConfigurationPossibilitiesForConfigureNotification
 import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
-import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComponent
+import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerService
 import javax.swing.event.HyperlinkEvent
 
 data class ConfigureKotlinNotificationState(
@@ -28,7 +28,7 @@ class ConfigureKotlinNotification(
     excludeModules: List<Module>,
     val notificationState: ConfigureKotlinNotificationState
 ) : Notification(
-    KotlinConfigurationCheckerComponent.CONFIGURE_NOTIFICATION_GROUP_ID, KotlinJvmBundle.message("configure.kotlin"),
+    KotlinConfigurationCheckerService.CONFIGURE_NOTIFICATION_GROUP_ID, KotlinJvmBundle.message("configure.kotlin"),
     notificationState.notificationString,
     NotificationType.WARNING,
     NotificationListener { notification, event ->

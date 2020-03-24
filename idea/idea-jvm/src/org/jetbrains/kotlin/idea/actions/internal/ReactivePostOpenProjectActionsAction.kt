@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.idea.actions.internal
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.project.impl.ProjectImpl
-import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComponent
+import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerService
 
 class ReactivePostOpenProjectActionsAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        val project = e.project as? ProjectImpl ?: return
-        val configureComponent = project.getComponentInstancesOfType(KotlinConfigurationCheckerComponent::class.java).single()
-        configureComponent.performProjectPostOpenActions()
+        val project = e.project ?: return
+        val configurationChecker = KotlinConfigurationCheckerService.getInstanceIfNotDisposed(project) ?: return
+        configurationChecker.performProjectPostOpenActions()
     }
 }

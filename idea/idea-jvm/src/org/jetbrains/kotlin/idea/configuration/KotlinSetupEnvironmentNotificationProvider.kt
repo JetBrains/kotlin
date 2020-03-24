@@ -26,7 +26,7 @@ import com.intellij.ui.EditorNotifications
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComponent
+import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerService
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.SuppressNotificationState
@@ -60,9 +60,9 @@ class KotlinSetupEnvironmentNotificationProvider(private val myProject: Project)
             return createSetupSdkPanel(myProject, psiFile)
         }
 
-        val configurationCheckerComponent = KotlinConfigurationCheckerComponent.getInstanceIfNotDisposed(module.project) ?: return null
+        val configurationChecker = KotlinConfigurationCheckerService.getInstanceIfNotDisposed(module.project) ?: return null
 
-        if (!configurationCheckerComponent.isSyncing &&
+        if (!configurationChecker.isSyncing &&
             isNotConfiguredNotificationRequired(module.toModuleGroup()) &&
             !hasAnyKotlinRuntimeInScope(module) &&
             UnsupportedAbiVersionNotificationPanelProvider.collectBadRoots(module).isEmpty()
