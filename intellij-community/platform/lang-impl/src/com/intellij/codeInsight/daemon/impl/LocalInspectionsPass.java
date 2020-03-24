@@ -422,7 +422,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
       PsiFile file = psiElement.getContainingFile();
       Document thisDocument = documentManager.getDocument(file);
 
-      HighlightSeverity severity = myProfileWrapper.getErrorLevel(HighlightDisplayKey.find(tool.getShortName()), file).getSeverity();
+      HighlightSeverity severity = myProfileWrapper.getErrorLevel(tool.getDisplayKey(), file).getSeverity();
 
       infos.clear();
       createHighlightsForDescriptor(infos, emptyActionRegistered, ilManager, file, thisDocument, tool, severity, descriptor, psiElement,
@@ -479,7 +479,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
         for (InspectionResult inspectionResult : resultList) {
           ProgressManager.checkCanceled();
           LocalInspectionToolWrapper tool = inspectionResult.tool;
-          HighlightSeverity severity = myProfileWrapper.getErrorLevel(HighlightDisplayKey.find(tool.getShortName()), file).getSeverity();
+          HighlightSeverity severity = myProfileWrapper.getErrorLevel(tool.getDisplayKey(), file).getSeverity();
           for (ProblemDescriptor descriptor : inspectionResult.foundProblems) {
             ProgressManager.checkCanceled();
             PsiElement element = descriptor.getPsiElement();
@@ -710,7 +710,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
       if (toolWrapper instanceof LocalInspectionToolWrapper && !isAcceptableLocalTool((LocalInspectionToolWrapper)toolWrapper)) {
         continue;
       }
-      final HighlightDisplayKey key = HighlightDisplayKey.find(toolWrapper.getShortName());
+      final HighlightDisplayKey key = toolWrapper.getDisplayKey();
       if (!profile.isToolEnabled(key, getFile())) continue;
       if (HighlightDisplayLevel.DO_NOT_SHOW.equals(profile.getErrorLevel(key, getFile()))) continue;
       LocalInspectionToolWrapper wrapper;
