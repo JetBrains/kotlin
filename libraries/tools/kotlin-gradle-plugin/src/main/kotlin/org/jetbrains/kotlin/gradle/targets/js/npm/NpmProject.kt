@@ -92,6 +92,10 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
     internal fun resolve(name: String): File? = modules.resolve(name)
 
     private fun buildNpmProjectName(): String {
+        compilation.outputModuleName?.let {
+            return it
+        }
+
         val project = target.project
 
         val moduleName = target.moduleName

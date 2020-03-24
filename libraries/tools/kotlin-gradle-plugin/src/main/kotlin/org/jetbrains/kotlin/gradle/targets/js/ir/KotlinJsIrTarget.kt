@@ -40,6 +40,12 @@ constructor(
         internal set
 
     override var moduleName: String? = null
+        set(value) {
+            check(!isBrowserConfigured && !isNodejsConfigured) {
+                "Please set moduleName before initialize browser() or nodejs()"
+            }
+            field = value
+        }
 
     val disambiguationClassifierInPlatform: String?
         get() = disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.IR)
