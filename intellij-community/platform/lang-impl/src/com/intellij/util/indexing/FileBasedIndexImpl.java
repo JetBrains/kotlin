@@ -660,7 +660,7 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     getChangedFilesCollector().ensureUpToDate();
     ApplicationManager.getApplication().assertReadAccessAllowed();
 
-    NoAccessDuringPsiEvents.checkCallContext();
+    NoAccessDuringPsiEvents.checkCallContext(indexId);
 
     if (!needsFileContentLoading(indexId)) {
       return true; //indexed eagerly in foreground while building unindexed file list
