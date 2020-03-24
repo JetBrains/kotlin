@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.wizard
 
+import com.intellij.openapi.application.impl.ApplicationInfoImpl
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType
@@ -79,22 +80,28 @@ abstract class AbstractNewWizardProjectImportTest : PlatformTestCase() {
     }
 
     private fun prepareGradleBuildSystem(directory: Path) {
-        project.getService(GradleSettings::class.java)?.apply {
-            gradleVmOptions = GradleEnvironment.Headless.GRADLE_VM_OPTIONS ?: gradleVmOptions
+        com.intellij.openapi.components.ServiceManager.getService(project, GradleSettings::class.java)?.apply {
             isOfflineWork = GradleEnvironment.Headless.GRADLE_OFFLINE?.toBoolean() ?: isOfflineWork
             serviceDirectoryPath = GradleEnvironment.Headless.GRADLE_SERVICE_DIRECTORY ?: serviceDirectoryPath
             storeProjectFilesExternally = true
         }
 
-        val settings = GradleProjectSettings().apply {
-            externalProjectPath = directory.toString()
-            isUseAutoImport = false
-            isUseQualifiedModuleNames = true
-            gradleJvm = SDK_NAME
-            distributionType = DistributionType.WRAPPED
+        // not needed on <= 192 (and causes error on <= 192 ):
+        if (!is192orLess()) {
+            val settings = GradleProjectSettings().apply {
+                externalProjectPath = directory.toString()
+                isUseAutoImport = false
+                isUseQualifiedModuleNames = true
+                gradleJvm = SDK_NAME
+                distributionType = DistributionType.WRAPPED
+            }
+            ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID).linkProject(settings)
         }
-        ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID).linkProject(settings)
     }
+
+    private fun is192orLess() =
+        ApplicationInfoImpl.getShadowInstance().minorVersionMainPart.toIntOrNull()?.let { it <= 2 } == true
+                && ApplicationInfoImpl.getShadowInstance().majorVersion == "2019"
 
     companion object {
         private const val SDK_NAME = "defaultSdk"
