@@ -220,9 +220,11 @@ class CoroutineBuilder(val suspendContext: XSuspendContext) {
             "()Ljava/lang/StackTraceElement;"
         )
         val vars = with(CoroutineAsyncStackTraceProvider()) {
+            val debugMetadataClassType = execContext.findClassSafe(AsyncStackTraceContext.DEBUG_METADATA_KT) ?: return null
             AsyncStackTraceContext(
                 execContext,
-                aMethod
+                aMethod,
+                debugMetadataClassType
             ).getSpilledVariables(continuation)
         } ?: return null
         return executionStack to SyntheticStackFrame(descriptor, vars, pos)

@@ -41,18 +41,19 @@ class CoroutineAsyncStackTraceProvider : AsyncStackTraceProvider {
 
 
         val astContext = createAsyncStackTraceContext(frameProxy, suspendContext, method)
-        return astContext.getAsyncStackTraceIfAny()
+        return astContext?.getAsyncStackTraceIfAny() ?: defaultResult
     }
 
     private fun createAsyncStackTraceContext(
         frameProxy: StackFrameProxyImpl,
         suspendContext: XSuspendContext,
         method: Method
-    ): AsyncStackTraceContext {
+    ): AsyncStackTraceContext? {
         val evaluationContext = EvaluationContextImpl(suspendContext as SuspendContextImpl, frameProxy)
         val context = ExecutionContext(evaluationContext, frameProxy)
         // DebugMetadataKt not found, probably old kotlin-stdlib version
-        return AsyncStackTraceContext(context, method)
+        val debugMetadataClassType = context.findClassSafe(AsyncStackTraceContext.DEBUG_METADATA_KT) ?: return null
+        return AsyncStackTraceContext(context, method, debugMetadataClassType)
     }
 
     fun canRunEvaluation(suspendContext: XSuspendContext) =

@@ -23,13 +23,11 @@ import org.jetbrains.kotlin.idea.debugger.safeVisibleVariableByName
 
 class AsyncStackTraceContext(
     val context: ExecutionContext,
-    val method: Method) {
+    val method: Method,
+    val debugMetadataKtType: ClassType) {
     val log by logger
-    val debugMetadataKtType = context.findClassSafe(
-        DEBUG_METADATA_KT
-    )!!
 
-    private companion object {
+    companion object {
         const val DEBUG_METADATA_KT = "kotlin.coroutines.jvm.internal.DebugMetadataKt"
     }
 

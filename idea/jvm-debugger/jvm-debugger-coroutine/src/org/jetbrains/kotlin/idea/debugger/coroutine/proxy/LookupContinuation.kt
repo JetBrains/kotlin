@@ -85,11 +85,12 @@ class LookupContinuation(val context: ExecutionContext, val frame: StackTraceEle
     fun findGetStackTraceElementMethodRef(continuation: ObjectReference): Method =
         (continuation.type() as ClassType).concreteMethodByName("getStackTraceElement", "()Ljava/lang/StackTraceElement;")
 
-    fun createAsyncStackTraceContext(stackTraceElementMethodRef: Method) =
-        AsyncStackTraceContext(context, stackTraceElementMethodRef)
+    fun createAsyncStackTraceContext(stackTraceElementMethodRef: Method, debugMetadataClassType: ClassType) =
+        AsyncStackTraceContext(context, stackTraceElementMethodRef, debugMetadataClassType)
 
     fun createAsyncStackTraceContext(continuation: ObjectReference): AsyncStackTraceContext? {
         val getStackTraceElementMethodRef = findGetStackTraceElementMethodRef(continuation)
-        return createAsyncStackTraceContext(getStackTraceElementMethodRef)
+        val debugMetadataClassType = context.findClassSafe(AsyncStackTraceContext.DEBUG_METADATA_KT) ?: return null
+        return createAsyncStackTraceContext(getStackTraceElementMethodRef, debugMetadataClassType)
     }
 }
