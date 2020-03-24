@@ -353,6 +353,7 @@ private val jvmFilePhases =
         jvmArgumentNullabilityAssertions then
         toArrayPhase then
         jvmOptimizationLoweringPhase then
+                ifNullExpressionsFusionPhase then
         additionalClassAnnotationPhase then
         typeOperatorLowering then
         replaceKFunctionInvokeWithFunctionInvokePhase then
