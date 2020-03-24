@@ -13,13 +13,12 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
 fun runPartialGradleImport(project: Project) {
-    // TODO: partial import
     val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
     val projectSettings = gradleSettings.getLinkedProjectsSettings()
         .filterIsInstance<GradleProjectSettings>()
@@ -40,13 +39,13 @@ fun showNotificationForProjectImport(project: Project, callback: () -> Unit) {
     if (project.notificationPanel != null) return
 
     val notification = getNotificationGroup().createNotification(
-        "Script configurations may be changed. Gradle Project Import needs to be run to load changes",
+        KotlinIdeaGradleBundle.message("notification.text.script.configuration.has.been.changed"),
         NotificationType.INFORMATION
     )
-    notification.addAction(NotificationAction.createSimple("Import changes") {
+    notification.addAction(NotificationAction.createSimple(KotlinIdeaGradleBundle.message("action.label.import.project")) {
         callback()
     })
-    notification.addAction(NotificationAction.createSimple("Enable auto-reload") {
+    notification.addAction(NotificationAction.createSimple(KotlinIdeaGradleBundle.message("action.label.enable.auto.import")) {
         callback()
         KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled = true
     })
