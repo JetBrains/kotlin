@@ -228,8 +228,8 @@ fun defineProperty(receiver: JsExpression, name: String, value: () -> JsExpressi
 
 fun defineProperty(receiver: JsExpression, name: String, getter: JsExpression?, setter: JsExpression? = null) =
     defineProperty(receiver, name) {
-        val literal = JsObjectLiteral(true)
-        literal.apply {
+        JsObjectLiteral(true).apply {
+            propertyInitializers += JsPropertyInitializer(JsStringLiteral("configurable"), JsBooleanLiteral(true))
             if (getter != null)
                 propertyInitializers += JsPropertyInitializer(JsStringLiteral("get"), getter)
             if (setter != null)
