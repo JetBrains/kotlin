@@ -64,16 +64,14 @@ sealed class ProjectTemplate : DisplayableSettingItem {
     companion object {
         val ALL = listOf(
             EmptySingleplatformProjectTemplate,
-            EmptyMultiplatformProjectTemplate,
             JvmConsoleApplication,
-            JvmServerJsClient,
-            MultiplatformLibrary,
-            AndroidApplication,
-            IOSApplication,
             MPPMobileApplication,
             MultiplatformMobileLibrary,
+            EmptyMultiplatformProjectTemplate,
+            MultiplatformLibrary,
             NativeConsoleApplication,
-            JsBrowserApplication
+            JsBrowserApplication,
+            JvmServerJsClient
         )
 
         fun byId(id: String): ProjectTemplate? = ALL.firstOrNull {
@@ -164,7 +162,7 @@ object EmptyMultiplatformProjectTemplate : ProjectTemplate() {
 
 object JvmConsoleApplication : ProjectTemplate() {
     override val title = "Console Application"
-    override val description = "Create a console application with Kotlin/JVM. Use it for prototyping or testing purposes"
+    override val description = "Create a console application with Kotlin/JVM. Use it for prototyping or testing purposes."
     override val suggestedProjectName = "myConsoleApplication"
     override val projectKind = ProjectKind.Singleplatform
 
@@ -228,29 +226,6 @@ object JvmServerJsClient : ProjectTemplate() {
     )
 }
 
-object AndroidApplication : ProjectTemplate() {
-    override val title = "Android Application"
-
-    override val description = "Simple Android application with single activity"
-    override val suggestedProjectName = "myAndroidApplication"
-    override val projectKind = ProjectKind.Android
-
-    override val setsPluginSettings: List<SettingWithValue<*, *>>
-        get() = listOf(
-            KotlinPlugin::modules withValue listOf(
-                Module(
-                    "app",
-                    AndroidSinglePlatformModuleConfigurator,
-                    template = null,
-                    sourcesets = SourcesetType.ALL.map { type ->
-                        Sourceset(type, dependencies = emptyList())
-                    },
-                    subModules = emptyList()
-                )
-            )
-        )
-}
-
 object NativeConsoleApplication : ProjectTemplate() {
     override val title = "Native Application"
     override val description =
@@ -289,29 +264,6 @@ object JsBrowserApplication : ProjectTemplate() {
                     "frontend",
                     JsSingleplatformModuleConfigurator,
                     template = SimpleJsClientTemplate(),
-                    sourcesets = SourcesetType.ALL.map { type ->
-                        Sourceset(type, dependencies = emptyList())
-                    },
-                    subModules = emptyList()
-                )
-            )
-        )
-}
-
-object IOSApplication : ProjectTemplate() {
-    override val title = "IOS Application"
-
-    override val description = "Simple IOS application with single screen "
-    override val suggestedProjectName = "myIOSApplication"
-    override val projectKind = ProjectKind.Multiplatform
-
-    override val setsPluginSettings: List<SettingWithValue<*, *>>
-        get() = listOf(
-            KotlinPlugin::modules withValue listOf(
-                Module(
-                    "iosApp",
-                    IOSSinglePlatformModuleConfigurator,
-                    template = null,
                     sourcesets = SourcesetType.ALL.map { type ->
                         Sourceset(type, dependencies = emptyList())
                     },

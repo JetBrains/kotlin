@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+
 plugins {
     id 'org.jetbrains.kotlin.multiplatform' version '1.3.70'
     id 'com.android.library'
@@ -17,7 +19,7 @@ kotlin {
     iosX64('ios') {
         binaries {
             framework {
-                baseName = 'library'
+                baseName = 'shared'
             }
         }
     }
@@ -64,3 +66,14 @@ android {
         }
     }
 }
+task(packForXcode, type: Sync) {
+    group = 'build'
+    def mode = System.getenv('CONFIGURATION') ?: 'DEBUG'
+    def framework = kotlin.targets.ios.binaries.getFramework(mode)
+    inputs.property('mode', mode)
+    dependsOn(framework.linkTask)
+    def targetDir = new File(buildDir, 'xcode-frameworks')
+    from({ framework.outputDirectory })
+    into(targetDir)
+}
+tasks.getByName("build").dependsOn(packForXcode)

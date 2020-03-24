@@ -28,11 +28,6 @@ public class ProjectTemplateBuildFileGenerationTestGenerated extends AbstractPro
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
-    @TestMetadata("androidApplication")
-    public void testAndroidApplication() throws Exception {
-        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/androidApplication/");
-    }
-
     @TestMetadata("emptyMultiplatform")
     public void testEmptyMultiplatform() throws Exception {
         runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/emptyMultiplatform/");
@@ -56,6 +51,11 @@ public class ProjectTemplateBuildFileGenerationTestGenerated extends AbstractPro
     @TestMetadata("jvmServerJsClient")
     public void testJvmServerJsClient() throws Exception {
         runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/jvmServerJsClient/");
+    }
+
+    @TestMetadata("mppMobileApplication")
+    public void testMppMobileApplication() throws Exception {
+        runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/projectTemplatesBuildFileGeneration/mppMobileApplication/");
     }
 
     @TestMetadata("multiplatformLibrary")
