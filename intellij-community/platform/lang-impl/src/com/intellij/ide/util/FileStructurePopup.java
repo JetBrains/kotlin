@@ -19,6 +19,12 @@ import com.intellij.ide.ui.UISettingsListener;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.NodeRenderer;
 import com.intellij.ide.util.treeView.smartTree.*;
+import com.intellij.internal.statistic.collectors.fus.actions.persistence.ActionsCollectorImpl;
+import com.intellij.internal.statistic.eventLog.FeatureUsageData;
+import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
+import com.intellij.internal.statistic.utils.PluginInfo;
+import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
+import com.intellij.lang.Language;
 import com.intellij.navigation.LocationPresentation;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.MnemonicHelper;
@@ -31,6 +37,8 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.progress.ProgressManager;
@@ -775,7 +783,9 @@ public class FileStructurePopup implements Disposable, TreeActionsOwner {
     checkBox.setSelected(selected);
     boolean isRevertedStructureFilter = action instanceof FileStructureFilter && ((FileStructureFilter)action).isReverted();
     myTreeActionsOwner.setActionIncluded(action, isRevertedStructureFilter != selected);
-    checkBox.addActionListener(__ -> {
+    checkBox.addActionListener(actionEvent -> {
+      logFileStructureCheckboxClick(action);
+
       boolean state = checkBox.isSelected();
       if (!myAutoClicked.contains(checkBox)) {
         saveState(action, state);
@@ -798,6 +808,23 @@ public class FileStructurePopup implements Disposable, TreeActionsOwner {
     panel.add(checkBox);
 
     myCheckBoxes.put(action.getClass(), checkBox);
+  }
+
+  private void logFileStructureCheckboxClick(TreeAction action) {
+    PluginInfo pluginInfo = PluginInfoDetectorKt.getPluginInfo(action.getClass());
+    Language language = null;
+    FileType fileType = myFileEditor.getFile().getFileType();
+    if (fileType instanceof LanguageFileType) {
+      language = ((LanguageFileType) fileType).getLanguage();
+    }
+    FeatureUsageData data = new FeatureUsageData()
+      .addProject(myProject)
+      .addPluginInfo(pluginInfo)
+      .addPlace(ActionPlaces.FILE_STRUCTURE_POPUP)
+      .addCurrentFile(language)
+      .addData("class", action.getClass().getName())
+      .addData("action_id", action.getClass().getName());
+    FUCounterUsageLogger.getInstance().logEvent(ActionsCollectorImpl.GROUP, ActionsCollectorImpl.ACTION_INVOKED_EVENT_ID, data);
   }
 
   @NotNull
