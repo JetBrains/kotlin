@@ -82,7 +82,13 @@ fun <F : FirClass<F>> F.runBodiesResolutionForLocalClass(
         returnTypeCalculator
     )
 
-    return this.transform<F, ResolutionMode>(transformer, resolutionMode).single
+    val graphBuilder = components.context.dataFlowAnalyzerContext.graphBuilder
+    val members = designationMap.keys
+    graphBuilder.prepareForLocalClassMembers(members)
+
+    return this.transform<F, ResolutionMode>(transformer, resolutionMode).single.also {
+        graphBuilder.cleanAfterForLocalClassMembers(members)
+    }
 }
 
 fun createReturnTypeCalculatorForIDE(session: FirSession, scopeSession: ScopeSession): ReturnTypeCalculator =

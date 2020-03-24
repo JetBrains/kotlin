@@ -639,6 +639,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/lambdas.kt");
         }
 
+        @TestMetadata("localClassesWithImplicit.kt")
+        public void testLocalClassesWithImplicit() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/cfg/localClassesWithImplicit.kt");
+        }
+
         @TestMetadata("loops.kt")
         public void testLoops() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/loops.kt");

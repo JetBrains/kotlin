@@ -54,6 +54,8 @@ class ControlFlowGraphBuilder {
 
     private val exitsFromCompletedPostponedAnonymousFunctions: MutableList<PostponedLambdaExitNode> = mutableListOf()
 
+    private val enterToLocalClassesMembers: MutableMap<FirFunctionSymbol<*>, CFGNode<*>?> = mutableMapOf()
+
     var levelCounter: Int = 0
         private set
 
@@ -65,6 +67,33 @@ class ControlFlowGraphBuilder {
     fun isTopLevel(): Boolean = graphs.size == 1
 
     // ----------------------------------- Named function -----------------------------------
+
+    fun prepareForLocalClassMembers(members: Collection<FirCallableMemberDeclaration<*>>) {
+        members.forEachFunction {
+            enterToLocalClassesMembers[it.symbol] = lastNodes.topOrNull()
+        }
+    }
+
+    fun cleanAfterForLocalClassMembers(members: Collection<FirCallableMemberDeclaration<*>>) {
+        members.forEachFunction {
+            enterToLocalClassesMembers.remove(it.symbol)
+        }
+    }
+
+    private inline fun Collection<FirCallableMemberDeclaration<*>>.forEachFunction(block: (FirFunction<*>) -> Unit) {
+        for (member in this) {
+            for (function in member.unwrap()) {
+                block(function)
+            }
+        }
+    }
+
+    private fun FirCallableMemberDeclaration<*>.unwrap(): List<FirFunction<*>> =
+        when (this) {
+            is FirFunction<*> -> listOf(this)
+            is FirProperty -> listOfNotNull(this.getter, this.setter)
+            else -> emptyList()
+        }
 
     /*
      * Second argument of pair is not null only if function is local and it is a
@@ -82,7 +111,9 @@ class ControlFlowGraphBuilder {
         val isInplace = invocationKind.isInplace()
 
         val previousNode = if (!isInplace && graphs.topOrNull()?.let { it.kind != ControlFlowGraph.Kind.TopLevel } == true) {
-            entersToPostponedAnonymousFunctions[function.symbol] ?: lastNodes.top()
+            entersToPostponedAnonymousFunctions[function.symbol]
+                ?: enterToLocalClassesMembers[function.symbol]
+                ?: lastNodes.top()
         } else {
             null
         }
