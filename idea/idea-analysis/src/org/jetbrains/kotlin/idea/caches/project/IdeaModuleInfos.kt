@@ -19,6 +19,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.analyzer.CombinedModuleInfo
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.analyzer.LibraryModuleInfo
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.TrackableModuleInfo
 import org.jetbrains.kotlin.caches.project.cacheByClassInvalidatingOnRootModifications
+import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
 import org.jetbrains.kotlin.caches.resolve.resolution
 import org.jetbrains.kotlin.config.SourceKotlinRootType
 import org.jetbrains.kotlin.config.TestSourceKotlinRootType
@@ -104,10 +106,16 @@ private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, for
     }
 }
 
-fun createLibraryInfo(project: Project, library: Library): List<LibraryInfo> {
-    return getLibraryPlatform(project, library).idePlatformKind.resolution.createLibraryInfo(project, library)
-}
+val Project.libraryInfoCache: MutableMap<Library, List<LibraryInfo>>
+    get() = cacheInvalidatingOnRootModifications { ContainerUtil.createConcurrentWeakMap() }
 
+fun createLibraryInfo(project: Project, library: Library): List<LibraryInfo> {
+    val cache = project.libraryInfoCache
+
+    return cache.getOrPut(library) {
+        getLibraryPlatform(project, library).idePlatformKind.resolution.createLibraryInfo(project, library)
+    }
+}
 
 private fun OrderEntry.acceptAsDependency(forProduction: Boolean): Boolean {
     return this !is ExportableOrderEntry
