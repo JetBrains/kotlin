@@ -154,7 +154,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
         requiredDependencies.add(versions.webpack)
 
         val webpackConfigWriter = KotlinWebpackConfig(
-            configDirectory = project.projectDir.resolve("webpack.config.d").takeIf { it.isDirectory },
+            configDirectory = project.projectDir.resolve("webpack.config.d"),
             sourceMaps = true,
             devtool = null,
             export = false,
