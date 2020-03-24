@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 import org.gradle.api.Project
 import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
@@ -35,8 +34,8 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
     val dir: File
         get() = nodeJs.projectPackagesDir.resolve(name)
 
-    val target: KotlinTarget
-        get() = compilation.target
+    val target: KotlinJsTargetDsl
+        get() = compilation.target as KotlinJsTargetDsl
 
     val project: Project
         get() = target.project
@@ -95,7 +94,7 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
     private fun buildNpmProjectName(): String {
         val project = target.project
 
-        val moduleName = (target as KotlinJsTargetDsl).moduleName
+        val moduleName = target.moduleName
 
         val compilationName = if (compilation.name != KotlinCompilation.MAIN_COMPILATION_NAME) {
             compilation.name
