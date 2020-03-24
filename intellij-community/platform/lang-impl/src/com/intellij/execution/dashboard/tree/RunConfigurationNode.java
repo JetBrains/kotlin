@@ -77,6 +77,17 @@ public class RunConfigurationNode extends AbstractTreeNode<RunDashboardService>
       nameAttributes = SimpleTextAttributes.GRAYED_BOLD_ATTRIBUTES;
     }
     presentation.addText(configurationSettings.getName(), nameAttributes);
+    Icon icon = getIcon(configurationSettings);
+    presentation.setIcon(isStored ? icon : IconLoader.createLazy(() -> IconLoader.getDisabledIcon(icon)));
+
+    for (RunDashboardCustomizer customizer : myCustomizers) {
+      if (customizer.updatePresentation(presentation, this)) {
+        return;
+      }
+    }
+  }
+
+  private Icon getIcon(RunnerAndConfigurationSettings configurationSettings) {
     Icon icon = null;
     RunDashboardRunConfigurationStatus status = getStatus();
     if (RunDashboardRunConfigurationStatus.STARTED.equals(status)) {
@@ -88,13 +99,7 @@ public class RunConfigurationNode extends AbstractTreeNode<RunDashboardService>
     if (icon == null) {
       icon = RunManagerEx.getInstanceEx(getProject()).getConfigurationIcon(configurationSettings);
     }
-    presentation.setIcon(isStored ? icon : IconLoader.getDisabledIcon(icon));
-
-    for (RunDashboardCustomizer customizer : myCustomizers) {
-      if (customizer.updatePresentation(presentation, this)) {
-        return;
-      }
-    }
+    return icon;
   }
 
   @NotNull
