@@ -33,8 +33,8 @@ class KotlinConstraintSystemCompleter(
     }
 
     interface Context : VariableFixationFinder.Context, ResultTypeResolver.Context {
+        val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker>
         override val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
-
         override val postponedTypeVariables: List<TypeVariableMarker>
 
         // type can be proper if it not contains not fixed type variables
@@ -170,8 +170,6 @@ class KotlinConstraintSystemCompleter(
         analyze: (PostponedResolvedAtom) -> Unit,
         fixationFinder: VariableFixationFinder
     ): Boolean {
-        if (this !is NewConstraintSystem) return false
-
         val isReturnArgumentOfAnotherLambda = postponedArguments.any {
             it is LambdaWithTypeVariableAsExpectedTypeAtom && it.isReturnArgumentOfAnotherLambda
         }
@@ -186,7 +184,7 @@ class KotlinConstraintSystemCompleter(
             return false
 
         val expectedTypeVariable =
-            atomExpectedType?.constructor?.takeIf { it in this.getBuilder().currentStorage().allTypeVariables } ?: return false
+            atomExpectedType?.constructor?.takeIf { it in allTypeVariables } ?: return false
 
         analyze(preparePostponedAtom(expectedTypeVariable, postponedAtom, expectedTypeVariable.builtIns, diagnosticsHolder) ?: return false)
 
@@ -202,8 +200,6 @@ class KotlinConstraintSystemCompleter(
         diagnosticsHolder: KotlinDiagnosticsHolder,
         analyze: (PostponedResolvedAtom) -> Unit
     ): Boolean {
-        if (this !is NewConstraintSystem) return false
-
         val variable = variableForFixation.variable as? TypeConstructor ?: return false
         val hasProperAtom = postponedArguments.any {
             when (it) {
@@ -216,7 +212,7 @@ class KotlinConstraintSystemCompleter(
         val postponedAtom = postponedArguments.firstOrNull() ?: return false
         val expectedTypeAtom = postponedAtom.expectedType
         val expectedTypeVariable =
-            expectedTypeAtom?.constructor?.takeIf { it in this.getBuilder().currentStorage().allTypeVariables } ?: variable
+            expectedTypeAtom?.constructor?.takeIf { it in allTypeVariables } ?: variable
 
         val shouldAnalyzeByEqualityExpectedTypeToVariable =
             hasProperAtom || !variableForFixation.hasProperConstraint || variableForFixation.hasOnlyTrivialProperConstraint
