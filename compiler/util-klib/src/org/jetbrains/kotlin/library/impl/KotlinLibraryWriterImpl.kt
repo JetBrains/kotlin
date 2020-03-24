@@ -23,7 +23,8 @@ open class BaseWriterImpl(
     moduleName: String,
     override val versions: KotlinLibraryVersioning,
     builtInsPlatform: BuiltInsPlatform,
-    val nopack: Boolean = false
+    val nopack: Boolean = false,
+    val shortName: String? = null
 ) : BaseWriter {
 
     val klibFile = File("${libraryLayout.libDir.path}.$KLIB_FILE_EXTENSION")
@@ -40,6 +41,9 @@ open class BaseWriterImpl(
         manifestProperties.writeKonanLibraryVersioning(versions)
         if (builtInsPlatform != BuiltInsPlatform.COMMON)
             manifestProperties.setProperty(KLIB_PROPERTY_BUILTINS_PLATFORM, builtInsPlatform.name)
+        shortName?.let {
+            manifestProperties.setProperty(KLIB_PROPERTY_SHORT_NAME, it)
+        }
     }
 
     override fun addLinkDependencies(libraries: List<KotlinLibrary>) {
