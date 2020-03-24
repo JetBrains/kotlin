@@ -141,7 +141,7 @@ data class KotlinWebpackConfig(
     }
 
     private fun Appendable.appendFromConfigDir() {
-        if (configDirectory == null) return
+        if (configDirectory == null || !configDirectory.isDirectory) return
 
         appendln()
         appendConfigsFromDir(configDirectory)
