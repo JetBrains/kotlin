@@ -6,12 +6,9 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.stubs.StubIndexKey;
-import com.intellij.util.indexing.roots.IndexableFilesProvider;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 @ApiStatus.Internal
 public interface FileBasedIndexInfrastructureExtension {
@@ -19,12 +16,11 @@ public interface FileBasedIndexInfrastructureExtension {
 
   /**
    * This notification is sent from the IDE to let the extension point implementation
-   * update it's internal state in order to supply indexes for the given {@param providers}.
+   * update it's internal state in order to supply indexes.
    * Called every time the project structure is updated.
    */
-  void processProjectEntries(@NotNull Project project,
-                             @NotNull List<IndexableFilesProvider> providers,
-                             @NotNull ProgressIndicator indicator);
+  void processIndexingProject(@NotNull Project project,
+                              @NotNull ProgressIndicator indicator);
 
 
   interface FileIndexingStatusProcessor {
