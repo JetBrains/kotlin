@@ -90,9 +90,9 @@ class RedundantLambdaArrowInspection : AbstractKotlinInspection() {
 }
 
 private fun KtCallExpression.isApplicableCall(lambdaExpression: KtLambdaExpression, lambdaContext: BindingContext): Boolean {
-    val offset = lambdaExpression.textOffset - textOffset
     val dotQualifiedExpression = parent as? KtDotQualifiedExpression
     return if (dotQualifiedExpression == null) {
+        val offset = lambdaExpression.textOffset - textOffset
         replaceWithCopyWithResolveCheck(
             resolveStrategy = { expr, context ->
                 expr.getResolvedCall(context)?.resultingDescriptor
@@ -103,6 +103,7 @@ private fun KtCallExpression.isApplicableCall(lambdaExpression: KtLambdaExpressi
             }
         )
     } else {
+        val offset = lambdaExpression.textOffset - dotQualifiedExpression.textOffset
         dotQualifiedExpression.replaceWithCopyWithResolveCheck(
             resolveStrategy = { expr, context ->
                 expr.selectorExpression.getResolvedCall(context)?.resultingDescriptor
