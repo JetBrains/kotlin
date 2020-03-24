@@ -44,6 +44,7 @@ public class ExternalSystemJdkComboBox extends ComboBoxWithWidePopup<ExternalSys
   @Nullable
   private Project myProject;
   private @Nullable Sdk myProjectJdk;
+  private boolean myHighlightInternalJdk = true;
 
   public ExternalSystemJdkComboBox() {
     this(null);
@@ -177,6 +178,18 @@ public class ExternalSystemJdkComboBox extends ComboBoxWithWidePopup<ExternalSys
     return this;
   }
 
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2021.2")
+  public boolean isHighlightInternalJdk() {
+    return myHighlightInternalJdk;
+  }
+
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2021.2")
+  public void setHighlightInternalJdk(boolean highlightInternalJdk) {
+    myHighlightInternalJdk = highlightInternalJdk;
+  }
+
   public void refreshData(@Nullable String selectedValue) {
     refreshData(selectedValue, null);
   }
@@ -221,14 +234,14 @@ public class ExternalSystemJdkComboBox extends ComboBoxWithWidePopup<ExternalSys
     }
   }
 
-  private static JdkComboBoxItem getInternalJdkItem() {
+  private JdkComboBoxItem getInternalJdkItem() {
     ExternalSystemJdkProvider jdkProvider = ExternalSystemJdkProvider.getInstance();
     Sdk internalJdk = jdkProvider.getInternalJdk();
     return new JdkComboBoxItem(
       ExternalSystemJdkUtil.USE_INTERNAL_JAVA,
       ExternalSystemBundle.message("external.system.java.internal.jre"),
       buildComment(internalJdk),
-      false
+      !myHighlightInternalJdk
     );
   }
 
