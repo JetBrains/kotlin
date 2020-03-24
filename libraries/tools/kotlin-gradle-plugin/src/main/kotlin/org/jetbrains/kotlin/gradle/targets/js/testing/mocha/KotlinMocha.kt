@@ -92,7 +92,7 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) :
         return TCServiceMessagesTestExecutionSpec(
             forkOptions,
             args,
-            true,
+            false,
             clientSettings
         )
     }
