@@ -27,18 +27,5 @@ fun main() {
     assertEquals('a'.toByte(), EnumExplicitCharA)
     assertEquals('b'.toByte(), EnumExplicitCharB)
     assertEquals(EnumExplicitCharA, EnumExplicitCharDup)
-
-    // FIXME: KT-36285
-    if (Platform.osFamily != OsFamily.LINUX && Platform.cpuArchitecture != CpuArchitecture.ARM32) {
-        assertEquals(49, sendV4I(vectorOf(1, 2, 3, 4)))
-    }
-    assertEquals(49, (sendV4F(vectorOf(1f, 2f, 3f, 4f)) + 0.00001).toInt())
-
-    memScoped {
-        val vector = alloc<KVector4i32Var>().also {
-            it.value = vectorOf(1, 2, 3, 4)
-        }
-        assertEquals(vector.value, vectorOf(1, 2, 3, 4))
-    }
 }
 

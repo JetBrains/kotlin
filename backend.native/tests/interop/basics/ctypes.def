@@ -87,15 +87,3 @@ enum EnumExplicitChar : char {
 	EnumExplicitCharB = 'b',
 	EnumExplicitCharDup = 'a'
 };
-
-typedef float __attribute__ ((__vector_size__ (16)))   KVector4f;
-typedef int   __attribute__ ((__vector_size__ (16)))   KVector4i32;
-
-static float sendV4F(KVector4f v) {
-	return v[0] + 2 * v[1] + 4 * v[2] + 8 * v[3];
-}
-
-static int sendV4I(KVector4i32 v) {
-	return v[0] + 2 * v[1] + 4 * v[2] + 8 * v[3];
-}
-

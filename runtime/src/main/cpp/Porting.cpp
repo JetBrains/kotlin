@@ -236,15 +236,23 @@ extern "C" void* dlcalloc(size_t, size_t);
 extern "C" void dlfree(void*);
 #define calloc_impl dlcalloc
 #define free_impl dlfree
+#define calloc_aligned_impl(count, size, alignment) dlcalloc(count, size)
+
 #else
 extern "C" void* konan_calloc_impl(size_t, size_t);
 extern "C" void konan_free_impl(void*);
+extern "C" void* konan_calloc_aligned_impl(size_t count, size_t size, size_t alignment);
 #define calloc_impl konan_calloc_impl
 #define free_impl konan_free_impl
+#define calloc_aligned_impl konan_calloc_aligned_impl
 #endif
 
 void* calloc(size_t count, size_t size) {
   return calloc_impl(count, size);
+}
+
+void* calloc_aligned(size_t count, size_t size, size_t alignment) {
+  return calloc_aligned_impl(count, size, alignment);
 }
 
 void free(void* pointer) {

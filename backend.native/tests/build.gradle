@@ -3379,6 +3379,10 @@ createInterop("cvalues") {
     it.defFile 'interop/basics/cvalues.def'
 }
 
+createInterop("cvectors") {
+    it.defFile 'interop/basics/cvectors.def'
+}
+
 createInterop("cstructs") {
     it.defFile 'interop/basics/cstructs.def'
 }
@@ -3558,6 +3562,20 @@ interopTest("interop_types") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/basics/types.kt"
     interop = 'ctypes'
+}
+
+interopTest("interop_vectors") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/basics/vectors.kt"
+    interop = 'cvectors'
+}
+
+interopTest("interop_vectors_mimalloc") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/basics/vectors.kt"
+    interop = 'cvectors'
+    flags = [ "-Xallocator=mimalloc" ]
+    arguments = [ "mimalloc" ]
 }
 
 interopTest("interop_mangling") {

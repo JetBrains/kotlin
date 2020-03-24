@@ -76,6 +76,7 @@ void *memset(void *b, int c, size_t len);
 
 // Memory operations.
 void* calloc(size_t count, size_t size);
+void* calloc_aligned(size_t count, size_t size, size_t alignment);
 void free(void* ptr);
 
 // Time operations.

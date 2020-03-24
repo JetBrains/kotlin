@@ -19,10 +19,6 @@ fun main() {
         next = null
         assertEquals(next, null)
 
-        assertEquals(vec4f, vectorOf(1.0f, 1.0f, 1.0f, 1.0f))
-        vec4f = vectorOf(0.0f, 0.0f, 0.0f, 0.0f)
-        assertEquals(vec4f, vectorOf(0.0f, 0.0f, 0.0f, 0.0f))
-
         assertEquals(e, E.R)
         e = E.G
         assertEquals(e, E.G)

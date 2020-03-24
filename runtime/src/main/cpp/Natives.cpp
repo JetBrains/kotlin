@@ -53,7 +53,7 @@ void* Kotlin_interop_malloc(KLong size, KInt align) {
     return nullptr;
   }
 
-  void* result = konan::calloc(1, size);
+  void* result = konan::calloc_aligned(1, size, align);
   if ((reinterpret_cast<uintptr_t>(result) & (align - 1)) != 0) {
     // Unaligned!
     RuntimeAssert(false, "unsupported alignment");
