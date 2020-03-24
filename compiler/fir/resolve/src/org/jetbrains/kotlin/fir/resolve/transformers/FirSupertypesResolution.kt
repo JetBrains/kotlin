@@ -107,7 +107,7 @@ private fun createScopesForNestedClasses(
             lookupInterfaces = false, deep = true, useSiteSession = session,
             supertypeSupplier = supertypeComputationSession.supertypesSupplier
         ).asReversed().mapNotNullTo(this) {
-            session.firSymbolProvider.getNestedClassifierScope(it.lookupTag.classId)
+            session.getNestedClassifierScope(it.lookupTag)
         }
         addIfNotNull(klass.typeParametersScope())
         val companionObjects = klass.declarations.filterIsInstance<FirRegularClass>().filter { it.isCompanion }
