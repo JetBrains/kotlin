@@ -7712,6 +7712,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/typeParameter3_ni.kt");
         }
 
+        @TestMetadata("typeParameter4.kt")
+        public void testTypeParameter4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/typeParameter4.kt");
+        }
+
         @TestMetadata("underscore.kt")
         public void testUnderscore() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/underscore.kt");
