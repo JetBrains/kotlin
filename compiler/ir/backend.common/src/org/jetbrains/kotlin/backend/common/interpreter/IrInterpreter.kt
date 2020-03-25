@@ -312,7 +312,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             // superQualifier is null for exception state => find method in builtins
             return calculateBuiltIns(owner.getLastOverridden() as IrSimpleFunction, data)
         }
-        val overridden = owner.overriddenSymbols.first { it.getReceiver()?.equalTo(superQualifier.getReceiver()) == true }
+        val overridden = owner.overriddenSymbols.single()
 
         val newStates = InterpreterFrame(mutableListOf(Variable(overridden.getReceiver()!!, superQualifier)))
         owner.valueParameters.zip(overridden.owner.valueParameters)
@@ -398,7 +398,10 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val rawDispatchReceiver = expression.dispatchReceiver
         rawDispatchReceiver?.interpret(data)?.check { return it }
         val dispatchReceiver = rawDispatchReceiver?.let { data.popReturnValue() }
-        val irFunctionReceiver = if (expression.superQualifierSymbol == null) dispatchReceiver else (dispatchReceiver as Complex).superType
+        val irFunctionReceiver = when (expression.superQualifierSymbol) {
+            null -> dispatchReceiver
+            else -> (dispatchReceiver as Complex).superType?.takeIf { it.irClass.isSubclassOf(expression.superQualifierSymbol!!.owner) }
+        }
         // it is important firstly to add receiver, then arguments; this order is used in builtin method call
         val irFunction = irFunctionReceiver?.getIrFunction(expression.symbol.descriptor) ?: expression.symbol.owner
         irFunctionReceiver?.let { receiverState ->
