@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.core.entity
 
+import org.jetbrains.annotations.Nls
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.Failure
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.UNIT_SUCCESS
@@ -25,7 +27,9 @@ fun <V> inValidatorContext(validator: Reader.(V) -> SettingValidator<V>) =
 
 object StringValidators {
     fun shouldNotBeBlank(name: String) = settingValidator { value: String ->
-        if (value.isBlank()) ValidationResult.ValidationError("${name.capitalize()} should not be blank ")
+        if (value.isBlank()) ValidationResult.ValidationError(
+            KotlinNewProjectWizardBundle.message("validation.should.not.be.blank", name.capitalize())
+        )
         else ValidationResult.OK
     }
 
@@ -34,10 +38,10 @@ object StringValidators {
             val allowedExtraSymbolsStringified = allowedExtraSymbols
                 .takeIf { it.isNotEmpty() }
                 ?.joinToString(separator = ", ") { char -> "'$char'" }
-                ?.let { chars -> ", and symbols: $chars" }
+                ?.let { chars -> KotlinNewProjectWizardBundle.message("validation.identifier.additional.symbols", chars) }
                 .orEmpty()
             ValidationResult.ValidationError(
-                "${name.capitalize()} should consist only of letters, digits$allowedExtraSymbolsStringified"
+                KotlinNewProjectWizardBundle.message("validation.identifier", name.capitalize(), allowedExtraSymbolsStringified)
             )
         } else ValidationResult.OK
     }
@@ -54,7 +58,7 @@ sealed class ValidationResult {
     }
 
     data class ValidationError(val messages: List<String>, val target: Any? = null) : ValidationResult() {
-        constructor(message: String, target: Any? = null) : this(listOf(message), target)
+        constructor(@Nls message: String, target: Any? = null) : this(listOf(message), target)
 
         override val isOk = false
     }
@@ -66,7 +70,7 @@ sealed class ValidationResult {
     }
 
     companion object {
-        fun create(condition: Boolean, message: String) =
+        fun create(condition: Boolean, @Nls message: String) =
             if (condition) OK else ValidationError(message)
 
         inline fun create(condition: Boolean, message: () -> String) =

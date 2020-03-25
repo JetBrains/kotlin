@@ -1,6 +1,9 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem
 
 
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
@@ -22,7 +25,10 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateBuildFiles
 
 abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
-    val type by enumSetting<BuildSystemType>("Build System", GenerationPhase.FIRST_STEP) {
+    val type by enumSetting<BuildSystemType>(
+        KotlinNewProjectWizardBundle.message("plugin.buildsystem.setting.type"),
+        GenerationPhase.FIRST_STEP
+    ) {
         isSavable = true
         filter = { _, type ->
             val service = service<BuildSystemAvailabilityWizardService>()
@@ -33,8 +39,15 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
             if (!buildSystemType.isGradle
                 && KotlinPlugin::projectKind.reference.notRequiredSettingValue != ProjectKind.Singleplatform
             ) {
-                val projectKind = KotlinPlugin::projectKind.reference.notRequiredSettingValue?.text?.capitalize() ?: "Project"
-                ValidationResult.ValidationError("$projectKind cannot be generated using ${buildSystemType.text}")
+                val projectKind = KotlinPlugin::projectKind.reference.notRequiredSettingValue?.text?.capitalize()
+                    ?: KotlinNewProjectWizardBundle.message("project")
+                ValidationResult.ValidationError(
+                    KotlinNewProjectWizardBundle.message(
+                        "plugin.buildsystem.setting.type.error.wrong.project.kind",
+                        projectKind,
+                        buildSystemType.text
+                    )
+                )
             } else ValidationResult.OK
         }
     }
@@ -106,14 +119,14 @@ data class BuildSystemData(
 
 data class BuildFileData(
     val createPrinter: () -> BuildFilePrinter,
-    val buildFileName: String
+    @NonNls val buildFileName: String
 )
 
-enum class BuildSystemType(override val text: String) : DisplayableSettingItem {
-    GradleKotlinDsl("Gradle Kotlin"),
-    GradleGroovyDsl("Gradle Groovy"),
-    Jps("IntelliJ"),
-    Maven("Maven")
+enum class BuildSystemType(@Nls override val text: String) : DisplayableSettingItem {
+    GradleKotlinDsl(KotlinNewProjectWizardBundle.message("buildsystem.type.gradle.kotlin")),
+    GradleGroovyDsl(KotlinNewProjectWizardBundle.message("buildsystem.type.gradle.groovy")),
+    Jps(KotlinNewProjectWizardBundle.message("buildsystem.type.intellij")),
+    Maven(KotlinNewProjectWizardBundle.message("buildsystem.type.maven"))
 
     ;
 

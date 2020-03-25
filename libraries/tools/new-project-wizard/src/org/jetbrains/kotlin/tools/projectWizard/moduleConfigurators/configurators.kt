@@ -1,6 +1,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSetting
@@ -20,7 +22,10 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 
 interface JvmModuleConfigurator : ModuleConfiguratorWithTests {
     companion object : ModuleConfiguratorSettings() {
-        val targetJvmVersion by enumSetting<TargetJvmVersion>("Target JVM Version", GenerationPhase.PROJECT_GENERATION) {
+        val targetJvmVersion by enumSetting<TargetJvmVersion>(
+            KotlinNewProjectWizardBundle.message("module.configurator.jvm.setting.target.jvm.version"),
+            GenerationPhase.PROJECT_GENERATION
+        ) {
             defaultValue = value(TargetJvmVersion.JVM_1_8)
         }
     }
@@ -31,7 +36,7 @@ interface JvmModuleConfigurator : ModuleConfiguratorWithTests {
     }
 }
 
-enum class TargetJvmVersion(val value: String) : DisplayableSettingItem {
+enum class TargetJvmVersion(@NonNls val value: String) : DisplayableSettingItem {
     JVM_1_6("1.6"),
     JVM_1_8("1.8"),
     JVM_9("9"),
@@ -54,9 +59,13 @@ val ModuleConfigurator.moduleType: ModuleType?
 
 object MppModuleConfigurator : ModuleConfigurator {
     override val moduleKind = ModuleKind.multiplatform
+
+    @NonNls
     override val suggestedModuleName = "shared"
+
+    @NonNls
     override val id = "multiplatform"
-    override val text = "Multiplatform"
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.mpp")
     override val canContainSubModules = true
 
     override fun createKotlinPluginIR(configurationData: ModulesToIrConversionData, module: Module): KotlinBuildSystemPluginIR? =
@@ -76,8 +85,10 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
     ModuleConfiguratorWithModuleType {
     override val moduleType get() = ModuleType.jvm
     override val moduleKind: ModuleKind get() = ModuleKind.singleplatformJvm
-    override val suggestedModuleName = "jvm"
-    override val id = "JVM Module"
+    @NonNls override val suggestedModuleName = "jvm"
+    @NonNls override val id = "JVM Module"
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.jvm")
+
 
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JUNIT4
 
@@ -118,9 +129,6 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
             }
         }
 }
-
-
-
 
 
 val ModuleType.defaultTarget

@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
@@ -22,7 +23,7 @@ fun ParsingState.withSettings(newSettings: List<Pair<SettingReference<*, *>, Any
 typealias ParsingContext = ComputeContext<ParsingState>
 
 abstract class Parser<out T : Any> {
-    abstract fun ParsingContext.parse(value: Any?, path: String): TaskResult<T>
+    abstract fun ParsingContext.parse(value: Any?, @NonNls path: String): TaskResult<T>
 }
 
 fun <T : Any> alwaysFailingParser(errorMessage: String) = object : Parser<T>() {
@@ -33,7 +34,7 @@ fun <T : Any> alwaysFailingParser(errorMessage: String) = object : Parser<T>() {
 }
 
 
-fun <T : Any> Parser<T>.parse(context: ParsingContext, value: Any?, path: String) =
+fun <T : Any> Parser<T>.parse(context: ParsingContext, value: Any?, @NonNls path: String) =
     with(context) { parse(value, path) }
 
 inline fun <reified E> enumParser(): Parser<E> where E : Enum<E>, E : DisplayableSettingItem = object : Parser<E>() {
@@ -90,31 +91,31 @@ inline fun <reified T : Any> valueParser() = valueParser { value, path ->
     value.parseAs(path, T::class).get()
 }
 
-fun Any?.classMismatchError(path: String, expected: KClass<*>): ParseError {
+fun Any?.classMismatchError(@NonNls path: String, expected: KClass<*>): ParseError {
     val classpath = this?.let { it::class.simpleName } ?: "null"
     return ParseError("Expected ${expected.simpleName!!} for `$path` but $classpath was found")
 }
 
-inline fun <reified V : Any> Any?.parseAs(path: String) =
+inline fun <reified V : Any> Any?.parseAs(@NonNls path: String) =
     safeAs<V>().toResult { classMismatchError(path, V::class) }
 
 
-inline fun <reified T : Any> Any?.parseAs(path: String, klass: KClass<T>): TaskResult<T> =
+inline fun <reified T : Any> Any?.parseAs(@NonNls path: String, klass: KClass<T>): TaskResult<T> =
     this?.takeIf { it::class.isSubclassOf(klass) }?.safeAs<T>()
         .toResult { classMismatchError(path, klass) }
 
 
-inline fun <reified V : Any> Map<*, *>.parseValue(path: String, name: String) =
+inline fun <reified V : Any> Map<*, *>.parseValue(@NonNls path: String, @NonNls name: String) =
     get(name).parseAs<V>("$path.$name")
 
-inline fun <reified V : Any> Map<*, *>.parseValue(path: String, name: String, defaultValue: (() -> V)) =
+inline fun <reified V : Any> Map<*, *>.parseValue(@NonNls path: String, @NonNls name: String, defaultValue: (() -> V)) =
     get(name)?.parseAs<V>("$path.$name") ?: defaultValue().asSuccess()
 
 
 inline fun <reified V : Any, R : Any> Map<*, *>.parseValue(
     context: ParsingContext,
-    path: String,
-    name: String,
+    @NonNls path: String,
+    @NonNls name: String,
     crossinline parser: suspend ParsingContext.(V) -> TaskResult<R>
 ) = with(context) {
     computeM {
@@ -124,16 +125,16 @@ inline fun <reified V : Any, R : Any> Map<*, *>.parseValue(
 }
 
 inline fun <reified T : Any> Map<*, *>.parseValue(
-    path: String,
-    name: String,
+    @NonNls path: String,
+    @NonNls name: String,
     klass: KClass<T>
 ) = get(path).parseAs("$path.$name", klass)
 
 
 fun <R : Any> Map<*, *>.parseValue(
     context: ParsingContext,
-    path: String,
-    name: String,
+    @NonNls path: String,
+    @NonNls name: String,
     parser: Parser<R>,
     defaultValue: (() -> R)? = null
 ) = with(context) {
@@ -147,7 +148,7 @@ fun <R : Any> Map<*, *>.parseValue(
 
 inline fun <reified V : Any, R : Any> Any?.parseAs(
     context: ParsingContext,
-    path: String,
+    @NonNls path: String,
     crossinline parser: suspend ParsingContext.(V) -> TaskResult<R>
 ) = with(context) {
     computeM {

@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.projectTemplates
 
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
@@ -133,8 +135,10 @@ private fun ModuleType.createDefaultTarget(
 ) = MultiplatformTargetModule(name, defaultTarget, createDefaultSourcesets())
 
 object EmptySingleplatformProjectTemplate : ProjectTemplate() {
-    override val title = "Backend Application"
-    override val description = "Create a backend application with Kotlin/JVM."
+    override val title = KotlinNewProjectWizardBundle.message("project.template.empty.singleplatform.title")
+    override val description = KotlinNewProjectWizardBundle.message("project.template.empty.singleplatform.description")
+
+    @NonNls
     override val suggestedProjectName = "myKotlinJvmProject"
     override val projectKind = ProjectKind.Singleplatform
 
@@ -147,8 +151,10 @@ object EmptySingleplatformProjectTemplate : ProjectTemplate() {
 }
 
 object EmptyMultiplatformProjectTemplate : ProjectTemplate() {
-    override val title = "Multiplatform Application"
-    override val description = "Create applications for different platforms that support sharing common code."
+    override val title = KotlinNewProjectWizardBundle.message("project.template.empty.mpp.title")
+    override val description = KotlinNewProjectWizardBundle.message("project.template.empty.mpp.description")
+
+    @NonNls
     override val suggestedProjectName = "myKotlinMultiplatformProject"
     override val projectKind = ProjectKind.Multiplatform
 
@@ -161,8 +167,10 @@ object EmptyMultiplatformProjectTemplate : ProjectTemplate() {
 }
 
 object JvmConsoleApplication : ProjectTemplate() {
-    override val title = "Console Application"
-    override val description = "Create a console application with Kotlin/JVM. Use it for prototyping or testing purposes."
+    override val title = KotlinNewProjectWizardBundle.message("project.template.empty.jvm.console.title")
+    override val description = KotlinNewProjectWizardBundle.message("project.template.empty.jvm.console.description")
+
+    @NonNls
     override val suggestedProjectName = "myConsoleApplication"
     override val projectKind = ProjectKind.Singleplatform
 
@@ -180,8 +188,10 @@ object JvmConsoleApplication : ProjectTemplate() {
 }
 
 object MultiplatformLibrary : ProjectTemplate() {
-    override val title = "Multiplatform Library"
-    override val description = "Create a library for sharing common code among different platforms."
+    override val title = KotlinNewProjectWizardBundle.message("project.template.mpp.lib.title")
+    override val description = KotlinNewProjectWizardBundle.message("project.template.mpp.lib.description")
+
+    @NonNls
     override val suggestedProjectName = "myMultiplatformLibrary"
     override val projectKind = ProjectKind.Multiplatform
 
@@ -202,9 +212,10 @@ object MultiplatformLibrary : ProjectTemplate() {
 }
 
 object JvmServerJsClient : ProjectTemplate() {
-    override val title: String = "Full-Stack Web Application"
-    override val description: String = "" +
-            "Create a fully-functional web application using Kotlin/JS for the frontend and Kotlin/JVM for the backend."
+    override val title: String = KotlinNewProjectWizardBundle.message("project.template.full.stack.title")
+    override val description: String = KotlinNewProjectWizardBundle.message("project.template.full.stack.description")
+
+    @NonNls
     override val suggestedProjectName: String = "myFullStackApplication"
     override val projectKind: ProjectKind = ProjectKind.Multiplatform
     override val setsPluginSettings: List<SettingWithValue<*, *>> = listOf(
@@ -227,9 +238,10 @@ object JvmServerJsClient : ProjectTemplate() {
 }
 
 object NativeConsoleApplication : ProjectTemplate() {
-    override val title = "Native Application"
-    override val description =
-        "Create an application with Kotlin/Native that works as a standalone application under a specific platform."
+    override val title = KotlinNewProjectWizardBundle.message("project.template.native.console.title")
+    override val description = KotlinNewProjectWizardBundle.message("project.template.native.console.description")
+
+    @NonNls
     override val suggestedProjectName = "myNativeConsoleApp"
     override val projectKind = ProjectKind.Multiplatform
 
@@ -252,8 +264,10 @@ object NativeConsoleApplication : ProjectTemplate() {
 }
 
 object JsBrowserApplication : ProjectTemplate() {
-    override val title = "Frontend Application"
-    override val description = "Create a frontend application with Kotlin/JS if you already have a backend."
+    override val title = KotlinNewProjectWizardBundle.message("project.template.frontend.title")
+    override val description = KotlinNewProjectWizardBundle.message("project.template.frontend.description")
+
+    @NonNls
     override val suggestedProjectName = "myKotlinJsApplication"
     override val projectKind = ProjectKind.Js
 
@@ -274,10 +288,10 @@ object JsBrowserApplication : ProjectTemplate() {
 }
 
 object MPPMobileApplication : ProjectTemplate() {
-    override val title = "Multiplatform Mobile Application"
+    override val title = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.title")
+    override val description = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.description")
 
-    override val description =
-        "Create mobile applications for iOS and Android with Kotlin Multiplatform Mobile, which supports sharing common code between platforms."
+    @NonNls
     override val suggestedProjectName = "myIOSApplication"
     override val projectKind = ProjectKind.Multiplatform
 
@@ -325,8 +339,10 @@ object MPPMobileApplication : ProjectTemplate() {
 }
 
 object MultiplatformMobileLibrary : ProjectTemplate() {
-    override val title = "Multiplatform Mobile Library"
-    override val description = "Create a library that supports sharing code between iOS and Android."
+    override val title = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.lib.title")
+    override val description = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.lib.description")
+
+    @NonNls
     override val suggestedProjectName = "myMppMobileLibrary"
     override val projectKind = ProjectKind.Multiplatform
 

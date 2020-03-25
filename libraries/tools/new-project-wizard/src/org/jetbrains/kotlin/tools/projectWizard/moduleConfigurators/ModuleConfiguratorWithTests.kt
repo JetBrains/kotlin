@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSetting
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSettingReference
@@ -24,7 +26,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 interface ModuleConfiguratorWithTests : ModuleConfiguratorWithSettings {
     companion object : ModuleConfiguratorSettings() {
         val testFramework by enumSetting<KotlinTestFramework>(
-            "Test Framework",
+            KotlinNewProjectWizardBundle.message("module.configurator.tests.setting.framework"),
             neededAtPhase = GenerationPhase.PROJECT_GENERATION
         ) {
             filter = filter@{ reference, kotlinTestFramework ->
@@ -67,9 +69,29 @@ enum class KotlinTestFramework(
     val moduleType: ModuleType,
     val dependencyNames: List<String>
 ) : DisplayableSettingItem {
-    JUNIT4("JUnit 4 Test Framework", ModuleType.jvm, listOf("test-junit")),
-    JUNIT5("JUnit 5 Test Framework", ModuleType.jvm, listOf("test-junit5")),
-    TEST_NG("Test NG Test Framework", ModuleType.jvm, listOf("test-testng")),
-    JS("JavaScript Test Framework", ModuleType.js, listOf("test-js")),
-    COMMON("Common Test Framework", ModuleType.common, listOf("test-common", "test-annotations-common")),
+    JUNIT4(
+        KotlinNewProjectWizardBundle.message("module.configurator.tests.setting.framework.junit4"),
+        ModuleType.jvm,
+        listOf("test-junit")
+    ),
+    JUNIT5(
+        KotlinNewProjectWizardBundle.message("module.configurator.tests.setting.framework.junit5"),
+        ModuleType.jvm,
+        listOf("test-junit5")
+    ),
+    TEST_NG(
+        KotlinNewProjectWizardBundle.message("module.configurator.tests.setting.framework.test.ng"),
+        ModuleType.jvm,
+        listOf("test-testng")
+    ),
+    JS(
+        KotlinNewProjectWizardBundle.message("module.configurator.tests.setting.framework.js"),
+        ModuleType.js,
+        listOf("test-js")
+    ),
+    COMMON(
+        KotlinNewProjectWizardBundle.message("module.configurator.tests.setting.framework.common"),
+        ModuleType.common,
+        listOf("test-common", "test-annotations-common")
+    )
 }

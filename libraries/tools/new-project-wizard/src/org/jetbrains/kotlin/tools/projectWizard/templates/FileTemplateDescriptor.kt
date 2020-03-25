@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.templates
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.core.asPath
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 import java.nio.file.Path
@@ -8,7 +9,7 @@ import java.nio.file.Paths
 
 // Should be used to create any kind of files in the generated project
 // Except build files as they will be generated using IR
-data class FileTemplateDescriptor(val templateId: String, val relativePath: Path) {
+data class FileTemplateDescriptor(@NonNls val templateId: String, val relativePath: Path) {
     constructor(templateId: String) : this(
         templateId,
         Paths.get(templateId).fileName.toString().removeSuffix(".vm").asPath()

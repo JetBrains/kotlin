@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.FreeIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.render
@@ -26,7 +27,7 @@ data class GradleByNameTaskAccessIR(
 }
 
 data class GradleByClassTasksAccessIR(
-    val taskClass: String
+    @NonNls val taskClass: String
 ) : GradleTaskAccessIR {
     override fun GradlePrinter.renderGradle() {
         when (dsl) {

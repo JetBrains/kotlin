@@ -1,6 +1,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 import kotlinx.collections.immutable.toPersistentList
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
@@ -20,6 +22,8 @@ interface NativeTargetConfigurator : TargetConfigurator
 class RealNativeTargetConfigurator private constructor(
     override val moduleSubType: ModuleSubType
 ) : NativeTargetConfigurator, SimpleTargetConfigurator {
+    override val text: String = moduleSubType.name.capitalize()
+
     override fun createInnerTargetIrs(reader: Reader, module: Module): List<BuildSystemIR> = if (moduleSubType.isIOS) {
         listOf(
             GradleSectionIR("binaries") {
@@ -43,8 +47,11 @@ class RealNativeTargetConfigurator private constructor(
 
 object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenceTargetConfigurator {
     override val moduleType = ModuleType.native
+
+    @NonNls
     override val id = "nativeForCurrentSystem"
-    override val text = "Your system"
+
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.native.for.current.system")
 
 
     override fun Reader.createTargetIrs(

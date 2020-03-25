@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSetting
@@ -41,8 +43,6 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
 
     override val moduleType: ModuleType
         get() = ModuleType.android
-    override val greyText: String
-        get() = "Requires Android SDK"
 
     override fun getPluginSettings(): List<PluginSettingReference<Any, SettingType<Any>>> =
         listOf(AndroidPlugin::androidSdkPath.reference)
@@ -128,6 +128,8 @@ object AndroidTargetConfigurator : TargetConfigurator,
     override val moduleSubType = ModuleSubType.android
     override val moduleType = ModuleType.android
 
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.android")
+
     override fun Reader.createAndroidPlugin(module: Module): AndroidGradlePlugin =
         withSettingsOf(module) { androidPlugin.reference.settingValue }
 
@@ -150,10 +152,19 @@ object AndroidTargetConfigurator : TargetConfigurator,
         )
     }
 
-    val androidPlugin by enumSetting<AndroidGradlePlugin>("Android Library", neededAtPhase = GenerationPhase.PROJECT_GENERATION)
+    val androidPlugin by enumSetting<AndroidGradlePlugin>(
+        KotlinNewProjectWizardBundle.message("module.configurator.android.setting.android.plugin"),
+        neededAtPhase = GenerationPhase.PROJECT_GENERATION
+    )
 }
 
-enum class AndroidGradlePlugin(override val text: String, val pluginName: String) : DisplayableSettingItem {
-    APPLICATION("Android Application", "com.android.application"),
-    LIBRARY("Android Library", "com.android.library")
+enum class AndroidGradlePlugin(override val text: String, @NonNls val pluginName: String) : DisplayableSettingItem {
+    APPLICATION(
+        KotlinNewProjectWizardBundle.message("module.configurator.android.setting.android.plugin.application"),
+        "com.android.application"
+    ),
+    LIBRARY(
+        KotlinNewProjectWizardBundle.message("module.configurator.android.setting.android.plugin.library"),
+        "com.android.library"
+    )
 }

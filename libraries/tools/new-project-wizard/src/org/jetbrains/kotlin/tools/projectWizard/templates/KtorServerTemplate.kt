@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.templates
 
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.core.Writer
 import org.jetbrains.kotlin.tools.projectWizard.core.asPath
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
@@ -22,11 +23,14 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repositorie
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.InterceptionPoint
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 
 class KtorServerTemplate : Template() {
-    override val title: String = "Ktor Server"
-    override val description: String = "Configurable Ktor web server for building web applications"
+    override val title: String = KotlinNewProjectWizardBundle.message("module.template.ktor.server.title")
+    override val description: String = KotlinNewProjectWizardBundle.message("module.template.ktor.server.description")
     override val moduleTypes: Set<ModuleType> = setOf(ModuleType.jvm)
+
+    @NonNls
     override val id: String = "ktorServer"
 
     override fun Writer.getRequiredLibraries(module: ModuleIR): List<DependencyIR> =
@@ -55,7 +59,10 @@ class KtorServerTemplate : Template() {
         FileTemplateDescriptor("$id/server.kt.vm", "server.kt".asPath()) asSrcOf SourcesetType.main
     )
 
-    val serverEngine by enumSetting<KtorServerEngine>("Ktor Server Engine", GenerationPhase.PROJECT_GENERATION)
+    val serverEngine by enumSetting<KtorServerEngine>(
+        KotlinNewProjectWizardBundle.message("module.template.ktor.server.setting.engine"),
+        GenerationPhase.PROJECT_GENERATION
+    )
 
     val imports = InterceptionPoint("imports", emptyList<String>())
     val routes = InterceptionPoint("routes", emptyList<String>())
@@ -65,7 +72,7 @@ class KtorServerTemplate : Template() {
     override val settings: List<TemplateSetting<*, *>> = listOf(serverEngine)
 }
 
-private fun ktorArtifactDependency(name: String) = ArtifactBasedLibraryDependencyIR(
+private fun ktorArtifactDependency(@NonNls name: String) = ArtifactBasedLibraryDependencyIR(
     MavenArtifact(Repositories.KTOR_BINTRAY, "io.ktor", name),
     Version.fromString("1.2.6"),
     DependencyType.MAIN
@@ -74,9 +81,18 @@ private fun ktorArtifactDependency(name: String) = ArtifactBasedLibraryDependenc
 
 @Suppress("MemberVisibilityCanBePrivate")
 enum class KtorServerEngine(val engineName: String, val dependencyName: String) : DisplayableSettingItem {
-    Netty("Netty", dependencyName = "ktor-server-netty"),
-    Tomcat("Tomcat", dependencyName = "ktor-server-tomcat"),
-    Jetty("Jetty", dependencyName = "ktor-server-jetty");
+    Netty(
+        KotlinNewProjectWizardBundle.message("module.template.ktor.server.setting.engine.netty"),
+        dependencyName = "ktor-server-netty"
+    ),
+    Tomcat(
+        KotlinNewProjectWizardBundle.message("module.template.ktor.server.setting.engine.tomcat"),
+        dependencyName = "ktor-server-tomcat"
+    ),
+    Jetty(
+        KotlinNewProjectWizardBundle.message("module.template.ktor.server.setting.engine.jetty"),
+        dependencyName = "ktor-server-jetty"
+    );
 
     override val text: String
         get() = engineName.capitalize()

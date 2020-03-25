@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.core.entity
 
 
+import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import kotlin.reflect.KProperty1
@@ -47,6 +48,7 @@ data class PipelineTask(
 
         var isAvailable: Checker = ALWAYS_AVAILABLE_CHECKER
 
+        @Nls
         var title: String? = null
 
         fun withAction(action: Writer.() -> TaskResult<Unit>) {

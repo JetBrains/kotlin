@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.core.entity.settings
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.Identificator
 import org.jetbrains.kotlin.tools.projectWizard.core.Plugin
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
@@ -18,6 +19,7 @@ import kotlin.reflect.KProperty1
 
 
 sealed class SettingReference<out V : Any, out T : SettingType<V>> {
+    @get:NonNls
     abstract val path: String
     abstract val type: KClass<out T>
 

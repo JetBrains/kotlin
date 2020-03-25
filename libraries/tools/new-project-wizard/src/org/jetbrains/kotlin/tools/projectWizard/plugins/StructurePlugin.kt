@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins
 
 
-
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
@@ -13,26 +13,41 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import java.nio.file.Paths
 
 class StructurePlugin(context: Context) : Plugin(context) {
-    val projectPath by pathSetting("Location", GenerationPhase.FIRST_STEP) {
+    val projectPath by pathSetting(
+        KotlinNewProjectWizardBundle.message("plugin.structure.setting.location"),
+        GenerationPhase.FIRST_STEP
+    ) {
         defaultValue = value(Paths.get("."))
     }
-    val name by stringSetting("Name", GenerationPhase.FIRST_STEP) {
+    val name by stringSetting(
+        KotlinNewProjectWizardBundle.message("plugin.structure.setting.name"),
+        GenerationPhase.FIRST_STEP
+    ) {
         shouldNotBeBlank()
-        validate(StringValidators.shouldBeValidIdentifier("Name", Module.ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES))
+        validate(StringValidators.shouldBeValidIdentifier(title, Module.ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES))
     }
 
-    val groupId by stringSetting("Group ID", GenerationPhase.FIRST_STEP) {
+    val groupId by stringSetting(
+        KotlinNewProjectWizardBundle.message("plugin.structure.setting.group.id"),
+        GenerationPhase.FIRST_STEP
+    ) {
         isSavable = true
         shouldNotBeBlank()
-        validate(StringValidators.shouldBeValidIdentifier("Group ID", setOf('.', '_')))
+        validate(StringValidators.shouldBeValidIdentifier(title, setOf('.', '_')))
     }
-    val artifactId by stringSetting("Artifact ID", GenerationPhase.FIRST_STEP) {
+    val artifactId by stringSetting(
+        KotlinNewProjectWizardBundle.message("plugin.structure.setting.artifact.id"),
+        GenerationPhase.FIRST_STEP
+    ) {
         shouldNotBeBlank()
-        validate(StringValidators.shouldBeValidIdentifier("Artifact ID", setOf('_')))
+        validate(StringValidators.shouldBeValidIdentifier(title, setOf('_')))
     }
-    val version by stringSetting("Version", GenerationPhase.FIRST_STEP) {
+    val version by stringSetting(
+        KotlinNewProjectWizardBundle.message("plugin.structure.setting.version"),
+        GenerationPhase.FIRST_STEP
+    ) {
         shouldNotBeBlank()
-        validate(StringValidators.shouldBeValidIdentifier("Version", setOf('_', '-', '.')))
+        validate(StringValidators.shouldBeValidIdentifier(title, setOf('_', '-', '.')))
         defaultValue = value("1.0-SNAPSHOT")
     }
 

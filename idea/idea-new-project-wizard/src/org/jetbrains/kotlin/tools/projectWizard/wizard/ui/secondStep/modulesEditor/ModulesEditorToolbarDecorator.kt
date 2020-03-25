@@ -4,6 +4,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionToolbarPosition
 import com.intellij.openapi.ui.Messages
 import com.intellij.ui.ToolbarDecorator
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidSinglePlatformModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.IOSSinglePlatformModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsSingleplatformModuleConfigurator
@@ -12,7 +13,6 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
-import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardUIBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.createPanelWithPopupHandler
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -58,7 +58,7 @@ class ModulesEditorToolbarDecorator(
                     null -> true
                     else -> false
                 }
-                text = "Add" + " " + when (tree.selectedSettingItem?.safeAs<Module>()?.kind) {
+                val moduleKindTextToAdd = when (tree.selectedSettingItem?.safeAs<Module>()?.kind) {
                     ModuleKind.multiplatform -> KotlinNewProjectWizardBundle.message("module.kind.target")
                     ModuleKind.singleplatformJvm -> KotlinNewProjectWizardBundle.message("module.kind.module")
                     ModuleKind.singleplatformJs -> KotlinNewProjectWizardBundle.message("module.kind.js.module")
@@ -66,9 +66,12 @@ class ModulesEditorToolbarDecorator(
                     ModuleKind.target -> ""
                     null -> ""
                 }
+
+                text = KotlinNewProjectWizardUIBundle.message("editor.modules.add", moduleKindTextToAdd)
             }
             event.presentation.isEnabled
         }
+
         setRemoveAction {
             val moduleKindText = selectedModuleKindText ?: KotlinNewProjectWizardBundle.message("module.kind.module")
             if (Messages.showOkCancelDialog(

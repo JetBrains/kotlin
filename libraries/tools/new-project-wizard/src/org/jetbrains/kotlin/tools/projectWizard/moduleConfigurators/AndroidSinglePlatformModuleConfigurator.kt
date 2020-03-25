@@ -1,7 +1,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 
-
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
@@ -19,9 +20,11 @@ object AndroidSinglePlatformModuleConfigurator :
     SinglePlatformModuleConfigurator,
     AndroidModuleConfigurator {
     override val moduleKind: ModuleKind get() = ModuleKind.singleplatformAndroid
+    @NonNls
     override val id = "android"
+    @NonNls
     override val suggestedModuleName = "android"
-    override val text = "Android"
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.android")
 
     override val requiresRootBuildFile: Boolean = true
 

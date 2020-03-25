@@ -1,9 +1,11 @@
 package org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem
 
 import kotlinx.collections.immutable.PersistentList
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.GeneratedIdentificator
 import org.jetbrains.kotlin.tools.projectWizard.Identificator
 import org.jetbrains.kotlin.tools.projectWizard.IdentificatorOwner
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
@@ -29,7 +31,7 @@ enum class ModuleKind : DisplayableSettingItem {
 
 // TODO separate to classes
 class Module(
-    var name: String,
+    @NonNls var name: String,
     val configurator: ModuleConfigurator,
     var template: Template?,
     val sourcesets: List<Sourceset>,
@@ -62,12 +64,12 @@ class Module(
     override val text: String get() = name
     override val greyText: String?
         get() = when {
-            kind == ModuleKind.target -> "${configurator.text} Target"
-            configurator == MppModuleConfigurator -> "MPP Module"
-            configurator == AndroidSinglePlatformModuleConfigurator -> "Android Module"
-            configurator == IOSSinglePlatformModuleConfigurator -> "IOS Module"
-            configurator == JsSingleplatformModuleConfigurator -> "JS Module"
-            else -> "Module"
+            kind == ModuleKind.target -> configurator.text + KotlinNewProjectWizardBundle.message("module.kind.target")
+            configurator == MppModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.mpp.module")
+            configurator == AndroidSinglePlatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.android.module")
+            configurator == IOSSinglePlatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.ios.module")
+            configurator == JsSingleplatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.js.module")
+            else -> KotlinNewProjectWizardBundle.message("module.kind.module")
         }
 
     fun SettingsWriter.initDefaultValuesForSettings() {
@@ -101,10 +103,12 @@ class Module(
         }
 
         private val moduleNameValidator = settingValidator<Module> { module ->
-            StringValidators.shouldNotBeBlank("Module name").validate(this, module.name)
+            StringValidators.shouldNotBeBlank(KotlinNewProjectWizardBundle.message("module.name")).validate(this, module.name)
         } and settingValidator { module ->
-            StringValidators.shouldBeValidIdentifier("Module name `${module.name}`", ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES)
-                .validate(this, module.name)
+            StringValidators.shouldBeValidIdentifier(
+                KotlinNewProjectWizardBundle.message("module.name", module.name),
+                ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES
+            ).validate(this, module.name)
         }
 
         val moduleConfiguratorValidator = settingValidator<Module> { module ->
@@ -117,7 +121,12 @@ class Module(
                     }
                     val value = reference?.notRequiredSettingValue
                         ?: reference?.savedOrDefaultValue
-                        ?: return@map ValidationResult.ValidationError("${setting.title.capitalize()} should not be blank")
+                        ?: return@map ValidationResult.ValidationError(
+                            KotlinNewProjectWizardBundle.message(
+                                "validation.should.not.be.blank",
+                                setting.title.capitalize()
+                            )
+                        )
                     (setting.validator as SettingValidator<Any>).validate(this@settingValidator, value)
                 }.fold()
             }
@@ -129,7 +138,12 @@ class Module(
                 template.settings.map { setting ->
                     val value = setting.reference.notRequiredSettingValue
                         ?: setting.reference.savedOrDefaultValue
-                        ?: return@map ValidationResult.ValidationError("${setting.title.capitalize()} should not be blank")
+                        ?: return@map ValidationResult.ValidationError(
+                            KotlinNewProjectWizardBundle.message(
+                                "validation.should.not.be.blank",
+                                setting.title.capitalize()
+                            )
+                        )
                     (setting.validator as SettingValidator<Any>).validate(this@settingValidator, value)
                 }.fold()
             }
@@ -157,7 +171,7 @@ val Module.isRootModule
     get() = parent == null
 
 @Suppress("FunctionName")
-fun MultiplatformTargetModule(name: String, configurator: ModuleConfigurator, sourcesets: List<Sourceset>) =
+fun MultiplatformTargetModule(@NonNls name: String, configurator: ModuleConfigurator, sourcesets: List<Sourceset>) =
     Module(
         name,
         configurator,
@@ -167,7 +181,7 @@ fun MultiplatformTargetModule(name: String, configurator: ModuleConfigurator, so
     )
 
 @Suppress("FunctionName")
-fun MultiplatformModule(name: String, targets: List<Module> = emptyList()) =
+fun MultiplatformModule(@NonNls name: String, targets: List<Module> = emptyList()) =
     Module(
         name,
         MppModuleConfigurator,
@@ -177,7 +191,7 @@ fun MultiplatformModule(name: String, targets: List<Module> = emptyList()) =
     )
 
 @Suppress("FunctionName")
-fun SingleplatformModule(name: String, sourcesets: List<Sourceset>) =
+fun SingleplatformModule(@NonNls name: String, sourcesets: List<Sourceset>) =
     Module(
         name,
         JvmSinglePlatformModuleConfigurator,

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.templates
 
 
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.WizardGradleRunConfiguration
 import org.jetbrains.kotlin.tools.projectWizard.WizardRunConfiguration
 import org.jetbrains.kotlin.tools.projectWizard.core.*
@@ -25,18 +27,25 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.TemplateInterceptor
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.interceptTemplate
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 
 class SimpleJsClientTemplate : Template() {
-    override val title: String = "Frontend Application"
-    override val description: String = "Configurable Kotlin/JS frontend application"
+    override val title: String = KotlinNewProjectWizardBundle.message("module.template.js.simple.title")
+    override val description: String = KotlinNewProjectWizardBundle.message("module.template.js.simple.description")
+
     override val moduleTypes: Set<ModuleType> = setOf(ModuleType.js)
+
+    @NonNls
     override val id: String = "simpleJsClient"
 
     override fun isApplicableTo(module: Module): Boolean =
         module.configurator == JsBrowserTargetConfigurator
                 || module.configurator == JsSingleplatformModuleConfigurator
 
-    val renderEngine by enumSetting<RenderEngine>("Rendering engine", GenerationPhase.PROJECT_GENERATION) {
+    val renderEngine by enumSetting<RenderEngine>(
+        KotlinNewProjectWizardBundle.message("module.template.js.simple.setting.rendering.engine"),
+        GenerationPhase.PROJECT_GENERATION
+    ) {
         defaultValue = value(RenderEngine.REACT_WITH_STYLED)
     }
 
@@ -45,12 +54,12 @@ class SimpleJsClientTemplate : Template() {
     override fun Reader.createRunConfigurations(module: ModuleIR): List<WizardRunConfiguration> = buildList {
         if (module.originalModule.kind == ModuleKind.singleplatformJs) {
             +WizardGradleRunConfiguration(
-                "BrowserDevelopmentRun in continuous mode",
+                KotlinNewProjectWizardBundle.message("module.template.js.simple.run.configuration.dev"),
                 "browserDevelopmentRun",
                 listOf("--continuous")
             )
             +WizardGradleRunConfiguration(
-                "BrowserProductionRun in continuous mode",
+                KotlinNewProjectWizardBundle.message("module.template.js.simple.run.configuration.prod"),
                 "browserProductionRun",
                 listOf("--continuous")
             )
@@ -221,8 +230,13 @@ class SimpleJsClientTemplate : Template() {
     }
 
     companion object {
+        @NonNls
         private const val JS_OUTPUT_FILE_NAME = "output.js"
+
+        @NonNls
         private const val WEBPACK_TASK_CLASS = "KotlinWebpack"
+
+        @NonNls
         private const val WEBPACK_TASK_SUFFIX = "BrowserProductionWebpack"
     }
 
@@ -270,9 +284,9 @@ class SimpleJsClientTemplate : Template() {
         )
     }
 
-    enum class RenderEngine(override val text: String) : DisplayableSettingItem {
-        KOTLINX_HTML("Use statically typed Kotlinx.html DSL"),
-        REACT("Use Kotlin-wrapped React library"),
-        REACT_WITH_STYLED("Use Kotlin-wrapped React framework together with Styled Components"),
+    enum class RenderEngine(@Nls override val text: String) : DisplayableSettingItem {
+        KOTLINX_HTML(KotlinNewProjectWizardBundle.message("module.template.js.simple.setting.rendering.kotlinx.html")),
+        REACT(KotlinNewProjectWizardBundle.message("module.template.js.simple.setting.rendering.react")),
+        REACT_WITH_STYLED(KotlinNewProjectWizardBundle.message("module.template.js.simple.setting.rendering.react.styled"))
     }
 }

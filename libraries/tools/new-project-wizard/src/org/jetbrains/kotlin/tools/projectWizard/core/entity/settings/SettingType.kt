@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.core.entity.settings
 
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
@@ -198,7 +199,12 @@ object PathSettingType : SettingType<Path>() {
         init {
             validate { pathValue ->
                 if (pathValue.toString().isBlank())
-                    ValidationResult.ValidationError("${title.capitalize()} should not be blank")
+                    ValidationResult.ValidationError(
+                        KotlinNewProjectWizardBundle.message(
+                            "validation.should.not.be.blank",
+                            title.capitalize()
+                        )
+                    )
                 else ValidationResult.OK
             }
         }
@@ -206,7 +212,9 @@ object PathSettingType : SettingType<Path>() {
         fun shouldExists() = validate { pathValue ->
             if (isUnitTestMode) return@validate ValidationResult.OK
             if (!Files.exists(pathValue))
-                ValidationResult.ValidationError("File for ${title.capitalize()} should exists")
+                ValidationResult.ValidationError(
+                    KotlinNewProjectWizardBundle.message("validation.file.should.exists", title.capitalize())
+                )
             else ValidationResult.OK
         }
 

@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 
@@ -15,7 +16,7 @@ object TargetConfigurationGroups {
 
     object NATIVE {
         val LINUX = FinalTargetConfiguratorGroup(
-            "Linux",
+            KotlinNewProjectWizardBundle.message("module.configuration.group.linux"),
             ModuleType.native,
             listOf(
                 RealNativeTargetConfigurator.configuratorsByModuleType.getValue(ModuleSubType.linuxX64),
@@ -26,7 +27,7 @@ object TargetConfigurationGroups {
         )
 
         val WINDOWS = FinalTargetConfiguratorGroup(
-            "Windows (MinGW)",
+            KotlinNewProjectWizardBundle.message("module.configuration.group.windows.mingw"),
             ModuleType.native,
             listOf(
                 RealNativeTargetConfigurator.configuratorsByModuleType.getValue(ModuleSubType.mingwX64),
@@ -35,7 +36,7 @@ object TargetConfigurationGroups {
         )
 
         val MAC = FinalTargetConfiguratorGroup(
-            "macOS",
+            KotlinNewProjectWizardBundle.message("module.configuration.group.macos"),
             ModuleType.native,
             listOf(
                 RealNativeTargetConfigurator.configuratorsByModuleType.getValue(ModuleSubType.macosX64)
@@ -43,7 +44,7 @@ object TargetConfigurationGroups {
         )
 
         val IOS = FinalTargetConfiguratorGroup(
-            "iOS",
+            KotlinNewProjectWizardBundle.message("module.configuration.group.ios"),
             ModuleType.native,
             listOf(
                 RealNativeTargetConfigurator.configuratorsByModuleType.getValue(ModuleSubType.iosArm32),
@@ -53,7 +54,7 @@ object TargetConfigurationGroups {
         )
 
         val ANDROID_NATIVE = FinalTargetConfiguratorGroup(
-            "Android Native",
+            KotlinNewProjectWizardBundle.message("module.configuration.group.android.native"),
             ModuleType.native,
             listOf(
                 RealNativeTargetConfigurator.configuratorsByModuleType.getValue(ModuleSubType.androidNativeArm64),

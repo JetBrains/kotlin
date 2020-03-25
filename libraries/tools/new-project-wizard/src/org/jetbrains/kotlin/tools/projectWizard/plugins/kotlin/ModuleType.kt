@@ -1,17 +1,18 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin
 
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.StdlibType
 import java.util.*
 
 //TODO maybe split into interfaces like it made with module configurators
 @Suppress("EnumEntryName")
 enum class ModuleType(val projectTypeName: String) {
-    jvm("Kotlin/JVM"),
-    js("Kotlin/JS"),
-    native("Kotlin/Native"),
-    common("Common"),
-    android("Android"),
-//    ios("iOS")
+    jvm(KotlinNewProjectWizardBundle.message("module.type.jvm")),
+    js(KotlinNewProjectWizardBundle.message("module.type.js")),
+    native(KotlinNewProjectWizardBundle.message("module.type.native")),
+    common(KotlinNewProjectWizardBundle.message("module.type.common")),
+    android(KotlinNewProjectWizardBundle.message("module.type.android")),
+//    ios(KotlinNewProjectWizardBundle.message("module.type.ios"))
 
     ;
 

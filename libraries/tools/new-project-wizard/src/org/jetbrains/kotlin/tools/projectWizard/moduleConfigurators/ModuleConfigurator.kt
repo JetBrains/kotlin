@@ -199,8 +199,6 @@ fun Module.getConfiguratorSettings() = buildList<SettingReference<*, *>> {
 
 interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
     val moduleKind: ModuleKind
-    override val text: String
-        get() = id
 
     val suggestedModuleName: String? get() = null
     val canContainSubModules: Boolean get() = false

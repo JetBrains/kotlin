@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
@@ -22,9 +24,13 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType {
 
 object JsSingleplatformModuleConfigurator : JSConfigurator, ModuleConfiguratorWithTests, SinglePlatformModuleConfigurator {
     override val moduleKind = ModuleKind.singleplatformJs
+
+    @NonNls
     override val suggestedModuleName = "js"
+
+    @NonNls
     override val id = "jsSinglepaltform"
-    override val text = "JS for Browser"
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.js")
 
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JS
 

@@ -8,7 +8,7 @@ dependencies {
     compileOnly(project(":kotlin-reflect-api"))
 
     //needed only for message bundles
-    implementation(intellijCoreDep())
+    implementation(intellijDep()) { includeJars("util") }
 
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(commonDep("junit:junit"))

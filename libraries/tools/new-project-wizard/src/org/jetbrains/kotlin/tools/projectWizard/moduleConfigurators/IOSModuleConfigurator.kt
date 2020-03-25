@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
@@ -14,10 +16,16 @@ import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
 import java.nio.file.Path
 
 object IOSSinglePlatformModuleConfigurator : SinglePlatformModuleConfigurator, ModuleConfiguratorSettings() {
+    @NonNls
     override val id = "IOS Module"
+
+    @NonNls
     override val suggestedModuleName = "ios"
+
     override val moduleKind: ModuleKind = ModuleKind.singleplatformJvm
-    override val greyText = "Requires Apple Xcode"
+    override val greyText = KotlinNewProjectWizardBundle.message("module.configurator.ios.requires.xcode")
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.ios")
+
 
     override val needCreateBuildFile: Boolean = false
     override val requiresRootBuildFile: Boolean = true
@@ -74,6 +82,7 @@ object IOSSinglePlatformModuleConfigurator : SinglePlatformModuleConfigurator, M
                 .asPath()
         )
 
+    @NonNls
     private const val DEFAULT_APP_NAME = "appName"
 
     val dependentModule by valueSetting<DependentModuleReference>(

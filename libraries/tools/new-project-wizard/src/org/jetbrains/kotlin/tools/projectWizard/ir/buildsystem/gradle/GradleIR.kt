@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.FreeIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.RepositoryIR
@@ -22,7 +23,7 @@ data class RawGradleIR(
     override fun GradlePrinter.renderGradle() = renderer()
 }
 
-fun rawIR(ir: String) = RawGradleIR { +ir }
+fun rawIR(@NonNls ir: String) = RawGradleIR { +ir }
 fun rawIR(ir: GradlePrinter.() -> String) = RawGradleIR { +ir() }
 
 fun MutableList<BuildSystemIR>.addRawIR(ir: GradlePrinter.() -> String) {
@@ -30,7 +31,7 @@ fun MutableList<BuildSystemIR>.addRawIR(ir: GradlePrinter.() -> String) {
 }
 
 
-class CreateGradleValueIR(val name: String, val body: GradleIR) : GradleIR {
+class CreateGradleValueIR(@NonNls val name: String, val body: GradleIR) : GradleIR {
     override fun GradlePrinter.renderGradle() {
         when (dsl) {
             GradlePrinter.GradleDsl.KOTLIN -> {
@@ -51,7 +52,7 @@ class CreateGradleValueIR(val name: String, val body: GradleIR) : GradleIR {
 }
 
 data class GradleCallIr(
-    val name: String,
+    @NonNls val name: String,
     val parameters: List<BuildSystemIR> = emptyList(),
     val isConstructorCall: Boolean = false,
 ) : GradleIR {
@@ -70,7 +71,7 @@ data class GradleCallIr(
 }
 
 data class GradleNewInstanceCall(
-    val name: String,
+    @NonNls val name: String,
     val parameters: List<BuildSystemIR> = emptyList()
 ) : GradleIR {
     override fun GradlePrinter.renderGradle() {
@@ -85,7 +86,7 @@ data class GradleNewInstanceCall(
 
 
 data class GradleSectionIR(
-    val name: String,
+    @NonNls val name: String,
     val body: BodyIR
 ) : GradleIR, FreeIR {
     constructor(name: String, bodyBuilder: MutableList<BuildSystemIR>.() -> Unit) : this(
@@ -101,7 +102,7 @@ data class GradleSectionIR(
 }
 
 data class GradleAssignmentIR(
-    val target: String,
+    @NonNls val target: String,
     val assignee: BuildSystemIR
 ) : GradleIR, FreeIR {
     override fun GradlePrinter.renderGradle() {
@@ -111,7 +112,7 @@ data class GradleAssignmentIR(
 }
 
 data class GradleStringConstIR(
-    val text: String
+    @NonNls val text: String
 ) : GradleIR {
     override fun GradlePrinter.renderGradle() {
         +text.quotified
@@ -119,9 +120,9 @@ data class GradleStringConstIR(
 }
 
 data class CompilationAccessIr(
-    val targetName: String,
-    val compilationName: String,
-    val property: String?
+    @NonNls val targetName: String,
+    @NonNls val compilationName: String,
+    @NonNls val property: String?
 ) : GradleIR {
     override fun GradlePrinter.renderGradle() {
         when (dsl) {
@@ -132,7 +133,7 @@ data class CompilationAccessIr(
     }
 }
 
-data class GradleDynamicPropertyAccessIR(val qualifier: BuildSystemIR, val propertyName: String) : GradleIR {
+data class GradleDynamicPropertyAccessIR(val qualifier: BuildSystemIR, @NonNls val propertyName: String) : GradleIR {
     override fun GradlePrinter.renderGradle() {
         qualifier.render(this)
         when (dsl) {

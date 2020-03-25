@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.core.entity.settings
 
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 
 fun ParsingContext.parseSettingsMap(
@@ -18,7 +19,7 @@ fun ParsingContext.parseSettingsMap(
             setting.type.parse(this, settingValue, setting.path).map { listOf(settingReference to it) }
         }
         setting.isRequired -> {
-            fail(ParseError("No value was found for a key `$path.${setting.path}`"))
+            fail(ParseError(KotlinNewProjectWizardBundle.message("parse.error.no.value.for.key", "$path.${setting.path}")))
         }
         else -> success(emptyList())
     }

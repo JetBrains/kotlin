@@ -1,6 +1,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 import kotlinx.collections.immutable.toPersistentList
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
@@ -41,7 +43,6 @@ interface SimpleTargetConfigurator : TargetConfigurator {
     val moduleSubType: ModuleSubType
     override val moduleType get() = moduleSubType.moduleType
     override val id get() = "${moduleSubType.name}Target"
-    override val text get() = moduleSubType.name.capitalize()
 
     override val suggestedModuleName: String? get() = moduleSubType.name
 
@@ -66,9 +67,14 @@ private fun Module.createTargetAccessIr(moduleSubType: ModuleSubType) =
 interface JsTargetConfigurator : JSConfigurator, TargetConfigurator, SingleCoexistenceTargetConfigurator
 
 object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWithTests {
+    @NonNls
     override val id = "jsBrowser"
-    override val text = "Browser"
+
+    @NonNls
     override val suggestedModuleName = "browser"
+
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.js.browser")
+
 
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JS
 
@@ -87,9 +93,13 @@ object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWit
 }
 
 object JsNodeTargetConfigurator : JsTargetConfigurator {
+    @NonNls
     override val id = "jsNode"
-    override val text = "Node.js"
+
+    @NonNls
     override val suggestedModuleName = "nodeJs"
+
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.js.node")
 
 
     override fun Reader.createTargetIrs(
@@ -108,6 +118,7 @@ object JsNodeTargetConfigurator : JsTargetConfigurator {
 
 object CommonTargetConfigurator : TargetConfiguratorWithTests(), SimpleTargetConfigurator, SingleCoexistenceTargetConfigurator {
     override val moduleSubType = ModuleSubType.common
+    override val text: String = KotlinNewProjectWizardBundle.message("module.configurator.common")
 
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.COMMON
 }
@@ -117,8 +128,7 @@ object JvmTargetConfigurator : JvmModuleConfigurator,
     SimpleTargetConfigurator {
     override val moduleSubType = ModuleSubType.jvm
 
-    override val text: String
-        get() = "JVM"
+    override val text: String = KotlinNewProjectWizardBundle.message("module.configurator.jvm")
 
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JUNIT4
 
@@ -149,7 +159,10 @@ object JvmTargetConfigurator : JvmModuleConfigurator,
                 Settings.javaSupport
 
     object Settings : ModuleConfiguratorSettings() {
-        val javaSupport by booleanSetting("Java language support", GenerationPhase.PROJECT_GENERATION) {
+        val javaSupport by booleanSetting(
+            KotlinNewProjectWizardBundle.message("module.configurator.jvm.setting.java.support"),
+            GenerationPhase.PROJECT_GENERATION
+        ) {
             defaultValue = value(false)
         }
     }

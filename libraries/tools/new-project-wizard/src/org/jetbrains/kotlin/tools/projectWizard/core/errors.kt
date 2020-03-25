@@ -1,9 +1,13 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import java.io.IOException
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 
 abstract class Error {
+    @get:Nls
     abstract val message: String
 }
 
@@ -24,31 +28,32 @@ data class IOError(override val exception: IOException) : ExceptionError()
 
 data class ExceptionErrorImpl(override val exception: Exception) : ExceptionError()
 
-data class ParseError(override val message: String) : Error()
+data class ParseError(@Nls override val message: String) : Error()
 
 data class TemplateNotFoundError(val id: String) : Error() {
     override val message: String
-        get() = "Template with an id `$id` is not found"
+        get() = KotlinNewProjectWizardBundle.message("error.template.not.found", id)
 }
 
 data class RequiredSettingsIsNotPresentError(val settingNames: List<String>) : Error() {
     override val message: String
         get() = buildString {
-            append("The following required settings is not present: \n")
+            append(KotlinNewProjectWizardBundle.message("error.required.settings.are.not.present") + '\n')
             settingNames.joinTo(this, "\n") { "   $it" }
         }
 }
 
-data class CircularTaskDependencyError(val taskName: String) : Error() {
+data class CircularTaskDependencyError(@NonNls val taskName: String) : Error() {
+    @get:NonNls
     override val message: String
         get() = "$taskName task has circular dependencies"
 }
 
-data class BadSettingValueError(override val message: String) : Error()
+data class BadSettingValueError(@Nls override val message: String) : Error()
 
 data class ConfiguratorNotFoundError(val id: String) : Error() {
     override val message: String
-        get() = "Module type `$id` was not found"
+        get() = KotlinNewProjectWizardBundle.message("error.configurator.not.found", id)
 }
 
 data class ValidationError(val validationMessage: String) : Error() {
@@ -56,9 +61,9 @@ data class ValidationError(val validationMessage: String) : Error() {
         get() = validationMessage.capitalize()
 }
 
-data class ProjectImportingError(override val message: String) : Error()
+data class ProjectImportingError(@Nls override val message: String) : Error()
 
-data class InvalidModuleDependencyError(val from: Module, val to: Module, val reason: String? = null) : Error() {
+data class InvalidModuleDependencyError(val from: Module, val to: Module, @Nls val reason: String? = null) : Error() {
     override val message: String
-        get() = "Invalid module dependency from module ${from.name} to ${to.name}" + reason?.let { ": $it" }
+        get() = KotlinNewProjectWizardBundle.message("error.invalid.module.dependency", from.name, to.name) + reason?.let { ": $it" }
 }
