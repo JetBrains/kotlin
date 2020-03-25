@@ -95,6 +95,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("idea/testData/formatter/BlankLinesAfterClassHeader.after.kt");
         }
 
+        @TestMetadata("BlankLinesAfterClassHeader2.after.kt")
+        public void testBlankLinesAfterClassHeader2() throws Exception {
+            runTest("idea/testData/formatter/BlankLinesAfterClassHeader2.after.kt");
+        }
+
         @TestMetadata("BlankLinesBeforeRBrace.after.kt")
         public void testBlankLinesBeforeRBrace() throws Exception {
             runTest("idea/testData/formatter/BlankLinesBeforeRBrace.after.kt");
