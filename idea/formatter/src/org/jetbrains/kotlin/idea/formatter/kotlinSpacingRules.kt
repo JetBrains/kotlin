@@ -153,13 +153,16 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                     null
                 } else {
                     val minLineFeeds = if (right.requireNode().elementType == FUN || right.requireNode().elementType == PROPERTY)
-                        1
+                        kotlinCommonSettings.BLANK_LINES_AFTER_CLASS_HEADER + 1
                     else
                         0
 
                     builderUtil.createLineFeedDependentSpacing(
-                        1, 1, minLineFeeds,
-                        settings.KEEP_LINE_BREAKS, settings.KEEP_BLANK_LINES_IN_DECLARATIONS,
+                        1,
+                        1,
+                        minLineFeeds,
+                        commonCodeStyleSettings.KEEP_LINE_BREAKS,
+                        commonCodeStyleSettings.KEEP_BLANK_LINES_IN_DECLARATIONS,
                         TextRange(parentPsi.textRange.startOffset, left.requireNode().psi.textRange.startOffset),
                         DependentSpacingRule(DependentSpacingRule.Trigger.HAS_LINE_FEEDS)
                             .registerData(
