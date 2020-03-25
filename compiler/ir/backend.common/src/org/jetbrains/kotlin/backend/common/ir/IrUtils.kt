@@ -357,7 +357,16 @@ fun IrDeclarationContainer.addChild(declaration: IrDeclaration) {
     stageController.unrestrictDeclarationListsAccess {
         this.declarations += declaration
     }
-    declaration.accept(SetDeclarationsParentVisitor, this)
+    declaration.setDeclarationsParent(this)
+}
+
+fun IrDeclarationContainer.addChildren(declarations: List<IrDeclaration>) {
+    declarations.forEach { this.addChild(it) }
+}
+
+fun <T : IrElement> T.setDeclarationsParent(parent: IrDeclarationParent): T {
+    accept(SetDeclarationsParentVisitor, parent)
+    return this
 }
 
 object SetDeclarationsParentVisitor : IrElementVisitor<Unit, IrDeclarationParent> {

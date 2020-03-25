@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.inline.isInlineParameter
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -35,8 +37,6 @@ val sharedVariablesPhase = makeIrFilePhase(
     name = "SharedVariables",
     description = "Transform shared variables"
 )
-
-object CoroutineIntrinsicLambdaOrigin : IrStatementOriginImpl("Coroutine intrinsic lambda")
 
 class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
 
@@ -66,19 +66,31 @@ class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
                     element.acceptChildren(this, data)
                 }
 
+                override fun visitCall(expression: IrCall, data: IrDeclarationParent?) {
+                    val callee = expression.symbol.owner
+                    if (!callee.isInline) {
+                        super.visitCall(expression, data)
+                        return
+                    }
+                    expression.dispatchReceiver?.accept(this, data)
+                    expression.extensionReceiver?.accept(this, data)
+                    for (param in callee.valueParameters) {
+                        val arg = expression.getValueArgument(param.index) ?: continue
+                        if (param.isInlineParameter()
+                            // This is somewhat conservative but simple.
+                            // If a user put redundant <crossinline> modifier on a parameter,
+                            // may be it's their fault?
+                            && !param.isCrossinline
+                            && arg is IrFunctionExpression
+                        )
+                            arg.function.acceptChildren(this, data)
+                        else
+                            arg.accept(this, data)
+                    }
+                }
+
                 override fun visitDeclaration(declaration: IrDeclaration, data: IrDeclarationParent?) =
                     super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
-
-                override fun visitContainerExpression(expression: IrContainerExpression, data: IrDeclarationParent?) =
-                    super.visitContainerExpression(
-                        expression,
-                        if (expression is IrReturnableBlock
-                            && expression.origin == CoroutineIntrinsicLambdaOrigin
-                        )
-                            null
-                        else
-                            data
-                    )
 
                 override fun visitVariable(declaration: IrVariable, data: IrDeclarationParent?) {
                     declaration.acceptChildren(this, data)
