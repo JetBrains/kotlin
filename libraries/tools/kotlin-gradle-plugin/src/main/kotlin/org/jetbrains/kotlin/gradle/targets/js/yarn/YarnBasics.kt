@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLock.Companion.dependencyKey
 import java.io.File
 
 abstract class YarnBasics : NpmApi {
@@ -145,7 +144,7 @@ abstract class YarnBasics : NpmApi {
     }
 }
 
-private class YarnEntryRegistry(lockFile: File) {
+private class YarnEntryRegistry(private val lockFile: File) {
     val entryMap = YarnLock.parse(lockFile)
         .entries
         .associateBy { it.dependencyKey }
@@ -167,5 +166,23 @@ private class YarnEntryRegistry(lockFile: File) {
         return checkNotNull(entry) {
             "Cannot find $key in yarn.lock"
         }
+    }
+
+    val YarnLock.Entry.dependencyKey: String
+        get() = key.correctDependencyKey()
+
+    private fun dependencyKey(packageKey: String, version: String) =
+        YarnLock.dependencyKey(packageKey, version).correctDependencyKey()
+
+    private fun String.correctDependencyKey(): String {
+        var correctedKey = replace("@github:", "@")
+
+        if ("@file:" in correctedKey) {
+            val location = correctedKey.substringAfter("@file:")
+            val path = lockFile.parentFile.resolve(location).canonicalPath
+            correctedKey = correctedKey.replaceAfter("@file:", path)
+        }
+
+        return correctedKey
     }
 }
