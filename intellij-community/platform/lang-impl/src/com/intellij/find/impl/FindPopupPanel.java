@@ -590,8 +590,8 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
     myReplaceComponent = new JBTextArea();
     myReplaceComponent.setColumns(25);
     myReplaceComponent.setRows(1);
-    mySearchTextArea = new SearchTextArea(mySearchComponent, true, true);
-    myReplaceTextArea = new SearchTextArea(myReplaceComponent, false, false);
+    mySearchTextArea = new SearchTextArea(mySearchComponent, true);
+    myReplaceTextArea = new SearchTextArea(myReplaceComponent, false);
     mySearchTextArea.setMultilineEnabled(Registry.is("ide.find.as.popup.allow.multiline"));
     myReplaceTextArea.setMultilineEnabled(Registry.is("ide.find.as.popup.allow.multiline"));
     AnAction caseSensitiveAction = createAction("find.popup.case.sensitive",
