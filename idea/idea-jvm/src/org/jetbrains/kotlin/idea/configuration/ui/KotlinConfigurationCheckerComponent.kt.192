@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
 import org.jetbrains.kotlin.idea.util.runReadActionInSmartMode
 import java.util.concurrent.atomic.AtomicInteger
 
-typealias KotlinConfigurationCheckerService = KotlinConfigurationCheckerComponent
-
 class KotlinConfigurationCheckerComponent(val project: Project) : ProjectComponent {
     private val syncDepth = AtomicInteger()
 
