@@ -2,6 +2,9 @@
 
 package com.intellij.refactoring.move;
 
+import com.intellij.internal.statistic.eventLog.FeatureUsageData;
+import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
+import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
@@ -46,8 +49,9 @@ public class MoveHandler implements RefactoringActionHandler {
     PsiReference reference = findReferenceAtCaret(element, offset);
     if (reference != null) {
       PsiElement refElement = reference.resolve();
-      for(MoveHandlerDelegate delegate: MoveHandlerDelegate.EP_NAME.getExtensionList()) {
+      for (MoveHandlerDelegate delegate: MoveHandlerDelegate.EP_NAME.getExtensionList()) {
         if (refElement != null && delegate.tryToMove(refElement, project, dataContext, reference, editor)) {
+          logDelegate(project, delegate, refElement.getLanguage());
           return;
         }
       }
@@ -61,14 +65,22 @@ public class MoveHandler implements RefactoringActionHandler {
         return;
       }
 
-      for(MoveHandlerDelegate delegate: candidateHandlers) {
+      for (MoveHandlerDelegate delegate: candidateHandlers) {
         if (delegate.tryToMove(element, project, dataContext, null, editor)) {
+          logDelegate(project, delegate, element.getLanguage());
           return;
         }
       }
 
       element = element.getParent();
     }
+  }
+
+  private static void logDelegate(@NotNull Project project, @NotNull MoveHandlerDelegate delegate, @Nullable Language language) {
+    FeatureUsageData data = new FeatureUsageData()
+      .addLanguage(language)
+      .addData("handler", delegate.getClass().getName());
+    FUCounterUsageLogger.getInstance().logEvent(project, "move.refactoring", "handler.invoked", data);
   }
 
   private static PsiReference findReferenceAtCaret(PsiElement element, int caretOffset) {
@@ -87,7 +99,7 @@ public class MoveHandler implements RefactoringActionHandler {
   public void invoke(@NotNull Project project, PsiElement @NotNull [] elements, DataContext dataContext) {
     final PsiElement targetContainer = dataContext == null ? null : LangDataKeys.TARGET_PSI_ELEMENT.getData(dataContext);
     final Set<PsiElement> filesOrDirs = new HashSet<>();
-    for(MoveHandlerDelegate delegate: MoveHandlerDelegate.EP_NAME.getExtensionList()) {
+    for (MoveHandlerDelegate delegate: MoveHandlerDelegate.EP_NAME.getExtensionList()) {
       if (delegate.canMove(dataContext) && delegate.isValidTarget(targetContainer, elements)) {
         delegate.collectFilesOrDirsFromContext(dataContext, filesOrDirs);
       }
@@ -104,6 +116,7 @@ public class MoveHandler implements RefactoringActionHandler {
           }
         }
       }
+      FUCounterUsageLogger.getInstance().logEvent(project, "move.refactoring", "move.files.or.directories");
       MoveFilesOrDirectoriesUtil
         .doMove(project, PsiUtilCore.toPsiElementArray(filesOrDirs), new PsiElement[]{targetContainer}, null);
       return;
@@ -117,8 +130,9 @@ public class MoveHandler implements RefactoringActionHandler {
   public static void doMove(Project project, PsiElement @NotNull [] elements, PsiElement targetContainer, DataContext dataContext, MoveCallback callback) {
     if (elements.length == 0) return;
 
-    for(MoveHandlerDelegate delegate: MoveHandlerDelegate.EP_NAME.getExtensionList()) {
+    for (MoveHandlerDelegate delegate: MoveHandlerDelegate.EP_NAME.getExtensionList()) {
       if (delegate.canMove(elements, targetContainer, null)) {
+        logDelegate(project, delegate, elements[0].getLanguage());
         delegate.doMove(project, elements, delegate.adjustTargetForMove(dataContext, targetContainer), callback);
         break;
       }
