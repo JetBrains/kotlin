@@ -88,6 +88,15 @@ class FirTowerResolver(
         extensionReceiver, extensionsOnly, noInnerConstructors
     )
 
+    private fun ReceiverValue.toMemberScopeTowerLevel(
+        extensionReceiver: ReceiverValue? = null,
+        implicitExtensionInvokeMode: Boolean = false
+    ) = MemberScopeTowerLevel(
+        session, components, this,
+        extensionReceiver, implicitExtensionInvokeMode,
+        scopeSession = components.scopeSession
+    )
+
     private suspend fun processQualifierScopes(
         manager: TowerResolveManager,
         info: CallInfo, qualifierReceiver: QualifierReceiver?
@@ -248,10 +257,7 @@ class FirTowerResolver(
         emptyTopLevelScopes: MutableSet<FirScope>
     ) {
         val implicitResult = manager.processLevel(
-            MemberScopeTowerLevel(
-                session,
-                components, dispatchReceiver = receiver, scopeSession = components.scopeSession
-            ), info, parentGroup.Member
+            receiver.toMemberScopeTowerLevel(), info, parentGroup.Member
         )
 
         if (implicitResult == ProcessorAction.NONE) {
@@ -269,13 +275,8 @@ class FirTowerResolver(
             if (!usable) continue
             if (implicitDispatchReceiverValue in implicitReceiverValuesWithEmptyScopes) continue
             manager.processLevel(
-                MemberScopeTowerLevel(
-                    session,
-                    components,
-                    dispatchReceiver = implicitDispatchReceiverValue,
-                    extensionReceiver = receiver,
-                    scopeSession = components.scopeSession
-                ), info, parentGroup.Implicit(dispatchDepth)
+                implicitDispatchReceiverValue.toMemberScopeTowerLevel(extensionReceiver = receiver),
+                info, parentGroup.Implicit(dispatchDepth)
             )
         }
 
@@ -328,9 +329,7 @@ class FirTowerResolver(
         }
 
         manager.processLevel(
-            MemberScopeTowerLevel(
-                session, components, dispatchReceiver = explicitReceiverValue, scopeSession = components.scopeSession
-            ), info, TowerGroup.Member, ExplicitReceiverKind.DISPATCH_RECEIVER
+            explicitReceiverValue.toMemberScopeTowerLevel(), info, TowerGroup.Member, ExplicitReceiverKind.DISPATCH_RECEIVER
         )
 
         val shouldProcessExplicitReceiverScopeOnly =
@@ -359,16 +358,11 @@ class FirTowerResolver(
             val parentGroup = TowerGroup.Implicit(depth)
 
             manager.processLevel(
-                MemberScopeTowerLevel(
-                    session, components,
-                    dispatchReceiver = implicitReceiverValue, extensionReceiver = explicitReceiverValue,
-                    scopeSession = components.scopeSession
-                ), info, parentGroup.Member, ExplicitReceiverKind.EXTENSION_RECEIVER
+                implicitReceiverValue.toMemberScopeTowerLevel(extensionReceiver = explicitReceiverValue),
+                info, parentGroup.Member, ExplicitReceiverKind.EXTENSION_RECEIVER
             )
             manager.processLevelForPropertyWithInvoke(
-                MemberScopeTowerLevel(
-                    session, components, dispatchReceiver = implicitReceiverValue, scopeSession = components.scopeSession
-                ), info, parentGroup.Member
+                implicitReceiverValue.toMemberScopeTowerLevel(), info, parentGroup.Member
             )
             for ((localIndex, localScope) in nonEmptyLocalScopes.withIndex()) {
                 manager.processLevelForPropertyWithInvoke(
@@ -379,13 +373,8 @@ class FirTowerResolver(
             for ((implicitDispatchReceiverValue, usable, dispatchDepth) in implicitReceivers) {
                 if (!usable) continue
                 manager.processLevelForPropertyWithInvoke(
-                    MemberScopeTowerLevel(
-                        session,
-                        components,
-                        dispatchReceiver = implicitDispatchReceiverValue,
-                        extensionReceiver = implicitReceiverValue,
-                        scopeSession = components.scopeSession
-                    ), info, parentGroup.Implicit(dispatchDepth)
+                    implicitDispatchReceiverValue.toMemberScopeTowerLevel(extensionReceiver = implicitReceiverValue),
+                    info, parentGroup.Implicit(dispatchDepth)
                 )
             }
             for ((topIndex, topLevelScope) in topLevelScopes.withIndex()) {
@@ -432,9 +421,7 @@ class FirTowerResolver(
         manager: TowerResolveManager
     ) {
         manager.processLevel(
-            MemberScopeTowerLevel(
-                session, components, dispatchReceiver = invokeReceiverValue, scopeSession = components.scopeSession
-            ),
+            invokeReceiverValue.toMemberScopeTowerLevel(),
             info, TowerGroup.Member,
             ExplicitReceiverKind.DISPATCH_RECEIVER,
             InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER
@@ -452,11 +439,8 @@ class FirTowerResolver(
             // NB: companions are processed via implicitReceiverValues!
             val parentGroup = TowerGroup.Implicit(depth)
             manager.processLevel(
-                MemberScopeTowerLevel(
-                    session, components,
-                    dispatchReceiver = implicitReceiverValue, extensionReceiver = invokeReceiverValue,
-                    scopeSession = components.scopeSession
-                ), info, parentGroup.Member,
+                implicitReceiverValue.toMemberScopeTowerLevel(extensionReceiver = invokeReceiverValue),
+                info, parentGroup.Member,
                 ExplicitReceiverKind.EXTENSION_RECEIVER,
                 InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER
             )
@@ -478,10 +462,8 @@ class FirTowerResolver(
         manager: TowerResolveManager
     ) {
         manager.processLevel(
-            MemberScopeTowerLevel(
-                session, components, dispatchReceiver = invokeReceiverValue,
-                scopeSession = components.scopeSession
-            ), info, TowerGroup.Member,
+            invokeReceiverValue.toMemberScopeTowerLevel(),
+            info, TowerGroup.Member,
             ExplicitReceiverKind.DISPATCH_RECEIVER,
             InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER
         )
@@ -497,12 +479,11 @@ class FirTowerResolver(
             if (!usable) continue
             val parentGroup = TowerGroup.Implicit(depth)
             manager.processLevel(
-                MemberScopeTowerLevel(
-                    session, components, dispatchReceiver = invokeReceiverValue,
+                invokeReceiverValue.toMemberScopeTowerLevel(
                     extensionReceiver = implicitReceiverValue,
-                    implicitExtensionInvokeMode = true,
-                    scopeSession = components.scopeSession
-                ), info, parentGroup.InvokeExtension,
+                    implicitExtensionInvokeMode = true
+                ),
+                info, parentGroup.InvokeExtension,
                 ExplicitReceiverKind.DISPATCH_RECEIVER,
                 InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER
             )
@@ -532,8 +513,6 @@ class FirTowerResolver(
                 }
             }
         }
-
-
 
         when (val receiver = info.explicitReceiver) {
             is FirResolvedQualifier -> manager.enqueueResolverTask { runResolverForQualifierReceiver(info, receiver, manager) }
