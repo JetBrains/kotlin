@@ -292,7 +292,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                     it.archiveFile = target.jar?.archiveFile
                     it.konanArtifacts = target.konanArtifacts
                 }
-                val targetDataNode = mainModuleNode.createChild<KotlinTargetData>(KotlinTargetData.KEY, targetData)
+                mainModuleNode.createChild(KotlinTargetData.KEY, targetData)
 
                 val compilationIds = LinkedHashSet<String>()
                 for (compilation in target.compilations) {
