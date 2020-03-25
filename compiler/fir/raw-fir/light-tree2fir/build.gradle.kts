@@ -15,9 +15,7 @@ repositories {
 }
 
 dependencies {
-    compile(project(":compiler:psi"))
-    compile(project(":compiler:fir:tree"))
-    compile(project(":compiler:fir:psi2fir"))
+    compile(project(":compiler:fir:raw-fir:common"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 
@@ -27,7 +25,7 @@ dependencies {
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(projectTests(":compiler:fir:psi2fir"))
+    testCompile(projectTests(":compiler:fir:raw-fir:psi2fir"))
 
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntime(project(":kotlin-reflect"))

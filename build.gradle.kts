@@ -256,8 +256,9 @@ extra["compilerModules"] = arrayOf(
     ":compiler:fir:cones",
     ":compiler:fir:resolve",
     ":compiler:fir:tree",
-    ":compiler:fir:psi2fir",
-    ":compiler:fir:lightTree",
+    ":compiler:fir:raw-fir:common",
+    ":compiler:fir:raw-fir:psi2fir",
+    ":compiler:fir:raw-fir:light-tree2fir",
     ":compiler:fir:fir2ir",
     ":compiler:fir:fir2ir:jvm-backend",
     ":compiler:fir:java",
@@ -554,16 +555,16 @@ tasks {
     }
 
     register("firCompilerTest") {
-        dependsOn(":compiler:fir:psi2fir:test")
+        dependsOn(":compiler:fir:raw-fir:psi2fir:test")
+        dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")
         dependsOn(":compiler:fir:analysis-tests:test")
         dependsOn(":compiler:fir:fir2ir:test")
-        dependsOn(":compiler:fir:lightTree:test")
     }
 
     register("firAllTest") {
         dependsOn(
-            ":compiler:fir:psi2fir:test",
-            ":compiler:fir:lightTree:test",
+            ":compiler:fir:raw-fir:psi2fir:test",
+            ":compiler:fir:raw-fir:light-tree2fir:test",
             ":compiler:fir:analysis-tests:test",
             ":compiler:fir:fir2ir:test",
             ":idea:idea-fir:test"

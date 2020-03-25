@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
@@ -42,7 +40,6 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitKPropertyTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -195,68 +192,6 @@ fun FirExpression.generateLazyLogicalOperation(
     }
 }
 
-internal fun KtWhenCondition.toFirWhenCondition(
-    subject: FirWhenSubject,
-    convert: KtExpression?.(String) -> FirExpression,
-    toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
-): FirExpression {
-    val baseSource = this.toFirSourceElement()
-    val firSubjectExpression = buildWhenSubjectExpression {
-        source = baseSource
-        whenSubject = subject
-    }
-    return when (this) {
-        is KtWhenConditionWithExpression -> {
-            buildOperatorCall {
-                source = expression?.toFirSourceElement()
-                operation = FirOperation.EQ
-                argumentList = buildBinaryArgumentList(
-                    firSubjectExpression, expression.convert("No expression in condition with expression")
-                )
-            }
-        }
-        is KtWhenConditionInRange -> {
-            val firRange = rangeExpression.convert("No range in condition with range")
-            firRange.generateContainsOperation(
-                firSubjectExpression,
-                isNegated,
-                rangeExpression?.toFirSourceElement(),
-                operationReference.toFirSourceElement()
-            )
-        }
-        is KtWhenConditionIsPattern -> {
-            buildTypeOperatorCall {
-                source = typeReference?.toFirSourceElement()
-                operation = if (isNegated) FirOperation.NOT_IS else FirOperation.IS
-                conversionTypeRef = typeReference.toFirOrErrorTypeRef()
-                argumentList = buildUnaryArgumentList(firSubjectExpression)
-            }
-        }
-        else -> {
-            buildErrorExpression(baseSource, ConeSimpleDiagnostic("Unsupported when condition: ${this.javaClass}", DiagnosticKind.Syntax))
-        }
-    }
-}
-
-internal fun Array<KtWhenCondition>.toFirWhenCondition(
-    baseSource: FirSourceElement?,
-    subject: FirWhenSubject,
-    convert: KtExpression?.(String) -> FirExpression,
-    toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
-): FirExpression {
-    var firCondition: FirExpression? = null
-    for (condition in this) {
-        val firConditionElement = condition.toFirWhenCondition(subject, convert, toFirOrErrorTypeRef)
-        firCondition = when (firCondition) {
-            null -> firConditionElement
-            else -> firCondition.generateLazyLogicalOperation(
-                firConditionElement, false, baseSource,
-            )
-        }
-    }
-    return firCondition!!
-}
-
 fun FirExpression.generateContainsOperation(
     argument: FirExpression,
     inverted: Boolean,
@@ -339,42 +274,7 @@ fun generateResolvedAccessExpression(source: FirSourceElement?, variable: FirVar
         }
     }
 
-internal fun generateDestructuringBlock(
-    session: FirSession,
-    multiDeclaration: KtDestructuringDeclaration,
-    container: FirVariable<*>,
-    tmpVariable: Boolean,
-    extractAnnotationsTo: KtAnnotated.(FirAnnotationContainerBuilder) -> Unit,
-    toFirOrImplicitTypeRef: KtTypeReference?.() -> FirTypeRef,
-): FirExpression {
-    return buildBlock {
-        source = multiDeclaration.toFirSourceElement()
-        if (tmpVariable) {
-            statements += container
-        }
-        val isVar = multiDeclaration.isVar
-        for ((index, entry) in multiDeclaration.entries.withIndex()) {
-            val entrySource = entry.toFirSourceElement()
-            val name = entry.nameAsSafeName
-            statements += buildProperty {
-                source = entrySource
-                this.session = session
-                returnTypeRef = entry.typeReference.toFirOrImplicitTypeRef()
-                this.name = name
-                initializer = buildComponentCall {
-                    source = entrySource
-                    explicitReceiver = generateResolvedAccessExpression(entrySource, container)
-                    componentIndex = index + 1
-                }
-                this.isVar = isVar
-                isLocal = true
-                status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
-                symbol = FirPropertySymbol(name)
-                entry.extractAnnotationsTo(this)
-            }
-        }
-    }
-}
+
 
 fun generateTemporaryVariable(
     session: FirSession, source: FirSourceElement?, name: Name, initializer: FirExpression, typeRef: FirTypeRef? = null,

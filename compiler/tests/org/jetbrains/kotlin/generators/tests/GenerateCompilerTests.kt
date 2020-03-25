@@ -533,13 +533,13 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("compiler/fir/psi2fir/tests", "compiler/fir/psi2fir/testData") {
+    testGroup("compiler/fir/raw-fir/psi2fir/tests", "compiler/fir/raw-fir/psi2fir/testData") {
         testClass<AbstractRawFirBuilderTestCase> {
             model("rawBuilder", testMethod = "doRawFirTest")
         }
     }
 
-    testGroup("compiler/fir/lightTree/tests", "compiler/fir/psi2fir/testData") {
+    testGroup("compiler/fir/raw-fir/light-tree2fir/tests", "compiler/fir/raw-fir/psi2fir/testData") {
         testClass<AbstractLightTree2FirConverterTestCase> {
             model("rawBuilder")
         }
@@ -609,7 +609,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("compiler/visualizer/tests", "compiler/fir/psi2fir/testData") {
+    testGroup("compiler/visualizer/tests", "compiler/fir/raw-fir/psi2fir/testData") {
         testClass<AbstractPsiVisualizer>("PsiVisualizerForRawFirDataGenerated") {
             model("rawBuilder", testMethod = "doFirBuilderDataTest")
         }

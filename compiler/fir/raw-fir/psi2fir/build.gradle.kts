@@ -9,10 +9,7 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:psi"))
-    compile(project(":core:descriptors"))
-    compile(project(":compiler:fir:tree"))
-    compile(project(":compiler:ir.tree"))
+    compile(project(":compiler:fir:raw-fir:common"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 
