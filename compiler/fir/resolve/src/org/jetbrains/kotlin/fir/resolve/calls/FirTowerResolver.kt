@@ -79,6 +79,15 @@ class FirTowerResolver(
         return implicitReceivers
     }
 
+    private fun FirScope.toScopeTowerLevel(
+        extensionReceiver: ReceiverValue? = null,
+        extensionsOnly: Boolean = false,
+        noInnerConstructors: Boolean = false
+    ): ScopeTowerLevel = ScopeTowerLevel(
+        session, components, this,
+        extensionReceiver, extensionsOnly, noInnerConstructors
+    )
+
     private suspend fun processQualifierScopes(
         manager: TowerResolveManager,
         info: CallInfo, qualifierReceiver: QualifierReceiver?
@@ -86,7 +95,7 @@ class FirTowerResolver(
         if (qualifierReceiver == null) return
         for ((depth, qualifierScope) in qualifierReceiver.callableScopes().withIndex()) {
             manager.processLevel(
-                ScopeTowerLevel(session, components, qualifierScope, noInnerConstructors = true),
+                qualifierScope.toScopeTowerLevel(noInnerConstructors = true),
                 info.noStubReceiver(), TowerGroup.Qualifier(depth)
             )
         }
@@ -103,7 +112,7 @@ class FirTowerResolver(
         ) return
         val scope = qualifierReceiver.classifierScope() ?: return
         manager.processLevel(
-            ScopeTowerLevel(session, components, scope, noInnerConstructors = true), info.noStubReceiver(),
+            scope.toScopeTowerLevel(noInnerConstructors = true), info.noStubReceiver(),
             if (prioritized) TowerGroup.ClassifierPrioritized else TowerGroup.Classifier
         )
     }
@@ -170,9 +179,10 @@ class FirTowerResolver(
             for ((implicitReceiverValue, usableAsValue, depth) in implicitReceivers) {
                 if (!usableAsValue) continue
                 manager.processLevel(
-                    ScopeTowerLevel(
-                        session, components, topLevelScope, extensionReceiver = implicitReceiverValue, extensionsOnly = true
-                    ), info, TowerGroup.TopPrioritized(index).Implicit(depth)
+                    topLevelScope.toScopeTowerLevel(
+                        extensionReceiver = implicitReceiverValue, extensionsOnly = true
+                    ),
+                    info, TowerGroup.TopPrioritized(index).Implicit(depth)
                 )
             }
         }
@@ -185,7 +195,7 @@ class FirTowerResolver(
     ) {
         for ((index, localScope) in localScopes.withIndex()) {
             val result = manager.processLevel(
-                ScopeTowerLevel(session, components, localScope), info, TowerGroup.Local(index)
+                localScope.toScopeTowerLevel(), info, TowerGroup.Local(index)
             )
             if (result != ProcessorAction.NONE) {
                 nonEmptyLocalScopes += localScope
@@ -220,11 +230,8 @@ class FirTowerResolver(
                 val scope = implicitReceiverValue.scope(session, components.scopeSession)
                 if (scope != null) {
                     manager.processLevel(
-                        ScopeTowerLevel(
-                            session,
-                            components,
-                            FirStaticScope(scope)
-                        ), info, parentGroup.Static(depth)
+                        FirStaticScope(scope).toScopeTowerLevel(),
+                        info, parentGroup.Static(depth)
                     )
                 }
             }
@@ -253,9 +260,8 @@ class FirTowerResolver(
 
         for ((localIndex, localScope) in nonEmptyLocalScopes.withIndex()) {
             manager.processLevel(
-                ScopeTowerLevel(
-                    session, components, localScope, extensionReceiver = receiver
-                ), info, parentGroup.Local(localIndex)
+                localScope.toScopeTowerLevel(extensionReceiver = receiver),
+                info, parentGroup.Local(localIndex)
             )
         }
 
@@ -276,10 +282,8 @@ class FirTowerResolver(
         for ((topIndex, topLevelScope) in topLevelScopes.withIndex()) {
             if (topLevelScope in emptyTopLevelScopes) continue
             val result = manager.processLevel(
-                ScopeTowerLevel(
-                    session,
-                    components, topLevelScope, extensionReceiver = receiver
-                ), info, parentGroup.Top(topIndex)
+                topLevelScope.toScopeTowerLevel(extensionReceiver = receiver),
+                info, parentGroup.Top(topIndex)
             )
             if (result == ProcessorAction.NONE) {
                 emptyTopLevelScopes += topLevelScope
@@ -297,7 +301,7 @@ class FirTowerResolver(
             // because we do not search for objects if we have extension receiver
             if (info.callKind != CallKind.VariableAccess && topLevelScope in emptyTopLevelScopes) continue
             manager.processLevel(
-                ScopeTowerLevel(session, components, topLevelScope), info, TowerGroup.Top(index)
+                topLevelScope.toScopeTowerLevel(), info, TowerGroup.Top(index)
             )
         }
     }
@@ -315,9 +319,10 @@ class FirTowerResolver(
             // Special case (extension hides member)
             for ((index, topLevelScope) in topLevelScopes.withIndex()) {
                 manager.processLevel(
-                    ScopeTowerLevel(
-                        session, components, topLevelScope, extensionReceiver = explicitReceiverValue, extensionsOnly = true
-                    ), info, TowerGroup.TopPrioritized(index), ExplicitReceiverKind.EXTENSION_RECEIVER
+                    topLevelScope.toScopeTowerLevel(
+                        extensionReceiver = explicitReceiverValue, extensionsOnly = true
+                    ),
+                    info, TowerGroup.TopPrioritized(index), ExplicitReceiverKind.EXTENSION_RECEIVER
                 )
             }
         }
@@ -338,15 +343,14 @@ class FirTowerResolver(
         val nonEmptyLocalScopes = mutableListOf<FirLocalScope>()
         for ((index, localScope) in localScopes.withIndex()) {
             val result = manager.processLevel(
-                ScopeTowerLevel(
-                    session, components, localScope, extensionReceiver = explicitReceiverValue
-                ), info, TowerGroup.Local(index), ExplicitReceiverKind.EXTENSION_RECEIVER
+                localScope.toScopeTowerLevel(extensionReceiver = explicitReceiverValue),
+                info, TowerGroup.Local(index), ExplicitReceiverKind.EXTENSION_RECEIVER
             )
             if (result != ProcessorAction.NONE) {
                 nonEmptyLocalScopes += localScope
             }
             manager.processLevelForPropertyWithInvoke(
-                ScopeTowerLevel(session, components, localScope), info, TowerGroup.Local(index)
+                localScope.toScopeTowerLevel(), info, TowerGroup.Local(index)
             )
         }
         for ((implicitReceiverValue, usableAsValue, depth) in implicitReceivers) {
@@ -368,9 +372,8 @@ class FirTowerResolver(
             )
             for ((localIndex, localScope) in nonEmptyLocalScopes.withIndex()) {
                 manager.processLevelForPropertyWithInvoke(
-                    ScopeTowerLevel(
-                        session, components, localScope, extensionReceiver = implicitReceiverValue
-                    ), info, parentGroup.Local(localIndex)
+                    localScope.toScopeTowerLevel(extensionReceiver = implicitReceiverValue),
+                    info, parentGroup.Local(localIndex)
                 )
             }
             for ((implicitDispatchReceiverValue, usable, dispatchDepth) in implicitReceivers) {
@@ -387,21 +390,19 @@ class FirTowerResolver(
             }
             for ((topIndex, topLevelScope) in topLevelScopes.withIndex()) {
                 manager.processLevelForPropertyWithInvoke(
-                    ScopeTowerLevel(
-                        session, components, topLevelScope, extensionReceiver = implicitReceiverValue
-                    ), info, parentGroup.Top(topIndex)
+                    topLevelScope.toScopeTowerLevel(extensionReceiver = implicitReceiverValue),
+                    info, parentGroup.Top(topIndex)
                 )
             }
         }
         for ((index, topLevelScope) in topLevelScopes.withIndex()) {
 
             manager.processLevel(
-                ScopeTowerLevel(
-                    session, components, topLevelScope, extensionReceiver = explicitReceiverValue
-                ), info, TowerGroup.Top(index), ExplicitReceiverKind.EXTENSION_RECEIVER
+                topLevelScope.toScopeTowerLevel(extensionReceiver = explicitReceiverValue),
+                info, TowerGroup.Top(index), ExplicitReceiverKind.EXTENSION_RECEIVER
             )
             manager.processLevelForPropertyWithInvoke(
-                ScopeTowerLevel(session, components, topLevelScope), info, TowerGroup.Top(index)
+                topLevelScope.toScopeTowerLevel(), info, TowerGroup.Top(index)
             )
         }
 
@@ -420,9 +421,8 @@ class FirTowerResolver(
             else -> null
         } ?: return
         manager.processLevel(
-            ScopeTowerLevel(
-                session, components, scope
-            ), info, TowerGroup.Member, explicitReceiverKind = ExplicitReceiverKind.DISPATCH_RECEIVER
+            scope.toScopeTowerLevel(),
+            info, TowerGroup.Member, explicitReceiverKind = ExplicitReceiverKind.DISPATCH_RECEIVER
         )
     }
 
@@ -441,9 +441,7 @@ class FirTowerResolver(
         )
         for ((index, localScope) in localScopes.withIndex()) {
             manager.processLevel(
-                ScopeTowerLevel(
-                    session, components, localScope, extensionReceiver = invokeReceiverValue
-                ),
+                localScope.toScopeTowerLevel(extensionReceiver = invokeReceiverValue),
                 info, TowerGroup.Local(index),
                 ExplicitReceiverKind.EXTENSION_RECEIVER,
                 InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER
@@ -465,9 +463,8 @@ class FirTowerResolver(
         }
         for ((index, topLevelScope) in topLevelScopes.withIndex()) {
             manager.processLevel(
-                ScopeTowerLevel(
-                    session, components, topLevelScope, extensionReceiver = invokeReceiverValue
-                ), info, TowerGroup.Top(index),
+                topLevelScope.toScopeTowerLevel(extensionReceiver = invokeReceiverValue),
+                info, TowerGroup.Top(index),
                 ExplicitReceiverKind.EXTENSION_RECEIVER,
                 InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER
             )
