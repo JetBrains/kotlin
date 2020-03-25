@@ -379,7 +379,11 @@ public class RunConfigurationUsageCollectorTest extends LightPlatformTestCase {
       addData("activate_before_run", isActivate).
       addData("shared", isShared).
       addData("parallel", isParallel).
-      addData("temporary", false);
+      addData("temporary", false).
+      addData("isShowConsoleOnStdOut", false).
+      addData("isShowConsoleOnStdErr", false).
+      addData("logFiles", false).
+      addData("predefinedLogFiles", false);
   }
 
   @NotNull
