@@ -383,8 +383,7 @@ abstract class ComponentStoreImpl : IComponentStore {
     @Suppress("UNCHECKED_CAST")
     val stateClass: Class<Any> = ComponentSerializationUtil.getStateClass(component.javaClass)
     val storage = getReadOnlyStorage(component.javaClass, stateClass, configurationSchemaKey)
-
-    val state = storage.getState(component, "", stateClass, null, reload = false)
+    val state = storage?.getState(component, "", stateClass, null, reload = false)
     if (state == null) {
       component.noStateLoaded()
     }
@@ -394,8 +393,8 @@ abstract class ComponentStoreImpl : IComponentStore {
     return true
   }
 
-  protected open fun getReadOnlyStorage(componentClass: Class<Any>, stateClass: Class<Any>, configurationSchemaKey: String): StateStorage {
-    throw UnsupportedOperationException("PersistentStateComponent without State annotation not supported (store=$this, componentClass=${componentClass.name}, stateClass=${stateClass.classes})")
+  protected open fun getReadOnlyStorage(componentClass: Class<Any>, stateClass: Class<Any>, configurationSchemaKey: String): StateStorage? {
+    return null
   }
 
   private fun doInitComponent(info: ComponentInfo, component: PersistentStateComponent<Any>, changedStorages: Set<StateStorage>?, reloadData: ThreeState): Boolean {
