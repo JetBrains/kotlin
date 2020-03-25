@@ -219,7 +219,7 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
 
         private const val MAX_LIBRARY_NAMES_IN_ONE_LINE = 5
 
-        private val NOTIFICATION_TITLE = KotlinGradleNativeBundle.message("error.incompatible.libraries.title")
-        private val NOTIFICATION_GROUP_ID = NOTIFICATION_TITLE
+        private val NOTIFICATION_TITLE get() = KotlinGradleNativeBundle.message("error.incompatible.libraries.title")
+        private const val NOTIFICATION_GROUP_ID = "Incompatible Kotlin/Native libraries"
     }
 }
