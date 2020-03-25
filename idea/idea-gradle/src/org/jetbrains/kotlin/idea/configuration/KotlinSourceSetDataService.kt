@@ -30,9 +30,12 @@ import org.jetbrains.kotlin.idea.inspections.gradle.findAll
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
 import org.jetbrains.kotlin.idea.roots.migrateNonJvmSourceFolders
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 
@@ -102,13 +105,17 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
 
             val platformKinds = kotlinSourceSet.actualPlatforms.platforms //TODO(auskov): fix calculation of jvm target
                 .map { IdePlatformKindTooling.getTooling(it).kind }
-                .flatMap {
-                    when (it) {
+                .flatMap { platformKind ->
+                    when (platformKind) {
                         is JvmIdePlatformKind -> {
-                            val target = JvmTarget.fromString(moduleData.targetCompatibility ?: "") ?: JvmTarget.DEFAULT
-                            JvmPlatforms.jvmPlatformByTargetVersion(target).componentPlatforms
+                            val jvmTarget = JvmTarget.fromString(moduleData.targetCompatibility ?: "") ?: JvmTarget.DEFAULT
+                            JvmPlatforms.jvmPlatformByTargetVersion(jvmTarget).componentPlatforms
                         }
-                        else -> it.defaultPlatform.componentPlatforms
+                        is NativeIdePlatformKind -> {
+                            val nativeTargets = moduleData.konanTargets.mapNotNull { KonanTarget.predefinedTargets[it] }
+                            NativePlatforms.nativePlatformByTargets(nativeTargets)
+                        }
+                        else -> platformKind.defaultPlatform.componentPlatforms
                     }
                 }
                 .distinct()
@@ -175,3 +182,12 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
         }
     }
 }
+
+private const val KOTLIN_NATIVE_TARGETS_PROPERTY = "konanTargets"
+
+var ModuleData.konanTargets: Set<String>
+    get() {
+        val value = getProperty(KOTLIN_NATIVE_TARGETS_PROPERTY) ?: return emptySet()
+        return if (value.isNotEmpty()) value.split(',').toSet() else emptySet()
+    }
+    set(value) = setProperty(KOTLIN_NATIVE_TARGETS_PROPERTY, value.takeIf { it.isNotEmpty() }?.joinToString(","))
