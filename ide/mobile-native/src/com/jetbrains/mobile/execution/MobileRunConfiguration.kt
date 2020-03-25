@@ -29,7 +29,9 @@ import java.io.File
 abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFactory, name: String) :
     CidrRunConfiguration<MobileBuildConfiguration, MobileBuildTarget>(project, factory, name) {
 
-    private var _module = RunConfigurationModule(project).also { it.module = project.allModules().first { module -> isSuitable(module) } }
+    private var _module = RunConfigurationModule(project).also {
+        it.module = project.allModules().firstOrNull { module -> isSuitable(module) }
+    }
     var module: Module?
         get() = _module.module
         set(value) {
