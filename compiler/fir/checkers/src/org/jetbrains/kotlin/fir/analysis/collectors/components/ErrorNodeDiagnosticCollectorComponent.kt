@@ -65,7 +65,7 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
         reporter.report(coneDiagnostic)
     }
 
-    private fun ConeSimpleDiagnostic.getFactory(): FirDiagnosticFactory0<FirSourceElement> {
+    private fun ConeSimpleDiagnostic.getFactory(): FirDiagnosticFactory0<FirSourceElement, *> {
         @Suppress("UNCHECKED_CAST")
         return when (kind) {
             DiagnosticKind.Syntax -> FirErrors.SYNTAX_ERROR

@@ -21,7 +21,7 @@ sealed class FirSourceElement {
     abstract val endOffset: Int
 }
 
-class FirPsiSourceElement(val psi: PsiElement) : FirSourceElement() {
+class FirPsiSourceElement<P : PsiElement>(val psi: P) : FirSourceElement() {
     override val elementType: IElementType
         get() = psi.node.elementType
 
@@ -42,19 +42,19 @@ class FirLightSourceElement(
         get() = element.tokenType
 }
 
-val FirSourceElement?.psi: PsiElement? get() = (this as? FirPsiSourceElement)?.psi
+val FirSourceElement?.psi: PsiElement? get() = (this as? FirPsiSourceElement<*>)?.psi
 
-val FirElement.psi: PsiElement? get() = (source as? FirPsiSourceElement)?.psi
+val FirElement.psi: PsiElement? get() = (source as? FirPsiSourceElement<*>)?.psi
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun PsiElement.toFirSourceElement(): FirPsiSourceElement = FirPsiSourceElement(this)
+inline fun PsiElement.toFirSourceElement(): FirPsiSourceElement<*> = FirPsiSourceElement(this)
 
 val FirSourceElement?.lightNode: LighterASTNode? get() = (this as? FirLightSourceElement)?.element
 
 fun FirSourceElement?.getModifierList(): FirModifierList? {
     return when (this) {
         null -> null
-        is FirPsiSourceElement -> (psi as? KtModifierListOwner)?.modifierList?.let { FirPsiModifierList(it) }
+        is FirPsiSourceElement<*> -> (psi as? KtModifierListOwner)?.modifierList?.let { FirPsiModifierList(it) }
         is FirLightSourceElement -> {
             val kidsRef = Ref<Array<LighterASTNode?>>()
             tree.getChildren(element, kidsRef)
