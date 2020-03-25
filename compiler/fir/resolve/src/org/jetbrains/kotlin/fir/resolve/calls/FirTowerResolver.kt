@@ -144,7 +144,6 @@ class FirTowerResolver(
             }
         }
 
-
         if (resolvedQualifier.symbol != null) {
             val typeRef = resolvedQualifier.typeRef
             // NB: yet built-in Unit is used for "no-value" type
@@ -165,7 +164,7 @@ class FirTowerResolver(
         info: CallInfo,
         manager: TowerResolveManager
     ) {
-        processExtensionsThatHideMembers(info, manager)
+        processExtensionsThatHideMembers(info, manager, explicitReceiverValue = null)
         val nonEmptyLocalScopes = mutableListOf<FirLocalScope>()
         processLocalScopes(manager, info, nonEmptyLocalScopes)
 
@@ -177,7 +176,8 @@ class FirTowerResolver(
 
     private suspend fun processExtensionsThatHideMembers(
         info: CallInfo,
-        manager: TowerResolveManager
+        manager: TowerResolveManager,
+        explicitReceiverValue: ReceiverValue?
     ) {
         val shouldProcessExtensionsBeforeMembers =
             info.callKind == CallKind.Function && info.name in HIDES_MEMBERS_NAME_LIST
@@ -185,17 +185,29 @@ class FirTowerResolver(
         if (!shouldProcessExtensionsBeforeMembers) return
 
         for ((index, topLevelScope) in topLevelScopes.withIndex()) {
-            for ((implicitReceiverValue, usableAsValue, depth) in implicitReceivers) {
-                if (!usableAsValue) continue
-                manager.processLevel(
-                    topLevelScope.toScopeTowerLevel(
-                        extensionReceiver = implicitReceiverValue, extensionsOnly = true
-                    ),
-                    info, TowerGroup.TopPrioritized(index).Implicit(depth)
-                )
+            if (explicitReceiverValue != null) {
+                manager.processHideMembersLevel(explicitReceiverValue, topLevelScope, info, index, depth = null)
+            } else {
+                for ((implicitReceiverValue, usableAsValue, depth) in implicitReceivers) {
+                    if (!usableAsValue) continue
+                    manager.processHideMembersLevel(implicitReceiverValue, topLevelScope, info, index, depth)
+                }
             }
         }
     }
+
+    private suspend fun TowerResolveManager.processHideMembersLevel(
+        receiverValue: ReceiverValue,
+        topLevelScope: FirScope,
+        info: CallInfo,
+        index: Int,
+        depth: Int?
+    ) = processLevel(
+        topLevelScope.toScopeTowerLevel(
+            extensionReceiver = receiverValue, extensionsOnly = true
+        ),
+        info, TowerGroup.TopPrioritized(index).let { if (depth != null) it.Implicit(depth) else it }
+    )
 
     private suspend fun processLocalScopes(
         manager: TowerResolveManager,
@@ -314,19 +326,7 @@ class FirTowerResolver(
     ) {
         val explicitReceiverValue = ExpressionReceiverValue(receiver)
 
-        val shouldProcessExtensionsBeforeMembers =
-            info.callKind == CallKind.Function && info.name in HIDES_MEMBERS_NAME_LIST
-        if (shouldProcessExtensionsBeforeMembers) {
-            // Special case (extension hides member)
-            for ((index, topLevelScope) in topLevelScopes.withIndex()) {
-                manager.processLevel(
-                    topLevelScope.toScopeTowerLevel(
-                        extensionReceiver = explicitReceiverValue, extensionsOnly = true
-                    ),
-                    info, TowerGroup.TopPrioritized(index), ExplicitReceiverKind.EXTENSION_RECEIVER
-                )
-            }
-        }
+        processExtensionsThatHideMembers(info, manager, explicitReceiverValue)
 
         manager.processLevel(
             explicitReceiverValue.toMemberScopeTowerLevel(), info, TowerGroup.Member, ExplicitReceiverKind.DISPATCH_RECEIVER
