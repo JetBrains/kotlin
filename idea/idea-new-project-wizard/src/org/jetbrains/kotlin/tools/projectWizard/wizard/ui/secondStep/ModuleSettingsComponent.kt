@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module.Comp
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.isRootModule
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 import org.jetbrains.kotlin.tools.projectWizard.templates.settings
+import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardUIBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.DropDownComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.TextFieldComponent
@@ -83,26 +84,28 @@ private class ModuleNameComponent(context: Context, private val module: Module) 
     override val component: JComponent
         get() = textField.component
 
-    override val title: String = "Name"
+    override val title: String = KotlinNewProjectWizardUIBundle.message("module.settings.name")
 
     override fun onInit() {
         super.onInit()
         val isSingleRootMode = read { KotlinPlugin::modules.settingValue }.size == 1
         when {
             isSingleRootMode && module.isRootModule -> {
-                textField.disable("[The same as the project name]")
+                textField.disable(KotlinNewProjectWizardUIBundle.message("module.settings.name.same.as.project"))
             }
             module.configurator == CommonTargetConfigurator -> {
-                //String concatination to not to forget localisation for localisation
-                textField.disable("common" + " " + "[Can not be modified]")
+                textField.disable(ModuleType.common.name + " " + KotlinNewProjectWizardUIBundle.message("module.settings.name.can.not.be.modified"))
             }
         }
     }
 
     companion object {
         private val validateModuleName =
-            StringValidators.shouldNotBeBlank("Module name") and
-                    StringValidators.shouldBeValidIdentifier("Module Name", ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES)
+            StringValidators.shouldNotBeBlank(KotlinNewProjectWizardUIBundle.message("module.settings.name.module.name")) and
+                    StringValidators.shouldBeValidIdentifier(
+                        KotlinNewProjectWizardUIBundle.message("module.settings.name.module.name"),
+                        ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES
+                    )
     }
 }
 
@@ -147,10 +150,10 @@ private class ModuleTemplateComponent(
         addToBottom(templateDescriptionLabel)
     }
 
-    override val title: String = "Template"
+    override val title: String = KotlinNewProjectWizardUIBundle.message("module.settings.template")
 
     private object NoneTemplate : Template() {
-        override val title = "None"
+        override val title = KotlinNewProjectWizardUIBundle.message("module.settings.template.none")
         override val description: String = ""
         override val moduleTypes: Set<ModuleType> = ModuleType.ALL
         override val id: String = "none"

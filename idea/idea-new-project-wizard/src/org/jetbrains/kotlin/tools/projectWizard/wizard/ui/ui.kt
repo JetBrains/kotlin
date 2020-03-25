@@ -14,6 +14,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.components.BorderLayoutPanel
+import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfigurator
@@ -131,7 +132,7 @@ fun <C : JComponent> C.addBorder(border: Border): C = apply {
     this.border = BorderFactory.createCompoundBorder(border, this.border)
 }
 
-fun <T> runWithProgressBar(title: String, action: () -> T): T =
+fun <T> runWithProgressBar(@Nls title: String, action: () -> T): T =
     ProgressManager.getInstance().runProcessWithProgressSynchronously(
         ThrowableComputable<T, Exception> { action() },
         title,

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.path
+import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardUIBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.borderPanel
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.icon
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -69,9 +70,9 @@ class ModulesEditorTree(
         }
 
         emptyText.clear()
-        emptyText.appendText("No modules created")
+        emptyText.appendText(KotlinNewProjectWizardUIBundle.message("editor.modules.no.modules"))
         emptyText.appendSecondaryText(
-            "Add a module to the project",
+            KotlinNewProjectWizardUIBundle.message("editor.modules.add.module"),
             SimpleTextAttributes.LINK_PLAIN_ATTRIBUTES
         ) {
             addModule(this)
@@ -122,7 +123,7 @@ private class CellRenderer(private val context: Context, renderErrors: Boolean) 
         ) {
             if (value?.safeAs<DefaultMutableTreeNode>()?.userObject == ModulesEditorTree.PROJECT_USER_OBJECT) {
                 icon = AllIcons.Nodes.Project
-                append("Project")
+                append(KotlinNewProjectWizardUIBundle.message("editor.modules.project"))
                 return
             }
             val setting = (value as? DefaultMutableTreeNode)?.userObject as? DisplayableSettingItem ?: return

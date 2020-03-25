@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemP
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeWizard
+import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardUIBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.modulesEditor.ModulesEditorComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.TitledComponentsList
@@ -130,7 +131,8 @@ class BuildSystemAdditionalSettingsComponent(ideWizard: IdeWizard) : DynamicComp
     }
 
     private enum class State(val sectionTitle: String) {
-        POM("Artifact Coordinates"), JPS("Kotlin Runtime")
+        POM(KotlinNewProjectWizardUIBundle.message("additional.buildsystem.settings.artifact.coordinates")),
+        JPS(KotlinNewProjectWizardUIBundle.message("additional.buildsystem.settings.kotlin.runtime"))
     }
 
     private fun BuildSystemType.state() =
@@ -183,12 +185,12 @@ private class JdkComponent(ideWizard: IdeWizard) : TitledComponent(ideWizard.con
         }
     }
 
-    override val title: String = "Project JDK"
+    override val title: String = KotlinNewProjectWizardUIBundle.message("additional.buildsystem.settings.project.jdk")
     override val component: JComponent = jdkComboBox
 }
 
 private class KotlinRuntimeComponentComponent(ideWizard: IdeWizard) : TitledComponent(ideWizard.context) {
-    override val title: String = "Kotlin Runtime"
+    override val title: String = KotlinNewProjectWizardUIBundle.message("additional.buildsystem.settings.kotlin.runtime")
     override val component: JComponent = ideWizard.jpsData.libraryOptionsPanel.simplePanel
 }
 
@@ -235,7 +237,7 @@ class ProjectPreviewComponent(context: Context) : DynamicComponent(context) {
     ).asSubComponent()
 
     override val component: JComponent = borderPanel {
-        addToTop(label("Preview", bold = true).addBorder(JBUI.Borders.emptyBottom(5)))
+        addToTop(label(KotlinNewProjectWizardUIBundle.message("project.preview"), bold = true).addBorder(JBUI.Borders.emptyBottom(5)))
         addToCenter(modulesEditorComponent.component)
     }.addBorder(JBUI.Borders.empty(UIConstants.PADDING,  /*left*/UIConstants.PADDING * 2, UIConstants.PADDING, UIConstants.PADDING))
         .addBorder(JBUI.Borders.customLine(JBColor.border(), 0,  /*left*/1, 0, 0))

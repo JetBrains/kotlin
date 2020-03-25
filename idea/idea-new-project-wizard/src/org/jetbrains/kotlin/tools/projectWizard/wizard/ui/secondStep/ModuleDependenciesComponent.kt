@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
+import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardUIBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.awt.Dimension
@@ -21,7 +22,7 @@ import javax.swing.JPanel
 class ModuleDependenciesComponent(
     context: Context
 ) : TitledComponent(context) {
-    override val title: String = "Module dependencies"
+    override val title: String = KotlinNewProjectWizardUIBundle.message("module.dependencies.module.dependencies")
     private val dependenciesList = ModuleDependenciesList()
     override val forceLabelCenteringOffset: Int? = 4
     override val additionalComponentPadding: Int = 1
@@ -35,7 +36,7 @@ class ModuleDependenciesComponent(
                 dependenciesList::addDependency
             ).show(button.preferredPopupPoint!!)
         }
-        setAddActionName("Add module dependency")
+        setAddActionName(KotlinNewProjectWizardUIBundle.message("module.dependencies.add.module.dependency"))
         setAddActionUpdater { e ->
             e.presentation.apply {
                 isEnabled = possibleDependencies().isNotEmpty()
@@ -45,7 +46,7 @@ class ModuleDependenciesComponent(
         setRemoveAction {
             dependenciesList.removeSelected()
         }
-        setRemoveActionName("Remove module dependency")
+        setRemoveActionName(KotlinNewProjectWizardUIBundle.message("module.dependencies.remove.module.dependency"))
         setMoveDownAction(null)
         setMoveUpAction(null)
     }
@@ -103,7 +104,7 @@ private class AddModulesPopUp(
 
 private class ModuleDependenciesList : AbstractSingleSelectableListWithIcon<Module>() {
     init {
-        setEmptyText("There is no module dependencies")
+        setEmptyText(KotlinNewProjectWizardUIBundle.message("module.settings.dependencies.empty"))
     }
 
     override fun ColoredListCellRenderer<Module>.render(value: Module) {

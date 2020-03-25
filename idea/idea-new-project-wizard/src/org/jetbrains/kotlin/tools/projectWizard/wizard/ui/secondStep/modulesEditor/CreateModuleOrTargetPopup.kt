@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
+import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardBundle
+import org.jetbrains.kotlin.tools.projectWizard.wizard.KotlinNewProjectWizardUIBundle
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.fullTextHtml
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.icon
 import javax.swing.Icon
@@ -62,7 +64,7 @@ class CreateModuleOrTargetPopup private constructor(
         targetConfiguratorGroup: TargetConfiguratorGroupWithSubItems,
         showTitle: Boolean
     ) : BaseListPopupStep<DisplayableSettingItem>(
-        "Target".takeIf { showTitle },
+        KotlinNewProjectWizardBundle.message("module.kind.target").takeIf { showTitle },
         targetConfiguratorGroup.subItems.filter { it.needToShow() }
     ) {
         override fun getIconFor(value: DisplayableSettingItem): Icon? = when (value) {
