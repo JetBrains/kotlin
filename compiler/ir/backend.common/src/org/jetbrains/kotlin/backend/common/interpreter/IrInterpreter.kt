@@ -448,7 +448,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val classProperties = irClass.declarations.filterIsInstance<IrProperty>()
         classProperties.forEach { property ->
             property.backingField?.initializer?.expression?.interpret(data)?.check { return it }
-            val receiver = irClass.thisReceiver!!.descriptor
+            val receiver = irClass.descriptor.thisAsReceiverParameter
             if (property.backingField?.initializer != null)
                 property.backingField?.let { data.getVariableState(receiver).setState(Variable(it.descriptor, data.popReturnValue())) }
         }

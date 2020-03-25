@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.backend.common.interpreter
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.evaluateIntrinsicAnnotation
 import org.jetbrains.kotlin.backend.common.interpreter.stack.*
 import org.jetbrains.kotlin.builtins.UnsignedTypes
-import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.descriptors.WrappedReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -51,9 +51,20 @@ fun DeclarationDescriptor.equalTo(other: DeclarationDescriptor): Boolean {
     return this.isSubtypeOf(other) || this.hasSameNameAs(other) || this == other
 }
 
+private fun WrappedReceiverParameterDescriptor.isEqualTo(other: DeclarationDescriptor): Boolean {
+    return when (val container = this.containingDeclaration) {
+        is FunctionDescriptor -> container.dispatchReceiverParameter == other || container.extensionReceiverParameter == other
+        else -> false
+    }
+}
+
 private fun DeclarationDescriptor.isSubtypeOf(other: DeclarationDescriptor): Boolean {
     if (this !is ReceiverParameterDescriptor || other !is ReceiverParameterDescriptor) return false
     return when {
+        this is WrappedReceiverParameterDescriptor && other is WrappedReceiverParameterDescriptor ->
+            this.isEqualTo(other) || other.isEqualTo(this)
+        this is WrappedReceiverParameterDescriptor -> this.isEqualTo(other)
+        other is WrappedReceiverParameterDescriptor -> other.isEqualTo(this)
         this.value is ImplicitClassReceiver && other.value is ImplicitClassReceiver -> this.value.type.isSubtypeOf(other.value.type)
         this.value is ExtensionReceiver && other.value is ExtensionReceiver -> this.value == other.value
         else -> false
