@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.Usage
+import org.gradle.api.initialization.IncludedBuild
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -135,8 +136,14 @@ internal class KotlinCompilationNpmResolver(
         val artifact: ResolvedArtifact
     )
 
+    data class CompositeDependency(
+        val dependency: ResolvedDependency,
+        val includedBuild: IncludedBuild
+    )
+
     inner class ConfigurationVisitor {
         private val internalDependencies = mutableSetOf<KotlinCompilationNpmResolver>()
+        private val internalCompositeDependencies = mutableSetOf<CompositeDependency>()
         private val externalGradleDependencies = mutableSetOf<ExternalGradleDependency>()
         private val externalNpmDependencies = mutableSetOf<NpmDependency>()
 
@@ -179,8 +186,11 @@ internal class KotlinCompilationNpmResolver(
             artifacts: MutableSet<ResolvedArtifact>
         ) {
             artifacts.forEach { artifact ->
-                val componentIdentifier = artifact.id.componentIdentifier
-                if (componentIdentifier is ProjectComponentIdentifier) {
+                val artifactId = artifact.id
+                val componentIdentifier = artifactId.componentIdentifier
+
+                val clazz = Class.forName("org.gradle.composite.internal.CompositeProjectComponentArtifactMetadata")
+                if (componentIdentifier is ProjectComponentIdentifier && !clazz.isAssignableFrom(artifactId::class.java)) {
                     val dependentProject = project.findProject(componentIdentifier.projectPath)
                         ?: error("Cannot find project ${componentIdentifier.projectPath}")
 
@@ -191,10 +201,22 @@ internal class KotlinCompilationNpmResolver(
                 } else {
                     externalGradleDependencies.add(ExternalGradleDependency(dependency, artifact))
                 }
+
+                if (clazz.isAssignableFrom(artifactId::class.java)) {
+                    (artifactId.componentIdentifier as ProjectComponentIdentifier).let { identifier ->
+                        val includedBuild = project.gradle.includedBuild(identifier.projectName.removePrefix(":"))
+                        internalCompositeDependencies.add(CompositeDependency(dependency, includedBuild))
+                    }
+                }
             }
         }
 
-        fun toPackageJsonProducer() = PackageJsonProducer(internalDependencies, externalGradleDependencies, externalNpmDependencies)
+        fun toPackageJsonProducer() = PackageJsonProducer(
+            internalDependencies,
+            internalCompositeDependencies,
+            externalGradleDependencies,
+            externalNpmDependencies
+        )
     }
 
     class PackageJsonProducerInputs(
@@ -211,6 +233,7 @@ internal class KotlinCompilationNpmResolver(
     @Suppress("MemberVisibilityCanBePrivate")
     inner class PackageJsonProducer(
         val internalDependencies: Collection<KotlinCompilationNpmResolver>,
+        val internalCompositeDependencies: Collection<CompositeDependency>,
         val externalGradleDependencies: Collection<ExternalGradleDependency>,
         val externalNpmDependencies: Collection<NpmDependency>
     ) {
