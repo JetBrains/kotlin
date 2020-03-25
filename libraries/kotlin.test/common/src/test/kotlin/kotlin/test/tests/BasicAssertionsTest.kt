@@ -35,9 +35,11 @@ class BasicAssertionsTest {
         assertTrue(true) // at least one assertion required for qunit
 
         withDefaultAsserter run@{
+            val rootCause = IllegalArgumentException()
             try {
-                assertFailsWith<IllegalStateException> { throw IllegalArgumentException() }
+                assertFailsWith<IllegalStateException> { throw rootCause }
             } catch (e: AssertionError) {
+                if (e.cause !== rootCause) throw AssertionError("Expected to fail with correct cause")
                 return@run
             }
             throw AssertionError("Expected to fail")
@@ -62,9 +64,11 @@ class BasicAssertionsTest {
 
     @Test
     fun testAssertFailsWithClassFails() {
-        checkFailedAssertion {
-            assertFailsWith(IllegalArgumentException::class) { throw IllegalStateException() }
+        val rootCause = IllegalStateException()
+        val actual = checkFailedAssertion {
+            assertFailsWith(IllegalArgumentException::class) { throw rootCause }
         }
+        assertSame(rootCause, actual.cause, "Expected to fail with correct cause")
 
         checkFailedAssertion {
             assertFailsWith(Exception::class) { }
