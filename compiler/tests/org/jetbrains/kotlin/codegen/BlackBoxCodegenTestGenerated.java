@@ -19806,6 +19806,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/properties/classFieldInsideNested.kt");
         }
 
+        @TestMetadata("classFieldInsideNestedLambda.kt")
+        public void testClassFieldInsideNestedLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/classFieldInsideNestedLambda.kt");
+        }
+
+        @TestMetadata("classFieldInsideNestedNestedLambda.kt")
+        public void testClassFieldInsideNestedNestedLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/classFieldInsideNestedNestedLambda.kt");
+        }
+
         @TestMetadata("classObjectProperties.kt")
         public void testClassObjectProperties() throws Exception {
             runTest("compiler/testData/codegen/box/properties/classObjectProperties.kt");
