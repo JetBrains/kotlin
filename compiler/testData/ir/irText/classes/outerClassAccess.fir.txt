@@ -10,7 +10,8 @@ FILE fqName:<root> fileName:/outerClassAccess.kt
       BLOCK_BODY
     CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner
-      CONSTRUCTOR visibility:public <> () returnType:<root>.Outer.Inner [primary]
+      CONSTRUCTOR visibility:public <> ($this:<root>.Outer.Inner) returnType:<root>.Outer.Inner [primary]
+        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'
@@ -21,7 +22,8 @@ FILE fqName:<root> fileName:/outerClassAccess.kt
             $this: GET_VAR '<this>: <root>.Outer.Inner declared in <root>.Outer.Inner.test' type=<root>.Outer.Inner origin=null
       CLASS CLASS name:Inner2 modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner.Inner2
-        CONSTRUCTOR visibility:public <> () returnType:<root>.Outer.Inner.Inner2 [primary]
+        CONSTRUCTOR visibility:public <> ($this:<root>.Outer.Inner.Inner2) returnType:<root>.Outer.Inner.Inner2 [primary]
+          $outer: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner.Inner2
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner2 modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'

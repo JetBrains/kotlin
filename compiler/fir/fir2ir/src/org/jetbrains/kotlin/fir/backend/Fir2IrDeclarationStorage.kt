@@ -331,10 +331,10 @@ class Fir2IrDeclarationStorage(
                 }
             }
         }
-        if (function !is FirConstructor) {
+        with(classifierStorage) {
             val thisOrigin = IrDeclarationOrigin.DEFINED
-            val receiverTypeRef = if (function !is FirPropertyAccessor) function?.receiverTypeRef else parentPropertyReceiverType
-            with(classifierStorage) {
+            if (function !is FirConstructor) {
+                val receiverTypeRef = if (function !is FirPropertyAccessor) function?.receiverTypeRef else parentPropertyReceiverType
                 if (receiverTypeRef != null) {
                     extensionReceiverParameter = receiverTypeRef.convertWithOffsets { startOffset, endOffset ->
                         declareThisReceiverParameter(
@@ -347,6 +347,15 @@ class Fir2IrDeclarationStorage(
                     }
                 }
                 if (function !is FirAnonymousFunction && containingClass != null && !isStatic) {
+                    dispatchReceiverParameter = declareThisReceiverParameter(
+                        parent,
+                        thisType = containingClass.thisReceiver!!.type,
+                        thisOrigin = thisOrigin
+                    )
+                }
+            } else {
+                // Set dispatch receiver parameter for inner class's constructor.
+                if (containingClass?.isInner == true) {
                     dispatchReceiverParameter = declareThisReceiverParameter(
                         parent,
                         thisType = containingClass.thisReceiver!!.type,
@@ -478,7 +487,7 @@ class Fir2IrDeclarationStorage(
                     isInline = false, isExternal = false, isPrimary = isPrimary, isExpect = false
                 ).apply {
                     enterScope(descriptor)
-                }.bindAndDeclareParameters(constructor, descriptor, irParent, isStatic = true).apply {
+                }.bindAndDeclareParameters(constructor, descriptor, irParent, isStatic = false).apply {
                     leaveScope(descriptor)
                 }
             }
