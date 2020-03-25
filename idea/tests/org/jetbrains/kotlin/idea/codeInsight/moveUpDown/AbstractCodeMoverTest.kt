@@ -21,7 +21,6 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.formatter.FormatSettingsUtil
 import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinDeclarationMover
 import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinExpressionMover
-import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
 import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.configureCodeStyleAndRun
@@ -64,16 +63,6 @@ abstract class AbstractMoveLeftRightTest : AbstractCodeMoverTest() {
 
 @Suppress("DEPRECATION")
 abstract class AbstractCodeMoverTest : KotlinLightCodeInsightTestCase() {
-    override fun setUp() {
-        super.setUp()
-        ApplicationManager.getApplication().isScriptChangesNotifierDisabled = true
-    }
-
-    override fun tearDown() {
-        ApplicationManager.getApplication().isScriptChangesNotifierDisabled = false
-        super.tearDown()
-    }
-
     protected fun doTest(
         path: String,
         trailingComma: Boolean = false,

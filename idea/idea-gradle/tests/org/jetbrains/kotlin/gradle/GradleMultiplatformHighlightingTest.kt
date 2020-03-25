@@ -11,6 +11,7 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.lang.annotation.HighlightSeverity
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.impl.EditorImpl
@@ -55,7 +56,12 @@ class GradleMultiplatformHighlightingTest : GradleImportingTestCase() {
         checkFiles(
             files.filter { it.extension == "kt" },
             project,
-            object : GradleDaemonAnalyzerTestCase(testLineMarkers = true, checkWarnings = true, checkInfos = false) {}
+            object : GradleDaemonAnalyzerTestCase(
+                testLineMarkers = true,
+                checkWarnings = true,
+                checkInfos = false,
+                rootDisposable = testRootDisposable
+            ) {}
         )
     }
 
@@ -67,16 +73,21 @@ class GradleMultiplatformHighlightingTest : GradleImportingTestCase() {
 abstract class GradleDaemonAnalyzerTestCase(
     val testLineMarkers: Boolean,
     val checkWarnings: Boolean,
-    val checkInfos: Boolean
+    val checkInfos: Boolean,
+    private val rootDisposable: Disposable
 ) : DaemonAnalyzerTestCase() {
     override fun doTestLineMarkers() = testLineMarkers
 
     fun checkHighlighting(project: Project, editor: Editor) {
         myProject = project
-        runInEdtAndWait {
-            // This will prepare ExpectedHighlightingData, clear current editor from testing tags, and then
-            // call doCheckResult, which we override
-            checkHighlighting(editor, checkWarnings, checkInfos)
+        try {
+            runInEdtAndWait {
+                // This will prepare ExpectedHighlightingData, clear current editor from testing tags, and then
+                // call doCheckResult, which we override
+                checkHighlighting(editor, checkWarnings, checkInfos)
+            }
+        } finally {
+            myProject = null
         }
     }
 
@@ -117,6 +128,10 @@ abstract class GradleDaemonAnalyzerTestCase(
     protected open fun performAdditionalChecksAfterHighlighting(editor: Editor) { }
 
     protected open fun renderAdditionalAttributeForTag(tag: TagInfo<*>): String? = null
+
+    override fun getTestRootDisposable(): Disposable {
+        return rootDisposable;
+    }
 }
 
 internal fun checkFiles(

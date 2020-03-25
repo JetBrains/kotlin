@@ -1,0 +1,409 @@
+digraph localClassesWithImplicit_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function myRun" style="filled" fillcolor=red];
+        1 [label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|T|>|()"];
+        2 [label="Jump: ^myRun R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|T|>|()"];
+        3 [label="Stub" style="filled" fillcolor=gray];
+        4 [label="Exit function myRun" style="filled" fillcolor=red];
+    }
+
+    0 -> {1};
+    1 -> {2};
+    2 -> {4};
+    2 -> {3} [style=dotted];
+    3 -> {4} [style=dotted];
+
+    subgraph cluster_1 {
+        color=red
+        5 [label="Enter function test" style="filled" fillcolor=red];
+        subgraph cluster_2 {
+            color=blue
+            6 [label="Enter when"];
+            subgraph cluster_3 {
+                color=blue
+                7 [label="Enter when branch condition "];
+                8 [label="Access variable R|<local>/a|"];
+                9 [label="Type operator: (R|<local>/a| !is R|kotlin/String|)"];
+                10 [label="Exit when branch condition"];
+            }
+            11 [label="Synthetic else branch"];
+            12 [label="Enter when branch result"];
+            subgraph cluster_4 {
+                color=blue
+                13 [label="Enter block"];
+                14 [label="Jump: ^test Unit"];
+                15 [label="Stub" style="filled" fillcolor=gray];
+                16 [label="Exit block" style="filled" fillcolor=gray];
+            }
+            17 [label="Exit when branch result" style="filled" fillcolor=gray];
+            18 [label="Exit when"];
+        }
+        19 [label="Exit anonymous object"];
+        20 [label="Variable declaration: lval x: R|anonymous|"];
+        21 [label="Exit function test" style="filled" fillcolor=red];
+    }
+
+    5 -> {6};
+    6 -> {7};
+    7 -> {8};
+    8 -> {9};
+    9 -> {10};
+    10 -> {12 11};
+    11 -> {18};
+    12 -> {13};
+    13 -> {14};
+    14 -> {21};
+    14 -> {15} [style=dotted];
+    15 -> {16} [style=dotted];
+    16 -> {17} [style=dotted];
+    17 -> {18} [style=dotted];
+    18 -> {19};
+    19 -> {20};
+    20 -> {21};
+
+    subgraph cluster_5 {
+        color=red
+        22 [label="Enter function <init>" style="filled" fillcolor=red];
+        23 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        24 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+
+    22 -> {23};
+    23 -> {24};
+
+    subgraph cluster_6 {
+        color=red
+        25 [label="Enter function foo" style="filled" fillcolor=red];
+        26 [label="Postponed enter to lambda"];
+        subgraph cluster_7 {
+            color=blue
+            27 [label="Enter function anonymousFunction"];
+            28 [label="Access variable R|<local>/a|"];
+            29 [label="Access variable R|kotlin/String.length|"];
+            subgraph cluster_8 {
+                color=blue
+                30 [label="Enter when"];
+                subgraph cluster_9 {
+                    color=blue
+                    31 [label="Enter when branch condition "];
+                    32 [label="Access variable R|<local>/b|"];
+                    33 [label="Type operator: (R|<local>/b| is R|kotlin/String|)"];
+                    34 [label="Exit when branch condition"];
+                }
+                subgraph cluster_10 {
+                    color=blue
+                    35 [label="Enter when branch condition else"];
+                    36 [label="Exit when branch condition"];
+                }
+                37 [label="Enter when branch result"];
+                subgraph cluster_11 {
+                    color=blue
+                    38 [label="Enter block"];
+                    39 [label="Const: Int(1)"];
+                    40 [label="Exit block"];
+                }
+                41 [label="Exit when branch result"];
+                42 [label="Enter when branch result"];
+                subgraph cluster_12 {
+                    color=blue
+                    43 [label="Enter block"];
+                    44 [label="Access variable R|<local>/b|"];
+                    45 [label="Access variable R|kotlin/String.length|"];
+                    46 [label="Function call: this@R|/A|.R|/A.bar|()"];
+                    47 [label="Exit block"];
+                }
+                48 [label="Exit when branch result"];
+                49 [label="Exit when"];
+            }
+            50 [label="Exit function anonymousFunction"];
+        }
+        51 [label="Postponed exit from lambda"];
+        52 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)"];
+        53 [label="Jump: ^foo R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <kind=UNKNOWN>  {
+    R|<local>/a|.R|kotlin/String.length|
+    ^ when () {
+        (R|<local>/b| is R|kotlin/String|) ->  {
+            R|<local>/b|.R|kotlin/String.length|
+            this@R|/A|.R|/A.bar|()
+        }
+        else ->  {
+            Int(1)
+        }
+    }
+
+}
+)"];
+        54 [label="Stub" style="filled" fillcolor=gray];
+        55 [label="Exit function foo" style="filled" fillcolor=red];
+    }
+
+    25 -> {26};
+    26 -> {27};
+    26 -> {51} [color=red];
+    27 -> {50 28};
+    28 -> {29};
+    29 -> {30};
+    30 -> {31};
+    31 -> {32};
+    32 -> {33};
+    33 -> {34};
+    34 -> {42 35};
+    35 -> {36};
+    36 -> {37};
+    37 -> {38};
+    38 -> {39};
+    39 -> {40};
+    40 -> {41};
+    41 -> {49};
+    42 -> {43};
+    43 -> {44};
+    44 -> {45};
+    45 -> {46};
+    46 -> {47};
+    47 -> {48};
+    48 -> {49};
+    49 -> {50};
+    50 -> {27};
+    50 -> {51} [color=green];
+    51 -> {52};
+    52 -> {53};
+    53 -> {55};
+    53 -> {54} [style=dotted];
+    54 -> {55} [style=dotted];
+
+    subgraph cluster_13 {
+        color=red
+        56 [label="Enter function bar" style="filled" fillcolor=red];
+        57 [label="Postponed enter to lambda"];
+        subgraph cluster_14 {
+            color=blue
+            58 [label="Enter function anonymousFunction"];
+            59 [label="Access variable R|<local>/b|"];
+            60 [label="Access variable <Unresolved name: length>#"];
+            61 [label="Access variable R|<local>/a|"];
+            62 [label="Access variable R|kotlin/String.length|"];
+            63 [label="Function call: this@R|/A|.R|/A.baz|()"];
+            64 [label="Exit function anonymousFunction"];
+        }
+        65 [label="Postponed exit from lambda"];
+        66 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)"];
+        67 [label="Jump: ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <kind=UNKNOWN>  {
+    R|<local>/b|.<Unresolved name: length>#
+    R|<local>/a|.R|kotlin/String.length|
+    ^ this@R|/A|.R|/A.baz|()
+}
+)"];
+        68 [label="Stub" style="filled" fillcolor=gray];
+        69 [label="Exit function bar" style="filled" fillcolor=red];
+    }
+
+    56 -> {57};
+    57 -> {58};
+    57 -> {65} [color=red];
+    58 -> {64 59};
+    59 -> {60};
+    60 -> {61};
+    61 -> {62};
+    62 -> {63};
+    63 -> {64};
+    64 -> {58};
+    64 -> {65} [color=green];
+    65 -> {66};
+    66 -> {67};
+    67 -> {69};
+    67 -> {68} [style=dotted];
+    68 -> {69} [style=dotted];
+
+    subgraph cluster_15 {
+        color=red
+        70 [label="Enter function baz" style="filled" fillcolor=red];
+        71 [label="Const: Int(1)"];
+        72 [label="Jump: ^baz Int(1)"];
+        73 [label="Stub" style="filled" fillcolor=gray];
+        74 [label="Exit function baz" style="filled" fillcolor=red];
+    }
+
+    70 -> {71};
+    71 -> {72};
+    72 -> {74};
+    72 -> {73} [style=dotted];
+    73 -> {74} [style=dotted];
+
+    subgraph cluster_16 {
+        color=red
+        75 [label="Enter function <init>" style="filled" fillcolor=red];
+        76 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        77 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+
+    75 -> {76};
+    76 -> {77};
+
+    subgraph cluster_17 {
+        color=red
+        78 [label="Enter function foo" style="filled" fillcolor=red];
+        79 [label="Postponed enter to lambda"];
+        subgraph cluster_18 {
+            color=blue
+            80 [label="Enter function anonymousFunction"];
+            81 [label="Access variable R|<local>/a|"];
+            82 [label="Access variable R|kotlin/String.length|"];
+            subgraph cluster_19 {
+                color=blue
+                83 [label="Enter when"];
+                subgraph cluster_20 {
+                    color=blue
+                    84 [label="Enter when branch condition "];
+                    85 [label="Access variable R|<local>/b|"];
+                    86 [label="Type operator: (R|<local>/b| is R|kotlin/String|)"];
+                    87 [label="Exit when branch condition"];
+                }
+                subgraph cluster_21 {
+                    color=blue
+                    88 [label="Enter when branch condition else"];
+                    89 [label="Exit when branch condition"];
+                }
+                90 [label="Enter when branch result"];
+                subgraph cluster_22 {
+                    color=blue
+                    91 [label="Enter block"];
+                    92 [label="Const: Int(1)"];
+                    93 [label="Exit block"];
+                }
+                94 [label="Exit when branch result"];
+                95 [label="Enter when branch result"];
+                subgraph cluster_23 {
+                    color=blue
+                    96 [label="Enter block"];
+                    97 [label="Access variable R|<local>/b|"];
+                    98 [label="Access variable R|kotlin/String.length|"];
+                    99 [label="Exit anonymous object"];
+                    100 [label="Function call: this@R|/anonymous|.R|/anonymous.bar|()"];
+                    101 [label="Exit block"];
+                }
+                102 [label="Exit when branch result"];
+                103 [label="Exit when"];
+            }
+            104 [label="Exit function anonymousFunction"];
+        }
+        105 [label="Postponed exit from lambda"];
+        106 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)"];
+        107 [label="Jump: ^foo R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <kind=UNKNOWN>  {
+    R|<local>/a|.R|kotlin/String.length|
+    ^ when () {
+        (R|<local>/b| is R|kotlin/String|) ->  {
+            R|<local>/b|.R|kotlin/String.length|
+            this@R|/anonymous|.R|/anonymous.bar|()
+        }
+        else ->  {
+            Int(1)
+        }
+    }
+
+}
+)"];
+        108 [label="Stub" style="filled" fillcolor=gray];
+        109 [label="Exit function foo" style="filled" fillcolor=red];
+    }
+
+    78 -> {79};
+    79 -> {80};
+    79 -> {105} [color=red];
+    80 -> {104 81};
+    81 -> {82};
+    82 -> {83};
+    83 -> {84};
+    84 -> {85};
+    85 -> {86};
+    86 -> {87};
+    87 -> {95 88};
+    88 -> {89};
+    89 -> {90};
+    90 -> {91};
+    91 -> {92};
+    92 -> {93};
+    93 -> {94};
+    94 -> {103};
+    95 -> {96};
+    96 -> {97};
+    97 -> {98};
+    98 -> {99};
+    99 -> {100};
+    100 -> {101};
+    101 -> {102};
+    102 -> {103};
+    103 -> {104};
+    104 -> {80};
+    104 -> {105} [color=green];
+    105 -> {106};
+    106 -> {107};
+    107 -> {109};
+    107 -> {108} [style=dotted];
+    108 -> {109} [style=dotted];
+
+    subgraph cluster_24 {
+        color=red
+        110 [label="Enter function bar" style="filled" fillcolor=red];
+        111 [label="Postponed enter to lambda"];
+        subgraph cluster_25 {
+            color=blue
+            112 [label="Enter function anonymousFunction"];
+            113 [label="Access variable R|<local>/a|"];
+            114 [label="Access variable R|kotlin/String.length|"];
+            115 [label="Access variable R|<local>/b|"];
+            116 [label="Access variable <Unresolved name: length>#"];
+            117 [label="Exit anonymous object"];
+            118 [label="Function call: this@R|/anonymous|.R|/anonymous.baz|()"];
+            119 [label="Exit function anonymousFunction"];
+        }
+        120 [label="Postponed exit from lambda"];
+        121 [label="Function call: R|/myRun|<R|kotlin/Int|>(...)"];
+        122 [label="Jump: ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <kind=UNKNOWN>  {
+    R|<local>/a|.R|kotlin/String.length|
+    R|<local>/b|.<Unresolved name: length>#
+    ^ this@R|/anonymous|.R|/anonymous.baz|()
+}
+)"];
+        123 [label="Stub" style="filled" fillcolor=gray];
+        124 [label="Exit function bar" style="filled" fillcolor=red];
+    }
+
+    110 -> {111};
+    111 -> {112};
+    111 -> {120} [color=red];
+    112 -> {119 113};
+    113 -> {114};
+    114 -> {115};
+    115 -> {116};
+    116 -> {117};
+    117 -> {118};
+    118 -> {119};
+    119 -> {112};
+    119 -> {120} [color=green];
+    120 -> {121};
+    121 -> {122};
+    122 -> {124};
+    122 -> {123} [style=dotted];
+    123 -> {124} [style=dotted];
+
+    subgraph cluster_26 {
+        color=red
+        125 [label="Enter function baz" style="filled" fillcolor=red];
+        126 [label="Const: Int(1)"];
+        127 [label="Jump: ^baz Int(1)"];
+        128 [label="Stub" style="filled" fillcolor=gray];
+        129 [label="Exit function baz" style="filled" fillcolor=red];
+    }
+
+    125 -> {126};
+    126 -> {127};
+    127 -> {129};
+    127 -> {128} [style=dotted];
+    128 -> {129} [style=dotted];
+
+}

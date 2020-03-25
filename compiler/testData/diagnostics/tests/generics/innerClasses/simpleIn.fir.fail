@@ -1,0 +1,2 @@
+Failures detected in FirBodyResolveTransformerAdapter, file: /simpleIn.fir.kt
+Cause: java.lang.RuntimeException: While resolving call R|<local>/outer|.set#(R?C|/infer|<R|kotlin/Any|>(String()))

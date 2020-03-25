@@ -34,7 +34,11 @@ class FirTowerResolver(
     resolutionStageRunner: ResolutionStageRunner,
 ) {
     private val localScopes: List<FirLocalScope> get() = components.localScopes.asReversed()
-    private val topLevelScopes: List<FirScope> get() = components.topLevelScopes.asReversed()
+    private val topLevelScopes: List<FirScope>
+        get() {
+            if (components.typeParametersScopes.isEmpty()) return components.fileImportsScope.asReversed()
+            return components.typeParametersScopes.asReversed() + components.fileImportsScope.asReversed()
+        }
 
     private val session: FirSession get() = components.session
     private val collector = CandidateCollector(components, resolutionStageRunner)

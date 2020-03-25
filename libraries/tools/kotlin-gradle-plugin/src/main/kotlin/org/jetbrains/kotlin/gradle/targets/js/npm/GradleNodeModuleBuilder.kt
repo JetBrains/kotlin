@@ -10,6 +10,7 @@ import com.google.gson.GsonBuilder
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
+import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import java.io.File
 
 /**
@@ -29,7 +30,7 @@ internal class GradleNodeModuleBuilder(
             val srcFile = artifact.file
             when {
                 isKotlinJsRuntimeFile(srcFile) -> files.add(srcFile)
-                srcFile.isZip -> project.zipTree(srcFile).forEach { innerFile ->
+                srcFile.isCompatibleArchive -> project.zipTree(srcFile).forEach { innerFile ->
                     when {
                         innerFile.name == NpmProject.PACKAGE_JSON -> srcPackageJsonFile = innerFile
                         isKotlinJsRuntimeFile(innerFile) -> files.add(innerFile)
@@ -69,8 +70,11 @@ internal fun fromSrcPackageJson(packageJson: File?): PackageJson? =
         Gson().fromJson(it, PackageJson::class.java)
     }
 
-private val File.isZip
-    get() = isFile && (name.endsWith(".jar") || name.endsWith(".zip"))
+private val File.isCompatibleArchive
+    get() = isFile
+            && (extension == "jar"
+            || extension == "zip"
+            || extension == KLIB_TYPE)
 
 private fun isKotlinJsRuntimeFile(file: File): Boolean {
     if (!file.isFile) return false

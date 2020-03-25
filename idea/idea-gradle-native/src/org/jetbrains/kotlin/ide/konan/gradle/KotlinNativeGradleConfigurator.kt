@@ -38,6 +38,6 @@ open class KotlinNativeGradleConfigurator : KotlinWithGradleConfigurator() {
 
     companion object {
         const val NAME = "KotlinNative"
-        val PRESENTABLE_TEXT = KotlinGradleNativeBundle.message("native.gradle.name.short")
+        val PRESENTABLE_TEXT get() = KotlinGradleNativeBundle.message("native.gradle.name.short")
     }
 }

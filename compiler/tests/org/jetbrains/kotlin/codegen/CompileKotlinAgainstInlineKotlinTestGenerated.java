@@ -276,6 +276,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             runTest("compiler/testData/codegen/boxInline/anonymousObject/superConstructorWithObjectParameter.kt");
         }
 
+        @TestMetadata("withInlineMethod.kt")
+        public void testWithInlineMethod() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/withInlineMethod.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumWhen")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -3250,6 +3255,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             runTest("compiler/testData/codegen/boxInline/smap/defaultFunction.kt");
         }
 
+        @TestMetadata("interleavedFiles.kt")
+        public void testInterleavedFiles() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/interleavedFiles.kt");
+        }
+
         @TestMetadata("kt23369.kt")
         public void testKt23369() throws Exception {
             runTest("compiler/testData/codegen/boxInline/smap/kt23369.kt");
@@ -3273,6 +3283,16 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("smap.kt")
         public void testSmap() throws Exception {
             runTest("compiler/testData/codegen/boxInline/smap/smap.kt");
+        }
+
+        @TestMetadata("smapWithNewSyntax.kt")
+        public void testSmapWithNewSyntax() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/smapWithNewSyntax.kt");
+        }
+
+        @TestMetadata("smapWithOldSyntax.kt")
+        public void testSmapWithOldSyntax() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/smapWithOldSyntax.kt");
         }
 
         @TestMetadata("compiler/testData/codegen/boxInline/smap/anonymous")

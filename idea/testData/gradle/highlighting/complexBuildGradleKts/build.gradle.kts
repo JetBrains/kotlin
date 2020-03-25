@@ -116,7 +116,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:fir:cones",
     ":compiler:fir:resolve",
     ":compiler:fir:tree",
-    ":compiler:fir:psi2fir",
+    ":compiler:fir:raw-fir:psi2fir",
     ":compiler:fir:fir2ir",
     ":compiler:fir:java",
     ":compiler:fir:jvm",

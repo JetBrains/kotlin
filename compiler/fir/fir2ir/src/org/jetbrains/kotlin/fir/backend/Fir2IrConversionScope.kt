@@ -77,15 +77,14 @@ class Fir2IrConversionScope {
     fun parent(): IrDeclarationParent? = parentStack.lastOrNull()
 
     fun lastDispatchReceiverParameter(): IrValueParameter? {
-        val dispatchReceiver = functionStack.lastOrNull()?.dispatchReceiverParameter
-        return if (dispatchReceiver != null) {
-            // Use the dispatch receiver of the containing function
-            dispatchReceiver
-        } else {
-            val lastClassSymbol = classStack.lastOrNull()?.symbol
-            // Use the dispatch receiver of the containing class
-            lastClassSymbol?.owner?.thisReceiver
+        // Use the dispatch receiver of the containing/enclosing functions (from the last to the first)
+        for (function in functionStack.asReversed()) {
+            function.dispatchReceiverParameter?.let { return it }
         }
+
+        // Use the dispatch receiver of the containing class
+        val lastClass = classStack.lastOrNull()
+        return lastClass?.thisReceiver
     }
 
     fun lastClass(): IrClass? = classStack.lastOrNull()

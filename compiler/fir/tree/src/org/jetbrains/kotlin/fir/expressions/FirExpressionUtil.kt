@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorLoop
@@ -28,7 +28,7 @@ inline val FirAnnotationCall.coneClassLikeType: ConeClassLikeType?
 inline val FirAnnotationCall.classId: ClassId?
     get() = coneClassLikeType?.lookupTag?.classId
 
-fun <T> buildConstOrErrorExpression(source: FirSourceElement?, kind: FirConstKind<T>, value: T?, diagnostic: FirDiagnostic): FirExpression =
+fun <T> buildConstOrErrorExpression(source: FirSourceElement?, kind: FirConstKind<T>, value: T?, diagnostic: ConeDiagnostic): FirExpression =
     value?.let {
         buildConstExpression(source, kind, it)
     } ?: buildErrorExpression {
@@ -51,14 +51,14 @@ fun FirExpression.toResolvedCallableSymbol(): FirCallableSymbol<*>? {
     return toResolvedCallableReference()?.resolvedSymbol as FirCallableSymbol<*>?
 }
 
-fun buildErrorLoop(source: FirSourceElement?, diagnostic: FirDiagnostic): FirErrorLoop {
+fun buildErrorLoop(source: FirSourceElement?, diagnostic: ConeDiagnostic): FirErrorLoop {
     return buildErrorLoop {
         this.source = source
         this.diagnostic = diagnostic
     }
 }
 
-fun buildErrorExpression(source: FirSourceElement?, diagnostic: FirDiagnostic): FirErrorExpression {
+fun buildErrorExpression(source: FirSourceElement?, diagnostic: ConeDiagnostic): FirErrorExpression {
     return buildErrorExpression {
         this.source = source
         this.diagnostic = diagnostic

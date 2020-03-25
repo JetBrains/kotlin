@@ -34,6 +34,7 @@ import com.intellij.util.PlatformIcons
 import com.intellij.util.ui.EmptyIcon
 import org.jetbrains.kotlin.idea.debugger.coroutine.KotlinDebuggerCoroutinesBundle
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
+import org.jetbrains.kotlin.idea.debugger.coroutine.data.State
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.datatransfer.StringSelection
@@ -143,7 +144,7 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
         var index = 0
         val states = if (UISettings.instance.state.mergeEqualStackTraces) mergedDump else dump
         for (state in states) {
-            if (StringUtil.containsIgnoreCase(state.stringStackTrace, text) || StringUtil.containsIgnoreCase(state.name, text)) {
+            if (StringUtil.containsIgnoreCase(state.stringStackTrace, text) || StringUtil.containsIgnoreCase(state.key.name, text)) {
                 model.addElement(state)
                 if (selection === state) {
                     selectedIndex = index
@@ -180,9 +181,9 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
     override fun getData(dataId: String): Any? = if (PlatformDataKeys.EXPORTER_TO_TEXT_FILE.`is`(dataId)) exporterToTextFile else null
 
     private fun getCoroutineStateIcon(infoData: CoroutineInfoData): Icon {
-        return when (infoData.state) {
-            CoroutineInfoData.State.RUNNING -> LayeredIcon(AllIcons.Actions.Resume, Daemon_sign)
-            CoroutineInfoData.State.SUSPENDED -> AllIcons.Actions.Pause
+        return when (infoData.key.state) {
+            State.RUNNING -> LayeredIcon(AllIcons.Actions.Resume, Daemon_sign)
+            State.SUSPENDED -> AllIcons.Actions.Pause
             else -> EmptyIcon.create(6)
         }
     }
@@ -190,18 +191,18 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
     private fun getAttributes(infoData: CoroutineInfoData): SimpleTextAttributes {
         return when {
             infoData.isSuspended() -> SimpleTextAttributes.GRAY_ATTRIBUTES
-            infoData.isEmptyStackTrace() -> SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, Color.GRAY.brighter())
+            infoData.isEmptyStack() -> SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, Color.GRAY.brighter())
             else -> SimpleTextAttributes.REGULAR_ATTRIBUTES
-
         }
     }
 
     private inner class CoroutineListCellRenderer : ColoredListCellRenderer<Any>() {
 
         override fun customizeCellRenderer(list: JList<*>, value: Any, index: Int, selected: Boolean, hasFocus: Boolean) {
-            val state = value as CoroutineInfoData
-            icon = getCoroutineStateIcon(state)
-            val attrs = getAttributes(state)
+            val infoData = value as CoroutineInfoData
+            val state = infoData.key
+            icon = fromState(state.state)
+            val attrs = getAttributes(infoData)
             append(state.name + " (", attrs)
             var detail: String? = state.state.name
             if (detail == null) {

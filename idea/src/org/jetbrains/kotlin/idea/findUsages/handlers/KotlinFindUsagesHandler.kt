@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.findUsages.handlers
 import com.intellij.find.findUsages.FindUsagesHandler
 import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.light.LightMemberReference
@@ -140,6 +141,7 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(
             processor.processIfNotNull { if (element.isValid) UsageInfo(element) else null }
 
         private fun UsageInfoProcessor.processIfNotNull(callback: () -> UsageInfo?): Boolean {
+            ProgressManager.checkCanceled()
             val usageInfo = runReadAction(callback)
             return if (usageInfo != null) process(usageInfo) else true
         }

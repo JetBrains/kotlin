@@ -258,16 +258,6 @@ fun main(args: Array<String>) {
             model("checker/diagnosticsMessage")
         }
 
-        testClass<AbstractFirPsiCheckerTest> {
-            model("checker", recursive = false)
-            model("checker/regression")
-            model("checker/recovery")
-            model("checker/rendering")
-            model("checker/duplicateJvmSignature")
-            model("checker/infos")
-            model("checker/diagnosticsMessage")
-        }
-
         testClass<AbstractJavaAgainstKotlinSourceCheckerTest> {
             model("kotlinAndJavaChecker/javaAgainstKotlin")
             model("kotlinAndJavaChecker/javaWithKotlin")
@@ -514,10 +504,6 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractReferenceResolveTest> {
-            model("resolve/references", pattern = KT_WITHOUT_DOTS_IN_NAME)
-        }
-
-        testClass<AbstractFirReferenceResolveTest> {
             model("resolve/references", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
@@ -889,13 +875,29 @@ fun main(args: Array<String>) {
         testClass<AbstractSlicerNullnessGroupingTest> {
             model("slicer/inflow", singleClass = true)
         }
+    }
 
+    testGroup("idea/idea-fir/tests", "idea/testData") {
         testClass<AbstractFirMultiModuleResolveTest> {
             model("fir/multiModule", recursive = false, extension = null)
         }
 
         testClass<AbstractFirLazyResolveTest> {
             model("fir/lazyResolve", extension = "test", singleClass = true, filenameStartsLowerCase = true)
+        }
+
+        testClass<AbstractFirReferenceResolveTest> {
+            model("resolve/references", pattern = KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+        testClass<AbstractFirPsiCheckerTest> {
+            model("checker", recursive = false)
+            model("checker/regression")
+            model("checker/recovery")
+            model("checker/rendering")
+            model("checker/duplicateJvmSignature")
+            model("checker/infos")
+            model("checker/diagnosticsMessage")
         }
     }
 

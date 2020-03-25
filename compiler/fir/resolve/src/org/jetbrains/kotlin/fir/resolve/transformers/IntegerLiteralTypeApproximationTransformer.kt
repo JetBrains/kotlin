@@ -116,16 +116,6 @@ class IntegerLiteralTypeApproximationTransformer(
     }
 }
 
-fun ConeClassLikeType.toConstKind(): FirConstKind<*> {
-    return when (classId) {
-        StandardClassIds.Int -> FirConstKind.Int
-        StandardClassIds.Long -> FirConstKind.Long
-        StandardClassIds.Short -> FirConstKind.Short
-        StandardClassIds.Byte -> FirConstKind.Byte
-        else -> throw IllegalStateException()
-    }
-}
-
 fun FirFunctionCall.getOriginalFunction(): FirCallableDeclaration<*>? {
     val symbol: AbstractFirBasedSymbol<*>? = when (val reference = calleeReference) {
         is FirResolvedNamedReference -> reference.resolvedSymbol
@@ -148,7 +138,8 @@ class IntegerOperatorsTypeUpdater(val approximator: IntegerLiteralTypeApproximat
             return functionCall.transformExplicitReceiver(approximator, expectedType).compose()
         }
         // TODO: maybe unsafe?
-        val receiverValue = functionCall.explicitReceiver!!.typeRef.coneTypeSafe<ConeIntegerLiteralType>()?.value ?: return functionCall.compose()
+        val receiverType = functionCall.explicitReceiver!!.typeRef.coneTypeSafe<ConeIntegerLiteralType>() ?: return functionCall.compose()
+        val receiverValue = receiverType.value
         val kind = function.kind
         val resultValue = when {
             kind.unary -> when (kind) {
@@ -193,7 +184,7 @@ class IntegerOperatorsTypeUpdater(val approximator: IntegerLiteralTypeApproximat
                 }
             }
         }
-        functionCall.replaceTypeRef(functionCall.resultType.resolvedTypeFromPrototype(ConeIntegerLiteralTypeImpl(resultValue)))
+        functionCall.replaceTypeRef(functionCall.resultType.resolvedTypeFromPrototype(ConeIntegerLiteralTypeImpl(resultValue, isUnsigned = receiverType.isUnsigned)))
         return functionCall.toOperatorCall().compose()
     }
 }

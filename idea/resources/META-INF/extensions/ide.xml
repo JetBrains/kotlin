@@ -70,6 +70,9 @@
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.additionalExtractableAnalyser"
                         interface="org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AdditionalExtractableAnalyser"/>
+
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.experimentalFeature"
+                        interface="org.jetbrains.kotlin.idea.configuration.ExperimentalFeature"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">

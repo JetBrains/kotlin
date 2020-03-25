@@ -317,7 +317,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
 
             // Note: Kotlin scripts require dependencies to be loaded
             if (isAKotlinScriptFile(fileName)) {
-                ScriptConfigurationManager.updateScriptDependenciesSynchronously(fixture.psiFile, project)
+                ScriptConfigurationManager.updateScriptDependenciesSynchronously(fixture.psiFile)
             }
 
             resetTimestamp()

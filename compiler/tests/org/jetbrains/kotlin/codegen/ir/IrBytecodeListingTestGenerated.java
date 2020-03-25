@@ -69,6 +69,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/jvmOverloadsAndParametersAnnotations.kt");
     }
 
+    @TestMetadata("jvmStaticWithDefaultParameters.kt")
+    public void testJvmStaticWithDefaultParameters() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/jvmStaticWithDefaultParameters.kt");
+    }
+
     @TestMetadata("noCollectionStubMethodsInInterface.kt")
     public void testNoCollectionStubMethodsInInterface() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/noCollectionStubMethodsInInterface.kt");
@@ -97,6 +102,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
     @TestMetadata("platformTypes.kt")
     public void testPlatformTypes() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/platformTypes.kt");
+    }
+
+    @TestMetadata("privateDefaultImpls.kt")
+    public void testPrivateDefaultImpls() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/privateDefaultImpls.kt");
     }
 
     @TestMetadata("privateDefaultSetter.kt")

@@ -773,35 +773,28 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
                     getSubstitutorWithoutFlexibleTypes(substitutor, explicitTypeArguments),
                 )
             }
-            is FunctionDescriptor -> candidateDescriptor.substituteInferredVariablesAndApproximate(substitutor)
+            is FunctionDescriptor -> {
+                candidateDescriptor.substituteInferredVariablesAndApproximate(substitutor, candidateDescriptor.isNotSimpleCall())
+            }
             is PropertyDescriptor -> {
-                if (candidateDescriptor.typeParameters.isNotEmpty())
+                if (candidateDescriptor.isNotSimpleCall()) {
                     candidateDescriptor.substituteInferredVariablesAndApproximate(substitutor)
-                else {
-                    val shouldForceApproximationAndSubstitution = candidateDescriptor.returnType?.let { type ->
-                        type.contains {
-                            it is NewCapturedType ||
-                                    it.constructor is IntegerLiteralTypeConstructor ||
-                                    it is DefinitelyNotNullType ||
-                                    it is StubType
-                        }
-                    } ?: false
-
-                    if (shouldForceApproximationAndSubstitution)
-                        candidateDescriptor.substituteInferredVariablesAndApproximate(substitutor)
-                    else
-                        candidateDescriptor
+                } else {
+                    candidateDescriptor
                 }
             }
             else -> candidateDescriptor
         }
 
-    private fun CallableDescriptor.substituteInferredVariablesAndApproximate(substitutor: NewTypeSubstitutor?): CallableDescriptor {
+    private fun CallableDescriptor.substituteInferredVariablesAndApproximate(
+        substitutor: NewTypeSubstitutor?,
+        shouldApproximate: Boolean = true
+    ): CallableDescriptor {
         val inferredTypeVariablesSubstitutor = substitutor ?: FreshVariableNewTypeSubstitutor.Empty
         val compositeSubstitutor = inferredTypeVariablesSubstitutor.composeWith(resolvedCallAtom.knownParametersSubstitutor)
 
         return substitute(resolvedCallAtom.freshVariablesSubstitutor)
-            .substituteAndApproximateTypes(compositeSubstitutor, typeApproximator)
+            .substituteAndApproximateTypes(compositeSubstitutor, if (shouldApproximate) typeApproximator else null)
     }
 
     fun getArgumentTypeForConstantConvertedArgument(valueArgument: ValueArgument): IntegerValueTypeConstant? {
@@ -914,3 +907,15 @@ fun NewResolvedCallImpl<*>.hasInferredReturnType(): Boolean {
     val returnType = this.resultingDescriptor.returnType ?: return false
     return !returnType.contains { ErrorUtils.isUninferredParameter(it) }
 }
+
+private fun CallableMemberDescriptor.isNotSimpleCall(): Boolean =
+    typeParameters.isNotEmpty() ||
+            (returnType?.let { type ->
+                type.contains {
+                    it is NewCapturedType ||
+                            it.constructor is IntegerLiteralTypeConstructor ||
+                            it is DefinitelyNotNullType ||
+                            it is StubType
+                }
+            } ?: false)
+

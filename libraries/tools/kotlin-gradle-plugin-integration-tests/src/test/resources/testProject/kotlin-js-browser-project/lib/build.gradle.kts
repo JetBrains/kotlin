@@ -12,6 +12,5 @@ kotlin {
         useCommonJs()
         browser {
         }
-        produceKotlinLibrary()
     }
 }

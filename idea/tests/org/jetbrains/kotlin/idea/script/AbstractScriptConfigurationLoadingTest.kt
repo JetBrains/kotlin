@@ -5,20 +5,18 @@
 
 package org.jetbrains.kotlin.idea.script
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
-import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
-import org.jetbrains.kotlin.idea.core.script.applySuggestedScriptConfiguration
+import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManagerExtensions
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.FileContentsDependentConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.testingBackgroundExecutor
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.testScriptConfigurationNotification
-import org.jetbrains.kotlin.idea.core.script.hasSuggestedScriptConfiguration
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -41,6 +39,7 @@ abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurat
     override fun setUp() {
         super.setUp()
         testScriptConfigurationNotification = true
+        ApplicationManager.getApplication().isScriptChangesNotifierDisabled = false
 
         scriptConfigurationManager = ServiceManager.getService(project, ScriptConfigurationManager::class.java)
     }
@@ -48,6 +47,7 @@ abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurat
     override fun tearDown() {
         super.tearDown()
         testScriptConfigurationNotification = false
+        ApplicationManager.getApplication().isScriptChangesNotifierDisabled = true
         occurredLoadings = 0
         currentLoadingScriptConfigurationCallback = null
     }

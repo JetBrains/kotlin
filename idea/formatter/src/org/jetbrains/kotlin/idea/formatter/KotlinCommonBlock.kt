@@ -131,13 +131,16 @@ abstract class KotlinCommonBlock(
 
         val block = nodeSubBlocks.first()
         val wrap = createWrapForQualifierExpression(node)
-        val indent = createIndentForQualifierExpression(node)
-        val newBlock = block.processBlock(indent, wrap)
+        val enforceIndentToChildren = anyCallInCallChainIsWrapped(node)
+        val indent = createIndentForQualifierExpression(enforceIndentToChildren)
+        val newBlock = block.processBlock(wrap, enforceIndentToChildren)
         return nodeSubBlocks.replaceBlock(newBlock, 0).splitAtIndex(operationBlockIndex, indent, wrap)
     }
 
-    private fun ASTBlock.processBlock(indent: Indent, wrap: Wrap?): ASTBlock {
+    private fun ASTBlock.processBlock(wrap: Wrap?, enforceIndentToChildren: Boolean): ASTBlock {
         val currentNode = requireNode()
+        val enforceIndent = enforceIndentToChildren && anyCallInCallChainIsWrapped(currentNode)
+        val indent = createIndentForQualifierExpression(enforceIndent)
 
         @Suppress("UNCHECKED_CAST")
         val subBlocks = subBlocks as List<ASTBlock>
@@ -150,8 +153,7 @@ abstract class KotlinCommonBlock(
         else
             null
 
-        val newBlock = subBlocks.elementAt(index).processBlock(indent, resultWrap)
-
+        val newBlock = subBlocks.elementAt(index).processBlock(resultWrap, enforceIndent)
         return subBlocks.replaceBlock(newBlock, index).let {
             val operationIndex = subBlocks.indexOfBlockWithType(QUALIFIED_OPERATION)
             if (operationIndex != -1)
@@ -178,11 +180,9 @@ abstract class KotlinCommonBlock(
         else
             null
 
-    private fun createIndentForQualifierExpression(node: ASTNode): Indent {
-        // enforce indent to children when there's a line break before the dot in any call in the chain (meaning that
-        // the call chain following that call is indented)
-        val enforceIndentToChildren = anyCallInCallChainIsWrapped(node)
-
+    // enforce indent to children when there's a line break before the dot in any call in the chain (meaning that
+    // the call chain following that call is indented)
+    private fun createIndentForQualifierExpression(enforceIndentToChildren: Boolean): Indent {
         val indentType = if (settings.kotlinCustomSettings.CONTINUATION_INDENT_FOR_CHAINED_CALLS) {
             if (enforceIndentToChildren) Indent.Type.CONTINUATION else Indent.Type.CONTINUATION_WITHOUT_FIRST
         } else {
@@ -825,11 +825,22 @@ private val ASTNode.isCall: Boolean
     get() = unwrapQualifier()?.lastChildNode?.elementType == CALL_EXPRESSION
 
 private fun anyCallInCallChainIsWrapped(node: ASTNode): Boolean {
-    val sequentialCalls = generateSequence(node) { it.firstChildNode }.takeWhile { it.isCall }
+    val sequentialNodes = generateSequence(node) {
+        when (it.elementType) {
+            POSTFIX_EXPRESSION, in QUALIFIED_EXPRESSIONS -> it.firstChildNode
+            PARENTHESIZED -> getSiblingWithoutWhitespaceAndComments(it.firstChildNode, true)
+            else -> null
+        }
+    }
 
-    return sequentialCalls.any { call ->
-        val qualifier = call.findChildByType(QUALIFIED_OPERATION)
-        qualifier != null && hasLineBreakBefore(qualifier)
+    return sequentialNodes.any {
+        val checkedElement = when (it.elementType) {
+            in QUALIFIED_EXPRESSIONS -> it.findChildByType(QUALIFIED_OPERATION)
+            PARENTHESIZED -> it.lastChildNode
+            else -> null
+        }
+
+        checkedElement != null && hasLineBreakBefore(checkedElement)
     }
 }
 

@@ -107,7 +107,7 @@ open class ConeFlexibleType(val lowerBound: ConeKotlinType, val upperBound: Cone
     }
 
     override val typeArguments: Array<out ConeTypeProjection>
-        get() = emptyArray()
+        get() = lowerBound.typeArguments
 
     override val nullability: ConeNullability
         get() = lowerBound.nullability.takeIf { it == upperBound.nullability } ?: ConeNullability.UNKNOWN
@@ -219,12 +219,15 @@ class ConeTypeVariableTypeConstructor(val debugName: String) : ConeClassifierLoo
     override val name: Name get() = Name.identifier(debugName)
 }
 
-abstract class ConeIntegerLiteralType(val value: Long) : ConeSimpleKotlinType(), TypeConstructorMarker {
+abstract class ConeIntegerLiteralType(
+    val value: Long,
+    val isUnsigned: Boolean,
+    override val nullability: ConeNullability
+) : ConeSimpleKotlinType(), TypeConstructorMarker {
     abstract val possibleTypes: Collection<ConeClassLikeType>
     abstract val supertypes: List<ConeClassLikeType>
 
     override val typeArguments: Array<out ConeTypeProjection> = emptyArray()
-    override val nullability: ConeNullability = ConeNullability.NOT_NULL
 
     abstract fun getApproximatedType(expectedType: ConeKotlinType? = null): ConeClassLikeType
 

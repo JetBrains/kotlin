@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined;
+import static org.jetbrains.kotlin.test.KotlinTestUtils.parseDirectives;
 
 public class TestFiles {
     /**
@@ -51,19 +52,30 @@ public class TestFiles {
     @NotNull
     public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M , F> factory,
             boolean preserveLocations, String coroutinesPackage) {
-        Map<String, String> directives = KotlinTestUtils.parseDirectives(expectedText);
+        return createTestFiles(testFileName, expectedText, factory, preserveLocations, coroutinesPackage, false);
+    }
+
+    @NotNull
+    public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M , F> factory,
+            boolean preserveLocations, String coroutinesPackage, boolean parseDirectivesPerFile) {
         Map<String, M> modules = new HashMap<>();
         List<F> testFiles = Lists.newArrayList();
         Matcher matcher = FILE_OR_MODULE_PATTERN.matcher(expectedText);
         boolean hasModules = false;
+        String commonPrefixOrWholeFile;
         if (!matcher.find()) {
             assert testFileName != null : "testFileName should not be null if no FILE directive defined";
             // One file
-            testFiles.add(factory.createFile(null, testFileName, expectedText, directives));
+            testFiles.add(factory.createFile(null, testFileName, expectedText, parseDirectives(expectedText)));
+            commonPrefixOrWholeFile = expectedText;
         }
         else {
+            Directives allFilesOrCommonPrefixDirectives = parseDirectivesPerFile ? null : parseDirectives(expectedText);
             int processedChars = 0;
             M module = null;
+            boolean firstFileProcessed = false;
+            commonPrefixOrWholeFile = expectedText.substring(0, matcher.start());
+
             // Many files
             while (true) {
                 String moduleName = matcher.group(1);
@@ -91,10 +103,15 @@ public class TestFiles {
                 String fileText = preserveLocations ?
                                   substringKeepingLocations(expectedText, start, end) :
                                   expectedText.substring(start,end);
+
+
+                String expectedText1 = firstFileProcessed ? commonPrefixOrWholeFile + fileText : fileText;
+                testFiles.add(factory.createFile(module, fileName, fileText,
+                                                 parseDirectivesPerFile ?
+                                                 parseDirectives(expectedText1)
+                                                                        : allFilesOrCommonPrefixDirectives));
                 processedChars = end;
-
-                testFiles.add(factory.createFile(module, fileName, fileText, directives));
-
+                firstFileProcessed = true;
                 if (!nextFileExists) break;
             }
             assert processedChars == expectedText.length() : "Characters skipped from " +
@@ -123,7 +140,7 @@ public class TestFiles {
                             "CoroutineUtil.kt",
                             TestHelperGeneratorKt.createTextForCoroutineHelpers(
                                     isReleaseCoroutines, checkStateMachine, checkTailCallOptimization),
-                            directives
+                            parseDirectives(commonPrefixOrWholeFile)
                     ));
         }
 
@@ -173,7 +190,7 @@ public class TestFiles {
     }
 
     public interface TestFileFactory<M, F> {
-        F createFile(@Nullable M module, @NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives);
+        F createFile(@Nullable M module, @NotNull String fileName, @NotNull String text, @NotNull Directives directives);
         M createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends);
     }
 
@@ -183,13 +200,13 @@ public class TestFiles {
                 @Nullable KotlinBaseTest.TestModule module,
                 @NotNull String fileName,
                 @NotNull String text,
-                @NotNull Map<String, String> directives
+                @NotNull Directives directives
         ) {
             return create(fileName, text, directives);
         }
 
         @NotNull
-        public abstract F create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives);
+        public abstract F create(@NotNull String fileName, @NotNull String text, @NotNull Directives directives);
 
         @Override
         public KotlinBaseTest.TestModule createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends) {

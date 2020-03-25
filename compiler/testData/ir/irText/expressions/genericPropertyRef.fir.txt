@@ -176,10 +176,10 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
       $receiver: VALUE_PARAMETER name:<this> type:T of <root>.<set-bar>
       VALUE_PARAMETER name:value index:0 type:T of <root>.<get-bar>
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:recivier type:kotlin.Any? visibility:private [static]' type=kotlin.Unit origin=null
-          value: ERROR_CALL 'Unresolved reference: this@R|/bar|' type=T of <root>.<get-bar>
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.Any? visibility:private [static]' type=kotlin.Unit origin=null
-          value: GET_VAR 'value: T of <root>.<get-bar> declared in <root>.<set-bar>' type=T of <root>.<get-bar> origin=null
+        CALL 'public final fun <set-recivier> (<set-?>: kotlin.Any?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+          <set-?>: ERROR_CALL 'Unresolved reference: this@R|/bar|' type=T of <root>.<get-bar>
+        CALL 'public final fun <set-value2> (<set-?>: kotlin.Any?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+          <set-?>: GET_VAR 'value: T of <root>.<get-bar> declared in <root>.<set-bar>' type=T of <root>.<get-bar> origin=null
   PROPERTY name:barRef visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:barRef type:kotlin.reflect.KMutableProperty1<kotlin.String?, kotlin.String?> visibility:private [final,static]
       EXPRESSION_BODY

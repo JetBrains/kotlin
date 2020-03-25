@@ -51,7 +51,9 @@ private object ConeConditionalEffectToFirVisitor : ConeContractDescriptionVisito
     }
 
     override fun visitIsInstancePredicate(isInstancePredicate: ConeIsInstancePredicate, data: Map<Int, FirExpression>): FirExpression? {
+        val argument = isInstancePredicate.arg.accept(this@ConeConditionalEffectToFirVisitor, data) ?: return null
         return buildTypeOperatorCall {
+            argumentList = buildUnaryArgumentList(argument)
             operation = if (isInstancePredicate.isNegated) {
                 FirOperation.NOT_IS
             } else {

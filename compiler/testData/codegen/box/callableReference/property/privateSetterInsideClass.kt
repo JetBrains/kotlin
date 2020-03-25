@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 import kotlin.reflect.KMutableProperty
 
 class Bar(name: String) {

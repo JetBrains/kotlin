@@ -74,7 +74,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessWithoutCallee
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
-import org.jetbrains.kotlin.fir.expressions.FirArraySetCall
+import org.jetbrains.kotlin.fir.expressions.FirAugmentedArraySetCall
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
@@ -401,8 +401,8 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(arrayOfCall)
     }
 
-    open fun visitArraySetCall(arraySetCall: FirArraySetCall) {
-        visitElement(arraySetCall)
+    open fun visitAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall) {
+        visitElement(augmentedArraySetCall)
     }
 
     open fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression) {
@@ -861,8 +861,8 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitArrayOfCall(arrayOfCall)
     }
 
-    final override fun visitArraySetCall(arraySetCall: FirArraySetCall, data: Nothing?) {
-        visitArraySetCall(arraySetCall)
+    final override fun visitAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall, data: Nothing?) {
+        visitAugmentedArraySetCall(augmentedArraySetCall)
     }
 
     final override fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: Nothing?) {

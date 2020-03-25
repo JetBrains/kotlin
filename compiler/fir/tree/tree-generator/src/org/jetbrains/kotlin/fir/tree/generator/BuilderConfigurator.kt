@@ -112,9 +112,8 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         }
 
         builder(arraySetCall) {
-            parents += qualifiedAccessBuilder
-            defaultFalse("safe")
-            defaultNoReceivers()
+            default("calleeReference", "FirStubReference")
+            useTypes(stubReferenceType)
         }
 
         builder(callableReferenceAccess) {

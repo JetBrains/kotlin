@@ -27,7 +27,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.15")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.16")
     }
 }
 
@@ -80,14 +80,18 @@ include ":kotlin-build-common",
         ":compiler:fir:cones",
         ":compiler:fir:tree",
         ":compiler:fir:tree:tree-generator",
-        ":compiler:fir:psi2fir",
-        ":compiler:fir:lightTree",
+        ":compiler:fir:raw-fir:common",
+        ":compiler:fir:raw-fir:psi2fir",
+        ":compiler:fir:raw-fir:light-tree2fir",
         ":compiler:fir:fir2ir",
+        ":compiler:fir:fir2ir:jvm-backend",
         ":compiler:fir:resolve",
         ":compiler:fir:java",
         ":compiler:fir:modularized-tests",
         ":compiler:fir:dump",
         ":compiler:fir:jvm",
+        ":compiler:fir:checkers",
+        ":compiler:fir:analysis-tests",
         ":compiler:frontend",
         ":compiler:frontend.common",
         ":compiler:frontend.java",
@@ -151,6 +155,7 @@ include ":kotlin-build-common",
         ":idea:formatter",
         ":idea:ide-common",
         ":idea:idea-core",
+        ":idea:idea-fir",
         ":idea:kotlin-gradle-tooling",
         ":idea:idea-android",
         ":idea:idea-android-output-parser",

@@ -1,19 +1,6 @@
 <idea-plugin>
   <project-components>
     <component>
-      <implementation-class>org.jetbrains.kotlin.idea.highlighter.KotlinBeforeResolveHighlightingPass$Factory</implementation-class>
-    </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.parameterInfo.custom.KotlinCodeHintsPass$Companion$Factory</implementation-class>
-    </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsPassFactory</implementation-class>
-      <skipForDefaultProject/>
-    </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.highlighter.ScriptExternalHighlightingPass$Factory</implementation-class>
-    </component>
-    <component>
       <implementation-class>org.jetbrains.kotlin.idea.completion.LookupCancelWatcher</implementation-class>
     </component>
     <component>
@@ -232,6 +219,11 @@
     <applicationService serviceImplementation="org.jetbrains.kotlin.idea.PluginStartupService" />
     <postStartupActivity implementation="org.jetbrains.kotlin.idea.PluginStartupActivity"/>
 
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinBeforeResolveHighlightingPass$Registrar"/>
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.ScriptExternalHighlightingPass$Registrar"/>
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.parameterInfo.custom.KotlinCodeHintsPass$Registrar"/>
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsPassFactory$Registrar"/>
+
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.KotlinIconProviderService"
                         serviceImplementation="org.jetbrains.kotlin.idea.KotlinIdeFileIconProviderService"/>
 
@@ -370,6 +362,9 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.project.LibraryDependenciesCache"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.project.LibraryDependenciesCacheImpl"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.project.SdkInfoCache"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.project.SdkInfoCacheImpl"/>
+
     <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.IdePackageOracleFactory"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.IdePackageOracleFactory"/>
 
@@ -387,6 +382,9 @@
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.debugger.StackFrameInterceptor"
                     serviceImplementation="org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineStackFrameInterceptor"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.debugger.coroutine.DebuggerListener"
+                    serviceImplementation="org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineDebuggerListener"/>
 
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
@@ -470,6 +468,11 @@
     <refactoring.moveClassHandler
         implementation="org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinClassHandler"
         order="first"/>
+    <refactoring.moveClassHandler
+        implementation="org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinAliasClassHandler"
+        order="first"/>
+    <refactoring.moveMemberHandler language="kotlin"
+                                   implementationClass="org.jetbrains.kotlin.idea.refactoring.move.MoveKotlinMemberHandler"/>
     <refactoring.moveInnerClassUsagesHandler
         implementationClass="org.jetbrains.kotlin.idea.refactoring.move.MoveJavaInnerClassKotlinUsagesHandler"
         language="kotlin" />
@@ -779,7 +782,9 @@
 
     <attachSourcesProvider implementation="org.jetbrains.kotlin.idea.actions.DecompileKotlinToJavaActionProvider"/>
 
+    <gotoDeclarationHandler implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinImportAliasGotoDeclarationHandler"/>
     <referencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearcher"/>
+    <referencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinAliasedImportedElementSearcher"/>
     <directClassInheritorsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDirectInheritorsSearcher"/>
     <overridingMethodsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinOverridingMethodsWithGenericsSearcher"/>
     <definitionsScopedSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDefinitionsSearcher"/>
@@ -1749,6 +1754,7 @@
                      enabledByDefault="false"
                      level="WEAK WARNING"
                      language="kotlin"
+                     runForWholeFile="true"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceCollectionCountWithSizeInspection"
@@ -1906,6 +1912,7 @@
                      level="WARNING"
                      runForWholeFile="true"
                      language="kotlin"
+                     suppressId="unused"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedReceiverParameterInspection"
@@ -1915,6 +1922,7 @@
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
+                     suppressId="unused"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinUnusedImportInspection"
@@ -1925,6 +1933,7 @@
                      level="WARNING"
                      runForWholeFile="true"
                      language="kotlin"
+                     suppressId="UnusedImport"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection"
@@ -1971,6 +1980,7 @@
                      enabledByDefault="false"
                      level="WARNING"
                      language="kotlin"
+                     runForWholeFile="true"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.refactoring.move.changePackage.PackageDirectoryMismatchInspection"
@@ -2650,6 +2660,7 @@
                      cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
+                     suppressId="DoubleNegation"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.WhenWithOnlyElseInspection"
@@ -2758,6 +2769,7 @@
                      cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
+                     suppressId="RedundantOverride"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SuspiciousEqualsCombination"
@@ -3452,6 +3464,7 @@
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
+                     suppressId="ThrowableNotThrown"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.JavaMapForEachInspection"
@@ -3479,6 +3492,7 @@
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
+                     suppressId="CovariantEquals"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceNotNullAssertionWithElvisReturnInspection"
@@ -3542,6 +3556,7 @@
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
+                     suppressId="EqualsBetweenInconvertibleTypes"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.LateinitVarOverridesLateinitVarInspection"

@@ -86,14 +86,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             isMutable("safe")
         }
 
-        impl(arraySetCall) {
-            parents += modifiableQualifiedAccess
-            default("lValue") {
-                value = "calleeReference"
-                customSetter = "calleeReference = value"
-            }
-        }
-
         impl(callableReferenceAccess) {
             parents += modifiableQualifiedAccess
         }

@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.fir
 
 import junit.framework.TestCase
+import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
+import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
@@ -13,8 +16,6 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.EdgeKind
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirControlFlowGraphRenderVisitor
-import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.AbstractDiagnosticCollector
-import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -77,14 +78,13 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         )
     }
 
-    protected fun checkDiagnostics(file: File, testFiles: List<TestFile>, firFiles: List<FirFile>) {
-        val collector = createCollector()
+    protected open fun checkDiagnostics(file: File, testFiles: List<TestFile>, firFiles: List<FirFile>) {
+        val diagnostics = collectDiagnostics(firFiles)
         val actualText = StringBuilder()
         for (testFile in testFiles) {
             val firFile = firFiles.firstOrNull { it.psi == testFile.ktFile }
             if (firFile != null) {
-                val coneDiagnostics = collector.collectDiagnostics(firFile)
-                testFile.getActualText(coneDiagnostics, actualText)
+                testFile.getActualText(diagnostics.getValue(firFile), actualText)
             } else {
                 actualText.append(testFile.expectedText)
             }
@@ -92,8 +92,19 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         KotlinTestUtils.assertEqualsToFile(file, actualText.toString())
     }
 
-    protected fun createCollector(): AbstractDiagnosticCollector {
-        return FirDiagnosticsCollector.create()
+    protected fun collectDiagnostics(firFiles: List<FirFile>): Map<FirFile, List<FirDiagnostic<*>>> {
+        val collectors = mutableMapOf<FirSession, AbstractDiagnosticCollector>()
+        val result = mutableMapOf<FirFile, List<FirDiagnostic<*>>>()
+        for (firFile in firFiles) {
+            val session = firFile.session
+            val collector = collectors.computeIfAbsent(session) { createCollector(session) }
+            result[firFile] = collector.collectDiagnostics(firFile).toList()
+        }
+        return result
+    }
+
+    private fun createCollector(session: FirSession): AbstractDiagnosticCollector {
+        return FirDiagnosticsCollector.create(session)
     }
 
     private fun checkCfg(testDataFile: File, firFiles: List<FirFile>) {

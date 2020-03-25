@@ -28,20 +28,16 @@ open class PodspecTask : DefaultTask() {
 
     private val specName = project.name.asValidFrameworkName()
 
-    @OutputFile
-    val outputFile: File = project.projectDir.resolve("$specName.podspec")
-
-    @Input
-    val frameworkNameProvider: Provider<String> = project.provider { settings.frameworkName }
+    @get:OutputFile
+    internal val outputFileProvider: Provider<File> = project.provider { project.file("$specName.podspec") }
 
     @get:Nested
-    internal lateinit var settings: CocoapodsExtension
+    internal lateinit var cocoapodsExtension: CocoapodsExtension
 
-    // TODO: Handle Framework name customization - rename the framework during sync process.
     @TaskAction
     fun generate() {
-        val frameworkDir = project.cocoapodsBuildDirs.framework.relativeTo(outputFile.parentFile).path
-        val dependencies = settings.pods.map { pod ->
+        val frameworkDir = project.cocoapodsBuildDirs.framework.relativeTo(outputFileProvider.get().parentFile).path
+        val dependencies = cocoapodsExtension.pods.map { pod ->
             val versionSuffix = if (pod.version != null) ", '${pod.version}'" else ""
             "|    spec.dependency '${pod.name}'$versionSuffix"
         }.joinToString(separator = "\n")
@@ -61,66 +57,69 @@ open class PodspecTask : DefaultTask() {
         val syncTask = "${project.path}:$SYNC_TASK_NAME"
 
 
-        outputFile.writeText(
-            """
-            |Pod::Spec.new do |spec|
-            |    spec.name                     = '$specName'
-            |    spec.version                  = '${settings.version}'
-            |    spec.homepage                 = '${settings.homepage.orEmpty()}'
-            |    spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
-            |    spec.authors                  = '${settings.authors.orEmpty()}'
-            |    spec.license                  = '${settings.license.orEmpty()}'
-            |    spec.summary                  = '${settings.summary.orEmpty()}'
-            |
-            |    spec.static_framework         = true
-            |    spec.vendored_frameworks      = "$frameworkDir/${frameworkNameProvider.get()}.framework"
-            |    spec.libraries                = "c++"
-            |    spec.module_name              = "#{spec.name}_umbrella"
-            |
-            $dependencies
-            |
-            |    spec.pod_target_xcconfig = {
-            |        'KOTLIN_TARGET[sdk=iphonesimulator*]' => 'ios_x64',
-            |        'KOTLIN_TARGET[sdk=iphoneos*]' => '$KOTLIN_TARGET_FOR_IOS_DEVICE',
-            |        'KOTLIN_TARGET[sdk=watchsimulator*]' => 'watchos_x86',
-            |        'KOTLIN_TARGET[sdk=watchos*]' => '$KOTLIN_TARGET_FOR_WATCHOS_DEVICE',
-            |        'KOTLIN_TARGET[sdk=appletvsimulator*]' => 'tvos_x64',
-            |        'KOTLIN_TARGET[sdk=appletvos*]' => 'tvos_arm64',
-            |        'KOTLIN_TARGET[sdk=macosx*]' => 'macos_x64'
-            |    }
-            |
-            |    spec.script_phases = [
-            |        {
-            |            :name => 'Build $specName',
-            |            :execution_position => :before_compile,
-            |            :shell_path => '/bin/sh',
-            |            :script => <<-SCRIPT
-            |                set -ev
-            |                REPO_ROOT="${'$'}PODS_TARGET_SRCROOT"
-            |                "$gradleCommand" -p "${'$'}REPO_ROOT" $syncTask \
-            |                    -P${KotlinCocoapodsPlugin.TARGET_PROPERTY}=${'$'}KOTLIN_TARGET \
-            |                    -P${KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY}=${'$'}CONFIGURATION \
-            |                    -P${KotlinCocoapodsPlugin.CFLAGS_PROPERTY}="${'$'}OTHER_CFLAGS" \
-            |                    -P${KotlinCocoapodsPlugin.HEADER_PATHS_PROPERTY}="${'$'}HEADER_SEARCH_PATHS" \
-            |                    -P${KotlinCocoapodsPlugin.FRAMEWORK_PATHS_PROPERTY}="${'$'}FRAMEWORK_SEARCH_PATHS"
-            |            SCRIPT
-            |        }
-            |    ]
-            |end
+        with(outputFileProvider.get()) {
+            writeText(
+                """
+                |Pod::Spec.new do |spec|
+                |    spec.name                     = '$specName'
+                |    spec.version                  = '${cocoapodsExtension.version}'
+                |    spec.homepage                 = '${cocoapodsExtension.homepage.orEmpty()}'
+                |    spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
+                |    spec.authors                  = '${cocoapodsExtension.authors.orEmpty()}'
+                |    spec.license                  = '${cocoapodsExtension.license.orEmpty()}'
+                |    spec.summary                  = '${cocoapodsExtension.summary.orEmpty()}'
+                |
+                |    spec.static_framework         = true
+                |    spec.vendored_frameworks      = "$frameworkDir/${cocoapodsExtension.frameworkName}.framework"
+                |    spec.libraries                = "c++"
+                |    spec.module_name              = "#{spec.name}_umbrella"
+                |
+                $dependencies
+                |
+                |    spec.pod_target_xcconfig = {
+                |        'KOTLIN_TARGET[sdk=iphonesimulator*]' => 'ios_x64',
+                |        'KOTLIN_TARGET[sdk=iphoneos*]' => '$KOTLIN_TARGET_FOR_IOS_DEVICE',
+                |        'KOTLIN_TARGET[sdk=watchsimulator*]' => 'watchos_x86',
+                |        'KOTLIN_TARGET[sdk=watchos*]' => '$KOTLIN_TARGET_FOR_WATCHOS_DEVICE',
+                |        'KOTLIN_TARGET[sdk=appletvsimulator*]' => 'tvos_x64',
+                |        'KOTLIN_TARGET[sdk=appletvos*]' => 'tvos_arm64',
+                |        'KOTLIN_TARGET[sdk=macosx*]' => 'macos_x64'
+                |    }
+                |
+                |    spec.script_phases = [
+                |        {
+                |            :name => 'Build $specName',
+                |            :execution_position => :before_compile,
+                |            :shell_path => '/bin/sh',
+                |            :script => <<-SCRIPT
+                |                set -ev
+                |                REPO_ROOT="${'$'}PODS_TARGET_SRCROOT/../"
+                |                "$gradleCommand" -p "${'$'}REPO_ROOT" $syncTask \
+                |                    -P${KotlinCocoapodsPlugin.TARGET_PROPERTY}=${'$'}KOTLIN_TARGET \
+                |                    -P${KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY}=${'$'}CONFIGURATION \
+                |                    -P${KotlinCocoapodsPlugin.CFLAGS_PROPERTY}="${'$'}OTHER_CFLAGS" \
+                |                    -P${KotlinCocoapodsPlugin.HEADER_PATHS_PROPERTY}="${'$'}HEADER_SEARCH_PATHS" \
+                |                    -P${KotlinCocoapodsPlugin.FRAMEWORK_PATHS_PROPERTY}="${'$'}FRAMEWORK_SEARCH_PATHS"
+                |            SCRIPT
+                |        }
+                |    ]
+                |end
         """.trimMargin()
-        )
+            )
 
-        logger.quiet(
-            """
-            Generated a podspec file at: ${outputFile.absolutePath}.
+            logger.quiet(
+                """
+            Generated a podspec file at: ${absolutePath}.
             To include it in your Xcode project, add the following dependency snippet in your Podfile:
 
-                pod '$specName', :path => '${outputFile.parentFile.absolutePath}'
+                pod '$specName', :path => '${parentFile.absolutePath}'
 
             """.trimIndent()
-        )
+            )
+        }
     }
 }
+
 
 /**
  * Creates a dummy framework in the target directory.

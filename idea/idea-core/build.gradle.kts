@@ -19,9 +19,10 @@ dependencies {
     compile(project(":kotlin-util-klib-metadata"))
     compile(project(":plugins:android-extensions-compiler"))
     compile(project(":kotlin-scripting-compiler-impl"))
-    compile(project(":compiler:fir:psi2fir"))
+    compile(project(":compiler:fir:raw-fir:psi2fir"))
     compile(project(":compiler:fir:fir2ir"))
     compile(project(":compiler:fir:resolve"))
+    compile(project(":compiler:fir:checkers"))
     compile(project(":compiler:fir:java"))
     compile(project(":compiler:fir:jvm"))
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }

@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.scripting.extensions.ScriptingResolveExtension
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
 import java.net.URLClassLoader
 
-private fun <T> ProjectExtensionDescriptor<T>.registerExtensionIfRequired(project: MockProject, extension: T) {
+private fun <T : Any> ProjectExtensionDescriptor<T>.registerExtensionIfRequired(project: MockProject, extension: T) {
     try {
         registerExtension(project, extension)
     } catch (ex: IllegalArgumentException) {

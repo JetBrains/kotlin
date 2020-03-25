@@ -52,7 +52,7 @@ abstract class AbstractCoroutineDumpTest : KotlinDescriptorTestCaseWithStepping(
 
     private fun stringDump(infoData: List<CoroutineInfoData>) = buildString {
         infoData.forEach {
-            appendln("\"${it.name}\", state: ${it.state}")
+            appendln("\"${it.key.name}\", state: ${it.key.state}")
         }
     }
 

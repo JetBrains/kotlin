@@ -311,7 +311,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
             else -> null
         }
         return if (defaultPrimitive == null)
-            irNull() to (compilerContext.builtIns.nullableAnyType)
+            irNull(compilerContext.irBuiltIns.anyNType) to (compilerContext.builtIns.nullableAnyType)
         else
             defaultPrimitive to kType
     }

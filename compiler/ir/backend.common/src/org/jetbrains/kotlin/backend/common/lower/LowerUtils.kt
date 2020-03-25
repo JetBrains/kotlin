@@ -185,7 +185,7 @@ fun IrConstructor.callsSuper(irBuiltIns: IrBuiltIns): Boolean {
             else if (delegatingClass.descriptor != constructedClass.descriptor)
                 throw AssertionError(
                     "Expected either call to another constructor of the class being constructed or" +
-                            " call to super class constructor. But was: $delegatingClass"
+                            " call to super class constructor. But was: $delegatingClass with '${delegatingClass.name}' name"
                 )
         }
     })

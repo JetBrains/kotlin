@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:Suppress("Duplicates")
@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
 import org.jetbrains.kotlin.frontend.java.di.configureJavaSpecificComponents
 import org.jetbrains.kotlin.frontend.java.di.initializeJavaSpecificComponents
+import org.jetbrains.kotlin.idea.klib.createKlibPackageFragmentProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
-import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -130,11 +130,9 @@ class CompositeResolverForModuleFactory(
         val metadataProvder = container.get<MetadataPackageFragmentProvider>()
         var klibMetadataProvider: PackageFragmentProvider? = null
 
-        if (moduleInfo is CommonKlibLibraryInfo && moduleInfo.compatibilityInfo.isCompatible) {
-            val library = moduleInfo.commonLibrary
+        if (moduleInfo is CommonKlibLibraryInfo) {
+            val library = moduleInfo.resolvedKotlinLibrary
             val languageVersionSettings = container.get<LanguageVersionSettings>()
-
-            val packageFragmentNames = parseModuleHeader(library.moduleHeaderData).packageFragmentNameList
 
             val metadataFactories = KlibMetadataFactories(
                 { DefaultBuiltIns.Instance },
@@ -148,14 +146,11 @@ class CompositeResolverForModuleFactory(
                 metadataFactories.platformDependentTypeTransformer
             )
 
-            klibMetadataProvider = klibMetadataModuleDescriptorFactory.createPackageFragmentProvider(
-                library,
-                packageAccessHandler = null,
-                packageFragmentNames = packageFragmentNames,
-                storageManager = moduleContext.storageManager,
-                moduleDescriptor = moduleDescriptor,
-                configuration = CompilerDeserializationConfiguration(languageVersionSettings),
-                compositePackageFragmentAddend = null
+            klibMetadataProvider = library.createKlibPackageFragmentProvider(
+                moduleContext.storageManager,
+                klibMetadataModuleDescriptorFactory,
+                languageVersionSettings,
+                moduleDescriptor
             )
         }
         return listOfNotNull(metadataProvder, klibMetadataProvider)
@@ -186,17 +181,7 @@ class CompositeResolverForModuleFactory(
     ): List<PackageFragmentProvider> {
         if (moduleInfo !is LibraryModuleInfo || !moduleInfo.platform.isJs()) return emptyList()
 
-        return moduleInfo.getLibraryRoots()
-            .flatMap { KotlinJavascriptMetadataUtils.loadMetadata(it) }
-            .filter { it.version.isCompatible() }
-            .map { metadata ->
-                val (header, packageFragmentProtos) =
-                    KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body, metadata.version)
-                createKotlinJavascriptPackageFragmentProvider(
-                    moduleContext.storageManager, moduleDescriptor, header, packageFragmentProtos, metadata.version,
-                    container.get(), LookupTracker.DO_NOTHING
-                )
-            }
+        return createPackageFragmentProvider(moduleInfo, container, moduleContext, moduleDescriptor)
     }
 
     fun createContainerForCompositePlatform(

@@ -616,7 +616,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
     ) {
         if (isAKotlinScriptFile(fileName)) {
             runAndMeasure("update script dependencies for $fileName") {
-                ScriptConfigurationManager.updateScriptDependenciesSynchronously(fixture.psiFile, project)
+                ScriptConfigurationManager.updateScriptDependenciesSynchronously(fixture.psiFile)
             }
         }
     }
@@ -691,7 +691,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
             iterations(50)
             setUp { it.setUpValue = openFileInEditor(project, fileName) }
             test {
-                ScriptConfigurationManager.updateScriptDependenciesSynchronously(it.setUpValue!!.psiFile, project)
+                ScriptConfigurationManager.updateScriptDependenciesSynchronously(it.setUpValue!!.psiFile)
                 it.value = it.setUpValue
             }
             tearDown {

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
@@ -38,19 +39,17 @@ abstract class KotlinJsIrSubTarget(
     internal fun configure() {
         NpmResolverPlugin.apply(project)
 
-        configureBuildVariants()
         configureTests()
 
         target.compilations.all {
             val npmProject = it.npmProject
-            listOf(
-                it.productionLinkTask,
-                it.developmentLinkTask
-            ).forEach { taskProvider ->
-                taskProvider.configure {
-                    it.kotlinOptions.outputFile = npmProject.dir.resolve(npmProject.main).canonicalPath
+            it.binaries
+                .withType(JsIrBinary::class.java)
+                .all { binary ->
+                    binary.linkTask.configure {
+                        it.kotlinOptions.outputFile = npmProject.dir.resolve(npmProject.main).canonicalPath
+                    }
                 }
-            }
         }
     }
 
@@ -65,8 +64,6 @@ abstract class KotlinJsIrSubTarget(
     protected fun disambiguateCamelCased(vararg names: String): String =
         lowerCamelCaseName(target.disambiguationClassifier, disambiguationClassifier, *names)
 
-    abstract fun configureBuildVariants()
-
     private fun configureTests() {
         testRuns = project.container(KotlinJsPlatformTestRun::class.java) { name -> KotlinJsPlatformTestRun(name, target) }.also {
             (this as ExtensionAware).extensions.add(this::testRuns.name, it)
@@ -78,6 +75,7 @@ abstract class KotlinJsIrSubTarget(
 
     protected open fun configureTestRunDefaults(testRun: KotlinJsPlatformTestRun) {
         target.compilations.matching { it.name == KotlinCompilation.TEST_COMPILATION_NAME }.all { compilation ->
+            compilation.binaries.executableIrInternal(compilation)
             configureTestsRun(testRun, compilation)
         }
     }
@@ -94,7 +92,13 @@ abstract class KotlinJsIrSubTarget(
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
             testJs.description = testTaskDescription
 
-            testJs.inputFileProperty.set(compilation.developmentLinkTask.map { it.outputFileProperty.get() })
+            val testExecutableTask = compilation.binaries.getIrBinary(
+                KotlinJsBinaryType.DEVELOPMENT
+            ).linkTask
+
+            testJs.inputFileProperty.set(
+                testExecutableTask.map { it.outputFileProperty.get() }
+            )
 
             testJs.dependsOn(nodeJs.npmInstallTask, nodeJs.nodeJsSetupTask)
 

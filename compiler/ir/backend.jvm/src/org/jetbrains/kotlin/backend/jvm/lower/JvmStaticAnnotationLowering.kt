@@ -59,29 +59,33 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
     override fun lower(irClass: IrClass) {
         val companion = irClass.declarations.find {
             it is IrClass && it.isCompanion
-        } as IrClass?
+        } as? IrClass ?: return
 
-        companion?.declarations?.filter(::isJvmStaticFunction)?.forEach { declaration ->
-            val jvmStaticFunction = declaration as IrSimpleFunction
-            if (jvmStaticFunction.isExternal) {
-                // We move external functions to the enclosing class and potentially add accessors there.
-                // The JVM backend also adds accessors in the companion object, but these are superfluous.
-                val staticExternal = irClass.addFunction {
-                    updateFrom(jvmStaticFunction)
-                    name = jvmStaticFunction.name
-                    returnType = jvmStaticFunction.returnType
-                }.apply {
-                    copyTypeParametersFrom(jvmStaticFunction)
-                    extensionReceiverParameter = jvmStaticFunction.extensionReceiverParameter?.copyTo(this)
-                    valueParameters = jvmStaticFunction.valueParameters.map { it.copyTo(this) }
-                    annotations = jvmStaticFunction.annotations.map { it.deepCopyWithSymbols() }
+        companion.declarations
+            // In case of companion objects, proxy functions for '$default' methods for @JvmStatic functions with default parameters
+            // are not created in the host class.
+            .filter { isJvmStaticFunction(it) && it.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER }
+            .forEach { declaration ->
+                val jvmStaticFunction = declaration as IrSimpleFunction
+                if (jvmStaticFunction.isExternal) {
+                    // We move external functions to the enclosing class and potentially add accessors there.
+                    // The JVM backend also adds accessors in the companion object, but these are superfluous.
+                    val staticExternal = irClass.addFunction {
+                        updateFrom(jvmStaticFunction)
+                        name = jvmStaticFunction.name
+                        returnType = jvmStaticFunction.returnType
+                    }.apply {
+                        copyTypeParametersFrom(jvmStaticFunction)
+                        extensionReceiverParameter = jvmStaticFunction.extensionReceiverParameter?.copyTo(this)
+                        valueParameters = jvmStaticFunction.valueParameters.map { it.copyTo(this) }
+                        annotations = jvmStaticFunction.annotations.map { it.deepCopyWithSymbols() }
+                    }
+                    companion.declarations.remove(jvmStaticFunction)
+                    companion.addProxy(staticExternal, companion, isStatic = false)
+                } else {
+                    irClass.addProxy(jvmStaticFunction, companion)
                 }
-                companion.declarations.remove(jvmStaticFunction)
-                companion.addProxy(staticExternal, companion, isStatic = false)
-            } else {
-                irClass.addProxy(jvmStaticFunction, companion)
             }
-        }
     }
 
     private fun IrClass.addProxy(target: IrSimpleFunction, companion: IrClass, isStatic: Boolean = true) =

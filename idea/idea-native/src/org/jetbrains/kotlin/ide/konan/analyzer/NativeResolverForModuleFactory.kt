@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
-import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo
-import org.jetbrains.kotlin.ide.konan.createPackageFragmentProvider
+import org.jetbrains.kotlin.ide.konan.NativePlatformKindResolution.Companion.createNativeKlibPackageFragmentProvider
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.konan.KonanPlatforms
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
@@ -57,19 +56,13 @@ class NativeResolverForModuleFactory(
         val packageFragmentProvider = container.get<ResolveSession>().packageFragmentProvider
         val fragmentProviders = mutableListOf(packageFragmentProvider)
 
-        val moduleInfo = moduleContent.moduleInfo
-
-        val konanLibrary = moduleInfo.getCapability(NativeLibraryInfo.NATIVE_LIBRARY_CAPABILITY)
-        if (konanLibrary != null) {
-            val libPackageFragmentProvider =
-                konanLibrary.createPackageFragmentProvider(
-                    moduleContext.storageManager,
-                    languageVersionSettings,
-                    moduleDescriptor
-                )
-
-            fragmentProviders.addIfNotNull(libPackageFragmentProvider)
-        }
+        val klibPackageFragmentProvider = createNativeKlibPackageFragmentProvider(
+            moduleContent.moduleInfo,
+            moduleContext.storageManager,
+            languageVersionSettings,
+            moduleDescriptor
+        )
+        fragmentProviders.addIfNotNull(klibPackageFragmentProvider)
 
         return ResolverForModule(CompositePackageFragmentProvider(fragmentProviders), container)
     }

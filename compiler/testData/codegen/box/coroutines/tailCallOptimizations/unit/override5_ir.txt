@@ -48,7 +48,7 @@ public final class Override5Kt$inlineMe$1$generic$2 {
 
 @kotlin.Metadata
 public final class Override5Kt$inlineMe$1 {
-    private synthetic final field $c: kotlin.jvm.functions.Function1
+    synthetic final @org.jetbrains.annotations.NotNull field $c: kotlin.jvm.functions.Function1
     inner class Override5Kt$inlineMe$1
     inner class Override5Kt$inlineMe$1$generic$1
     inner class Override5Kt$inlineMe$1$generic$2

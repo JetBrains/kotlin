@@ -43,7 +43,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             ) {
                 assertSuccessful()
 
-                assertTasksExecuted(":compileProductionKotlinJs")
+                assertTasksExecuted(":compileProductionExecutableKotlinJs")
 
                 assertFileExists("build/js/packages/kotlin-js-nodejs/kotlin/kotlin-js-nodejs.js")
             }
@@ -53,9 +53,9 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             gradleBuildScript().appendText(
                 """${"\n"}
                 tasks {
-                    named("compileProductionKotlinJs").configure {
+                    named("compileProductionExecutableKotlinJs").configure {
                         this as org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
-                        type = org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType.DEVELOPMENT
+                        type = org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType.DEVELOPMENT
                     }
                 }
             """.trimIndent()

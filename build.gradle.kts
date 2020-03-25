@@ -27,10 +27,9 @@ buildscript {
     dependencies {
         bootstrapCompilerClasspath(kotlin("compiler-embeddable", bootstrapKotlinVersion))
 
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.15")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.16")
         classpath("com.gradle.publish:plugin-publish-plugin:0.9.7")
         classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
-        classpath("net.sf.proguard:proguard-gradle:6.1.0")
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
     }
 }
@@ -176,12 +175,13 @@ extra["versions.markdown"] = "0.1.25"
 extra["versions.trove4j"] = "1.0.20181211"
 extra["versions.completion-ranking-kotlin"] = "0.1.2"
 extra["versions.r8"] = "1.5.70"
+extra["versions.kotlinx-collections-immutable"] = "0.3.1"
 
 // NOTE: please, also change KTOR_NAME in pathUtil.kt and all versions in corresponding jar names in daemon tests.
 extra["versions.ktor-network"] = "1.0.1"
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.4-dev-14579"
+    extra["versions.kotlin-native"] = "1.4-M2-dev-15039"
 }
 
 val intellijUltimateEnabled by extra(project.kotlinBuildProperties.intellijUltimateEnabled)
@@ -256,11 +256,15 @@ extra["compilerModules"] = arrayOf(
     ":compiler:fir:cones",
     ":compiler:fir:resolve",
     ":compiler:fir:tree",
-    ":compiler:fir:psi2fir",
-    ":compiler:fir:lightTree",
+    ":compiler:fir:raw-fir:common",
+    ":compiler:fir:raw-fir:psi2fir",
+    ":compiler:fir:raw-fir:light-tree2fir",
     ":compiler:fir:fir2ir",
+    ":compiler:fir:fir2ir:jvm-backend",
     ":compiler:fir:java",
-    ":compiler:fir:jvm"
+    ":compiler:fir:jvm",
+    ":compiler:fir:checkers",
+    ":compiler:fir:analysis-tests"
 )
 
 val coreLibProjects = listOfNotNull(
@@ -551,19 +555,19 @@ tasks {
     }
 
     register("firCompilerTest") {
-        dependsOn(":compiler:fir:psi2fir:test")
-        dependsOn(":compiler:fir:resolve:test")
+        dependsOn(":compiler:fir:raw-fir:psi2fir:test")
+        dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")
+        dependsOn(":compiler:fir:analysis-tests:test")
         dependsOn(":compiler:fir:fir2ir:test")
-        dependsOn(":compiler:fir:lightTree:test")
     }
 
     register("firAllTest") {
         dependsOn(
-            ":compiler:fir:psi2fir:test",
-            ":compiler:fir:lightTree:test",
-            ":compiler:fir:resolve:test",
+            ":compiler:fir:raw-fir:psi2fir:test",
+            ":compiler:fir:raw-fir:light-tree2fir:test",
+            ":compiler:fir:analysis-tests:test",
             ":compiler:fir:fir2ir:test",
-            ":idea:firTest"
+            ":idea:idea-fir:test"
         )
     }
 
@@ -657,7 +661,8 @@ tasks {
             ":idea:jvm-debugger:jvm-debugger-evaluation:test",
             ":idea:jvm-debugger:jvm-debugger-sequence:test",
             ":idea:jvm-debugger:eval4j:test",
-            ":idea:scripting-support:test"
+            ":idea:scripting-support:test",
+            ":idea:idea-fir:test"
         )
     }
 

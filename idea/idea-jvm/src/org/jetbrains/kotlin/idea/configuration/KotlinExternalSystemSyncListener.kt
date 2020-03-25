@@ -20,19 +20,19 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComponent
+import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerService
 
 class KotlinExternalSystemSyncListener : ExternalSystemTaskNotificationListenerAdapter() {
     override fun onStart(id: ExternalSystemTaskId, workingDir: String) {
         val project = id.findResolvedProject() ?: return
         KotlinMigrationProjectComponent.getInstanceIfNotDisposed(project)?.onImportAboutToStart()
-        KotlinConfigurationCheckerComponent.getInstanceIfNotDisposed(project)?.syncStarted()
+        KotlinConfigurationCheckerService.getInstanceIfNotDisposed(project)?.syncStarted()
     }
 
     override fun onEnd(id: ExternalSystemTaskId) {
         // At this point changes might be still not applied to project structure yet.
         val project = id.findResolvedProject() ?: return
-        KotlinConfigurationCheckerComponent.getInstanceIfNotDisposed(project)?.syncDone()
+        KotlinConfigurationCheckerService.getInstanceIfNotDisposed(project)?.syncDone()
     }
 }
 

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -22,7 +22,7 @@ abstract class FirErrorLoop : FirLoop(), FirDiagnosticHolder {
     abstract override val block: FirBlock
     abstract override val condition: FirExpression
     abstract override val label: FirLabel?
-    abstract override val diagnostic: FirDiagnostic
+    abstract override val diagnostic: ConeDiagnostic
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorLoop(this, data)
 

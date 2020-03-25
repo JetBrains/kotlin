@@ -5,47 +5,71 @@
 
 package org.jetbrains.kotlin.idea.debugger.coroutine
 
-import com.intellij.debugger.engine.*
-import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
+import com.intellij.debugger.engine.AsyncStackTraceProvider
+import com.intellij.debugger.engine.JavaStackFrame
+import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
-import com.intellij.xdebugger.frame.XSuspendContext
-import com.sun.jdi.*
-import org.jetbrains.kotlin.idea.debugger.*
+import com.intellij.debugger.memory.utils.StackFrameItem
+import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.*
+import org.jetbrains.kotlin.idea.debugger.coroutine.data.PreCoroutineStackFrameItem
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineStackFrameItem
-import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.AsyncStackTraceContext
-import org.jetbrains.kotlin.idea.debugger.evaluate.BaseExecutionContext
-import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
-import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
+import org.jetbrains.kotlin.idea.debugger.hopelessAware
+import org.jetbrains.kotlin.idea.debugger.isInKotlinSources
 
 class CoroutineAsyncStackTraceProvider : AsyncStackTraceProvider {
 
-    override fun getAsyncStackTrace(stackFrame: JavaStackFrame, suspendContext: SuspendContextImpl): List<CoroutineStackFrameItem>? =
-        getAsyncStackTrace(stackFrame, suspendContext as XSuspendContext)
-
-    fun getAsyncStackTrace(stackFrame: JavaStackFrame, suspendContext: XSuspendContext): List<CoroutineStackFrameItem>? {
-        val stackFrameList = hopelessAware { getAsyncStackTraceSafe(stackFrame.stackFrameProxy, suspendContext) }
-        return if (stackFrameList == null || stackFrameList.isEmpty()) null else stackFrameList
+    override fun getAsyncStackTrace(stackFrame: JavaStackFrame, suspendContext: SuspendContextImpl): List<StackFrameItem>? {
+        val stackFrameList = hopelessAware {
+            if (stackFrame is CoroutinePreflightStackFrame)
+                lookupForAfterPreflight(stackFrame, suspendContext)
+            else
+                null
+        }
+        return if (stackFrameList == null || stackFrameList.isEmpty())
+            null
+        else stackFrameList
     }
 
-    fun getAsyncStackTraceSafe(frameProxy: StackFrameProxyImpl, suspendContext: XSuspendContext): List<CoroutineStackFrameItem> {
-        val defaultResult = emptyList<CoroutineStackFrameItem>()
+    fun lookupForAfterPreflight(
+        stackFrame: CoroutinePreflightStackFrame,
+        suspendContext: SuspendContextImpl
+    ): List<CoroutineStackFrameItem>? {
+        val resumeWithFrame = stackFrame.resumeWithFrame
 
+        if (threadAndContextSupportsEvaluation(suspendContext, resumeWithFrame)) {
+            val stackFrames = mutableListOf<CoroutineStackFrameItem>()
+            stackFrames.addAll(
+                stackFrame.restoredStackFrame.drop(1).dropLast(1)
+            ) // because first frame has been generated via CoroutinePreflightStackFrame
+
+            val lastRestoredFrame = stackFrame.restoredStackFrame.last()
+
+            stackFrames.addAll(stackFrame.threadPreCoroutineFrames.mapIndexed { index, stackFrameProxyImpl ->
+                if (index == 0)
+                    PreCoroutineStackFrameItem(stackFrameProxyImpl, lastRestoredFrame) // get location and variables also from restored part
+                else
+                    PreCoroutineStackFrameItem(stackFrameProxyImpl)
+            })
+            return stackFrames
+        }
+        return null
+    }
+
+    fun lookupForResumeContinuation(
+        frameProxy: StackFrameProxyImpl,
+        suspendContext: SuspendContextImpl
+    ): List<CoroutineStackFrameItem>? {
         val location = frameProxy.location()
         if (!location.isInKotlinSources())
-            return defaultResult
+            return null
 
-        val method = location.safeMethod() ?: return defaultResult
-        val threadReference = frameProxy.threadProxy().threadReference
-
-        if (threadReference == null || !threadReference.isSuspended || !canRunEvaluation(suspendContext))
-            return defaultResult
-
-        val context = DefaultExecutionContext(suspendContext as SuspendContextImpl, frameProxy)
-        val astContext = AsyncStackTraceContext(context, method)
-        return astContext.getAsyncStackTraceIfAny()
+        if (threadAndContextSupportsEvaluation(suspendContext, frameProxy))
+            return ContinuationHolder.lookupForResumeMethodContinuation(suspendContext, frameProxy)
+                ?.getAsyncStackTraceIfAny()?.stackFrameItems
+        return null
     }
 
-    fun canRunEvaluation(suspendContext: XSuspendContext) =
-        (suspendContext as SuspendContextImpl).debugProcess.canRunEvaluation
+    private fun threadAndContextSupportsEvaluation(suspendContext: SuspendContextImpl, frameProxy: StackFrameProxyImpl) =
+        suspendContext.supportsEvaluation() && frameProxy.threadProxy().supportsEvaluation()
 }
 

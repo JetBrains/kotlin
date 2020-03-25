@@ -284,10 +284,11 @@ class MethodInliner(
 
                     val childSourceMapper =
                         if (inliningContext.classRegeneration && !inliningContext.isInliningLambda)
-                            NestedSourceMapper(sourceMapper, lambdaSMAP.intervals, lambdaSMAP.sourceInfo)
-                        else if (info is DefaultLambda) {
-                            NestedSourceMapper(sourceMapper.parent!!, lambdaSMAP.intervals, lambdaSMAP.sourceInfo)
-                        } else InlineLambdaSourceMapper(sourceMapper.parent!!, info.node)
+                            NestedSourceMapper(sourceMapper, lambdaSMAP)
+                        else if (info is DefaultLambda)
+                            NestedSourceMapper(sourceMapper.parent!!, lambdaSMAP)
+                        else
+                            SameFileNestedSourceMapper(sourceMapper.parent!!, info.node.classSMAP)
 
                     val inliner = MethodInliner(
                         info.node.node, lambdaParameters, inliningContext.subInlineLambda(info),
@@ -859,9 +860,20 @@ class MethodInliner(
         needReification: Boolean,
         capturesAnonymousObjectThatMustBeRegenerated: Boolean
     ): AnonymousObjectTransformationInfo {
-
+        // In objects inside non-default inline lambdas, all reified type parameters are free (not from the function
+        // we're inlining into) so there's nothing to reify:
+        //
+        //     inline fun <reified T> f(x: () -> KClass<T> = { { T::class }() }) = x()
+        //     fun a() = f<Int>()
+        //     fun b() = f<Int> { { Int::class }() } // non-default lambda
+        //     inline fun <reified V> c() = f<V> { { V::class }() }
+        //
+        // -- in a(), the default inline lambda captures T so a regeneration is needed; but in b() and c(), the non-default
+        // inline lambda cannot possibly reference it, while V is not yet bound so regenerating the object while inlining
+        // the lambda into f() is pointless.
+        val inNonDefaultLambda = inliningContext.isInliningLambda && inliningContext.lambdaInfo !is DefaultLambda
         val info = AnonymousObjectTransformationInfo(
-            anonymousType, needReification, lambdaMapping,
+            anonymousType, needReification && !inNonDefaultLambda, lambdaMapping,
             inliningContext.classRegeneration,
             isAlreadyRegenerated(anonymousType),
             desc,

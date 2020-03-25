@@ -194,6 +194,7 @@ sealed class BaseExecutionContext(val evaluationContext: EvaluationContextImpl) 
 
     fun findAndInvoke(instance: ObjectReference, name: String, methodSignature: String? = null, vararg params: Value): Value? {
         val type = instance.referenceType()
+        type.allMethods()
         val method =
             if (methodSignature is String)
                 type.methodsByName(name, methodSignature).single()

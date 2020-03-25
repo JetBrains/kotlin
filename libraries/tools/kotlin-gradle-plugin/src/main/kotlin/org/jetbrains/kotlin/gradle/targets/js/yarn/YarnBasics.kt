@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
+import com.github.gundy.semver4j.SemVer
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLock.Companion.dependencyKey
 import java.io.File
 
 abstract class YarnBasics : NpmApi {
@@ -97,54 +99,73 @@ abstract class YarnBasics : NpmApi {
         nodeWorkDir: File,
         srcDependenciesList: Collection<NpmDependency>
     ) {
-        val yarnLock = nodeWorkDir.resolve("yarn.lock")
-        if (yarnLock.isFile) {
-            val byKey = YarnLock.parse(yarnLock).entries.associateBy { it.key }
-            val visited = mutableMapOf<NpmDependency, NpmDependency>()
+        val yarnLock = nodeWorkDir
+            .resolve("yarn.lock")
+            .takeIf { it.isFile }
+            ?: return
 
-            fun resolveRecursively(src: NpmDependency): NpmDependency {
-                val copy = visited[src]
-                if (copy != null) {
-                    src.resolvedVersion = copy.resolvedVersion
-                    src.integrity = copy.integrity
-                    src.dependencies.addAll(copy.dependencies)
-                    return src
-                }
-                visited[src] = src
+        val entryRegistry = YarnEntryRegistry(yarnLock)
+        val visited = mutableMapOf<NpmDependency, NpmDependency>()
 
-                val key = YarnLock.key(src.key, src.version)
-                val deps = byKey[key]
-                    ?: if (src.version == "*") byKey.entries
-                        .firstOrNull { it.key.startsWith(YarnLock.key(src.key, "")) }
-                        ?.value
-                    else null
-
-                if (deps != null) {
-                    src.resolvedVersion = deps.version
-                    src.integrity = deps.integrity
-                    src.dependencies.addAll(deps.dependencies.map { dep ->
-                        val scopedName = dep.scopedName
-                        val child = NpmDependency(
-                            src.project,
-                            scopedName.toString(),
-                            dep.version ?: "*"
-                        )
-                        child.parent = src
-
-                        resolveRecursively(child)
-
-                        child
-                    })
-                } else {
-                    error("Cannot find $key in yarn.lock")
-                }
-
+        fun resolveRecursively(src: NpmDependency): NpmDependency {
+            val copy = visited[src]
+            if (copy != null) {
+                src.resolvedVersion = copy.resolvedVersion
+                src.integrity = copy.integrity
+                src.dependencies.addAll(copy.dependencies)
                 return src
             }
+            visited[src] = src
 
-            srcDependenciesList.forEach { src ->
-                resolveRecursively(src)
+            val deps = entryRegistry.find(src.key, src.version)
+
+            src.resolvedVersion = deps.version
+            src.integrity = deps.integrity
+
+            deps.dependencies.mapTo(src.dependencies) { dep ->
+                val scopedName = dep.scopedName
+                val child = NpmDependency(
+                    project = src.project,
+                    name = scopedName.toString(),
+                    version = dep.version ?: "*"
+                )
+                child.parent = src
+
+                resolveRecursively(child)
+
+                child
             }
+
+            return src
+        }
+
+        srcDependenciesList.forEach { src ->
+            resolveRecursively(src)
+        }
+    }
+}
+
+private class YarnEntryRegistry(lockFile: File) {
+    val entryMap = YarnLock.parse(lockFile)
+        .entries
+        .associateBy { it.dependencyKey }
+
+    fun find(packageKey: String, version: String): YarnLock.Entry {
+        val key = dependencyKey(packageKey, version)
+        var entry = entryMap[key]
+
+        if (entry == null && version == "*") {
+            val searchKey = dependencyKey(packageKey, "")
+            entry = entryMap.entries
+                .filter { it.key.startsWith(searchKey) }
+                .firstOrNull {
+                    SemVer.satisfies(it.key.removePrefix(searchKey), "*")
+                }
+                ?.value
+        }
+
+        return checkNotNull(entry) {
+            "Cannot find $key in yarn.lock"
         }
     }
 }

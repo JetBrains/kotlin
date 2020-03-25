@@ -35,7 +35,7 @@ abstract class AbstractScriptConfigurationHighlightingTest : AbstractScriptConfi
             }
         })
 
-        ScriptConfigurationManager.updateScriptDependenciesSynchronously(myFile, project)
+        ScriptConfigurationManager.updateScriptDependenciesSynchronously(myFile)
         checkHighlighting(editor, false, false)
     }
 }

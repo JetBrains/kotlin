@@ -10280,6 +10280,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/approximateBeforeFixation.kt");
                 }
 
+                @TestMetadata("avoidCreatingUselessCapturedTypes.kt")
+                public void testAvoidCreatingUselessCapturedTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/avoidCreatingUselessCapturedTypes.kt");
+                }
+
                 @TestMetadata("cannotCaptureInProjection.kt")
                 public void testCannotCaptureInProjection() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/cannotCaptureInProjection.kt");
@@ -10983,6 +10988,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/inferArgumentToNothingFromNullConstant.kt");
                 }
 
+                @TestMetadata("inferenceWithRecursiveGenericsAndNothing.kt")
+                public void testInferenceWithRecursiveGenericsAndNothing() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/inferenceWithRecursiveGenericsAndNothing.kt");
+                }
+
                 @TestMetadata("kt24490.kt")
                 public void testKt24490() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/kt24490.kt");
@@ -11041,6 +11051,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("platformNothingAsUsefulConstraint.kt")
                 public void testPlatformNothingAsUsefulConstraint() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/platformNothingAsUsefulConstraint.kt");
+                }
+
+                @TestMetadata("reifiedParameterWithRecursiveBound.kt")
+                public void testReifiedParameterWithRecursiveBound() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/reifiedParameterWithRecursiveBound.kt");
                 }
             }
 
@@ -11458,6 +11473,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("kt37043_2.kt")
                 public void testKt37043_2() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/regressions/kt37043_2.kt");
+                }
+
+                @TestMetadata("kt37650.kt")
+                public void testKt37650() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/regressions/kt37650.kt");
                 }
 
                 @TestMetadata("kt4420.kt")
@@ -18785,6 +18805,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("implicitInvoke.kt")
                 public void testImplicitInvoke() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/invoke/implicitInvoke.kt");
+                }
+
+                @TestMetadata("implicitInvokeAfterSafeCall.kt")
+                public void testImplicitInvokeAfterSafeCall() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/invoke/implicitInvokeAfterSafeCall.kt");
                 }
 
                 @TestMetadata("invokeAndSmartCast.kt")

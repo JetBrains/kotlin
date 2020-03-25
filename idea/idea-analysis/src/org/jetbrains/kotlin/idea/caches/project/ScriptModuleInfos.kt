@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 
 data class ScriptModuleInfo(
-    val project: Project,
+    override val project: Project,
     val scriptFile: VirtualFile,
     val scriptDefinition: ScriptDefinition
 ) : IdeaModuleInfo {
@@ -59,7 +59,7 @@ data class ScriptModuleInfo(
         get() = JvmPlatformAnalyzerServices
 }
 
-sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, BinaryModuleInfo {
+sealed class ScriptDependenciesInfo(override val project: Project) : IdeaModuleInfo, BinaryModuleInfo {
     abstract val sdk: Sdk?
 
     override val name = Name.special(KotlinIdeaAnalysisBundle.message("script.dependencies"))
@@ -118,7 +118,7 @@ sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, Bina
     }
 }
 
-sealed class ScriptDependenciesSourceInfo(val project: Project) : IdeaModuleInfo, SourceForBinaryModuleInfo {
+sealed class ScriptDependenciesSourceInfo(override val project: Project) : IdeaModuleInfo, SourceForBinaryModuleInfo {
     override val name = Name.special(KotlinIdeaAnalysisBundle.message("source.for.script.dependencies"))
 
     override val binariesModuleInfo: ScriptDependenciesInfo

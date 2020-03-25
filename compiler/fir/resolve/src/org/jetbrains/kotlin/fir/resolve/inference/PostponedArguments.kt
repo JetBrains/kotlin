@@ -33,7 +33,12 @@ fun Candidate.preprocessLambdaArgument(
 
     if (expectedType != null) {
         // TODO: add SAM conversion processing
-        val lambdaType = createFunctionalType(resolvedArgument.parameters, resolvedArgument.receiver, resolvedArgument.returnType)
+        val lambdaType = createFunctionalType(
+            resolvedArgument.parameters,
+            resolvedArgument.receiver,
+            resolvedArgument.returnType,
+            isSuspend = resolvedArgument.isSuspend
+        )
         csBuilder.addSubtypeConstraint(lambdaType, expectedType, SimpleConstraintSystemConstraintPosition)
     }
 

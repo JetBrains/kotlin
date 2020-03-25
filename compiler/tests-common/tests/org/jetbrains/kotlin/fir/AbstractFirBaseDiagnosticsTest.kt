@@ -21,15 +21,16 @@ import org.jetbrains.kotlin.checkers.diagnostics.TextDiagnostic
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.name.FqName
@@ -46,13 +47,16 @@ import java.util.*
 abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
     override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
         try {
-            analyzeAndCheckUnhandled(testDataFile, files)
+            analyzeAndCheckUnhandled(testDataFile, files, useLightTree)
         } catch (t: AssertionError) {
             throw t
         } catch (t: Throwable) {
             throw t
         }
     }
+
+    protected open val useLightTree: Boolean
+        get() = false
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         Extensions.getArea(environment.project)
@@ -140,7 +144,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
             val module = modules[testModule]!!
             val dependencies = ArrayList<ModuleInfo>()
             dependencies.add(module)
-            for (dependency in testModule.getDependencies()) {
+            for (dependency in testModule.dependencies) {
                 dependencies.add(modules[dependency]!!)
             }
 
@@ -193,7 +197,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         }
 
     protected fun TestFile.getActualText(
-        coneDiagnostics: Iterable<ConeDiagnostic>,
+        firDiagnostics: Iterable<FirDiagnostic<*>>,
         actualText: StringBuilder
     ): Boolean {
         val ktFile = this.ktFile
@@ -208,7 +212,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         // TODO: report JVM signature diagnostics also for implementing modules
 
         val ok = booleanArrayOf(true)
-        val diagnostics = coneDiagnostics.toActualDiagnostic(ktFile)
+        val diagnostics = firDiagnostics.toActualDiagnostic(ktFile)
         val filteredDiagnostics = diagnostics // TODO
 
         actualDiagnostics.addAll(filteredDiagnostics)
@@ -305,9 +309,12 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
         return ok[0]
     }
 
-    private fun Iterable<ConeDiagnostic>.toActualDiagnostic(root: PsiElement): List<ActualDiagnostic> {
+    private fun Iterable<FirDiagnostic<*>>.toActualDiagnostic(root: PsiElement): List<ActualDiagnostic> {
         val result = mutableListOf<ActualDiagnostic>()
-        filter { it.diagnostic.factory != FirErrors.SYNTAX_ERROR }.mapTo(result) { ActualDiagnostic(it.diagnostic, null, true) }
+        filter { it.factory != FirErrors.SYNTAX_ERROR }.mapTo(result) {
+            val oldDiagnostic = (it as FirPsiDiagnostic<*>).asPsiBasedDiagnostic()
+            ActualDiagnostic(oldDiagnostic, null, true)
+        }
         for (errorElement in AnalyzingUtils.getSyntaxErrorRanges(root)) {
             result.add(ActualDiagnostic(SyntaxErrorDiagnostic(errorElement), null, true))
         }

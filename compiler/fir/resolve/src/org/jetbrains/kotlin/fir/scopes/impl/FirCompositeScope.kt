@@ -5,12 +5,8 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirIterableScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 
 class FirCompositeScope(
     private val scopeList: MutableList<FirScope>,
@@ -18,8 +14,8 @@ class FirCompositeScope(
 ) : FirIterableScope() {
     override val scopes get() = if (reversedPriority) scopeList.asReversed() else scopeList
 
-    fun addImportingScopes(file: FirFile, session: FirSession, scopeSession: ScopeSession) {
-        scopeList += createImportingScopes(file, session, scopeSession)
+    fun addScopes(scopes: List<FirScope>) {
+        scopeList += scopes
     }
 
     fun addScope(scope: FirScope) {

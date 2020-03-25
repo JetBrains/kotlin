@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.contracts.description.InvocationKind
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.tree.generator.context.generatedType
 import org.jetbrains.kotlin.fir.tree.generator.context.type
@@ -29,6 +26,7 @@ val invocationKindType = type(InvocationKind::class)
 val varianceType = type(Variance::class)
 val nameType = type(Name::class)
 val visibilityType = type(Visibility::class)
+val effectiveVisibilityType = type("fir", "FirEffectiveVisibility")
 val visibilitiesType = type(Visibilities::class)
 val modalityType = type(Modality::class)
 val fqNameType = type(FqName::class)
@@ -66,7 +64,7 @@ val firScopeProviderType = type("fir.scopes", "FirScopeProvider")
 val pureAbstractElementType = generatedType("FirPureAbstractElement")
 val effectDeclarationType = type("fir.contracts.description", "ConeEffectDeclaration")
 val emptyContractDescriptionType = generatedType("contracts.impl", "FirEmptyContractDescription")
-val firDiagnosticType = generatedType("diagnostics", "FirDiagnostic")
+val coneDiagnosticType = generatedType("diagnostics", "ConeDiagnostic")
 
 val dslBuilderAnnotationType = generatedType("builder", "FirBuilderDsl")
 val firImplementationDetailType = generatedType("FirImplementationDetail")

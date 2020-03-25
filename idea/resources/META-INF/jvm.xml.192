@@ -1,0 +1,8 @@
+<idea-plugin>
+    <project-components>
+        <component>
+            <implementation-class>org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComponent</implementation-class>
+        </component>
+    </project-components>
+
+</idea-plugin>

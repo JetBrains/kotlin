@@ -222,8 +222,8 @@ class MoveKotlinDeclarationsProcessor(
                     )
                 }
 
-                MoveClassHandler.EP_NAME.extensions.forEach { handler ->
-                    if (handler !is MoveKotlinClassHandler) handler.preprocessUsages(results)
+                MoveClassHandler.EP_NAME.extensions.filter { it !is MoveKotlinClassHandler }.forEach { handler ->
+                    handler.preprocessUsages(results)
                 }
 
                 results

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.idea.debugger.coroutine
 
-import com.intellij.ui.components.JBLabel
 import com.intellij.ui.SimpleListCellRenderer
+import com.intellij.ui.components.JBLabel
 import javax.swing.ListCellRenderer
 
 class VersionedImplementationProvider {

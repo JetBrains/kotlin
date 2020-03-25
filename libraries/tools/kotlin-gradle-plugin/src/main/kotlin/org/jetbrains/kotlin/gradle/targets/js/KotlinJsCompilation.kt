@@ -8,11 +8,15 @@
 // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.JsBinary
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.*
@@ -21,6 +25,24 @@ open class KotlinJsCompilation(
     target: KotlinTarget,
     name: String
 ) : AbstractKotlinCompilationToRunnableFiles<KotlinJsOptions>(target, name), KotlinCompilationWithResources<KotlinJsOptions> {
+    internal val binaries: KotlinJsBinaryContainer =
+        target.project.objects.newInstance(
+            KotlinJsBinaryContainer::class.java,
+            target,
+            WrapUtil.toDomainObjectSet(JsBinary::class.java)
+        )
+
+    var outputModuleName: String? = null
+        set(value) {
+            (target as KotlinJsSubTargetContainerDsl).apply {
+                check(!isBrowserConfigured && !isNodejsConfigured) {
+                    "Please set outputModuleName for compilation before initialize browser() or nodejs() on target"
+                }
+            }
+
+            field = value
+        }
+
     override val processResourcesTaskName: String
         get() = disambiguateName("processResources")
 

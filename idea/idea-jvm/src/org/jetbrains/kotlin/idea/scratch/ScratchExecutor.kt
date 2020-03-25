@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.scratch
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.editor.EditorFactory
@@ -188,6 +189,7 @@ abstract class SequentialScratchExecutor(file: ScratchFile) : ScratchExecutor(fi
         stopExecution {
             lock.release()
         }
+        // blocking UI thread!?
         check(lock.tryAcquire(2, TimeUnit.SECONDS)) {
             "Couldn't stop REPL process in 2 seconds"
         }

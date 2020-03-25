@@ -44,12 +44,14 @@ val projectsToShadow by extra(listOf(
         ":libraries:tools:new-project-wizard:new-project-wizard-cli",
         ":compiler:psi",
         ":compiler:fir:cones",
+        ":compiler:fir:checkers",
         ":compiler:fir:resolve",
         ":compiler:fir:tree",
         ":compiler:fir:java",
         ":compiler:fir:jvm",
-        ":compiler:fir:psi2fir",
+        ":compiler:fir:raw-fir:psi2fir",
         ":compiler:fir:fir2ir",
+        ":compiler:fir:fir2ir:jvm-backend",
         ":compiler:frontend",
         ":compiler:frontend.common",
         ":compiler:frontend.java",
@@ -143,7 +145,7 @@ dependencies {
     embedded(protobufFull())
     embedded(kotlinBuiltins())
 
-    libraries(commonDep("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.2"))
+    libraries(commonDep("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${property("versions.kotlinx-collections-immutable")}"))
     libraries(commonDep("javax.inject"))
     libraries(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8"))
     libraries(commonDep("org.jetbrains", "markdown"))

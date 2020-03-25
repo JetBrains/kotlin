@@ -57,3 +57,7 @@ org.jetbrains.kotlin.util.KotlinVersionsTest.testVersionsAreConsistent, KT-35567
 org.jetbrains.kotlinx.serialization.SerializationIrBytecodeListingTestGenerated.testBasic, wait until new serialziation runtime version will be publicly available
 org.jetbrains.kotlin.jvm.compiler.CompileKotlinAgainstJavaTestGenerated.WithAPT.testClassWithTypeParameter, KT-36448
 org.jetbrains.kotlin.jvm.compiler.CompileKotlinAgainstJavaTestGenerated.WithoutAPT.testClassWithTypeParameter, KT-36448
+org.jetbrains.kotlin.idea.debugger.test.AsyncStackTraceTestGenerated.testAllFilesPresentInAsyncStackTrace, redesign test AsyncStackTraces
+org.jetbrains.kotlin.idea.debugger.test.AsyncStackTraceTestGenerated.testAsyncFunctions, redesign test AsyncStackTraces
+org.jetbrains.kotlin.idea.debugger.test.AsyncStackTraceTestGenerated.testAsyncLambdas, redesign test AsyncStackTraces
+org.jetbrains.kotlin.idea.debugger.test.AsyncStackTraceTestGenerated.testAsyncSimple, redesign test AsyncStackTraces

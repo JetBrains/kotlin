@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.findUsages
 import com.intellij.CommonBundle
 import com.intellij.find.FindBundle
 import com.intellij.find.findUsages.FindUsagesHandler
+import com.intellij.find.findUsages.FindUsagesHandler.NULL_HANDLER
 import com.intellij.find.findUsages.FindUsagesHandlerFactory
 import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.find.findUsages.JavaFindUsagesHandlerFactory
@@ -35,7 +36,9 @@ import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandle
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindMemberUsagesHandler
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinTypeParameterFindUsagesHandler
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 
 class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactory() {
@@ -52,10 +55,27 @@ class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactor
                 element is KtProperty ||
                 element is KtParameter ||
                 element is KtTypeParameter ||
-                element is KtConstructor<*>
+                element is KtConstructor<*> ||
+                (element is KtImportAlias &&
+                        // TODO: it is ambiguous case: ImportAlias does not have any reference to be resolved
+                        element.importDirective?.importedReference?.getQualifiedElementSelector()?.mainReference?.resolve() != null)
+
 
     override fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean): FindUsagesHandler {
         when (element) {
+            is KtImportAlias -> {
+                return when (val resolvedElement =
+                    element.importDirective?.importedReference?.getQualifiedElementSelector()?.mainReference?.resolve()) {
+                    is KtClassOrObject ->
+                        if (!forHighlightUsages) {
+                            createFindUsagesHandler(resolvedElement, forHighlightUsages)
+                        } else NULL_HANDLER
+                    is KtNamedFunction, is KtProperty, is KtConstructor<*> ->
+                        createFindUsagesHandler(resolvedElement, forHighlightUsages)
+                    else -> NULL_HANDLER
+                }
+            }
+
             is KtClassOrObject ->
                 return KotlinFindClassUsagesHandler(element, this)
 
@@ -118,10 +138,10 @@ class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactor
 
     private fun handlerForMultiple(originalDeclaration: KtNamedDeclaration, declarations: Collection<PsiElement>): FindUsagesHandler {
         return when (declarations.size) {
-            0 -> FindUsagesHandler.NULL_HANDLER
+            0 -> NULL_HANDLER
 
             1 -> {
-                val target = declarations.single().unwrapped ?: return FindUsagesHandler.NULL_HANDLER
+                val target = declarations.single().unwrapped ?: return NULL_HANDLER
                 if (target is KtNamedDeclaration) {
                     KotlinFindMemberUsagesHandler.getInstance(target, factory = this)
                 } else {

@@ -1,5 +1,4 @@
 // !LANGUAGE: +NewInference
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 
 @file:OptIn(ExperimentalTypeInference::class)

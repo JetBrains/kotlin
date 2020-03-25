@@ -9,25 +9,41 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirEffectiveVisibility
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.firEffectiveVisibility
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 
-class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationStatus?>(phase = FirResolvePhase.STATUS) {
-    private val classes = mutableListOf<FirRegularClass>()
-
-    private val containingClass: FirRegularClass? get() = classes.lastOrNull()
-
-    override lateinit var session: FirSession
-
-    override fun transformFile(file: FirFile, data: FirDeclarationStatus?): CompositeTransformResult<FirFile> {
-        session = file.session
-        return super.transformFile(file, data)
+@Deprecated("Should be used just once from createTransformerByPhase", level = DeprecationLevel.WARNING)
+class FirStatusResolveTransformerAdapter : FirTransformer<Nothing?>() {
+    override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
+        error("Should not be called for ${element::class}, only for files")
     }
+
+    override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        val transformer = FirStatusResolveTransformer(file.session)
+        return file.transform(transformer, null)
+    }
+}
+
+fun <F : FirClass<F>> F.runStatusResolveForLocalClass(session: FirSession): F {
+    val transformer = FirStatusResolveTransformer(session)
+
+    return this.transform<F, Nothing?>(transformer, null).single
+}
+
+private class FirStatusResolveTransformer(override val session: FirSession) :
+    FirAbstractTreeTransformer<FirDeclarationStatus?>(phase = FirResolvePhase.STATUS) {
+    private val classes = mutableListOf<FirClass<*>>()
+
+    private val containingClass: FirClass<*>? get() = classes.lastOrNull()
 
     override fun transformDeclarationStatus(
         declarationStatus: FirDeclarationStatus,
@@ -106,60 +122,75 @@ class FirStatusResolveTransformer : FirAbstractTreeTransformer<FirDeclarationSta
     override fun transformBlock(block: FirBlock, data: FirDeclarationStatus?): CompositeTransformResult<FirStatement> {
         return block.compose()
     }
+}
 
-    companion object {
-        fun FirDeclaration.resolveStatus(
-            status: FirDeclarationStatus,
-            containingClass: FirRegularClass?,
-            isLocal: Boolean
-        ): FirDeclarationStatus {
-            if (status.visibility == Visibilities.UNKNOWN || status.modality == null) {
-                val visibility = when (status.visibility) {
-                    Visibilities.UNKNOWN -> if (isLocal) Visibilities.LOCAL else resolveVisibility(containingClass)
-                    else -> status.visibility
-                }
-                val modality = status.modality ?: resolveModality(containingClass)
-                return (status as FirDeclarationStatusImpl).resolved(visibility, modality)
-            }
-            return status
+private val <F : FirClass<F>> FirClass<F>.effectiveVisibility: FirEffectiveVisibility
+    get() = when (this) {
+        is FirRegularClass -> status.effectiveVisibility
+        is FirAnonymousObject -> FirEffectiveVisibility.Local
+        else -> error("Unknown kind of class: ${this::class}")
+    }
+
+private val <F : FirClass<F>> FirClass<F>.modality: Modality?
+    get() = when (this) {
+        is FirRegularClass -> status.modality
+        is FirAnonymousObject -> Modality.FINAL
+        else -> error("Unknown kind of class: ${this::class}")
+    }
+
+fun FirDeclaration.resolveStatus(
+    status: FirDeclarationStatus,
+    containingClass: FirClass<*>?,
+    isLocal: Boolean
+): FirDeclarationStatus {
+    if (status.visibility == Visibilities.UNKNOWN || status.modality == null) {
+        val visibility = when (status.visibility) {
+            Visibilities.UNKNOWN -> if (isLocal) Visibilities.LOCAL else resolveVisibility(containingClass)
+            else -> status.visibility
         }
+        val modality = status.modality ?: resolveModality(containingClass)
+        val containerEffectiveVisibility = containingClass?.effectiveVisibility ?: FirEffectiveVisibility.Public
+        val effectiveVisibility =
+            visibility.firEffectiveVisibility(session, this as? FirMemberDeclaration).lowerBound(containerEffectiveVisibility)
+        return (status as FirDeclarationStatusImpl).resolved(visibility, effectiveVisibility, modality)
+    }
+    return status
+}
 
-        private fun FirDeclaration.resolveVisibility(containingClass: FirRegularClass?): Visibility {
-            if (this is FirConstructor) {
-                if (containingClass != null &&
-                    (containingClass.classKind == ClassKind.ENUM_CLASS || containingClass.modality == Modality.SEALED)
-                ) {
-                    return Visibilities.PRIVATE
-                }
-            }
-            return Visibilities.PUBLIC // TODO (overrides)
+private fun FirDeclaration.resolveVisibility(containingClass: FirClass<*>?): Visibility {
+    if (this is FirConstructor) {
+        if (containingClass != null &&
+            (containingClass.classKind == ClassKind.ENUM_CLASS || containingClass.modality == Modality.SEALED)
+        ) {
+            return Visibilities.PRIVATE
         }
+    }
+    return Visibilities.PUBLIC // TODO (overrides)
+}
 
-        private fun FirDeclaration.resolveModality(containingClass: FirRegularClass?): Modality {
-            return when (this) {
-                is FirRegularClass -> if (classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
-                is FirCallableMemberDeclaration<*> -> {
+private fun FirDeclaration.resolveModality(containingClass: FirClass<*>?): Modality {
+    return when (this) {
+        is FirRegularClass -> if (classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
+        is FirCallableMemberDeclaration<*> -> {
+            when {
+                containingClass == null -> Modality.FINAL
+                containingClass.classKind == ClassKind.INTERFACE -> {
                     when {
-                        containingClass == null -> Modality.FINAL
-                        containingClass.classKind == ClassKind.INTERFACE -> {
-                            when {
-                                visibility == Visibilities.PRIVATE ->
-                                    Modality.FINAL
-                                this is FirSimpleFunction && body == null ->
-                                    Modality.ABSTRACT
-                                this is FirProperty && initializer == null && getter?.body == null && setter?.body == null ->
-                                    Modality.ABSTRACT
-                                else ->
-                                    Modality.OPEN
-                            }
-                        }
-                        else -> {
-                            if (isOverride && containingClass.modality != Modality.FINAL) Modality.OPEN else Modality.FINAL
-                        }
+                        visibility == Visibilities.PRIVATE ->
+                            Modality.FINAL
+                        this is FirSimpleFunction && body == null ->
+                            Modality.ABSTRACT
+                        this is FirProperty && initializer == null && getter?.body == null && setter?.body == null ->
+                            Modality.ABSTRACT
+                        else ->
+                            Modality.OPEN
                     }
                 }
-                else -> Modality.FINAL
+                else -> {
+                    if (isOverride && containingClass.modality != Modality.FINAL) Modality.OPEN else Modality.FINAL
+                }
             }
         }
+        else -> Modality.FINAL
     }
 }

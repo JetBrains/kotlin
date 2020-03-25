@@ -21,7 +21,7 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 
-open class ProjectExtensionDescriptor<T>(name: String, private val extensionClass: Class<T>) {
+open class ProjectExtensionDescriptor<T : Any>(name: String, private val extensionClass: Class<T>) {
     val extensionPointName: ExtensionPointName<T> = ExtensionPointName.create(name)
 
     fun registerExtensionPoint(project: Project) {
