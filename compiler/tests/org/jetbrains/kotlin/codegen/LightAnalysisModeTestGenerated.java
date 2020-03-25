@@ -2065,6 +2065,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/callableReference/bound/companionObjectReceiver.kt");
             }
 
+            @TestMetadata("dontShareReceiver.kt")
+            public void testDontShareReceiver() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/bound/dontShareReceiver.kt");
+            }
+
             @TestMetadata("emptyLHS.kt")
             public void testEmptyLHS() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/bound/emptyLHS.kt");
