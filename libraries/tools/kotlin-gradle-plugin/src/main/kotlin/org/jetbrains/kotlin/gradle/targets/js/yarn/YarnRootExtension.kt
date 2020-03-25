@@ -23,7 +23,7 @@ open class YarnRootExtension(val project: Project) : ConfigurationPhaseAware<Yar
     var installationDir by Property(gradleHome.resolve("yarn"))
 
     var downloadBaseUrl by Property("https://github.com/yarnpkg/yarn/releases/download")
-    var version by Property("1.21.1")
+    var version by Property("1.22.4")
 
     val yarnSetupTask: YarnSetupTask
         get() = project.tasks.getByName(YarnSetupTask.NAME) as YarnSetupTask
