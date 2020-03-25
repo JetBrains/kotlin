@@ -15,6 +15,7 @@ import com.intellij.util.indexing.impl.forward.AbstractForwardIndexAccessor;
 import com.intellij.util.indexing.impl.forward.PersistentMapBasedForwardIndex;
 import com.intellij.util.indexing.impl.perFileVersion.PersistentSubIndexerRetriever;
 import com.intellij.util.io.*;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +23,7 @@ import java.io.*;
 import java.util.Collections;
 import java.util.Map;
 
+@ApiStatus.Internal
 public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInputMappingIndex<Key, Value, FileContent> {
   private static final Logger LOG = Logger.getInstance(SnapshotInputMappings.class);
 
@@ -46,7 +48,7 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
   private final boolean myIsPsiBackedIndex;
   private PersistentSubIndexerRetriever<?, ?> mySubIndexerRetriever;
 
-  public SnapshotInputMappings(IndexExtension<Key, Value, FileContent> indexExtension) throws IOException {
+  public SnapshotInputMappings(@NotNull IndexExtension<Key, Value, FileContent> indexExtension) throws IOException {
     myIndexId = (ID<Key, Value>)indexExtension.getName();
     myIsPsiBackedIndex = FileBasedIndexImpl.isPsiDependentIndex(indexExtension);
 
@@ -88,7 +90,15 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
     Map<Key, Value> data = doReadData(hashId);
     if (data != null && DebugAssertions.EXTRA_SANITY_CHECKS) {
       Map<Key, Value> contentData = myIndexer.map(content);
-      boolean sameValueForSavedIndexedResultAndCurrentOne = contentData.equals(data);
+      boolean sameValueForSavedIndexedResultAndCurrentOne;
+      if (myIndexer instanceof SingleEntryIndexer) {
+        Value contentValue = ContainerUtil.getFirstItem(contentData.values());
+        Value value = ContainerUtil.getFirstItem(data.values());
+        sameValueForSavedIndexedResultAndCurrentOne = Comparing.equal(contentValue, value);
+      }
+      else {
+        sameValueForSavedIndexedResultAndCurrentOne = contentData.equals(data);
+      }
       if (!sameValueForSavedIndexedResultAndCurrentOne) {
         data = contentData;
         DebugAssertions.error(
@@ -116,6 +126,9 @@ public class SnapshotInputMappings<Key, Value> implements UpdatableSnapshotInput
     } else {
       assert myValueExternalizer != null;
       Value value = AbstractForwardIndexAccessor.deserializeFromByteSeq(byteSequence, myValueExternalizer);
+      if (value == null && !((SingleEntryIndexer<?>)myIndexer).isAcceptNullValues()) {
+        return Collections.emptyMap();
+      }
       //noinspection unchecked
       return Collections.singletonMap((Key)Integer.valueOf(0), value);
     }
