@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.idea.configuration.ui.notifications.notifyKotlinStyl
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
 import java.util.concurrent.atomic.AtomicInteger
 
-class KotlinConfigurationCheckerStartupActivity : StartupActivity.DumbAware {
+class KotlinConfigurationCheckerStartupActivity : StartupActivity {
     override fun runActivity(project: Project) {
         NotificationsConfiguration.getNotificationsConfiguration()
             .register(

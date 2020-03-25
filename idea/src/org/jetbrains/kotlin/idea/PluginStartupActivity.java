@@ -43,10 +43,10 @@ import org.jetbrains.kotlin.utils.PathUtil;
 
 import static org.jetbrains.kotlin.idea.TestResourceBundleKt.registerAdditionalResourceBundleInTests;
 
-public class PluginStartupActivity implements StartupActivity.DumbAware {
+public class PluginStartupActivity implements StartupActivity {
     private static final Logger LOG = Logger.getInstance(PluginStartupActivity.class);
 
-    private static final String KOTLIN_BUNDLED = "KOTLIN_BUNDLED";
+    private static final String KOTLIN_BUNDLED_PATH_VARIABLE = "KOTLIN_BUNDLED";
 
     @Override
     public void runActivity(@NotNull Project project) {
@@ -115,7 +115,7 @@ public class PluginStartupActivity implements StartupActivity.DumbAware {
 
     private static void registerPathVariable() {
         PathMacros macros = PathMacros.getInstance();
-        macros.setMacro(KOTLIN_BUNDLED, PathUtil.getKotlinPathsForIdeaPlugin().getHomePath().getPath());
+        macros.setMacro(KOTLIN_BUNDLED_PATH_VARIABLE, PathUtil.getKotlinPathsForIdeaPlugin().getHomePath().getPath());
     }
 
 }
