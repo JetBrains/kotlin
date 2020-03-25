@@ -405,14 +405,14 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/removeTrailingComma"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
-        @TestMetadata("destructionDeclaration.kt")
-        public void testDestructionDeclaration() throws Exception {
-            runTest("idea/testData/joinLines/removeTrailingComma/destructionDeclaration.kt");
+        @TestMetadata("destructuringDeclarations.kt")
+        public void testDestructuringDeclarations() throws Exception {
+            runTest("idea/testData/joinLines/removeTrailingComma/destructuringDeclarations.kt");
         }
 
-        @TestMetadata("destructionDeclarationInLambda.kt")
-        public void testDestructionDeclarationInLambda() throws Exception {
-            runTest("idea/testData/joinLines/removeTrailingComma/destructionDeclarationInLambda.kt");
+        @TestMetadata("destructuringDeclarationsInLambda.kt")
+        public void testDestructuringDeclarationsInLambda() throws Exception {
+            runTest("idea/testData/joinLines/removeTrailingComma/destructuringDeclarationsInLambda.kt");
         }
 
         @TestMetadata("functionArguments.kt")

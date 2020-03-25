@@ -1197,26 +1197,26 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
-            @TestMetadata("idea/testData/formatter/trailingComma/destructionDeclaration")
+            @TestMetadata("idea/testData/formatter/trailingComma/destructuringDeclarations")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class DestructionDeclaration extends AbstractFormatterTest {
+            public static class DestructuringDeclarations extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
-                public void testAllFilesPresentInDestructionDeclaration() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/destructionDeclaration"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), null, true);
+                public void testAllFilesPresentInDestructuringDeclarations() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/destructuringDeclarations"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), null, true);
                 }
 
-                @TestMetadata("DestructionDeclarationsInLambda.after.kt")
-                public void testDestructionDeclarationsInLambda() throws Exception {
-                    runTest("idea/testData/formatter/trailingComma/destructionDeclaration/DestructionDeclarationsInLambda.after.kt");
+                @TestMetadata("DestructuringDeclarationsInLambda.after.kt")
+                public void testDestructuringDeclarationsInLambda() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/destructuringDeclarations/DestructuringDeclarationsInLambda.after.kt");
                 }
 
                 @TestMetadata("MultiVariableDeclaration.after.kt")
                 public void testMultiVariableDeclaration() throws Exception {
-                    runTest("idea/testData/formatter/trailingComma/destructionDeclaration/MultiVariableDeclaration.after.kt");
+                    runTest("idea/testData/formatter/trailingComma/destructuringDeclarations/MultiVariableDeclaration.after.kt");
                 }
             }
 
@@ -1431,16 +1431,16 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             }
         }
 
-        @TestMetadata("idea/testData/formatter/trailingComma/destructionDeclaration")
+        @TestMetadata("idea/testData/formatter/trailingComma/destructuringDeclarations")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class DestructionDeclaration extends AbstractFormatterTest {
+        public static class DestructuringDeclarations extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTestCallSite, this, testDataFilePath);
             }
 
-            public void testAllFilesPresentInDestructionDeclaration() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/destructionDeclaration"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.kt.*$"), null, true);
+            public void testAllFilesPresentInDestructuringDeclarations() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/destructuringDeclarations"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.kt.*$"), null, true);
             }
         }
 
@@ -1978,26 +1978,26 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 }
             }
 
-            @TestMetadata("idea/testData/formatter/trailingComma/destructionDeclaration")
+            @TestMetadata("idea/testData/formatter/trailingComma/destructuringDeclarations")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class DestructionDeclaration extends AbstractFormatterTest {
+            public static class DestructuringDeclarations extends AbstractFormatterTest {
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTestInverted, this, testDataFilePath);
                 }
 
-                public void testAllFilesPresentInDestructionDeclaration() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/destructionDeclaration"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), null, true);
+                public void testAllFilesPresentInDestructuringDeclarations() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/destructuringDeclarations"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), null, true);
                 }
 
-                @TestMetadata("DestructionDeclarationsInLambda.after.inv.kt")
-                public void testDestructionDeclarationsInLambda() throws Exception {
-                    runTest("idea/testData/formatter/trailingComma/destructionDeclaration/DestructionDeclarationsInLambda.after.inv.kt");
+                @TestMetadata("DestructuringDeclarationsInLambda.after.inv.kt")
+                public void testDestructuringDeclarationsInLambda() throws Exception {
+                    runTest("idea/testData/formatter/trailingComma/destructuringDeclarations/DestructuringDeclarationsInLambda.after.inv.kt");
                 }
 
                 @TestMetadata("MultiVariableDeclaration.after.inv.kt")
                 public void testMultiVariableDeclaration() throws Exception {
-                    runTest("idea/testData/formatter/trailingComma/destructionDeclaration/MultiVariableDeclaration.after.inv.kt");
+                    runTest("idea/testData/formatter/trailingComma/destructuringDeclarations/MultiVariableDeclaration.after.inv.kt");
                 }
             }
 
@@ -2212,16 +2212,16 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             }
         }
 
-        @TestMetadata("idea/testData/formatter/trailingComma/destructionDeclaration")
+        @TestMetadata("idea/testData/formatter/trailingComma/destructuringDeclarations")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class DestructionDeclaration extends AbstractFormatterTest {
+        public static class DestructuringDeclarations extends AbstractFormatterTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTestInvertedCallSite, this, testDataFilePath);
             }
 
-            public void testAllFilesPresentInDestructionDeclaration() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/destructionDeclaration"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.inv\\.kt.*$"), null, true);
+            public void testAllFilesPresentInDestructuringDeclarations() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/formatter/trailingComma/destructuringDeclarations"), Pattern.compile("^([^\\.]+)\\.call\\.after\\.inv\\.kt.*$"), null, true);
             }
         }
 
