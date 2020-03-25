@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
@@ -26,9 +29,11 @@ open class KotlinPackageJsonTask : DefaultTask() {
     private val producer: KotlinCompilationNpmResolver.PackageJsonProducer
         get() = compilationResolver.packageJsonProducer
 
-    private fun findDependentTasks(): Collection<KotlinPackageJsonTask> =
+    private fun findDependentTasks(): Collection<Any> =
         producer.internalDependencies.map { dependentResolver ->
             dependentResolver.npmProject.packageJsonTask
+        } + producer.internalCompositeDependencies.map { dependency ->
+            dependency.includedBuild.task(":packageJson")
         }
 
     @get:Nested

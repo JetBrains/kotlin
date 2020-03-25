@@ -198,7 +198,7 @@ internal class KotlinCompilationNpmResolver(
                         ?.forEach { dependentResolver ->
                             internalDependencies.add(dependentResolver)
                         }
-                } else {
+                } else if (componentIdentifier !is ProjectComponentIdentifier) {
                     externalGradleDependencies.add(ExternalGradleDependency(dependency, artifact))
                 }
 
@@ -253,12 +253,23 @@ internal class KotlinCompilationNpmResolver(
                 resolver.gradleNodeModules.get(it.dependency, it.artifact.file)
             }
 
+            val compositeDependencies = internalCompositeDependencies.mapNotNull { dependency ->
+                resolver.compositeNodeModules.get(
+                    dependency.dependency,
+                    dependency.includedBuild.projectDir.resolve("build/js/packages/lib/package.json")
+                )
+            }
+
             val packageJson = PackageJson(
                 npmProject.name,
                 fixSemver(project.version.toString())
             )
 
             packageJson.main = npmProject.main
+
+            compositeDependencies.forEach {
+                packageJson.dependencies[it.name] = it.version
+            }
 
             resolvedInternalDependencies.forEach {
                 packageJson.dependencies[it.packageJson.name] = it.packageJson.version
@@ -297,6 +308,7 @@ internal class KotlinCompilationNpmResolver(
                 project,
                 npmProject,
                 resolvedInternalDependencies,
+                compositeDependencies,
                 importedExternalGradleDependencies,
                 externalNpmDependencies,
                 packageJson

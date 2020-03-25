@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatRootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.npm.CompositeNodeModulesCache
 import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModulesCache
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonUpToDateCheck
@@ -37,6 +38,7 @@ internal class KotlinRootNpmResolver internal constructor(
     private var closed: Boolean = false
 
     val gradleNodeModules = GradleNodeModulesCache(nodeJs)
+    val compositeNodeModules = CompositeNodeModulesCache(nodeJs)
     private val projectResolvers = mutableMapOf<Project, KotlinProjectNpmResolver>()
 
     fun alreadyResolvedMessage(action: String) = "Cannot $action. NodeJS projects already resolved."

@@ -9,8 +9,8 @@ import com.google.gson.Gson
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModule
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.File
 
 class YarnImportedPackagesVersionResolver(
@@ -21,7 +21,7 @@ class YarnImportedPackagesVersionResolver(
     private val resolvedVersion = mutableMapOf<String, String>()
     private val importedProjectWorkspaces = mutableListOf<String>()
     private val externalModules = npmProjects.flatMapTo(mutableSetOf()) {
-        it.externalGradleDependencies
+        it.externalGradleDependencies + it.internalCompositeDependencies
     }
 
     fun resolveAndUpdatePackages(): MutableList<String> {

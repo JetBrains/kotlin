@@ -18,6 +18,7 @@ class KotlinCompilationNpmResolution(
     val project: Project,
     val npmProject: NpmProject,
     val internalDependencies: Collection<KotlinCompilationNpmResolution>,
+    val internalCompositeDependencies: Collection<GradleNodeModule>,
     val externalGradleDependencies: Collection<GradleNodeModule>,
     val externalNpmDependencies: Collection<NpmDependency>,
     val packageJson: PackageJson
