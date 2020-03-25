@@ -1,7 +1,6 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
   <xi:include href="/META-INF/KonanOCSwift.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="/META-INF/KonanCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
-  <xi:include href="/META-INF/android-kotlin-extensions-common.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <id>com.intellij.kotlin.mobile</id>
   <name>Mobile</name>
@@ -65,9 +64,6 @@
 
     <projectService serviceInterface="com.jetbrains.cidr.documentation.CocoaDocumentationManager"
                     serviceImplementation="com.jetbrains.mobile.documentation.AppleDocumentationManager"/>
-
-    <moduleService serviceInterface="org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager"
-                   serviceImplementation="org.jetbrains.kotlin.android.synthetic.idea.res.IDEAndroidCommonLayoutXmlFileManager"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin.android.model">
