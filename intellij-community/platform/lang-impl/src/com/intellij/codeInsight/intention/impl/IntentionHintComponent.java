@@ -13,6 +13,7 @@ import com.intellij.codeInspection.SuppressIntentionActionFromFix;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.actions.ActionsCollector;
 import com.intellij.ide.plugins.DynamicPlugins;
+import com.intellij.internal.statistic.IntentionsCollector;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
@@ -402,6 +403,7 @@ public class IntentionHintComponent implements Disposable, ScrollAwareHint {
       myPopup.showInBestPositionFor(myEditor);
     }
 
+    IntentionsCollector.reportShownIntentions(myFile.getProject(), myPopup, myFile.getLanguage());
     myPopupShown = true;
   }
 
