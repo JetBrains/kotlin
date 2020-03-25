@@ -18,8 +18,15 @@ import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 import java.io.StringWriter
 
-interface TemplateEngineService : WizardService {
-    fun renderTemplate(template: FileTemplateDescriptor, data: Map<String, Any?>): String
+abstract class TemplateEngineService : WizardService {
+    abstract fun renderTemplate(template: FileTemplateDescriptor, data: Map<String, Any?>): String
+
+    protected fun getTemplateText(template: FileTemplateDescriptor) = try {
+        val templateId = template.templateId.replace('\\', '/')
+        Template::class.java.getResource(templateId).readText()
+    } catch (e: Throwable) {
+        throw RuntimeException("Can not get template ${template.templateId}", e)
+    }
 
     fun Writer.writeTemplate(template: FileTemplate): TaskResult<Unit> {
         val formatter = service<FileFormattingService>()
@@ -31,10 +38,9 @@ interface TemplateEngineService : WizardService {
 }
 
 
-class VelocityTemplateEngineServiceImpl : TemplateEngineService, IdeaIndependentWizardService {
+class VelocityTemplateEngineServiceImpl : TemplateEngineService(), IdeaIndependentWizardService {
     override fun renderTemplate(template: FileTemplateDescriptor, data: Map<String, Any?>): String {
-        val templatePath = template.templateId
-        val templateText = Template::class.java.getResource(templatePath).readText()
+        val templateText = getTemplateText(template)
         val context = VelocityContext().apply {
             data.forEach { (key, value) -> put(key, value) }
         }
