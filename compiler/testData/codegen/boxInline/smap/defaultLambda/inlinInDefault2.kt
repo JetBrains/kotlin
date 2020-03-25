@@ -91,7 +91,6 @@ Kotlin
 test/_1Kt
 *L
 1#1,75:1
-71#1,2:76
 *E
 
 SMAP
