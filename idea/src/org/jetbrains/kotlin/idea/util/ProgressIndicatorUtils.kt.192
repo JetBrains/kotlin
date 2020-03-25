@@ -21,6 +21,7 @@ import java.util.concurrent.TimeoutException
 object ProgressIndicatorUtils {
     private val LOG = Logger.getInstance(ProgressIndicatorUtils::class.java)
 
+    @JvmStatic
     fun <T> underModalProgress(
         project: Project,
         @Nls progressTitle: String,

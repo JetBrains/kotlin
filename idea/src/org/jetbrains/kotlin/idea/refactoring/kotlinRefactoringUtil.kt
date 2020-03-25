@@ -28,6 +28,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.popup.*
+import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Pass
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
@@ -76,12 +77,10 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.refactoring.rename.canonicalRender
 import org.jetbrains.kotlin.idea.roots.isOutsideKotlinAwareSourceRoot
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.idea.util.actualsForExpected
-import org.jetbrains.kotlin.idea.util.liftToExpected
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.OVERRIDE_KEYWORD
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.*
@@ -855,6 +854,39 @@ fun checkSuperMethods(
     ignore: Collection<PsiElement>?,
     @Nls actionString: String
 ): List<PsiElement> {
+    if (!declaration.hasModifier(OVERRIDE_KEYWORD)) return listOf(declaration)
+
+    val project = declaration.project
+
+    val (declarationDescriptor, overriddenElementsToDescriptor) =
+        ProgressIndicatorUtils.underModalProgress(
+            project,
+            KotlinBundle.message("find.usages.progress.text.declaration.superMethods"),
+            Computable {
+                val declarationDescriptor = declaration.unsafeResolveToDescriptor() as CallableDescriptor
+
+                if (declarationDescriptor is LocalVariableDescriptor) return@Computable (declarationDescriptor to emptyMap<PsiElement, CallableDescriptor>())
+
+                val overriddenElementsToDescriptor = HashMap<PsiElement, CallableDescriptor>()
+                for (overriddenDescriptor in DescriptorUtils.getAllOverriddenDescriptors(
+                    declarationDescriptor
+                )) {
+                    val overriddenDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(
+                        project,
+                        overriddenDescriptor
+                    ) ?: continue
+                    if (overriddenDeclaration is KtNamedFunction || overriddenDeclaration is KtProperty || overriddenDeclaration is PsiMethod || overriddenDeclaration is KtParameter) {
+                        overriddenElementsToDescriptor[overriddenDeclaration] = overriddenDescriptor
+                    }
+                }
+                if (ignore != null) {
+                    overriddenElementsToDescriptor.keys.removeAll(ignore)
+                }
+                (declarationDescriptor to overriddenElementsToDescriptor)
+            })
+
+    if (overriddenElementsToDescriptor.isEmpty()) return listOf(declaration)
+
     fun getClassDescriptions(overriddenElementsToDescriptor: Map<PsiElement, CallableDescriptor>): List<String> {
         return overriddenElementsToDescriptor.entries.map { entry ->
             val (element, descriptor) = entry
@@ -893,25 +925,6 @@ fun checkSuperMethods(
             else -> emptyList()
         }
     }
-
-
-    val declarationDescriptor = declaration.unsafeResolveToDescriptor() as CallableDescriptor
-
-    if (declarationDescriptor is LocalVariableDescriptor) return listOf(declaration)
-
-    val project = declaration.project
-    val overriddenElementsToDescriptor = HashMap<PsiElement, CallableDescriptor>()
-    for (overriddenDescriptor in DescriptorUtils.getAllOverriddenDescriptors(declarationDescriptor)) {
-        val overriddenDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, overriddenDescriptor) ?: continue
-        if (overriddenDeclaration is KtNamedFunction || overriddenDeclaration is KtProperty || overriddenDeclaration is PsiMethod || overriddenDeclaration is KtParameter) {
-            overriddenElementsToDescriptor[overriddenDeclaration] = overriddenDescriptor
-        }
-    }
-    if (ignore != null) {
-        overriddenElementsToDescriptor.keys.removeAll(ignore)
-    }
-
-    if (overriddenElementsToDescriptor.isEmpty()) return listOf(declaration)
 
     return askUserForMethodsToSearch(declarationDescriptor, overriddenElementsToDescriptor)
 }

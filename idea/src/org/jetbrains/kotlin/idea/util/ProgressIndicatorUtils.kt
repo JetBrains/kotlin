@@ -21,7 +21,7 @@ import java.util.concurrent.TimeoutException
  * Copied from [com.intellij.openapi.progress.util.ProgressIndicatorUtils]
  */
 object ProgressIndicatorUtils {
-    @Throws(ProcessCanceledException::class)
+    @JvmStatic
     fun <T> underModalProgress(
         project: Project,
         @Nls progressTitle: String,
