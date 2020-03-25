@@ -38,4 +38,10 @@ internal actual fun <T : Throwable> checkResultIsFailure(exceptionClass: KClass<
     )
 }
 
+/** Platform-specific construction of AssertionError with cause */
+@Suppress("NOTHING_TO_INLINE")
+internal actual inline fun AssertionErrorWithCause(message: String?, cause: Throwable?): AssertionError =
+        AssertionError(message, cause)
+
+
 internal actual fun lookupAsserter(): Asserter = DefaultAsserter
