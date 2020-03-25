@@ -208,6 +208,7 @@ def update_external_tests() {
             include 'common/**'
             include 'test/**'
             exclude 'test/js/**'
+            include 'kotlin-test/**'
         }
     }
 }
