@@ -57,8 +57,6 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE, "When accessing module declarations from UMD, " +
                                                                         "they must be marked by both @JsModule and @JsNonModule")
 
-        put(ErrorsJs.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
-            "Can''t put non-external declarations in file marked with {0} annotation", RENDER_TYPE)
         put(ErrorsJs.WRONG_JS_QUALIFIER, "Qualifier contains illegal characters")
 
         put(ErrorsJs.CANNOT_CHECK_FOR_EXTERNAL_INTERFACE, "Cannot check for external interface: {0}", RENDER_TYPE)

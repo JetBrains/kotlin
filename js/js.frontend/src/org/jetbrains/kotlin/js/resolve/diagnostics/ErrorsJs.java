@@ -59,8 +59,6 @@ public interface ErrorsJs {
             DiagnosticFactory1.create(ERROR, DEFAULT);
     DiagnosticFactory0<PsiElement> CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE = DiagnosticFactory0.create(ERROR, DEFAULT);
 
-    DiagnosticFactory1<KtElement, KotlinType> NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE =
-            DiagnosticFactory1.create(ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<KtValueArgument> WRONG_JS_QUALIFIER = DiagnosticFactory0.create(ERROR, PositioningStrategies.DEFAULT);
 
     DiagnosticFactory1<PsiElement, KotlinType> CANNOT_CHECK_FOR_EXTERNAL_INTERFACE = DiagnosticFactory1.create(ERROR);
