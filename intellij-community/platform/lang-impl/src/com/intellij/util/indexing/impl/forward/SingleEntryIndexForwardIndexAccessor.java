@@ -4,7 +4,6 @@ package com.intellij.util.indexing.impl.forward;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.VolatileNotNullLazyValue;
 import com.intellij.openapi.util.io.ByteArraySequence;
 import com.intellij.util.containers.ContainerUtil;
@@ -20,24 +19,19 @@ import java.util.Map;
 
 public class SingleEntryIndexForwardIndexAccessor<V> implements ForwardIndexAccessor<Integer, V> {
   private static final Logger LOG = Logger.getInstance(SingleEntryIndexForwardIndexAccessor.class);
-  private final ID<Integer, V> myIndexId;
-  private final VolatileNotNullLazyValue<UpdatableIndex<Integer, V, ?>> myIndex = new VolatileNotNullLazyValue<UpdatableIndex<Integer, V, ?>>() {
-    @NotNull
-    @Override
-    protected UpdatableIndex<Integer, V, ?> compute() {
-      return ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getIndex(myIndexId);
-    }
-  };
+  private final VolatileNotNullLazyValue<UpdatableIndex<Integer, V, ?>> myIndex;
 
   @SuppressWarnings("unchecked")
-  public SingleEntryIndexForwardIndexAccessor(IndexExtension<?, ?, V> extension) {
+  public SingleEntryIndexForwardIndexAccessor(IndexExtension<Integer, V, ?> extension) {
     LOG.assertTrue(extension instanceof SingleEntryFileBasedIndexExtension);
-    myIndexId = (ID<Integer, V>)extension.getName();
+    IndexId<?, ?> name = extension.getName();
+    FileBasedIndexImpl fileBasedIndex = (FileBasedIndexImpl)FileBasedIndex.getInstance();
+    myIndex = VolatileNotNullLazyValue.createValue(() -> fileBasedIndex.getIndex((ID<Integer, V>)name));
   }
 
   @NotNull
   @Override
-  public InputDataDiffBuilder<Integer, V> getDiffBuilder(int inputId, @Nullable ByteArraySequence sequence) throws IOException {
+  public final InputDataDiffBuilder<Integer, V> getDiffBuilder(int inputId, @Nullable ByteArraySequence sequence) throws IOException {
     Map<Integer, V> data;
     try {
       data = ProgressManager.getInstance().computeInNonCancelableSection(() -> myIndex.getValue().getIndexedFileData(inputId));
@@ -45,12 +39,17 @@ public class SingleEntryIndexForwardIndexAccessor<V> implements ForwardIndexAcce
     catch (StorageException e) {
       throw new IOException(e);
     }
+    return getDiffBuilder(inputId, data);
+  }
+
+  @NotNull
+  protected DirectInputDataDiffBuilder<Integer, V> getDiffBuilder(int inputId, @NotNull Map<Integer, V> data) throws IOException {
     return new SingleValueDiffBuilder<>(inputId, data);
   }
 
   @Nullable
   @Override
-  public ByteArraySequence serializeIndexedData(@NotNull InputData<Integer, V> data) {
+  public final ByteArraySequence serializeIndexedData(@NotNull InputData<Integer, V> data) {
     return null;
   }
 

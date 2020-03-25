@@ -312,8 +312,7 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
 
     MyIndex(@NotNull FileBasedIndexExtension<Integer, SerializedStubTree> extension, @NotNull IndexStorage<Integer, SerializedStubTree> storage)
       throws IOException {
-      super(extension, storage, new EmptyForwardIndex(), new StubUpdatingForwardIndexAccessor(), null, null);
-      ((StubUpdatingForwardIndexAccessor)getForwardIndexAccessor()).setIndex(this);
+      super(extension, storage, new EmptyForwardIndex(), new StubUpdatingForwardIndexAccessor(extension), null, null);
 
       // load stub serializers before usage
       if (InvertedIndex.ARE_COMPOSITE_INDEXERS_ENABLED) {
