@@ -148,7 +148,7 @@ interface KotlinTarget : Serializable {
     val compilations: Collection<KotlinCompilation>
     val testTasks: Collection<KotlinTestTask>
     val jar: KotlinTargetJar?
-    val konanArtifacts: List<KonanArtifactModel> // TODO: move K/N artifacts under KotlinNativeCompilationExtensions
+    val konanArtifacts: List<KonanArtifactModel>
 
     companion object {
         const val METADATA_TARGET_NAME = "metadata"
