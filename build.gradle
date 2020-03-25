@@ -74,6 +74,14 @@ ext {
     ]
     cacheableTargetNames = cacheableTargets.collect { it.visibleName }
 
+    // Some targets miss zlib in their sysroots.
+    // We skip these targets when generate a corresponding platform library.
+    // See also: the :distDef task, targetDefFiles in the :platformLibs project.
+    targetsWithoutZlib = [
+            KonanTarget.LINUX_MIPS32.INSTANCE,
+            KonanTarget.LINUX_MIPSEL32.INSTANCE
+    ]
+
     kotlinCompilerModule="org.jetbrains.kotlin:kotlin-compiler:${kotlinVersion}"
     kotlinStdLibModule="org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
     kotlinCommonStdlibModule="org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinStdlibVersion}:sources"
@@ -388,9 +396,14 @@ task distDef(type: Copy) {
 
     destinationDir distDir
 
-    from(project("platformLibs").file("src/platform")) {
-        into('konan/platformDef')
-        include '**/*.def'
+    platformManager.targetValues.each { target ->
+        from(project("platformLibs").file("src/platform/${target.family.name().toLowerCase()}")) {
+            into("konan/platformDef/${target.visibleName}")
+            include '**/*.def'
+            if (target in targetsWithoutZlib) {
+                exclude '**/zlib.def'
+            }
+        }
     }
 }
 

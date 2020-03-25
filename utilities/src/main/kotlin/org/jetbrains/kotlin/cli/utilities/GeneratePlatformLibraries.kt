@@ -69,7 +69,7 @@ fun generatePlatformLibraries(args: Array<String>) {
     val inputDirectoryPath by argParser.option(
             ArgType.String,
             "input-directory", "i",
-            "Input directory. Default value is <dist>/konan/platformDef/<target_family>"
+            "Input directory. Default value is <dist>/konan/platformDef/<target>"
     )
     val outputDirectoryPath by argParser.option(
             ArgType.String,
@@ -123,7 +123,7 @@ fun generatePlatformLibraries(args: Array<String>) {
     val target = HostManager(distribution).targetByName(targetName)
 
     val inputDirectory = inputDirectoryPath?.File()
-            ?: File(distribution.konanSubdir, "platformDef").child(target.family.visibleName)
+            ?: File(distribution.konanSubdir, "platformDef").child(target.visibleName)
 
     val outputDirectory = outputDirectoryPath?.File()
             ?: File(distribution.klib, "platform").child(target.visibleName)
