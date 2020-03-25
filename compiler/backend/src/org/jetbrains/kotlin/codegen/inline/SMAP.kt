@@ -85,8 +85,8 @@ class SMAPBuilder(
     }
 }
 
-open class NestedSourceMapper(
-    override val parent: SourceMapper, protected val smap: SMAP
+class NestedSourceMapper(
+    override val parent: SourceMapper, private val smap: SMAP, private val sameFile: Boolean = false
 ) : DefaultSourceMapper(smap.sourceInfo) {
 
     private val visitedLines = TIntIntHashMap()
@@ -98,32 +98,29 @@ open class NestedSourceMapper(
             return lineNumber
         }
 
-        val mappedLineNumber = visitedLines.get(lineNumber)
-
-        return if (mappedLineNumber > 0) {
-            mappedLineNumber
-        } else {
-            val rangeForMapping =
-                (if (lastVisitedRange?.contains(lineNumber) == true) lastVisitedRange!! else smap.findRange(lineNumber))
-                    ?: error("Can't find range to map line $lineNumber in ${sourceInfo.source}: ${sourceInfo.pathOrCleanFQN}")
-            val sourceLineNumber = rangeForMapping.mapDestToSource(lineNumber)
-            val newLineNumber = parent.mapLineNumber(sourceLineNumber, rangeForMapping.parent!!.name, rangeForMapping.parent!!.path)
-            if (newLineNumber > 0) {
-                visitedLines.put(lineNumber, newLineNumber)
-            }
-            lastVisitedRange = rangeForMapping
-            newLineNumber
-        }
-    }
-}
-
-open class SameFileNestedSourceMapper(parent: SourceMapper, smap: SMAP) : NestedSourceMapper(parent, smap) {
-    override fun mapLineNumber(lineNumber: Int): Int {
-        if (lineNumber <= smap.sourceInfo.linesInFile) {
+        if (sameFile && lineNumber <= smap.sourceInfo.linesInFile) {
             // assuming the parent source mapper is for the same file, this line number does not need remapping
             return lineNumber
         }
-        return super.mapLineNumber(lineNumber)
+
+        val mappedLineNumber = visitedLines.get(lineNumber)
+        if (mappedLineNumber > 0) {
+            return mappedLineNumber
+        }
+
+        val range = lastVisitedRange?.takeIf { lineNumber in it }
+            ?: smap.findRange(lineNumber)
+            ?: error("Can't find range to map line $lineNumber in ${sourceInfo.source}: ${sourceInfo.pathOrCleanFQN}")
+        val sourceLineNumber = range.mapDestToSource(lineNumber)
+        val newLineNumber = if (sameFile)
+            parent.mapLineNumber(sourceLineNumber, range.parent!!.name, range.parent!!.path, range.callSiteMarker)
+        else
+            parent.mapLineNumber(sourceLineNumber, range.parent!!.name, range.parent!!.path)
+        if (newLineNumber > 0) {
+            visitedLines.put(lineNumber, newLineNumber)
+        }
+        lastVisitedRange = range
+        return newLineNumber
     }
 }
 
@@ -132,13 +129,12 @@ interface SourceMapper {
     val parent: SourceMapper?
         get() = null
 
-    fun mapLineNumber(lineNumber: Int): Int {
-        throw UnsupportedOperationException("fail")
-    }
+    fun mapLineNumber(lineNumber: Int): Int
 
-    fun mapLineNumber(source: Int, sourceName: String, sourcePath: String): Int {
-        throw UnsupportedOperationException("fail")
-    }
+    fun mapLineNumber(source: Int, sourceName: String, sourcePath: String): Int =
+        mapLineNumber(source, sourceName, sourcePath, null)
+
+    fun mapLineNumber(source: Int, sourceName: String, sourcePath: String, callSiteMarker: CallSiteMarker?): Int
 
     fun endMapping() {
     }
@@ -159,13 +155,12 @@ object IdenticalSourceMapper : SourceMapper {
 
     override fun mapLineNumber(lineNumber: Int) = lineNumber
 
-    override fun mapLineNumber(source: Int, sourceName: String, sourcePath: String): Int {
+    override fun mapLineNumber(source: Int, sourceName: String, sourcePath: String, callSiteMarker: CallSiteMarker?): Int =
         throw UnsupportedOperationException(
             "IdenticalSourceMapper#mapLineNumber($source, $sourceName, $sourcePath)\n"
                     + "This mapper should not encounter a line number out of range of the current file.\n"
                     + "This indicates that SMAP generation is missed somewhere."
         )
-    }
 }
 
 data class CallSiteMarker(val lineNumber: Int)
@@ -209,7 +204,10 @@ open class DefaultSourceMapper(val sourceInfo: SourceInfo) : SourceMapper {
         return lineNumber
     }
 
-    override fun mapLineNumber(source: Int, sourceName: String, sourcePath: String): Int {
+    override fun mapLineNumber(source: Int, sourceName: String, sourcePath: String): Int =
+        mapLineNumber(source, sourceName, sourcePath, callSiteMarker)
+
+    override fun mapLineNumber(source: Int, sourceName: String, sourcePath: String, callSiteMarker: CallSiteMarker?): Int {
         if (source < 0) {
             //no source information, so just skip this linenumber
             return -1

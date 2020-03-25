@@ -3280,6 +3280,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             runTest("compiler/testData/codegen/boxInline/smap/defaultFunction.kt");
         }
 
+        @TestMetadata("defaultFunctionWithInlineCall.kt")
+        public void testDefaultFunctionWithInlineCall() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/defaultFunctionWithInlineCall.kt");
+        }
+
         @TestMetadata("interleavedFiles.kt")
         public void testInterleavedFiles() throws Exception {
             runTest("compiler/testData/codegen/boxInline/smap/interleavedFiles.kt");
@@ -3298,6 +3303,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         @TestMetadata("kt23369_3.kt")
         public void testKt23369_3() throws Exception {
             runTest("compiler/testData/codegen/boxInline/smap/kt23369_3.kt");
+        }
+
+        @TestMetadata("kt35006.kt")
+        public void testKt35006() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/kt35006.kt");
         }
 
         @TestMetadata("oneFile.kt")
