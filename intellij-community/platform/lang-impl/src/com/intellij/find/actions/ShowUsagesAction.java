@@ -85,6 +85,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static com.intellij.find.actions.ShowUsagesActionHandler.getSecondInvocationTitle;
 import static com.intellij.find.actions.ShowUsagesActionHandler.showUsagesInMaximalScope;
@@ -113,8 +114,8 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
 
       Usage o1 = c1.getUsage();
       Usage o2 = c2.getUsage();
-      int weight1 = o1 == myTable.USAGES_OUTSIDE_SCOPE_SEPARATOR ? 2 : o1 == myTable.MORE_USAGES_SEPARATOR ? 1 : 0;
-      int weight2 = o2 == myTable.USAGES_OUTSIDE_SCOPE_SEPARATOR ? 2 : o2 == myTable.MORE_USAGES_SEPARATOR ? 1 : 0;
+      int weight1 = o1 == myTable.USAGES_FILTERED_OUT_SEPARATOR ? 3 : o1 == myTable.USAGES_OUTSIDE_SCOPE_SEPARATOR ? 2 : o1 == myTable.MORE_USAGES_SEPARATOR ? 1 : 0;
+      int weight2 = o2 == myTable.USAGES_FILTERED_OUT_SEPARATOR ? 3 : o2 == myTable.USAGES_OUTSIDE_SCOPE_SEPARATOR ? 2 : o2 == myTable.MORE_USAGES_SEPARATOR ? 1 : 0;
       if (weight1 != weight2) return weight1 - weight2;
 
       if (o1 instanceof Comparable && o2 instanceof Comparable) {
@@ -331,9 +332,8 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
       () -> showElementUsages(
         project, editor, popupPosition,
         maxUsages + getUsagesPageSize(), minWidth,
-        presentation, usageSearcher, actionHandler
-      ),
-      () -> showUsagesInMaximalScope(actionHandler)
+        presentation, usageSearcher, actionHandler)
+      , () -> showUsagesInMaximalScope(actionHandler)
     );
 
 
@@ -355,7 +355,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     }
 
     UsageNode USAGES_OUTSIDE_SCOPE_NODE = new UsageNode(null, table.USAGES_OUTSIDE_SCOPE_SEPARATOR);
-    UsageNode MORE_USAGES_SEPARATOR_NODE = UsageViewImpl.NULL_NODE;
+    UsageNode MORE_USAGES_SEPARATOR_NODE = new UsageNode(null, table.MORE_USAGES_SEPARATOR);
 
     PingEDT pingEDT = new PingEDT("Rebuild popup in EDT", o -> popup != null && popup.isDisposed(), 100, () -> {
       if (popup != null && popup.isDisposed()) return;
@@ -380,15 +380,42 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
         nodes.add(USAGES_OUTSIDE_SCOPE_NODE);
       }
       List<UsageNode> data = new ArrayList<>(nodes);
-      int filteredCount = filtered(copy, usageView);
-      if (filteredCount != 0) {
-        data.add(createStringNode(UsageViewBundle.message("usages.were.filtered.out", filteredCount)));
+      int filteredOutCount = getFilteredOutNodeCount(copy, usageView);
+      if (filteredOutCount != 0) {
+        DefaultActionGroup filteringActions = new DefaultActionGroup();
+        usageView.addFilteringActions(filteringActions);
+        List<ToggleAction> unselectedActions = Arrays.stream(filteringActions.getChildren(null))
+          .filter(action -> action instanceof ToggleAction)
+          .map(action -> (ToggleAction)action)
+          .filter(ta -> !ta.isSelected(new AnActionEvent(null, DataContext.EMPTY_CONTEXT, "", ta.getTemplatePresentation(), ActionManager.getInstance(), 0)))
+          .filter(ta -> !StringUtil.isEmpty(ta.getTemplatePresentation().getText()))
+          .collect(Collectors.toList());
+        String unselectedActionTexts = unselectedActions
+          .stream()
+          .map(ta -> ta.getTemplatePresentation().getText())
+          .filter(Objects::nonNull)
+          .map(text -> StringUtil.wrapWithDoubleQuote(text))
+          .collect(Collectors.joining(", "));
+
+        data.add(new FilteredOutUsagesNode(table.USAGES_FILTERED_OUT_SEPARATOR,
+                                           UsageViewBundle.message("usages.were.filtered.out", filteredOutCount),
+                                           UsageViewBundle.message("usages.were.filtered.out.tooltip", unselectedActionTexts)) {
+          @Override
+          public void onSelected() {
+            // toggle back unselected toggle actions and restart show usages in hope it will show filtered out items now
+            for (ToggleAction action : unselectedActions) {
+              AnActionEvent fakeEvent = new AnActionEvent(null, DataContext.EMPTY_CONTEXT, "", action.getTemplatePresentation(), ActionManager.getInstance(), 0);
+              action.actionPerformed(fakeEvent);
+            }
+            showElementUsages(project, editor, popupPosition, maxUsages, minWidth, presentation, usageSearcher, actionHandler);
+          }
+        });
       }
       data.sort(new UsageNodeComparator(table));
 
       boolean hasMore = shouldShowMoreSeparator || hasOutsideScopeUsages;
       int totalCount = copy.size();
-      int visibleCount = totalCount - filteredCount;
+      int visibleCount = totalCount - filteredOutCount;
       statusPanel.setText(getStatusString(!processIcon.isDisposed(), hasMore, visibleCount, totalCount));
       rebuildTable(usageView, data, table, popup, popupPosition, minWidth);
     });
@@ -717,7 +744,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     return ActionManager.getInstance().getKeyboardShortcut(ID);
   }
 
-  private static int filtered(@NotNull List<? extends Usage> usages, @NotNull UsageViewImpl usageView) {
+  private static int getFilteredOutNodeCount(@NotNull List<? extends Usage> usages, @NotNull UsageViewImpl usageView) {
     return (int)usages.stream().filter(usage -> !usageView.isVisible(usage)).count();
   }
 
@@ -981,6 +1008,28 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     public String toString() {
       return myString.toString();
     }
+  }
+  static abstract class FilteredOutUsagesNode extends UsageNode {
+    @NotNull private final String myString;
+    private final String myToolTip;
+
+    private FilteredOutUsagesNode(@NotNull Usage fakeUsage, @NotNull String string, @NotNull String toolTip) {
+      super(null, fakeUsage);
+      myString = string;
+      myToolTip = toolTip;
+    }
+
+    @Override
+    public String toString() {
+      return myString;
+    }
+
+    @NotNull
+    public String getTooltip() {
+      return myToolTip;
+    }
+
+    public abstract void onSelected();
   }
 
   @Service

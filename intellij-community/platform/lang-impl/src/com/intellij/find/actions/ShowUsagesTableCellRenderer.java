@@ -83,6 +83,14 @@ class ShowUsagesTableCellRenderer implements TableCellRenderer {
       textChunks.append(">...");
       return textComponentSpanningWholeRow(textChunks, rowBackground, rowForeground, column, list);
     }
+    if (usage == ((ShowUsagesTable)list).USAGES_FILTERED_OUT_SEPARATOR) {
+      ShowUsagesAction.FilteredOutUsagesNode filtered = (ShowUsagesAction.FilteredOutUsagesNode)usageNode;
+      SimpleColoredComponent textChunks = new SimpleColoredComponent();
+      textChunks.append(filtered.toString(), SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
+      JComponent component = textComponentSpanningWholeRow(textChunks, rowBackground, rowForeground, column, list);
+      component.setToolTipText(filtered.getTooltip());
+      return component;
+    }
 
     // want to be able to right-align the "current" word
     LayoutManager layout = column == USAGE_TEXT_COL
@@ -184,7 +192,7 @@ class ShowUsagesTableCellRenderer implements TableCellRenderer {
   }
 
   @NotNull
-  private static Component textComponentSpanningWholeRow(@NotNull SimpleColoredComponent chunks,
+  private static JComponent textComponentSpanningWholeRow(@NotNull SimpleColoredComponent chunks,
                                                          Color rowBackground,
                                                          Color rowForeground,
                                                          final int column,
