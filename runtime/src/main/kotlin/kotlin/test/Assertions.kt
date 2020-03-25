@@ -33,7 +33,7 @@ internal actual fun <T : Throwable> checkResultIsFailure(exceptionClass: KClass<
                     @Suppress("UNCHECKED_CAST")
                     return e as T
                 }
-                asserter.fail(messagePrefix(message) + "Expected an exception of ${exceptionClass.qualifiedName} to be thrown, but was $e")
+                asserter.fail(messagePrefix(message) + "Expected an exception of ${exceptionClass.qualifiedName} to be thrown, but was $e", e)
             }
     )
 }
