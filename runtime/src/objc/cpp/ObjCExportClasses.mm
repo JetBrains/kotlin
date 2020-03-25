@@ -36,12 +36,18 @@ extern "C" id objc_autoreleaseReturnValue(id self);
 -(BOOL)_tryRetain;
 @end;
 
+static void injectToRuntime();
+
 @implementation KotlinBase {
   BackRefFromAssociatedObject refHolder;
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
   RETURN_OBJ(refHolder.ref());
+}
+
++(void)load {
+  injectToRuntime();
 }
 
 +(void)initialize {
@@ -204,7 +210,6 @@ OBJ_GETTER(Kotlin_boxDouble, KDouble value);
 }
 @end;
 
-__attribute__((constructor))
 static void injectToRuntime() {
   RuntimeCheck(Kotlin_ObjCExport_toKotlinSelector == nullptr, "runtime injected twice");
   Kotlin_ObjCExport_toKotlinSelector = @selector(toKotlin:);

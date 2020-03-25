@@ -325,6 +325,9 @@ static void initTypeAdapters() {
 }
 
 static void Kotlin_ObjCExport_initializeImpl() {
+  RuntimeCheck(Kotlin_ObjCExport_toKotlinSelector != nullptr, "unexpected initialization order");
+  RuntimeCheck(Kotlin_ObjCExport_releaseAsAssociatedObjectSelector != nullptr, "unexpected initialization order");
+
   initTypeAdapters();
 
   SEL toKotlinSelector = Kotlin_ObjCExport_toKotlinSelector;

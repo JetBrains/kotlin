@@ -191,6 +191,19 @@ __attribute__((swift_name("CoroutinesKt")))
 + (BOOL)callSuspendBridgeBridge:(KtAbstractSuspendBridge *)bridge resultHolder:(KtResultHolder<KtKotlinUnit *> *)resultHolder error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("callSuspendBridge(bridge:resultHolder:)")));
 @end;
 
+__attribute__((swift_name("GH4002ArgumentBase")))
+@interface KtGH4002ArgumentBase : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("GH4002Argument")))
+@interface KtGH4002Argument : KtGH4002ArgumentBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("DelegateClass")))
 @interface KtDelegateClass : KtBase <KtKotlinReadWriteProperty>
