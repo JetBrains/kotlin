@@ -41,7 +41,9 @@ private fun File.toPath() = Paths.get(this.path)
 
 fun File.zipDirAs(unixFile: File) {
     unixFile.withMutableZipFileSystem {
-        this.recursiveCopyTo(it.file("/"))
+        // Time attributes are not preserved to ensure that the output zip file bytes deterministic for a fixed set of
+        // input files.
+        this.recursiveCopyTo(it.file("/"), resetTimeAttributes = true)
     }
 }
 

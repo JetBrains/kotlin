@@ -14,7 +14,9 @@ import java.lang.Exception
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import java.nio.file.*
+import java.nio.file.attribute.BasicFileAttributeView
 import java.nio.file.attribute.BasicFileAttributes
+import java.nio.file.attribute.FileTime
 
 data class File constructor(internal val javaPath: Path) {
     constructor(parent: Path, child: String): this(parent.resolve(child))
@@ -62,10 +64,10 @@ data class File constructor(internal val javaPath: Path) {
         Files.copy(javaPath, destination.javaPath, StandardCopyOption.REPLACE_EXISTING)
     }
 
-    fun recursiveCopyTo(destination: File) {
+    fun recursiveCopyTo(destination: File, resetTimeAttributes: Boolean = false) {
         val sourcePath = javaPath
         val destPath = destination.javaPath
-        sourcePath.recursiveCopyTo(destPath)
+        sourcePath.recursiveCopyTo(destPath, resetTimeAttributes = resetTimeAttributes)
     }
 
     fun mkdirs() = Files.createDirectories(javaPath)
@@ -185,7 +187,7 @@ fun createTempFile(name: String, suffix: String? = null)
 fun createTempDir(name: String): File
         = Files.createTempDirectory(name).File()
 
-fun Path.recursiveCopyTo(destPath: Path) {
+fun Path.recursiveCopyTo(destPath: Path, resetTimeAttributes: Boolean = false) {
     val sourcePath = this
     Files.walk(sourcePath).forEach next@ { oldPath ->
 
@@ -201,6 +203,10 @@ fun Path.recursiveCopyTo(destPath: Path) {
             Files.createDirectories(newPath)
         } else {
             Files.copy(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING)
+        }
+        if (resetTimeAttributes) {
+            val zero = FileTime.fromMillis(0)
+            Files.getFileAttributeView(newPath, BasicFileAttributeView::class.java).setTimes(zero, zero, zero);
         }
     }
 }
