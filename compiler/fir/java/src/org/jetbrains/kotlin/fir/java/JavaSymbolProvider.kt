@@ -113,7 +113,7 @@ class JavaSymbolProvider(
                 forTypeParameterBounds = true
             )
         }
-        addDefaultBoundIfNecessary()
+        addDefaultBoundIfNecessary(isFlexible = true)
     }
 
     private fun List<JavaTypeParameter>.convertTypeParameters(stack: JavaTypeParameterStack): List<FirTypeParameter> {
