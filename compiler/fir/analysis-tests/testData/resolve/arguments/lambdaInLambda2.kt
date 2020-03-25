@@ -22,8 +22,7 @@ interface PsiMethod {
 interface PsiClass
 
 fun test() {
-    // TODO: don't forget to implement preservation flexibility of java type parameters in FIR (this is the reason of error here)
-    val processor = <!INAPPLICABLE_CANDIDATE!>AdapterProcessor<!><PsiMethod, PsiClass>(
+    val processor = AdapterProcessor<PsiMethod, PsiClass>(
         Function { method: PsiMethod? -> method?.containingClass }
     )
 }
