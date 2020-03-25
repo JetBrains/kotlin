@@ -7,6 +7,8 @@ import com.intellij.codeInsight.lookup.LookupEx;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.ide.IdeEventQueue;
+import com.intellij.internal.statistic.eventLog.FeatureUsageData;
+import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.lang.ContextAwareActionHandler;
 import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.*;
@@ -126,8 +128,21 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
     }
 
     IdeEventQueue.getInstance().setEventCount(eventCount);
+
+    final PsiFile file = editor != null ? PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()) : null;
+    final Language language = file != null
+                              ? file.getLanguage()
+                              : (elements.length > 0 ? elements[0].getLanguage() : null);
+    FeatureUsageData data = new FeatureUsageData()
+      .addData("handler", handler.getClass().getName())
+      .addLanguage(language);
+    if (elements.length > 0) {
+      data.addData("element", elements[0].getClass().getName());
+    }
+
+    FUCounterUsageLogger.getInstance().logEvent(project, "refactoring", "handler.invoked", data);
+
     if (editor != null) {
-      final PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
       if (file == null) return;
       DaemonCodeAnalyzer.getInstance(project).autoImportReferenceAtCursor(editor, file);
       handler.invoke(project, editor, file, dataContext);
