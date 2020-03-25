@@ -15,8 +15,9 @@ object EmbeddedComponents {
 @Suppress("unused")
 object PillImporter {
     private val TASKS = mapOf(
-            "pill" to JpsCompatiblePluginTasks::pill,
-            "unpill" to JpsCompatiblePluginTasks::unpill
+        "pill" to JpsCompatiblePluginTasks::pill,
+        "unpill" to JpsCompatiblePluginTasks::unpill,
+        "comboUtil" to JpsCompatiblePluginTasks::comboUtil
     )
 
     @JvmStatic

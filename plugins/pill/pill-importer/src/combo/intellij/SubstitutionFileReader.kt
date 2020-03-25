@@ -13,6 +13,9 @@ class Substitutions(private val substitutions: Map<String, Map<String, List<Orde
     fun getForArtifact(artifactName: String): Map<String, List<OrderEntryInfo>>? {
         return substitutions[artifactName]
     }
+
+    val artifacts: Set<String>
+        get() = substitutions.keys
 }
 
 object SubstitutionFileReader {

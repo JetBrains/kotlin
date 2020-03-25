@@ -51,3 +51,8 @@ val unpill by tasks.creating {
     dependsOn(jar)
     doLast { runPillTask("unpill") }
 }
+
+val comboUtil by tasks.creating {
+    dependsOn(jar)
+    doLast { runPillTask("comboUtil") }
+}

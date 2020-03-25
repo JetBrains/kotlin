@@ -2,6 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import proguard.gradle.ProGuardTask
+import java.io.File
 
 buildscript {
 
@@ -348,7 +349,7 @@ allprojects {
         bootstrapKotlinRepo?.let(::maven)
         internalKotlinRepo?.let(::maven)
 
-        maven("file:///Users/yan/jb/repo")
+        maven("file://" + File(project.projectDir, "buildSrc/prepare-deps/intellijRepo").absolutePath.replace(File.separatorChar, '/'))
     }
 
     configureJvmProject(javaHome!!, jvmTarget!!)

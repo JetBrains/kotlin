@@ -131,11 +131,8 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
 
         files.forEach { it.write() }
 
-        val comboOptionValue = System.getProperty("pill.combo", "").toUpperCase()
-        if (comboOptionValue.isNotEmpty()) {
-            val combo = Combo.values().firstOrNull { it.name == comboOptionValue }
-                ?: error("Unsupported combo option value, supported values are: " + Combo.values().map { it.name.toLowerCase() })
-
+        val combo = findCombo()
+        if (combo != null) {
             val generator = combo.createGenerator(rootProject.projectDir, rootProject.logger)
             generator.generate()
         }
@@ -147,6 +144,22 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
         removeExistingIdeaLibrariesAndModules()
         removeJpsAndPillRunConfigurations()
         removeAllArtifactConfigurations()
+    }
+
+    fun comboUtil() {
+        val combo = findCombo() ?: error("Combo implementation is not found")
+        val taskName = System.getProperty("pill.combo.task", null) ?: error("Combo task is not specified")
+        combo.runTask(taskName, rootProject.projectDir, rootProject.logger)
+    }
+
+    private fun findCombo(): Combo? {
+        val comboOptionValue = System.getProperty("pill.combo", "").toUpperCase()
+        if (comboOptionValue.isNotEmpty()) {
+            return Combo.values().firstOrNull { it.name == comboOptionValue }
+                ?: error("Unsupported combo option value, supported values are: " + Combo.values().map { it.name.toLowerCase() })
+        }
+
+        return null
     }
 
     private fun removeExistingIdeaLibrariesAndModules() {

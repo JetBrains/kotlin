@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.jetbrains.intellij.idea</groupId>
+  <artifactId>intellij-runtime-annotations</artifactId>
+  <version>202.0</version>
+  <packaging>zip</packaging>
+</project>

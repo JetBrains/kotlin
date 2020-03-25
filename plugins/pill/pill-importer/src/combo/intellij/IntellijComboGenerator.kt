@@ -18,21 +18,7 @@ private const val LIBRARIES_DIR_PATH = ".idea/libraries"
 private const val KOTLIN_IDE_IML_NAME = "kotlinide.iml"
 private const val COMBO_IML_NAME = "combo.iml"
 
-class IntellijComboGenerator(private val kotlinProjectDir: File) : ComboGenerator {
-    private val comboProjectDir = kotlinProjectDir.parentFile
-    private val ideaProjectDir = File(kotlinProjectDir.parentFile, "intellij")
-
-    private val kotlinDependenciesDir = File(System.getProperty("user.home"), ".gradle/kotlin-build-dependencies/repo/kotlin.build")
-
-    private val substitutions: Substitutions
-
-    init {
-        require(kotlinProjectDir.name == "kotlin") { "Kotlin project must be placed in " + File(kotlinProjectDir.parentFile, "kotlin") }
-        require(ideaProjectDir.exists()) { "Intellij project not found in $ideaProjectDir" }
-
-        substitutions = SubstitutionFileReader.read(kotlinProjectDir, ideaProjectDir)
-    }
-
+class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBase(kotlinProjectDir), ComboGenerator {
     override fun generate() {
         copyIdeaSettings()
         patchIdeaVcsSettings()

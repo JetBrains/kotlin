@@ -11,6 +11,7 @@ import javax.xml.stream.XMLOutputFactory
 
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
+import java.io.File
 
 plugins {
     base
@@ -87,7 +88,7 @@ repositories {
         }
     }
 
-    maven("file:///Users/yan/jb/repo")
+    maven("file://" + File(project.projectDir, "intellijRepo").absolutePath.replace(File.separatorChar, '/'))
 
     maven("https://www.jetbrains.com/intellij-repository/$intellijReleaseType")
     maven("https://plugins.jetbrains.com/maven")

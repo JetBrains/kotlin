@@ -7,14 +7,23 @@ package org.jetbrains.kotlin.pill.combo
 
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.pill.combo.intellij.IntellijComboGenerator
+import org.jetbrains.kotlin.pill.combo.intellij.IntellijRepoGenerator
 import java.io.File
 
-enum class Combo() {
+enum class Combo {
     INTELLIJ {
         override fun createGenerator(kotlinProjectDir: File, logger: Logger): ComboGenerator {
             return IntellijComboGenerator(kotlinProjectDir)
         }
+
+        override fun runTask(taskName: String, kotlinProjectDir: File, logger: Logger) {
+            when (taskName) {
+                "genRepo" -> IntellijRepoGenerator(kotlinProjectDir).generate()
+                else -> error("IntelliJ combo: Unknown task name $taskName")
+            }
+        }
     };
 
     abstract fun createGenerator(kotlinProjectDir: File, logger: Logger): ComboGenerator
+    abstract fun runTask(taskName: String, kotlinProjectDir: File, logger: Logger)
 }
