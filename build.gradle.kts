@@ -766,6 +766,7 @@ val zipStdlibTests by task<Zip> {
     archiveFileName.set("kotlin-stdlib-tests.zip")
     from("libraries/stdlib/common/test") { into("common") }
     from("libraries/stdlib/test") { into("test") }
+    from("libraries/kotlin.test/common/src/test/kotlin") { into("kotlin-test") }
     doLast {
         logger.lifecycle("Stdlib tests are packed to ${archiveFile.get()}")
     }
