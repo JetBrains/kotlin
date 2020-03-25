@@ -19,6 +19,7 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.runInEdtAndGet
 import com.intellij.util.ui.tree.TreeUtil
 import groovy.json.StringEscapeUtils.escapeJava
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.plugins.gradle.importing.GradleBuildScriptBuilderEx
 import org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
@@ -175,7 +176,7 @@ class GradleTestRunnerViewTest : GradleImportingTestCase() {
     }
 
     val consoleTextWithoutFirstLine = consoleText.substringAfter("\n")
-    assertTrue(consoleTextWithoutFirstLine.contains(testOutputText))
+    assertThat(consoleTextWithoutFirstLine).contains(testOutputText)
     val expectedText = if (SystemInfo.isWindows) {
       scriptOutputText + scriptOutputTextWOEol + "\n"
     } else {
