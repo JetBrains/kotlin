@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
-import com.github.gundy.semver4j.SemVer
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
@@ -141,48 +140,5 @@ abstract class YarnBasics : NpmApi {
         srcDependenciesList.forEach { src ->
             resolveRecursively(src)
         }
-    }
-}
-
-private class YarnEntryRegistry(private val lockFile: File) {
-    val entryMap = YarnLock.parse(lockFile)
-        .entries
-        .associateBy { it.dependencyKey }
-
-    fun find(packageKey: String, version: String): YarnLock.Entry {
-        val key = dependencyKey(packageKey, version)
-        var entry = entryMap[key]
-
-        if (entry == null && version == "*") {
-            val searchKey = dependencyKey(packageKey, "")
-            entry = entryMap.entries
-                .filter { it.key.startsWith(searchKey) }
-                .firstOrNull {
-                    SemVer.satisfies(it.key.removePrefix(searchKey), "*")
-                }
-                ?.value
-        }
-
-        return checkNotNull(entry) {
-            "Cannot find $key in yarn.lock"
-        }
-    }
-
-    val YarnLock.Entry.dependencyKey: String
-        get() = key.correctDependencyKey()
-
-    private fun dependencyKey(packageKey: String, version: String) =
-        YarnLock.dependencyKey(packageKey, version).correctDependencyKey()
-
-    private fun String.correctDependencyKey(): String {
-        var correctedKey = replace("@github:", "@")
-
-        if ("@file:" in correctedKey) {
-            val location = correctedKey.substringAfter("@file:")
-            val path = lockFile.parentFile.resolve(location).canonicalPath
-            correctedKey = correctedKey.replaceAfter("@file:", path)
-        }
-
-        return correctedKey
     }
 }
