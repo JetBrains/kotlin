@@ -8,6 +8,7 @@
  * SPEC VERSION: 0.1-280
  * PLACE: overload-resolution, building-the-overload-candidate-set-ocs, call-with-named-parameters -> paragraph 1 -> sentence 2
  * RELEVANT PLACES: overload-resolution, building-the-overload-candidate-set-ocs, call-with-named-parameters -> paragraph 2 -> sentence 1
+ * overload-resolution, building-the-overload-candidate-set-ocs, call-with-specified-type-parameters -> paragraph 1 -> sentence 2
  * NUMBER: 10
  * DESCRIPTION: Explicit receiver:  Top-level non-extension functions: Callables star-imported into the current file;
  */

@@ -1,0 +1,14 @@
+{
+  "2": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-312",
+          "casesNumber": 2,
+          "description": " filtering is done before selection of the overload candidate set is perfomed",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}
