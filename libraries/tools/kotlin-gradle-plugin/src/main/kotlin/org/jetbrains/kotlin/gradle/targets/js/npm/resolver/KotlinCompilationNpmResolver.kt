@@ -250,7 +250,7 @@ internal class KotlinCompilationNpmResolver(
                     ?: error("Unresolved dependent npm package: ${this@KotlinCompilationNpmResolver} -> $it")
             }
             val importedExternalGradleDependencies = externalGradleDependencies.mapNotNull {
-                resolver.gradleNodeModules.get(it.dependency, it.artifact)
+                resolver.gradleNodeModules.get(it.dependency, it.artifact.file)
             }
 
             val packageJson = PackageJson(

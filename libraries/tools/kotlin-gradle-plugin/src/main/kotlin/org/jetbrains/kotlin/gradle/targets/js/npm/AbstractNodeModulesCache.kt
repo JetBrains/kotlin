@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
 import org.jetbrains.kotlin.gradle.internal.ProcessedFilesCache
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
@@ -27,16 +26,16 @@ internal abstract class AbstractNodeModulesCache(val nodeJs: NodeJsRootExtension
     @Synchronized
     fun get(
         dependency: ResolvedDependency,
-        artifact: ResolvedArtifact
-    ): GradleNodeModule? = cache.getOrCompute(artifact.file) {
-        buildImportedPackage(dependency, artifact)
+        file: File
+    ): GradleNodeModule? = cache.getOrCompute(file) {
+        buildImportedPackage(dependency, file)
     }?.let {
         GradleNodeModule(it)
     }
 
     abstract fun buildImportedPackage(
         dependency: ResolvedDependency,
-        artifact: ResolvedArtifact
+        file: File
     ): File?
 
     @Synchronized

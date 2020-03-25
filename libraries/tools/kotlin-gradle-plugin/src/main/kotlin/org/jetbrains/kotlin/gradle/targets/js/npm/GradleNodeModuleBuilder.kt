@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import java.io.File
@@ -19,15 +18,14 @@ import java.io.File
 internal class GradleNodeModuleBuilder(
     val project: Project,
     val dependency: ResolvedDependency,
-    val artifacts: Collection<ResolvedArtifact>,
+    val srcFiles: Collection<File>,
     val cache: GradleNodeModulesCache
 ) {
     var srcPackageJsonFile: File? = null
     val files = mutableListOf<File>()
 
     fun visitArtifacts() {
-        artifacts.forEach { artifact ->
-            val srcFile = artifact.file
+        srcFiles.forEach { srcFile ->
             when {
                 isKotlinJsRuntimeFile(srcFile) -> files.add(srcFile)
                 srcFile.isCompatibleArchive -> project.zipTree(srcFile).forEach { innerFile ->

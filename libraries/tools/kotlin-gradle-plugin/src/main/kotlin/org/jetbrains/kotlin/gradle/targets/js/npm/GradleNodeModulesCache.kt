@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import java.io.File
@@ -16,9 +15,9 @@ import java.io.File
 internal class GradleNodeModulesCache(nodeJs: NodeJsRootExtension) : AbstractNodeModulesCache(nodeJs) {
     override fun buildImportedPackage(
         dependency: ResolvedDependency,
-        artifact: ResolvedArtifact
+        file: File
     ): File? {
-        val module = GradleNodeModuleBuilder(project, dependency, listOf(artifact), this)
+        val module = GradleNodeModuleBuilder(project, dependency, listOf(file), this)
         module.visitArtifacts()
         return module.rebuild()
     }
