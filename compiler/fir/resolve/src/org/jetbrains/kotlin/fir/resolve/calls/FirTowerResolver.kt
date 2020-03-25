@@ -147,23 +147,42 @@ class FirTowerResolver(
         info: CallInfo,
         manager: TowerResolveManager
     ) {
+        processExtensionsThatHideMembers(info, manager)
+        val nonEmptyLocalScopes = mutableListOf<FirLocalScope>()
+        processLocalScopes(manager, info, nonEmptyLocalScopes)
+
+        val emptyTopLevelScopes = mutableSetOf<FirScope>()
+        processImplicitReceivers(manager, info, nonEmptyLocalScopes, emptyTopLevelScopes)
+
+        processTopLevelScopes(info, emptyTopLevelScopes, manager)
+    }
+
+    private suspend fun processExtensionsThatHideMembers(
+        info: CallInfo,
+        manager: TowerResolveManager
+    ) {
         val shouldProcessExtensionsBeforeMembers =
             info.callKind == CallKind.Function && info.name in HIDES_MEMBERS_NAME_LIST
-        if (shouldProcessExtensionsBeforeMembers) {
-            // Special case (extension hides member)
-            for ((index, topLevelScope) in topLevelScopes.withIndex()) {
-                for ((implicitReceiverValue, usableAsValue, depth) in implicitReceivers) {
-                    if (!usableAsValue) continue
-                    manager.processLevel(
-                        ScopeTowerLevel(
-                            session, components, topLevelScope, extensionReceiver = implicitReceiverValue, extensionsOnly = true
-                        ), info, TowerGroup.TopPrioritized(index).Implicit(depth)
-                    )
-                }
+
+        if (!shouldProcessExtensionsBeforeMembers) return
+
+        for ((index, topLevelScope) in topLevelScopes.withIndex()) {
+            for ((implicitReceiverValue, usableAsValue, depth) in implicitReceivers) {
+                if (!usableAsValue) continue
+                manager.processLevel(
+                    ScopeTowerLevel(
+                        session, components, topLevelScope, extensionReceiver = implicitReceiverValue, extensionsOnly = true
+                    ), info, TowerGroup.TopPrioritized(index).Implicit(depth)
+                )
             }
         }
-        val nonEmptyLocalScopes = mutableListOf<FirLocalScope>()
-        val emptyTopLevelScopes = mutableSetOf<FirScope>()
+    }
+
+    private suspend fun processLocalScopes(
+        manager: TowerResolveManager,
+        info: CallInfo,
+        nonEmptyLocalScopes: MutableList<FirLocalScope>
+    ) {
         for ((index, localScope) in localScopes.withIndex()) {
             val result = manager.processLevel(
                 ScopeTowerLevel(session, components, localScope), info, TowerGroup.Local(index)
@@ -172,51 +191,29 @@ class FirTowerResolver(
                 nonEmptyLocalScopes += localScope
             }
         }
+    }
+
+    private suspend fun processImplicitReceivers(
+        manager: TowerResolveManager,
+        info: CallInfo,
+        nonEmptyLocalScopes: MutableList<FirLocalScope>,
+        emptyTopLevelScopes: MutableSet<FirScope>
+    ) {
         val implicitReceiverValuesWithEmptyScopes = mutableSetOf<ImplicitReceiverValue<*>>()
         for ((implicitReceiverValue, usableAsValue, depth) in implicitReceivers) {
             // NB: companions are processed via implicitReceiverValues!
             val parentGroup = TowerGroup.Implicit(depth)
 
             if (usableAsValue) {
-                val implicitResult = manager.processLevel(
-                    MemberScopeTowerLevel(
-                        session, components, dispatchReceiver = implicitReceiverValue, scopeSession = components.scopeSession
-                    ), info, parentGroup.Member
+                processCandidatesWithGivenImplicitReceiverAsValue(
+                    implicitReceiverValue,
+                    manager,
+                    info,
+                    parentGroup,
+                    implicitReceiverValuesWithEmptyScopes,
+                    nonEmptyLocalScopes,
+                    emptyTopLevelScopes
                 )
-                if (implicitResult == ProcessorAction.NONE) {
-                    implicitReceiverValuesWithEmptyScopes += implicitReceiverValue
-                }
-                for ((localIndex, localScope) in nonEmptyLocalScopes.withIndex()) {
-                    manager.processLevel(
-                        ScopeTowerLevel(
-                            session, components, localScope, extensionReceiver = implicitReceiverValue
-                        ), info, parentGroup.Local(localIndex)
-                    )
-                }
-                for ((implicitDispatchReceiverValue, usable, dispatchDepth) in implicitReceivers) {
-                    if (!usable) continue
-                    if (implicitDispatchReceiverValue in implicitReceiverValuesWithEmptyScopes) continue
-                    manager.processLevel(
-                        MemberScopeTowerLevel(
-                            session,
-                            components,
-                            dispatchReceiver = implicitDispatchReceiverValue,
-                            extensionReceiver = implicitReceiverValue,
-                            scopeSession = components.scopeSession
-                        ), info, parentGroup.Implicit(dispatchDepth)
-                    )
-                }
-                for ((topIndex, topLevelScope) in topLevelScopes.withIndex()) {
-                    if (topLevelScope in emptyTopLevelScopes) continue
-                    val result = manager.processLevel(
-                        ScopeTowerLevel(
-                            session, components, topLevelScope, extensionReceiver = implicitReceiverValue
-                        ), info, parentGroup.Top(topIndex)
-                    )
-                    if (result == ProcessorAction.NONE) {
-                        emptyTopLevelScopes += topLevelScope
-                    }
-                }
             }
 
             if (implicitReceiverValue is ImplicitDispatchReceiverValue) {
@@ -232,7 +229,69 @@ class FirTowerResolver(
                 }
             }
         }
+    }
 
+    private suspend fun processCandidatesWithGivenImplicitReceiverAsValue(
+        receiver: ImplicitReceiverValue<*>,
+        manager: TowerResolveManager,
+        info: CallInfo,
+        parentGroup: TowerGroup,
+        implicitReceiverValuesWithEmptyScopes: MutableSet<ImplicitReceiverValue<*>>,
+        nonEmptyLocalScopes: List<FirLocalScope>,
+        emptyTopLevelScopes: MutableSet<FirScope>
+    ) {
+        val implicitResult = manager.processLevel(
+            MemberScopeTowerLevel(
+                session,
+                components, dispatchReceiver = receiver, scopeSession = components.scopeSession
+            ), info, parentGroup.Member
+        )
+
+        if (implicitResult == ProcessorAction.NONE) {
+            implicitReceiverValuesWithEmptyScopes += receiver
+        }
+
+        for ((localIndex, localScope) in nonEmptyLocalScopes.withIndex()) {
+            manager.processLevel(
+                ScopeTowerLevel(
+                    session, components, localScope, extensionReceiver = receiver
+                ), info, parentGroup.Local(localIndex)
+            )
+        }
+
+        for ((implicitDispatchReceiverValue, usable, dispatchDepth) in implicitReceivers) {
+            if (!usable) continue
+            if (implicitDispatchReceiverValue in implicitReceiverValuesWithEmptyScopes) continue
+            manager.processLevel(
+                MemberScopeTowerLevel(
+                    session,
+                    components,
+                    dispatchReceiver = implicitDispatchReceiverValue,
+                    extensionReceiver = receiver,
+                    scopeSession = components.scopeSession
+                ), info, parentGroup.Implicit(dispatchDepth)
+            )
+        }
+
+        for ((topIndex, topLevelScope) in topLevelScopes.withIndex()) {
+            if (topLevelScope in emptyTopLevelScopes) continue
+            val result = manager.processLevel(
+                ScopeTowerLevel(
+                    session,
+                    components, topLevelScope, extensionReceiver = receiver
+                ), info, parentGroup.Top(topIndex)
+            )
+            if (result == ProcessorAction.NONE) {
+                emptyTopLevelScopes += topLevelScope
+            }
+        }
+    }
+
+    private suspend fun processTopLevelScopes(
+        info: CallInfo,
+        emptyTopLevelScopes: Collection<FirScope>,
+        manager: TowerResolveManager
+    ) {
         for ((index, topLevelScope) in topLevelScopes.withIndex()) {
             // NB: this check does not work for variables
             // because we do not search for objects if we have extension receiver
