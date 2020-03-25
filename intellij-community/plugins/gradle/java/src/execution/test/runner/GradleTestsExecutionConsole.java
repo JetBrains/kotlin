@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.gradle.execution.test.runner;
 
 import com.intellij.build.BuildViewSettingsProvider;
+import com.intellij.execution.Platform;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.execution.testframework.sm.runner.SMTestProxy;
@@ -59,7 +60,7 @@ public class GradleTestsExecutionConsole extends SMTRunnerConsoleView implements
   // IJ Gradle test runner xml events protocol produces many unwanted empty strings
   // this is a workaround to avoid the trash in the console
   private boolean detectUnwantedEmptyLine(@NotNull String s) {
-    if (s.length() == 1 && StringUtil.isLineBreak(s.charAt(0))) {
+    if (Platform.current().lineSeparator.equals(s)) {
       if (lastMessageWasEmptyLine) return true;
       lastMessageWasEmptyLine = true;
     }

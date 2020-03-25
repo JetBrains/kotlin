@@ -13,6 +13,7 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTask
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.testFramework.ExtensionTestUtil.maskExtensions
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.runInEdtAndGet
@@ -175,9 +176,14 @@ class GradleTestRunnerViewTest : GradleImportingTestCase() {
 
     val consoleTextWithoutFirstLine = consoleText.substringAfter("\n")
     assertTrue(consoleTextWithoutFirstLine.contains(testOutputText))
-    assertEquals("script \n" +
-                 "output\n" +
-                 "text\n" +
-                 "text w/o eol\n", consoleTextWithoutFirstLine.substringBefore(testOutputText))
+    val expectedText = if (SystemInfo.isWindows) {
+      scriptOutputText + scriptOutputTextWOEol + "\n"
+    } else {
+      "script \n" +
+      "output\n" +
+      "text\n" +
+      "text w/o eol\n"
+    }
+    assertEquals(expectedText, consoleTextWithoutFirstLine.substringBefore(testOutputText))
   }
 }
