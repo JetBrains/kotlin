@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.projectRoots.impl.jdkDownloader
 
 import com.intellij.openapi.diagnostic.logger
@@ -120,6 +120,14 @@ object JdkRequirements {
     }
   }
 
+  private val JAVA_VERSION_REGEX = Regex("^" +
+                                         "(9|[1-9][1-9]|)(\\.0(\\.\\d+)?)?" +
+                                         "|" +
+                                         "1\\.\\d(\\.0(_\\d+)?)?" +
+                                         "|" +
+                                         "8" +
+                                         "\$")
+
   fun parseRequirement(request: String): JdkRequirement? {
     try {
       val versionMatcher = if (request.trim().startsWith("=")) ::strictVersionMatcher else ::sameMajorVersionMatcher
@@ -127,10 +135,12 @@ object JdkRequirements {
 
       //case 1. <vendor>-<version>
       run {
-        val parts = text.split("-", " ").map(String::trim).filterNot(String::isBlank)
-        if (parts.size != 2) return@run
-        val (vendor, version) = parts
-        val javaVersion = JavaVersion.tryParse(version) ?: return null
+        val idx = text.lastIndexOfAny(charArrayOf('-', ' '))
+        if (idx < 0 || idx + 1 >= text.length) return@run
+        val vendor = text.substring(0, idx)
+        val version = text.substring(idx + 1)
+        if (!version.matches(JAVA_VERSION_REGEX)) return@run
+        val javaVersion = JavaVersion.tryParse(version) ?: return@run
         val matcher = versionMatcher(javaVersion)
 
         return object : JdkRequirement {
@@ -143,7 +153,8 @@ object JdkRequirements {
 
       //case 2. It is just a version
       run {
-        val javaVersion = JavaVersion.tryParse(text) ?: return null
+        if (!text.matches(JAVA_VERSION_REGEX)) return@run
+        val javaVersion = JavaVersion.tryParse(text) ?: return@run
         val matcher = versionMatcher(javaVersion)
         return object : JdkRequirement {
           fun matches(version: String) = matcher.matchVersion(version)
@@ -156,7 +167,7 @@ object JdkRequirements {
     }
     catch (t: Throwable) {
       LOG.warn("Failed to parse requirement $request. ${t.message}", t)
-      return null
     }
+    return null
   }
 }
