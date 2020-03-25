@@ -2,6 +2,7 @@
 package com.intellij.application.options.editor
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings
+import com.intellij.codeInsight.documentation.render.DocRenderItem
 import com.intellij.ide.IdeBundle
 import com.intellij.ide.ui.LafManager
 import com.intellij.ide.ui.UISettings
@@ -110,6 +111,7 @@ class EditorAppearanceConfigurable : BoundCompositeSearchableConfigurable<Unname
 
   override fun apply() {
     val showEditorTooltip = UISettings.instance.showEditorToolTip
+    val docRenderingEnabled = EditorSettingsExternalizable.getInstance().isDocCommentRenderingEnabled
 
     super.apply()
 
@@ -117,6 +119,9 @@ class EditorAppearanceConfigurable : BoundCompositeSearchableConfigurable<Unname
     if (showEditorTooltip != UISettings.instance.showEditorToolTip) {
       LafManager.getInstance().repaintUI()
       uiSettings.fireUISettingsChanged()
+    }
+    if (docRenderingEnabled != EditorSettingsExternalizable.getInstance().isDocCommentRenderingEnabled) {
+      DocRenderItem.resetAllToDefaultState()
     }
 
     EditorOptionsPanel.restartDaemons()

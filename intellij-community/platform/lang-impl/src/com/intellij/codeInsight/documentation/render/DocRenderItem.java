@@ -2,6 +2,7 @@
 package com.intellij.codeInsight.documentation.render;
 
 import com.intellij.codeInsight.CodeInsightBundle;
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.documentation.DocFontSizePopup;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.HelpTooltip;
@@ -24,6 +25,8 @@ import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
@@ -45,7 +48,7 @@ import java.awt.geom.AffineTransform;
 import java.util.*;
 import java.util.function.BooleanSupplier;
 
-class DocRenderItem {
+public class DocRenderItem {
   private static final Key<DocRenderItem> OUR_ITEM = Key.create("doc.render.item");
   private static final Key<Collection<DocRenderItem>> OUR_ITEMS = Key.create("doc.render.items");
   private static final Key<VisibleAreaListener> VISIBLE_AREA_LISTENER = Key.create("doc.render.visible.area.listener");
@@ -177,6 +180,36 @@ class DocRenderItem {
       int endLine = document.getLineNumber(i.highlighter.getEndOffset());
       return line >= startLine - 1 && line <= endLine + 1;
     }).min(Comparator.comparingInt(i -> i.highlighter.getStartOffset())).orElse(null);
+  }
+
+  private static void resetToDefaultState(@NotNull Editor editor) {
+    Collection<DocRenderItem> items = editor.getUserData(OUR_ITEMS);
+    if (items == null) return;
+    boolean globalSetting = EditorSettingsExternalizable.getInstance().isDocCommentRenderingEnabled();
+    keepScrollingPositionWhile(editor, () -> {
+      List<Runnable> foldingTasks = new ArrayList<>();
+      List<DocRenderItem> itemsToUpdateInlays = new ArrayList<>();
+      boolean updated = false;
+      for (DocRenderItem item : items) {
+        if ((item.inlay == null) == globalSetting) {
+          updated |= item.toggle(foldingTasks);
+          itemsToUpdateInlays.add(item);
+        }
+      }
+      editor.getFoldingModel().runBatchFoldingOperation(() -> foldingTasks.forEach(Runnable::run), true, false);
+      updated |= updateInlays(itemsToUpdateInlays);
+      return updated;
+    });
+  }
+
+  public static void resetAllToDefaultState() {
+    for (Editor editor : EditorFactory.getInstance().getAllEditors()) {
+      resetToDefaultState(editor);
+      DocRenderPassFactory.forceRefreshOnNextPass(editor);
+    }
+    for (Project project : ProjectManager.getInstance().getOpenProjects()) {
+      DaemonCodeAnalyzer.getInstance(project).restart();
+    }
   }
 
   private DocRenderItem(@NotNull Editor editor, @NotNull TextRange textRange, @Nullable String textToRender) {

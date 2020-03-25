@@ -43,6 +43,10 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
     return editor.getProject() == null || existing != null && existing == current ? null : new DocRenderPass(editor, file);
   }
 
+  static void forceRefreshOnNextPass(@NotNull Editor editor) {
+    editor.putUserData(MODIFICATION_STAMP, null);
+  }
+
   private static class DocRenderPass extends EditorBoundHighlightingPass {
     private Items items;
 

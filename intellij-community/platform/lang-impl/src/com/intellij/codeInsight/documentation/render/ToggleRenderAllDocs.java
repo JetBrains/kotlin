@@ -7,7 +7,7 @@ import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
 import com.intellij.openapi.project.DumbAware;
 import org.jetbrains.annotations.NotNull;
 
-public class ToggleRenderDocsOnFileOpeningAction extends ToggleAction implements DumbAware {
+public class ToggleRenderAllDocs extends ToggleAction implements DumbAware {
   @Override
   public boolean isSelected(@NotNull AnActionEvent e) {
     return EditorSettingsExternalizable.getInstance().isDocCommentRenderingEnabled();
@@ -16,5 +16,6 @@ public class ToggleRenderDocsOnFileOpeningAction extends ToggleAction implements
   @Override
   public void setSelected(@NotNull AnActionEvent e, boolean state) {
     EditorSettingsExternalizable.getInstance().setDocCommentRenderingEnabled(state);
+    DocRenderItem.resetAllToDefaultState();
   }
 }
