@@ -175,6 +175,7 @@ extra["versions.markdown"] = "0.1.25"
 extra["versions.trove4j"] = "1.0.20181211"
 extra["versions.completion-ranking-kotlin"] = "0.1.2"
 extra["versions.r8"] = "1.5.70"
+extra["versions.kotlinx-collections-immutable"] = "0.3.1"
 
 // NOTE: please, also change KTOR_NAME in pathUtil.kt and all versions in corresponding jar names in daemon tests.
 extra["versions.ktor-network"] = "1.0.1"
