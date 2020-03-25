@@ -47,7 +47,6 @@ Kotlin
 test/_1Kt
 *L
 1#1,26:1
-19#1,6:27
 *E
 
 // FILE: 2.smap
