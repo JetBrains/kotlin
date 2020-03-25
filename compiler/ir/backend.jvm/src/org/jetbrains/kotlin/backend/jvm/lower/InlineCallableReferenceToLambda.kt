@@ -83,7 +83,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                 returnType = field.type
                 isSuspend = false
             }.apply {
-                parent = currentDeclarationParent
+                parent = currentDeclarationParent ?: error("No current declaration parent at ${expression.dump()}")
                 val boundReceiver = expression.dispatchReceiver ?: expression.extensionReceiver
 
                 val receiver =
@@ -140,7 +140,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                 returnType = referencedFunction.returnType
                 isSuspend = referencedFunction.isSuspend
             }.apply {
-                parent = currentDeclarationParent
+                parent = currentDeclarationParent!!
                 for ((index, argumentType) in argumentTypes.withIndex()) {
                     addValueParameter {
                         name = Name.identifier("p$index")

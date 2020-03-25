@@ -137,7 +137,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
             origin = if (isLambda) JvmLoweredDeclarationOrigin.LAMBDA_IMPL else JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
             name = SpecialNames.NO_NAME_PROVIDED
         }.apply {
-            parent = currentDeclarationParent
+            parent = currentDeclarationParent ?: error("No current declaration parent at ${irFunctionReference.dump()}")
             superTypes += superType
             if (samSuperType == null)
                 superTypes += functionSuperClass.typeWith(parameterTypes)
