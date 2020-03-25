@@ -146,5 +146,5 @@ CocoaPods libraries, it can be build __only__ __from__ __Xcode__.
 
 ## Current Limitations
 
- - If a Kotlin/Native module uses a CocoaPods library, you can built this module only from an Xcode project.
+ - If a Kotlin/Native module uses a CocoaPods library, you can build this module only from an Xcode project.
  Otherwise the CocoaPods library cannot be resolved by the Kotlin/Native infrastructure.
