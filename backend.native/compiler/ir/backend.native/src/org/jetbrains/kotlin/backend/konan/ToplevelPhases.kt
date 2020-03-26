@@ -326,18 +326,19 @@ internal val allLoweringsPhase = namedIrModulePhase(
                 stripTypeAliasDeclarationsPhase then
                 lowerBeforeInlinePhase then
                 arrayConstructorPhase then
+                lateinitPhase then
+                sharedVariablesPhase then
+                extractLocalClassesFromInlineBodies then
                 inlinePhase then
                 provisionalFunctionExpressionPhase then
                 lowerAfterInlinePhase then
                 performByIrFile(
                         name = "IrLowerByFile",
                         description = "IR Lowering by file",
-                        lower = lateinitPhase then
-                                forLoopsPhase then
+                        lower = forLoopsPhase then
                                 stringConcatenationPhase then
                                 enumConstructorsPhase then
                                 initializersPhase then
-                                sharedVariablesPhase then
                                 localFunctionsPhase then
                                 tailrecPhase then
                                 defaultParameterExtentPhase then
