@@ -211,7 +211,7 @@ public class AsyncProjectViewSupport {
     }
     TreePath path = paths.get(0);
     tree.expandPath(path); // request to expand found path
-    TreeUtil.selectPath(tree, path); // select and scroll to center
+    TreeUtil.selectPaths(tree, path); // select and scroll to center
     return true;
   }
 
