@@ -10,19 +10,20 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.NonDefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.isIOS
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 
-interface NativeTargetConfigurator : TargetConfigurator
+interface NativeTargetConfigurator : TargetConfigurator {
+    val isDesktopTarget: Boolean
+}
 
 class RealNativeTargetConfigurator private constructor(
     override val moduleSubType: ModuleSubType
 ) : NativeTargetConfigurator, SimpleTargetConfigurator {
     override val text: String = moduleSubType.name.capitalize()
+    override val isDesktopTarget: Boolean
+        get() = moduleSubType.isNativeDesktop
 
     override fun createInnerTargetIrs(reader: Reader, module: Module): List<BuildSystemIR> = if (moduleSubType.isIOS) {
         listOf(
@@ -47,6 +48,7 @@ class RealNativeTargetConfigurator private constructor(
 
 object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenceTargetConfigurator {
     override val moduleType = ModuleType.native
+    override val isDesktopTarget: Boolean = true
 
     @NonNls
     override val id = "nativeForCurrentSystem"

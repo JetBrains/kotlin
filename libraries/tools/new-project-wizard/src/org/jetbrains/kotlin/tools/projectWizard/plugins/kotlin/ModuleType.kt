@@ -38,6 +38,14 @@ enum class ModuleSubType(val moduleType: ModuleType) {
 val ModuleSubType.isIOS: Boolean
     get() = this in EnumSet.of(ModuleSubType.iosX64, ModuleSubType.iosArm32, ModuleSubType.iosArm64)
 
+val ModuleSubType.isNativeDesktop: Boolean
+    get() = this in EnumSet.of(
+        ModuleSubType.linuxX64,
+        ModuleSubType.macosX64,
+        ModuleSubType.mingwX64, ModuleSubType.mingwX86
+    )
+
+
 fun ModuleType.correspondingStdlib(): StdlibType? = when (this) {
     ModuleType.jvm -> StdlibType.StdlibJdk8
     ModuleType.js -> StdlibType.StdlibJs
