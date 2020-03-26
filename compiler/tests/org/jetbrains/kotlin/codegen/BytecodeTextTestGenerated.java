@@ -4245,6 +4245,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/singleConcat.kt");
         }
 
+        @TestMetadata("stringBuilderToString.kt")
+        public void testStringBuilderToString() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/stringBuilderToString.kt");
+        }
+
         @TestMetadata("stringPlus.kt")
         public void testStringPlus() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/stringPlus.kt");
