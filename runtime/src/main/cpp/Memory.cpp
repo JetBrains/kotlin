@@ -2046,7 +2046,6 @@ OBJ_GETTER(initSharedInstance,
   }
   ObjHeader* object = AllocInstance(typeInfo, OBJ_RESULT);
   memoryState->initializingSingletons.push_back(std::make_pair(location, object));
-  addHeapRef(object);
 #if KONAN_NO_EXCEPTIONS
   ctor(object);
   if (Strict)
@@ -2054,7 +2053,6 @@ OBJ_GETTER(initSharedInstance,
   UpdateHeapRef(location, object);
   synchronize();
   memoryState->initializingSingletons.pop_back();
-  releaseHeapRef<Strict>(object);
   return object;
 #else  // KONAN_NO_EXCEPTIONS
   try {
@@ -2064,13 +2062,11 @@ OBJ_GETTER(initSharedInstance,
     UpdateHeapRef(location, object);
     synchronize();
     memoryState->initializingSingletons.pop_back();
-    releaseHeapRef<Strict>(object);
     return object;
   } catch (...) {
     UpdateReturnRef(OBJ_RESULT, nullptr);
     zeroHeapRef(location);
     memoryState->initializingSingletons.pop_back();
-    releaseHeapRef<Strict>(object);
     synchronize();
     throw;
   }
