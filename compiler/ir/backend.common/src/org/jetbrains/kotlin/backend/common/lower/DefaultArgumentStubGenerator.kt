@@ -57,7 +57,7 @@ open class DefaultArgumentStubGenerator(
         val newIrFunction =
             irFunction.generateDefaultsFunction(context, skipInlineMethods, skipExternalMethods, forceSetOverrideSymbols, visibility)
                 ?: return null
-        if (newIrFunction.origin == IrDeclarationOrigin.FAKE_OVERRIDE) {
+        if (newIrFunction.isFakeOverride) {
             return listOf(irFunction, newIrFunction)
         }
 
