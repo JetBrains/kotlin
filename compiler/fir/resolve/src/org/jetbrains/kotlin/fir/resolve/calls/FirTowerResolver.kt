@@ -44,24 +44,32 @@ class FirTowerResolver(
     private val collector = CandidateCollector(components, resolutionStageRunner)
     private val manager = TowerResolveManager(this)
     private lateinit var implicitReceivers: List<ImplicitReceiver>
+    private lateinit var implicitReceiversUsableAsValues: List<ImplicitReceiver>
 
-    private data class ImplicitReceiver(val receiver: ImplicitReceiverValue<*>, val usableAsValue: Boolean, val depth: Int)
+    private data class ImplicitReceiver(
+        val receiver: ImplicitReceiverValue<*>,
+        val depth: Int,
+        val usableAsValue: Boolean
+    )
 
-    private fun prepareImplicitReceivers(implicitReceiverValues: List<ImplicitReceiverValue<*>>): List<ImplicitReceiver> {
+    private fun prepareImplicitReceivers(implicitReceiverValues: List<ImplicitReceiverValue<*>>) {
         var depth = 0
         var firstDispatchValue = true
         val explicitCompanions = mutableListOf<FirRegularClassSymbol>()
-        implicitReceivers = implicitReceiverValues.mapNotNull {
-            val usableAsValue = when (it) {
+        val implicitReceiversUsableAsValues = mutableListOf<ImplicitReceiver>()
+        implicitReceivers = implicitReceiverValues.mapNotNull { receiverValue ->
+            val usableAsValue = when (receiverValue) {
                 is ImplicitExtensionReceiverValue -> true
                 is ImplicitDispatchReceiverValue -> {
-                    val symbol = it.boundSymbol
+                    val symbol = receiverValue.boundSymbol
                     val klass = symbol.fir as? FirRegularClass
-                    if (!it.implicitCompanion && klass?.isCompanion == true) {
+
+                    if (!receiverValue.implicitCompanion && klass?.isCompanion == true) {
                         explicitCompanions += klass.symbol
                     }
-                    if (firstDispatchValue && !it.inDelegated) {
-                        if (!it.implicitCompanion &&
+
+                    if (firstDispatchValue && !receiverValue.inDelegated) {
+                        if (!receiverValue.implicitCompanion &&
                             klass?.isInner == false &&
                             !symbol.classId.isLocal
                         ) {
@@ -69,14 +77,23 @@ class FirTowerResolver(
                         }
                         true
                     } else {
-                        symbol.fir.classKind == ClassKind.OBJECT && !it.inDelegated
+                        symbol.fir.classKind == ClassKind.OBJECT && !receiverValue.inDelegated
                     }
                 }
             }
-            if (it is ImplicitDispatchReceiverValue && it.implicitCompanion && it.boundSymbol in explicitCompanions) null
-            else ImplicitReceiver(it, usableAsValue, depth++)
+
+            if (receiverValue is ImplicitDispatchReceiverValue && receiverValue.implicitCompanion && receiverValue.boundSymbol in explicitCompanions) {
+                null
+            } else {
+                ImplicitReceiver(receiverValue, depth++, usableAsValue).also {
+                    if (usableAsValue) {
+                        implicitReceiversUsableAsValues.add(it)
+                    }
+                }
+            }
         }
-        return implicitReceivers
+
+        this.implicitReceiversUsableAsValues = implicitReceiversUsableAsValues
     }
 
     private fun FirScope.toScopeTowerLevel(
@@ -187,8 +204,7 @@ class FirTowerResolver(
             if (explicitReceiverValue != null) {
                 processHideMembersLevel(explicitReceiverValue, topLevelScope, info, index, depth = null)
             } else {
-                for ((implicitReceiverValue, usableAsValue, depth) in implicitReceivers) {
-                    if (!usableAsValue) continue
+                for ((implicitReceiverValue, depth) in implicitReceiversUsableAsValues) {
                     processHideMembersLevel(implicitReceiverValue, topLevelScope, info, index, depth)
                 }
             }
@@ -228,7 +244,7 @@ class FirTowerResolver(
         emptyTopLevelScopes: MutableSet<FirScope>
     ) {
         val implicitReceiverValuesWithEmptyScopes = mutableSetOf<ImplicitReceiverValue<*>>()
-        for ((implicitReceiverValue, usableAsValue, depth) in implicitReceivers) {
+        for ((implicitReceiverValue, depth, usableAsValue) in implicitReceivers) {
             // NB: companions are processed via implicitReceiverValues!
             val parentGroup = TowerGroup.Implicit(depth)
 
@@ -280,8 +296,7 @@ class FirTowerResolver(
             )
         }
 
-        for ((implicitDispatchReceiverValue, usable, dispatchDepth) in implicitReceivers) {
-            if (!usable) continue
+        for ((implicitDispatchReceiverValue, dispatchDepth) in implicitReceiversUsableAsValues) {
             if (implicitDispatchReceiverValue in implicitReceiverValuesWithEmptyScopes) continue
             manager.processLevel(
                 implicitDispatchReceiverValue.toMemberScopeTowerLevel(extensionReceiver = receiver),
@@ -345,8 +360,7 @@ class FirTowerResolver(
             }
         }
 
-        for ((implicitReceiverValue, usableAsValue, depth) in implicitReceivers) {
-            if (!usableAsValue) continue
+        for ((implicitReceiverValue, depth) in implicitReceiversUsableAsValues) {
             processCombinationOfReceivers(manager, implicitReceiverValue, explicitReceiverValue, info, depth, nonEmptyLocalScopes)
         }
 
@@ -415,8 +429,7 @@ class FirTowerResolver(
             )
         }
 
-        for ((implicitDispatchReceiverValue, usable, dispatchDepth) in implicitReceivers) {
-            if (!usable) continue
+        for ((implicitDispatchReceiverValue, dispatchDepth) in implicitReceiversUsableAsValues) {
             manager.processLevelForPropertyWithInvoke(
                 implicitDispatchReceiverValue.toMemberScopeTowerLevel(extensionReceiver = implicitReceiverValue),
                 info, parentGroup.Implicit(dispatchDepth)
@@ -470,8 +483,7 @@ class FirTowerResolver(
             )
         }
 
-        for ((implicitReceiverValue, usable, depth) in implicitReceivers) {
-            if (!usable) continue
+        for ((implicitReceiverValue, depth) in implicitReceiversUsableAsValues) {
             // NB: companions are processed via implicitReceiverValues!
             val parentGroup = TowerGroup.Implicit(depth)
             manager.processLevel(
@@ -512,8 +524,7 @@ class FirTowerResolver(
         invokeReceiverValue: ExpressionReceiverValue,
         manager: TowerResolveManager
     ) {
-        for ((implicitReceiverValue, usable, depth) in implicitReceivers) {
-            if (!usable) continue
+        for ((implicitReceiverValue, depth) in implicitReceiversUsableAsValues) {
             val parentGroup = TowerGroup.Implicit(depth)
             manager.processLevel(
                 invokeReceiverValue.toMemberScopeTowerLevel(
