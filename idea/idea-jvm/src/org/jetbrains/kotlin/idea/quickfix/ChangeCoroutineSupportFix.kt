@@ -13,6 +13,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.configuration.findApplicableConfigurator
 import org.jetbrains.kotlin.idea.roots.invalidateProjectRoots
@@ -24,7 +25,7 @@ sealed class ChangeCoroutineSupportFix(
 ) : AbstractChangeFeatureSupportLevelFix(element, LanguageFeature.Coroutines, coroutineSupport, shortFeatureName) {
 
     class InModule(element: PsiElement, coroutineSupport: LanguageFeature.State) : ChangeCoroutineSupportFix(element, coroutineSupport) {
-        override fun getText() = "${super.getText()} in the current module"
+        override fun getText() = KotlinJvmBundle.message("fix.0.in.current.module", super.getText())
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
             val module = ModuleUtilCore.findModuleForPsiElement(file) ?: return
@@ -34,7 +35,7 @@ sealed class ChangeCoroutineSupportFix(
     }
 
     class InProject(element: PsiElement, coroutineSupport: LanguageFeature.State) : ChangeCoroutineSupportFix(element, coroutineSupport) {
-        override fun getText() = "${super.getText()} in the project"
+        override fun getText() = KotlinJvmBundle.message("fix.0.in.the.project", super.getText())
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
             if (featureSupportEnabled) {
@@ -54,7 +55,7 @@ sealed class ChangeCoroutineSupportFix(
     }
 
     companion object : FeatureSupportIntentionActionsFactory() {
-        private const val shortFeatureName = "coroutine"
+        private val shortFeatureName get() = KotlinJvmBundle.message("short.feature.name.coroutine")
 
         fun getFixText(state: LanguageFeature.State) = getFixText(state, shortFeatureName)
 

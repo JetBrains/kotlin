@@ -97,7 +97,7 @@ class KotlinSetupEnvironmentNotificationProvider(private val myProject: Project)
                 setText(KotlinJvmBundle.message("kotlin.not.configured"))
                 val configurators = getAbleToRunConfigurators(module).toList()
                 if (configurators.isNotEmpty()) {
-                    createComponentActionLabel(KotlinJvmBundle.message("configure")) { label ->
+                    createComponentActionLabel(KotlinJvmBundle.message("action.text.configure")) { label ->
                         val singleConfigurator = configurators.singleOrNull()
                         if (singleConfigurator != null) {
                             singleConfigurator.apply(module.project)
@@ -107,7 +107,7 @@ class KotlinSetupEnvironmentNotificationProvider(private val myProject: Project)
                         }
                     }
 
-                    createComponentActionLabel(KotlinJvmBundle.message("ignore")) {
+                    createComponentActionLabel(KotlinJvmBundle.message("action.text.ignore")) {
                         SuppressNotificationState.suppressKotlinNotConfigured(module)
                         EditorNotifications.getInstance(module.project).updateAllNotifications()
                     }
@@ -123,7 +123,7 @@ class KotlinSetupEnvironmentNotificationProvider(private val myProject: Project)
 
         fun createConfiguratorsPopup(project: Project, configurators: List<KotlinProjectConfigurator>): ListPopup {
             val step = object : BaseListPopupStep<KotlinProjectConfigurator>(
-                KotlinJvmBundle.message("choose.configurator"),
+                KotlinJvmBundle.message("title.choose.configurator"),
                 configurators
             ) {
                 override fun getTextFor(value: KotlinProjectConfigurator?) = value?.presentableText ?: "<none>"

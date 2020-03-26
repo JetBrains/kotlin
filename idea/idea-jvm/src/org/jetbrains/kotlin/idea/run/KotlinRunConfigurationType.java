@@ -24,7 +24,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinIcons;
-import org.jetbrains.kotlin.idea.KotlinLanguage;
+import org.jetbrains.kotlin.idea.KotlinJvmBundle;
 
 public class KotlinRunConfigurationType extends SimpleConfigurationType {
     public static KotlinRunConfigurationType getInstance() {
@@ -33,8 +33,8 @@ public class KotlinRunConfigurationType extends SimpleConfigurationType {
 
     public KotlinRunConfigurationType() {
         super("JetRunConfigurationType",
-              KotlinLanguage.NAME,
-              KotlinLanguage.NAME,
+              KotlinJvmBundle.message("language.name.kotlin"),
+              KotlinJvmBundle.message("language.name.kotlin"),
               NotNullLazyValue.createValue(() -> KotlinIcons.SMALL_LOGO));
     }
 

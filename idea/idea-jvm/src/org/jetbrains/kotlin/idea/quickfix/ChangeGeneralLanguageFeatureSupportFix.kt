@@ -14,12 +14,10 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.replaceLanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
-import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.findApplicableConfigurator
-import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
-import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.getCleanRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.roots.invalidateProjectRoots
 import org.jetbrains.kotlin.idea.util.module
@@ -36,7 +34,7 @@ sealed class ChangeGeneralLanguageFeatureSupportFix(
         feature: LanguageFeature,
         featureSupport: LanguageFeature.State
     ) : ChangeGeneralLanguageFeatureSupportFix(element, feature, featureSupport) {
-        override fun getText() = "${super.getText()} in the current module"
+        override fun getText() = KotlinJvmBundle.message("fix.0.in.current.module", super.getText())
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
             val module = ModuleUtilCore.findModuleForPsiElement(file) ?: return
@@ -51,7 +49,7 @@ sealed class ChangeGeneralLanguageFeatureSupportFix(
         feature: LanguageFeature,
         featureSupport: LanguageFeature.State
     ) : ChangeGeneralLanguageFeatureSupportFix(element, feature, featureSupport) {
-        override fun getText() = "${super.getText()} in the project"
+        override fun getText() = KotlinJvmBundle.message("fix.0.in.the.project", super.getText())
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
             if (featureSupportEnabled) {

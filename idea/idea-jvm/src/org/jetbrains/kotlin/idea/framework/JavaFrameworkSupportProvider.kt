@@ -48,7 +48,7 @@ class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
                 FrameworksCompatibilityUtils.suggestRemoveIncompatibleFramework(
                     rootModel,
                     JSLibraryStdDescription.SUITABLE_LIBRARY_KINDS,
-                    KotlinJvmBundle.message("kotlin.js")
+                    KotlinJvmBundle.message("presentable.name.kotlin.js")
                 )
 
                 description!!.finishLibConfiguration(module, rootModel, false)

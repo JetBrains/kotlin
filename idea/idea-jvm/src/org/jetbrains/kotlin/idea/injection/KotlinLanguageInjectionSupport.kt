@@ -74,7 +74,7 @@ class KotlinLanguageInjectionSupport : AbstractLanguageInjectionSupport() {
 
         TemporaryPlacesRegistry.getInstance(project).removeHostWithUndo(project, psiElement)
 
-        project.executeWriteCommand(KotlinJvmBundle.message("remove.injection.in.code.instructions")) {
+        project.executeWriteCommand(KotlinJvmBundle.message("command.action.remove.injection.in.code.instructions")) {
             injectInstructions.forEach(PsiElement::delete)
         }
 
@@ -172,7 +172,7 @@ private fun addInjectionInstructionInCode(language: Language, host: PsiLanguageI
     val modifierListOwner = findElementToInjectWithAnnotation(ktHost)
 
     if (modifierListOwner != null && canInjectWithAnnotation(ktHost)) {
-        project.executeWriteCommand(KotlinJvmBundle.message("add.injection.annotation")) {
+        project.executeWriteCommand(KotlinJvmBundle.message("command.action.add.injection.annotation")) {
             modifierListOwner.addAnnotation(FqName(AnnotationUtil.LANGUAGE), "\"${language.id}\"")
         }
 
@@ -186,7 +186,7 @@ private fun addInjectionInstructionInCode(language: Language, host: PsiLanguageI
     val psiFactory = KtPsiFactory(project)
     val injectComment = psiFactory.createComment("//language=" + language.id)
 
-    project.executeWriteCommand(KotlinJvmBundle.message("add.injection.comment")) {
+    project.executeWriteCommand(KotlinJvmBundle.message("command.action.add.injection.comment")) {
         commentBeforeAnchor.parent.addBefore(injectComment, commentBeforeAnchor)
     }
 

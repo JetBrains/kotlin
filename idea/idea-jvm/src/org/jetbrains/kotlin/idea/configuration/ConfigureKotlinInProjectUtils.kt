@@ -83,11 +83,11 @@ fun devRepository(version: String) = RepositoryDescription(
     isSnapshot = false
 )
 
-val MAVEN_CENTRAL = "mavenCentral()"
+const val MAVEN_CENTRAL = "mavenCentral()"
 
-val JCENTER = "jcenter()"
+const val JCENTER = "jcenter()"
 
-val KOTLIN_GROUP_ID = "org.jetbrains.kotlin"
+const val KOTLIN_GROUP_ID = "org.jetbrains.kotlin"
 
 fun isRepositoryConfigured(repositoriesBlockText: String): Boolean =
     repositoriesBlockText.contains(MAVEN_CENTRAL) || repositoriesBlockText.contains(JCENTER)

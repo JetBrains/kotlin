@@ -36,7 +36,7 @@ open class KotlinJsModuleConfigurator : KotlinWithLibraryConfigurator() {
     override fun getTargetPlatform() = JsPlatforms.CompatJsPlatform
 
     override val presentableText: String
-        get() = JavaScript.FULL_NAME
+        get() = KotlinJvmBundle.message("language.name.javascript")
 
     override fun isConfigured(module: Module) = hasKotlinJsRuntimeInScope(module)
 

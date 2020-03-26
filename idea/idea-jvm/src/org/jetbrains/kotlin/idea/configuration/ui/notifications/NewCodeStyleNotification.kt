@@ -55,7 +55,7 @@ fun notifyKotlinStyleUpdateIfNeeded(project: Project) {
 
 private class KotlinCodeStyleChangedNotification(val project: Project, isProjectSettings: Boolean) : Notification(
     KOTLIN_UPDATE_CODE_STYLE_GROUP_ID,
-    "Kotlin Code Style",
+    KotlinJvmBundle.message("kotlin.code.style"),
     "<html>${KotlinJvmBundle.message("default.code.style.was.updated.to.kotlin.coding.conventions")}</html>",
     NotificationType.WARNING,
     null

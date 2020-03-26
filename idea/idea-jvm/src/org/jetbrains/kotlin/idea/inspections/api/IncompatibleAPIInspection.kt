@@ -64,7 +64,7 @@ class IncompatibleAPIInspection : LocalInspectionTool() {
 
     companion object {
         const val SHORT_NAME = "IncompatibleAPI"
-        val DEFAULT_REASON get() = KotlinJvmBundle.message("incompatible.api")
+        val DEFAULT_REASON get() = KotlinJvmBundle.message("reason.incompatible.api")
     }
 }
 

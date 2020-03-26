@@ -93,7 +93,7 @@ class KtScratchReplExecutor(file: ScratchFile) : SequentialScratchExecutor(file)
     }
 
     private fun sendCommandToProcess(command: String) {
-        LOG.printDebugMessage("Send to REPL: ${command}")
+        LOG.printDebugMessage("Send to REPL: $command")
 
         val processInputOS = osProcessHandler?.processInput ?: return logError(this::class.java, "<p>Broken execute stream</p>")
         val charset = osProcessHandler?.charset ?: Charsets.UTF_8
@@ -203,16 +203,15 @@ class KtScratchReplExecutor(file: ScratchFile) : SequentialScratchExecutor(file)
             }
         }
 
-        private fun parseReplOutput(text: String, outputType: String): ScratchOutput? {
-            return when (outputType) {
-                "USER_OUTPUT" -> ScratchOutput(text, ScratchOutputType.OUTPUT)
-                "REPL_RESULT" -> ScratchOutput(text, ScratchOutputType.RESULT)
-                "REPL_INCOMPLETE",
-                "INTERNAL_ERROR",
-                "COMPILE_ERROR",
-                "RUNTIME_ERROR" -> ScratchOutput(text, ScratchOutputType.ERROR)
-                else -> null
-            }
+        private fun parseReplOutput(text: String, outputType: String): ScratchOutput? = when (outputType) {
+            "USER_OUTPUT" -> ScratchOutput(text, ScratchOutputType.OUTPUT)
+            "REPL_RESULT" -> ScratchOutput(text, ScratchOutputType.RESULT)
+            "REPL_INCOMPLETE",
+            "INTERNAL_ERROR",
+            "COMPILE_ERROR",
+            "RUNTIME_ERROR",
+            -> ScratchOutput(text, ScratchOutputType.ERROR)
+            else -> null
         }
     }
 }
