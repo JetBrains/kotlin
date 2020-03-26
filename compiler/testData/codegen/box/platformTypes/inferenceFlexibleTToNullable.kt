@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, JS_IR
+// IGNORE_BACKEND: JS, JS_IR, NATIVE
 // !LANGUAGE: +NewInference
 
 // FILE: Foo.java
