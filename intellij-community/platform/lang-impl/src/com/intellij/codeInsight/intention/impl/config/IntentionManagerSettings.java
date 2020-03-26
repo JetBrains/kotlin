@@ -178,9 +178,7 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
 
   private synchronized MetaDataKey registerMetaData(@NotNull IntentionActionMetaData metaData) {
     MetaDataKey key = new MetaDataKey(metaData.myCategory, metaData.getFamily());
-    if (!myMetaData.containsKey(key)){
-      processMetaData(metaData);
-    }
+    processMetaData(metaData);
     myMetaData.put(key, metaData);
     return key;
   }
