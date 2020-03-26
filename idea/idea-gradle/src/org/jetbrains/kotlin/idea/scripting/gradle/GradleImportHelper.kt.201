@@ -7,15 +7,26 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
-import com.intellij.notification.*
+import com.intellij.diff.util.DiffUtil
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.psi.UserDataProperty
+import com.intellij.testFramework.LightVirtualFileBase
+import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModelResolver
-import org.jetbrains.plugins.gradle.service.project.GradleIncrementalResolverPolicy
+import org.jetbrains.kotlin.psi.UserDataProperty
+import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
+import org.jetbrains.plugins.gradle.service.project.GradlePartialResolverPolicy
+import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
 fun runPartialGradleImport(project: Project) {
@@ -28,63 +39,64 @@ fun runPartialGradleImport(project: Project) {
         projectSettings.externalProjectPath,
         ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
             .projectResolverPolicy(
-                GradleIncrementalResolverPolicy {
+                GradlePartialResolverPolicy {
                     it is KotlinDslScriptModelResolver
                 }
             )
     )
 }
 
-private var Project.notificationPanel: Notification?
-        by UserDataProperty<Project, Notification>(Key.create("load.script.configuration.panel"))
+private var Project.notificationPanel: Boolean?
+        by UserDataProperty<Project, Boolean>(Key.create("load.script.configuration.panel"))
 
 
 fun showNotificationForProjectImport(project: Project, callback: () -> Unit) {
-    runInEdt {
-        ApplicationManager.getApplication().assertIsDispatchThread()
-        val toolbarProvider = ProjectRefreshFloatingProvider.getExtension()
-        toolbarProvider.updateAllToolbarComponents()
-    }
-    if (project.notificationPanel != null) return
-
-    val notification = getNotificationGroup().createNotification(
-        "Script configurations may be changed. They affect code highlighting, completion and other IDE functionality for *.gradle.kts scripts",
-        NotificationType.INFORMATION
-    )
-    notification.addAction(NotificationAction.createSimple("Import changes") {
-        callback()
-    })
-    notification.addAction(NotificationAction.createSimple("Enable auto-reload") {
-        callback()
-        KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled = true
-    })
-    project.notificationPanel = notification
-    notification.notify(project)
+    project.notificationPanel = true
+    (ActionManager.getInstance().getAction("LoadConfigurationAction") as LoadConfigurationAction).onClick = callback
 }
 
 fun hideNotificationForProjectImport(project: Project): Boolean {
-    if (project.notificationPanel == null) return false
-    project.notificationPanel?.expire()
-    project.notificationPanel = null
+    project.notificationPanel = false
     return true
 }
 
-private fun getNotificationGroup(): NotificationGroup {
-    return NotificationGroup.findRegisteredGroup("Kotlin DSL script configurations")
-        ?: NotificationGroup("Kotlin DSL script configurations", NotificationDisplayType.STICKY_BALLOON, true)
-}
+class LoadConfigurationAction : AnAction(
+    KotlinIdeaGradleBundle.message("action.text.load.script.configurations"),
+    KotlinIdeaGradleBundle.message("action.description.load.script.configurations"),
+    KotlinIcons.LOAD_SCRIPT_CONFIGURATION
+) {
 
-class ScriptConfigurationsRefreshFloatingProvider : AbstractFloatingToolbarProvider(ACTION_GROUP) {
+    var onClick = {}
 
-    override val priority = 200
+    override fun actionPerformed(e: AnActionEvent) {
+        onClick()
+    }
 
-    override val autoHideable = false
+    override fun update(e: AnActionEvent) {
+        ensureValidActionVisibility(e)
 
-    companion object {
-        const val ACTION_GROUP = "ProjectRefreshActionGroup"
+        e.presentation.description = KotlinIdeaGradleBundle.message("action.description.load.script.configurations")
+    }
 
-        fun getExtension(): ScriptConfigurationsRefreshFloatingProvider {
-            return EditorFloatingToolbar.EP_NAME.findExtensionOrFail(ScriptConfigurationsRefreshFloatingProvider::class.java)
+    private fun ensureValidActionVisibility(e: AnActionEvent) {
+        if (e.project?.notificationPanel != true) {
+            e.presentation.isVisible = false
+            return
         }
+        val editor = e.getData(CommonDataKeys.EDITOR) ?: return
+        when {
+            DiffUtil.isDiffEditor(editor) -> e.presentation.isVisible = false
+            !editor.isScriptEditor() -> e.presentation.isVisible = false
+        }
+    }
+
+    private fun Editor.isScriptEditor(): Boolean {
+        val documentManager = FileDocumentManager.getInstance()
+        val virtualFile = documentManager.getFile(document)
+        if (virtualFile is LightVirtualFileBase) return false
+        if (virtualFile == null || !virtualFile.isValid) return false
+
+        val project = project ?: return false
+        return virtualFile.findScriptDefinition(project) != null
     }
 }
