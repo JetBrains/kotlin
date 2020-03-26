@@ -16,6 +16,7 @@
 
 package androidx.compose.plugins.kotlin.compiler.lower
 
+import androidx.compose.plugins.kotlin.ComposeFqNames
 import androidx.compose.plugins.kotlin.ComposeUtils
 import androidx.compose.plugins.kotlin.ComposeUtils.composeInternalFqName
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -156,6 +158,13 @@ class ComposerLambdaMemoization(
         val result = super.visitDeclaration(declaration)
         if (symbolOwner != null) declarationContextStack.pop()
         return result
+    }
+
+    private fun irCurrentComposer(): IrExpression {
+        val currentComposerSymbol = getTopLevelPropertyGetter(
+            ComposeUtils.composeFqName("currentComposer")
+        )
+        return irCall(currentComposerSymbol)
     }
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
@@ -351,6 +360,15 @@ class ComposerLambdaMemoization(
 
         return irBuilder.irCall(restartFactorySymbol).apply {
             var index = 0
+
+            // first parameter is the composer parameter if we are ina  composable context
+            if (declarationContext.composable) {
+                putValueArgument(
+                    index++,
+                    irCurrentComposer()
+                )
+            }
+
             // key parameter
             putValueArgument(
                 index++, irBuilder.irInt(
@@ -369,7 +387,7 @@ class ComposerLambdaMemoization(
 
             // block parameter
             putValueArgument(index, expression)
-        }.markAsSynthetic(mark = declarationContext.composable)
+        }
     }
 
     private fun rememberExpression(
