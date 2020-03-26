@@ -37,7 +37,7 @@ interface Callable {
 
     fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, codegen: ExpressionCodegen): StackValue {
         // it's important to use unsubstituted return type here to unbox value if it comes from type variable
-        return StackValue.functionCall(returnType, resolvedCall.resultingDescriptor.original.returnType) {
+        return StackValue.functionCall(returnType, returnKotlinType ?: resolvedCall.resultingDescriptor.original.returnType) {
             codegen.invokeMethodWithArguments(this, resolvedCall, receiver)
         }
     }

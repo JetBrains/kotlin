@@ -1477,6 +1477,34 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/bytecodeText/coroutines/inlineClasses")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class InlineClasses extends AbstractIrBytecodeTextTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInlineClasses() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("inlineClassBoxingInSuspendFunReturn_Primitive.kt")
+            public void testInlineClassBoxingInSuspendFunReturn_Primitive() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/inlineClasses/inlineClassBoxingInSuspendFunReturn_Primitive.kt");
+            }
+
+            @TestMetadata("noInlineClassBoxingInSuspendFunReturn_Any.kt")
+            public void testNoInlineClassBoxingInSuspendFunReturn_Any() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/inlineClasses/noInlineClassBoxingInSuspendFunReturn_Any.kt");
+            }
+
+            @TestMetadata("noInlineClassBoxingInSuspendFunReturn_InlineAny.kt")
+            public void testNoInlineClassBoxingInSuspendFunReturn_InlineAny() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/inlineClasses/noInlineClassBoxingInSuspendFunReturn_InlineAny.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
