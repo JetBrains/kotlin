@@ -32,7 +32,7 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
         File(distribution.platformLibs(konanTarget)).absoluteFile
 
     private val defDirectory =
-        File(distribution.platformDefs(konanTarget.family)).absoluteFile
+        File(distribution.platformDefs(konanTarget)).absoluteFile
 
     private val shouldBuildCaches: Boolean =
         CacheBuilder.cacheWorksFor(konanTarget) && project.konanCacheKind != NativeCacheKind.NONE

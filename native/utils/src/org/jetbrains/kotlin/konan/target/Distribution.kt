@@ -91,7 +91,7 @@ class Distribution(
 
     fun runtime(target: KonanTarget) = runtimeFileOverride ?: "$stdlibDefaultComponent/targets/${target.visibleName}/native/runtime.bc"
 
-    fun platformDefs(family: Family) = "$konanHome/konan/platformDef/${family.visibleName}"
+    fun platformDefs(target: KonanTarget) = "$konanHome/konan/platformDef/${target.visibleName}"
 
     fun platformLibs(target: KonanTarget) = "$klib/platform/${target.visibleName}"
 
