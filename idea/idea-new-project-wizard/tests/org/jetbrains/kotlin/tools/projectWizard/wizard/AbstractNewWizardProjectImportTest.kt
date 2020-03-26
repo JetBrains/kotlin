@@ -83,7 +83,6 @@ abstract class AbstractNewWizardProjectImportTest : PlatformTestCase() {
         com.intellij.openapi.components.ServiceManager.getService(project, GradleSettings::class.java)?.apply {
             isOfflineWork = GradleEnvironment.Headless.GRADLE_OFFLINE?.toBoolean() ?: isOfflineWork
             serviceDirectoryPath = GradleEnvironment.Headless.GRADLE_SERVICE_DIRECTORY ?: serviceDirectoryPath
-            storeProjectFilesExternally = true
         }
 
         // not needed on <= 192 (and causes error on <= 192 ):
