@@ -60,11 +60,7 @@ dependencies {
     testRuntime(intellijPluginDep("smali"))
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("testng"))
-    if (Platform[201].orHigher()) {
-        testRuntime(intellijPluginDep("platform-langInjection"))
-    } else {
-        testRuntime(intellijPluginDep("IntelliLang"))
-    }
+    testRuntime(intellijPluginDep("IntelliLang"))
     testRuntime(intellijPluginDep("testng"))
     testRuntime(intellijPluginDep("copyright"))
     testRuntime(intellijPluginDep("properties"))
