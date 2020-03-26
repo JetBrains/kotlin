@@ -105,7 +105,11 @@ class KotlinSuggestedRefactoringExecution(
                     defaultValueForParameter = defaultValue,
                     modifierList = modifierList
                 ).apply {
-                    setNewParameterValue(newParameterValues[newParameterValueIndex++])
+                    // a few last added parameters may be missing in newParameterValues
+                    // because they have default values and we did not offer to enter value for them
+                    if (newParameterValueIndex < newParameterValues.size) {
+                        setNewParameterValue(newParameterValues[newParameterValueIndex++])
+                    }
                 }
             } else {
                 KotlinParameterInfo(

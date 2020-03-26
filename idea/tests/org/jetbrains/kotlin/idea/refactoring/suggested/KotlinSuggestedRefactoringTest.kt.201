@@ -1345,7 +1345,7 @@ class KotlinSuggestedRefactoringTest : BaseSuggestedRefactoringTest() {
         )
     }
 
-    fun testAddParameterWithDefaultValue() {
+    fun testAddOptionalParameter() {
         doTestChangeSignature(
             """
                 interface I {
@@ -1375,7 +1375,7 @@ class KotlinSuggestedRefactoringTest : BaseSuggestedRefactoringTest() {
                     i.foo(1)
                 }
             """.trimIndent(),
-            "usages",
+            "implementations",
             {
                 myFixture.type(", p2: Int = 10")
             },
@@ -1414,7 +1414,7 @@ class KotlinSuggestedRefactoringTest : BaseSuggestedRefactoringTest() {
         )
     }
 
-    fun testReorderParameterWithDefaultValue() {
+    fun testReorderOptionalParameter() {
         doTestChangeSignature(
             """
                 interface I {
