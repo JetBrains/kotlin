@@ -7,32 +7,31 @@ package org.jetbrains.kotlin.platform.konan
 
 import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.toTargetPlatform
 
-abstract class KonanPlatform : SimplePlatform("Native") {
+abstract class NativePlatform : SimplePlatform("Native") {
     override val oldFashionedDescription: String
         get() = "Native "
 }
 
 @Suppress("DEPRECATION_ERROR")
-object KonanPlatforms {
-    private object DefaultSimpleKonanPlatform : KonanPlatform()
+object NativePlatforms {
+    private object DefaultSimpleNativePlatform : NativePlatform()
 
     @Deprecated(
-        message = "Should be accessed only by compatibility layer, other clients should use 'defaultKonanPlatform'",
+        message = "Should be accessed only by compatibility layer, other clients should use 'defaultNativePlatform'",
         level = DeprecationLevel.ERROR
     )
-    object CompatKonanPlatform : TargetPlatform(setOf(DefaultSimpleKonanPlatform)),
+    object CompatNativePlatform : TargetPlatform(setOf(DefaultSimpleNativePlatform)),
         // Needed for backward compatibility, because old code uses INSTANCEOF checks instead of calling extensions
         org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform {
         override val platformName: String
             get() = "Native"
     }
 
-    val defaultKonanPlatform: TargetPlatform
-        get() = CompatKonanPlatform
+    val defaultNativePlatform: TargetPlatform
+        get() = CompatNativePlatform
 
-    val allKonanPlatforms: List<TargetPlatform> = listOf(defaultKonanPlatform)
+    val allNativePlatforms: List<TargetPlatform> = listOf(defaultNativePlatform)
 }
 
-fun TargetPlatform?.isNative(): Boolean = this?.singleOrNull() is KonanPlatform
+fun TargetPlatform?.isNative(): Boolean = this?.singleOrNull() is NativePlatform

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.js.JsPlatform
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
-import org.jetbrains.kotlin.platform.konan.KonanPlatform
+import org.jetbrains.kotlin.platform.konan.NativePlatform
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.superclasses
@@ -40,7 +40,7 @@ fun TargetPlatform.createArguments(init: (CommonCompilerArguments).() -> Unit = 
             jvmTarget = (singlePlatform as? JdkPlatform)?.targetVersion?.description ?: JvmTarget.DEFAULT.description
         }
         is JsPlatform -> K2JSCompilerArguments().apply { init() }
-        is KonanPlatform -> FakeK2NativeCompilerArguments().apply { init() }
+        is NativePlatform -> FakeK2NativeCompilerArguments().apply { init() }
         else -> error("Unknown platform $singlePlatform")
     }
 }

@@ -14,13 +14,12 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
 import org.jetbrains.kotlin.ide.konan.NativePlatformKindResolution.Companion.createNativeKlibPackageFragmentProvider
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.konan.KonanPlatforms
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService.Companion.createDeclarationProviderFactory
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 class NativeResolverForModuleFactory(
     private val platformAnalysisParameters: PlatformAnalysisParameters,
@@ -47,7 +46,7 @@ class NativeResolverForModuleFactory(
             moduleContext,
             declarationProviderFactory,
             CodeAnalyzerInitializer.getInstance(moduleContext.project).createTrace(),
-            KonanPlatforms.defaultKonanPlatform,
+            NativePlatforms.defaultNativePlatform,
             NativePlatformAnalyzerServices,
             targetEnvironment,
             languageVersionSettings

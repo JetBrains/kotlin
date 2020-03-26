@@ -38,10 +38,10 @@ import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.isInterop
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
-import org.jetbrains.kotlin.platform.konan.KonanPlatforms
 import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.serialization.konan.impl.KlibMetadataModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -64,7 +64,7 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
         createNativeKlibPackageFragmentProvider(moduleInfo, storageManager, languageVersionSettings, moduleDescriptor)
 
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean =
-        virtualFile.isKlibLibraryRootForPlatform(KonanPlatforms.defaultKonanPlatform)
+        virtualFile.isKlibLibraryRootForPlatform(NativePlatforms.defaultNativePlatform)
 
     override fun createResolverForModuleFactory(
         settings: PlatformAnalysisParameters,
@@ -168,5 +168,5 @@ class NativeKlibLibraryInfo(project: Project, library: Library, libraryRoot: Str
         }
 
     override val platform: TargetPlatform
-        get() = KonanPlatforms.defaultKonanPlatform
+        get() = NativePlatforms.defaultNativePlatform
 }

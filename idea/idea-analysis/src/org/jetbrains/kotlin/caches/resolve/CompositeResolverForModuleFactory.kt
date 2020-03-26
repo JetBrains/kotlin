@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
-import org.jetbrains.kotlin.platform.konan.KonanPlatform
-import org.jetbrains.kotlin.platform.konan.KonanPlatforms
+import org.jetbrains.kotlin.platform.konan.NativePlatform
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalMarkerDeclarationAnnotationChecker
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
@@ -136,8 +136,8 @@ class CompositeResolverForModuleFactory(
         if (targetPlatform.has<JvmPlatform>()) listOf(container.get<JavaDescriptorResolver>().packageFragmentProvider) else emptyList()
 
     private fun getKonanProvidersIfAny(moduleInfo: ModuleInfo, container: StorageComponentContainer): List<PackageFragmentProvider> {
-        if (!targetPlatform.has<KonanPlatform>()) return emptyList()
-        val resolution = KonanPlatforms.defaultKonanPlatform.idePlatformKind.resolution
+        if (!targetPlatform.has<NativePlatform>()) return emptyList()
+        val resolution = NativePlatforms.defaultNativePlatform.idePlatformKind.resolution
 
         val konanProvider = resolution.createPlatformSpecificPackageFragmentProvider(
             moduleInfo,

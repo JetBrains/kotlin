@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.*
 import org.jetbrains.kotlin.descriptors.konan.isInteropLibrary
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.konan.KonanPlatforms
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -31,7 +31,7 @@ internal class KlibModuleDescriptorFactoryImpl(val createBuiltIns: (StorageManag
             KlibModuleOrigin.CAPABILITY to origin,
             ImplicitIntegerCoercion.MODULE_CAPABILITY to origin.isInteropLibrary()
         ),
-        platform = KonanPlatforms.defaultKonanPlatform
+        platform = NativePlatforms.defaultNativePlatform
     )
 
     override fun createDescriptorAndNewBuiltIns(
