@@ -28,7 +28,7 @@ class RunnableStatusListener implements DaemonCodeAnalyzer.DaemonListener {
         Editor editor = ((TextEditor)fileEditor).getEditor();
         Project project = editor.getProject();
         VirtualFile file = fileEditor.getFile();
-        if (file != null && project != null) {
+        if (file != null && project != null && file.isValid()) {
           boolean hasRunMarkers = ContainerUtil.findInstance(
             DaemonCodeAnalyzerImpl.getLineMarkers(editor.getDocument(), project),
             RunLineMarkerProvider.RunLineMarkerInfo.class) != null;
