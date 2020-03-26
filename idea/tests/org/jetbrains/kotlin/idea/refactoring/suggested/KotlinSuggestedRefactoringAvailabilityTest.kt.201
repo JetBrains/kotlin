@@ -530,6 +530,51 @@ class KotlinSuggestedRefactoringAvailabilityTest : BaseSuggestedRefactoringAvail
         )
     }
 
+    fun testExpectedFunction() {
+        ignoreErrors = true
+        doTest(
+            """
+                expect fun foo()<caret>
+            """.trimIndent(),
+            {
+                myFixture.type(": Int")
+            },
+            expectedAvailability = Availability.Available(changeSignatureAvailableTooltip("foo", "actual declarations")),
+        )
+    }
+
+    fun testMemberInsideExpectedClass() {
+        ignoreErrors = true
+        doTest(
+            """
+                expect class C {
+                    fun foo()<caret>
+                }
+            """.trimIndent(),
+            {
+                myFixture.type(": Int")
+            },
+            expectedAvailability = Availability.Available(changeSignatureAvailableTooltip("foo", "actual declarations")),
+        )
+    }
+
+    fun testMemberDeepInsideExpectedClass() {
+        ignoreErrors = true
+        doTest(
+            """
+                expect class C {
+                    class Nested {
+                        fun foo()<caret>
+                    }   
+                }
+            """.trimIndent(),
+            {
+                myFixture.type(": Int")
+            },
+            expectedAvailability = Availability.Available(changeSignatureAvailableTooltip("foo", "actual declarations")),
+        )
+    }
+
     private fun addImport(fqName: String) {
         (file as KtFile).importList!!.add(KtPsiFactory(project).createImportDirective(ImportPath.fromString(fqName)))
     }

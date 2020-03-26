@@ -4,6 +4,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.psi.util.parents
 import com.intellij.refactoring.suggested.*
 import com.intellij.refactoring.suggested.SuggestedRefactoringSupport.Parameter
 import com.intellij.refactoring.suggested.SuggestedRefactoringSupport.Signature
@@ -14,9 +15,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.hasBody
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
@@ -211,9 +215,16 @@ class KotlinSuggestedRefactoringAvailability(refactoringSupport: SuggestedRefact
             hasModifier(KtTokens.ABSTRACT_KEYWORD) -> IMPLEMENTATIONS
             hasModifier(KtTokens.OPEN_KEYWORD) -> OVERRIDES
             containingClassOrObject?.isInterfaceClass() == true -> if (hasBody()) OVERRIDES else IMPLEMENTATIONS
-            hasModifier(KtTokens.EXPECT_KEYWORD) -> "actual declarations"
+            isExpectDeclaration() -> "actual declarations"
             else -> null
         }
+    }
+
+    private fun KtCallableDeclaration.isExpectDeclaration(): Boolean {
+        return parentsWithSelf
+            .filterIsInstance<KtDeclaration>()
+            .takeWhile { it == this || it is KtClassOrObject }
+            .any { it.hasModifier(KtTokens.EXPECT_KEYWORD) }
     }
 
     override fun hasTypeChanges(oldSignature: Signature, newSignature: Signature): Boolean {
