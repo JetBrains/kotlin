@@ -45,8 +45,11 @@ tasks.withType(KotlinCompile).configureEach {
 androidx {
     name = "AndroidX Compose Hosted Compiler Plugin"
     // Nobody should ever get this artifact from maven; just from studio or from source
-    publish = Publish.NONE
+    // However, we need to generate these artifacts to import them into google3 and studio
+    publish = Publish.SNAPSHOT_AND_RELEASE
+    generateDocs = false
     toolingProject = true
+    mavenVersion = LibraryVersions.COMPOSE
     mavenGroup = LibraryGroups.COMPOSE
     inceptionYear = "2019"
     description = "Contains the Kotlin compiler plugin for Compose used in Android Studio and IDEA"
