@@ -35,6 +35,8 @@ dependencies {
     compileOnly("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$cidrVersion") { isTransitive = false }
     api(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     api(project(":kotlin-ultimate:ide:common-noncidr-native")) { isTransitive = false }
+
+    testCompile(commonDep("junit:junit"))
 }
 
 
@@ -64,3 +66,7 @@ val jarTask = (tasks.findByName("jar") as Jar? ?: task<Jar>("jar")).apply {
     archiveFileName.set("mobile-mpp.jar")
 }
 
+sourceSets {
+    "main" { projectDefault() }
+    "test" { projectDefault() }
+}

@@ -14,6 +14,9 @@ val handleSymlink: (FileCopyDetails, File) -> Boolean by ultimateTools
 val mainModule = ":kotlin-ultimate:ide:android-studio-native"
 val binariesDir = "bin"
 
+val kotlinVersion: String by rootProject.extra
+val mobilePluginVersion: String = findProperty("mobilePluginDeployVersion")?.toString() ?: "0.1-SNAPSHOT"
+
 dependencies {
     embedded(project(mainModule)) { isTransitive = false }
 }
@@ -91,5 +94,36 @@ if (rootProject.findProperty("versions.androidStudioRelease") != null) {
     (rootProject.tasks.findByPath("idea-runner:runIde") as? JavaExec)?.apply {
         dependsOn(":kotlin-ultimate:prepare:mobile-mpp-plugin:mobileMppPlugin")
         this.setJvmArgs(addPlugin(this.getAllJvmArgs(), mobileMppPluginDir.absolutePath))
+    }
+}
+
+fun replaceVersion(versionFile: java.io.File, versionPattern: String, replacement: (MatchResult) -> String) {
+    check(versionFile.isFile) { "Version file $versionFile is not found" }
+    val text = versionFile.readText()
+    val pattern = Regex(versionPattern)
+    val match = pattern.find(text) ?: error("Version pattern is missing in file $versionFile")
+    val newValue = replacement(match)
+    versionFile.writeText(text.replaceRange(match.groups[1]!!.range, newValue))
+}
+
+val writePluginVersion by tasks.registering {
+    val versionFile = project(":kotlin-ultimate:ide:android-studio-native")
+        .projectDir
+        .resolve("src/com/jetbrains/mpp/versions/VersionsUtils.kt")
+
+    inputs.property("version", mobilePluginVersion)
+    inputs.property("kotlinVersion", kotlinVersion)
+    outputs.file(versionFile)
+
+    doLast {
+        requireNotNull(mobilePluginVersion) { "Specify 'pluginVersion' property" }
+
+        replaceVersion(versionFile, """const val mobilePluginVersion: String = "([^"]+)"""") {
+            mobilePluginVersion
+        }
+
+        replaceVersion(versionFile, """const val compiledAgainstKotlin: String = "([^"]+)"""") {
+            kotlinVersion
+        }
     }
 }
