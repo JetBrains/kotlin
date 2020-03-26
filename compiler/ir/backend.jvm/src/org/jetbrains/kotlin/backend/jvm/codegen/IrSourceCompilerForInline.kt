@@ -86,13 +86,10 @@ class IrSourceCompilerForInline(
         }
 
     override val lazySourceMapper: DefaultSourceMapper
-        get() = codegen.smapOverride ?: codegen.classCodegen.getOrCreateSourceMapper()
+        get() = codegen.smap.also { codegen.classCodegen.writeSourceMap = true }
 
-    override fun generateLambdaBody(lambdaInfo: ExpressionLambda): SMAPAndMethodNode {
-        val smap = codegen.context.getSourceMapper(codegen.classCodegen.irClass)
-        val node = FunctionCodegen((lambdaInfo as IrExpressionLambdaImpl).function, codegen.classCodegen, codegen).generate(smap)
-        return SMAPAndMethodNode(node, SMAP(smap.resultMappings))
-    }
+    override fun generateLambdaBody(lambdaInfo: ExpressionLambda): SMAPAndMethodNode =
+        FunctionCodegen((lambdaInfo as IrExpressionLambdaImpl).function, codegen.classCodegen, codegen).generate()
 
     override fun doCreateMethodNodeFromSource(
         callableDescriptor: FunctionDescriptor,
@@ -101,9 +98,7 @@ class IrSourceCompilerForInline(
         asmMethod: Method
     ): SMAPAndMethodNode {
         assert(callableDescriptor == callee.symbol.descriptor.original) { "Expected $callableDescriptor got ${callee.descriptor.original}" }
-        val classCodegen = ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context)
-        val node = classCodegen.generateMethodNode(callee)
-        return SMAPAndMethodNode(node, SMAP(classCodegen.getOrCreateSourceMapper().resultMappings))
+        return ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context).generateMethodNode(callee)
     }
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()
@@ -116,7 +111,7 @@ class IrSourceCompilerForInline(
     override fun createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(finallyNode: MethodNode, curFinallyDepth: Int) =
         ExpressionCodegen(
             codegen.irFunction, codegen.signature, codegen.frameMap, InstructionAdapter(finallyNode), codegen.classCodegen,
-            codegen.inlinedInto, codegen.smapOverride
+            codegen.inlinedInto, codegen.smap
         ).also {
             it.finallyDepth = curFinallyDepth
         }

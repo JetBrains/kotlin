@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper
-import org.jetbrains.kotlin.codegen.inline.MethodBodyVisitor
-import org.jetbrains.kotlin.codegen.inline.wrapWithMaxLocalCalc
+import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
@@ -44,14 +42,14 @@ class FunctionCodegen(
 ) {
     private val context = classCodegen.context
 
-    fun generate(smapOverride: DefaultSourceMapper? = null): MethodNode =
+    fun generate(): SMAPAndMethodNode =
         try {
-            doGenerate(smapOverride)
+            doGenerate()
         } catch (e: Throwable) {
             throw RuntimeException("Exception while generating code for:\n${irFunction.dump()}", e)
         }
 
-    private fun doGenerate(smapOverride: DefaultSourceMapper?): MethodNode {
+    private fun doGenerate(): SMAPAndMethodNode {
         val signature = context.methodSignatureMapper.mapSignatureWithGeneric(irFunction)
         val flags = irFunction.calculateMethodFlags()
         val methodNode = MethodNode(
@@ -90,23 +88,28 @@ class FunctionCodegen(
         // `$$forInline` versions of suspend functions have the same bodies as the originals, but with different
         // name/flags/annotations and with no state machine.
         val notForInline = irFunction.suspendForInlineToOriginal()
-        if (!context.state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0 || irFunction.isExternal) {
+        val smap = if (!context.state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0 || irFunction.isExternal) {
             generateAnnotationDefaultValueIfNeeded(methodVisitor)
+            SMAP(listOf(FileMapping.SKIP))
         } else if (notForInline != null) {
-            classCodegen.generateMethodNode(notForInline).accept(MethodBodyVisitor(methodVisitor))
+            val (originalNode, smap) = classCodegen.generateMethodNode(notForInline)
+            originalNode.accept(MethodBodyVisitor(methodVisitor))
+            smap
         } else {
+            val sourceMapper = context.getSourceMapper(classCodegen.irClass)
             val frameMap = irFunction.createFrameMapWithReceivers()
             context.state.globalInlineContext.enterDeclaration(irFunction.suspendFunctionOriginal().descriptor)
             try {
                 val adapter = InstructionAdapter(methodVisitor)
-                ExpressionCodegen(irFunction, signature, frameMap, adapter, classCodegen, inlinedInto, smapOverride).generate()
+                ExpressionCodegen(irFunction, signature, frameMap, adapter, classCodegen, inlinedInto, sourceMapper).generate()
             } finally {
                 context.state.globalInlineContext.exitDeclaration()
             }
             methodVisitor.visitMaxs(-1, -1)
+            SMAP(sourceMapper.resultMappings)
         }
         methodVisitor.visitEnd()
-        return methodNode
+        return SMAPAndMethodNode(methodNode, smap)
     }
 
     // Since the only arguments to anonymous object constructors are captured variables and complex
