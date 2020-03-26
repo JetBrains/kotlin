@@ -3591,6 +3591,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/methodCallExpression/conflictJavaMethodCallWithExplicitImports.java");
         }
 
+        @TestMetadata("defaultParamsWithVararg.java")
+        public void testDefaultParamsWithVararg() throws Exception {
+            runTest("nj2k/testData/newJ2k/methodCallExpression/defaultParamsWithVararg.java");
+        }
+
         @TestMetadata("emptyCall.java")
         public void testEmptyCall() throws Exception {
             runTest("nj2k/testData/newJ2k/methodCallExpression/emptyCall.java");
