@@ -71,7 +71,7 @@ object FieldSets {
 
     val status = field("status", declarationStatus)
 
-    val controlFlowGraphReferenceField = field("controlFlowGraphReference", controlFlowGraphReference)
+    val controlFlowGraphReferenceField = field("controlFlowGraphReference", controlFlowGraphReference).withTransform()
 
     val visibility = field(visibilityType)
 

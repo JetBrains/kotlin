@@ -85,7 +85,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         function.configure {
             withArg("F", "FirFunction<F>")
             parentArg(callableDeclaration, "F", "F")
-            +controlFlowGraphReferenceField.withTransform()
+            +controlFlowGraphReferenceField
             +symbol("FirFunctionSymbol", "F")
             +fieldList(valueParameter, withReplace = true).withTransform()
             +body(nullable = true)
@@ -231,11 +231,13 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("companionObject", regularClass, nullable = true)
             +booleanField("hasLazyNestedClassifiers")
             +superTypeRefs(withReplace = true)
+            +controlFlowGraphReferenceField
         }
 
         anonymousObject.configure {
             parentArg(klass, "F", anonymousObject)
             +symbol("FirAnonymousObjectSymbol")
+            +controlFlowGraphReferenceField
         }
 
         sealedClass.configure {
@@ -285,7 +287,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         property.configure {
             parentArg(variable, "F", property)
             parentArg(callableMemberDeclaration, "F", property)
-            +controlFlowGraphReferenceField.withTransform()
+            +controlFlowGraphReferenceField
             +symbol("FirPropertySymbol")
             +field("backingFieldSymbol", backingFieldSymbolType)
             +booleanField("isLocal")

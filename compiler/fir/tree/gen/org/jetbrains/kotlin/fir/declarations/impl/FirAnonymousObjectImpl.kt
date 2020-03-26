@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -34,6 +36,8 @@ internal class FirAnonymousObjectImpl(
     override var typeRef: FirTypeRef,
     override val symbol: FirAnonymousObjectSymbol,
 ) : FirAnonymousObject() {
+    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
+
     init {
         symbol.bind(this)
     }
@@ -43,6 +47,7 @@ internal class FirAnonymousObjectImpl(
         declarations.forEach { it.accept(visitor, data) }
         annotations.forEach { it.accept(visitor, data) }
         typeRef.accept(visitor, data)
+        controlFlowGraphReference.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnonymousObjectImpl {
@@ -50,6 +55,12 @@ internal class FirAnonymousObjectImpl(
         declarations.transformInplace(transformer, data)
         annotations.transformInplace(transformer, data)
         typeRef = typeRef.transformSingle(transformer, data)
+        transformControlFlowGraphReference(transformer, data)
+        return this
+    }
+
+    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousObjectImpl {
+        controlFlowGraphReference = controlFlowGraphReference.transformSingle(transformer, data)
         return this
     }
 

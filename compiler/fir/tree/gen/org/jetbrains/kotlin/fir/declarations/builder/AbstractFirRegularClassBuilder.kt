@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.FirClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParametersOwnerBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -44,5 +45,6 @@ interface AbstractFirRegularClassBuilder : FirClassBuilder, FirTypeParametersOwn
     abstract var symbol: FirRegularClassSymbol
     abstract var companionObject: FirRegularClass?
     abstract var hasLazyNestedClassifiers: Boolean
+    abstract var controlFlowGraphReference: FirControlFlowGraphReference
     override fun build(): FirRegularClass
 }

@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.builder.AbstractFirRegularClassBuil
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -46,6 +48,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     internal val existingNestedClassifierNames: List<Name>
 ) : FirRegularClass() {
     override val hasLazyNestedClassifiers: Boolean get() = true
+    override val controlFlowGraphReference: FirControlFlowGraphReference get() = FirEmptyControlFlowGraphReference
 
     init {
         symbol.bind(this)
@@ -83,6 +86,10 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirJavaClass {
         status = status.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirRegularClass {
         return this
     }
 }
@@ -147,6 +154,13 @@ internal class FirJavaClassBuilder : AbstractFirRegularClassBuilder, FirAnnotati
 
     @Deprecated("Modification of 'hasLazyNestedClassifiers' has no impact for FirClassImplBuilder", level = DeprecationLevel.HIDDEN)
     override var hasLazyNestedClassifiers: Boolean
+        get() = throw IllegalStateException()
+        set(value) {
+            throw IllegalStateException()
+        }
+
+    @Deprecated("Modification of 'controlFlowGraphReference' has no impact for FirClassImplBuilder", level = DeprecationLevel.HIDDEN)
+    override var controlFlowGraphReference: FirControlFlowGraphReference
         get() = throw IllegalStateException()
         set(value) {
             throw IllegalStateException()

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -36,10 +37,13 @@ abstract class FirRegularClass : FirPureAbstractElement(), FirMemberDeclaration,
     abstract val companionObject: FirRegularClass?
     abstract val hasLazyNestedClassifiers: Boolean
     abstract override val superTypeRefs: List<FirTypeRef>
+    abstract val controlFlowGraphReference: FirControlFlowGraphReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitRegularClass(this, data)
 
     abstract override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirRegularClass
+
+    abstract fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirRegularClass
 }
