@@ -68,7 +68,7 @@ fun renderResolvedCall(resolvedCall: ResolvedCall<*>, context: RenderingContext)
         val typeParameters = resolvedCall.candidateDescriptor.typeParameters
         val (inferredTypeParameters, notInferredTypeParameters) = typeParameters.partition(TypeParameterDescriptor::isInferred)
 
-        append("<br/>$indent<i>${KotlinIdeaAnalysisBundle.message("where")}</i> ")
+        append("<br/>$indent<i>${KotlinIdeaAnalysisBundle.message("type.parameters.where")}</i> ")
         if (notInferredTypeParameters.isNotEmpty()) {
             append(notInferredTypeParameters.joinToString { typeParameter -> renderError(typeParameter.name) })
             append("<i> ${KotlinIdeaAnalysisBundle.message("cannot.be.inferred")}</i>")

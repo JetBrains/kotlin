@@ -534,8 +534,7 @@ data class PlatformModuleInfo(
 
     override fun modulesWhoseInternalsAreVisible() = containedModules.flatMap { it.modulesWhoseInternalsAreVisible() }
 
-    override val name: Name
-        get() = Name.special("<Platform module ${platformModule.name} including ${commonModules.map { it.name }}>")
+    override val name: Name = Name.special("<Platform module ${platformModule.name} including ${commonModules.map { it.name }}>")
 
     override val displayedName: String
         get() = KotlinIdeaAnalysisBundle.message(

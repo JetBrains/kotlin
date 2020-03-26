@@ -29,8 +29,9 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class OperatorToFunctionIntention :
-    SelfTargetingIntention<KtExpression>(KtExpression::class.java,
-                                         KotlinIdeaAnalysisBundle.message("replace.overloaded.operator.with.function.call")
+    SelfTargetingIntention<KtExpression>(
+        KtExpression::class.java,
+        KotlinIdeaAnalysisBundle.message("replace.overloaded.operator.with.function.call")
     ) {
     companion object {
         private fun isApplicableUnary(element: KtUnaryExpression, caretOffset: Int): Boolean {
