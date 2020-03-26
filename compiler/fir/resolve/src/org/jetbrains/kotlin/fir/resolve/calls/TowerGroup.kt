@@ -102,9 +102,3 @@ class TowerGroup private constructor(private val kinds: Array<TowerGroupKind>) :
         return 0
     }
 }
-
-fun main() {
-    println(TowerGroup.Member < TowerGroup.Last)
-    println(TowerGroup.Member < TowerGroup.Member.Weakened(1))
-    println(TowerGroup.Member.Weakened(1) < TowerGroup.Member)
-}
