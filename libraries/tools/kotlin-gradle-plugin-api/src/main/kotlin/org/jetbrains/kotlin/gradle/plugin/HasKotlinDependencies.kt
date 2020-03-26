@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.util.ConfigureUtil
+import java.io.File
 
 interface KotlinDependencyHandler {
     fun api(dependencyNotation: Any): Dependency?
@@ -45,6 +46,8 @@ interface KotlinDependencyHandler {
     fun project(notation: Map<String, Any?>): ProjectDependency
 
     fun npm(name: String, version: String = "*"): Dependency
+
+    fun npm(name: String, directory: File): Dependency
 
     @Deprecated(
         message = "Use npm(name, version) instead. Name like in package.json"

@@ -7,6 +7,7 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
+import java.io.File
 
 class DefaultKotlinDependencyHandler(
     val parent: HasKotlinDependencies,
@@ -80,7 +81,18 @@ class DefaultKotlinDependencyHandler(
         }
 
     override fun npm(name: String, version: String): NpmDependency =
-        NpmDependency(project, name, version)
+        NpmDependency(
+            project = project,
+            name = name,
+            version = version
+        )
+
+    override fun npm(name: String, directory: File): NpmDependency =
+        NpmDependency(
+            project = project,
+            name = name,
+            directory = directory
+        )
 
     override fun npm(org: String?, packageName: String, version: String) =
         npm("${if (org != null) "@$org/" else ""}$packageName", version)
