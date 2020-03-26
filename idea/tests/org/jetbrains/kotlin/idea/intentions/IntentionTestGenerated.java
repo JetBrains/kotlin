@@ -14790,6 +14790,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/intentions/samConversionToAnonymousObject"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
         }
 
+        @TestMetadata("funInterface.kt")
+        public void testFunInterface() throws Exception {
+            runTest("idea/testData/intentions/samConversionToAnonymousObject/funInterface.kt");
+        }
+
         @TestMetadata("labeledReturn.kt")
         public void testLabeledReturn() throws Exception {
             runTest("idea/testData/intentions/samConversionToAnonymousObject/labeledReturn.kt");
