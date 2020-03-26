@@ -16,7 +16,9 @@
 
 package androidx.compose.plugins.kotlin.compiler.lower
 
+import androidx.compose.plugins.kotlin.ComposeFqNames
 import androidx.compose.plugins.kotlin.KtxNameConventions
+import androidx.compose.plugins.kotlin.hasDirectAnnotation
 import androidx.compose.plugins.kotlin.isEmitInline
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
@@ -62,6 +64,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrBreakContinue
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -69,10 +72,12 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
 import org.jetbrains.kotlin.ir.expressions.IrElseBranch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
 import org.jetbrains.kotlin.ir.expressions.getValueArgument
@@ -89,6 +94,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrWhenImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnitOrNullableUnit
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.toKotlinType
@@ -367,6 +373,12 @@ class ComposableFunctionBodyTransformer(
         .first { it is PropertyDescriptor && it.name.asString() == "skipping" }
         .cast<PropertyDescriptor>()
 
+    private val joinKeyDescriptor = composerTypeDescriptor
+        .unsubstitutedMemberScope
+        .findFirstFunction(KtxNameConventions.JOINKEY.identifier) {
+            it.valueParameters.size == 2
+        }
+
     private val scopeStack = mutableListOf<Scope>()
 
     private val currentFunctionScope
@@ -451,6 +463,9 @@ class ComposableFunctionBodyTransformer(
         if (descriptor.isInline)
             return false
 
+        if (descriptor.hasDirectAnnotation())
+            return false
+
         // Do not insert an observe scope in an inline composable lambda
         descriptor.findPsi()?.let { psi ->
             (psi as? KtFunctionLiteral)?.let {
@@ -508,12 +523,7 @@ class ComposableFunctionBodyTransformer(
     ): IrStatement {
         val body = declaration.body!!
 
-        val preamble = IrBlockImpl(
-            body.startOffset,
-            body.endOffset,
-            declaration.returnType,
-            null
-        )
+        val preamble = mutableStatementContainer()
 
         scope.dirty = changedParam
 
@@ -533,20 +543,11 @@ class ComposableFunctionBodyTransformer(
             it.defaultValue = null
         }
 
-        var (transformed, returnVar) = IrBlockImpl(
-            body.startOffset,
-            body.endOffset,
-            context.irBuiltIns.nothingType,
-            null,
-            body.statements
-        )
-            .withReturnAsVar()
+        var (transformed, returnVar) = body.asBodyAndResultVar()
 
         transformed = transformed.transformChildren()
 
-        val end = { irEndReplaceableGroup() }
-
-        scope.pushEnd(end)
+        scope.realizeGroup(::irEndReplaceableGroup)
 
         declaration.body = IrBlockBodyImpl(
             body.startOffset,
@@ -555,7 +556,7 @@ class ComposableFunctionBodyTransformer(
                 irStartReplaceableGroup(declaration.irSourceKey()),
                 *preamble.statements.toTypedArray(),
                 transformed,
-                end(),
+                irEndReplaceableGroup(),
                 returnVar?.let { irReturn(declaration.symbol, irGet(it)) }
             )
         )
@@ -622,12 +623,7 @@ class ComposableFunctionBodyTransformer(
         numSlots: Int
     ): IrStatement {
         val body = declaration.body!!
-        val preamble = IrBlockImpl(
-            body.startOffset,
-            body.endOffset,
-            declaration.returnType,
-            null
-        )
+        val preamble = mutableStatementContainer()
 
         // these are the parameters excluding the synthetic ones that we generate for compose.
         // These are the only parameters we want to consider in skipping calculations
@@ -699,19 +695,13 @@ class ComposableFunctionBodyTransformer(
             skipping?.let { preamble.statements.add(it) }
         }
 
-        var (transformed, returnVar) = IrBlockImpl(
-            body.startOffset,
-            body.endOffset,
-            context.irBuiltIns.nothingType,
-            null,
-            body.statements
-        )
+        var (transformed, returnVar) = body
             .transformChildren()
-            .withReturnAsVar()
+            .asBodyAndResultVar()
 
         val end = { irEndRestartGroupAndUpdateScope(declaration, changedParam, defaultParam) }
 
-        scope.pushEnd(end)
+        scope.realizeGroup(end)
 
         // if it has non-optional unstable params, the function can never skip, so we always
         // execute the body. Otherwise, we wrap the body in an if and only skip when certain
@@ -1108,24 +1098,35 @@ class ComposableFunctionBodyTransformer(
         return false
     }
 
-    private fun IrExpression.withReturnAsVar(): Pair<IrExpression, IrVariable?> {
-        if (this is IrReturn) return irTemporary(value).let {
-            irBlock(statements = listOf(it)) to it
-        }
-        var block = this as? IrBlock
+    private fun IrBody.asBodyAndResultVar(): Pair<IrExpression, IrVariable?> {
+        // TODO(lmr): figure out how to handle return Unit in a better way
+        val original = IrBlockImpl(
+            startOffset,
+            endOffset,
+            context.irBuiltIns.nothingType,
+            null,
+            statements
+        )
+        var block: IrBlock? = original
         var expr: IrStatement? = block?.statements?.lastOrNull()
         while (expr != null && block != null) {
             if (expr is IrReturn) {
-                val temp = irTemporary(expr.value)
                 block.statements.pop()
-                block.statements.add(temp)
-                return this to temp
+                return if (expr.value.type.isUnitOrNullableUnit()) {
+                    block.statements.add(expr.value)
+                    original to null
+                } else {
+                    val temp = irTemporary(expr.value)
+                    block.statements.add(temp)
+                    original to temp
+                }
             }
-            if (expr !is IrBlock) return this to null
+            if (expr !is IrBlock)
+                return original to null
             block = expr
             expr = block.statements.lastOrNull()
         }
-        return this to null
+        return original to null
     }
 
     override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
@@ -1225,6 +1226,18 @@ class ComposableFunctionBodyTransformer(
         return irMethodCall(irCurrentComposer(), endMovableDescriptor)
     }
 
+    private fun irJoinKeyChain(
+        sourceKey: IrExpression,
+        keyExprs: List<IrExpression>
+    ): IrExpression {
+        return (listOf(sourceKey) + keyExprs).reduce { accumulator, value ->
+            irMethodCall(irCurrentComposer(), joinKeyDescriptor).apply {
+                putValueArgument(0, accumulator)
+                putValueArgument(1, value)
+            }
+        }
+    }
+
     private fun irSafeCall(
         target: IrExpression,
         descriptor: FunctionDescriptor,
@@ -1295,116 +1308,94 @@ class ComposableFunctionBodyTransformer(
         )
     }
 
-    private fun createGroup(
-        start: IrExpression,
-        wrapped: IrExpression,
-        end: () -> IrExpression,
-        scope: Scope.BlockScope
-    ): IrExpression {
+    private fun IrExpression.asReplaceableGroup(scope: Scope.BlockScope): IrExpression {
+        // if the scope has no composable calls, then the only important thing is that a
+        // start/end call gets executed. as a result, we can just put them both at the top of
+        // the group, and we don't have to deal with any of the complicated jump logic that
+        // could be inside of the block
+        if (!scope.hasComposableCalls && !scope.hasReturn && !scope.hasJump) {
+            return wrap(
+                before = listOf(irStartReplaceableGroup(irSourceKey()), irEndReplaceableGroup())
+            )
+        }
+        scope.realizeGroup(::irEndReplaceableGroup)
         return when {
-            // if the scope has no composable calls, then the only important thing is that a
-            // start/end call gets executed. as a result, we can just put them both at the top of
-            // the group, and we don't have to deal with any of the complicated jump logic that
-            // could be inside of the block
-            !scope.hasComposableCalls && !scope.hasReturn && !scope.hasJump -> {
-                IrBlockImpl(
-                    wrapped.startOffset,
-                    wrapped.endOffset,
-                    wrapped.type,
-                    null,
-                    listOf(
-                        start,
-                        end(),
-                        wrapped
-                    )
-                )
-            }
             // if the scope ends with a return call, then it will get properly ended if we
             // just push the end call on the scope because of the way returns get transformed in
             // this class. As a result, here we can safely just "prepend" the start call
-            wrapped.endsWithReturnOrJump() -> {
-                scope.pushEnd(end)
-                prependSimple(start, wrapped)
+            endsWithReturnOrJump() -> {
+                wrap(before = listOf(irStartReplaceableGroup(irSourceKey())))
             }
             // otherwise, we want to push an end call for any early returns/jumps, but also add
             // an end call to the end of the group
             else -> {
-                scope.pushEnd(end)
-                wrapSimple(start, wrapped, end())
+                wrap(
+                    before = listOf(irStartReplaceableGroup(irSourceKey())),
+                    after = listOf(irEndReplaceableGroup())
+                )
             }
         }
     }
 
-    private fun prependSimple(
-        start: IrExpression,
-        wrapped: IrExpression
+    private fun IrExpression.wrap(
+        before: List<IrExpression> = emptyList(),
+        after: List<IrExpression> = emptyList()
     ): IrExpression {
-        return IrBlockImpl(
-            wrapped.startOffset,
-            wrapped.endOffset,
-            wrapped.type,
-            null,
-            listOf(
-                start,
-                wrapped
-            )
-        )
-    }
-
-    private fun wrapSimple(
-        start: IrExpression?,
-        wrapped: IrExpression,
-        end: IrExpression?
-    ): IrExpression {
-        if (wrapped.type.isUnitOrNullableUnit()) {
-            return IrBlockImpl(
-                wrapped.startOffset,
-                wrapped.endOffset,
-                wrapped.type,
-                null,
-                listOfNotNull(
-                    start,
-                    wrapped,
-                    end
-                )
-            )
+        return if (after.isEmpty() || type.isNothing() || type.isUnitOrNullableUnit()) {
+            wrap(type, before, after)
         } else {
-            val tempVar = irTemporary(wrapped, nameHint = "group")
-
-            return IrBlockImpl(
-                wrapped.startOffset,
-                wrapped.endOffset,
-                wrapped.type,
-                null,
-                listOfNotNull(
-                    start,
-                    tempVar,
-                    end,
-                    IrGetValueImpl(
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET,
-                        tempVar.symbol
-                    )
-                )
+            val tmpVar = irTemporary(this, nameHint = "group")
+            tmpVar.wrap(
+                type,
+                before,
+                after + irGet(tmpVar)
             )
         }
     }
 
-    private fun IrExpression.asReplaceableGroup(scope: Scope.BlockScope) = createGroup(
-        irStartReplaceableGroup(irSourceKey()),
-        this,
-        ::irEndReplaceableGroup,
-        scope
-    )
+    private fun IrStatement.wrap(
+        type: IrType,
+        before: List<IrExpression> = emptyList(),
+        after: List<IrExpression> = emptyList()
+    ): IrExpression {
+        return IrBlockImpl(
+            startOffset,
+            endOffset,
+            type,
+            null,
+            before + this + after
+        )
+    }
 
-    // TODO: joined key
-    @Suppress("unused")
-    private fun IrExpression.asMovableGroup(scope: Scope.BlockScope) = createGroup(
-        irStartMovableGroup(irSourceKey()),
-        this,
-        ::irEndMovableGroup,
-        scope
-    )
+    private fun IrExpression.asCoalescableGroup(scope: Scope.BlockScope): IrExpression {
+        val before = mutableStatementContainer()
+        val after = mutableStatementContainer()
+
+        // Since this expression produces a dynamic number of groups, we may need to wrap it with
+        // a group directly. We don't know that for sure yet, so we provide the parent scope with
+        // handlers to do that if it ends up needing to.
+        encounteredCoalescableGroup(
+            scope,
+            realizeGroup = {
+                before.statements.add(irStartReplaceableGroup(irSourceKey()))
+                after.statements.add(irEndReplaceableGroup())
+            },
+            makeEnd = ::irEndReplaceableGroup
+        )
+        return wrap(
+            type,
+            listOf(before),
+            listOf(after)
+        )
+    }
+
+    private fun mutableStatementContainer(): IrBlockImpl {
+        return IrBlockImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            context.irBuiltIns.unitType
+        )
+    }
 
     private fun encounteredComposableCall() {
         loop@ for (scope in scopeStack.asReversed()) {
@@ -1423,14 +1414,30 @@ class ComposableFunctionBodyTransformer(
         }
     }
 
+    private fun encounteredCoalescableGroup(
+        coalescableScope: Scope.BlockScope,
+        realizeGroup: () -> Unit,
+        makeEnd: () -> IrExpression
+    ) {
+        loop@ for (scope in scopeStack.asReversed()) {
+            when (scope) {
+                is Scope.BlockScope -> {
+                    scope.markCoalescableGroup(coalescableScope, realizeGroup, makeEnd)
+                    break@loop
+                }
+                else -> error("Unexpected scope type")
+            }
+        }
+    }
+
     private fun encounteredReturn(
         symbol: IrReturnTargetSymbol,
-        pushEndCall: (IrExpression) -> Unit
+        extraEndLocation: (IrExpression) -> Unit
     ) {
         loop@ for (scope in scopeStack.asReversed()) {
             when (scope) {
                 is Scope.FunctionScope -> {
-                    scope.markReturn(pushEndCall)
+                    scope.markReturn(extraEndLocation)
                     if (scope.function == symbol.owner) {
                         break@loop
                     } else {
@@ -1438,25 +1445,25 @@ class ComposableFunctionBodyTransformer(
                     }
                 }
                 is Scope.BlockScope -> {
-                    scope.markReturn(pushEndCall)
+                    scope.markReturn(extraEndLocation)
                 }
             }
         }
     }
 
-    private fun encounteredContinue(jump: IrBreakContinue, pushEndCall: (IrExpression) -> Unit) {
+    private fun encounteredJump(jump: IrBreakContinue, extraEndLocation: (IrExpression) -> Unit) {
         loop@ for (scope in scopeStack.asReversed()) {
             when (scope) {
                 is Scope.FunctionScope -> error("Unexpected Function Scope encountered")
                 is Scope.ClassScope -> error("Unexpected Function Scope encountered")
                 is Scope.LoopScope -> {
-                    scope.markJump(pushEndCall)
                     if (jump.loop == scope.loop) {
                         break@loop
                     }
+                    scope.markJump(extraEndLocation)
                 }
                 is Scope.BlockScope -> {
-                    scope.markJump(pushEndCall)
+                    scope.markJump(extraEndLocation)
                 }
             }
         }
@@ -1524,7 +1531,9 @@ class ComposableFunctionBodyTransformer(
             return super.visitCall(expression)
         }
         encounteredComposableCall()
-
+        if (expression.descriptor.fqNameSafe == ComposeFqNames.key) {
+            return visitKeyCall(expression)
+        }
         // it's important that we transform all of the parameters here since this will cause the
         // IrGetValue's of remapped default parameters to point to the right variable.
         expression.transformChildrenVoid()
@@ -1569,6 +1578,59 @@ class ComposableFunctionBodyTransformer(
         )
 
         return expression
+    }
+
+    private fun visitKeyCall(expression: IrCall): IrExpression {
+        val keyArgs = mutableListOf<IrExpression>()
+        var blockArg: IrExpression? = null
+        for (i in 0 until expression.valueArgumentsCount) {
+            val param = expression.symbol.owner.valueParameters[i]
+            val arg = expression.getValueArgument(i)
+                ?: error("Unexpected null argument found on key call")
+            if (param.name.asString().startsWith('$'))
+                // we are done. synthetic args go at
+                // the end
+                break
+
+            when {
+                param.name.identifier == "block" -> {
+                    blockArg = arg
+                }
+                arg is IrVararg -> {
+                    keyArgs.addAll(arg.elements.mapNotNull { it as? IrExpression })
+                }
+                else -> {
+                    keyArgs.add(arg)
+                }
+            }
+        }
+        val before = mutableStatementContainer()
+        val after = mutableStatementContainer()
+
+        if (blockArg !is IrFunctionExpression) error("Expected function expression")
+
+        var (block, resultVar) = blockArg.function.body!!.asBodyAndResultVar()
+
+        withScope(Scope.BranchScope()) {
+            block = block.transform(this, null)
+        }
+
+        return irBlock(
+            type = expression.type,
+            statements = listOfNotNull(
+                before,
+                irStartMovableGroup(
+                    irJoinKeyChain(
+                        expression.irSourceKey(),
+                        keyArgs.map { it.transform(this, null) }
+                    )
+                ),
+                block,
+                irEndMovableGroup(),
+                after,
+                resultVar?.let { irGet(resultVar) }
+            )
+        )
     }
 
     private fun IrExpression.isStatic(): Boolean {
@@ -1669,67 +1731,34 @@ class ComposableFunctionBodyTransformer(
 
     override fun visitReturn(expression: IrReturn): IrExpression {
         if (!currentFunctionScope.isComposable) return super.visitReturn(expression)
-        val endBlock = IrBlockImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
-            context.irBuiltIns.unitType
-        )
-        encounteredReturn(expression.returnTargetSymbol) { endBlock.statements.add(0, it) }
-        val returnScope = withScope(Scope.BranchScope()) { expression.transformChildren() }
-        return IrBlockImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
-            expression.type,
-            null,
-            if (returnScope.hasComposableCalls) {
-                // If there is a composable call in the return expression, we want to make sure
-                // the call itself gets called before the end expressions do. To ensure this, we
-                // move the result of the call into a temporary variable and then change the
-                // return value to just be the temporary.
-                // ie, `return ComposableCall()` -> `val tmp = ComposableCall(); end; return tmp;`
-                val temp = irTemporary(expression.value, nameHint = "return")
-                listOf<IrStatement>(
-                    temp,
+        expression.transformChildren()
+        val endBlock = mutableStatementContainer()
+        encounteredReturn(expression.returnTargetSymbol) { endBlock.statements.add(it) }
+        return if (expression.value.type.isUnitOrNullableUnit()) {
+            expression.wrap(listOf(endBlock))
+        } else {
+            val tempVar = irTemporary(expression.value, nameHint = "return")
+            tempVar.wrap(
+                expression.type,
+                after = listOf(
                     endBlock,
                     IrReturnImpl(
                         expression.startOffset,
                         expression.endOffset,
                         expression.type,
                         expression.returnTargetSymbol,
-                        IrGetValueImpl(
-                            UNDEFINED_OFFSET,
-                            UNDEFINED_OFFSET,
-                            temp.symbol
-                        )
+                        irGet(tempVar)
                     )
                 )
-            } else {
-                listOf(
-                    endBlock,
-                    expression
-                )
-            }
-        )
+            )
+        }
     }
 
     override fun visitBreakContinue(jump: IrBreakContinue): IrExpression {
         if (!currentFunctionScope.isComposable) return super.visitBreakContinue(jump)
-        val endBlock = IrBlockImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
-            context.irBuiltIns.unitType
-        )
-        encounteredContinue(jump) { endBlock.statements.add(0, it) }
-        return IrBlockImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
-            jump.type,
-            null,
-            listOf(
-                endBlock,
-                jump
-            )
-        )
+        val endBlock = mutableStatementContainer()
+        encounteredJump(jump) { endBlock.statements.add(it) }
+        return jump.wrap(before = listOf(endBlock))
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop): IrExpression {
@@ -1743,23 +1772,14 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun handleLoop(loop: IrLoopBase): IrExpression {
-        withScope(Scope.LoopScope(loop)) {
-            val (condScope, condition) = loop.condition.transformWithScope(Scope.BranchScope())
-            val (bodyScope, body) = loop.body?.transformWithScope(Scope.BranchScope())
-                ?: null to null
-            loop.condition = condition
-            loop.body = body
-            if (!condScope.hasComposableCalls && bodyScope?.hasComposableCalls != true) {
-                return loop
-            }
-            if (condScope.hasComposableCalls) {
-                loop.condition = condition.asReplaceableGroup(condScope)
-            }
-            if (bodyScope?.hasComposableCalls == true) {
-                loop.body = body?.asReplaceableGroup(bodyScope)
-            }
+        val loopScope = withScope(Scope.LoopScope(loop)) {
+            loop.transformChildren()
         }
-        return loop
+        return if (loopScope.hasComposableCalls) {
+            loop.asCoalescableGroup(loopScope)
+        } else {
+            loop
+        }
     }
 
     override fun visitWhen(expression: IrWhen): IrExpression {
@@ -1775,8 +1795,8 @@ class ComposableFunctionBodyTransformer(
         // since it will *always* be executed. As a result, if only the first conditional has a
         // composable call in it, we can avoid creating a group for it since it is not
         // conditionally executed.
-        var condsNeedGroups = false
-        var resultsNeedGroups = false
+        var needsWrappingGroup = false
+        var someResultsHaveCalls = false
         var hasElseBranch = false
 
         val transformed = IrWhenImpl(
@@ -1787,7 +1807,7 @@ class ComposableFunctionBodyTransformer(
         )
         val resultScopes = mutableListOf<Scope.BranchScope>()
         val condScopes = mutableListOf<Scope.BranchScope>()
-        withScope(Scope.WhenScope()) {
+        val whenScope = withScope(Scope.WhenScope()) {
             expression.branches.forEachIndexed { index, it ->
                 if (it is IrElseBranch) {
                     hasElseBranch = true
@@ -1796,7 +1816,7 @@ class ComposableFunctionBodyTransformer(
                     condScopes.add(Scope.BranchScope())
                     resultScopes.add(resultScope)
 
-                    resultsNeedGroups = resultsNeedGroups || resultScope.hasComposableCalls
+                    someResultsHaveCalls = someResultsHaveCalls || resultScope.hasComposableCalls
                     transformed.branches.add(
                         IrElseBranchImpl(
                             it.startOffset,
@@ -1816,11 +1836,11 @@ class ComposableFunctionBodyTransformer(
                     condScopes.add(condScope)
                     resultScopes.add(resultScope)
 
-                    // the first condition is always executed so if it has a composable call in it, it
-                    // doesn't necessitate a group
-                    condsNeedGroups =
-                        condsNeedGroups || (index != 0 && condScope.hasComposableCalls)
-                    resultsNeedGroups = resultsNeedGroups || resultScope.hasComposableCalls
+                    // the first condition is always executed so if it has a composable call in it,
+                    // it doesn't necessitate a group
+                    needsWrappingGroup =
+                        needsWrappingGroup || (index != 0 && condScope.hasComposableCalls)
+                    someResultsHaveCalls = someResultsHaveCalls || resultScope.hasComposableCalls
                     transformed.branches.add(
                         IrBranchImpl(
                             it.startOffset,
@@ -1835,10 +1855,11 @@ class ComposableFunctionBodyTransformer(
 
         // If we are putting groups around the result branches, we need to guarantee that exactly
         // one result branch is executed. We do this by adding an else branch if it there is not
-        // one already.
+        // one already. Note that we only need to do this if we aren't going to wrap the if
+        // statement in a group entirely, which we will do if the conditions have calls in them.
         // NOTE: we might also be able to assume that the when is exhaustive if it has a non-unit
         // resulting type, since the type system should enforce that.
-        if (!hasElseBranch && resultsNeedGroups) {
+        if (!hasElseBranch && someResultsHaveCalls && !needsWrappingGroup) {
             condScopes.add(Scope.BranchScope())
             resultScopes.add(Scope.BranchScope())
             transformed.branches.add(
@@ -1864,15 +1885,29 @@ class ComposableFunctionBodyTransformer(
         }
 
         forEachWith(transformed.branches, condScopes, resultScopes) { it, condScope, resultScope ->
-            if (condsNeedGroups) {
+            // If the conditional block doesn't have a composable call in it, we don't need
+            // to geneerate a group around it because we will be generating one around the entire
+            // if statement
+            if (needsWrappingGroup && condScope.hasComposableCalls) {
                 it.condition = it.condition.asReplaceableGroup(condScope)
             }
-            if (resultsNeedGroups) {
+            if (
+                // if no wrapping group but some results have calls, we have to have every result
+                // be a group so that we have a consistent number of groups during execution
+                (someResultsHaveCalls && !needsWrappingGroup) ||
+                // if we are wrapping the if with a group, then we only need to add a group when
+                // the block has composable calls
+                (needsWrappingGroup && resultScope.hasComposableCalls)
+            ) {
                 it.result = it.result.asReplaceableGroup(resultScope)
             }
         }
 
-        return transformed
+        return if (needsWrappingGroup) {
+            transformed.asCoalescableGroup(whenScope)
+        } else {
+            transformed
+        }
     }
 
     sealed class Scope {
@@ -1918,26 +1953,57 @@ class ComposableFunctionBodyTransformer(
         }
 
         abstract class BlockScope : Scope() {
-            private val endCallHandlers = mutableListOf<(IrExpression) -> Unit>()
+            private val extraEndLocations = mutableListOf<(IrExpression) -> Unit>()
 
-            fun pushEnd(makeEnd: () -> IrExpression) {
-                endCallHandlers.forEach {
-                    it(makeEnd())
-                }
+            fun realizeGroup(makeEnd: () -> IrExpression) {
+                realizeCoalescableGroup()
+                realizeEndCalls(makeEnd)
             }
 
             fun markComposableCall() {
                 hasComposableCalls = true
+                if (coalescableChild != null) {
+                    // if a call happens after the coalescable child group, then we should
+                    // realize the group of the coalescable child
+                    shouldRealizeCoalescableChild = true
+                }
             }
 
-            fun markReturn(endCallHandler: (IrExpression) -> Unit) {
-                endCallHandlers.push(endCallHandler)
+            fun markReturn(extraEndLocation: (IrExpression) -> Unit) {
                 hasReturn = true
+                extraEndLocations.push(extraEndLocation)
             }
 
-            fun markJump(endCallHandler: (IrExpression) -> Unit) {
+            fun markJump(extraEndLocation: (IrExpression) -> Unit) {
                 hasJump = true
-                endCallHandlers.push(endCallHandler)
+                extraEndLocations.push(extraEndLocation)
+            }
+
+            fun markCoalescableGroup(
+                scope: BlockScope,
+                realizeGroup: () -> Unit,
+                makeEnd: () -> IrExpression
+            ) {
+                coalescableChild = scope
+                realizeCoalescableChildGroup = {
+                    realizeGroup()
+                    scope.realizeGroup(makeEnd)
+                    realizeCoalescableChildGroup = { error("Attempted to realize group twice") }
+                }
+            }
+
+            private fun realizeCoalescableGroup() {
+                if (shouldRealizeCoalescableChild) {
+                    realizeCoalescableChildGroup()
+                } else {
+                    coalescableChild?.realizeCoalescableGroup()
+                }
+            }
+
+            private fun realizeEndCalls(makeEnd: () -> IrExpression) {
+                extraEndLocations.forEach {
+                    it(makeEnd())
+                }
             }
 
             var hasComposableCalls = false
@@ -1946,8 +2012,10 @@ class ComposableFunctionBodyTransformer(
                 private set
             var hasJump = false
                 private set
+            private var realizeCoalescableChildGroup = {}
+            private var shouldRealizeCoalescableChild = false
+            private var coalescableChild: BlockScope? = null
         }
-
         class ClassScope : Scope()
         class LoopScope(val loop: IrLoop) : BlockScope()
         class WhenScope : BlockScope()

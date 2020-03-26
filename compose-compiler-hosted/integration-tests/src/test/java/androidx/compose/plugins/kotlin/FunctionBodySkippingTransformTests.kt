@@ -679,8 +679,7 @@ class FunctionBodySkippingTransformTests : AbstractIrTransformTest() {
                   Provide(restartableFunction(%composer, -756386923, true) { z: Int, %composer: Composer<N>?, %changed: Int ->
                     B(x, y, z, %composer, 0b0110 and %dirty or 0b00011000 and %changed shl 0b0010 or 0b01100000 and %changed shl 0b0100, 0)
                   }, %composer, 0)
-                  val tmp0_return = B(x, y, 0, %composer, 0b0110 and %dirty or 0b00011000 and %changed shl 0b0010, 0b0100)
-                  tmp0_return
+                  B(x, y, 0, %composer, 0b0110 and %dirty or 0b00011000 and %changed shl 0b0010, 0b0100)
                 }, %composer, 0)
                 B(x, 0, 0, %composer, 0b0110 and %dirty, 0b0110)
               } else {
