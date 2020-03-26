@@ -28,7 +28,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
-class ComposerIntrinsicTransformer(val context: JvmBackendContext) :
+class ComposerIntrinsicTransformer(
+    val context: JvmBackendContext,
+    val functionBodySkipping: Boolean
+) :
     IrElementTransformerVoid(),
     FileLoweringPass,
     ModuleLoweringPass {
@@ -46,7 +49,14 @@ class ComposerIntrinsicTransformer(val context: JvmBackendContext) :
             // since this call was transformed by the ComposerParamTransformer, the first argument
             // to this call is the composer itself. We just replace this expression with the
             // argument expression and we are good.
-            assert(expression.valueArgumentsCount == 1)
+            if (expression.valueArgumentsCount != 1) {
+                print("")
+            }
+            if (functionBodySkipping) {
+                assert(expression.valueArgumentsCount == 2)
+            } else {
+                assert(expression.valueArgumentsCount == 1)
+            }
             val composerExpr = expression.getValueArgument(0)
             if (composerExpr == null) error("Expected non-null composer argument")
             return composerExpr

@@ -524,7 +524,7 @@ class ComposableCallTransformer(
     }
 
     private fun nearestComposer(): IrValueParameter {
-        for (fn in declarationStack.asReversed().asSequence()) {
+        for (fn in declarationStack.asReversed()) {
             if (fn is IrFunction) {
                 val param = fn.valueParameters.lastOrNull()
                 if (param != null && param.isComposerParam()) {

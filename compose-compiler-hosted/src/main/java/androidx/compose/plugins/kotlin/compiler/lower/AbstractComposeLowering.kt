@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irBlock
@@ -61,15 +62,18 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -77,11 +81,14 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrElseBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrWhenImpl
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
@@ -109,6 +116,7 @@ import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import kotlin.math.abs
 
 abstract class AbstractComposeLowering(
     val context: JvmBackendContext,
@@ -164,7 +172,19 @@ abstract class AbstractComposeLowering(
             .getContributedFunctions(
                 fqName.shortName(), NoLookupLocation.FROM_BACKEND
             ).singleOrNull() ?: error("Function not found $fqName")
-        return symbolTable.referenceSimpleFunction(descriptor)
+        return symbolRemapper.getReferencedFunction(
+            symbolTable.referenceSimpleFunction(descriptor)
+        )
+    }
+
+    fun getTopLevelPropertyGetter(fqName: FqName): IrFunctionSymbol {
+        val descriptor = context.state.module.getPackage(fqName.parent()).memberScope
+            .getContributedVariables(
+                fqName.shortName(), NoLookupLocation.FROM_BACKEND
+            ).singleOrNull() ?: error("Function not found $fqName")
+        return symbolRemapper.getReferencedFunction(
+            symbolTable.referenceSimpleFunction(descriptor.getter!!)
+        )
     }
 
     fun KotlinType.toIrType(): IrType = typeTranslator.translateType(this)
@@ -369,6 +389,10 @@ abstract class AbstractComposeLowering(
         }
     }
 
+    protected operator fun Int.get(index: Int): Boolean {
+        return this and (1 shl index) != 0
+    }
+
     // create a bitmask with the following bits
     protected fun bitMask(vararg values: Boolean): Int = values.foldIndexed(0) { i, mask, bit ->
         mask.withBit(i, bit)
@@ -385,12 +409,12 @@ abstract class AbstractComposeLowering(
         )
     }
 
-    protected fun irSet(symbol: IrVariableSymbol, value: IrExpression): IrExpression {
+    protected fun irSet(variable: IrVariable, value: IrExpression): IrExpression {
         return IrSetVariableImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             context.irBuiltIns.unitType,
-            symbol,
+            variable.symbol,
             value = value,
             origin = null
         )
@@ -425,6 +449,108 @@ abstract class AbstractComposeLowering(
         )
     }
 
+    protected fun irShiftBits(value: IrExpression, bitsToShiftLeft: Int): IrExpression {
+        if (bitsToShiftLeft == 0) return value
+        val int = context.builtIns.intType
+        val shiftLeft = context.irIntrinsics.symbols.getBinaryOperator(OperatorNames.SHL, int, int)
+        val shiftRight = context.irIntrinsics.symbols.getBinaryOperator(OperatorNames.SHR, int, int)
+
+        return irCall(
+            if (bitsToShiftLeft > 0) shiftLeft else shiftRight,
+            value,
+            null,
+            irConst(abs(bitsToShiftLeft))
+        )
+    }
+
+    protected fun irInv(lhs: IrExpression): IrCallImpl {
+        val int = context.builtIns.intType
+        return irCall(
+            context.irIntrinsics.symbols.getUnaryOperator(OperatorNames.INV, int),
+            lhs
+        )
+    }
+
+    protected fun irOr(lhs: IrExpression, rhs: IrExpression): IrCallImpl {
+        val int = context.builtIns.intType
+        return irCall(
+            context.irIntrinsics.symbols.getBinaryOperator(OperatorNames.OR, int, int),
+            lhs,
+            null,
+            rhs
+        )
+    }
+
+    protected fun irOrOr(lhs: IrExpression, rhs: IrExpression): IrExpression {
+        return IrWhenImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            origin = IrStatementOrigin.OROR,
+            type = context.irBuiltIns.booleanType,
+            branches = listOf(
+                IrBranchImpl(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    condition = lhs,
+                    result = irConst(true)
+                ),
+                IrElseBranchImpl(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    condition = irConst(true),
+                    result = rhs
+                )
+            )
+        )
+    }
+
+    protected fun irAndAnd(lhs: IrExpression, rhs: IrExpression): IrExpression {
+        return IrWhenImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            origin = IrStatementOrigin.ANDAND,
+            type = context.irBuiltIns.booleanType,
+            branches = listOf(
+                IrBranchImpl(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    condition = lhs,
+                    result = rhs
+                ),
+                IrElseBranchImpl(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    condition = irConst(true),
+                    result = irConst(false)
+                )
+            )
+        )
+    }
+
+    protected fun irXor(lhs: IrExpression, rhs: IrExpression): IrCallImpl {
+        val int = context.builtIns.intType
+        return irCall(
+            context.irIntrinsics.symbols.getBinaryOperator(OperatorNames.XOR, int, int),
+            lhs,
+            null,
+            rhs
+        )
+    }
+
+    protected fun irReturn(
+        target: IrReturnTargetSymbol,
+        value: IrExpression,
+        type: IrType = value.type
+    ): IrExpression {
+        return IrReturnImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            type,
+            target,
+            value
+        )
+    }
+
     protected fun irEqual(lhs: IrExpression, rhs: IrExpression): IrExpression {
         return irCall(
             context.irBuiltIns.eqeqeqSymbol,
@@ -435,11 +561,15 @@ abstract class AbstractComposeLowering(
         )
     }
 
-    protected fun irNotEqual(lhs: IrExpression, rhs: IrExpression): IrExpression {
+    protected fun irNot(value: IrExpression): IrExpression {
         return irCall(
             context.irBuiltIns.booleanNotSymbol,
-            dispatchReceiver = irEqual(lhs, rhs)
+            dispatchReceiver = value
         )
+    }
+
+    protected fun irNotEqual(lhs: IrExpression, rhs: IrExpression): IrExpression {
+        return irNot(irEqual(lhs, rhs))
     }
 
 //        context.irIntrinsics.symbols.intAnd
@@ -465,6 +595,14 @@ abstract class AbstractComposeLowering(
         value
     )
 
+    protected fun irNull() = IrConstImpl(
+        UNDEFINED_OFFSET,
+        UNDEFINED_OFFSET,
+        context.irBuiltIns.anyNType,
+        IrConstKind.Null,
+        null
+    )
+
     protected fun irGet(type: IrType, symbol: IrValueSymbol): IrExpression {
         return IrGetValueImpl(
             UNDEFINED_OFFSET,
@@ -478,11 +616,12 @@ abstract class AbstractComposeLowering(
         return irGet(variable.type, variable.symbol)
     }
 
-    protected fun irIf(condition: IrExpression, body: IrExpression): IrStatement {
+    protected fun irIf(condition: IrExpression, body: IrExpression): IrExpression {
         return IrIfThenElseImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
-            context.irBuiltIns.unitType
+            context.irBuiltIns.unitType,
+            origin = IrStatementOrigin.IF
         ).also {
             it.branches.add(
                 IrBranchImpl(condition, body)
@@ -491,7 +630,7 @@ abstract class AbstractComposeLowering(
     }
 
     protected fun irIfThenElse(
-        type: IrType,
+        type: IrType = context.irBuiltIns.unitType,
         condition: IrExpression,
         thenPart: IrExpression,
         elsePart: IrExpression
@@ -501,8 +640,67 @@ abstract class AbstractComposeLowering(
             branches.add(irElseBranch(elsePart))
         }
 
+    protected fun irWhen(
+        type: IrType = context.irBuiltIns.unitType,
+        origin: IrStatementOrigin? = null,
+        branches: List<IrBranch>
+    ) = IrWhenImpl(
+        UNDEFINED_OFFSET,
+        UNDEFINED_OFFSET,
+        type,
+        origin,
+        branches
+    )
+    protected fun irBranch(
+        condition: IrExpression,
+        result: IrExpression
+    ): IrBranch {
+        return IrBranchImpl(condition, result)
+    }
+
     protected fun irElseBranch(expression: IrExpression) =
         IrElseBranchImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irConst(true), expression)
+
+    protected fun irBlock(
+        type: IrType = context.irBuiltIns.unitType,
+        origin: IrStatementOrigin? = null,
+        statements: List<IrStatement>
+    ): IrExpression {
+        return IrBlockImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            type,
+            origin,
+            statements
+        )
+    }
+
+    protected fun irLambda(function: IrFunction, type: IrType): IrExpression {
+        return irBlock(
+            type,
+            origin = IrStatementOrigin.LAMBDA,
+            statements = listOf(
+                function,
+                IrFunctionReferenceImpl(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    type,
+                    function.symbol,
+                    function.symbol.descriptor,
+                    function.typeParameters.size,
+                    IrStatementOrigin.LAMBDA
+                )
+            )
+        )
+    }
+}
+
+fun IrFunction.composerParam(): IrValueParameter? {
+    for (param in valueParameters.asReversed()) {
+        if (param.isComposerParam()) return param
+        if (!param.name.asString().startsWith('$')) return null
+    }
+    return null
 }
 
 fun IrValueParameter.isComposerParam(): Boolean =
