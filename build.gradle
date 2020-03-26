@@ -217,7 +217,6 @@ dependencies {
     distPack project(':klib')
     distPack project(path: ':endorsedLibraries:kotlinx.cli', configuration: "jvmRuntimeElements")
     distPack "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
-    distPack  "org.jetbrains.kotlin:konan.serializer:$konanVersion"
 }
 
 task sharedJar {

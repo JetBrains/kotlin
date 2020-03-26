@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.klibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.kotlinLibrary
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
+import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.library.BaseKotlinLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
@@ -59,3 +60,7 @@ fun BaseKotlinLibrary.isInteropLibrary() =
 fun ModuleDescriptor.isFromInteropLibrary() =
         if (klibModuleOrigin !is DeserializedKlibModuleOrigin) false
         else kotlinLibrary.isInteropLibrary()
+
+private val STDLIB_MODULE_NAME = Name.special("<$KONAN_STDLIB_NAME>")
+
+fun ModuleDescriptor.isKonanStdlib() = name == STDLIB_MODULE_NAME

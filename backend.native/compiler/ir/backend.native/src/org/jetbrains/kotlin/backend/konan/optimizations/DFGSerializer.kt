@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeFactories
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.konan.utils.KonanFactories
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import sun.misc.Unsafe
 import kotlin.reflect.KClass
@@ -996,7 +996,7 @@ internal object DFGSerializer {
 
             if (libraryDataFlowGraph != null) {
                 val module = DataFlowIR.Module(
-                        KonanFactories.DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(library, specifics, storageManager, null))
+                        NativeFactories.DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(library, specifics, storageManager, null))
                 val reader = ArraySlice(libraryDataFlowGraph)
                 val dataLayoutHash = reader.readLong()
                 val expectedHash = computeDataLayoutHash(Module::class)

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
+import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.get
@@ -18,11 +19,12 @@ import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
-import org.jetbrains.kotlin.descriptors.konan.isKonanStdlib
+import org.jetbrains.kotlin.backend.konan.descriptors.isKonanStdlib
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.utils.KonanFactories
+import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.library.metadata.NativeTypeTransformer
+import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
@@ -38,7 +40,7 @@ internal object TopDownAnalyzerFacadeForKonan {
 
         val projectContext = ProjectContext(config.project, "TopDownAnalyzer for Konan")
 
-        val module = KonanFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(
+        val module = NativeFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(
                 moduleName, projectContext.storageManager, origin = CurrentKlibModuleOrigin)
         val moduleContext = MutableModuleContextImpl(module, projectContext)
 
@@ -120,10 +122,11 @@ private class ResolvedDependencies(
             }
         }
 
-        this.moduleDescriptors = KonanFactories.DefaultResolvedDescriptorsFactory.createResolved(
+        this.moduleDescriptors = NativeFactories.DefaultResolvedDescriptorsFactory.createResolved(
                 resolvedLibraries, storageManager, builtIns, specifics, customAction)
 
         this.friends = collectedFriends.toSet()
     }
 }
 
+val NativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer, NativeTypeTransformer())
