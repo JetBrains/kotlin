@@ -31,7 +31,7 @@ object SMAPParser {
                 FileMapping(source, path).apply {
                     if (methodStartLine <= methodEndLine) {
                         //one to one
-                        addRangeMapping(RangeMapping(methodStartLine, methodStartLine, methodEndLine - methodStartLine + 1))
+                        mapNewInterval(methodStartLine, methodStartLine, methodEndLine - methodStartLine + 1)
                     }
                 }
 
@@ -74,7 +74,7 @@ object SMAPParser {
 
             val fileIndex = lineMapping.substring(fileSeparator + 1, rangeSeparator).toInt()
             val targetIndex = lineMapping.substring(targetSplit + 1).toInt()
-            fileMappings[fileIndex]!!.addRangeMapping(RangeMapping(originalIndex, targetIndex, range))
+            fileMappings[fileIndex]!!.mapNewInterval(originalIndex, targetIndex, range)
         }
 
         return SMAP(fileMappings.values.toList())

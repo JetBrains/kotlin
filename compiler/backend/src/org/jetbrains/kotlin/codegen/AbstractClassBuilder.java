@@ -137,9 +137,7 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
         List<FileMapping> fileMappings = smap.getResultMappings();
         if (fileMappings.isEmpty()) return;
 
-        FileMapping origin = fileMappings.get(0);
-        SMAPBuilder builder = new SMAPBuilder(origin.getName(), origin.getPath(), fileMappings, backwardsCompatibleSyntax);
-        visitSource(origin.getName(), builder.build());
+        visitSource(fileMappings.get(0).getName(), SMAPBuilder.INSTANCE.build(fileMappings, backwardsCompatibleSyntax));
     }
 
     @Override
