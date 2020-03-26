@@ -1,16 +1,12 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.importing
 
-import com.intellij.openapi.application.invokeAndWaitIfNeeded
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.RunAll
 import com.intellij.util.ThrowableRunnable
 import org.jetbrains.plugins.gradle.tooling.builder.AbstractModelBuilderTest
 import org.junit.runners.Parameterized
-import java.io.File
 
 abstract class GradleJavaCompilerSettingsImportingTestCase : GradleJavaImportingTestCase() {
 
@@ -82,11 +78,8 @@ abstract class GradleJavaCompilerSettingsImportingTestCase : GradleJavaImporting
   }
 
   companion object {
-    /**
-     * It's sufficient to run the test against one gradle version
-     */
     @Parameterized.Parameters(name = "with Gradle-{0}")
     @JvmStatic
-    fun tests() = arrayListOf(*AbstractModelBuilderTest.SUPPORTED_GRADLE_VERSIONS, arrayOf("6.3-rc-2"))
+    fun tests() = arrayListOf(*AbstractModelBuilderTest.SUPPORTED_GRADLE_VERSIONS, arrayOf("6.3"))
   }
 }
