@@ -258,7 +258,7 @@ public class CodeCompletionHandlerBase {
     CompletionPhase phase;
     if (synchronous) {
       phase = new CompletionPhase.BgCalculation(indicator);
-      indicator.makeSureLookupIsShown(0);
+      indicator.showLookup();
     } else {
       phase = new CompletionPhase.CommittingDocuments(indicator, InjectedLanguageUtil.getTopLevelEditor(indicator.getEditor()));
     }
@@ -292,7 +292,6 @@ public class CodeCompletionHandlerBase {
     }
 
     int timeout = calcSyncTimeOut(startingTime);
-    indicator.makeSureLookupIsShown(timeout);
     if (indicator.blockingWaitForFinish(timeout)) {
       checkForExceptions(future);
       try {

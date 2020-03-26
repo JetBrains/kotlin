@@ -1224,7 +1224,8 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     return withLock(() -> myPresentableArranger.getRelevanceObjects(items, hideSingleValued));
   }
 
-  private <T> T withLock(Computable<T> computable) {
+  @ApiStatus.Internal
+  public <T> T withLock(Computable<T> computable) {
     synchronized (myArrangerLock) {
       return computable.compute();
     }

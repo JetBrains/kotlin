@@ -51,7 +51,6 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.testFramework.TestModeFlags;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.LightweightHint;
-import com.intellij.util.Alarm;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.concurrency.Semaphore;
@@ -86,12 +85,11 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
   private final int myInvocationCount;
   private OffsetsInFile myHostOffsets;
   private final LookupImpl myLookup;
-  private final Alarm mySuppressTimeoutAlarm = new Alarm(this);
   private final MergingUpdateQueue myQueue;
   private final Update myUpdate = new Update("update") {
     @Override
     public void run() {
-      updateLookup(myIsUpdateSuppressed);
+      updateLookup();
       myQueue.setMergingTimeSpan(ourShowPopupGroupingTime);
     }
   };
@@ -106,7 +104,6 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
     }
   };
 
-  private volatile boolean myIsUpdateSuppressed = false;
   private static int ourInsertSingleItemTimeSpan = 300;
 
   //temp external setters to make Rider autopopup more reactive
@@ -335,7 +332,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
   }
 
   void showLookup() {
-    updateLookup(myIsUpdateSuppressed);
+    updateLookup();
   }
 
   // non-null when running generators and adding elements to lookup
@@ -357,18 +354,16 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
   }
 
   void withSingleUpdate(Runnable action) {
-    try {
-      myIsUpdateSuppressed = true;
-      action.run();
-    } finally {
-      myIsUpdateSuppressed = false;
-      myQueue.queue(myUpdate);
-    }
+    Runnable finishBatch = myArranger.batchUpdate(action);
+    myLookup.withLock(() -> {
+      finishBatch.run();
+      return null;
+    });
   }
 
-  private void updateLookup(boolean isUpdateSuppressed) {
+  private void updateLookup() {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    if (isOutdated() || !shouldShowLookup() || isUpdateSuppressed) return;
+    if (isOutdated() || !shouldShowLookup()) return;
 
     while (true) {
       Runnable action = myAdvertiserChanges.poll();
@@ -605,7 +600,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
         }
       }
       else {
-        updateLookup(myIsUpdateSuppressed);
+        updateLookup();
         if (CompletionServiceImpl.getCompletionPhase() != CompletionPhase.NoCompletion) {
           CompletionServiceImpl.setCompletionPhase(new CompletionPhase.ItemsCalculated(this));
         }
@@ -864,19 +859,6 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
   public static void setAutopopupTriggerTime(int timeSpan) {
     ourShowPopupGroupingTime = timeSpan;
     ourShowPopupAfterFirstItemGroupingTime = timeSpan;
-  }
-
-  void makeSureLookupIsShown(int timeout) {
-    mySuppressTimeoutAlarm.addRequest(this::showIfSuppressed, timeout);
-  }
-
-  private void showIfSuppressed() {
-    ApplicationManager.getApplication().assertIsDispatchThread();
-
-    if(myLookup.isShown())
-      return;
-
-    updateLookup(false);
   }
 
   private static class ModifierTracker extends KeyAdapter {
