@@ -124,6 +124,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         runTest("compiler/testData/codegen/bytecodeText/flagsInMultiFileInherit.kt");
     }
 
+    @TestMetadata("iincGeneration.kt")
+    public void testIincGeneration() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/iincGeneration.kt");
+    }
+
     @TestMetadata("inheritedPropertyAnnotations.kt")
     public void testInheritedPropertyAnnotations() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/inheritedPropertyAnnotations.kt");
