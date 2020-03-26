@@ -607,6 +607,8 @@ tasks {
 
     register("toolsTest") {
         dependsOn(":tools:kotlinp:test")
+        dependsOn(":native:kotlin-native-utils:test")
+        dependsOn(":native:kotlin-klib-commonizer:test")
     }
 
     register("examplesTest") {
@@ -635,13 +637,6 @@ tasks {
     register("jps-tests") {
         dependsOn("dist")
         dependsOn(":jps-plugin:test")
-    }
-
-    register("konan-tests") {
-        dependsOn("dist")
-        dependsOn(
-            ":native:kotlin-klib-commonizer:test"
-        )
     }
 
     register("idea-plugin-main-tests") {
@@ -725,7 +720,6 @@ tasks {
         dependsOn(
             "idea-plugin-tests",
             "jps-tests",
-            "konan-tests",
             "plugins-tests",
             "android-ide-tests",
             ":generators:test"

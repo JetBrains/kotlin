@@ -12,23 +12,11 @@ open class HostManager(protected val distribution: Distribution = Distribution()
 
     fun targetManager(userRequest: String? = null): TargetManager = TargetManagerImpl(userRequest, this)
 
-    // TODO: need a better way to enumerated predefined targets.
-    private val predefinedTargets = listOf(
-        ANDROID_ARM32, ANDROID_ARM64, ANDROID_X86, ANDROID_X64,
-        IOS_ARM32, IOS_ARM64, IOS_X64,
-        WATCHOS_ARM32, WATCHOS_ARM64,
-        WATCHOS_X86, WATCHOS_X64,
-        TVOS_ARM64, TVOS_X64,
-        LINUX_X64, LINUX_ARM32_HFP, LINUX_ARM64, LINUX_MIPS32, LINUX_MIPSEL32,
-        MINGW_X64, MINGW_X86,
-        MACOS_X64,
-        WASM32)
-
     private val zephyrSubtargets = distribution.availableSubTarget("zephyr").map { ZEPHYR(it) }
     private val experimentalEnabled = experimental || distribution.experimentalEnabled
     private val configurableSubtargets = zephyrSubtargets
 
-    val targetValues: List<KonanTarget> by lazy { predefinedTargets + configurableSubtargets }
+    val targetValues: List<KonanTarget> by lazy { KonanTarget.predefinedTargets.toList() + configurableSubtargets }
 
     val targets = targetValues.associateBy { it.visibleName }
 
