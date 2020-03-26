@@ -517,7 +517,6 @@ fun runTest() {
     }
 
     static def excludeList = [
-            "build/external/compiler/codegen/boxInline/anonymousObject/kt8133.kt"  // KT-34066
     ]
 
     boolean isEnabledForNativeBackend(String fileName) {
