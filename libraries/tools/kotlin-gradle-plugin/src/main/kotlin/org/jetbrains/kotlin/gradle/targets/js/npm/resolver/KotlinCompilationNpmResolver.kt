@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.*
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fixSemver
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
@@ -254,11 +255,23 @@ internal class KotlinCompilationNpmResolver(
             }
 
             val compositeDependencies = internalCompositeDependencies.mapNotNull { dependency ->
-                resolver.compositeNodeModules.get(
-                    dependency.dependency,
-                    dependency.includedBuild.projectDir.resolve("build/js/packages/lib/package.json")
-                )
+                val packages = dependency.includedBuild
+                    .projectDir
+                    .resolve(nodeJs.projectPackagesDir.relativeTo(nodeJs.rootProject.buildDir))
+                packages
+                    .list()
+                    ?.map { fileName ->
+                        packages.resolve(fileName).resolve(PACKAGE_JSON)
+                    }
+                    ?.map { file ->
+                        resolver.compositeNodeModules.get(
+                            dependency.dependency,
+                            file
+                        )
+                    }
             }
+                .flatten()
+                .filterNotNull()
 
             val packageJson = PackageJson(
                 npmProject.name,
