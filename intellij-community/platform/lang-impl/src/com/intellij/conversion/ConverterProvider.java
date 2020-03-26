@@ -29,6 +29,7 @@ public abstract class ConverterProvider {
   @NotNull
   public abstract String getConversionDescription();
 
+  @Nls(capitalization = Nls.Capitalization.Sentence)
   @NotNull
   public abstract ProjectConverter createConverter(@NotNull ConversionContext context);
 
