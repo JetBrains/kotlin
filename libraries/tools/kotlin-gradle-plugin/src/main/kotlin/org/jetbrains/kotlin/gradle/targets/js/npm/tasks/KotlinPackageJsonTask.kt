@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import java.io.File
 
@@ -33,7 +34,7 @@ open class KotlinPackageJsonTask : DefaultTask() {
         producer.internalDependencies.map { dependentResolver ->
             dependentResolver.npmProject.packageJsonTask
         } + producer.internalCompositeDependencies.map { dependency ->
-            dependency.includedBuild.task(":packageJson")
+            dependency.includedBuild.task(":$PACKAGE_JSON_UMBRELLA_TASK_NAME")
         }
 
     @get:Nested
@@ -66,6 +67,7 @@ open class KotlinPackageJsonTask : DefaultTask() {
                 task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
 
                 task.dependsOn(target.project.provider { task.findDependentTasks() })
+                task.dependsOn(project.rootProject.tasks.named(PACKAGE_JSON_UMBRELLA_TASK_NAME))
                 task.mustRunAfter(rootClean)
             }
 
