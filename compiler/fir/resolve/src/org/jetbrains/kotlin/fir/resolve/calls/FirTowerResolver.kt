@@ -334,16 +334,15 @@ class FirTowerResolver(
 
         val nonEmptyLocalScopes = mutableListOf<FirLocalScope>()
         for ((index, localScope) in localScopes.withIndex()) {
-            val result = manager.processLevel(
-                localScope.toScopeTowerLevel(extensionReceiver = explicitReceiverValue),
-                info, TowerGroup.Local(index), ExplicitReceiverKind.EXTENSION_RECEIVER
-            )
-            if (result != ProcessorAction.NONE) {
+            if (manager.processScopeForExplicitReceiver(
+                    localScope,
+                    explicitReceiverValue,
+                    info,
+                    TowerGroup.Local(index)
+                ) != ProcessorAction.NONE
+            ) {
                 nonEmptyLocalScopes += localScope
             }
-            manager.processLevelForPropertyWithInvoke(
-                localScope.toScopeTowerLevel(), info, TowerGroup.Local(index)
-            )
         }
 
         for ((implicitReceiverValue, usableAsValue, depth) in implicitReceivers) {
@@ -352,15 +351,31 @@ class FirTowerResolver(
         }
 
         for ((index, topLevelScope) in topLevelScopes.withIndex()) {
-            manager.processLevel(
-                topLevelScope.toScopeTowerLevel(extensionReceiver = explicitReceiverValue),
-                info, TowerGroup.Top(index), ExplicitReceiverKind.EXTENSION_RECEIVER
-            )
-
-            manager.processLevelForPropertyWithInvoke(
-                topLevelScope.toScopeTowerLevel(), info, TowerGroup.Top(index)
+            manager.processScopeForExplicitReceiver(
+                topLevelScope,
+                explicitReceiverValue,
+                info,
+                TowerGroup.Top(index)
             )
         }
+    }
+
+    private suspend fun TowerResolveManager.processScopeForExplicitReceiver(
+        scope: FirScope,
+        explicitReceiverValue: ExpressionReceiverValue,
+        info: CallInfo,
+        towerGroup: TowerGroup,
+    ): ProcessorAction {
+        val result = processLevel(
+            scope.toScopeTowerLevel(extensionReceiver = explicitReceiverValue),
+            info, towerGroup, ExplicitReceiverKind.EXTENSION_RECEIVER
+        )
+
+        processLevelForPropertyWithInvoke(
+            scope.toScopeTowerLevel(), info, towerGroup
+        )
+
+        return result
     }
 
     private suspend fun TowerResolveManager.processMembersForExplicitReceiver(
