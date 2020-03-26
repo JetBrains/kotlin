@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package test.collections
 
+import kotlin.random.Random
 import kotlin.test.*
 
 fun fibonacci(): Sequence<Int> {
@@ -632,6 +633,60 @@ public class SequenceTest {
         val comparator = compareBy { s: String -> s.reversed() }
         assertEquals(listOf("act", "wast", "test"), sequenceOf("act", "test", "wast").sortedWith(comparator).toList())
     }
+
+    @Test fun shuffled() {
+        val sequence = (0 until 100).asSequence()
+        val originalValues = sequence.toList()
+        val shuffled = sequence.shuffled()
+        val values1 = shuffled.toList()
+        val values2 = shuffled.toList()
+
+        assertNotEquals(originalValues, values1)
+        assertNotEquals(values1, values2, "Each run returns new shuffle")
+        assertEquals(originalValues.toSet(), values1.toSet())
+        assertEquals(originalValues.toSet(), values2.toSet())
+        assertEquals(originalValues.size, values1.distinct().size)
+        assertEquals(originalValues.size, values2.distinct().size)
+    }
+
+    @Test fun shuffledPredictably() {
+        val list = List(10) { it }
+        val sequence = list.asSequence()
+        val shuffled1 = sequence.shuffled(Random(1))
+        val shuffled2 = sequence.shuffled(Random(1))
+
+        val values1 = shuffled1.toList()
+        val values2 = shuffled2.toList()
+
+        assertEquals(values1, values2)
+        assertEquals("[5, 3, 7, 9, 8, 2, 6, 0, 4, 1]", values1.toString())
+
+        val values1n = shuffled1.toList()
+        assertNotEquals(values1, values1n, "Each run returns new shuffle")
+
+        val values42 = sequence.shuffled(Random(42)).toList()
+        assertEquals("[3, 6, 7, 1, 8, 2, 9, 4, 0, 5]", values42.toString())
+    }
+
+    @Test fun shuffledPartially() {
+        val countingRandom = object : Random() {
+            var counter: Int = 0
+            override fun nextBits(bitCount: Int): Int {
+                counter++
+                return Random.nextBits(bitCount)
+            }
+        }
+
+        val sequence = (0 until 100).asSequence()
+        val partialShuffle = sequence.shuffled(countingRandom).take(10)
+
+        assertEquals(0, countingRandom.counter)
+
+        val result = partialShuffle.toList()
+        assertEquals(10, result.size)
+        assertEquals(10, countingRandom.counter)
+    }
+
 
     @Test fun associateWith() {
         val items = sequenceOf("Alice", "Bob", "Carol")
