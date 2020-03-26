@@ -38,21 +38,20 @@ internal class YarnEntryRegistry(private val lockFile: File) {
     private fun dependencyKey(packageKey: String, version: String) =
         YarnLock.dependencyKey(packageKey, version).correctDependencyKey()
 
-    private fun String.correctDependencyKey(): String {
-        var correctedKey = replace(GITHUB_VERSION_PREFIX, "@")
+    private fun String.correctDependencyKey(): String =
+        when {
+            contains(GITHUB_VERSION_PREFIX) -> replace(GITHUB_VERSION_PREFIX, "@")
+            contains(FILE_VERSION_PREFIX) -> {
+                val location = substringAfter(FILE_VERSION_PREFIX)
+                val path = lockFile
+                    .parentFile
+                    .resolve(location)
+                    .canonicalPath
 
-        if (FILE_VERSION_PREFIX in correctedKey) {
-            val location = correctedKey.substringAfter(FILE_VERSION_PREFIX)
-            val path = lockFile
-                .parentFile
-                .resolve(location)
-                .canonicalPath
-
-            correctedKey = correctedKey.replaceAfter(FILE_VERSION_PREFIX, path)
+                replaceAfter(FILE_VERSION_PREFIX, path)
+            }
+            else -> this
         }
-
-        return correctedKey
-    }
 }
 
 private const val FILE_VERSION_PREFIX = "@file:"
