@@ -14815,6 +14815,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/ir/fileClassInitializers.kt");
         }
 
+        @TestMetadata("genericCompanion.kt")
+        public void testGenericCompanion() throws Exception {
+            runTest("compiler/testData/codegen/box/ir/genericCompanion.kt");
+        }
+
         @TestMetadata("kt25405.kt")
         public void testKt25405() throws Exception {
             runTest("compiler/testData/codegen/box/ir/kt25405.kt");
@@ -19914,6 +19919,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("initOrderMultiModule.kt")
         public void testInitOrderMultiModule() throws Exception {
             runTest("compiler/testData/codegen/box/properties/initOrderMultiModule.kt");
+        }
+
+        @TestMetadata("javaGenericSynthProperty.kt")
+        public void testJavaGenericSynthProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/javaGenericSynthProperty.kt");
         }
 
         @TestMetadata("javaPropertyBoxedGetter.kt")
