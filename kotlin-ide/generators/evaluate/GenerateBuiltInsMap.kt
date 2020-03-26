@@ -91,7 +91,7 @@ private fun getOperationMap(argumentsCount: Int): MutableMap<CallableDescriptor,
     fun CallableDescriptor.isCompileTime(classDescriptor: ClassDescriptor): Boolean {
         val thisIsCompileTime = this.annotations.hasAnnotation(compileTimeAnnotation)
         val classIsCompileTime = classDescriptor.annotations.hasAnnotation(compileTimeAnnotation)
-        val isPrimitive = KotlinBuiltIns.isPrimitiveClass(classDescriptor)
+        val isPrimitive = KotlinBuiltIns.isPrimitiveClass(classDescriptor) || KotlinBuiltIns.isString(classDescriptor.defaultType)
         val isFakeOverridden = (this as? FunctionDescriptor)?.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
         return when {
             isPrimitive -> thisIsCompileTime || classIsCompileTime
