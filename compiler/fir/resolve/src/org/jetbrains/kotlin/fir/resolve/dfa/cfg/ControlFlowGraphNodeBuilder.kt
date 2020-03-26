@@ -201,3 +201,16 @@ fun ControlFlowGraphBuilder.createAnonymousObjectExitNode(fir: FirAnonymousObjec
 
 fun ControlFlowGraphBuilder.createUnionFunctionCallArgumentsNode(fir: FirElement): UnionFunctionCallArgumentsNode =
     UnionFunctionCallArgumentsNode(graph, fir, levelCounter, createId())
+
+fun ControlFlowGraphBuilder.createClassEnterNode(fir: FirClass<*>): ClassEnterNode =
+    ClassEnterNode(graph, fir, levelCounter, createId()).also {
+        graph.enterNode = it
+    }
+
+fun ControlFlowGraphBuilder.createClassExitNode(fir: FirClass<*>): ClassExitNode =
+    ClassExitNode(graph, fir, levelCounter, createId()).also {
+        graph.exitNode = it
+    }
+
+fun ControlFlowGraphBuilder.createLocalClassExitNode(fir: FirRegularClass): LocalClassExitNode =
+    LocalClassExitNode(graph, fir, levelCounter, createId())
