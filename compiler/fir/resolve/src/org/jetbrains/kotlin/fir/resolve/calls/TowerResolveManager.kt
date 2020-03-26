@@ -180,68 +180,7 @@ class TowerResolveManager internal constructor(private val towerResolver: FirTow
                     }
 
                     if (invokeReceiverCollector.isSuccess()) {
-                        for (invokeReceiverCandidate in invokeReceiverCollector.bestCandidates()) {
-
-                            val symbol = invokeReceiverCandidate.symbol
-                            if (symbol !is FirCallableSymbol<*> && symbol !is FirRegularClassSymbol) continue
-                            val isExtensionFunctionType = (symbol as? FirCallableSymbol<*>)?.fir?.returnTypeRef?.isExtensionFunctionType(towerResolver.components.session) == true
-                            if (invokeBuiltinExtensionMode && !isExtensionFunctionType) {
-                                continue
-                            }
-                            val extensionReceiverExpression = invokeReceiverCandidate.extensionReceiverExpression()
-                            val useImplicitReceiverAsBuiltinInvokeArgument =
-                                !invokeBuiltinExtensionMode && isExtensionFunctionType &&
-                                        invokeReceiverCandidate.explicitReceiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
-
-                            val invokeReceiverExpression = createExplicitReceiverForInvoke(invokeReceiverCandidate).let {
-                                if (!invokeBuiltinExtensionMode) {
-                                    it.extensionReceiver = extensionReceiverExpression
-                                    // NB: this should fix problem in DFA (KT-36014)
-                                    it.explicitReceiver = info.explicitReceiver
-                                    it.safe = info.isSafeCall
-                                }
-                                towerResolver.components.transformQualifiedAccessUsingSmartcastInfo(it.build())
-                            }
-
-                            val invokeFunctionInfo =
-                                info.copy(explicitReceiver = invokeReceiverExpression, name = OperatorNameConventions.INVOKE).let {
-                                    when {
-                                        invokeBuiltinExtensionMode -> it.withReceiverAsArgument(info.explicitReceiver!!)
-                                        else -> it
-                                    }
-                                }
-
-                            val explicitReceiver = ExpressionReceiverValue(invokeReceiverExpression)
-                            invokeOnGivenReceiverCandidateFactory = CandidateFactory(towerResolver.components, invokeFunctionInfo)
-                            when {
-                                invokeBuiltinExtensionMode -> {
-                                    enqueueResolverTask {
-                                        towerResolver.runResolverForBuiltinInvokeExtensionWithExplicitArgument(
-                                            invokeFunctionInfo, explicitReceiver, this@TowerResolveManager
-                                        )
-                                    }
-                                }
-                                useImplicitReceiverAsBuiltinInvokeArgument -> {
-                                    enqueueResolverTask {
-                                        towerResolver.runResolverForBuiltinInvokeExtensionWithImplicitArgument(
-                                            invokeFunctionInfo, explicitReceiver, this@TowerResolveManager
-                                        )
-                                    }
-                                    enqueueResolverTask {
-                                        towerResolver.runResolverForInvoke(
-                                            invokeFunctionInfo, explicitReceiver, this@TowerResolveManager
-                                        )
-                                    }
-                                }
-                                else -> {
-                                    enqueueResolverTask {
-                                        towerResolver.runResolverForInvoke(
-                                            invokeFunctionInfo, explicitReceiver, this@TowerResolveManager
-                                        )
-                                    }
-                                }
-                            }
-                        }
+                        processInvokeReceiversCandidates(invokeBuiltinExtensionMode)
                     }
                 }
                 CallKind.CallableReference -> {
@@ -278,6 +217,72 @@ class TowerResolveManager internal constructor(private val towerResolver: FirTow
                 }
             }
             return result
+        }
+
+        private fun processInvokeReceiversCandidates(invokeBuiltinExtensionMode: Boolean) {
+            for (invokeReceiverCandidate in invokeReceiverCollector.bestCandidates()) {
+
+                val symbol = invokeReceiverCandidate.symbol
+                if (symbol !is FirCallableSymbol<*> && symbol !is FirRegularClassSymbol) continue
+                val isExtensionFunctionType =
+                    (symbol as? FirCallableSymbol<*>)?.fir?.returnTypeRef?.isExtensionFunctionType(towerResolver.components.session) == true
+                if (invokeBuiltinExtensionMode && !isExtensionFunctionType) {
+                    continue
+                }
+                val extensionReceiverExpression = invokeReceiverCandidate.extensionReceiverExpression()
+                val useImplicitReceiverAsBuiltinInvokeArgument =
+                    !invokeBuiltinExtensionMode && isExtensionFunctionType &&
+                            invokeReceiverCandidate.explicitReceiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+
+                val invokeReceiverExpression = createExplicitReceiverForInvoke(invokeReceiverCandidate).let {
+                    if (!invokeBuiltinExtensionMode) {
+                        it.extensionReceiver = extensionReceiverExpression
+                        // NB: this should fix problem in DFA (KT-36014)
+                        it.explicitReceiver = info.explicitReceiver
+                        it.safe = info.isSafeCall
+                    }
+                    towerResolver.components.transformQualifiedAccessUsingSmartcastInfo(it.build())
+                }
+
+                val invokeFunctionInfo =
+                    info.copy(explicitReceiver = invokeReceiverExpression, name = OperatorNameConventions.INVOKE).let {
+                        when {
+                            invokeBuiltinExtensionMode -> it.withReceiverAsArgument(info.explicitReceiver!!)
+                            else -> it
+                        }
+                    }
+
+                val explicitReceiver = ExpressionReceiverValue(invokeReceiverExpression)
+                invokeOnGivenReceiverCandidateFactory = CandidateFactory(towerResolver.components, invokeFunctionInfo)
+                when {
+                    invokeBuiltinExtensionMode -> {
+                        enqueueResolverTask {
+                            towerResolver.runResolverForBuiltinInvokeExtensionWithExplicitArgument(
+                                invokeFunctionInfo, explicitReceiver, this@TowerResolveManager
+                            )
+                        }
+                    }
+                    useImplicitReceiverAsBuiltinInvokeArgument -> {
+                        enqueueResolverTask {
+                            towerResolver.runResolverForBuiltinInvokeExtensionWithImplicitArgument(
+                                invokeFunctionInfo, explicitReceiver, this@TowerResolveManager
+                            )
+                        }
+                        enqueueResolverTask {
+                            towerResolver.runResolverForInvoke(
+                                invokeFunctionInfo, explicitReceiver, this@TowerResolveManager
+                            )
+                        }
+                    }
+                    else -> {
+                        enqueueResolverTask {
+                            towerResolver.runResolverForInvoke(
+                                invokeFunctionInfo, explicitReceiver, this@TowerResolveManager
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 
