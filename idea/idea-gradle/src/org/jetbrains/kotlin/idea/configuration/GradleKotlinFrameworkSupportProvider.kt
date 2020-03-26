@@ -319,7 +319,7 @@ open class GradleKotlinJSNodeFrameworkSupportProvider(
 }
 
 open class GradleKotlinMPPFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider(
-    "KOTLIN_MPP", "Kotlin/Multiplatform", KotlinIcons.MPP
+    "KOTLIN_MPP", KotlinIdeaGradleBundle.message("display.name.kotlin.multiplatform"), KotlinIcons.MPP
 ) {
     override fun getPluginId() = "org.jetbrains.kotlin.multiplatform"
     override fun getPluginExpression() = "id 'org.jetbrains.kotlin.multiplatform'"

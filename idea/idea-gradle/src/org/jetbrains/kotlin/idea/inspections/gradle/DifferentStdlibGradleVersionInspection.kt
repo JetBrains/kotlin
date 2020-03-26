@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.inspections.gradle
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.PsiFile
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.configuration.KOTLIN_GROUP_ID
 import org.jetbrains.kotlin.idea.inspections.gradle.GradleHeuristicHelper.PRODUCTION_DEPENDENCY_STATEMENTS
@@ -67,7 +68,11 @@ class DifferentStdlibGradleVersionInspection : BaseInspection() {
     }
 
     companion object {
-        private fun findLibraryStatement(closure: GrClosableBlock, libraryGroup: String, libraryIds: List<String>): GrCallExpression? {
+        private fun findLibraryStatement(
+            closure: GrClosableBlock,
+            @NonNls libraryGroup: String,
+            libraryIds: List<String>
+        ): GrCallExpression? {
             return GradleHeuristicHelper.findStatementWithPrefixes(closure, PRODUCTION_DEPENDENCY_STATEMENTS).firstOrNull { statement ->
                 libraryIds.any {
                     val index = statement.text.indexOf(it)

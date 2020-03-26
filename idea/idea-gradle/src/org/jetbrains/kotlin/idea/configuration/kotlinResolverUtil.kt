@@ -14,8 +14,10 @@ import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginsAdvertiser
 import com.intellij.util.PlatformUtils
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 
+@NonNls
 const val NATIVE_DEBUG_ID = "com.intellij.nativeDebug"
 
 fun suggestNativeDebug(projectPath: String) {

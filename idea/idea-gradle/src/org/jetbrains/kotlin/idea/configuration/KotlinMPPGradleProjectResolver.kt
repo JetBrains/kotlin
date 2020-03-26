@@ -28,6 +28,7 @@ import com.intellij.util.text.VersionComparatorUtil
 import org.gradle.tooling.model.UnsupportedMethodException
 import org.gradle.tooling.model.idea.IdeaContentRoot
 import org.gradle.tooling.model.idea.IdeaModule
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
@@ -171,7 +172,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                     externalProject?.sourceSets?.values?.forEach { sourceSet ->
                         sourceSet.dependencies.forEach { dependency ->
                             dependency.getDependencyArtifacts().map { toCanonicalPath(it.absolutePath) }
-                                .filter { mppArtifacts.keys.contains(it) }.forEach {filePath ->
+                                .filter { mppArtifacts.keys.contains(it) }.forEach { filePath ->
                                     (artifactToDependency[filePath] ?: ArrayList<ExternalDependency>().also { newCollection ->
                                         artifactToDependency[filePath] = newCollection
                                     }).add(dependency)
@@ -678,7 +679,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                 it.startsWith("ios") || it.startsWith("watchos") || it.startsWith("tvos")
             } ?: false
 
-        private fun Iterable<CompilationWithDependencies>.selectFirstAvailableTarget(vararg targetsByPriority: String): CompilationWithDependencies {
+        private fun Iterable<CompilationWithDependencies>.selectFirstAvailableTarget(@NonNls vararg targetsByPriority: String): CompilationWithDependencies {
             for (target in targetsByPriority) {
                 val result = firstOrNull { it.konanTarget == target }
                 if (result != null) {

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.psi.PsiFile
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.idea.versions.MAVEN_JS_STDLIB_ID
@@ -31,6 +32,7 @@ class KotlinJsGradleModuleConfigurator : KotlinWithGradleConfigurator() {
     override val kotlinPluginName: String = KOTLIN_JS
     override fun getKotlinPluginExpression(forKotlinDsl: Boolean): String =
         if (forKotlinDsl) "id(\"kotlin2js\")" else "id 'kotlin2js'"
+
     override fun getMinimumSupportedVersion() = "1.1.0"
     override fun getStdlibArtifactName(sdk: Sdk?, version: String): String = MAVEN_JS_STDLIB_ID
 
@@ -47,7 +49,7 @@ class KotlinJsGradleModuleConfigurator : KotlinWithGradleConfigurator() {
                 file.module?.getBuildScriptSettingsPsiFile()
             }
             if (settingsPsiFile != null) {
-                getManipulator(settingsPsiFile).addResolutionStrategy("kotlin2js")
+                getManipulator(settingsPsiFile).addResolutionStrategy(KOTLIN_JS)
             }
         }
 
@@ -55,6 +57,7 @@ class KotlinJsGradleModuleConfigurator : KotlinWithGradleConfigurator() {
     }
 
     companion object {
-        val KOTLIN_JS = "kotlin2js"
+        @NonNls
+        const val KOTLIN_JS = "kotlin2js"
     }
 }
