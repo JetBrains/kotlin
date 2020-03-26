@@ -19,8 +19,13 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
 public class KotlinSurrounderUtils {
-    public static String SURROUND_WITH = KotlinIdeaCoreBundle.message("surround.with.title");
-    public static String SURROUND_WITH_ERROR = KotlinIdeaCoreBundle.message("surround.with.error.cannot.perform.action");
+    public static String SURROUND_WITH() {
+        return KotlinIdeaCoreBundle.message("surround.with.title");
+    }
+
+    public static String SURROUND_WITH_ERROR() {
+        return KotlinIdeaCoreBundle.message("surround.with.error.cannot.perform.action");
+    }
 
     private KotlinSurrounderUtils() {
     }
@@ -34,7 +39,7 @@ public class KotlinSurrounderUtils {
     }
 
     public static void showErrorHint(@NotNull Project project, @NotNull Editor editor, @NotNull String message) {
-        CodeInsightUtils.showErrorHint(project, editor, message, SURROUND_WITH, null);
+        CodeInsightUtils.showErrorHint(project, editor, message, SURROUND_WITH(), null);
     }
 
     public static boolean isUsedAsStatement(@NotNull KtExpression expression) {
