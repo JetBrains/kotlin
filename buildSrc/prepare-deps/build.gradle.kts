@@ -88,7 +88,46 @@ repositories {
         }
     }
 
-    maven("file://" + File(project.projectDir, "intellijRepo").absolutePath.replace(File.separatorChar, '/'))
+    if (intellijVersion.endsWith(".0")) {
+        val repoDir = File(project.projectDir, "intellijRepo")
+        maven("file://" + repoDir.absolutePath.replace(File.separatorChar, '/'))
+    } else if (intellijVersion.startsWith("202.")) {
+        ivy {
+            url = URI("https://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_master_Idea_Installers/$intellijVersion")
+
+            patternLayout {
+                artifact("[artifact]-[revision].portable.zip")
+                artifact("[artifact]-[revision].zip")
+                artifact("[artifact]-[revision]-sources.zip")
+            }
+
+            content {
+                includeModule("com.jetbrains.intellij.idea", "ideaIC")
+                includeModule("com.jetbrains.intellij.idea", "ideaIU")
+                includeModule("com.jetbrains.intellij.idea", "intellij-core")
+            }
+
+            metadataSources {
+                artifact()
+            }
+        }
+
+        ivy {
+            url = URI("https://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_master_Idea_Installers/$intellijVersion/jps")
+
+            patternLayout {
+                artifact("standalone-jps-[revision].zip")
+            }
+
+            content {
+                includeModule("com.jetbrains.intellij.idea", "jps-standalone")
+            }
+
+            metadataSources {
+                artifact()
+            }
+        }
+    }
 
     maven("https://www.jetbrains.com/intellij-repository/$intellijReleaseType")
     maven("https://plugins.jetbrains.com/maven")
@@ -296,8 +335,8 @@ fun buildIvyRepositoryTaskAndRegisterCleanupTask(
                 copy {
                     val fileTree = when (extension) {
                         "tar.gz" -> tarTree(file)
-                        "zip" -> zipTree(file)
-                        else -> error("Unsupported artifact extension: $extension")
+                        "zip", "jar" -> zipTree(file)
+                        else -> error("Unsupported artifact extension: $extension ($file)")
                     }
 
                     from(

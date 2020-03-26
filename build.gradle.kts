@@ -3,6 +3,7 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import proguard.gradle.ProGuardTask
 import java.io.File
+import java.net.URI
 
 buildscript {
 
@@ -349,7 +350,28 @@ allprojects {
         bootstrapKotlinRepo?.let(::maven)
         internalKotlinRepo?.let(::maven)
 
-        maven("file://" + File(project.projectDir, "buildSrc/prepare-deps/intellijRepo").absolutePath.replace(File.separatorChar, '/'))
+        val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
+
+        if (intellijVersion.endsWith(".0")) {
+            val repoDir = File(project.projectDir, "buildSrc/prepare-deps/intellijRepo")
+            maven("file://" + repoDir.absolutePath.replace(File.separatorChar, '/'))
+        } else if (intellijVersion.startsWith("202.")) {
+            ivy {
+                url = URI("https://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_master_Idea_Installers/$intellijVersion/jps")
+
+                patternLayout {
+                    artifact("[artifact]-[revision].[ext]")
+                }
+
+                content {
+                    includeModule("com.jetbrains.intellij.idea", "jps-build-test")
+                }
+
+                metadataSources {
+                    artifact()
+                }
+            }
+        }
     }
 
     configureJvmProject(javaHome!!, jvmTarget!!)
