@@ -1,6 +1,6 @@
 interface My {
     private val x: Int
-    private abstract val xx: Int
+    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>abstract<!> val xx: Int
     private val xxx: Int
         get() = 0
     final val y: Int

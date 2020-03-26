@@ -22,4 +22,6 @@ object FirDiagnosticRenderers {
             }
         }
     }
+
+    val TO_STRING = Renderer<Any> { it.toString() }
 }

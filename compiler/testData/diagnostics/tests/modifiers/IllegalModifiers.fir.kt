@@ -2,9 +2,9 @@
 package illegal_modifiers
 
 abstract class A() {
-    abstract final fun f()
-    abstract open fun g()
-    final open fun h() {}
+    <!INCOMPATIBLE_MODIFIERS!>abstract<!> <!INCOMPATIBLE_MODIFIERS!>final<!> fun f()
+    abstract <!REDUNDANT_MODIFIER!>open<!> fun g()
+    <!INCOMPATIBLE_MODIFIERS!>final<!> <!INCOMPATIBLE_MODIFIERS!>open<!> fun h() {}
 
     open var r: String
     get
@@ -21,8 +21,8 @@ class FinalClass() {
         open set(v: Int) {}
 }
 
-private public class C
-private public object D
+<!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>public<!> class C
+<!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>public<!> object D
 
 //A sample annotation to check annotation usage in parameters.
 annotation class annotated(val text: String = "not given")
@@ -32,8 +32,8 @@ class LegalModifier(val a: Int, @annotated private var b: String, @annotated var
 
 //Check illegal modifier in constructor parameters
 class IllegalModifiers1(
-        in
-        out
+        <!INCOMPATIBLE_MODIFIERS!>in<!>
+        <!INCOMPATIBLE_MODIFIERS!>out<!>
         reified
         enum
         private
@@ -41,7 +41,7 @@ class IllegalModifiers1(
         a: Int)
 
 //Check multiple illegal modifiers in constructor
-class IllegalModifiers2(private abstract a: Int)
+class IllegalModifiers2(<!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>abstract<!> a: Int)
 
 
 //Check annotations with illegal modifiers in constructor
@@ -65,10 +65,10 @@ abstract class IllegalModifiers5() {
   private fun qux() {
 
     //Check illegal modifier in catch block
-    try {} catch (in out reified enum public e: Exception) {}
+    try {} catch (<!INCOMPATIBLE_MODIFIERS!>in<!> <!INCOMPATIBLE_MODIFIERS!>out<!> reified enum public e: Exception) {}
 
     //Check multiple illegal modifiers in catch block
-    try {} catch (in out reified enum abstract public e: Exception) {}
+    try {} catch (<!INCOMPATIBLE_MODIFIERS!>in<!> <!INCOMPATIBLE_MODIFIERS!>out<!> reified enum abstract public e: Exception) {}
 
     //Check annotations with illegal modifiers
     try {} catch (@annotated("a text") abstract public e: Exception) {}
@@ -92,24 +92,24 @@ abstract class IllegalModifiers6() {
 
 // strange inappropriate modifiers usages
 override
-out
-in
+<!INCOMPATIBLE_MODIFIERS!>out<!>
+<!INCOMPATIBLE_MODIFIERS!>in<!>
 vararg
 reified
 class IllegalModifiers7() {
     enum
     inner
     annotation
-    out
-    in
+    <!INCOMPATIBLE_MODIFIERS!>out<!>
+    <!INCOMPATIBLE_MODIFIERS!>in<!>
     vararg
     reified
     val x = 1
     enum
     inner
     annotation
-    out
-    in
+    <!INCOMPATIBLE_MODIFIERS!>out<!>
+    <!INCOMPATIBLE_MODIFIERS!>in<!>
     vararg
     reified
     const
@@ -118,46 +118,46 @@ class IllegalModifiers7() {
 
 // Secondary constructors
 class IllegalModifiers8 {
-    abstract
+    <!INCOMPATIBLE_MODIFIERS!>abstract<!>
     enum
-    open
+    <!INCOMPATIBLE_MODIFIERS, REDUNDANT_MODIFIER!>open<!>
     inner
     annotation
-    override
-    out
-    in
-    final
+    <!INCOMPATIBLE_MODIFIERS!>override<!>
+    <!INCOMPATIBLE_MODIFIERS!>out<!>
+    <!INCOMPATIBLE_MODIFIERS!>in<!>
+    <!INCOMPATIBLE_MODIFIERS!>final<!>
     vararg
     reified
-    const<!SYNTAX!><!>
+    <!INCOMPATIBLE_MODIFIERS!>const<!><!SYNTAX!><!>
     constructor() {}
 
-    constructor(private enum abstract x: Int) {}
+    constructor(<!INCOMPATIBLE_MODIFIERS!>private<!> enum <!INCOMPATIBLE_MODIFIERS!>abstract<!> x: Int) {}
 }
 
 class IllegalModifiers9 {
-    private protected constructor() {}
-    private internal constructor(x: Int) {}
+    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>protected<!> constructor() {}
+    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>internal<!> constructor(x: Int) {}
 }
 
 // Illegal modifiers on primary constructor
 
 class IllegalModifiers10
-abstract
+<!INCOMPATIBLE_MODIFIERS!>abstract<!>
 enum
-open
+<!INCOMPATIBLE_MODIFIERS, REDUNDANT_MODIFIER!>open<!>
 inner
 annotation
-override
-out
-in
-final
+<!INCOMPATIBLE_MODIFIERS!>override<!>
+<!INCOMPATIBLE_MODIFIERS!>out<!>
+<!INCOMPATIBLE_MODIFIERS!>in<!>
+<!INCOMPATIBLE_MODIFIERS!>final<!>
 vararg
 reified
-const constructor()
+<!INCOMPATIBLE_MODIFIERS!>const<!> constructor()
 
-class IllegalModifiers11 private protected constructor()
+class IllegalModifiers11 <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>protected<!> constructor()
 
 class Outer {
-    inner sealed class Inner
+    <!INCOMPATIBLE_MODIFIERS!>inner<!> <!INCOMPATIBLE_MODIFIERS!>sealed<!> class Inner
 }

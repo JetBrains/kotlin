@@ -11,7 +11,7 @@ public abstract class TestBug1() {
         position(m1().second)
     }
 
-    private abstract fun m1(): Pair<Int, Int>
+    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>abstract<!> fun m1(): Pair<Int, Int>
 
     private fun position(p: Int) {}
 
@@ -19,6 +19,6 @@ public abstract class TestBug1() {
 
 //from library
 public class Pair<out A, out B> (
-        public val first: A,
-        public val second: B
+    public val first: A,
+    public val second: B
 )
