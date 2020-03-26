@@ -343,6 +343,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 scope,
                 ktExpression.startOffsetSkippingComments, ktExpression.endOffset, origin,
                 context.symbolTable.referenceField(unwrappedPropertyDescriptor.original),
+                unwrappedPropertyDescriptor,
                 propertyIrType,
                 propertyReceiver,
                 superQualifierSymbol

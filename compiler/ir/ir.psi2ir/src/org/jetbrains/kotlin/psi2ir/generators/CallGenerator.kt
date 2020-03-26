@@ -187,7 +187,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                     dispatchReceiverValue?.load(),
                     IrStatementOrigin.GET_PROPERTY,
                     superQualifierSymbol
-                )
+                ).also { context.callToSubstitutedDescriptorMap[it] = descriptor }
             }
         } else {
             call.callReceiver.adjustForCallee(getMethodDescriptor).call { dispatchReceiverValue, extensionReceiverValue ->
