@@ -54,7 +54,7 @@ class RawFirBuilder(
     }
 
     override fun PsiElement.toFirSourceElement(): FirPsiSourceElement<*> {
-        return FirPsiSourceElement(this)
+        return this.toFirPsiSourceElement()
     }
 
     override val PsiElement.elementType: IElementType

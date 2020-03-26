@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.toFirSourceElement
+import org.jetbrains.kotlin.fir.toFirPsiSourceElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.psi.*
 
@@ -27,7 +27,7 @@ internal fun KtWhenCondition.toFirWhenCondition(
     convert: KtExpression?.(String) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
-    val baseSource = this.toFirSourceElement()
+    val baseSource = this.toFirPsiSourceElement()
     val firSubjectExpression = buildWhenSubjectExpression {
         source = baseSource
         whenSubject = subject
@@ -35,7 +35,7 @@ internal fun KtWhenCondition.toFirWhenCondition(
     return when (this) {
         is KtWhenConditionWithExpression -> {
             buildOperatorCall {
-                source = expression?.toFirSourceElement()
+                source = expression?.toFirPsiSourceElement()
                 operation = FirOperation.EQ
                 argumentList = buildBinaryArgumentList(
                     firSubjectExpression, expression.convert("No expression in condition with expression")
@@ -47,13 +47,13 @@ internal fun KtWhenCondition.toFirWhenCondition(
             firRange.generateContainsOperation(
                 firSubjectExpression,
                 isNegated,
-                rangeExpression?.toFirSourceElement(),
-                operationReference.toFirSourceElement()
+                rangeExpression?.toFirPsiSourceElement(),
+                operationReference.toFirPsiSourceElement()
             )
         }
         is KtWhenConditionIsPattern -> {
             buildTypeOperatorCall {
-                source = typeReference?.toFirSourceElement()
+                source = typeReference?.toFirPsiSourceElement()
                 operation = if (isNegated) FirOperation.NOT_IS else FirOperation.IS
                 conversionTypeRef = typeReference.toFirOrErrorTypeRef()
                 argumentList = buildUnaryArgumentList(firSubjectExpression)
@@ -93,13 +93,13 @@ internal fun generateDestructuringBlock(
     toFirOrImplicitTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
     return buildBlock {
-        source = multiDeclaration.toFirSourceElement()
+        source = multiDeclaration.toFirPsiSourceElement()
         if (tmpVariable) {
             statements += container
         }
         val isVar = multiDeclaration.isVar
         for ((index, entry) in multiDeclaration.entries.withIndex()) {
-            val entrySource = entry.toFirSourceElement()
+            val entrySource = entry.toFirPsiSourceElement()
             val name = entry.nameAsSafeName
             statements += buildProperty {
                 source = entrySource

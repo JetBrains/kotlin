@@ -60,7 +60,7 @@ val FirModifier<*>.lightNode: LighterASTNode? get() = (this as? FirLightModifier
 
 val FirModifier<*>.source: FirSourceElement?
     get() = when (this) {
-        is FirPsiModifier -> this.psi?.toFirSourceElement()
+        is FirPsiModifier -> this.psi?.toFirPsiSourceElement()
         is FirLightModifier -> {
             // TODO pretty sure I got offsets wrong here
             val startOffset = tree.getStartOffset(node)

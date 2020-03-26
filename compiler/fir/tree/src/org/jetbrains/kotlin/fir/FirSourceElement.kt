@@ -47,7 +47,7 @@ val FirSourceElement?.psi: PsiElement? get() = (this as? FirPsiSourceElement<*>)
 val FirElement.psi: PsiElement? get() = (source as? FirPsiSourceElement<*>)?.psi
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun PsiElement.toFirSourceElement(): FirPsiSourceElement<*> = FirPsiSourceElement(this)
+inline fun PsiElement.toFirPsiSourceElement(): FirPsiSourceElement<*> = FirPsiSourceElement(this)
 
 val FirSourceElement?.lightNode: LighterASTNode? get() = (this as? FirLightSourceElement)?.element
 
