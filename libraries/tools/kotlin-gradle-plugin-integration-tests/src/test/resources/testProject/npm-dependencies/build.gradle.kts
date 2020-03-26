@@ -14,6 +14,9 @@ kotlin.sourceSets {
     getByName("main") {
         dependencies {
             implementation(kotlin("stdlib-js"))
+            // It has transitive dependency on custom github version of escodegen
+            implementation(npm("@yworks/optimizer", "1.0.6"))
+            implementation(npm("file-dependency", projectDir.resolve("file-dependency")))
         }
     }
 
@@ -21,7 +24,6 @@ kotlin.sourceSets {
         dependencies {
             implementation(kotlin("test-js"))
             implementation(npm("mocha"))
-            implementation(npm("puppeteer"))
         }
     }
 }

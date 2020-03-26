@@ -5,4 +5,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "npm-dependencies-clash"
+rootProject.name = "npm-dependencies"

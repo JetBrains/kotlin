@@ -536,12 +536,13 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
     }
 
     @Test
-    fun testNpmDependenciesClash() = with(Project("npm-dependencies-clash", GradleVersionRequired.AtLeast("4.10.2"))) {
+    fun testNpmDependencies() = with(Project("npm-dependencies", GradleVersionRequired.AtLeast("4.10.2"))) {
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
-        build("test") {
+        build("build") {
             assertSuccessful()
+            assertFileExists("build/js/packages/node_modules/file-dependency")
         }
     }
 
