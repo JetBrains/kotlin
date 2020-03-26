@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 
 object FirErrors {
     val UNRESOLVED_REFERENCE by error1<FirSourceElement, String?>()
@@ -34,4 +35,9 @@ object FirErrors {
     val SUPER_IS_NOT_AN_EXPRESSION by error0<FirSourceElement>()
 
     val INAPPLICABLE_INFIX_MODIFIER by existing<FirSourceElement, String>(Errors.INAPPLICABLE_INFIX_MODIFIER)
+
+    val REPEATED_MODIFIER by error1<FirSourceElement, KtModifierKeywordToken>()
+    val REDUNDANT_MODIFIER by error2<FirSourceElement, KtModifierKeywordToken, KtModifierKeywordToken>()
+    val DEPRECATED_MODIFIER_PAIR by error2<FirSourceElement, KtModifierKeywordToken, KtModifierKeywordToken>()
+    val INCOMPATIBLE_MODIFIERS by error2<FirSourceElement, KtModifierKeywordToken, KtModifierKeywordToken>()
 }

@@ -8,13 +8,13 @@ fun gav(noinline x: (Int) -> Unit, crossinline y: (String) -> Int) {}
 
 inline fun correct(noinline x: (Int) -> Unit, crossinline y: (String) -> Int) {}
 
-inline fun incompatible(noinline crossinline x: () -> String) {}
+inline fun incompatible(<!INCOMPATIBLE_MODIFIERS!>noinline<!> <!INCOMPATIBLE_MODIFIERS!>crossinline<!> x: () -> String) {}
 
 class FunctionSubtype : () -> Unit {
     override fun invoke() {}
 }
 
 inline fun functionSubtype(
-        noinline f: FunctionSubtype,
-        crossinline g: FunctionSubtype
+    noinline f: FunctionSubtype,
+    crossinline g: FunctionSubtype
 ) { }

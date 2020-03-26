@@ -1,0 +1,34 @@
+FILE: wrongModifierTarget.kt
+    public final class Alpha : R|kotlin/Any| {
+        public constructor(): R|Alpha| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class Beta : R|kotlin/Any| {
+            public constructor(int: R|kotlin/Int| = Int(2), double: R|kotlin/Double| = Double(3.0)): R|Alpha.Beta| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val int: R|kotlin/Int| = R|<local>/int|
+                public get(): R|kotlin/Int|
+
+            public final val bar: R|kotlin/Double| = R|<local>/double|
+                public get(): R|kotlin/Double|
+
+            public final operator fun component1(): R|kotlin/Int| {
+                ^component1 this@R|/Alpha.Beta|.R|/Alpha.Beta.int|
+            }
+
+            public final operator fun component2(): R|kotlin/Double| {
+                ^component2 this@R|/Alpha.Beta|.R|/Alpha.Beta.int|.R|kotlin/Int.times|(this@R|/Alpha.Beta|.R|/Alpha.Beta.bar|)
+            }
+
+        }
+
+        public final fun foo(doubleWithoutDefaultValue: R|kotlin/Double|): R|kotlin/Unit| {
+            lval <destruct>: R|Alpha.Beta| = this@R|/Alpha|.R|/Alpha.Beta.Beta|()
+            lval _: R|kotlin/Int| = R|<local>/<destruct>|.R|/Alpha.Beta.component1|()
+            lval entry: R|kotlin/Double| = R|<local>/<destruct>|.R|/Alpha.Beta.component2|()
+        }
+
+    }

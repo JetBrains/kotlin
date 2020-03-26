@@ -1,0 +1,54 @@
+FILE: repeatedModifier.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    internal final object B : R|kotlin/Any| {
+        private constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final enum class C : R|kotlin/Enum<C>| {
+        private constructor(): R|C| {
+            super<R|kotlin/Enum<C>|>()
+        }
+
+        public final static enum entry VALUE1: R|C|
+        public final static enum entry VALUE2: R|C|
+        protected final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|C.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            private final val D: R|kotlin/Int| = Int(5)
+                private get(): R|kotlin/Int|
+
+        }
+
+        public final inline fun foo(f: R|(kotlin/Int) -> kotlin/Int|): R|kotlin/Int| {
+            ^foo R|<local>/f|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(Int(8))
+        }
+
+        public final static fun values(): R|kotlin/Array<C>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|C| {
+        }
+
+    }
+    public open class E : R|kotlin/Any| {
+        public constructor(int: R|kotlin/Int| = Int(5)): R|E| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val int: R|kotlin/Int| = R|<local>/int|
+            private get(): R|kotlin/Int|
+
+        protected final var double: R|kotlin/Double| = R|<local>/int|.R|kotlin/Int.plus|(Double(8.0))
+            protected get(): R|kotlin/Double|
+            protected set(value: R|kotlin/Double|): R|kotlin/Unit|
+
+    }
