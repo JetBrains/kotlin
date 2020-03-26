@@ -36,7 +36,7 @@ data class NpmDependency(
     ) : this(
         project,
         name,
-        "file:${directory.relativeToRoot(project)}"
+        "$FILE_VERSION_PREFIX${directory.canonicalPath}"
     )
 
     enum class Scope {
