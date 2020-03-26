@@ -36,6 +36,8 @@ object ComposeFqNames {
     val Composable = ComposeUtils.composeFqName("Composable")
     val CurrentComposerIntrinsic = ComposeUtils.composeFqName("<get-currentComposer>")
     val Pivotal = ComposeUtils.composeFqName("Pivotal")
+    val Direct = ComposeUtils.composeFqName("Direct")
+    val key = ComposeUtils.composeFqName("key")
     val StableMarker = ComposeUtils.composeFqName("StableMarker")
     val HiddenAttribute = ComposeUtils.composeFqName("HiddenAttribute")
     val Composer = ComposeUtils.composeFqName("Composer")
@@ -70,6 +72,8 @@ fun KotlinType.isMarkedStable(): Boolean =
                     (constructor.declarationDescriptor?.annotations?.hasStableMarker() ?: false))
 fun Annotated.hasComposableAnnotation(): Boolean =
     annotations.findAnnotation(ComposeFqNames.Composable) != null
+fun Annotated.hasDirectAnnotation(): Boolean =
+    annotations.findAnnotation(ComposeFqNames.Direct) != null
 fun Annotated.hasUntrackedAnnotation(): Boolean =
     annotations.findAnnotation(ComposeFqNames.Untracked) != null
 fun Annotated.hasPivotalAnnotation(): Boolean =
