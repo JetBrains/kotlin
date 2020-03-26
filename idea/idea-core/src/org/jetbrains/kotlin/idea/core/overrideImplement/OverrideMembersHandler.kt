@@ -89,7 +89,7 @@ class OverrideMembersHandler(private val preferConstructorParameters: Boolean = 
         return overridden.flatMap { toRealSupers(it) }.distinctBy { it.original }
     }
 
-    override fun getChooserTitle() = KotlinIdeaCoreBundle.message("title.override.members")
+    override fun getChooserTitle() = KotlinIdeaCoreBundle.message("override.members.handler.title")
 
-    override fun getNoMembersFoundHint() = KotlinIdeaCoreBundle.message("hint.text.no.members.to.override.have.been.found")
+    override fun getNoMembersFoundHint() = KotlinIdeaCoreBundle.message("override.members.handler.no.members.hint")
 }
