@@ -28,7 +28,26 @@ interface UnknownSdkContributor {
 data class UnknownSdkSnapshot(
   val totallyUnknownSdks: Set<String>,
   val resolvableSdks: List<UnknownSdk>
-)
+) {
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is UnknownSdkSnapshot) return false
+
+    if (this.totallyUnknownSdks != other.totallyUnknownSdks) return false
+    if (this.resolvableSdks.size != other.resolvableSdks.size) return false
+
+    // this is an optimization to compare if UnknownSdk instances are still the same
+    // we omit predicates in this test, anyways, it is likely that we'd see
+    // new object instances every next call
+    fun List<UnknownSdk>.map() = map {
+      it.sdkName to (it.sdkType.name to ((it.sdkHomePredicate == null) to (it.sdkVersionStringPredicate == null)))
+    }.toSet()
+
+    return this.resolvableSdks.map() == other.resolvableSdks.map()
+  }
+
+  override fun hashCode() = 42 + totallyUnknownSdks.size + resolvableSdks.size
+}
 
 private data class MissingSdkInfo(
   private val mySdkName: String,

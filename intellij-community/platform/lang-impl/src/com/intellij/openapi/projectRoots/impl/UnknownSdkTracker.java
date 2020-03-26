@@ -46,6 +46,8 @@ public class UnknownSdkTracker {
   @NotNull private final Project myProject;
   @NotNull private final MergingUpdateQueue myUpdateQueue;
 
+  private UnknownSdkSnapshot myPreviousRequestCache = null;
+
   public UnknownSdkTracker(@NotNull Project project) {
     myProject = project;
     myUpdateQueue = new MergingUpdateQueue(getClass().getSimpleName(),
@@ -69,6 +71,11 @@ public class UnknownSdkTracker {
 
         new UnknownSdkCollector(myProject)
           .collectSdksPromise(snapshot -> {
+
+            //there is nothing to do if we see the same snapshot, IDEA-236153
+            if (snapshot.equals(myPreviousRequestCache)) return;
+            myPreviousRequestCache = snapshot;
+
             //we cannot use snapshot#missingSdks here, because it affects other IDEs/languages where our logic is not good enough
             onFixableAndMissingSdksCollected(filterOnlyAllowedEntries(snapshot.getResolvableSdks()));
           });
