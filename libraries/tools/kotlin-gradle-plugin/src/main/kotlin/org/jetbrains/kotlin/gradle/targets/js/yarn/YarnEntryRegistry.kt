@@ -40,8 +40,8 @@ internal class YarnEntryRegistry(private val lockFile: File) {
 
     private fun String.correctDependencyKey(): String =
         when {
-            contains(GITHUB_VERSION_PREFIX) -> replace(GITHUB_VERSION_PREFIX, "@")
-            contains(FILE_VERSION_PREFIX) -> {
+            GITHUB_VERSION_PREFIX in this -> replace(GITHUB_VERSION_PREFIX, "@")
+            FILE_VERSION_PREFIX in this -> {
                 val location = substringAfter(FILE_VERSION_PREFIX)
                 val path = lockFile
                     .parentFile
