@@ -12,10 +12,10 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.BaseFirBuilder
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.escapedStringToCharacter
+import org.jetbrains.kotlin.fir.toFirLightSourceElement
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
@@ -33,7 +33,7 @@ open class BaseConverter(
     override fun LighterASTNode.toFirSourceElement(): FirLightSourceElement {
         val startOffset = offset + tree.getStartOffset(this)
         val endOffset = offset + tree.getEndOffset(this)
-        return FirLightSourceElement(this, startOffset, endOffset, tree)
+        return toFirLightSourceElement(startOffset, endOffset, tree)
     }
 
     override val LighterASTNode.elementType: IElementType

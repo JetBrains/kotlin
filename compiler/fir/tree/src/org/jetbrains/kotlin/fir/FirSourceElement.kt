@@ -49,6 +49,12 @@ val FirElement.psi: PsiElement? get() = (source as? FirPsiSourceElement<*>)?.psi
 @Suppress("NOTHING_TO_INLINE")
 inline fun PsiElement.toFirPsiSourceElement(): FirPsiSourceElement<*> = FirPsiSourceElement(this)
 
+@Suppress("NOTHING_TO_INLINE")
+inline fun LighterASTNode.toFirLightSourceElement(
+    startOffset: Int, endOffset: Int,
+    tree: FlyweightCapableTreeStructure<LighterASTNode>
+): FirLightSourceElement = FirLightSourceElement(this, startOffset, endOffset, tree)
+
 val FirSourceElement?.lightNode: LighterASTNode? get() = (this as? FirLightSourceElement)?.element
 
 fun FirSourceElement?.getModifierList(): FirModifierList? {

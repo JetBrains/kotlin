@@ -65,6 +65,6 @@ val FirModifier<*>.source: FirSourceElement?
             // TODO pretty sure I got offsets wrong here
             val startOffset = tree.getStartOffset(node)
             val endOffset = tree.getEndOffset(node)
-            FirLightSourceElement(node, startOffset, endOffset, tree)
+            node.toFirLightSourceElement(startOffset, endOffset, tree)
         }
     }
