@@ -6479,12 +6479,19 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         public void testAllFilesPresentInPropertyAccess() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/propertyAccess"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+            KotlinTestUtils
+                    .assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/propertyAccess"),
+                                                                 Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
         @TestMetadata("classUsesPackageProperties.kt")
         public void testClassUsesPackageProperties() throws Exception {
             runTest("js/js.translator/testData/box/propertyAccess/classUsesPackageProperties.kt");
+        }
+
+        @TestMetadata("configurable.kt")
+        public void testConfigurable() throws Exception {
+            runTest("js/js.translator/testData/box/propertyAccess/configurable.kt");
         }
 
         @TestMetadata("customGetter.kt")
