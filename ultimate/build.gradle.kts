@@ -184,11 +184,7 @@ dependencies {
         }
         testRuntime(intellijUltimatePluginDep("android"))
         testRuntime(intellijUltimatePluginDep("testng"))
-        if (Platform[201].orHigher()) {
-            testRuntime(intellijUltimatePluginDep("platform-langInjection"))
-        } else {
-            testRuntime(intellijUltimatePluginDep("IntelliLang"))
-        }
+        testRuntime(intellijUltimatePluginDep("IntelliLang"))
         testRuntime(intellijUltimatePluginDep("copyright"))
         testRuntime(intellijUltimatePluginDep("java-decompiler"))
     }
