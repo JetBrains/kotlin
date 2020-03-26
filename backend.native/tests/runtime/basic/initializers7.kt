@@ -7,23 +7,50 @@ package runtime.basic.initializers7
 
 import kotlin.test.*
 
-import kotlin.random.Random
-
 object A {
-    val a1 = Random.nextInt(100)
-    val a2 = Random.nextInt(100)
+    init {
+        assertAUninitialized()
+    }
+    val a1 = 7
+    val a2 = 12
+}
+
+// Check that A is initialized dynamically.
+fun assertAUninitialized() {
+    assertEquals(0, A.a1)
+    assertEquals(0, A.a2)
 }
 
 object B {
+    init {
+        assertBUninitialized()
+    }
     val b1 = A.a2
     val b2 = C.c1
 }
 
+// Check that B is initialized dynamically.
+fun assertBUninitialized() {
+    assertEquals(0, B.b1)
+    assertEquals(0, B.b2)
+}
+
 object C {
-    val c1 = Random.nextInt(100)
+    init {
+        assertCUninitialized()
+    }
+    val c1 = 42
     val c2 = A.a1
     val c3 = B.b1
     val c4 = B.b2
+}
+
+// Check that C is initialized dynamically.
+fun assertCUninitialized() {
+    assertEquals(0, C.c1)
+    assertEquals(0, C.c2)
+    assertEquals(0, C.c3)
+    assertEquals(0, C.c4)
 }
 
 @Test fun runTest() {
