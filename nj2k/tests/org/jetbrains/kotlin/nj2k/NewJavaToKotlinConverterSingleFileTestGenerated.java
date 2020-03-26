@@ -5212,6 +5212,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/types/capturedWildcardTypeAsLambdaParameter.java");
         }
 
+        @TestMetadata("nullType.java")
+        public void testNullType() throws Exception {
+            runTest("nj2k/testData/newJ2k/types/nullType.java");
+        }
+
         @TestMetadata("recursiveType.java")
         public void testRecursiveType() throws Exception {
             runTest("nj2k/testData/newJ2k/types/recursiveType.java");
