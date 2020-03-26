@@ -11,6 +11,7 @@ import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.Usage
 import org.gradle.api.initialization.IncludedBuild
+import org.gradle.api.internal.artifacts.DefaultProjectComponentIdentifier
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.CompilationResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+import org.jetbrains.kotlin.gradle.utils.topRealPath
 import java.io.File
 import java.io.Serializable
 
@@ -204,8 +206,8 @@ internal class KotlinCompilationNpmResolver(
                 }
 
                 if (clazz.isAssignableFrom(artifactId::class.java)) {
-                    (artifactId.componentIdentifier as ProjectComponentIdentifier).let { identifier ->
-                        val includedBuild = project.gradle.includedBuild(identifier.projectName.removePrefix(":"))
+                    (artifactId.componentIdentifier as DefaultProjectComponentIdentifier).let { identifier ->
+                        val includedBuild = project.gradle.includedBuild(identifier.identityPath.topRealPath().name!!)
                         internalCompositeDependencies.add(CompositeDependency(dependency, includedBuild))
                     }
                 }
