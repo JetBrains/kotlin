@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -1854,6 +1854,64 @@ class ArraysTest {
         val array = Array(6) { it }
         array.sortWith(comparator)
         array.iterator().assertSorted { a, b -> comparator.compare(a, b) <= 0 }
+    }
+
+    private inline fun <T> testShuffle(array: T, shuffle: T.() -> Unit, toList: T.() -> List<*>) {
+        val original = array.toList()
+        array.shuffle()
+        val shuffled = array.toList()
+        assertNotEquals(original, shuffled)
+        assertEquals(original.groupBy { it }, shuffled.groupBy { it })
+    }
+
+    @Test
+    fun shuffle() {
+        val numbers = List(100) { it }
+        testShuffle(numbers.map(Int::toInt).toIntArray(), { shuffle() }, { toList() })
+        testShuffle(numbers.map(Int::toLong).toLongArray(), { shuffle() }, { toList() })
+        testShuffle(numbers.map(Int::toByte).toByteArray(), { shuffle() }, { toList() })
+        testShuffle(numbers.map(Int::toShort).toShortArray(), { shuffle() }, { toList() })
+        testShuffle(numbers.map(Int::toFloat).toFloatArray(), { shuffle() }, { toList() })
+        testShuffle(numbers.map(Int::toDouble).toDoubleArray(), { shuffle() }, { toList() })
+        testShuffle(numbers.map(Int::toChar).toCharArray(), { shuffle() }, { toList() })
+        testShuffle(numbers.map { it % 2 == 0 }.toBooleanArray(), { shuffle() }, { toList() })
+
+        testShuffle(numbers.map(Int::toUInt).toUIntArray(), { shuffle() }, { toList() })
+        testShuffle(numbers.map(Int::toULong).toULongArray(), { shuffle() }, { toList() })
+        testShuffle(numbers.map(Int::toUByte).toUByteArray(), { shuffle() }, { toList() })
+        testShuffle(numbers.map(Int::toUShort).toUShortArray(), { shuffle() }, { toList() })
+
+        testShuffle(arrayOf(1, "x", null, Any(), 'a', 2u, 5.0), { shuffle() }, { toList() })
+    }
+
+    private inline fun <T> testShuffleR(array: T, shuffle: T.(Random) -> Unit, toList: T.() -> List<*>) {
+        val seed = Random.nextInt()
+        val original = array.toList()
+        val originalShuffled = original.shuffled(Random(seed))
+        array.shuffle(Random(seed))
+        val shuffled = array.toList()
+        assertNotEquals(original, shuffled)
+        assertEquals(originalShuffled, shuffled)
+    }
+
+    @Test
+    fun shufflePredictably() {
+        val numbers = List(16) { it }
+        testShuffleR(numbers.map(Int::toInt).toIntArray(), { r -> shuffle(r) }, { toList() })
+        testShuffleR(numbers.map(Int::toLong).toLongArray(), { r -> shuffle(r) }, { toList() })
+        testShuffleR(numbers.map(Int::toByte).toByteArray(), { r -> shuffle(r) }, { toList() })
+        testShuffleR(numbers.map(Int::toShort).toShortArray(), { r -> shuffle(r) }, { toList() })
+        testShuffleR(numbers.map(Int::toFloat).toFloatArray(), { r -> shuffle(r) }, { toList() })
+        testShuffleR(numbers.map(Int::toDouble).toDoubleArray(), { r -> shuffle(r) }, { toList() })
+        testShuffleR(numbers.map(Int::toChar).toCharArray(), { r -> shuffle(r) }, { toList() })
+        testShuffleR(numbers.map { it % 2 == 0 }.toBooleanArray(), { r -> shuffle(r) }, { toList() })
+
+        testShuffleR(numbers.map(Int::toUInt).toUIntArray(), { r -> shuffle(r) }, { toList() })
+        testShuffleR(numbers.map(Int::toULong).toULongArray(), { r -> shuffle(r) }, { toList() })
+        testShuffleR(numbers.map(Int::toUByte).toUByteArray(), { r -> shuffle(r) }, { toList() })
+        testShuffleR(numbers.map(Int::toUShort).toUShortArray(), { r -> shuffle(r) }, { toList() })
+
+        testShuffleR(arrayOf(1, "x", null, Any(), 'a', 2u, 5.0), { r -> shuffle(r) }, { toList() })
     }
 
     @Test

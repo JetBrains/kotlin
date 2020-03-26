@@ -1577,6 +1577,24 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun scanIndexed ([Ljava/lang/Object;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
 	public static final fun scanReduce ([Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 	public static final fun scanReduceIndexed ([Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
+	public static final fun shuffle ([B)V
+	public static final fun shuffle ([BLkotlin/random/Random;)V
+	public static final fun shuffle ([C)V
+	public static final fun shuffle ([CLkotlin/random/Random;)V
+	public static final fun shuffle ([D)V
+	public static final fun shuffle ([DLkotlin/random/Random;)V
+	public static final fun shuffle ([F)V
+	public static final fun shuffle ([FLkotlin/random/Random;)V
+	public static final fun shuffle ([I)V
+	public static final fun shuffle ([ILkotlin/random/Random;)V
+	public static final fun shuffle ([J)V
+	public static final fun shuffle ([JLkotlin/random/Random;)V
+	public static final fun shuffle ([Ljava/lang/Object;)V
+	public static final fun shuffle ([Ljava/lang/Object;Lkotlin/random/Random;)V
+	public static final fun shuffle ([S)V
+	public static final fun shuffle ([SLkotlin/random/Random;)V
+	public static final fun shuffle ([Z)V
+	public static final fun shuffle ([ZLkotlin/random/Random;)V
 	public static final fun single ([B)B
 	public static final fun single ([BLkotlin/jvm/functions/Function1;)B
 	public static final fun single ([C)C
@@ -2553,6 +2571,14 @@ public final class kotlin/collections/unsigned/UArraysKt {
 	public static final fun reversed-GBYM_sE ([B)Ljava/util/List;
 	public static final fun reversed-QwZRm1k ([J)Ljava/util/List;
 	public static final fun reversed-rL5Bavg ([S)Ljava/util/List;
+	public static final fun shuffle--ajY-9A ([I)V
+	public static final fun shuffle-2D5oskM ([ILkotlin/random/Random;)V
+	public static final fun shuffle-GBYM_sE ([B)V
+	public static final fun shuffle-JzugnMA ([JLkotlin/random/Random;)V
+	public static final fun shuffle-QwZRm1k ([J)V
+	public static final fun shuffle-oSF2wD8 ([BLkotlin/random/Random;)V
+	public static final fun shuffle-rL5Bavg ([S)V
+	public static final fun shuffle-s5X_as8 ([SLkotlin/random/Random;)V
 	public static final fun singleOrNull--ajY-9A ([I)Lkotlin/UInt;
 	public static final fun singleOrNull-GBYM_sE ([B)Lkotlin/UByte;
 	public static final fun singleOrNull-QwZRm1k ([J)Lkotlin/ULong;

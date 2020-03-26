@@ -907,6 +907,19 @@ public fun <T> Iterable<T>.reversed(): List<T> {
 }
 
 /**
+ * Randomly shuffles elements in this list in-place using the specified [random] instance as the source of randomness.
+ * 
+ * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+ */
+@SinceKotlin("1.3")
+public fun <T> MutableList<T>.shuffle(random: Random): Unit {
+    for (i in lastIndex downTo 1) {
+        val j = random.nextInt(i + 1)
+        this[j] = this.set(i, this[j])
+    }
+}
+
+/**
  * Sorts elements in the list in-place according to natural sort order of the value returned by specified [selector] function.
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
