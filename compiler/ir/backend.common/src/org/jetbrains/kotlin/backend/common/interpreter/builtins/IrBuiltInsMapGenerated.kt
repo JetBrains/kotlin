@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,6 +116,8 @@ val unaryFunctions = mapOf<CompileTimeFunction, Function1<Any?, Any?>>(
     unaryOperation<Double>("unaryMinus", "Double") { a -> a.unaryMinus() },
     unaryOperation<Double>("unaryPlus", "Double") { a -> a.unaryPlus() },
     unaryOperation<String>("length", "String") { a -> a.length },
+    unaryOperation<String>("hashCode", "String") { a -> a.hashCode() },
+    unaryOperation<String>("toString", "String") { a -> a.toString() },
     unaryOperation<BooleanArray>("size", "BooleanArray") { a -> a.size },
     unaryOperation<BooleanArray>("iterator", "BooleanArray") { a -> a.iterator() },
     unaryOperation<CharArray>("size", "CharArray") { a -> a.size },
@@ -404,6 +406,7 @@ val binaryFunctions = mapOf<CompileTimeFunction, Function2<Any?, Any?, Any?>>(
     binaryOperation<Double, Long>("times", "Double", "Long") { a, b -> a.times(b) },
     binaryOperation<Double, Short>("times", "Double", "Short") { a, b -> a.times(b) },
     binaryOperation<String, String>("compareTo", "String", "String") { a, b -> a.compareTo(b) },
+    binaryOperation<String, Any?>("equals", "String", "Any?") { a, b -> a.equals(b) },
     binaryOperation<String, Int>("get", "String", "Int") { a, b -> a.get(b) },
     binaryOperation<String, Any?>("plus", "String", "Any?") { a, b -> a.plus(b) },
     binaryOperation<BooleanArray, Int>("get", "BooleanArray", "Int") { a, b -> a.get(b) },
