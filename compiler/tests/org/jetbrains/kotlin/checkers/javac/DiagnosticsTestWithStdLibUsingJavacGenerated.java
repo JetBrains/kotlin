@@ -743,6 +743,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/localFun_LL13.kt");
             }
 
+            @TestMetadata("mainInObject.kt")
+            public void testMainInObject() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/mainInObject.kt");
+            }
+
             @TestMetadata("property.kt")
             public void testProperty() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/property.kt");
