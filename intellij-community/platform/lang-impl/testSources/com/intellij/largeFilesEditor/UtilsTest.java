@@ -45,4 +45,47 @@ public class UtilsTest {
     int progress = Utils.calculatePagePositionPercent(500, 1000);
     assertTrue("progress=" + progress, progress >= 49 && progress <= 51);
   }
+
+  @Test
+  public void cutToMaxLength_longStrings_1() {
+    assertEquals("012345678901234567890123456789",
+                 Utils.cutToMaxLength("012345678901234567890123456789", 100));
+  }
+
+  @Test
+  public void cutToMaxLength_longStrings_2() {
+    assertEquals("01234567...123456789",
+                 Utils.cutToMaxLength("012345678901234567890123456789", 20));
+  }
+
+  @Test
+  public void cutToMaxLength_longStrings_3() {
+    assertEquals("01234567...23456789",
+                 Utils.cutToMaxLength("012345678901234567890123456789", 19));
+  }
+
+  @Test
+  public void cutToMaxLength_shortStrings_1() {
+    assertEquals("01234567", Utils.cutToMaxLength("01234567", 100));
+  }
+
+  @Test
+  public void cutToMaxLength_shortStrings_2() {
+    assertEquals("01234567", Utils.cutToMaxLength("01234567", 8));
+  }
+
+  @Test
+  public void cutToMaxLength_shortStrings_3() {
+    assertEquals("01...67", Utils.cutToMaxLength("01234567", 7));
+  }
+
+  @Test
+  public void cutToMaxLength_shortStrings_4() {
+    assertEquals("0...67", Utils.cutToMaxLength("01234567", 6));
+  }
+
+  @Test
+  public void cutToMaxLength_shortStrings_5() {
+    assertEquals("0...7", Utils.cutToMaxLength("01234567", 5));
+  }
 }
