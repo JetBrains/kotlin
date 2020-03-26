@@ -221,14 +221,16 @@ class TowerResolveManager internal constructor(private val towerResolver: FirTow
 
         private fun processInvokeReceiversCandidates(invokeBuiltinExtensionMode: Boolean) {
             for (invokeReceiverCandidate in invokeReceiverCollector.bestCandidates()) {
-
                 val symbol = invokeReceiverCandidate.symbol
                 if (symbol !is FirCallableSymbol<*> && symbol !is FirRegularClassSymbol) continue
+
                 val isExtensionFunctionType =
                     (symbol as? FirCallableSymbol<*>)?.fir?.returnTypeRef?.isExtensionFunctionType(towerResolver.components.session) == true
+
                 if (invokeBuiltinExtensionMode && !isExtensionFunctionType) {
                     continue
                 }
+
                 val extensionReceiverExpression = invokeReceiverCandidate.extensionReceiverExpression()
                 val useImplicitReceiverAsBuiltinInvokeArgument =
                     !invokeBuiltinExtensionMode && isExtensionFunctionType &&
@@ -335,7 +337,10 @@ class TowerResolveManager internal constructor(private val towerResolver: FirTow
         }
     }
 
-    data class SuspendedResolverTask(val continuation: Continuation<Unit>, val group: TowerGroup): Comparable<SuspendedResolverTask> {
+    private data class SuspendedResolverTask(
+        val continuation: Continuation<Unit>,
+        val group: TowerGroup
+    ) : Comparable<SuspendedResolverTask> {
         override fun compareTo(other: SuspendedResolverTask): Int {
             return group.compareTo(other.group)
         }
@@ -362,9 +367,7 @@ class TowerResolveManager internal constructor(private val towerResolver: FirTow
             if (resultCollector.isSuccess()) return
         }
     }
-
 }
-
 
 enum class InvokeResolveMode {
     IMPLICIT_CALL_ON_GIVEN_RECEIVER,
