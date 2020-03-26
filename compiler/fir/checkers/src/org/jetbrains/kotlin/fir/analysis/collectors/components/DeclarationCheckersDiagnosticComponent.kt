@@ -21,6 +21,10 @@ class DeclarationCheckersDiagnosticComponent(collector: AbstractDiagnosticCollec
         runCheck { DeclarationCheckers.MEMBER_DECLARATIONS.check(regularClass, data, it) }
     }
 
+    override fun visitSealedClass(sealedClass: FirSealedClass, data: CheckerContext) {
+        runCheck { DeclarationCheckers.MEMBER_DECLARATIONS.check(sealedClass, data, it) }
+    }
+
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: CheckerContext) {
         runCheck { DeclarationCheckers.MEMBER_DECLARATIONS.check(simpleFunction, data, it) }
     }
@@ -45,11 +49,19 @@ class DeclarationCheckersDiagnosticComponent(collector: AbstractDiagnosticCollec
         runCheck { DeclarationCheckers.DECLARATIONS.check(valueParameter, data, it) }
     }
 
+    override fun visitTypeParameter(typeParameter: FirTypeParameter, data: CheckerContext) {
+        runCheck { DeclarationCheckers.DECLARATIONS.check(typeParameter, data, it) }
+    }
+
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: CheckerContext) {
         runCheck { DeclarationCheckers.DECLARATIONS.check(enumEntry, data, it) }
     }
 
-    private fun <D : FirDeclaration> List<FirDeclarationChecker<D>>.check(declaration: D, context: CheckerContext, reporter: DiagnosticReporter) {
+    private fun <D : FirDeclaration> List<FirDeclarationChecker<D>>.check(
+        declaration: D,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
         for (checker in this) {
             checker.check(declaration, context, reporter)
         }
