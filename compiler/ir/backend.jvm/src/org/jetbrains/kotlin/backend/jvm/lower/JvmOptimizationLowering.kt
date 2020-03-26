@@ -40,10 +40,6 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                     context.state.intrinsics.getIntrinsic(expression.symbol.descriptor) is Not
     }
 
-    private fun hasNoSideEffectsForNullCompare(expression: IrExpression): Boolean {
-        return expression.type.isPrimitiveType() && (expression is IrConst<*> || expression is IrGetValue)
-    }
-
     private val IrFunction.isObjectEquals
         get() = name.asString() == "equals" &&
                 valueParameters.count() == 1 &&
