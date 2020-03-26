@@ -16,7 +16,8 @@ private const val MODULES_DIR_PATH = ".idea/modules"
 private const val LIBRARIES_DIR_PATH = ".idea/libraries"
 
 private const val KOTLIN_IDE_IML_NAME = "kotlinide.iml"
-private const val COMBO_IML_NAME = "combo.iml"
+private const val COMBO_IML_NAME = "kombo.iml"
+private const val COMBO_OLD_IML_NAME = "combo.iml"
 
 class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBase(kotlinProjectDir), ComboGenerator {
     override fun generate() {
@@ -30,6 +31,8 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
         mergeModules()
 
         generateModule(File(comboProjectDir, "$MODULES_DIR_PATH/$KOTLIN_IDE_IML_NAME"), "\$MODULE_DIR\$/../../" + kotlinProjectDir.name)
+
+        File(comboProjectDir, COMBO_OLD_IML_NAME).takeIf { it.exists() }?.delete()
         generateModule(File(comboProjectDir, COMBO_IML_NAME), "\$MODULE_DIR\$")
 
         copyKotlinModules()
