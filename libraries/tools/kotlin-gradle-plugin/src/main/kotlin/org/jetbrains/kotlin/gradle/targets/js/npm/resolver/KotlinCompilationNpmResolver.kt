@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.CompilationResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+import org.jetbrains.kotlin.gradle.utils.CompositeProjectComponentArtifactMetadata
+import org.jetbrains.kotlin.gradle.utils.`is`
 import org.jetbrains.kotlin.gradle.utils.topRealPath
 import java.io.File
 import java.io.Serializable
@@ -188,30 +190,49 @@ internal class KotlinCompilationNpmResolver(
             dependency: ResolvedDependency,
             artifacts: MutableSet<ResolvedArtifact>
         ) {
-            artifacts.forEach { artifact ->
-                val artifactId = artifact.id
-                val componentIdentifier = artifactId.componentIdentifier
+            artifacts.forEach { visitArtifact(dependency, it) }
+        }
 
-                val clazz = Class.forName("org.gradle.composite.internal.CompositeProjectComponentArtifactMetadata")
-                if (componentIdentifier is ProjectComponentIdentifier && !clazz.isAssignableFrom(artifactId::class.java)) {
-                    val dependentProject = project.findProject(componentIdentifier.projectPath)
-                        ?: error("Cannot find project ${componentIdentifier.projectPath}")
+        private fun visitArtifact(
+            dependency: ResolvedDependency,
+            artifact: ResolvedArtifact
+        ) {
+            val artifactId = artifact.id
+            val componentIdentifier = artifactId.componentIdentifier
 
-                    resolver.findDependentResolver(project, dependentProject)
-                        ?.forEach { dependentResolver ->
-                            internalDependencies.add(dependentResolver)
-                        }
-                } else if (componentIdentifier !is ProjectComponentIdentifier) {
-                    externalGradleDependencies.add(ExternalGradleDependency(dependency, artifact))
-                }
-
-                if (clazz.isAssignableFrom(artifactId::class.java)) {
-                    (artifactId.componentIdentifier as DefaultProjectComponentIdentifier).let { identifier ->
-                        val includedBuild = project.gradle.includedBuild(identifier.identityPath.topRealPath().name!!)
-                        internalCompositeDependencies.add(CompositeDependency(dependency, includedBuild))
-                    }
-                }
+            if (artifactId `is` CompositeProjectComponentArtifactMetadata) {
+                visitCompositeProjectDependency(dependency, componentIdentifier as ProjectComponentIdentifier)
+                return
             }
+
+            if (componentIdentifier is ProjectComponentIdentifier) {
+                visitProjectDependency(componentIdentifier)
+                return
+            }
+
+            externalGradleDependencies.add(ExternalGradleDependency(dependency, artifact))
+        }
+
+        private fun visitCompositeProjectDependency(
+            dependency: ResolvedDependency,
+            componentIdentifier: ProjectComponentIdentifier
+        ) {
+            (componentIdentifier as DefaultProjectComponentIdentifier).let { identifier ->
+                val includedBuild = project.gradle.includedBuild(identifier.identityPath.topRealPath().name!!)
+                internalCompositeDependencies.add(CompositeDependency(dependency, includedBuild))
+            }
+        }
+
+        private fun visitProjectDependency(
+            componentIdentifier: ProjectComponentIdentifier
+        ) {
+            val dependentProject = project.findProject(componentIdentifier.projectPath)
+                ?: error("Cannot find project ${componentIdentifier.projectPath}")
+
+            resolver.findDependentResolver(project, dependentProject)
+                ?.forEach { dependentResolver ->
+                    internalDependencies.add(dependentResolver)
+                }
         }
 
         fun toPackageJsonProducer() = PackageJsonProducer(
