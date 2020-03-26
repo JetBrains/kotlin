@@ -129,7 +129,7 @@ public class IdeErrorMessages {
                 KotlinIdeaAnalysisBundle.htmlMessage("html.types.of.inherited.var.properties.do.not.match.br.0.br.1.html"),
                 HTML, HTML);
 
-        MAP.put(VAR_OVERRIDDEN_BY_VAL, KotlinIdeaAnalysisBundle.htmlMessage("html.val.property.cannot.override.var.property.br.1.html2"), HTML, HTML);
+        MAP.put(VAR_OVERRIDDEN_BY_VAL, KotlinIdeaAnalysisBundle.htmlMessage("html.val.property.cannot.override.var.property.br.1.html"), HTML, HTML);
         MAP.put(VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION,
                 KotlinIdeaAnalysisBundle.htmlMessage("html.val.property.cannot.override.var.property.br.1.html"), HTML, HTML);
 
