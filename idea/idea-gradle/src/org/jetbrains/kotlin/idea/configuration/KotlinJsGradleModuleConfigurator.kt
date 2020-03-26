@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 
 class KotlinJsGradleModuleConfigurator : KotlinWithGradleConfigurator() {
     override val name: String = "gradle-js"
-    override val presentableText: String = KotlinIdeaGradleBundle.message("presentable.text.javascript.with.gradle")
+    override val presentableText: String get() = KotlinIdeaGradleBundle.message("presentable.text.javascript.with.gradle")
     override val targetPlatform: TargetPlatform = JsPlatforms.defaultJsPlatform
     override val kotlinPluginName: String = KOTLIN_JS
     override fun getKotlinPluginExpression(forKotlinDsl: Boolean): String =

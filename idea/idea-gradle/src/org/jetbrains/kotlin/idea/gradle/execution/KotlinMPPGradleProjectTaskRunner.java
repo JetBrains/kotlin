@@ -152,7 +152,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
             else {
                 projectName = projectFile.getName();
             }
-            String executionName = KotlinIdeaGradleBundle.message("build.0", projectName);
+            String executionName = KotlinIdeaGradleBundle.message("build.0.project", projectName);
             settings.setExecutionName(executionName);
             settings.setExternalProjectPath(rootProjectPath);
             settings.setTaskNames(ContainerUtil.collect(ContainerUtil.concat(cleanTasks, buildTasks).iterator()));

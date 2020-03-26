@@ -123,7 +123,7 @@ class KotlinConsoleRunner(
     var compilerHelper: ConsoleCompilerHelper by Delegates.notNull()
 
     private val consoleScriptDefinition = object : KotlinScriptDefinition(Any::class) {
-        override val name = KotlinIdeaReplBundle.message("kotlin.repl")
+        override val name get() = KotlinIdeaReplBundle.message("kotlin.repl")
         override fun isScript(fileName: String): Boolean = fileName.startsWith(consoleView.virtualFile.name)
         override fun getScriptName(script: KtScript) = Name.identifier("REPL")
     }
