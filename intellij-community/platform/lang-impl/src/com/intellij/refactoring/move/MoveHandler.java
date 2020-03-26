@@ -67,7 +67,7 @@ public class MoveHandler implements RefactoringActionHandler {
 
       for (MoveHandlerDelegate delegate: candidateHandlers) {
         if (delegate.tryToMove(element, project, dataContext, null, editor)) {
-          logDelegate(project, delegate, element.getLanguage());
+          logDelegate(project, delegate, element.isValid() ? element.getLanguage() : null);
           return;
         }
       }
