@@ -74,6 +74,7 @@ public class CodeCompletionHandlerBase {
   final boolean invokedExplicitly;
   final boolean synchronous;
   final boolean autopopup;
+  final boolean allowAutoInsert;
   private static int ourAutoInsertItemTimeout = 2000;
 
   public static CodeCompletionHandlerBase createHandler(@NotNull CompletionType completionType) {
@@ -87,7 +88,7 @@ public class CodeCompletionHandlerBase {
     }
     assert (codeCompletionAction instanceof BaseCodeCompletionAction);
     BaseCodeCompletionAction baseCodeCompletionAction = (BaseCodeCompletionAction) codeCompletionAction;
-    return baseCodeCompletionAction.createHandler(completionType, invokedExplicitly, autopopup, synchronous);
+    return baseCodeCompletionAction.createHandler(completionType, invokedExplicitly, autopopup, synchronous, true);
   }
 
   public CodeCompletionHandlerBase(@NotNull CompletionType completionType) {
@@ -95,12 +96,17 @@ public class CodeCompletionHandlerBase {
   }
 
   public CodeCompletionHandlerBase(@NotNull CompletionType completionType, boolean invokedExplicitly, boolean autopopup, boolean synchronous) {
+    this(completionType, invokedExplicitly, autopopup, synchronous, true);
+  }
+
+  public CodeCompletionHandlerBase(@NotNull CompletionType completionType, boolean invokedExplicitly, boolean autopopup, boolean synchronous, boolean allowAutoInsert) {
     this.completionType = completionType;
     this.invokedExplicitly = invokedExplicitly;
     this.autopopup = autopopup;
     this.synchronous = synchronous;
+    this.allowAutoInsert = allowAutoInsert;
 
-    if (invokedExplicitly) {
+    if (invokedExplicitly && allowAutoInsert) {
       assert synchronous;
     }
     if (autopopup) {
@@ -357,7 +363,7 @@ public class CodeCompletionHandlerBase {
   private AutoCompletionDecision shouldAutoComplete(@NotNull CompletionProgressIndicator indicator,
                                                     @NotNull List<LookupElement> items,
                                                     @NotNull CompletionParameters parameters) {
-    if (!invokedExplicitly) {
+    if (!invokedExplicitly || !allowAutoInsert) {
       return AutoCompletionDecision.SHOW_LOOKUP;
     }
     final LookupElement item = items.get(0);
