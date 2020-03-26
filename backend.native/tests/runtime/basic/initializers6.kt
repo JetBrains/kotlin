@@ -9,7 +9,7 @@ import kotlin.test.*
 
 import kotlin.native.concurrent.*
 
-val aWorkerId = 2
+val aWorkerId = AtomicInt(0)
 val bWorkersCount = 3
 
 val aWorkerUnlocker = AtomicInt(0)
@@ -18,13 +18,13 @@ val bWorkerUnlocker = AtomicInt(0)
 object A {
     init {
         // Must be called by aWorker only.
-        assertEquals(aWorkerId, Worker.current.id)
+        assertEquals(aWorkerId.value, Worker.current.id)
         // Only allow b workers to run, when a worker has started initialization.
         bWorkerUnlocker.increment()
         // Only proceed with initialization, when all b workers have started executing.
         while (aWorkerUnlocker.value < bWorkersCount) {}
         // And now wait a bit, to increase probability of races.
-        Worker.current.park(1000 * 1000L)
+        Worker.current.park(100 * 1000L)
     }
     val a = produceA()
     val b = produceB()
@@ -32,21 +32,20 @@ object A {
 
 fun produceA(): String {
     // Must've been called by aWorker only.
-    assertEquals(aWorkerId, Worker.current.id)
+    assertEquals(aWorkerId.value, Worker.current.id)
     return "A"
 }
 
 fun produceB(): String {
     // Must've been called by aWorker only.
-    assertEquals(aWorkerId, Worker.current.id)
+    assertEquals(aWorkerId.value, Worker.current.id)
     // Also check that it's ok to get A.a while initializing A.b.
     return "B+${A.a}"
 }
 
 @Test fun runTest() {
     val aWorker = Worker.start()
-    // This test relies on aWorkerId value.
-    assertEquals(aWorkerId, aWorker.id)
+    aWorkerId.value = aWorker.id
     val bWorkers = Array(bWorkersCount, { _ -> Worker.start() })
 
     val aFuture = aWorker.execute(TransferMode.SAFE, {}, {
