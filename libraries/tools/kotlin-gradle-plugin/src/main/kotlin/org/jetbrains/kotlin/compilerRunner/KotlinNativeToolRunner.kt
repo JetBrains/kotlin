@@ -154,70 +154,71 @@ internal abstract class KonanCliRunner(
                 spec.environment(environment)
             }
         } else {
-            // TODO: Remove this if once KT-37550 is fixed
-            if (PropertiesProvider(project).nativeEnableParallelExecutionCheck) {
-                System.getProperties().compute(PARALLEL_EXECUTION_GUARD_PROPERTY) { _, value ->
-                    if (value != null) {
-                        throw IllegalStateException(
-                            """
-                            Parallel in-process execution of the Kotlin/Native compiler detected.
-                            
-                            At this moment the parallel execution of several compiler instances in the same process is not supported.
-                            To fix this, you can do one of the following things:
-                            
-                            - Disable in-process execution. To do this, set '$KOTLIN_NATIVE_DISABLE_COMPILER_DAEMON=true' project property.
-
-                            - Disable parallel task execution. To do this, set 'org.gradle.parallel=false' project property.
-                
-                            If you still want to run the compiler in-process in parallel, you may disable this check by setting project
-                            property '$KOTLIN_NATIVE_ENABLE_PARALLEL_EXECUTION_CHECK=false'. Note that in this case the compiler may fail.
-                            
-                            """.trimIndent()
-                        )
-                    }
-                    "true"
-                }
-            }
-
-
-            val oldProperties = mutableMapOf<String, String?>()
-            additionalSystemProperties.forEach {
-                oldProperties[it.key] = System.getProperty(it.key)
-            }
-            System.getProperties().toList()
-                .map { (k, v) -> k.toString() to v.toString() }
-                .filter { (k, _) -> k in blacklistProperties }
-                .forEach { (k, v) ->
-                    oldProperties[k] = v
-                    System.clearProperty(k)
-                }
-
-            additionalSystemProperties.forEach { System.setProperty(it.key, it.value) }
-
-            val konanCompilerClassLoader = konanCompilerClassLoadersMap.computeIfAbsent(project.konanHome) {
-                val arrayOfURLs = classpath.map { File(it.absolutePath).toURI().toURL() }.toTypedArray()
-                URLClassLoader(arrayOfURLs, null)
-            }
-
-            val mainClass = konanCompilerClassLoader.loadClass(mainClass)
-            val mainMethod = mainClass.methods.single { it.name == "daemonMain" }
-
             try {
-                mainMethod.invoke(null, (listOf(toolName) + transformArgs(args)).toTypedArray())
-            } catch (t: InvocationTargetException) {
-                throw t.targetException
-            } finally {
-                oldProperties.forEach {
-                    val value = it.value
-                    if (value == null)
-                        System.clearProperty(it.key)
-                    else System.setProperty(it.key, value)
-                }
-            }
+                // TODO: Remove this if once KT-37550 is fixed
+                if (PropertiesProvider(project).nativeEnableParallelExecutionCheck) {
+                    System.getProperties().compute(PARALLEL_EXECUTION_GUARD_PROPERTY) { _, value ->
+                        if (value != null) {
+                            throw IllegalStateException(
+                                """
+                                Parallel in-process execution of the Kotlin/Native compiler detected.
 
-            // TODO: Remove once KT-37550 is fixed
-            if (PropertiesProvider(project).nativeEnableParallelExecutionCheck) {
-                System.clearProperty(PARALLEL_EXECUTION_GUARD_PROPERTY)
+                                At this moment the parallel execution of several compiler instances in the same process is not supported.
+                                To fix this, you can do one of the following things:
+
+                                - Disable in-process execution. To do this, set '$KOTLIN_NATIVE_DISABLE_COMPILER_DAEMON=true' project property.
+
+                                - Disable parallel task execution. To do this, set 'org.gradle.parallel=false' project property.
+
+                                If you still want to run the compiler in-process in parallel, you may disable this check by setting project
+                                property '$KOTLIN_NATIVE_ENABLE_PARALLEL_EXECUTION_CHECK=false'. Note that in this case the compiler may fail.
+                                
+                                """.trimIndent()
+                            )
+                        }
+                        "true"
+                    }
+                }
+
+                val oldProperties = mutableMapOf<String, String?>()
+                additionalSystemProperties.forEach {
+                    oldProperties[it.key] = System.getProperty(it.key)
+                }
+                System.getProperties().toList()
+                    .map { (k, v) -> k.toString() to v.toString() }
+                    .filter { (k, _) -> k in blacklistProperties }
+                    .forEach { (k, v) ->
+                        oldProperties[k] = v
+                        System.clearProperty(k)
+                    }
+
+                additionalSystemProperties.forEach { System.setProperty(it.key, it.value) }
+
+                val konanCompilerClassLoader = konanCompilerClassLoadersMap.computeIfAbsent(project.konanHome) {
+                    val arrayOfURLs = classpath.map { File(it.absolutePath).toURI().toURL() }.toTypedArray()
+                    URLClassLoader(arrayOfURLs, null)
+                }
+
+                val mainClass = konanCompilerClassLoader.loadClass(mainClass)
+                val mainMethod = mainClass.methods.single { it.name == "daemonMain" }
+
+                try {
+                    mainMethod.invoke(null, (listOf(toolName) + transformArgs(args)).toTypedArray())
+                } catch (t: InvocationTargetException) {
+                    throw t.targetException
+                } finally {
+                    oldProperties.forEach {
+                        val value = it.value
+                        if (value == null)
+                            System.clearProperty(it.key)
+                        else System.setProperty(it.key, value)
+                    }
+                }
+            } finally {
+                // TODO: Remove once KT-37550 is fixed
+                if (PropertiesProvider(project).nativeEnableParallelExecutionCheck) {
+                    System.clearProperty(PARALLEL_EXECUTION_GUARD_PROPERTY)
+                }
             }
         }
     }
