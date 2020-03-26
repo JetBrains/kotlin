@@ -26663,6 +26663,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/strings/interpolation.kt");
         }
 
+        @TestMetadata("javaToStringNPE.kt")
+        public void testJavaToStringNPE() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/javaToStringNPE.kt");
+        }
+
         @TestMetadata("kt2592.kt")
         public void testKt2592() throws Exception {
             runTest("compiler/testData/codegen/box/strings/kt2592.kt");
