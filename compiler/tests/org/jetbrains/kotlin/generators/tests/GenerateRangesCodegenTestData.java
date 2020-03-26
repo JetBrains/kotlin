@@ -72,9 +72,12 @@ public class GenerateRangesCodegenTestData {
     private static final Map<String, String> MIN_MAX_CONSTANTS = new LinkedHashMap<>();
 
     private static final List<String> FIR_PASSING_LITERAL_TESTS =
-            Arrays.asList("emptyDownto", "emptyRange", "oneElementDownTo", "oneElementRange", "openRange",
+            Arrays.asList("emptyDownto", "emptyRange", "inexactSteppedDownTo", "inexactSteppedRange",
+                          "oneElementDownTo", "oneElementRange", "openRange",
                           "reversedBackSequence", "reversedEmptyBackSequence", "reversedEmptyRange",
-                          "reversedRange", "simpleDownTo", "simpleRange", "simpleRangeWithNonConstantEnds");
+                          "reversedInexactSteppedDownTo", "reversedRange", "reversedSimpleSteppedRange",
+                          "simpleDownTo", "simpleRange", "simpleRangeWithNonConstantEnds",
+                          "simpleSteppedDownTo", "simpleSteppedRange");
     private static final List<String> FIR_PASSING_EXPRESSION_TESTS =
             Arrays.asList("emptyDownto", "emptyRange", "inexactSteppedDownTo", "inexactSteppedRange",
                           "oneElementDownTo", "oneElementRange", "openRange",
