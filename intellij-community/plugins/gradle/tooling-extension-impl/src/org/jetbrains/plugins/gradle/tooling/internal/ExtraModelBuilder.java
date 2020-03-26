@@ -15,6 +15,7 @@
  */
 package org.jetbrains.plugins.gradle.tooling.internal;
 
+import com.intellij.openapi.externalSystem.model.ExternalSystemException;
 import org.gradle.StartParameter;
 import org.gradle.api.Project;
 import org.gradle.api.invocation.Gradle;
@@ -30,6 +31,7 @@ import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder;
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderContext;
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService;
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions;
+import org.jetbrains.plugins.gradle.tooling.builder.ExternalProjectBuilderImpl;
 import org.jetbrains.plugins.gradle.tooling.util.VersionMatcher;
 
 import java.util.*;
@@ -103,6 +105,10 @@ public class ExtraModelBuilder implements ToolingModelBuilder {
             }
           }
           catch (Exception e) {
+            if (service instanceof ExternalProjectBuilderImpl) {
+              if (e instanceof RuntimeException) throw (RuntimeException)e;
+              throw new ExternalSystemException(e);
+            }
             ErrorMessageBuilder builderError = service.getErrorMessageBuilder(project, e);
             project.getLogger().error(builderError.build());
           } finally {

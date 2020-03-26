@@ -40,7 +40,9 @@ import static org.jetbrains.plugins.gradle.tooling.builder.ModelBuildersDataProv
 @CompileStatic
 class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
 
-  private static final boolean is4OrBetter = GradleVersion.current().baseVersion >= GradleVersion.version("4.0")
+  private static final GradleVersion gradleBaseVersion = GradleVersion.current().baseVersion
+  private static final boolean is4OrBetter = gradleBaseVersion >= GradleVersion.version("4.0")
+  private static final boolean is51OrBetter = is4OrBetter && gradleBaseVersion >= GradleVersion.version("5.1")
 
   static final DataProvider<Map<Project, ExternalProject>> PROJECTS_PROVIDER = new DataProvider<Map<Project, ExternalProject>>() {
     @NotNull
@@ -59,7 +61,9 @@ class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
   @Override
   Object buildAll(@NotNull final String modelName, @NotNull final Project project, @NotNull ModelBuilderContext context) {
     if (project != project.rootProject) return null
-
+    if (System.properties.'idea.internal.failEsModelBuilder' as boolean) {
+      throw new RuntimeException("Boom!")
+    }
     def cache = context.getData(PROJECTS_PROVIDER)
     def tasksFactory = context.getData(TASKS_PROVIDER)
     def sourceSetFinder = new SourceSetCachedFinder(context)
@@ -122,8 +126,15 @@ class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
     final List<File> artifacts = new ArrayList<File>()
     for (Jar jar : project.getTasks().withType(Jar.class)) {
       try {
-        // TODO use getArchiveFile method since Gradle 5.1
-        artifacts.add(jar.getArchivePath())
+        if (is51OrBetter) {
+          def archiveFile = jar.getArchiveFile()
+          if (archiveFile.isPresent()) {
+            artifacts.add(archiveFile.get().asFile)
+          }
+        }
+        else {
+          artifacts.add(jar.getArchivePath())
+        }
       }
       catch (e) {
         // TODO add reporting for such issues
@@ -135,8 +146,16 @@ class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
     def configurationsByName = project.getConfigurations().getAsMap()
     Map<String, Set<File>> artifactsByConfiguration = new HashMap<String, Set<File>>()
     for (Map.Entry<String, Configuration> configurationEntry : configurationsByName.entrySet()) {
-      Set<File> files = configurationEntry.getValue().getArtifacts().getFiles().getFiles()
-      artifactsByConfiguration.put(configurationEntry.getKey(), new LinkedHashSet<>(files))
+      def configuration = configurationEntry.getValue()
+      try {
+        def artifactSet = configuration.getArtifacts()
+        def fileCollection = artifactSet.getFiles()
+        Set<File> files = fileCollection.getFiles()
+        artifactsByConfiguration.put(configurationEntry.getKey(), new LinkedHashSet<>(files))
+      }
+      catch (Exception e) {
+        project.getLogger().warn("warning: can not resolve artifacts of [$configuration]\n$e.message")
+      }
     }
     externalProject.setArtifactsByConfiguration(artifactsByConfiguration)
   }
