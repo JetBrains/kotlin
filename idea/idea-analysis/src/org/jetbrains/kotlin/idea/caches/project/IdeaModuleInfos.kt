@@ -39,7 +39,10 @@ import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.framework.getLibraryPlatform
-import org.jetbrains.kotlin.idea.project.*
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.project.findAnalyzerServices
+import org.jetbrains.kotlin.idea.project.getStableName
+import org.jetbrains.kotlin.idea.project.isHMPPEnabled
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.rootManager
@@ -203,7 +206,10 @@ data class ModuleProductionSourceInfo internal constructor(
     override val module: Module
 ) : ModuleSourceInfoWithExpectedBy(forProduction = true) {
 
-    override val name = Name.special(KotlinIdeaAnalysisBundle.message("production.sources.for.module.0", module.name))
+    override val name = Name.special("<production sources for module ${module.name}>")
+
+    override val displayedName: String
+        get() = KotlinIdeaAnalysisBundle.message("production.sources.for.module.0", module.name)
 
     override val stableName: Name = module.getStableName()
 
@@ -217,11 +223,11 @@ data class ModuleProductionSourceInfo internal constructor(
 data class ModuleTestSourceInfo internal constructor(override val module: Module) :
     ModuleSourceInfoWithExpectedBy(forProduction = false), org.jetbrains.kotlin.idea.caches.resolve.ModuleTestSourceInfo {
 
-    override val name = Name.special(KotlinIdeaAnalysisBundle.message("test.sources.for.module.0", module.name))
+    override val name = Name.special("<test sources for module ${module.name}>")
 
     override val stableName: Name = module.getStableName()
 
-    override val displayedName get() = module.name + " (test)"
+    override val displayedName get() = KotlinIdeaAnalysisBundle.message("module.name.0.test", module.name)
 
     override fun contentScope(): GlobalSearchScope = enlargedSearchScope(ModuleTestSourceScope(module), module, isTestScope = true)
 
@@ -301,7 +307,10 @@ open class LibraryInfo(override val project: Project, val library: Library) : Id
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.LIBRARY
 
-    override val name: Name = Name.special(KotlinIdeaAnalysisBundle.message("library.0", library.name.toString()))
+    override val name: Name = Name.special("<library ${library.name}>")
+
+    override val displayedName: String
+        get() = KotlinIdeaAnalysisBundle.message("library.0", library.name.toString())
 
     override fun contentScope(): GlobalSearchScope = LibraryWithoutSourceScope(project, library)
 
@@ -345,7 +354,10 @@ open class LibraryInfo(override val project: Project, val library: Library) : Id
 data class LibrarySourceInfo(override val project: Project, val library: Library, override val binariesModuleInfo: BinaryModuleInfo) :
     IdeaModuleInfo, SourceForBinaryModuleInfo {
 
-    override val name: Name = Name.special(KotlinIdeaAnalysisBundle.message("sources.for.library.0", library.name.toString()))
+    override val name: Name = Name.special("<sources for library ${library.name}>")
+
+    override val displayedName: String
+        get() = KotlinIdeaAnalysisBundle.message("sources.for.library.0", library.name.toString())
 
     override fun sourceScope(): GlobalSearchScope = KotlinSourceFilterScope.librarySources(
         LibrarySourceScope(
@@ -372,7 +384,10 @@ data class SdkInfo(override val project: Project, val sdk: Sdk) : IdeaModuleInfo
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.LIBRARY
 
-    override val name: Name = Name.special(KotlinIdeaAnalysisBundle.message("sdk.0", sdk.name))
+    override val name: Name = Name.special("<sdk ${sdk.name}>")
+
+    override val displayedName: String
+        get() = KotlinIdeaAnalysisBundle.message("sdk.0", sdk.name)
 
     override fun contentScope(): GlobalSearchScope = SdkScope(project, sdk)
 
@@ -389,7 +404,10 @@ object NotUnderContentRootModuleInfo : IdeaModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
 
-    override val name: Name = Name.special(KotlinIdeaAnalysisBundle.message("special.module.for.files.not.under.source.root"))
+    override val name: Name = Name.special("<special module for files not under source root>")
+
+    override val displayedName: String
+        get() = KotlinIdeaAnalysisBundle.message("special.module.for.files.not.under.source.root")
 
     override val project: Project?
         get() = null
@@ -517,7 +535,14 @@ data class PlatformModuleInfo(
     override fun modulesWhoseInternalsAreVisible() = containedModules.flatMap { it.modulesWhoseInternalsAreVisible() }
 
     override val name: Name
-        get() = Name.special("<Platform module ${platformModule.displayedName} including ${commonModules.map { it.displayedName }}>")
+        get() = Name.special("<Platform module ${platformModule.name} including ${commonModules.map { it.name }}>")
+
+    override val displayedName: String
+        get() = KotlinIdeaAnalysisBundle.message(
+            "platform.module.0.including.1",
+            platformModule.displayedName,
+            commonModules.map { it.displayedName }
+        )
 
     override fun createModificationTracker() = platformModule.createModificationTracker()
 }
