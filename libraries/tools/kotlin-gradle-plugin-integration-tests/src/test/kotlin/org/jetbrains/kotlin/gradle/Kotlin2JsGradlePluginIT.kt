@@ -542,7 +542,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
 
         build("build") {
             assertSuccessful()
-            assertFileExists("build/js/packages/node_modules/file-dependency")
+            assertFileExists("build/js/node_modules/file-dependency")
         }
     }
 
