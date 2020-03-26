@@ -39,5 +39,4 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     compile "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
     compile "org.jetbrains.kotlin:kotlin-compiler:$kotlinVersion"
-    compile "org.jetbrains.kotlin:konan.metadata:$konanVersion"
 }

@@ -71,7 +71,6 @@ if (hasProperty("kotlinProjectPath")) {
 
 includeBuild 'shared'
 includeBuild 'build-tools'
-includeBuild 'extracted/konan.metadata'
 includeBuild 'extracted/konan.serializer'
 includeBuild 'tools/kotlin-native-gradle-plugin'
 
