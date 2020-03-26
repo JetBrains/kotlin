@@ -78,6 +78,10 @@ sealed class ValidationResult {
     }
 }
 
+fun <V> SettingValidator<V>.withTarget(target: Any) = SettingValidator<V> { value ->
+    this.validate(value).withTarget(target)
+}
+
 infix fun ValidationResult.isSpecificError(error: ValidationResult.ValidationError) =
     this is ValidationResult.ValidationError && messages.firstOrNull() == error.messages.firstOrNull()
 

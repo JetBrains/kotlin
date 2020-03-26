@@ -44,9 +44,9 @@ class Module(
     val kind: ModuleKind
         get() = configurator.moduleKind
 
-    override val validator = moduleNameValidator and
+    override val validator = (moduleNameValidator and
             moduleConfiguratorValidator and
-            moduleTemplateValidator and
+            moduleTemplateValidator).withTarget(this) and
             subModulesValidator
 
     var subModules = subModules

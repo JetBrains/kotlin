@@ -140,7 +140,9 @@ private class CellRenderer(private val context: Context, renderErrors: Boolean) 
             if (renderErrors) {
                 if (setting is Module) context.read {
                     val validationResult = setting.validator.validate(this, setting)
-                    setError(validationResult as? ValidationResult.ValidationError)
+                    val error = validationResult.safeAs<ValidationResult.ValidationError>()
+                        ?.takeIf { it.target === setting }
+                    setError(error)
                 } else {
                     setError(null)
                 }
