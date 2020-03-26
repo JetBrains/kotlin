@@ -17,7 +17,6 @@ import org.gradle.api.tasks.TaskDependency
 import org.gradle.internal.component.local.model.DefaultLibraryBinaryIdentifier
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
-import org.jetbrains.kotlin.gradle.utils.relativeToRoot
 import java.io.File
 
 data class NpmDependency(
@@ -136,3 +135,5 @@ data class NpmDependency(
 
     override fun getReason(): String? = reason
 }
+
+const val FILE_VERSION_PREFIX = "file:"

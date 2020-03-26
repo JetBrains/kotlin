@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import com.github.gundy.semver4j.SemVer
+import org.jetbrains.kotlin.gradle.targets.js.npm.FILE_VERSION_PREFIX
 import java.io.File
 
 internal class YarnEntryRegistry(private val lockFile: File) {
@@ -40,19 +41,21 @@ internal class YarnEntryRegistry(private val lockFile: File) {
 
     private fun String.correctDependencyKey(): String =
         when {
-            GITHUB_VERSION_PREFIX in this -> replace(GITHUB_VERSION_PREFIX, "@")
-            FILE_VERSION_PREFIX in this -> {
-                val location = substringAfter(FILE_VERSION_PREFIX)
+            GITHUB_MARKER in this -> replace(GITHUB_MARKER, SEPARATOR)
+            FILE_MARKER in this -> {
+                val location = substringAfter(FILE_MARKER)
                 val path = lockFile
                     .parentFile
                     .resolve(location)
                     .canonicalPath
 
-                replaceAfter(FILE_VERSION_PREFIX, path)
+                replaceAfter(FILE_MARKER, path)
             }
             else -> this
         }
 }
 
-private const val FILE_VERSION_PREFIX = "@file:"
-private const val GITHUB_VERSION_PREFIX = "@github:"
+private const val SEPARATOR = "@"
+
+private const val FILE_MARKER = "${SEPARATOR}$FILE_VERSION_PREFIX"
+private const val GITHUB_MARKER = "${SEPARATOR}github:"
