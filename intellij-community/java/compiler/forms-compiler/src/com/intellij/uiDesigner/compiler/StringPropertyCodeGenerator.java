@@ -56,11 +56,13 @@ public final class StringPropertyCodeGenerator extends PropertyCodeGenerator imp
     }
     catch (Exception ignored) {}
 
-    try {
-      classFinder.loadClass("com.intellij.DynamicBundle");
-      dynamicBundleType = Type.getType("Lcom/intellij/DynamicBundle;");
+    if (visitor.useDynamicBundles) {
+      try {
+        classFinder.loadClass("com.intellij.DynamicBundle");
+        dynamicBundleType = Type.getType("Lcom/intellij/DynamicBundle;");
+      }
+      catch (Exception ignored) {}
     }
-    catch (Exception ignored) {}
   }
 
   @Override

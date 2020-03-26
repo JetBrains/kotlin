@@ -59,6 +59,7 @@ public class AsmCodeGenerator {
 
   private final NestedFormLoader myFormLoader;
   private final boolean myIgnoreCustomCreation;
+  private final boolean myUseDynamicBundles;
   private final ClassWriter myClassWriter;
 
   static {
@@ -89,9 +90,11 @@ public class AsmCodeGenerator {
                           InstrumentationClassFinder finder,
                           NestedFormLoader formLoader,
                           final boolean ignoreCustomCreation,
+                          boolean useDynamicBundles,
                           final ClassWriter classWriter) {
     myFormLoader = formLoader;
     myIgnoreCustomCreation = ignoreCustomCreation;
+    myUseDynamicBundles = useDynamicBundles;
     if (finder == null){
       throw new IllegalArgumentException("loader cannot be null");
     }
@@ -104,6 +107,14 @@ public class AsmCodeGenerator {
     myErrors = new ArrayList<FormErrorInfo>();
     myWarnings = new ArrayList<FormErrorInfo>();
     myClassWriter = classWriter;
+  }
+  
+  public AsmCodeGenerator(LwRootContainer rootContainer,
+                          InstrumentationClassFinder finder,
+                          NestedFormLoader formLoader,
+                          final boolean ignoreCustomCreation,
+                          final ClassWriter classWriter) {
+    this(rootContainer, finder, formLoader, ignoreCustomCreation, false, classWriter);
   }
 
   public void patchFile(final File classFile) {
@@ -175,7 +186,7 @@ public class AsmCodeGenerator {
     FirstPassClassVisitor visitor = new FirstPassClassVisitor();
     reader.accept(visitor, 0);
 
-    reader.accept(new FormClassVisitor(myClassWriter, visitor.isExplicitSetupCall()), 0);
+    reader.accept(new FormClassVisitor(myClassWriter, visitor.isExplicitSetupCall(), myUseDynamicBundles), 0);
     myPatchedData = myClassWriter.toByteArray();
     return myPatchedData;
   }
@@ -227,10 +238,12 @@ public class AsmCodeGenerator {
     private boolean myHaveCreateComponentsMethod = false;
     private int myCreateComponentsAccess;
     private final boolean myExplicitSetupCall;
+    final boolean useDynamicBundles;
 
-    FormClassVisitor(final ClassVisitor cv, final boolean explicitSetupCall) {
+    FormClassVisitor(final ClassVisitor cv, final boolean explicitSetupCall, boolean useDynamicBundles) {
       super(ASM_API_VERSION, cv);
       myExplicitSetupCall = explicitSetupCall;
+      this.useDynamicBundles = useDynamicBundles;
     }
 
     @Override
