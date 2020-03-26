@@ -40,86 +40,66 @@ class KotlinParameterInfo @JvmOverloads constructor(
 ) : ParameterInfo {
     var currentTypeInfo: KotlinTypeInfo = originalTypeInfo
 
-    val defaultValueParameterReferences: Map<PsiReference, DeclarationDescriptor>
+    val defaultValueParameterReferences: Map<PsiReference, DeclarationDescriptor> by lazy { collectDefaultValueParameterReferences(defaultValueForCall) }
 
-    init {
-        val file = defaultValueForCall?.containingFile as? KtFile
-        defaultValueParameterReferences =
-            if (defaultValueForCall != null && file != null && (file.isPhysical || file.analysisContext != null)) {
-                val project = file.project
-                val map = LinkedHashMap<PsiReference, DeclarationDescriptor>()
+    private fun collectDefaultValueParameterReferences(defaultValueForCall: KtExpression?): Map<PsiReference, DeclarationDescriptor> {
+        val file = defaultValueForCall?.containingFile as? KtFile ?: return emptyMap()
+        if (!file.isPhysical && file.analysisContext == null) return emptyMap()
 
-                defaultValueForCall!!.accept(
-                    object : KtTreeVisitorVoid() {
-                        private fun selfParameterOrNull(parameter: DeclarationDescriptor?): ValueParameterDescriptor? {
-                            return if (parameter is ValueParameterDescriptor &&
-                                compareDescriptors(project, parameter.containingDeclaration, callableDescriptor)
-                            ) {
-                                parameter
-                            } else null
-                        }
+        val project = file.project
+        val map = LinkedHashMap<PsiReference, DeclarationDescriptor>()
 
-                        private fun selfReceiverOrNull(receiverDescriptor: DeclarationDescriptor?): DeclarationDescriptor? {
-                            if (compareDescriptors(
-                                    project,
-                                    receiverDescriptor,
-                                    callableDescriptor.extensionReceiverParameter?.containingDeclaration
-                                )
-                            ) {
-                                return receiverDescriptor
-                            }
-                            if (compareDescriptors(
-                                    project,
-                                    receiverDescriptor,
-                                    callableDescriptor.dispatchReceiverParameter?.containingDeclaration
-                                )
-                            ) {
-                                return receiverDescriptor
-                            }
-                            return null
-                        }
+        defaultValueForCall.accept(
+            object : KtTreeVisitorVoid() {
+                private fun selfParameterOrNull(parameter: DeclarationDescriptor?): ValueParameterDescriptor? {
+                    return (parameter as? ValueParameterDescriptor)
+                        ?.takeIf { compareDescriptors(project, parameter.containingDeclaration, callableDescriptor) }
+                }
 
-                        private fun selfReceiverOrNull(receiver: ImplicitReceiver?): DeclarationDescriptor? {
-                            return selfReceiverOrNull(receiver?.declarationDescriptor)
-                        }
-
-                        private fun getRelevantDescriptor(
-                            expression: KtSimpleNameExpression,
-                            ref: KtReference
-                        ): DeclarationDescriptor? {
-                            val context = expression.analyze(BodyResolveMode.PARTIAL)
-
-                            val descriptor = ref.resolveToDescriptors(context).singleOrNull()
-                            if (descriptor is ValueParameterDescriptor) return selfParameterOrNull(descriptor)
-
-                            if (descriptor is PropertyDescriptor && callableDescriptor is ConstructorDescriptor) {
-                                val parameter = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) as? KtParameter
-                                return parameter?.let { selfParameterOrNull(context[BindingContext.VALUE_PARAMETER, it]) }
-                            }
-
-                            val resolvedCall = expression.getResolvedCall(context) ?: return null
-                            (resolvedCall.resultingDescriptor as? ReceiverParameterDescriptor)?.let {
-                                return if (selfReceiverOrNull(it.containingDeclaration) != null) it else null
-                            }
-
-                            selfReceiverOrNull(resolvedCall.extensionReceiver as? ImplicitReceiver)?.let { return it }
-                            selfReceiverOrNull(resolvedCall.dispatchReceiver as? ImplicitReceiver)?.let { return it }
-
-                            return null
-                        }
-
-                        override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
-                            val ref = expression.mainReference
-                            val descriptor = getRelevantDescriptor(expression, ref) ?: return
-                            map[ref] = descriptor
-                        }
+                private fun selfReceiverOrNull(receiverDescriptor: DeclarationDescriptor?): DeclarationDescriptor? {
+                    if (compareDescriptors(project, receiverDescriptor, callableDescriptor.extensionReceiverParameter?.containingDeclaration)) {
+                        return receiverDescriptor
                     }
-                )
+                    if (compareDescriptors(project, receiverDescriptor, callableDescriptor.dispatchReceiverParameter?.containingDeclaration)) {
+                        return receiverDescriptor
+                    }
+                    return null
+                }
 
-                map
-            } else {
-                emptyMap()
+                private fun selfReceiverOrNull(receiver: ImplicitReceiver?): DeclarationDescriptor? {
+                    return selfReceiverOrNull(receiver?.declarationDescriptor)
+                }
+
+                private fun getRelevantDescriptor(expression: KtSimpleNameExpression, ref: KtReference): DeclarationDescriptor? {
+                    val context = expression.analyze(BodyResolveMode.PARTIAL)
+
+                    val descriptor = ref.resolveToDescriptors(context).singleOrNull()
+                    if (descriptor is ValueParameterDescriptor) return selfParameterOrNull(descriptor)
+
+                    if (descriptor is PropertyDescriptor && callableDescriptor is ConstructorDescriptor) {
+                        val parameter = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) as? KtParameter
+                        return parameter?.let { selfParameterOrNull(context[BindingContext.VALUE_PARAMETER, it]) }
+                    }
+
+                    val resolvedCall = expression.getResolvedCall(context) ?: return null
+                    (resolvedCall.resultingDescriptor as? ReceiverParameterDescriptor)?.let {
+                        return if (selfReceiverOrNull(it.containingDeclaration) != null) it else null
+                    }
+
+                    selfReceiverOrNull(resolvedCall.extensionReceiver as? ImplicitReceiver)?.let { return it }
+                    selfReceiverOrNull(resolvedCall.dispatchReceiver as? ImplicitReceiver)?.let { return it }
+
+                    return null
+                }
+
+                override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
+                    val ref = expression.mainReference
+                    val descriptor = getRelevantDescriptor(expression, ref) ?: return
+                    map[ref] = descriptor
+                }
             }
+        )
+        return map
     }
 
     override fun getOldIndex(): Int = originalIndex

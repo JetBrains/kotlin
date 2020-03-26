@@ -1599,4 +1599,13 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testRemoveLambdaParameter2() {
         doTest { removeParameter(0) }
     }
+
+    fun testNewParamValueRefsOtherParam() {
+        doTest {
+            val parameterInfo = KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "p2", KotlinTypeInfo(false, BUILT_INS.intType))
+            val codeFragment = KtPsiFactory(project).createExpressionCodeFragment("p1 * p1", context)
+            parameterInfo.defaultValueForCall = codeFragment.getContentElement()!!
+            addParameter(parameterInfo)
+        }
+    }
 }
