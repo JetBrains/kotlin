@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -204,21 +206,31 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
     facadeClass: IrClass,
     shouldGeneratePartHierarchy: Boolean
 ): IrSimpleFunction? {
+    val target = this
+
     if (Visibilities.isPrivate(visibility) ||
         name == StaticInitializersLowering.clinitName ||
         origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
     ) return null
 
-    // TODO: perform copy of the signature only, without body
-    val function = deepCopyWithSymbols(facadeClass)
+    val function = buildFun {
+        updateFrom(target)
+        origin = if (shouldGeneratePartHierarchy) IrDeclarationOrigin.FAKE_OVERRIDE else JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE
+        name = target.name
+    }
+
+    function.copyParameterDeclarationsFrom(target)
+    function.returnType = target.returnType
+    function.parent = facadeClass
+    function.annotations = target.annotations
 
     if (shouldGeneratePartHierarchy) {
         function.body = null
-        function.origin = IrDeclarationOrigin.FAKE_OVERRIDE
         function.overriddenSymbols = listOf(symbol)
     } else {
+        function.overriddenSymbols = overriddenSymbols.toList()
         function.body = context.createIrBuilder(function.symbol).irBlockBody {
-            +irReturn(irCall(this@createMultifileDelegateIfNeeded).also { call ->
+            +irReturn(irCall(target).also { call ->
                 call.passTypeArgumentsFrom(function)
                 function.extensionReceiverParameter?.let { parameter ->
                     call.extensionReceiver = irGet(parameter)
@@ -228,7 +240,6 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
                 }
             })
         }
-        function.origin = JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE
     }
 
     facadeClass.declarations.add(function)
