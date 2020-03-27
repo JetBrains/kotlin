@@ -179,17 +179,18 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     mySearchActionsToolbar2 = createSearchToolbar2(searchToolbar2Actions);
     mySearchActionsToolbar2.setForceShowFirstComponent(true);
     Wrapper searchToolbarWrapper2 = new Wrapper(mySearchActionsToolbar2);
-    mySearchActionsToolbar2.setBorder(JBUI.Borders.emptyLeft(4));
+    searchToolbarWrapper2.setBorder(JBUI.Borders.emptyLeft(4));
     JPanel searchPair = new NonOpaquePanel(new BorderLayout());
     searchPair.add(searchToolbarWrapper1, BorderLayout.WEST);
     searchPair.add(searchToolbarWrapper2, BorderLayout.CENTER);
 
     myReplaceActionsToolbar1 = createReplaceToolbar1(replaceToolbar1Actions);
+    myReplaceActionsToolbar1.setBorder(JBUI.Borders.empty());
     Wrapper replaceToolbarWrapper1 = new Wrapper(myReplaceActionsToolbar1);
     myReplaceActionsToolbar2 = createReplaceToolbar2(replaceToolbar2Actions);
     myReplaceActionsToolbar2.setForceShowFirstComponent(true);
     Wrapper replaceToolbarWrapper2 = new Wrapper(myReplaceActionsToolbar2);
-    myReplaceActionsToolbar2.setBorder(JBUI.Borders.emptyLeft(4));
+    replaceToolbarWrapper2.setBorder(JBUI.Borders.emptyLeft(4));
     myReplaceToolbarWrapper = new NonOpaquePanel(new BorderLayout());
     myReplaceToolbarWrapper.add(replaceToolbarWrapper1, BorderLayout.WEST);
     myReplaceToolbarWrapper.add(replaceToolbarWrapper2, BorderLayout.CENTER);
@@ -213,7 +214,7 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     myRightPanel.add(myReplaceToolbarWrapper);
 
     OnePixelSplitter splitter = new OnePixelSplitter(false, .25F);
-    myRightPanel.setBorder(JBUI.Borders.empty(2, 6, 0, 0));
+    myRightPanel.setBorder(JBUI.Borders.emptyLeft(6));
     splitter.setFirstComponent(myLeftPanel);
     splitter.setSecondComponent(myRightPanel);
     splitter.setHonorComponentsMinimumSize(true);
@@ -600,7 +601,6 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
   private ActionToolbarImpl createToolbar(@NotNull ActionGroup group) {
     ActionToolbarImpl toolbar = (ActionToolbarImpl)ActionManager.getInstance()
       .createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, group, true);
-    toolbar.setBorder(JBUI.Borders.empty());
     toolbar.setTargetComponent(this);
     toolbar.setLayoutPolicy(ActionToolbar.AUTO_LAYOUT_POLICY);
     Utils.setSmallerFontForChildren(toolbar);
