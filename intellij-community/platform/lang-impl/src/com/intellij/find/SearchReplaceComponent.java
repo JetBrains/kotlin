@@ -83,7 +83,8 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
   private final DataProvider myDataProviderDelegate;
 
   private boolean myMultilineMode;
-  private String myStatusText = "";
+  @NotNull private String myStatusText = "";
+  @NotNull private Color myStatusColor = UIUtil.getLabelForeground();
   private DefaultActionGroup myTouchbarActions;
 
   @NotNull
@@ -277,6 +278,11 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     return myStatusText;
   }
 
+  @NotNull
+  public Color getStatusColor() {
+    return myStatusColor;
+  }
+
   public void replace() {
     if (myReplaceAction != null) {
       myReplaceAction.run();
@@ -291,10 +297,12 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
 
   public void setRegularBackground() {
     mySearchTextComponent.setBackground(UIUtil.getTextFieldBackground());
+    myStatusColor = UIUtil.getLabelForeground();
   }
 
   public void setNotFoundBackground() {
     mySearchTextComponent.setBackground(LightColors.RED);
+    myStatusColor = UIUtil.getErrorForeground();
   }
 
   @Nullable
