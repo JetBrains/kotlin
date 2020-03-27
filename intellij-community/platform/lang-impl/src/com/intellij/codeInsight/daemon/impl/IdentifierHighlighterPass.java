@@ -7,7 +7,6 @@ import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.codeInsight.highlighting.*;
 import com.intellij.find.FindManager;
-import com.intellij.find.findUsages.DefaultFindUsagesHandlerFactory;
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesManager;
 import com.intellij.find.impl.FindManagerImpl;
@@ -296,7 +295,7 @@ public class IdentifierHighlighterPass extends TextEditorHighlightingPass {
       FindUsagesHandler oldHandler = ((FindManagerImpl)FindManager.getInstance(project))
         .getFindUsagesManager()
         .getFindUsagesHandler(psiTarget, true);
-      if (oldHandler != null && !(oldHandler instanceof DefaultFindUsagesHandlerFactory.DefaultFindUsagesHandler)) {
+      if (oldHandler != null) {
         return oldHandler.findReferencesToHighlight(psiTarget, searchScope);
       }
     }
