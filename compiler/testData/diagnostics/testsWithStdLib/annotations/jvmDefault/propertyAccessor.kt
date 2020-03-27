@@ -3,12 +3,12 @@
 
 interface B {
 
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     val prop1: String
-    <!WRONG_ANNOTATION_TARGET!>@JvmDefault<!> get() = ""
+    <!WRONG_ANNOTATION_TARGET!>@<!DEPRECATION!>JvmDefault<!><!> get() = ""
 
 
     var prop2: String
-        <!WRONG_ANNOTATION_TARGET!>@JvmDefault<!> get() = ""
-        <!WRONG_ANNOTATION_TARGET!>@JvmDefault<!> set(<!UNUSED_PARAMETER!>value<!>) {}
+        <!WRONG_ANNOTATION_TARGET!>@<!DEPRECATION!>JvmDefault<!><!> get() = ""
+        <!WRONG_ANNOTATION_TARGET!>@<!DEPRECATION!>JvmDefault<!><!> set(<!UNUSED_PARAMETER!>value<!>) {}
 }
