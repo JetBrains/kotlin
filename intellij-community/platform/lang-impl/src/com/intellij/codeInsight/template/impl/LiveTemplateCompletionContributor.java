@@ -2,6 +2,7 @@
 package com.intellij.codeInsight.template.impl;
 
 import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.template.CustomLiveTemplate;
 import com.intellij.codeInsight.template.CustomLiveTemplateBase;
 import com.intellij.codeInsight.template.CustomTemplateCallback;
@@ -63,6 +64,13 @@ public class LiveTemplateCompletionContributor extends CompletionContributor imp
           return;
         }
 
+        PrefixMatcher matcher = result.getPrefixMatcher();
+        if (matcher instanceof CamelHumpMatcher && ((CamelHumpMatcher)matcher).isTypoTolerant()) {
+          // template matching uses editor content, not the supplied matcher
+          // so if the first typo-intolerant invocation didn't produce results, this one won't, too
+          return;
+        }
+
         Editor editor = parameters.getEditor();
         int offset = editor.getCaretModel().getOffset();
         final List<TemplateImpl> availableTemplates = TemplateManagerImpl.listApplicableTemplates(file, offset, false);
@@ -94,7 +102,7 @@ public class LiveTemplateCompletionContributor extends CompletionContributor imp
         if (!customTemplateAvailableAndHasCompletionItem(null, editor, file, offset)) {
           TemplateImpl template = findFullMatchedApplicableTemplate(editor, offset, availableTemplates);
           if (template != null) {
-            result.withPrefixMatcher(result.getPrefixMatcher().cloneWithPrefix(template.getKey()))
+            result.withPrefixMatcher(template.getKey())
               .addElement(new LiveTemplateLookupElementImpl(template, true));
           }
         }
@@ -103,7 +111,7 @@ public class LiveTemplateCompletionContributor extends CompletionContributor imp
           ProgressManager.checkCanceled();
           String templateKey = possible.getKey().getKey();
           String currentPrefix = possible.getValue();
-          result.withPrefixMatcher(result.getPrefixMatcher().cloneWithPrefix(currentPrefix))
+          result.withPrefixMatcher(currentPrefix)
             .restartCompletionOnPrefixChange(templateKey);
         }
       }
