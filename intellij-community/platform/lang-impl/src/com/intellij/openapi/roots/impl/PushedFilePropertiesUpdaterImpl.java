@@ -247,25 +247,20 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
     }
   }
 
-  private static <T> T findPusherValuesUpwards(Project project, VirtualFile dir, FilePropertyPusher<? extends T> pusher, T moduleValue) {
-    final T value = pusher.getImmediateValue(project, dir);
-    if (value != null) return value;
+  private static <T> T findNewPusherValue(Project project, VirtualFile fileOrDir, FilePropertyPusher<? extends T> pusher, T moduleValue) {
+    //Do not check fileOrDir.getUserData() as it may be outdated.
+    T immediateValue = pusher.getImmediateValue(project, fileOrDir);
+    if (immediateValue != null) return immediateValue;
     if (moduleValue != null) return moduleValue;
-    return findPusherValuesFromParent(project, dir, pusher);
+    return findNewPusherValueFromParent(project, fileOrDir, pusher);
   }
 
-  private static <T> T findPusherValuesUpwards(Project project, VirtualFile dir, FilePropertyPusher<? extends T> pusher) {
-    final T userValue = dir.getUserData(pusher.getFileDataKey());
-    if (userValue != null) return userValue;
-    final T value = pusher.getImmediateValue(project, dir);
-    if (value != null) return value;
-    return findPusherValuesFromParent(project, dir, pusher);
-  }
-
-  private static <T> T findPusherValuesFromParent(Project project, VirtualFile dir, FilePropertyPusher<? extends T> pusher) {
-    final VirtualFile parent = dir.getParent();
+  private static <T> T findNewPusherValueFromParent(Project project, VirtualFile fileOrDir, FilePropertyPusher<? extends T> pusher) {
+    final VirtualFile parent = fileOrDir.getParent();
     if (parent != null && ProjectFileIndex.getInstance(project).isInContent(parent)) {
-      return findPusherValuesUpwards(project, parent, pusher);
+      final T userValue = parent.getUserData(pusher.getFileDataKey());
+      if (userValue != null) return userValue;
+      return findNewPusherValue(project, parent, pusher, null);
     }
     T projectValue = pusher.getImmediateValue(project, null);
     return projectValue != null ? projectValue : pusher.getDefaultValue();
@@ -373,8 +368,8 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
   }
 
   @Override
-  public <T> void findAndUpdateValue(final VirtualFile fileOrDir, final FilePropertyPusher<T> pusher, final T moduleValue) {
-    T newValue = findPusherValuesUpwards(myProject, fileOrDir, pusher, moduleValue);
+  public <T> void findAndUpdateValue(@NotNull VirtualFile fileOrDir, @NotNull FilePropertyPusher<T> pusher, @Nullable T moduleValue) {
+    T newValue = findNewPusherValue(myProject, fileOrDir, pusher, moduleValue);
     T oldValue = fileOrDir.getUserData(pusher.getFileDataKey());
     if (newValue != oldValue) {
       fileOrDir.putUserData(pusher.getFileDataKey(), newValue);
