@@ -1,10 +1,12 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.template.impl;
 
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.hash.LinkedHashMap;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashSet;
 
@@ -42,6 +44,11 @@ public class TemplateImplUtil {
 
   public static boolean isValidVariableName(String varName) {
     return parseVariableNames("$" + varName + "$").contains(varName);
+  }
+
+  public static boolean isValidVariable(@Nullable String var) {
+    return var != null && var.length() > 2 && StringUtil.startsWithChar(var, '$') && StringUtil.endsWithChar(var, '$') &&
+           isValidVariableName(var.substring(1, var.length() - 1));
   }
 
   public static TextRange findVariableAtOffset(CharSequence text, int offset) {
