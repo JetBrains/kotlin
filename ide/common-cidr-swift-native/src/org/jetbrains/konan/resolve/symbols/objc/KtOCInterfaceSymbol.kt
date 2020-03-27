@@ -17,16 +17,16 @@ import com.jetbrains.cidr.lang.types.OCReferenceType
 import com.jetbrains.cidr.lang.types.OCType
 import com.jetbrains.cidr.lang.types.OCTypeArgument
 import com.jetbrains.cidr.lang.types.visitors.OCTypeSubstitution
+import org.jetbrains.konan.resolve.translation.StubAndProject
 import org.jetbrains.konan.resolve.translation.createSuperType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 class KtOCInterfaceSymbol : KtOCClassSymbol<KtOCInterfaceSymbol.InterfaceState, ObjCInterface>, OCInterfaceSymbol {
     private var categoryName: String?
 
-    constructor(moduleDescriptor: ModuleDescriptor, stub: ObjCInterface, project: Project, file: VirtualFile)
-            : super(moduleDescriptor, stub, project, file) {
-        this.categoryName = stub.categoryName
+    constructor(stubAndProject: StubAndProject<ObjCInterface>, file: VirtualFile)
+            : super(stubAndProject, file) {
+        this.categoryName = stubAndProject.stub.categoryName
     }
 
     constructor() : super() {

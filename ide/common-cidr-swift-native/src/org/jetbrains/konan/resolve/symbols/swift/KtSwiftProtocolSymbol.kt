@@ -11,16 +11,16 @@ import com.jetbrains.swift.symbols.SwiftAssociatedTypeSymbol
 import com.jetbrains.swift.symbols.SwiftMemberSymbol
 import com.jetbrains.swift.symbols.SwiftProtocolSymbol
 import com.jetbrains.swift.symbols.impl.SwiftAllMemberHolder
+import org.jetbrains.konan.resolve.translation.StubAndProject
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocol
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 class KtSwiftProtocolSymbol : KtSwiftTypeSymbol<KtSwiftProtocolSymbol.ProtocolState, ObjCProtocol>, SwiftProtocolSymbol {
     @Transient
     @Volatile
     private var myCachedMemberHolder: SwiftAllMemberHolder? = null
 
-    constructor(moduleDescriptor: ModuleDescriptor, stub: ObjCProtocol, project: Project, file: VirtualFile)
-            : super(moduleDescriptor, stub, project, file)
+    constructor(stubAndProject: StubAndProject<ObjCProtocol>, file: VirtualFile)
+            : super(stubAndProject, file)
 
     constructor() : super()
 

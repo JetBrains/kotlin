@@ -7,10 +7,10 @@ import com.jetbrains.cidr.CidrLog
 import com.jetbrains.cidr.lang.symbols.DeepEqual
 import com.jetbrains.cidr.lang.symbols.OCSymbolBase
 import org.jetbrains.konan.resolve.symbols.KtLazySymbol.StubState
+import org.jetbrains.konan.resolve.translation.StubAndProject
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
 import org.jetbrains.kotlin.backend.konan.objcexport.Stub
 import org.jetbrains.kotlin.descriptors.InvalidModuleException
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
@@ -28,28 +28,29 @@ abstract class KtLazySymbol<State : StubState, Stb : ObjCTopLevel<*>> : KtSymbol
     // TODO: Remove superfluous ModuleDescriptor reference, when Kotlin/Native 1.4.0-M2 lands
     @Transient
     @Volatile
-    private var stubAndProject: Triple<ModuleDescriptor, Stb, Project>?
+    private var stubAndProject: StubAndProject<Stb>? = null
 
-    constructor(
-        moduleDescriptor: ModuleDescriptor,
-        stub: Stb,
-        project: Project,
-        name: String
-    ) {
+    constructor(stubAndProject: StubAndProject<Stb>, name: String) {
         this.name = name
-        this.stubAndProject = Triple(moduleDescriptor, stub, project)
+        this.stubAndProject = stubAndProject
     }
 
-    constructor() {
-        this.stubAndProject = null
-    }
+    constructor()
 
     protected val state: State?
         get() {
             _state?.let { return validStateOrNull }
-            stubAndProject?.let { (moduleDescriptor, stub, project) ->
+            stubAndProject?.let { (stubTrace, stub) ->
+                val (resolutionFacade, moduleDescriptorTrace) = stubTrace
+                val project = resolutionFacade.project
                 val newState = runReadAction {
-                    if (project.isDisposed || !moduleDescriptor.isValid) return@runReadAction null
+                    if (project.isDisposed
+                        || !moduleDescriptorTrace.isValid
+                        || resolutionFacade.moduleDescriptor !== moduleDescriptorTrace
+                        || !moduleDescriptorTrace.isValid
+                    ) {
+                        return@runReadAction null
+                    }
                     try {
                         computeState(stub, project)
                     } catch (e: InvalidModuleException) {
@@ -66,7 +67,7 @@ abstract class KtLazySymbol<State : StubState, Stb : ObjCTopLevel<*>> : KtSymbol
         }
 
     private fun psi(project: Project): PsiElement? {
-        stubAndProject?.let { (_, stub, _) -> return stub.psi }
+        stubAndProject?.let { (_, stub) -> return stub.psi }
         return OCSymbolBase.doLocateDefinition(this, project, KtNamedDeclaration::class.java)
     }
 
@@ -74,7 +75,7 @@ abstract class KtLazySymbol<State : StubState, Stb : ObjCTopLevel<*>> : KtSymbol
 
     override fun getComplexOffset(): Long =
         _state?.offset
-            ?: stubAndProject?.let { (_, stub, _) -> stub.offset }
+            ?: stubAndProject?.let { (_, stub) -> stub.offset }
             ?: _state!!.offset
 
     protected abstract fun computeState(stub: Stb, project: Project): State

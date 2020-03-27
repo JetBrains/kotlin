@@ -14,13 +14,13 @@ import com.jetbrains.cidr.lang.symbols.objc.OCProtocolSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCProtocolSymbolImpl
 import com.jetbrains.cidr.lang.types.OCReferenceType
 import com.jetbrains.cidr.lang.types.OCType
+import org.jetbrains.konan.resolve.translation.StubAndProject
 import org.jetbrains.konan.resolve.translation.createSuperType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocol
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 class KtOCProtocolSymbol : KtOCClassSymbol<KtOCProtocolSymbol.ProtocolState, ObjCProtocol>, OCProtocolSymbol {
-    constructor(moduleDescriptor: ModuleDescriptor, stub: ObjCProtocol, project: Project, file: VirtualFile)
-            : super(moduleDescriptor, stub, project, file)
+    constructor(stubAndProject: StubAndProject<ObjCProtocol>, file: VirtualFile)
+            : super(stubAndProject, file)
 
     constructor() : super()
 

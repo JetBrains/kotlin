@@ -12,8 +12,8 @@ import com.jetbrains.swift.psi.types.SwiftContext
 import com.jetbrains.swift.symbols.*
 import org.jetbrains.konan.resolve.symbols.KtLazySymbol
 import org.jetbrains.konan.resolve.translation.KtSwiftSymbolTranslator
+import org.jetbrains.konan.resolve.translation.StubAndProject
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import javax.swing.Icon
 
 abstract class KtSwiftLazySymbol<State : KtLazySymbol.StubState, Stb : ObjCTopLevel<*>>
@@ -27,11 +27,11 @@ abstract class KtSwiftLazySymbol<State : KtLazySymbol.StubState, Stb : ObjCTopLe
     override val projectFile: SwiftContext
         get() = SwiftContext.of(file, project)
 
-    constructor(moduleDescriptor: ModuleDescriptor, stub: Stb, project: Project, file: VirtualFile)
-            : super(moduleDescriptor, stub, project, stub.swiftName) {
+    constructor(stubAndProject: StubAndProject<Stb>, file: VirtualFile)
+            : super(stubAndProject, stubAndProject.stub.swiftName) {
         this.file = file
-        this.project = project
-        this.objcName = stub.name
+        this.project = stubAndProject.project
+        this.objcName = stubAndProject.stub.name
     }
 
     constructor() : super()

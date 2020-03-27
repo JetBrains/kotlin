@@ -7,12 +7,12 @@ import com.jetbrains.swift.psi.SwiftDeclarationKind
 import com.jetbrains.swift.psi.types.SwiftClassType
 import com.jetbrains.swift.symbols.SwiftClassSymbol
 import com.jetbrains.swift.symbols.SwiftInitializerSymbol
+import org.jetbrains.konan.resolve.translation.StubAndProject
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 class KtSwiftClassSymbol : KtSwiftTypeSymbol<KtSwiftClassSymbol.ClassState, ObjCInterface>, SwiftClassSymbol {
-    constructor(moduleDescriptor: ModuleDescriptor, stub: ObjCInterface, project: Project, file: VirtualFile)
-            : super(moduleDescriptor, stub, project, file)
+    constructor(stubAndProject: StubAndProject<ObjCInterface>, file: VirtualFile)
+            : super(stubAndProject, file)
 
     constructor() : super()
 
