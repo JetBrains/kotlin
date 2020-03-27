@@ -42,7 +42,7 @@ class FirTowerResolver(
 
     private val session: FirSession get() = components.session
     private val collector = CandidateCollector(components, resolutionStageRunner)
-    private val manager = TowerResolveManager(this)
+    private val manager = TowerResolveManager()
     private lateinit var implicitReceivers: List<ImplicitReceiver>
     private lateinit var implicitReceiversUsableAsValues: List<ImplicitReceiver>
 
@@ -546,21 +546,7 @@ class FirTowerResolver(
     ): CandidateCollector {
         // TODO: add flag receiver / non-receiver position
         prepareImplicitReceivers(implicitReceiverValues)
-        val candidateFactory = CandidateFactory(components, info)
-        manager.candidateFactory = candidateFactory
-        if (info.callKind == CallKind.CallableReference && info.stubReceiver != null) {
-            manager.stubReceiverCandidateFactory = candidateFactory.replaceCallInfo(info.replaceExplicitReceiver(info.stubReceiver))
-        }
-        manager.resultCollector = collector
-        if (info.callKind == CallKind.Function) {
-            manager.invokeReceiverCollector = CandidateCollector(components, components.resolutionStageRunner)
-            manager.invokeReceiverCandidateFactory = CandidateFactory(components, info.replaceWithVariableAccess())
-            if (info.explicitReceiver != null) {
-                with(manager.invokeReceiverCandidateFactory) {
-                    manager.invokeBuiltinExtensionReceiverCandidateFactory = replaceCallInfo(callInfo.replaceExplicitReceiver(null))
-                }
-            }
-        }
+        manager.callResolutionContext = buildCallResolutionContext(info, collector)
 
         when (val receiver = info.explicitReceiver) {
             is FirResolvedQualifier -> manager.enqueueResolverTask { runResolverForQualifierReceiver(info, receiver, manager) }
@@ -577,6 +563,41 @@ class FirTowerResolver(
         }
         manager.runTasks()
         return collector
+    }
+
+    private fun buildCallResolutionContext(
+        info: CallInfo,
+        collector: CandidateCollector
+    ): CallResolutionContext {
+        val candidateFactory = CandidateFactory(components, info)
+        val stubReceiverCandidateFactory =
+            if (info.callKind == CallKind.CallableReference && info.stubReceiver != null)
+                candidateFactory.replaceCallInfo(info.replaceExplicitReceiver(info.stubReceiver))
+            else
+                null
+
+        var invokeReceiverCollector: CandidateCollector? = null
+        var invokeReceiverCandidateFactory: CandidateFactory? = null
+        var invokeBuiltinExtensionReceiverCandidateFactory: CandidateFactory? = null
+        if (info.callKind == CallKind.Function) {
+            invokeReceiverCollector = CandidateCollector(components, components.resolutionStageRunner)
+            invokeReceiverCandidateFactory = CandidateFactory(components, info.replaceWithVariableAccess())
+            if (info.explicitReceiver != null) {
+                with(invokeReceiverCandidateFactory) {
+                    invokeBuiltinExtensionReceiverCandidateFactory = replaceCallInfo(callInfo.replaceExplicitReceiver(null))
+                }
+            }
+        }
+
+        return CallResolutionContext(
+            candidateFactory,
+            collector,
+            invokeReceiverCandidateFactory,
+            invokeBuiltinExtensionReceiverCandidateFactory,
+            stubReceiverCandidateFactory,
+            invokeReceiverCollector,
+            this
+        )
     }
 
     fun reset() {
