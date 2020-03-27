@@ -11,6 +11,7 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType
 import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.PlatformTestCase
+import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.kotlin.tools.projectWizard.cli.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.Services
@@ -32,15 +33,20 @@ import java.nio.file.Paths
 //TODO change to HeavyPlatformTestCase when we stop supporting <= 192
 abstract class AbstractNewWizardProjectImportTest : PlatformTestCase() {
     abstract fun createWizard(directory: Path, buildSystem: BuildSystem, projectDirectory: Path): Wizard
+
+    lateinit var sdkCreationChecker: KotlinSdkCreationChecker
+
     override fun setUp() {
         super.setUp()
         runWriteAction {
             val sdk = SimpleJavaSdkType().createJdk(SDK_NAME, IdeaTestUtil.requireRealJdkHome())
             ProjectJdkTable.getInstance().addJdk(sdk, project)
         }
+        sdkCreationChecker = KotlinSdkCreationChecker()
     }
 
     override fun tearDown() {
+        sdkCreationChecker.removeNewKotlinSdk()
         super.tearDown()
         runWriteAction {
             ProjectJdkTable.getInstance().findJdk(SDK_NAME)?.let(ProjectJdkTable.getInstance()::removeJdk)
@@ -85,8 +91,8 @@ abstract class AbstractNewWizardProjectImportTest : PlatformTestCase() {
             serviceDirectoryPath = GradleEnvironment.Headless.GRADLE_SERVICE_DIRECTORY ?: serviceDirectoryPath
         }
 
-        // not needed on <= 192 (and causes error on <= 192 ):
-        if (!is192orLess()) {
+        // not needed on 192 (and causes error on 192 ):
+        if (!is192()) {
             val settings = GradleProjectSettings().apply {
                 externalProjectPath = directory.toString()
                 isUseAutoImport = false
@@ -98,8 +104,8 @@ abstract class AbstractNewWizardProjectImportTest : PlatformTestCase() {
         }
     }
 
-    private fun is192orLess() =
-        ApplicationInfoImpl.getShadowInstance().minorVersionMainPart.toIntOrNull()?.let { it <= 2 } == true
+    private fun is192() =
+        ApplicationInfoImpl.getShadowInstance().minorVersionMainPart == "2"
                 && ApplicationInfoImpl.getShadowInstance().majorVersion == "2019"
 
     companion object {

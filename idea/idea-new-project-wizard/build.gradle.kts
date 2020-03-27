@@ -24,6 +24,21 @@ dependencies {
     testImplementation(intellijPluginDep("gradle"))
 
 
+
+    testRuntimeOnly(toolsJar())
+    testRuntimeOnly(project(":plugins:kapt3-idea"))
+    testRuntimeOnly(project(":allopen-ide-plugin"))
+    testRuntimeOnly(project(":sam-with-receiver-ide-plugin"))
+    testRuntimeOnly(project(":noarg-ide-plugin"))
+    testRuntimeOnly(project(":kotlinx-serialization-ide-plugin"))
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":plugins:annotation-based-compiler-plugins-ide-support"))
+    testRuntimeOnly(project(":kotlin-gradle-statistics"))
+    testRuntimeOnly(project(":kotlin-scripting-idea"))
+    testRuntimeOnly(intellijRuntimeAnnotations())
+
+
+
     excludeInAndroidStudio(rootProject) {
         compileOnly(intellijPluginDep("maven"))
     }
