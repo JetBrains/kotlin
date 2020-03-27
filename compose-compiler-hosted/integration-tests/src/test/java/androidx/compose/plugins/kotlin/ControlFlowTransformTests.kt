@@ -28,7 +28,8 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         ComposeTransforms.FRAMED_CLASSES xor
         ComposeTransforms.CALLS_AND_EMITS xor
         ComposeTransforms.RESTART_GROUPS or
-        ComposeTransforms.CONTROL_FLOW_GROUPS,
+        ComposeTransforms.CONTROL_FLOW_GROUPS or
+        ComposeTransforms.FUNCTION_BODY_SKIPPING,
         """
             import androidx.compose.Composable
 
@@ -63,12 +64,22 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(x: Int, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
-              if (x > 0) {
-                NA()
+            fun Example(x: Int, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
+              var %dirty = %changed
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              %composer.endReplaceableGroup()
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+                if (x > 0) {
+                  NA()
+                }
+              } else {
+                %composer.skipCurrentGroup()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(x, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -85,17 +96,27 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(x: Int, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
-              if (x > 0) {
-                %composer.startReplaceableGroup(2002223180)
-                A(%composer)
-                %composer.endReplaceableGroup()
-              } else {
-                %composer.startReplaceableGroup(2002223093)
-                %composer.endReplaceableGroup()
+            fun Example(x: Int, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
+              var %dirty = %changed
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              %composer.endReplaceableGroup()
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+                if (x > 0) {
+                  %composer.startReplaceableGroup(2002223180)
+                  A(%composer, 0)
+                  %composer.endReplaceableGroup()
+                } else {
+                  %composer.startReplaceableGroup(2002223093)
+                  %composer.endReplaceableGroup()
+                }
+              } else {
+                %composer.skipCurrentGroup()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(x, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -114,18 +135,28 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(x: Int, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
-              if (x > 0) {
-                %composer.startReplaceableGroup(2002223180)
-                A(%composer)
-                %composer.endReplaceableGroup()
-              } else {
-                %composer.startReplaceableGroup(2002223205)
-                A(%composer)
-                %composer.endReplaceableGroup()
+            fun Example(x: Int, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
+              var %dirty = %changed
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              %composer.endReplaceableGroup()
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+                if (x > 0) {
+                  %composer.startReplaceableGroup(2002223180)
+                  A(%composer, 0)
+                  %composer.endReplaceableGroup()
+                } else {
+                  %composer.startReplaceableGroup(2002223205)
+                  A(%composer, 0)
+                  %composer.endReplaceableGroup()
+                }
+              } else {
+                %composer.skipCurrentGroup()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(x, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -144,14 +175,24 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(x: Int, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
-              if (B(%composer)) {
-                NA()
-              } else {
-                NA()
+            fun Example(x: Int, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
+              var %dirty = %changed
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              %composer.endReplaceableGroup()
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+                if (B(%composer, 0)) {
+                  NA()
+                } else {
+                  NA()
+                }
+              } else {
+                %composer.skipCurrentGroup()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(x, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -172,24 +213,34 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(x: Int, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
-              if (%composer.startReplaceableGroup(2002223173)
-              val tmp0_group = B(%composer)
-              %composer.endReplaceableGroup()
-              tmp0_group) {
-                NA()
-              } else if (%composer.startReplaceableGroup(2002223208)
-              val tmp1_group = B(%composer)
-              %composer.endReplaceableGroup()
-              tmp1_group) {
-                NA()
-              } else if (%composer.startReplaceableGroup(2002223239)
-              %composer.endReplaceableGroup()
-              true) {
-                NA()
+            fun Example(x: Int, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
+              var %dirty = %changed
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              %composer.endReplaceableGroup()
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+                if (%composer.startReplaceableGroup(2002223173)
+                val tmp0_group = B(%composer, 0)
+                %composer.endReplaceableGroup()
+                tmp0_group) {
+                  NA()
+                } else if (%composer.startReplaceableGroup(2002223208)
+                val tmp1_group = B(%composer, 0)
+                %composer.endReplaceableGroup()
+                tmp1_group) {
+                  NA()
+                } else if (%composer.startReplaceableGroup(2002223239)
+                %composer.endReplaceableGroup()
+                true) {
+                  NA()
+                }
+              } else {
+                %composer.skipCurrentGroup()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(x, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -208,23 +259,32 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(x: Int, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
-              val tmp0_subject = x
-              when {
-                tmp0_subject == 0 -> {
-                  8
-                }
-                tmp0_subject == 0b1 -> {
-                  10
-                }
-                else -> {
-                  x
-                }
+            fun Example(x: Int, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
+              var %dirty = %changed
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              %composer.endReplaceableGroup()
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+                val tmp0_subject = x
+                when {
+                  tmp0_subject == 0 -> {
+                    8
+                  }
+                  tmp0_subject == 0b0001 -> {
+                    10
+                  }
+                  else -> {
+                    x
+                  }
+                }
+              } else {
+                %composer.skipCurrentGroup()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(x, %composer, %changed or 0b0001)
+              }
             }
-
         """
     )
 
@@ -242,27 +302,37 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(x: Int, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
-              val tmp0_subject = x
-              when {
-                tmp0_subject == 0 -> {
-                  %composer.startReplaceableGroup(2002223193)
-                  A(%composer)
-                  %composer.endReplaceableGroup()
-                }
-                tmp0_subject == 0b1 -> {
-                  %composer.startReplaceableGroup(2002223210)
-                  A(%composer)
-                  %composer.endReplaceableGroup()
-                }
-                else -> {
-                  %composer.startReplaceableGroup(2002223230)
-                  A(%composer)
-                  %composer.endReplaceableGroup()
-                }
+            fun Example(x: Int, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
+              var %dirty = %changed
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              %composer.endReplaceableGroup()
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+                val tmp0_subject = x
+                when {
+                  tmp0_subject == 0 -> {
+                    %composer.startReplaceableGroup(2002223193)
+                    A(%composer, 0)
+                    %composer.endReplaceableGroup()
+                  }
+                  tmp0_subject == 0b0001 -> {
+                    %composer.startReplaceableGroup(2002223210)
+                    A(%composer, 0)
+                    %composer.endReplaceableGroup()
+                  }
+                  else -> {
+                    %composer.startReplaceableGroup(2002223230)
+                    A(%composer, 0)
+                    %composer.endReplaceableGroup()
+                  }
+                }
+              } else {
+                %composer.skipCurrentGroup()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(x, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -281,30 +351,40 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(x: Int, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
-              var y = val tmp0_subject = x
-              when {
-                tmp0_subject == 0 -> {
-                  %composer.startReplaceableGroup(2002223201)
-                  val tmp0_group = R(%composer)
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                }
-                tmp0_subject == 0b1 -> {
-                  %composer.startReplaceableGroup(2002223218)
-                  val tmp1_group = R(%composer)
-                  %composer.endReplaceableGroup()
-                  tmp1_group
-                }
-                else -> {
-                  %composer.startReplaceableGroup(2002223238)
-                  val tmp2_group = R(%composer)
-                  %composer.endReplaceableGroup()
-                  tmp2_group
-                }
+            fun Example(x: Int, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
+              var %dirty = %changed
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              %composer.endReplaceableGroup()
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+                var y = val tmp0_subject = x
+                when {
+                  tmp0_subject == 0 -> {
+                    %composer.startReplaceableGroup(2002223201)
+                    val tmp0_group = R(%composer, 0)
+                    %composer.endReplaceableGroup()
+                    tmp0_group
+                  }
+                  tmp0_subject == 0b0001 -> {
+                    %composer.startReplaceableGroup(2002223218)
+                    val tmp1_group = R(%composer, 0)
+                    %composer.endReplaceableGroup()
+                    tmp1_group
+                  }
+                  else -> {
+                    %composer.startReplaceableGroup(2002223238)
+                    val tmp2_group = R(%composer, 0)
+                    %composer.endReplaceableGroup()
+                    tmp2_group
+                  }
+                }
+              } else {
+                %composer.skipCurrentGroup()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(x, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -323,26 +403,36 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(x: Int, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
-              when {
-                x < 0 -> {
-                  %composer.startReplaceableGroup(2002223193)
-                  A(%composer)
-                  %composer.endReplaceableGroup()
-                }
-                x > 30 -> {
-                  %composer.startReplaceableGroup(2002223215)
-                  A(%composer)
-                  %composer.endReplaceableGroup()
-                }
-                else -> {
-                  %composer.startReplaceableGroup(2002223235)
-                  A(%composer)
-                  %composer.endReplaceableGroup()
-                }
+            fun Example(x: Int, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
+              var %dirty = %changed
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              %composer.endReplaceableGroup()
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+                when {
+                  x < 0 -> {
+                    %composer.startReplaceableGroup(2002223193)
+                    A(%composer, 0)
+                    %composer.endReplaceableGroup()
+                  }
+                  x > 30 -> {
+                    %composer.startReplaceableGroup(2002223215)
+                    A(%composer, 0)
+                    %composer.endReplaceableGroup()
+                  }
+                  else -> {
+                    %composer.startReplaceableGroup(2002223235)
+                    A(%composer, 0)
+                    %composer.endReplaceableGroup()
+                  }
+                }
+              } else {
+                %composer.skipCurrentGroup()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(x, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -361,28 +451,38 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(x: Int, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
-              when {
-                %composer.startReplaceableGroup(2002223184)
-                val tmp0_group = x == R(%composer)
-                %composer.endReplaceableGroup()
-                tmp0_group -> {
-                  NA()
-                }
-                %composer.startReplaceableGroup(2002223209)
-                val tmp1_group = x > R(%composer)
-                %composer.endReplaceableGroup()
-                tmp1_group -> {
-                  NA()
-                }
-                %composer.startReplaceableGroup(2002223241)
-                %composer.endReplaceableGroup()
-                true -> {
-                  NA()
-                }
+            fun Example(x: Int, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
+              var %dirty = %changed
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              %composer.endReplaceableGroup()
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+                when {
+                  %composer.startReplaceableGroup(2002223184)
+                  val tmp0_group = x == R(%composer, 0)
+                  %composer.endReplaceableGroup()
+                  tmp0_group -> {
+                    NA()
+                  }
+                  %composer.startReplaceableGroup(2002223209)
+                  val tmp1_group = x > R(%composer, 0)
+                  %composer.endReplaceableGroup()
+                  tmp1_group -> {
+                    NA()
+                  }
+                  %composer.startReplaceableGroup(2002223241)
+                  %composer.endReplaceableGroup()
+                  true -> {
+                    NA()
+                  }
+                }
+              } else {
+                %composer.skipCurrentGroup()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(x, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -397,22 +497,32 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(x: Int?, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
-              val tmp0_safe_receiver = x
-              when {
-                tmp0_safe_receiver == null -> {
-                  %composer.startReplaceableGroup(2002223173)
-                  %composer.endReplaceableGroup()
-                  null
-                }
-                else -> {
-                  %composer.startReplaceableGroup(2002223173)
-                  tmp0_safe_receiver.A(%composer)
-                  %composer.endReplaceableGroup()
-                }
+            fun Example(x: Int?, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
+              var %dirty = %changed
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              %composer.endReplaceableGroup()
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+                val tmp0_safe_receiver = x
+                when {
+                  tmp0_safe_receiver == null -> {
+                    %composer.startReplaceableGroup(2002223173)
+                    %composer.endReplaceableGroup()
+                    null
+                  }
+                  else -> {
+                    %composer.startReplaceableGroup(2002223173)
+                    tmp0_safe_receiver.A(%composer, 0)
+                    %composer.endReplaceableGroup()
+                  }
+                }
+              } else {
+                %composer.skipCurrentGroup()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(x, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -427,23 +537,33 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(x: Int?, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
-              val y = val tmp0_elvis_lhs = x
-              when {
-                tmp0_elvis_lhs == null -> {
-                  %composer.startReplaceableGroup(2002223183)
-                  val tmp0_group = R(%composer)
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                }
-                else -> {
-                  %composer.startReplaceableGroup(2002223178)
-                  %composer.endReplaceableGroup()
-                  tmp0_elvis_lhs
-                }
+            fun Example(x: Int?, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
+              var %dirty = %changed
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              %composer.endReplaceableGroup()
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+                val y = val tmp0_elvis_lhs = x
+                when {
+                  tmp0_elvis_lhs == null -> {
+                    %composer.startReplaceableGroup(2002223183)
+                    val tmp0_group = R(%composer, 0)
+                    %composer.endReplaceableGroup()
+                    tmp0_group
+                  }
+                  else -> {
+                    %composer.startReplaceableGroup(2002223178)
+                    %composer.endReplaceableGroup()
+                    tmp0_elvis_lhs
+                  }
+                }
+              } else {
+                %composer.skipCurrentGroup()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(x, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -460,16 +580,18 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(items: List<Int>, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
+            fun Example(items: List<Int>, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
               val tmp0_iterator = items.iterator()
               while (tmp0_iterator.hasNext()) {
                 %composer.startReplaceableGroup(2002223179)
                 val i = tmp0_iterator.next()
-                P(i, %composer)
+                P(i, %composer, 0)
                 %composer.endReplaceableGroup()
               }
-              %composer.endReplaceableGroup()
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(items, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -486,14 +608,20 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(%composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
-              val tmp0_iterator = L(%composer).iterator()
-              while (tmp0_iterator.hasNext()) {
-                val i = tmp0_iterator.next()
-                print(i)
+            fun Example(%composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
+              if (%changed !== 0 || !%composer.skipping) {
+                val tmp0_iterator = L(%composer, 0).iterator()
+                while (tmp0_iterator.hasNext()) {
+                  val i = tmp0_iterator.next()
+                  print(i)
+                }
+              } else {
+                %composer.skipCurrentGroup()
               }
-              %composer.endReplaceableGroup()
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(%composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -511,15 +639,17 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(items: MutableList<Int>, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
+            fun Example(items: MutableList<Int>, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
               while (items.isNotEmpty()) {
                 %composer.startReplaceableGroup(2002223213)
-                val item = items.removeAt(items.<get-size>() - 1)
-                P(item, %composer)
+                val item = items.removeAt(items.size - 1)
+                P(item, %composer, 0)
                 %composer.endReplaceableGroup()
               }
-              %composer.endReplaceableGroup()
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(items, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -536,15 +666,21 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(%composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
-              while (%composer.startReplaceableGroup(2002223170)
-              val tmp0_group = B(%composer)
-              %composer.endReplaceableGroup()
-              tmp0_group) {
-                print("hello world")
+            fun Example(%composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
+              if (%changed !== 0 || !%composer.skipping) {
+                while (%composer.startReplaceableGroup(2002223170)
+                val tmp0_group = B(%composer, 0)
+                %composer.endReplaceableGroup()
+                tmp0_group) {
+                  print("hello world")
+                }
+              } else {
+                %composer.skipCurrentGroup()
               }
-              %composer.endReplaceableGroup()
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(%composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -561,17 +697,23 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(%composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
-              while (%composer.startReplaceableGroup(2002223170)
-              val tmp0_group = B(%composer)
-              %composer.endReplaceableGroup()
-              tmp0_group) {
-                %composer.startReplaceableGroup(2002223175)
-                A(%composer)
+            fun Example(%composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
+              if (%changed !== 0 || !%composer.skipping) {
+                while (%composer.startReplaceableGroup(2002223170)
+                val tmp0_group = B(%composer, 0)
                 %composer.endReplaceableGroup()
+                tmp0_group) {
+                  %composer.startReplaceableGroup(2002223175)
+                  A(%composer, 0)
+                  %composer.endReplaceableGroup()
+                }
+              } else {
+                %composer.skipCurrentGroup()
               }
-              %composer.endReplaceableGroup()
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(%composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -590,20 +732,32 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(x: Int, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
-              if (x > 0) {
-                %composer.startReplaceableGroup(2002223180)
-                A(%composer)
-                %composer.endReplaceableGroup()
-                %composer.endReplaceableGroup()
-                return
-              } else {
-                %composer.startReplaceableGroup(2002223093)
-                %composer.endReplaceableGroup()
+            fun Example(x: Int, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
+              var %dirty = %changed
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              print("hello")
-              %composer.endReplaceableGroup()
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+                if (x > 0) {
+                  %composer.startReplaceableGroup(2002223180)
+                  A(%composer, 0)
+                  %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                    Example(x, %composer, %changed or 0b0001)
+                  }
+                  %composer.endReplaceableGroup()
+                  return
+                } else {
+                  %composer.startReplaceableGroup(2002223093)
+                  %composer.endReplaceableGroup()
+                }
+                print("hello")
+              } else {
+                %composer.skipCurrentGroup()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(x, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -621,14 +775,26 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(x: Int, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
-              if (x > 0) {
-                %composer.endReplaceableGroup()
-                return
+            fun Example(x: Int, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
+              var %dirty = %changed
+              if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
               }
-              A(%composer)
-              %composer.endReplaceableGroup()
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+                if (x > 0) {
+                  %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                    Example(x, %composer, %changed or 0b0001)
+                  }
+                  return
+                }
+                A(%composer, 0)
+              } else {
+                %composer.skipCurrentGroup()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(x, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -647,11 +813,11 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(x: Int, %composer: Composer<N>?): Int {
+            fun Example(x: Int, %composer: Composer<N>?, %changed: Int): Int {
               %composer.startReplaceableGroup(2002223143)
               if (x > 0) {
                 %composer.startReplaceableGroup(2002223185)
-                A(%composer)
+                A(%composer, 0)
                 %composer.endReplaceableGroup()
                 %composer.endReplaceableGroup()
                 return 1
@@ -659,8 +825,9 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
                 %composer.startReplaceableGroup(2002223093)
                 %composer.endReplaceableGroup()
               }
+              val tmp0 = 2
               %composer.endReplaceableGroup()
-              return 2
+              return tmp0
             }
         """
     )
@@ -679,15 +846,16 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(x: Int, %composer: Composer<N>?): Int {
+            fun Example(x: Int, %composer: Composer<N>?, %changed: Int): Int {
               %composer.startReplaceableGroup(2002223143)
               if (x > 0) {
                 %composer.endReplaceableGroup()
                 return 1
               }
-              A(%composer)
+              A(%composer, 0)
+              val tmp0 = 2
               %composer.endReplaceableGroup()
-              return 2
+              return tmp0
             }
         """
     )
@@ -703,12 +871,12 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(%composer: Composer<N>?): Int {
+            fun Example(%composer: Composer<N>?, %changed: Int): Int {
               %composer.startReplaceableGroup(2002223143)
-              A(%composer)
-              val tmp0_return = R(%composer)
+              A(%composer, 0)
+              val tmp0 = R(%composer, 0)
               %composer.endReplaceableGroup()
-              return tmp0_return
+              return tmp0
             }
         """
     )
@@ -726,21 +894,21 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(x: Int, %composer: Composer<N>?): Int {
+            fun Example(x: Int, %composer: Composer<N>?, %changed: Int): Int {
               %composer.startReplaceableGroup(2002223143)
               if (x > 0) {
                 %composer.startReplaceableGroup(2002223185)
-                val tmp0_return = R(%composer)
+                val tmp1_return = R(%composer, 0)
                 %composer.endReplaceableGroup()
                 %composer.endReplaceableGroup()
-                return tmp0_return
+                return tmp1_return
               } else {
                 %composer.startReplaceableGroup(2002223093)
                 %composer.endReplaceableGroup()
               }
-              val tmp1_return = R(%composer)
+              val tmp0 = R(%composer, 0)
               %composer.endReplaceableGroup()
-              return tmp1_return
+              return tmp0
             }
         """
     )
@@ -765,28 +933,32 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(items: Iterator<Int>, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
+            fun Example(items: Iterator<Int>, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
               while (items.hasNext()) {
                 %composer.startReplaceableGroup(2002223207)
                 val i = items.next()
-                P(i, %composer)
+                P(i, %composer, 0)
                 if (i == 0) {
                   %composer.startReplaceableGroup(2002223271)
-                  P(i, %composer)
-                  %composer.endReplaceableGroup()
+                  P(i, %composer, 0)
+                  %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                    Example(items, %composer, %changed or 0b0001)
+                  }
                   %composer.endReplaceableGroup()
                   %composer.endReplaceableGroup()
                   return
                 } else {
                   %composer.startReplaceableGroup(2002223324)
-                  P(i, %composer)
+                  P(i, %composer, 0)
                   %composer.endReplaceableGroup()
                 }
-                P(i, %composer)
+                P(i, %composer, 0)
                 %composer.endReplaceableGroup()
               }
-              %composer.endReplaceableGroup()
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(items, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -807,8 +979,8 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(items: Iterator<Int>, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
+            fun Example(items: Iterator<Int>, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
               while (items.hasNext()) {
                 %composer.startReplaceableGroup(2002223207)
                 val i = items.next()
@@ -816,10 +988,12 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
                   %composer.endReplaceableGroup()
                   break
                 }
-                P(i, %composer)
+                P(i, %composer, 0)
                 %composer.endReplaceableGroup()
               }
-              %composer.endReplaceableGroup()
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(items, %composer, %changed or 0b0001)
+              }
             }
         """
         )
@@ -840,19 +1014,21 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(items: Iterator<Int>, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
+            fun Example(items: Iterator<Int>, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
               while (items.hasNext()) {
                 %composer.startReplaceableGroup(2002223207)
                 val i = items.next()
-                P(i, %composer)
+                P(i, %composer, 0)
                 if (i == 0) {
                   %composer.endReplaceableGroup()
                   break
                 }
                 %composer.endReplaceableGroup()
               }
-              %composer.endReplaceableGroup()
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(items, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -874,20 +1050,22 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(items: Iterator<Int>, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
+            fun Example(items: Iterator<Int>, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
               while (items.hasNext()) {
                 %composer.startReplaceableGroup(2002223207)
                 val i = items.next()
-                P(i, %composer)
+                P(i, %composer, 0)
                 if (i == 0) {
                   %composer.endReplaceableGroup()
                   break
                 }
-                P(i, %composer)
+                P(i, %composer, 0)
                 %composer.endReplaceableGroup()
               }
-              %composer.endReplaceableGroup()
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(items, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -908,8 +1086,8 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(items: Iterator<Int>, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
+            fun Example(items: Iterator<Int>, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
               while (items.hasNext()) {
                 %composer.startReplaceableGroup(2002223207)
                 val i = items.next()
@@ -917,10 +1095,12 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
                   %composer.endReplaceableGroup()
                   continue
                 }
-                P(i, %composer)
+                P(i, %composer, 0)
                 %composer.endReplaceableGroup()
               }
-              %composer.endReplaceableGroup()
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(items, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -942,12 +1122,12 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(items: Iterator<Int>, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
+            fun Example(items: Iterator<Int>, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
               while (items.hasNext()) {
                 %composer.startReplaceableGroup(2002223207)
                 val i = items.next()
-                P(i, %composer)
+                P(i, %composer, 0)
                 if (i == 0) {
                   %composer.endReplaceableGroup()
                   continue
@@ -955,7 +1135,9 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
                 print(i)
                 %composer.endReplaceableGroup()
               }
-              %composer.endReplaceableGroup()
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(items, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -977,20 +1159,22 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(items: Iterator<Int>, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
+            fun Example(items: Iterator<Int>, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
               while (items.hasNext()) {
                 %composer.startReplaceableGroup(2002223207)
                 val i = items.next()
-                P(i, %composer)
+                P(i, %composer, 0)
                 if (i == 0) {
                   %composer.endReplaceableGroup()
                   continue
                 }
-                P(i, %composer)
+                P(i, %composer, 0)
                 %composer.endReplaceableGroup()
               }
-              %composer.endReplaceableGroup()
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(items, %composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -1024,8 +1208,8 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(a: Iterator<Int>, b: Iterator<Int>, %composer: Composer<N>?) {
-              %composer.startReplaceableGroup(2002223143)
+            fun Example(a: Iterator<Int>, b: Iterator<Int>, %composer: Composer<N>?, %changed: Int) {
+              %composer.startRestartGroup(2002223143)
               a@while (a.hasNext()) {
                 %composer.startReplaceableGroup(2002223219)
                 val x = a.next()
@@ -1046,18 +1230,22 @@ class ControlFlowTransformTests : AbstractIrTransformTest() {
                     break@a
                   }
                   if (y > 100) {
-                    %composer.endReplaceableGroup()
+                    %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                      Example(a, b, %composer, %changed or 0b0001)
+                    }
                     %composer.endReplaceableGroup()
                     %composer.endReplaceableGroup()
                     return
                   }
-                  A(%composer)
+                  A(%composer, 0)
                   %composer.endReplaceableGroup()
                 }
-                A(%composer)
+                A(%composer, 0)
                 %composer.endReplaceableGroup()
               }
-              %composer.endReplaceableGroup()
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Example(a, b, %composer, %changed or 0b0001)
+              }
             }
         """
     )

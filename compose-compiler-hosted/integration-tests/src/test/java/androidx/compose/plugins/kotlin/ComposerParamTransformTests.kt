@@ -47,7 +47,7 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
         """
             @Composable
             fun Example(%composer: Composer<N>?) {
-              <get-bar>(%composer)
+              bar
             }
             @JvmName("getBar")
             fun <get-bar>(%composer: Composer<N>?): Int {
@@ -213,8 +213,7 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
             @Composable
             fun Test(%composer: Composer<N>?) {
               Example({ %composer: Composer<N>? ->
-              }
-              , %composer)
+              }, %composer)
             }
         """
     )

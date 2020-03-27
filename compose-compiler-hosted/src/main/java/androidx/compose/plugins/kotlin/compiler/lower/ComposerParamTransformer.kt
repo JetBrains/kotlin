@@ -121,7 +121,8 @@ class ComposerParamTransformer(
             context,
             symbolRemapper,
             typeTranslator,
-            composerTypeDescriptor
+            composerTypeDescriptor,
+            functionBodySkipping
         )
         // for each declaration, we create a deepCopy transformer It is important here that we
         // use the "preserving metadata" variant since we are using this copy to *replace* the
@@ -365,8 +366,9 @@ class ComposerParamTransformer(
     fun IrFunction.lambdaInvokeWithComposerParam(): IrFunction {
         val descriptor = descriptor
         val argCount = descriptor.valueParameters.size
+        val extraParams = if (functionBodySkipping) 2 else 1
         val newFnClass = context.irIntrinsics.symbols.externalSymbolTable
-            .referenceClass(context.builtIns.getFunction(argCount + 1))
+            .referenceClass(context.builtIns.getFunction(argCount + extraParams))
         val newDescriptor = newFnClass.descriptor.unsubstitutedMemberScope.findFirstFunction(
             OperatorNameConventions.INVOKE.identifier
         ) { true }
@@ -733,7 +735,8 @@ class ComposerParamTransformer(
                 context,
                 symbolRemapper,
                 typeTranslator,
-                composerTypeDescriptor
+                composerTypeDescriptor,
+                functionBodySkipping
             )
             // for each declaration, we create a deepCopy transformer It is important here that we
             // use the "preserving metadata" variant since we are using this copy to *replace* the

@@ -62,11 +62,17 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
         """
             @Composable
             fun Test(%composer: Composer<N>?, %changed: Int) {
-              %composer.startReplaceableGroup(80698815)
-              A(1, %composer, 0)
-              B(0, %composer, 0, 0b1)
-              B(2, %composer, 0, 0)
-              %composer.endReplaceableGroup()
+              %composer.startRestartGroup(80698815)
+              if (%changed !== 0 || !%composer.skipping) {
+                A(1, %composer, 0b0110)
+                B(0, %composer, 0, 0b0001)
+                B(2, %composer, 0b0110, 0)
+              } else {
+                %composer.skipCurrentGroup()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Test(%composer, %changed or 0b0001)
+              }
             }
         """
     )
@@ -86,10 +92,51 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
         """
             @Composable
             fun Test(%composer: Composer<N>?, %changed: Int) {
-              %composer.startReplaceableGroup(80698815)
-              A(0, 1, 2, 0, 0, %composer, 0, 0b11000)
-              A(0, 0, 2, 0, 0, %composer, 0, 0b11010)
-              %composer.endReplaceableGroup()
+              %composer.startRestartGroup(80698815)
+              if (%changed !== 0 || !%composer.skipping) {
+                A(0, 1, 2, 0, 0, %composer, 0b01111110, 0b00011000)
+                A(0, 0, 2, 0, 0, %composer, 0b01100110, 0b00011010)
+              } else {
+                %composer.skipCurrentGroup()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Test(%composer, %changed or 0b0001)
+              }
+            }
+        """
+    )
+
+    @Test
+    fun testNonStaticDefaultExpressions(): Unit = defaultParams(
+        """
+            fun makeInt(): Int = 123
+        """,
+        """
+            @Composable
+            fun Test(x: Int = makeInt()) {
+
+            }
+        """,
+        """
+            @Composable
+            fun Test(x: Int, %composer: Composer<N>?, %changed: Int, %default: Int) {
+              %composer.startRestartGroup(80698815)
+              var %dirty = %changed
+              val x = if (%default and 0b0001 !== 0) {
+                makeInt()
+              } else {
+                x
+              }
+              if (%default and 0b0001 === 0 && %changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0010 else 0b0100
+              }
+              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+              } else {
+                %composer.skipCurrentGroup()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                Test(x, %composer, %changed or 0b0001, %default)
+              }
             }
         """
     )
@@ -108,22 +155,32 @@ class DefaultParamTransformTests : AbstractIrTransformTest() {
         """
             @Composable
             fun A(a: Int, b: Int, %composer: Composer<N>?, %changed: Int, %default: Int) {
-              %composer.startReplaceableGroup(2064)
-              val a = if (%default and 0b1 !== 0) {
-                0
-              } else {
-                a
+              %composer.startRestartGroup(2064)
+              var %dirty = %changed
+              val a = if (%default and 0b0001 !== 0) 0 else a
+              if (%default and 0b0001 !== 0) {
+                %dirty = %dirty or 0b0110
+              } else if (%changed and 0b0110 === 0) {
+                %dirty = %dirty or if (%composer.changed(a)) 0b0010 else 0b0100
               }
-              val b = if (%default and 0b10 !== 0) {
+              val b = if (%default and 0b0010 !== 0) {
                 a + 1
               } else {
                 b
               }
-              print(a)
-              print(b)
-              %composer.endReplaceableGroup()
+              if (%default and 0b0010 === 0 && %changed and 0b00011000 === 0) {
+                %dirty = %dirty or if (%composer.changed(b)) 0b1000 else 0b00010000
+              }
+              if (%dirty and 0b00101011 xor 0b00101010 !== 0 || !%composer.skipping) {
+                print(a)
+                print(b)
+              } else {
+                %composer.skipCurrentGroup()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<N>? ->
+                A(a, b, %composer, %changed or 0b0001, %default)
+              }
             }
-
         """
     )
 }

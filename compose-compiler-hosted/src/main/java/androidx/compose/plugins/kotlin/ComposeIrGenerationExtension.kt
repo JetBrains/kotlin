@@ -22,7 +22,7 @@ import androidx.compose.plugins.kotlin.compiler.lower.ComposeResolutionMetadataT
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerIntrinsicTransformer
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerLambdaMemoization
 import androidx.compose.plugins.kotlin.compiler.lower.ComposerParamTransformer
-import androidx.compose.plugins.kotlin.compiler.lower.ControlFlowTransformer
+import androidx.compose.plugins.kotlin.compiler.lower.ComposableFunctionBodyTransformer
 import androidx.compose.plugins.kotlin.frames.FrameIrTransformer
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
@@ -114,11 +114,15 @@ class ComposeIrGenerationExtension : IrGenerationExtension {
             // transform calls to the currentComposer to just use the local parameter from the
             // previous transform
             if (transforms and ComposeTransforms.INTRINSICS != 0) {
-                ComposerIntrinsicTransformer(jvmContext).lower(module)
+                ComposerIntrinsicTransformer(jvmContext, functionBodySkipping).lower(module)
             }
 
             if (transforms and ComposeTransforms.CONTROL_FLOW_GROUPS != 0) {
-                ControlFlowTransformer(jvmContext, symbolRemapper, bindingTrace).lower(module)
+                ComposableFunctionBodyTransformer(
+                    jvmContext,
+                    symbolRemapper,
+                    bindingTrace
+                ).lower(module)
             }
 
             // transform composable calls and emits into their corresponding calls appealing

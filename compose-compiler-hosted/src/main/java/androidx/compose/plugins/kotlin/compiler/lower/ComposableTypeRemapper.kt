@@ -55,10 +55,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
-import org.jetbrains.kotlin.ir.types.impl.IrTypeProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.types.withHasQuestionMark
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
@@ -302,7 +299,8 @@ class ComposerTypeRemapper(
     private val context: JvmBackendContext,
     private val symbolRemapper: SymbolRemapper,
     private val typeTranslator: TypeTranslator,
-    private val composerTypeDescriptor: ClassDescriptor
+    private val composerTypeDescriptor: ClassDescriptor,
+    private val functionBodySkipping: Boolean
 ) : TypeRemapper {
 
     lateinit var deepCopy: IrElementTransformerVoid
@@ -335,10 +333,17 @@ class ComposerTypeRemapper(
         if (!type.isComposable()) return underlyingRemapType(type)
         if (!shouldTransform) return underlyingRemapType(type)
         val oldIrArguments = type.arguments
+        val extraParams = if (functionBodySkipping) 2 else 1
+        val extraArgs = listOfNotNull(
+            makeTypeProjection(composerTypeDescriptor.defaultType.toIrType(), Variance.INVARIANT),
+            if (functionBodySkipping)
+                makeTypeProjection(context.irBuiltIns.intType, Variance.INVARIANT)
+            else
+                null
+        )
         val newIrArguments =
             oldIrArguments.subList(0, oldIrArguments.size - 1) +
-                    makeTypeProjection(composerTypeDescriptor.defaultType.toIrType(),
-                        Variance.INVARIANT) +
+                    extraArgs +
                     oldIrArguments.last()
 
         return IrSimpleTypeImpl(
@@ -348,7 +353,7 @@ class ComposerTypeRemapper(
                     context
                     .irBuiltIns
                     .builtIns
-                    .getFunction(oldIrArguments.size) // return type is an argument, so this is n + 1
+                    .getFunction(oldIrArguments.size - 1 + extraParams)
                 )
             ),
             type.hasQuestionMark,
