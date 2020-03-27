@@ -16,3 +16,6 @@ fun libCommonMainInternalFun() = Unit
 fun main() {
     
 }
+
+/** Test KT-37832 */
+class MyCustomException : RuntimeException()
