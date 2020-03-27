@@ -114,6 +114,11 @@ open class CInteropArguments(argParser: ArgParser =
             fullName = SHORT_MODULE_NAME,
             description = "A short name used to denote this library in the IDE and during Objective-C export"
     )
+
+    val moduleName by argParser.option(ArgType.String,
+            fullName = "Xmodule-name",
+            description = "A full name of the library used for dependency resolution"
+    )
 }
 
 class JSInteropArguments(argParser: ArgParser = ArgParser("jsinterop",

@@ -26,6 +26,7 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String>? {
     val purgeUserLibs = arguments.purgeUserLibs
     val nopack = arguments.nopack
     val temporaryFilesDir = arguments.tempDir
+    val moduleName = (arguments as? CInteropArguments)?.moduleName
     val shortModuleName = (arguments as? CInteropArguments)?.shortModuleName
 
     val buildDir = File("$outputFileName-build")
@@ -67,6 +68,7 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String>? {
         (if (noEndorsedLibs) arrayOf("-$NOENDORSEDLIBS") else emptyArray()) +
         (if (purgeUserLibs) arrayOf("-$PURGE_USER_LIBS") else emptyArray()) +
         (if (nopack) arrayOf("-$NOPACK") else emptyArray()) +
+        moduleName?.let { arrayOf("-module-name", it) }.orEmpty() +
         shortModuleName?.let { arrayOf("-Xshort-module-name=$it") }.orEmpty() +
         arguments.kotlincOption
 }

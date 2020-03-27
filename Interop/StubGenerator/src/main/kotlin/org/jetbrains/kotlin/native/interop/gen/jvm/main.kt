@@ -273,7 +273,8 @@ private fun processCLib(flavorName: String, cinteropArguments: CInteropArguments
     }
 
     val klibSuffix = CompilerOutputKind.LIBRARY.suffix(target)
-    val moduleName = File(cinteropArguments.output).name.removeSuffixIfPresent(klibSuffix)
+    val moduleName = cinteropArguments.moduleName
+            ?: File(cinteropArguments.output).name.removeSuffixIfPresent(klibSuffix)
 
     val configuration = InteropConfiguration(
             library = compilation,
