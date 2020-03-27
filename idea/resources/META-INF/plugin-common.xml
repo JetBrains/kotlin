@@ -18,8 +18,7 @@
 
     <group id = "ConvertJavaToKotlinGroup">
       <separator/>
-      <action id="ConvertJavaToKotlin" class="org.jetbrains.kotlin.idea.actions.JavaToKotlinAction"
-              text="Convert Java File to Kotlin File">
+      <action id="ConvertJavaToKotlin" class="org.jetbrains.kotlin.idea.actions.JavaToKotlinAction">
         <keyboard-shortcut keymap="$default" first-keystroke="control alt shift K"/>
       </action>
       <add-to-group group-id="CodeMenu" anchor="last"/>
@@ -27,97 +26,78 @@
       <add-to-group group-id="EditorTabPopupMenu" anchor="last"/>
     </group>
 
-    <group id="KotlinToolsGroup" popup="true" text="Kotlin" icon="/org/jetbrains/kotlin/idea/icons/kotlin13.png"
+    <group id="KotlinToolsGroup" popup="true" icon="/org/jetbrains/kotlin/idea/icons/kotlin13.png"
            class="org.jetbrains.kotlin.idea.actions.KotlinActionGroup">
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </group>
 
-    <action id="KotlinConfigureUpdates" class="org.jetbrains.kotlin.idea.actions.ConfigurePluginUpdatesAction"
-            text="Configure Kotlin Plugin Updates"
-            description="Configure automatic updates for the Kotlin plugin">
+    <action id="KotlinConfigureUpdates" class="org.jetbrains.kotlin.idea.actions.ConfigurePluginUpdatesAction">
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
 
-    <action id="DecompileKotlinToJava" class="org.jetbrains.kotlin.idea.actions.DecompileKotlinToJavaAction"
-            text="Decompile Kotlin To Java">
+    <action id="DecompileKotlinToJava" class="org.jetbrains.kotlin.idea.actions.DecompileKotlinToJavaAction">
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
 
-    <action id="CopyKotlinProjectInformation" class="org.jetbrains.kotlin.idea.actions.internal.CopyKotlinProjectOverviewAction"
-            text="Copy Kotlin Project Overview To Clipboard">
+    <action id="CopyKotlinProjectInformation" class="org.jetbrains.kotlin.idea.actions.internal.CopyKotlinProjectOverviewAction">
     </action>
 
-    <action id="KotlinCodeMigration" class="org.jetbrains.kotlin.idea.migration.CodeMigrationAction"
-            text="Run Code Migrations">
+    <action id="KotlinCodeMigration" class="org.jetbrains.kotlin.idea.migration.CodeMigrationAction">
       <!-- TODO: Not assigned to any group because there should be a panel for filling migration options -->
     </action>
 
-    <action id="KotlinCodeMigrationToggle" class="org.jetbrains.kotlin.idea.migration.CodeMigrationToggleAction"
-            text="Enable migrations detection (experimental)">
+    <action id="KotlinCodeMigrationToggle" class="org.jetbrains.kotlin.idea.migration.CodeMigrationToggleAction">
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
 
     <action id="ExtractFunction" class="org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractFunctionAction"
-            text="_Function..." use-shortcut-of="ExtractMethod">
+            use-shortcut-of="ExtractMethod">
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="ExtractMethod"/>
     </action>
 
     <action id="IntroduceProperty" class="org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.IntroducePropertyAction"
-            text="P_roperty..." use-shortcut-of="IntroduceField">
+            use-shortcut-of="IntroduceField">
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="IntroduceField"/>
     </action>
 
-    <group id="InternalKotlin" text="Kotlin Internal Actions" internal="true">
+    <group id="InternalKotlin" internal="true">
       <separator/>
 
-      <action id="DumbModeTremble" class="org.jetbrains.kotlin.idea.actions.internal.DumbModeTrembleAction"
-              text="Tremble Dumb Mode"/>
+      <action id="DumbModeTremble" class="org.jetbrains.kotlin.idea.actions.internal.DumbModeTrembleAction"/>
 
-    <group id="KotlinRefactoringTesting" text="Kotlin refactoring testing" popup="true">
+    <group id="KotlinRefactoringTesting" popup="true">
       <action id="TestMoveRefactiringAction"
-              class="org.jetbrains.kotlin.idea.actions.internal.refactoringTesting.MoveRefactoringAction"
-              text="Test move refactoring on opened project"/>
+              class="org.jetbrains.kotlin.idea.actions.internal.refactoringTesting.MoveRefactoringAction"/>
     </group>
 
-      <group id="KotlinInternalGroup" text="Kotlin" popup="true">
-        <group id="KotlinCompletionBenchmarkGroup" popup="true" text="Benchmark completion">
+      <group id="KotlinInternalGroup" popup="true">
+        <group id="KotlinCompletionBenchmarkGroup" popup="true">
           <action id="TopLevelCompletionBenchmarkAction"
-                  class="org.jetbrains.kotlin.idea.actions.internal.benchmark.TopLevelCompletionBenchmarkAction"
-                  text="Top-level scenario"/>
+                  class="org.jetbrains.kotlin.idea.actions.internal.benchmark.TopLevelCompletionBenchmarkAction"/>
 
           <action id="LocalCompletionBenchmarkAction"
-                  class="org.jetbrains.kotlin.idea.actions.internal.benchmark.LocalCompletionBenchmarkAction"
-                  text="Local scenario"/>
+                  class="org.jetbrains.kotlin.idea.actions.internal.benchmark.LocalCompletionBenchmarkAction"/>
         </group>
 
         <action id="HighlightingBenchmarkAction"
-                class="org.jetbrains.kotlin.idea.actions.internal.benchmark.HighlightingBenchmarkAction"
-                text="Benchmark highlighting"/>
+                class="org.jetbrains.kotlin.idea.actions.internal.benchmark.HighlightingBenchmarkAction"/>
 
         <action id="CacheResetOnProcessCanceledToggleAction"
-                class="org.jetbrains.kotlin.idea.actions.internal.CacheResetOnProcessCanceledToggleAction"
-                text="Reset caches on ProcessCanceledException"/>
+                class="org.jetbrains.kotlin.idea.actions.internal.CacheResetOnProcessCanceledToggleAction"/>
 
-        <action id="CheckComponentsUsageSearchAction" class="org.jetbrains.kotlin.idea.actions.internal.CheckComponentsUsageSearchAction"
-                text="Check Component Functions Usage Search"/>
+        <action id="CheckComponentsUsageSearchAction" class="org.jetbrains.kotlin.idea.actions.internal.CheckComponentsUsageSearchAction"/>
 
-        <action id="FindImplicitNothingAction" class="org.jetbrains.kotlin.idea.actions.internal.FindImplicitNothingAction"
-                text="Find Implicit Nothing Calls"/>
+        <action id="FindImplicitNothingAction" class="org.jetbrains.kotlin.idea.actions.internal.FindImplicitNothingAction"/>
 
-        <action id="PrintOutNotPropertyMatches" class="org.jetbrains.kotlin.idea.actions.internal.SearchNotPropertyCandidatesAction"
-                text="Search Not Property Candidates"/>
+        <action id="PrintOutNotPropertyMatches" class="org.jetbrains.kotlin.idea.actions.internal.SearchNotPropertyCandidatesAction"/>
 
-        <action id="StoredExceptionsThrowToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.StoredExceptionsThrowToggleAction"
-                text="Throw cached PCE"/>
+        <action id="StoredExceptionsThrowToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.StoredExceptionsThrowToggleAction"/>
 
-        <action id="MultiplatformCompositeAnalysisToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.MultiplatformCompositeAnalysisToggleAction"
-                text="Toggle Composite Analysis"/>
+        <action id="MultiplatformCompositeAnalysisToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.MultiplatformCompositeAnalysisToggleAction"/>
 
-        <action id="CopyAsDiagnosticTest" class="org.jetbrains.kotlin.idea.actions.internal.CopyAsDiagnosticTestAction"
-                text="Copy Current File As Diagnostic Test"/>
+        <action id="CopyAsDiagnosticTest" class="org.jetbrains.kotlin.idea.actions.internal.CopyAsDiagnosticTestAction"/>
 
-        <action id="KotlinFormattingSettingsStatusAction" class="org.jetbrains.kotlin.idea.actions.internal.KotlinFormattingSettingsStatusAction"
-                text="Formatter settings info"/>
+        <action id="KotlinFormattingSettingsStatusAction" class="org.jetbrains.kotlin.idea.actions.internal.KotlinFormattingSettingsStatusAction"/>
 
         <!--        <action id="ShowFirAction" class="org.jetbrains.kotlin.idea.actions.internal.ShowFirAction"
                 text="Show RAW FIR Explorer"/> -->
@@ -127,69 +107,53 @@
       <add-to-group group-id="Internal" anchor="last"/>
     </group>
 
-    <action id="KotlinThrowException" class="org.jetbrains.kotlin.idea.actions.internal.KotlinThrowExceptionAction"
-            text="Drop an error from Kotlin plugin"/>
+    <action id="KotlinThrowException" class="org.jetbrains.kotlin.idea.actions.internal.KotlinThrowExceptionAction"/>
 
-    <action id="ExtractFunctionToScope" class="org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractFunctionToScopeAction"
-            text="Function to _Scope...">
+    <action id="ExtractFunctionToScope" class="org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractFunctionToScopeAction">
       <keyboard-shortcut keymap="$default" first-keystroke="control alt shift M"/>
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="ExtractFunction"/>
     </action>
 
-    <action id="IntroduceTypeParameter" class="org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeParameter.IntroduceTypeParameterAction"
-            text="T_ype Parameter...">
+    <action id="IntroduceTypeParameter" class="org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeParameter.IntroduceTypeParameterAction">
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="ExtractFunctionToScope"/>
     </action>
 
-    <action id="IntroduceTypeAlias" class="org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeAlias.IntroduceTypeAliasAction"
-            text="Type _Alias...">
+    <action id="IntroduceTypeAlias" class="org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeAlias.IntroduceTypeAliasAction">
       <keyboard-shortcut keymap="$default" first-keystroke="control alt shift A"/>
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="IntroduceTypeParameter"/>
     </action>
 
-    <action id="KotlinShellExecute" class="com.intellij.openapi.actionSystem.EmptyAction"
-            text="Execute Kotlin Code"
-            description="Execute Kotlin code in console">
+    <action id="KotlinShellExecute" class="com.intellij.openapi.actionSystem.EmptyAction">
       <keyboard-shortcut first-keystroke="control ENTER" keymap="$default"/>
     </action>
 
     <group id="KotlinGenerateGroup">
       <action id="KotlinGenerateTestMethod"
-              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$Test"
-              text="Test Function" />
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$Test"/>
       <action id="KotlinGenerateSetUpMethod"
-              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$SetUp"
-              text="SetUp Function" />
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$SetUp"/>
       <action id="KotlinGenerateTearDownMethod"
-              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$TearDown"
-              text="TearDown Function" />
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$TearDown"/>
       <action id="KotlinGenerateDataMethod"
-              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$Data"
-              text="Parameters Function" />
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$Data"/>
       <separator />
       <action id="KotlinGenerateSecondaryConstructor"
-              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateSecondaryConstructorAction"
-              text="Secondary Constructor" />
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateSecondaryConstructorAction"/>
       <action id="KotlinGenerateEqualsAndHashCode"
-              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateEqualsAndHashcodeAction"
-              text="equals() and hashCode()" />
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateEqualsAndHashcodeAction"/>
       <action id="KotlinGenerateToString"
-              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateToStringAction"
-              text="toString()" />
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateToStringAction"/>
 
       <add-to-group group-id="GenerateGroup" anchor="first"/>
     </group>
 
-    <action id="Kotlin.RunScratch" class="org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction"
-            text="Run Kotlin Scratch" description="Run Kotlin Scratch">
+    <action id="Kotlin.RunScratch" class="org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction">
       <keyboard-shortcut first-keystroke="control alt W" keymap="$default"/>
       <add-to-group group-id="RunContextPopupGroup" anchor="last"/>
     </action>
-    <action id="Kotlin.ClearScratch" class="org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction"
-            text="Clear Kotlin Scratch" description="Clear Kotlin Scratch">
+    <action id="Kotlin.ClearScratch" class="org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction">
     </action>
-    <action id="Kotlin.StopScratch" class="org.jetbrains.kotlin.idea.scratch.actions.StopScratchAction"
-            text="Stop scratch execution" description="Stop scratch execution">
+    <action id="Kotlin.StopScratch" class="org.jetbrains.kotlin.idea.scratch.actions.StopScratchAction">
     </action>
   </actions>
 
@@ -203,28 +167,23 @@
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.KotlinReferenceProvidersService"
                         serviceImplementation="org.jetbrains.kotlin.idea.references.KtIdeReferenceProviderService"/>
 
-    <applicationService serviceInterface="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"
-                        serviceImplementation="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"/>
+    <applicationService serviceImplementation="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"/>
 
-    <applicationService serviceInterface="org.jetbrains.kotlin.idea.quickfix.QuickFixes"
-                        serviceImplementation="org.jetbrains.kotlin.idea.quickfix.QuickFixes"/>
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.quickfix.QuickFixes"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.caches.FileAttributeService"
                         serviceImplementation="org.jetbrains.kotlin.idea.caches.FileAttributeServiceImpl"/>
 
-    <applicationService serviceInterface="org.jetbrains.kotlin.idea.KotlinPluginUpdater"
-                        serviceImplementation="org.jetbrains.kotlin.idea.KotlinPluginUpdater"/>
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.KotlinPluginUpdater"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.KotlinDeclarationNavigationPolicy"
                         serviceImplementation="org.jetbrains.kotlin.idea.decompiler.navigation.KotlinDeclarationNavigationPolicyImpl"/>
 
     <!-- since 192 use light service @Service instead of this declaration -->
-    <applicationService serviceInterface="org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache"
-                        serviceImplementation="org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache"/>
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache"/>
 
     <!-- since 192 use light service @Service instead of this declaration -->
-    <applicationService serviceInterface="org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings$KotlinCodeStyleSettingsHolder"
-                        serviceImplementation="org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings$KotlinCodeStyleSettingsHolder"/>
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings$KotlinCodeStyleSettingsHolder"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.util.ImportInsertHelper"
                     serviceImplementation="org.jetbrains.kotlin.idea.util.ImportInsertHelperImpl"/>
@@ -277,45 +236,34 @@
     <projectService serviceInterface="org.jetbrains.kotlin.scripting.resolve.ScriptReportSink"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder"
-                    serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder"
-                    serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder"
-                    serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings"
-                    serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings"/>
 
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.parameterInfo.custom.KotlinCodeHintsModel"/>
 
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerWorkspaceSettings"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.asJava.classes.FacadeCache"
-                    serviceImplementation="org.jetbrains.kotlin.asJava.classes.FacadeCache"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.asJava.classes.FacadeCache"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService"
                     serviceImplementation="org.jetbrains.kotlin.idea.stubindex.resolve.PluginDeclarationProviderFactoryService"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.stubindex.SubpackagesIndexService"
-                    serviceImplementation="org.jetbrains.kotlin.idea.stubindex.SubpackagesIndexService"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.stubindex.SubpackagesIndexService"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker"
-                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider"
-                    serviceImplementation="org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"
-                    serviceImplementation="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.lightClasses.ClsJavaStubByVirtualFileCache"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.lightClasses.ClsJavaStubByVirtualFileCache"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.caches.lightClasses.ClsJavaStubByVirtualFileCache"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.lightClasses.IdeLightClassInheritanceHelper"/>
@@ -340,11 +288,9 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.project.SdkInfoCache"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.project.SdkInfoCacheImpl"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.IdePackageOracleFactory"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.IdePackageOracleFactory"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.IdePackageOracleFactory"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.util.ProjectJob"
-                    serviceImplementation="org.jetbrains.kotlin.idea.core.util.ProjectJob"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.core.util.ProjectJob"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.lazy.ProbablyNothingCallableNames"
                     serviceImplementation="org.jetbrains.kotlin.idea.project.ProbablyNothingCallableNamesImpl"/>
@@ -352,8 +298,7 @@
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.lazy.ProbablyContractedCallableNames"
                     serviceImplementation="org.jetbrains.kotlin.idea.project.ProbablyContractedCallableNamesImpl"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings"
-                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.debugger.StackFrameInterceptor"
                     serviceImplementation="org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineStackFrameInterceptor"/>
@@ -773,13 +718,11 @@
 
     <readWriteAccessDetector implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector" id="kotlin"/>
 
-    <applicationService serviceInterface="org.jetbrains.kotlin.idea.editor.KotlinEditorOptions"
-                        serviceImplementation="org.jetbrains.kotlin.idea.editor.KotlinEditorOptions"/>
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.editor.KotlinEditorOptions"/>
 
     <editorSmartKeysConfigurable instance="org.jetbrains.kotlin.idea.editor.KotlinEditorOptionsConfigurable"/>
 
-    <applicationService serviceInterface="org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings"
-                        serviceImplementation="org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings"/>
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings"/>
 
     <statementUpDownMover id="jetExpression"
                           implementation="org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinExpressionMover"
@@ -3579,11 +3522,9 @@
                      language="kotlin"
     />
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings"
-                    serviceImplementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings"/>
 
-    <applicationService serviceInterface="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightSettings"
-                    serviceImplementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightSettings"/>
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightSettings"/>
 
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
     <autoImportOptionsProvider instance="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettingsProvider"/>
@@ -3620,5 +3561,6 @@
     <idePlatformKindTooling implementation="org.jetbrains.kotlin.idea.core.platform.impl.JvmIdePlatformKindTooling"/>
     <idePlatformKindTooling implementation="org.jetbrains.kotlin.idea.core.platform.impl.JsIdePlatformKindTooling"/>
   </extensions>
+  <resource-bundle>messages.KotlinBundle</resource-bundle>
 
 </idea-plugin>
