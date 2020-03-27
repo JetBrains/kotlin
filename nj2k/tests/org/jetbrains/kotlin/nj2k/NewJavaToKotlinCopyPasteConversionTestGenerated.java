@@ -183,6 +183,16 @@ public class NewJavaToKotlinCopyPasteConversionTestGenerated extends AbstractNew
         runTest("nj2k/testData/copyPaste/OnlyQualifier.java");
     }
 
+    @TestMetadata("OpenPublicFunctionToTopLevel.java")
+    public void testOpenPublicFunctionToTopLevel() throws Exception {
+        runTest("nj2k/testData/copyPaste/OpenPublicFunctionToTopLevel.java");
+    }
+
+    @TestMetadata("PrivateFunctionToTopLevel.java")
+    public void testPrivateFunctionToTopLevel() throws Exception {
+        runTest("nj2k/testData/copyPaste/PrivateFunctionToTopLevel.java");
+    }
+
     @TestMetadata("RawTypeRef.java")
     public void testRawTypeRef() throws Exception {
         runTest("nj2k/testData/copyPaste/RawTypeRef.java");
