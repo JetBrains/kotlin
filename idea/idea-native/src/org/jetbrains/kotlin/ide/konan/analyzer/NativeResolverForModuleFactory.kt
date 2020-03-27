@@ -53,8 +53,7 @@ class NativeResolverForModuleFactory(
             languageVersionSettings
         )
 
-        val packageFragmentProvider = container.get<ResolveSession>().packageFragmentProvider
-        val fragmentProviders = mutableListOf(packageFragmentProvider)
+        var packageFragmentProvider = container.get<ResolveSession>().packageFragmentProvider
 
         val klibPackageFragmentProvider = createNativeKlibPackageFragmentProvider(
             moduleContent.moduleInfo,
@@ -62,8 +61,11 @@ class NativeResolverForModuleFactory(
             languageVersionSettings,
             moduleDescriptor
         )
-        fragmentProviders.addIfNotNull(klibPackageFragmentProvider)
 
-        return ResolverForModule(CompositePackageFragmentProvider(fragmentProviders), container)
+        if (klibPackageFragmentProvider != null) {
+            packageFragmentProvider = CompositePackageFragmentProvider(listOf(packageFragmentProvider, klibPackageFragmentProvider))
+        }
+
+        return ResolverForModule(packageFragmentProvider, container)
     }
 }
