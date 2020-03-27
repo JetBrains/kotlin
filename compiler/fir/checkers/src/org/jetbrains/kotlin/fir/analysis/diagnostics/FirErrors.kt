@@ -32,6 +32,9 @@ object FirErrors {
     val RETURN_NOT_ALLOWED by error0<FirSourceElement>()
     val CONSTRUCTOR_IN_OBJECT by error0<FirSourceElement>()
     val SUPER_IS_NOT_AN_EXPRESSION by error0<FirSourceElement>()
+    val SUPER_NOT_AVAILABLE by error0<FirSourceElement>()
+    val NOT_A_SUPERTYPE by error0<FirSourceElement>()
+    val SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE by error0<FirSourceElement>()
 
     val INAPPLICABLE_INFIX_MODIFIER by existing<FirSourceElement, String>(Errors.INAPPLICABLE_INFIX_MODIFIER)
 }

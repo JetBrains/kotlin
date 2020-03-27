@@ -44,7 +44,8 @@ abstract class AbstractDiagnosticCollector(
     private var componentsInitialized = false
     private val visitor = Visitor()
 
-    private var context = PersistentCheckerContext()
+    @Suppress("LeakingThis")
+    private var context = PersistentCheckerContext(this)
 
     fun initializeComponents(vararg components: AbstractDiagnosticCollectorComponent) {
         if (componentsInitialized) {
@@ -71,6 +72,13 @@ abstract class AbstractDiagnosticCollector(
                 type = regularClass.defaultType()
             }
             visitWithDeclarationAndReceiver(regularClass, regularClass.name, typeRef)
+        }
+
+        override fun visitSealedClass(sealedClass: FirSealedClass) {
+            val typeRef = buildResolvedTypeRef {
+                type = sealedClass.defaultType()
+            }
+            visitWithDeclarationAndReceiver(sealedClass, sealedClass.name, typeRef)
         }
 
         override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
@@ -105,6 +113,13 @@ abstract class AbstractDiagnosticCollector(
 
         override fun visitEnumEntry(enumEntry: FirEnumEntry) {
             visitWithDeclaration(enumEntry)
+        }
+
+        override fun visitAnonymousObject(anonymousObject: FirAnonymousObject) {
+            val typeRef = buildResolvedTypeRef {
+                type = anonymousObject.defaultType()
+            }
+            visitWithDeclarationAndReceiver(anonymousObject, null, typeRef)
         }
 
         override fun visitFile(file: FirFile) {

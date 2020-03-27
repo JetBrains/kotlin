@@ -1,0 +1,37 @@
+FILE: superclassNotAccessibleFromInterface.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract interface ATrait : R|A| {
+        public open override fun foo(): R|kotlin/Unit| {
+            super<R|A|>.R|/A.foo|()
+        }
+
+    }
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract interface Some : R|Base| {
+        public open fun bar(): R|kotlin/Unit| {
+            this@R|/Some|.R|/Base.foo|()
+        }
+
+    }
+    public abstract interface Other : R|kotlin/Any| {
+        public open fun bar(): R|kotlin/Unit| {
+            this@R|/Other|.R|kotlin/Any.equals|(String())
+        }
+
+    }
