@@ -374,19 +374,12 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
 
   @Override
   public <T> void findAndUpdateValue(final VirtualFile fileOrDir, final FilePropertyPusher<T> pusher, final T moduleValue) {
-    final T value = findPusherValuesUpwards(myProject, fileOrDir, pusher, moduleValue);
-    updateValue(myProject, fileOrDir, value, pusher);
-  }
-
-  public static <T> void updateValue(final Project project,
-                                     final VirtualFile fileOrDir,
-                                     final T value,
-                                     final FilePropertyPusher<T> pusher) {
-    final T oldValue = fileOrDir.getUserData(pusher.getFileDataKey());
-    if (value != oldValue) {
-      fileOrDir.putUserData(pusher.getFileDataKey(), value);
+    T newValue = findPusherValuesUpwards(myProject, fileOrDir, pusher, moduleValue);
+    T oldValue = fileOrDir.getUserData(pusher.getFileDataKey());
+    if (newValue != oldValue) {
+      fileOrDir.putUserData(pusher.getFileDataKey(), newValue);
       try {
-        pusher.persistAttribute(project, fileOrDir, value);
+        pusher.persistAttribute(myProject, fileOrDir, newValue);
       }
       catch (IOException e) {
         LOG.error(e);
