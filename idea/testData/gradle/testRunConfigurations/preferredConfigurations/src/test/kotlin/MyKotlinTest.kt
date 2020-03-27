@@ -1,11 +1,11 @@
 import org.junit.Test
 
-class <lineMarker descr="Run Test" settings=":cleanTest :test --tests \"MyKotlinTest\"">MyKotlinTest</lineMarker> {
+class <lineMarker descr="Run Test" settings="Nothing here">MyKotlinTest</lineMarker> {
     @Test
-    fun <lineMarker descr="Run Test" settings=":cleanTest :test --tests \"MyKotlinTest.testA\"">testA</lineMarker>() {
+    fun <lineMarker descr="Run Test" settings="Nothing here">testA</lineMarker>() {
     }
 
     @Test
-    fun <lineMarker descr="Run Test" settings=":cleanTest :test --tests \"MyKotlinTest.testB\"">testB</lineMarker>() {
+    fun <lineMarker descr="Run Test" settings="Nothing here">testB</lineMarker>() {
     }
 }

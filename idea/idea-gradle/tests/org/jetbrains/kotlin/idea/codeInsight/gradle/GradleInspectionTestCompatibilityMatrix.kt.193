@@ -3,6 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle
+package org.jetbrains.kotlin.idea.codeInsight.gradle
 
-fun KaptImportingTest.isAndroidStudio() = true
+fun isGradleInspectionTestApplicable() = true

@@ -5,4 +5,4 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.gradle
 
-fun isGradleInspectionTestApplicable() = true
+fun isGradleInspectionTestApplicable() = false
