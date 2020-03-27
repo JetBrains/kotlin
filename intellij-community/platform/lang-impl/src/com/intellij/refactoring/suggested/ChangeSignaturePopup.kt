@@ -125,13 +125,7 @@ private class SignatureChangesPage(
   nameOfStuffToUpdate: String
 ) : JPanel(BorderLayout()) {
   init {
-    // we use editor scheme that is the default for the current UI theme
-    // (we don't use one from the current editor because one can have light UI theme and dark editor scheme or vise versa)
-    val themeColorsScheme = EditorColorsManager.getInstance().schemeForCurrentUITheme
-    var presentation = SignatureChangePresentation(signatureChangeModel, editorFont, themeColorsScheme, verticalMode = false)
-    if (presentation.requiredSize.width > screenSize.width * 0.75) {
-      presentation = SignatureChangePresentation(signatureChangeModel, editorFont, themeColorsScheme, verticalMode = true)
-    }
+    val presentation = createPresentation(signatureChangeModel, editorFont, screenSize)
 
     add(JLabel(RefactoringBundle.message("suggested.refactoring.change.signature.label.text", nameOfStuffToUpdate)), BorderLayout.NORTH)
     add(
@@ -148,6 +142,30 @@ private class SignatureChangesPage(
     )
 
     border = JBUI.Borders.empty(0, 4)
+  }
+
+  private fun createPresentation(
+    model: SignatureChangePresentationModel,
+    editorFont: Font,
+    screenSize: Dimension
+  ): SignatureChangePresentation {
+    // we use editor scheme that is the default for the current UI theme
+    // (we don't use one from the current editor because one can have light UI theme and dark editor scheme or vise versa)
+    val themeColorsScheme = EditorColorsManager.getInstance().schemeForCurrentUITheme
+    var font = editorFont
+    val maxWidthHorizontalMode = screenSize.width * 0.75
+    val maxWidth = screenSize.width * 0.9
+    val maxHeight = screenSize.height * 0.9
+    while (true) {
+      var presentation = SignatureChangePresentation(model, font, themeColorsScheme, verticalMode = false)
+      if (presentation.requiredSize.width > maxWidthHorizontalMode) {
+        presentation = SignatureChangePresentation(model, font, themeColorsScheme, verticalMode = true)
+      }
+      if (presentation.requiredSize.width <= maxWidth && presentation.requiredSize.height <= maxHeight || font.size == 1) {
+        return presentation
+      }
+      font = Font(font.name, font.style, font.size - 1)
+    }
   }
 }
 
