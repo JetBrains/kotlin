@@ -456,7 +456,9 @@ class KotlinTypeMapper @JvmOverloads constructor(
             if (isInterface && (superCall || descriptor.visibility == Visibilities.PRIVATE || isAccessor(descriptor))) {
                 thisClass = mapClass(functionParent)
                 dispatchReceiverKotlinType = functionParent.defaultType
-                if (declarationOwner is JavaClassDescriptor || declarationFunctionDescriptor.isCompiledToJvmDefaultIfNoAbstract(jvmDefaultMode)) {
+                if (declarationOwner is JavaClassDescriptor ||
+                    (declarationFunctionDescriptor.isCompiledToJvmDefaultIfNoAbstract(jvmDefaultMode) && !isAccessor(descriptor))
+                ) {
                     invokeOpcode = INVOKESPECIAL
                     signature = mapSignatureSkipGeneric(functionDescriptor)
                     returnKotlinType = functionDescriptor.returnType

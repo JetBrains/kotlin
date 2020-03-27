@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.JvmDefaultMode;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor;
@@ -651,7 +652,10 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             return descriptor;
         }
 
-        if (JvmAnnotationUtilKt.isCompiledToJvmDefaultIfNoAbstract(descriptor, getState().getJvmDefaultMode()) && descriptorContext instanceof DefaultImplsClassContext) {
+        //in other default modes there shouldn't be any accessors form DefaultImpls to Interface cause all compiled inside interface
+        if (getState().getJvmDefaultMode() == JvmDefaultMode.ENABLE &&
+            JvmAnnotationUtilKt.hasJvmDefaultAnnotation(descriptor) &&
+            descriptorContext instanceof DefaultImplsClassContext) {
             descriptorContext = ((DefaultImplsClassContext) descriptorContext).getInterfaceContext();
         }
 
