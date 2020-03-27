@@ -503,17 +503,13 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
         textComponent.repaint();
       }
     });
-    installCloseOnEscapeAction(textComponent);
-    return true;
-  }
-
-  private void installCloseOnEscapeAction(@NotNull JTextComponent c) {
     new CloseAction() {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         close();
       }
-    }.registerCustomShortcutSet(KeymapUtil.getActiveKeymapShortcuts(IdeActions.ACTION_EDITOR_ESCAPE), c);
+    }.registerCustomShortcutSet(KeymapUtil.getActiveKeymapShortcuts(IdeActions.ACTION_EDITOR_ESCAPE), textArea);
+    return true;
   }
 
   private abstract static class CloseAction extends DumbAwareAction implements LightEditCompatible {
