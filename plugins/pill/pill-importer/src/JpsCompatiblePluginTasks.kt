@@ -54,7 +54,7 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
             ":kotlin-reflect-api/java9" to ":kotlin-reflect/main"
         )
 
-        private val LIB_DIRECTORIES = listOf("dependencies", "dist")
+        private val LIB_DIRECTORIES = listOf("dependencies", "dist", "buildSrc/prepare-deps/intellijRepo")
     }
 
     private lateinit var projectDir: File
