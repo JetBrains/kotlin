@@ -113,10 +113,6 @@ public class InspectionManagerEx extends InspectionManagerBase {
     return inspectionContext;
   }
 
-  public void setProfile(@NotNull String name) {
-    myCurrentProfileName = name;
-  }
-
   void closeRunningContext(@NotNull GlobalInspectionContextImpl globalInspectionContext){
     myRunningContexts.remove(globalInspectionContext);
   }
