@@ -31,6 +31,7 @@ import kotlin.internal.RequireKotlinVersionKind
 @SinceKotlin("1.2")
 @RequireKotlin("1.2.40", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
+@Deprecated("Switch to new -Xjvm-default modes: `all` or `all-compatibility`")
 annotation class JvmDefault
 
 /**
