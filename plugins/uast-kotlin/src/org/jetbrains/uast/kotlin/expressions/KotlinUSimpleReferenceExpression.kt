@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 import org.jetbrains.uast.*
+import org.jetbrains.uast.internal.acceptList
 import org.jetbrains.uast.internal.log
 import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.internal.DelegatedMultiResolve
@@ -81,6 +82,7 @@ open class KotlinUSimpleReferenceExpression(
         if (sourcePsi.parent.destructuringDeclarationInitializer != true) {
             visitAccessorCalls(visitor)
         }
+        annotations.acceptList(visitor)
 
         visitor.afterVisitSimpleNameReferenceExpression(this)
     }
@@ -236,6 +238,10 @@ class KotlinClassViaConstructorUSimpleReferenceExpression(
                 (resultingDescriptor.returnType?.getFunctionalInterfaceType(this, sourcePsi) as? PsiClassType)?.resolve()
             else -> null
         }
+    }
+
+    override fun accept(visitor: UastVisitor) {
+        super<KotlinAbstractUExpression>.accept(visitor)
     }
 
     override fun resolve(): PsiElement? = resolved

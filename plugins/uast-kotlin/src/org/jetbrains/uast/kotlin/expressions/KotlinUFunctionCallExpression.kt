@@ -192,6 +192,7 @@ class KotlinUFunctionCallExpression(
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitCallExpression(this)) return
+        annotations.acceptList(visitor)
         methodIdentifier?.accept(visitor)
         classReference.accept(visitor)
         valueArguments.acceptList(visitor)

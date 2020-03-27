@@ -206,11 +206,12 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
         return result.tempVarAssignment
     }
 
-    if (result is KotlinUElvisExpression && parent is KtBinaryExpression) {
-        when (element.psi) {
-            parent.left -> return result.lhsDeclaration
-            parent.right -> return result.rhsIfExpression
-        }
+    if (result is KotlinUElvisExpression && parentUnwrapped is KtBinaryExpression) {
+        val branch: Sequence<PsiElement?> = element.psi?.parentsWithSelf.orEmpty().takeWhile { it != parentUnwrapped }
+        if (branch.contains(parentUnwrapped.left))
+            return result.lhsDeclaration
+        if (branch.contains(parentUnwrapped.right))
+            return result.rhsIfExpression
     }
 
     if ((result is UMethod || result is KotlinLocalFunctionULambdaExpression)

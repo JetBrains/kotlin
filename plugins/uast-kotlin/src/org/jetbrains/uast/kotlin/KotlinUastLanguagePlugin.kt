@@ -198,6 +198,7 @@ internal object KotlinConverter {
         is KtTypeElement -> unwrapElements(element.parent)
         is KtSuperTypeList -> unwrapElements(element.parent)
         is KtFinallySection -> unwrapElements(element.parent)
+        is KtAnnotatedExpression -> unwrapElements(element.parent)
         else -> element
     }
 
@@ -421,6 +422,11 @@ internal object KotlinConverter {
             }
             else {
                 expr<UDeclarationsExpression>(build(::createLocalFunctionDeclaration))
+            }
+            is KtAnnotatedExpression -> {
+                expression.baseExpression
+                    ?.let { convertExpression(it, givenParent, requiredType) }
+                    ?: expr<UExpression>(build(::UnknownKotlinExpression))
             }
 
             else -> expr<UExpression>(build(::UnknownKotlinExpression))
