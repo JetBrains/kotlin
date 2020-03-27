@@ -772,15 +772,16 @@ class ControlFlowGraphBuilder {
         return enterNode to lastNode
     }
 
-    fun exitInitBlock(initBlock: FirAnonymousInitializer): InitBlockExitNode {
+    fun exitInitBlock(initBlock: FirAnonymousInitializer): Pair<InitBlockExitNode, ControlFlowGraph> {
         levelCounter--
-        return initBlockExitNodes.pop().also {
+        val exitNode = initBlockExitNodes.pop().also {
             addNewSimpleNode(it)
             it.updateDeadStatus()
-            lexicalScopes.pop()
-            exitNodes.pop()
-            graphs.pop()
         }
+        lexicalScopes.pop()
+        exitNodes.pop()
+        val graph = graphs.pop()
+        return exitNode to graph
     }
 
     // ----------------------------------- Safe calls -----------------------------------

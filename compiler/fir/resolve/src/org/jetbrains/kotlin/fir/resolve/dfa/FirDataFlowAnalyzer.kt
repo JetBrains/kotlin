@@ -924,8 +924,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
     }
 
-    fun exitInitBlock(initBlock: FirAnonymousInitializer) {
-        graphBuilder.exitInitBlock(initBlock).mergeIncomingFlow()
+    fun exitInitBlock(initBlock: FirAnonymousInitializer): ControlFlowGraph {
+        val (node, controlFlowGraph) = graphBuilder.exitInitBlock(initBlock)
+        node.mergeIncomingFlow()
+        return controlFlowGraph
     }
 
     // ------------------------------------------------------ Utils ------------------------------------------------------

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -21,6 +22,9 @@ abstract class FirAnonymousInitializer : FirPureAbstractElement(), FirDeclaratio
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
     abstract val body: FirBlock?
+    abstract val controlFlowGraphReference: FirControlFlowGraphReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousInitializer(this, data)
+
+    abstract fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousInitializer
 }

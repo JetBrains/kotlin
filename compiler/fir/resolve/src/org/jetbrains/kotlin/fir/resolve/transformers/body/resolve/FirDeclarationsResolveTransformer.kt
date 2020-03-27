@@ -442,9 +442,9 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             dataFlowAnalyzer.enterInitBlock(anonymousInitializer)
             addLocalScope(primaryConstructorParametersScope)
             addLocalScope(FirLocalScope())
-            transformDeclarationContent(anonymousInitializer, ResolutionMode.ContextIndependent).also {
-                dataFlowAnalyzer.exitInitBlock(it.single as FirAnonymousInitializer)
-            }
+            val result = transformDeclarationContent(anonymousInitializer, ResolutionMode.ContextIndependent).single as FirAnonymousInitializer
+            val graph = dataFlowAnalyzer.exitInitBlock(result)
+            result.transformControlFlowGraphReference(ControlFlowGraphReferenceTransformer, graph).compose()
         }
     }
 

@@ -54,4 +54,27 @@ digraph smartCastInInit_kt {
 
     13 -> {14};
 
+    subgraph cluster_5 {
+        color=red
+        15 [label="Enter init block" style="filled" fillcolor=red];
+        subgraph cluster_6 {
+            color=blue
+            16 [label="Enter block"];
+            17 [label="Function call: R|/s|()"];
+            18 [label="Assignmenet: R|/Main.x|"];
+            19 [label="Access variable R|/Main.x|"];
+            20 [label="Function call: this@R|/Main|.R|/Main.x|.R|/S.foo|()"];
+            21 [label="Exit block"];
+        }
+        22 [label="Exit init block" style="filled" fillcolor=red];
+    }
+
+    15 -> {16};
+    16 -> {17};
+    17 -> {18};
+    18 -> {19};
+    19 -> {20};
+    20 -> {21};
+    21 -> {22};
+
 }

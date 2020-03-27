@@ -367,6 +367,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         anonymousInitializer.configure {
             +body(nullable = true)
+            +controlFlowGraphReferenceField
         }
 
         file.configure {

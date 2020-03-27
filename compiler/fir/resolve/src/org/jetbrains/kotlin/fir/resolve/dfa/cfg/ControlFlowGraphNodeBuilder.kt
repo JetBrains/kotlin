@@ -15,11 +15,15 @@ fun ControlFlowGraphBuilder.createLoopExitNode(fir: FirLoop): LoopExitNode = Loo
 
 fun ControlFlowGraphBuilder.createLoopEnterNode(fir: FirLoop): LoopEnterNode = LoopEnterNode(graph, fir, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createInitBlockExitNode(fir: FirAnonymousInitializer): InitBlockExitNode =
-    InitBlockExitNode(graph, fir, levelCounter, createId())
-
 fun ControlFlowGraphBuilder.createInitBlockEnterNode(fir: FirAnonymousInitializer): InitBlockEnterNode =
-    InitBlockEnterNode(graph, fir, levelCounter, createId())
+    InitBlockEnterNode(graph, fir, levelCounter, createId()).also {
+        graph.enterNode = it
+    }
+
+fun ControlFlowGraphBuilder.createInitBlockExitNode(fir: FirAnonymousInitializer): InitBlockExitNode =
+    InitBlockExitNode(graph, fir, levelCounter, createId()).also {
+        graph.exitNode = it
+    }
 
 fun ControlFlowGraphBuilder.createTypeOperatorCallNode(fir: FirTypeOperatorCall): TypeOperatorCallNode =
     TypeOperatorCallNode(graph, fir, levelCounter, createId())
