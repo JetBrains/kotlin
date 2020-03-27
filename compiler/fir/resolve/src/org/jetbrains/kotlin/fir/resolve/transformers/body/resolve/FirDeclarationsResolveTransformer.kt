@@ -16,8 +16,10 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildReturnExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildUnitExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.inference.FirDelegatedPropertyInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionalType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -324,7 +326,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         var result = withLabelAndReceiverType(null, anonymousObject, type) {
             transformDeclarationContent(anonymousObject, data).single as FirAnonymousObject
         }
-        if (!implicitTypeOnly) {
+        if (!implicitTypeOnly && result.controlFlowGraphReference == FirEmptyControlFlowGraphReference) {
             val graph = dataFlowAnalyzer.exitAnonymousObject(result)
             result = result.transformControlFlowGraphReference(ControlFlowGraphReferenceTransformer, graph)
         } else {

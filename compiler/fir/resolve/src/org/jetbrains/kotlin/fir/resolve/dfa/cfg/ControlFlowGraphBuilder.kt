@@ -83,13 +83,13 @@ class ControlFlowGraphBuilder {
         val invocationKind = function.invocationKind
         val isInplace = invocationKind.isInplace()
 
-        val previousNode = if (!isInplace && graphs.topOrNull()?.let { it.kind != ControlFlowGraph.Kind.TopLevel } == true) {
-            entersToPostponedAnonymousFunctions[function.symbol]
-                ?: enterToLocalClassesMembers[function.symbol]
-                ?: lastNodes.top()
-        } else {
-            null
-        }
+        val previousNode = entersToPostponedAnonymousFunctions[function.symbol]
+            ?: enterToLocalClassesMembers[function.symbol]
+            ?: if (!isInplace && graphs.topOrNull()?.let { it.kind == ControlFlowGraph.Kind.Function } == true) {
+                lastNodes.top()
+            } else {
+                null
+            }
 
         if (!isInplace) {
             graphs.push(ControlFlowGraph(function, name, ControlFlowGraph.Kind.Function))
@@ -108,6 +108,10 @@ class ControlFlowGraphBuilder {
                 lexicalScopes.push(stackOf())
                 lastNodes.push(it)
             }
+        }
+
+        if (previousNode != null && !isInplace) {
+            addEdge(previousNode, enterNode, preferredKind = EdgeKind.Dfg)
         }
         val exitNode = createFunctionExitNode(function, isInplace)
         if (function is FirAnonymousFunction) {
@@ -170,6 +174,12 @@ class ControlFlowGraphBuilder {
         } else {
             null
         }
+        if (graph != null) {
+            val previousGraph = graphs.top()
+            if (previousGraph.kind == ControlFlowGraph.Kind.Function) {
+                previousGraph.addSubGraph(graph)
+            }
+        }
         return exitNode to graph
     }
 
@@ -210,10 +220,12 @@ class ControlFlowGraphBuilder {
 
     fun enterClass() {
         levelCounter++
+        graphs.push(ControlFlowGraph(null, "STUB_CLASS_GRAPH", ControlFlowGraph.Kind.ClassInitializer))
     }
 
     fun exitClass() {
         levelCounter--
+        graphs.pop()
     }
 
     fun exitClass(klass: FirClass<*>): ControlFlowGraph {
@@ -225,7 +237,8 @@ class ControlFlowGraphBuilder {
             }
             else -> throw IllegalArgumentException("Unknown class kind: ${klass::class}")
         }
-        graphs.push(ControlFlowGraph(klass, name, ControlFlowGraph.Kind.ClassInitializer))
+        val classGraph = ControlFlowGraph(klass, name, ControlFlowGraph.Kind.ClassInitializer)
+        graphs.push(classGraph)
         var node: CFGNode<*> = createClassEnterNode(klass)
         for (declaration in klass.declarations) {
             val graph = when (declaration) {
@@ -235,6 +248,7 @@ class ControlFlowGraphBuilder {
             } ?: continue
             addEdge(node, graph.enterNode, preferredKind = EdgeKind.Cfg)
             node = graph.exitNode
+            classGraph.addSubGraph(graph)
         }
         val exitNode = createClassExitNode(klass)
         addEdge(node, exitNode, preferredKind = EdgeKind.Cfg)
@@ -314,7 +328,7 @@ class ControlFlowGraphBuilder {
     // ----------------------------------- Property -----------------------------------
 
     fun enterProperty(property: FirProperty): PropertyInitializerEnterNode {
-        graphs.push(ControlFlowGraph(property, "val ${property.name}", ControlFlowGraph.Kind.PropertyInitializer))
+        graphs.push(ControlFlowGraph(property, "val ${property.name}", ControlFlowGraph.Kind.Function))
         val enterNode = createPropertyInitializerEnterNode(property)
         val exitNode = createPropertyInitializerExitNode(property)
         topLevelVariableInitializerExitNodes.push(exitNode)
@@ -782,7 +796,7 @@ class ControlFlowGraphBuilder {
 
     fun enterAnnotationCall(annotationCall: FirAnnotationCall): AnnotationEnterNode {
         return createAnnotationEnterNode(annotationCall).also {
-            if (graphs.size > 1) {
+            if (graphs.top().kind == ControlFlowGraph.Kind.Function) {
                 addNewSimpleNode(it)
             } else {
                 lastNodes.push(it)

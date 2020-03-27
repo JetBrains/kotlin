@@ -28,8 +28,22 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
     lateinit var exitNode: CFGNode<*>
         internal set
 
+    var owner: ControlFlowGraph? = null
+        private set
+
+    private val _subGraphs: MutableList<ControlFlowGraph> = mutableListOf()
+    val subGraphs: List<ControlFlowGraph> get() = _subGraphs
+
+    internal fun addSubGraph(graph: ControlFlowGraph) {
+        assert(graph.owner == null) {
+            "SubGraph already has owner"
+        }
+        graph.owner = this
+        _subGraphs += graph
+    }
+
     enum class Kind {
-        Function, ClassInitializer, PropertyInitializer, TopLevel
+        Function, ClassInitializer, TopLevel
     }
 }
 
