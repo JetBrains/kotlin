@@ -13,19 +13,26 @@ import org.jetbrains.kotlin.fir.declarations.isInner
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessExpressionBuilder
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.resolve.transformQualifiedAccessUsingSmartcastInfo
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirStaticScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class FirTowerResolverSession internal constructor(
     val components: BodyResolveComponents,
@@ -85,11 +92,13 @@ class FirTowerResolverSession internal constructor(
 
         val levelHandler =
             LevelHandler(
-                callInfo, explicitReceiverKind, group,
-                callResolutionContext, manager, this, components,
             )
 
-        return levelHandler.handleLevel(towerLevel, invokeResolveMode).also {
+        return levelHandler.handleLevel(callInfo, explicitReceiverKind, group, callResolutionContext, towerLevel, invokeResolveMode) {
+            enqueueResolverTasksForInvokeReceiverCandidates(
+                invokeResolveMode, callInfo
+            )
+        }.also {
             manager.stopIfSuccess()
         }
     }
@@ -461,7 +470,7 @@ class FirTowerResolverSession internal constructor(
         )
     }
 
-    internal suspend fun runResolverForInvoke(
+    private suspend fun runResolverForInvoke(
         info: CallInfo,
         invokeReceiverValue: ExpressionReceiverValue
     ) {
@@ -503,7 +512,7 @@ class FirTowerResolverSession internal constructor(
     }
 
     // Here we already know extension receiver for invoke, and it's stated in info as first argument
-    internal suspend fun runResolverForBuiltinInvokeExtensionWithExplicitArgument(
+    private suspend fun runResolverForBuiltinInvokeExtensionWithExplicitArgument(
         info: CallInfo,
         invokeReceiverValue: ExpressionReceiverValue
     ) {
@@ -516,7 +525,7 @@ class FirTowerResolverSession internal constructor(
     }
 
     // Here we don't know extension receiver for invoke, assuming it's one of implicit receivers
-    internal suspend fun runResolverForBuiltinInvokeExtensionWithImplicitArgument(
+    private suspend fun runResolverForBuiltinInvokeExtensionWithImplicitArgument(
         info: CallInfo,
         invokeReceiverValue: ExpressionReceiverValue
     ) {
@@ -530,6 +539,88 @@ class FirTowerResolverSession internal constructor(
                 info, parentGroup.InvokeExtension,
                 ExplicitReceiverKind.DISPATCH_RECEIVER,
                 InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER
+            )
+        }
+    }
+
+    private fun enqueueResolverTasksForInvokeReceiverCandidates(
+        invokeResolveMode: InvokeResolveMode?,
+        info: CallInfo,
+    ) {
+        val invokeBuiltinExtensionMode = invokeResolveMode == InvokeResolveMode.RECEIVER_FOR_INVOKE_BUILTIN_EXTENSION
+
+        for (invokeReceiverCandidate in callResolutionContext.invokeReceiverCollector!!.bestCandidates()) {
+            val symbol = invokeReceiverCandidate.symbol
+            if (symbol !is FirCallableSymbol<*> && symbol !is FirRegularClassSymbol) continue
+
+            val isExtensionFunctionType =
+                (symbol as? FirCallableSymbol<*>)?.fir?.returnTypeRef?.isExtensionFunctionType(components.session) == true
+
+            if (invokeBuiltinExtensionMode && !isExtensionFunctionType) {
+                continue
+            }
+
+            val extensionReceiverExpression = invokeReceiverCandidate.extensionReceiverExpression()
+            val useImplicitReceiverAsBuiltinInvokeArgument =
+                !invokeBuiltinExtensionMode && isExtensionFunctionType &&
+                        invokeReceiverCandidate.explicitReceiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+
+            val invokeReceiverExpression = components.createExplicitReceiverForInvoke(invokeReceiverCandidate).let {
+                if (!invokeBuiltinExtensionMode) {
+                    it.extensionReceiver = extensionReceiverExpression
+                    // NB: this should fix problem in DFA (KT-36014)
+                    it.explicitReceiver = info.explicitReceiver
+                    it.safe = info.isSafeCall
+                }
+                components.transformQualifiedAccessUsingSmartcastInfo(it.build())
+            }
+
+            val invokeFunctionInfo =
+                info.copy(explicitReceiver = invokeReceiverExpression, name = OperatorNameConventions.INVOKE).let {
+                    when {
+                        invokeBuiltinExtensionMode -> it.withReceiverAsArgument(info.explicitReceiver!!)
+                        else -> it
+                    }
+                }
+
+            val explicitReceiver = ExpressionReceiverValue(invokeReceiverExpression)
+            callResolutionContext.invokeOnGivenReceiverCandidateFactory = CandidateFactory(components, invokeFunctionInfo)
+            enqueueResolverTasksForInvoke(
+                invokeFunctionInfo,
+                explicitReceiver,
+                invokeBuiltinExtensionMode,
+                useImplicitReceiverAsBuiltinInvokeArgument
+            )
+        }
+    }
+
+    private fun enqueueResolverTasksForInvoke(
+        invokeFunctionInfo: CallInfo,
+        explicitReceiver: ExpressionReceiverValue,
+        invokeBuiltinExtensionMode: Boolean,
+        useImplicitReceiverAsBuiltinInvokeArgument: Boolean
+    ) {
+        if (invokeBuiltinExtensionMode) {
+            manager.enqueueResolverTask {
+                runResolverForBuiltinInvokeExtensionWithExplicitArgument(
+                    invokeFunctionInfo, explicitReceiver
+                )
+            }
+
+            return
+        }
+
+        if (useImplicitReceiverAsBuiltinInvokeArgument) {
+            manager.enqueueResolverTask {
+                runResolverForBuiltinInvokeExtensionWithImplicitArgument(
+                    invokeFunctionInfo, explicitReceiver
+                )
+            }
+        }
+
+        manager.enqueueResolverTask {
+            runResolverForInvoke(
+                invokeFunctionInfo, explicitReceiver
             )
         }
     }
@@ -580,6 +671,28 @@ class FirTowerResolverSession internal constructor(
 
             return implicitReceivers to implicitReceiversUsableAsValues
         }
+    }
+}
 
+private fun BodyResolveComponents.createExplicitReceiverForInvoke(candidate: Candidate): FirQualifiedAccessExpressionBuilder {
+    val (name, typeRef) = when (val symbol = candidate.symbol) {
+        is FirCallableSymbol<*> -> {
+            symbol.callableId.callableName to returnTypeCalculator.tryCalculateReturnType(symbol.firUnsafe())
+        }
+        is FirRegularClassSymbol -> {
+            symbol.classId.shortClassName to buildResolvedTypeRef {
+                type = symbol.constructType(emptyArray(), isNullable = false)
+            }
+        }
+        else -> throw AssertionError()
+    }
+    return FirQualifiedAccessExpressionBuilder().apply {
+        calleeReference = FirNamedReferenceWithCandidate(
+            null,
+            name,
+            candidate
+        )
+        dispatchReceiver = candidate.dispatchReceiverExpression()
+        this.typeRef = typeRef
     }
 }
