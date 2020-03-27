@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 
 class Fir2IrConversionScope {
     private val parentStack = mutableListOf<IrDeclarationParent>()
@@ -75,6 +76,15 @@ class Fir2IrConversionScope {
     }
 
     fun parent(): IrDeclarationParent? = parentStack.lastOrNull()
+
+    fun dispatchReceiverParameter(irClass: IrClass): IrValueParameter? {
+        for (function in functionStack.asReversed()) {
+            if (function.parentClassOrNull == irClass) {
+                function.dispatchReceiverParameter?.let { return it }
+            }
+        }
+        return irClass.thisReceiver
+    }
 
     fun lastDispatchReceiverParameter(): IrValueParameter? {
         // Use the dispatch receiver of the containing/enclosing functions (from the last to the first)
