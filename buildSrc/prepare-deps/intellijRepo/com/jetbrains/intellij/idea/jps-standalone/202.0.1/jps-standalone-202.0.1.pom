@@ -2,7 +2,7 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.jetbrains.intellij.idea</groupId>
-  <artifactId>intellij-core</artifactId>
-  <version>202.0</version>
+  <artifactId>jps-standalone</artifactId>
+  <version>202.0.1</version>
   <packaging>zip</packaging>
 </project>

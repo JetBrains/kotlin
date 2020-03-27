@@ -2,7 +2,7 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.jetbrains.intellij.idea</groupId>
-  <artifactId>ideaIU</artifactId>
-  <version>202.0</version>
+  <artifactId>intellij-runtime-annotations</artifactId>
+  <version>202.0.1</version>
   <packaging>zip</packaging>
 </project>

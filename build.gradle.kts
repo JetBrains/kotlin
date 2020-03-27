@@ -352,7 +352,7 @@ allprojects {
 
         val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
 
-        if (intellijVersion.endsWith(".0")) {
+        if (intellijVersion.startsWith("202.0.")) {
             val repoDir = File(rootProject.projectDir, "buildSrc/prepare-deps/intellijRepo")
             maven("file://" + repoDir.absolutePath.replace(File.separatorChar, '/'))
         } else if (intellijVersion.startsWith("202.")) {

@@ -88,7 +88,7 @@ repositories {
         }
     }
 
-    if (intellijVersion.endsWith(".0")) {
+    if (intellijVersion.startsWith("202.0.")) {
         val repoDir = File(project.projectDir, "intellijRepo")
         maven("file://" + repoDir.absolutePath.replace(File.separatorChar, '/'))
     } else if (intellijVersion.startsWith("202.")) {
