@@ -26,8 +26,10 @@ import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.plugins.gradle.service.project.GradlePartialResolverPolicy
+import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverExtension
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
+import java.util.function.Predicate
 
 fun runPartialGradleImport(project: Project) {
     val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
@@ -39,9 +41,7 @@ fun runPartialGradleImport(project: Project) {
         projectSettings.externalProjectPath,
         ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
             .projectResolverPolicy(
-                GradlePartialResolverPolicy {
-                    it is KotlinDslScriptModelResolver
-                }
+                GradlePartialResolverPolicy(Predicate<GradleProjectResolverExtension?> { it is KotlinDslScriptModelResolver })
             )
     )
 }
