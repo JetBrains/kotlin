@@ -12,6 +12,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.util.io.exists
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
+import org.jetbrains.kotlin.checkers.utils.DiagnosticsRenderingConfiguration
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromTextFile
 import org.jetbrains.kotlin.idea.project.KotlinMultiplatformAnalysisModeComponent
@@ -81,9 +82,11 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
             file,
             markDynamicCalls = false,
             dynamicCallDescriptors = mutableListOf(),
-            platform = null, // we don't need to attach platform-description string to diagnostic here
-            withNewInference = false,
-            languageVersionSettings = resolutionFacade.frontendService(),
+            configuration = DiagnosticsRenderingConfiguration(
+                platform = null, // we don't need to attach platform-description string to diagnostic here
+                withNewInference = false,
+                languageVersionSettings = resolutionFacade.frontendService(),
+            ),
             dataFlowValueFactory = resolutionFacade.frontendService(),
             moduleDescriptor = moduleDescriptor as ModuleDescriptorImpl
         ).filter { diagnosticsFilter.value(it.diagnostic) }

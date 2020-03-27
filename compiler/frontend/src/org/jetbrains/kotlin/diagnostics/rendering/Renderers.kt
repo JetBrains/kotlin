@@ -740,12 +740,11 @@ object Renderers {
         return typesAsString.sorted().joinToString(separator = " & ")
     }
 
-    fun renderCallInfo(fqName: FqNameUnsafe?, typeCall: String?): String {
-        val info = java.lang.StringBuilder()
-        info.append("fqName: ${fqName?.asString() ?: "fqName is unknown"}; ")
-        info.append("typeCall: ${typeCall ?: "typeCall is unknown"}")
-        return info.toString()
-    }
+    fun renderCallInfo(fqName: FqNameUnsafe?, typeCall: String) =
+        buildString {
+            append("fqName: ${fqName?.asString() ?: "fqName is unknown"}; ")
+            append("typeCall: $typeCall")
+        }
 }
 
 fun DescriptorRenderer.asRenderer() = SmartDescriptorRenderer(this)

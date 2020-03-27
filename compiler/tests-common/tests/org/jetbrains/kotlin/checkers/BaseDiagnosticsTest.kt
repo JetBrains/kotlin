@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.checkers.diagnostics.TextDiagnostic
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory0
 import org.jetbrains.kotlin.checkers.diagnostics.factories.SyntaxErrorDiagnosticFactory
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
+import org.jetbrains.kotlin.checkers.utils.DiagnosticsRenderingConfiguration
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -260,8 +261,11 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 ktFile,
                 markDynamicCalls,
                 dynamicCallDescriptors,
-                newInferenceEnabled,
-                languageVersionSettings,
+                DiagnosticsRenderingConfiguration(
+                    platform = null,
+                    withNewInference,
+                    languageVersionSettings,
+                ),
                 DataFlowValueFactoryImpl(languageVersionSettings),
                 moduleDescriptor,
                 this.diagnosedRangesToDiagnosticNames
