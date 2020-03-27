@@ -34,6 +34,7 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.FileBasedIndexProjectHandler;
+import com.intellij.util.indexing.IndexingBundle;
 import com.intellij.util.indexing.UnindexedFilesUpdater;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -186,6 +187,8 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
     DumbModeTask task = new DumbModeTask(this) {
       @Override
       public void performInDumbMode(@NotNull ProgressIndicator indicator) {
+        indicator.setIndeterminate(true);
+        indicator.setText(IndexingBundle.message("progress.indexing.scanning"));
         performPushTasks();
       }
     };

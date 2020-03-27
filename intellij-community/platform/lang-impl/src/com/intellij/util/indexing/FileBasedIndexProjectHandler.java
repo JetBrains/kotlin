@@ -130,12 +130,12 @@ public final class FileBasedIndexProjectHandler implements IndexableFileSet {
     return new DumbModeTask(project.getService(FileBasedIndexProjectHandler.class)) {
       @Override
       public void performInDumbMode(@NotNull ProgressIndicator indicator) {
+        indicator.setIndeterminate(false);
+        indicator.setText(IndexingBundle.message("progress.indexing.updating"));
+
         long start = System.currentTimeMillis();
         Collection<VirtualFile> files = index.getFilesToUpdate(project);
         long calcDuration = System.currentTimeMillis() - start;
-
-        indicator.setIndeterminate(false);
-        indicator.setText(IndexingBundle.message("progress.indexing.updating"));
 
         LOG.info("Reindexing refreshed files: " + files.size() + " to update, calculated in " + calcDuration + "ms");
         if (!files.isEmpty()) {
