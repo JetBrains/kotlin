@@ -2,7 +2,6 @@
 package com.intellij.openapi.roots.impl;
 
 import com.intellij.ProjectTopics;
-import com.intellij.diagnostic.PluginException;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
@@ -358,25 +357,18 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
 
   private void doApplyPushersToFile(@NotNull VirtualFile fileOrDir,
                                     @NotNull List<? extends FilePropertyPusher<?>> pushers,
-                                    Object[] moduleValues) {
-    FilePropertyPusher<Object> pusher = null;
-    try {
-      final boolean isDir = fileOrDir.isDirectory();
-      for (int i = 0; i < pushers.size(); i++) {
-        //noinspection unchecked
-        pusher = (FilePropertyPusher<Object>)pushers.get(i);
-        if (isDir
-            ? !pusher.acceptsDirectory(fileOrDir, myProject)
-            : pusher.pushDirectoriesOnly() || !pusher.acceptsFile(fileOrDir, myProject)) {
-          continue;
-        }
-        Object value = moduleValues != null ? moduleValues[i] : null;
-        findAndUpdateValue(fileOrDir, pusher, value);
+                                    Object @Nullable[] moduleValues) {
+    final boolean isDir = fileOrDir.isDirectory();
+    for (int i = 0; i < pushers.size(); i++) {
+      //noinspection unchecked
+      FilePropertyPusher<Object> pusher = (FilePropertyPusher<Object>)pushers.get(i);
+      if (isDir
+          ? !pusher.acceptsDirectory(fileOrDir, myProject)
+          : pusher.pushDirectoriesOnly() || !pusher.acceptsFile(fileOrDir, myProject)) {
+        continue;
       }
-    }
-    catch (AbstractMethodError ame) { // acceptsDirectory is missed
-      if (pusher != null) throw PluginException.createByClass("Failed to apply pusher " + pusher.getClass(), ame, pusher.getClass());
-      throw ame;
+      Object value = moduleValues != null ? moduleValues[i] : null;
+      findAndUpdateValue(fileOrDir, pusher, value);
     }
   }
 
