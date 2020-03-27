@@ -121,6 +121,8 @@ fun IrElement.dumpSrc(): String {
         .replace(Regex("%tab%", RegexOption.MULTILINE), "")
             // remove empty lines
         .replace(Regex("\\n(\\s)*$", RegexOption.MULTILINE), "")
+            // brackets with comma on new line
+        .replace(Regex("}\\n(\\s)*,", RegexOption.MULTILINE), "},")
 }
 
 private class IrSourcePrinterVisitor(
@@ -385,10 +387,15 @@ private class IrSourcePrinterVisitor(
         }
 
         if (isInfix) {
+            val prev = printIntsAsBinary
+            if (name == "xor" || name == "and" || name == "or") {
+                printIntsAsBinary = true
+            }
             expression.dispatchReceiver?.print()
                 ?: expression.extensionReceiver?.print()
             print(" $name ")
             expression.getValueArgument(0)?.print()
+            printIntsAsBinary = prev
             return
         }
 
@@ -409,20 +416,18 @@ private class IrSourcePrinterVisitor(
             print(".")
         }
 
-        when (function.origin) {
-            IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR -> {
-                val prop = (function as IrSimpleFunction).correspondingPropertySymbol!!.owner
-                val propName = prop.name.asString()
-                print(propName)
-                if (function == prop.setter) {
-                    print(" = ")
-                    expression.getValueArgument(0)?.print()
-                }
+        val prop = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
+
+        if (prop != null) {
+            val propName = prop.name.asString()
+            print(propName)
+            if (function == prop.setter) {
+                print(" = ")
+                expression.getValueArgument(0)?.print()
             }
-            else -> {
-                print(name)
-                expression.printArgumentList()
-            }
+        } else {
+            print(name)
+            expression.printArgumentList()
         }
     }
 
@@ -449,7 +454,6 @@ private class IrSourcePrinterVisitor(
                 val param = symbol.owner.valueParameters[i]
                 val isTrailingLambda = i == symbol.owner.valueParameters.size - 1 &&
                         !isLeafEmit &&
-                        param.type.isFunction() &&
                         (
                             arg is IrFunctionExpression ||
                             (arg is IrBlock && arg.origin == IrStatementOrigin.LAMBDA)
@@ -597,7 +601,24 @@ private class IrSourcePrinterVisitor(
     override fun visitWhen(expression: IrWhen) {
         val isIf = expression.origin == IrStatementOrigin.IF || expression is IrIfThenElseImpl
         when {
+            expression.origin == IrStatementOrigin.OROR -> {
+                val lhs = expression.branches[0].condition
+                val rhs = expression.branches[1].result
+                lhs.print()
+                print(" || ")
+                rhs.print()
+            }
+            expression.origin == IrStatementOrigin.ANDAND -> {
+                val lhs = expression.branches[0].condition
+                val rhs = expression.branches[0].result
+                lhs.print()
+                print(" && ")
+                rhs.print()
+            }
             isIf -> {
+                val singleLine = expression.branches.all {
+                    it.result is IrConst<*> || it.result is IrGetValue
+                }
                 expression.branches.forEachIndexed { index, branch ->
                     val isElse = index == expression.branches.size - 1 &&
                             (branch.condition as? IrConst<*>)?.value == true
@@ -605,23 +626,38 @@ private class IrSourcePrinterVisitor(
                         index == 0 -> {
                             print("if (")
                             branch.condition.print()
-                            println(") {")
+                            if (singleLine)
+                                print(") ")
+                            else
+                                println(") {")
                         }
                         isElse -> {
-                            println("} else {")
+                            if (singleLine)
+                                print(" else ")
+                            else
+                                println("} else {")
                         }
                         else -> {
-                            print("} else if (")
+                            if (singleLine)
+                                print(" else if (")
+                            else
+                                print("} else if (")
                             branch.condition.print()
-                            println(") {")
+                            if (singleLine)
+                                print(") ")
+                            else
+                                println(") {")
                         }
                     }
-                    indented {
+                    if (singleLine)
+                        branch.result.print()
+                    else indented {
                         branch.result.print()
                         println()
                     }
                 }
-                println("}")
+                if (!singleLine)
+                    println("}")
             }
             else -> {
                 print("when ")
@@ -698,6 +734,19 @@ private class IrSourcePrinterVisitor(
                 val classImpl = expression.statements[0] as IrClass
                 classImpl.printAsObject()
             }
+            IrStatementOrigin.SAFE_CALL -> {
+                val lhs = expression.statements[0] as IrVariable
+                val rhs = expression.statements[1] as IrWhen
+                val call = rhs.branches.last().result as? IrCall
+                if (call == null) {
+                    expression.statements.printJoin("\n")
+                    return
+                }
+                lhs.initializer?.print()
+                print("?.")
+                print(call.descriptor.name)
+                call.printArgumentList()
+            }
             else -> {
                 expression.statements.printJoin("\n")
             }
@@ -724,8 +773,14 @@ private class IrSourcePrinterVisitor(
         print(expression.symbol.owner.name)
     }
 
-    override fun visitVariableAccess(expression: IrValueAccessExpression) {
+    override fun visitGetValue(expression: IrGetValue) {
         print(expression.symbol.owner.name)
+    }
+
+    override fun visitSetVariable(expression: IrSetVariable) {
+        print(expression.symbol.owner.name)
+        print(" = ")
+        expression.value.print()
     }
 
     override fun visitExpressionBody(body: IrExpressionBody) {
@@ -795,7 +850,7 @@ private class IrSourcePrinterVisitor(
         if (value == 0) return "0"
         var current = value
         var result = ""
-        while (current != 0) {
+        while (current != 0 || result.length % 4 != 0) {
             val nextBit = current and 1 != 0
             current = current shr 1
             result = "${if (nextBit) "1" else "0"}$result"
@@ -964,14 +1019,6 @@ private class IrSourcePrinterVisitor(
         super.visitFunctionAccess(expression)
     }
 
-    override fun visitGetValue(expression: IrGetValue) {
-        super.visitGetValue(expression)
-    }
-
-    override fun visitSetVariable(expression: IrSetVariable) {
-        super.visitSetVariable(expression)
-    }
-
     override fun visitBranch(branch: IrBranch) {
         print("<<BRANCH>>")
     }
@@ -1028,6 +1075,10 @@ private class IrSourcePrinterVisitor(
 
     override fun visitSpreadElement(spread: IrSpreadElement) {
         print("<<SPREAD>>")
+    }
+
+    override fun visitVariableAccess(expression: IrValueAccessExpression) {
+        print("<<VARACCESS>>")
     }
 
     override fun visitTry(aTry: IrTry) {
