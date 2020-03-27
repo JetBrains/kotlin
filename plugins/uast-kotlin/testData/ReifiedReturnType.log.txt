@@ -1,0 +1,104 @@
+UFile (package = )
+    UClass (name = ReifiedReturnTypeKt)
+        UMethod (name = function1)
+            UParameter (name = t)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UParameter (name = i)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UParameter (name = s)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+        UMethod (name = function2)
+            UParameter (name = t)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UParameter (name = i)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UParameter (name = s)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = t)
+        UMethod (name = function3)
+            UParameter (name = t)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UParameter (name = i)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UParameter (name = s)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+        UMethod (name = function4)
+            UParameter (name = t)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UParameter (name = i)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UParameter (name = s)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = t)
+        UMethod (name = function5)
+            UParameter (name = t)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UParameter (name = i)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UParameter (name = s)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    ULiteralExpression (value = 42)
+        UMethod (name = function6)
+            UParameter (name = t)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UParameter (name = i)
+            UParameter (name = s)
+            UBlockExpression
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = t)
+        UMethod (name = function7)
+            UParameter (name = t)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UParameter (name = i)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UParameter (name = s)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = t)
+        UMethod (name = function8)
+            UParameter (name = t)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UParameter (name = i)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UParameter (name = s)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = t)
+        UMethod (name = function9)
+            UParameter (name = t)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UParameter (name = i)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UParameter (name = s)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = t)
+        UMethod (name = function10)
+            UParameter (name = t)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UParameter (name = i)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UParameter (name = s)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = t)
+        UMethod (name = function11)
+            UParameter (name = t)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UParameter (name = i)
+            UParameter (name = s)
+            UBlockExpression
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = t)

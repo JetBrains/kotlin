@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.*
 import org.jetbrains.uast.expressions.UInjectionHost
 import org.jetbrains.uast.kotlin.KotlinConverter.convertDeclaration
@@ -51,6 +52,7 @@ import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethodWithFakeLightDelegate
 import org.jetbrains.uast.kotlin.expressions.*
+import org.jetbrains.uast.kotlin.psi.UastFakeLightMethod
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
@@ -194,6 +196,7 @@ internal object KotlinConverter {
         is KtLightParameterList -> unwrapElements(element.parent)
         is KtTypeElement -> unwrapElements(element.parent)
         is KtSuperTypeList -> unwrapElements(element.parent)
+        is KtFinallySection -> unwrapElements(element.parent)
         else -> element
     }
 
@@ -487,6 +490,7 @@ internal object KotlinConverter {
         return with(expectedTypes) {
             when (original) {
                 is KtLightMethod -> el<UMethod>(build(KotlinUMethod.Companion::create))   // .Companion is needed because of KT-13934
+                is UastFakeLightMethod -> el<UMethod> { KotlinUMethodWithFakeLightDelegate(original.original, original, givenParent) }
                 is KtLightClass -> when (original.kotlinOrigin) {
                     is KtEnumEntry -> el<UEnumConstant> {
                         convertEnumEntry(original.kotlinOrigin as KtEnumEntry, givenParent)
@@ -526,9 +530,7 @@ internal object KotlinConverter {
                             if (lightMethod != null)
                                 convertDeclaration(lightMethod, givenParent, expectedTypes)
                             else {
-                                val ktLightClass = original.containingClassOrObject?.toLightClass()
-                                    ?: original.containingKtFile.findFacadeClass()
-                                    ?: return null
+                                val ktLightClass = getLightClassForFakeMethod(original) ?: return null
                                 KotlinUMethodWithFakeLightDelegate(original, ktLightClass, givenParent)
                             }
                         }
@@ -564,6 +566,10 @@ internal object KotlinConverter {
         }
     }
 
+    private fun getLightClassForFakeMethod(original: KtFunction): KtLightClass? {
+        if (original.isLocal) return null
+        return (original.containingClassOrObject?.toLightClass() ?: original.containingKtFile.findFacadeClass())
+    }
 
     fun convertDeclarationOrElement(
         element: PsiElement,
@@ -613,11 +619,18 @@ internal object KotlinConverter {
         alternative uParam@{
             val lightMethod = when (val ownerFunction = element.ownerFunction) {
                 is KtFunction -> LightClassUtil.getLightClassMethod(ownerFunction)
+                    ?: getLightClassForFakeMethod(ownerFunction)
+                        ?.takeIf { !it.isAnnotationType }
+                        ?.let { UastFakeLightMethod(ownerFunction, it) }
                 is KtPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(ownerFunction)
                 else -> null
             } ?: return@uParam null
             val lightParameter = lightMethod.parameterList.parameters.find { it.name == element.name } ?: return@uParam null
             KotlinUParameter(lightParameter, element, givenParent)
+        },
+        alternative catch@{
+            val uCatchClause = element.parent?.parent?.safeAs<KtCatchClause>()?.toUElementOfType<UCatchClause>() ?: return@catch null
+            uCatchClause.parameters.firstOrNull { it.sourcePsi == element }
         },
         *convertToPropertyAlternatives(LightClassUtil.getLightClassPropertyMethods(element), givenParent)
     )

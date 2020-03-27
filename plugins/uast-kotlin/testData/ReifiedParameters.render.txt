@@ -1,0 +1,14 @@
+public final class ReifiedParametersKt {
+    fun functionWithLambda(@org.jetbrains.annotations.Nullable t: T, @org.jetbrains.annotations.NotNull process: kotlin.jvm.functions.Function1<? super T,? extends java.lang.Integer>) : int {
+        return invoke(t)
+    }
+    fun functionWithVararg(@org.jetbrains.annotations.Nullable i: int, @org.jetbrains.annotations.Nullable t: T) : T {
+        return t[0]
+    }
+    fun functionWithParamAnnotation(@org.jetbrains.annotations.Nullable @kotlin.Suppress(names = "s") t: T) : T {
+        return t
+    }
+    fun functionUnresolved(@org.jetbrains.annotations.NotNull @kotlin.Suppress(names = "s") t: <ErrorType>) : T {
+        return t
+    }
+}

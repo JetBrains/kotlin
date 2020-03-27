@@ -232,7 +232,7 @@ internal abstract class AbstractScriptConfigurationManager(
     }
 
     init {
-        val connection = project.messageBus.connect()
+        val connection = project.messageBus.connect(project)
         connection.subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
             override fun rootsChanged(event: ModuleRootEvent) {
                 clearClassRootsCaches()

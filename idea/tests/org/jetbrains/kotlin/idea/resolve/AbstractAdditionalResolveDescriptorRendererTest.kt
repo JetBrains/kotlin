@@ -9,7 +9,6 @@ import com.intellij.mock.MockProject
 import com.intellij.pom.PomModel
 import com.intellij.pom.core.impl.PomModelImpl
 import com.intellij.pom.tree.TreeAspect
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -33,19 +32,12 @@ abstract class AbstractAdditionalResolveDescriptorRendererTest : AbstractDescrip
         val pomModelImpl = PomModelImpl(project)
         val treeAspect = TreeAspect(pomModelImpl)
 
-        (project as MockProject).registerService(PomModel::class.java, pomModelImpl)
-        (project.picoContainer as MutablePicoContainer).registerComponentInstance(
-            KotlinCodeBlockModificationListener(
-                PsiModificationTracker.SERVICE.getInstance(project),
-                project,
-                treeAspect
-            )
-        )
+        val mockProject = project as MockProject
+        createAndRegisterKotlinCodeBlockModificationListener(mockProject, pomModelImpl, treeAspect)
     }
 
     override fun tearDown() {
-        (project.picoContainer as MutablePicoContainer).unregisterComponent(KotlinCodeBlockModificationListener::class.java)
-        (project.picoContainer as MutablePicoContainer).unregisterComponent(PomModel::class.java)
+        unregisterKotlinCodeBlockModificationListener(project as MockProject)
 
         super.tearDown()
     }

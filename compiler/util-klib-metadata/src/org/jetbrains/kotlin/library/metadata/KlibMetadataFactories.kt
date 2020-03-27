@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.storage.StorageManager
 /**
  * The default Kotlin/Native factories.
  */
-open class KlibMetadataFactories(
-    createBuiltIns:(StorageManager) -> KotlinBuiltIns,
+class KlibMetadataFactories(
+    createBuiltIns: (StorageManager) -> KotlinBuiltIns,
     val flexibleTypeDeserializer: FlexibleTypeDeserializer,
     val platformDependentTypeTransformer: PlatformDependentTypeTransformer
 ) {

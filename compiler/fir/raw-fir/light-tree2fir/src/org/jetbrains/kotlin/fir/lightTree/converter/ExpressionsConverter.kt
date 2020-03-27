@@ -55,7 +55,11 @@ class ExpressionsConverter(
 ) : BaseConverter(session, tree, offset, context) {
 
     inline fun <reified R : FirElement> getAsFirExpression(expression: LighterASTNode?, errorReason: String = ""): R {
-        return expression?.let { convertExpression(it, errorReason) } as? R ?: (buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.Syntax)) as R)
+        return expression?.let {
+            convertExpression(it, errorReason)
+        } as? R ?: buildErrorExpression(
+            null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionRequired)
+        ) as R
     }
 
     /*****    EXPRESSIONS    *****/
@@ -103,7 +107,7 @@ class ExpressionsConverter(
 
                 OBJECT_LITERAL -> declarationsConverter.convertObjectLiteral(expression)
                 FUN -> declarationsConverter.convertFunctionDeclaration(expression)
-                else -> buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.Syntax))
+                else -> buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionRequired))
             }
         }
 
@@ -310,9 +314,13 @@ class ExpressionsConverter(
     private fun convertUnaryExpression(unaryExpression: LighterASTNode): FirExpression {
         lateinit var operationTokenName: String
         var argument: LighterASTNode? = null
+        var operationReference: LighterASTNode? = null
         unaryExpression.forEachChildren {
             when (it.tokenType) {
-                OPERATION_REFERENCE -> operationTokenName = it.asText
+                OPERATION_REFERENCE -> {
+                    operationReference = it
+                    operationTokenName = it.asText
+                }
                 else -> if (it.isExpression()) argument = it
             }
         }
@@ -330,7 +338,8 @@ class ExpressionsConverter(
             conventionCallName != null -> {
                 if (operationToken in OperatorConventions.INCREMENT_OPERATIONS) {
                     return generateIncrementOrDecrementBlock(
-                        null,
+                        unaryExpression,
+                        operationReference,
                         argument,
                         callName = conventionCallName,
                         prefix = unaryExpression.tokenType == PREFIX_EXPRESSION
@@ -548,7 +557,7 @@ class ExpressionsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseStringTemplate
      */
     private fun convertStringTemplate(stringTemplate: LighterASTNode): FirExpression {
-        return stringTemplate.getChildrenAsArray().toInterpolatingCall(null) { convertShortOrLongStringTemplate(it) }
+        return stringTemplate.getChildrenAsArray().toInterpolatingCall(stringTemplate) { convertShortOrLongStringTemplate(it) }
     }
 
     private fun LighterASTNode?.convertShortOrLongStringTemplate(errorReason: String): FirExpression {
@@ -1053,8 +1062,9 @@ class ExpressionsConverter(
         }
 
         val jumpBuilder = if (isBreak) FirBreakExpressionBuilder() else FirContinueExpressionBuilder()
+        val sourceElement = jump.toFirSourceElement()
         return jumpBuilder.apply {
-            source = jump.toFirSourceElement()
+            source = sourceElement
         }.bindLabel(jump).build()
     }
 

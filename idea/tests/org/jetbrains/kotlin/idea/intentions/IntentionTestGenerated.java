@@ -3343,6 +3343,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/changeVisibility/private/noModifierListFun.kt");
             }
 
+            @TestMetadata("noModifierListFunInterface.kt")
+            public void testNoModifierListFunInterface() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/private/noModifierListFunInterface.kt");
+            }
+
             @TestMetadata("noModifierListInterface.kt")
             public void testNoModifierListInterface() throws Exception {
                 runTest("idea/testData/intentions/changeVisibility/private/noModifierListInterface.kt");

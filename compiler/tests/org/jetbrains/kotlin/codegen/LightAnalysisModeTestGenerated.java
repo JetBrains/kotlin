@@ -14815,6 +14815,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/ir/fileClassInitializers.kt");
         }
 
+        @TestMetadata("genericCompanion.kt")
+        public void testGenericCompanion() throws Exception {
+            runTest("compiler/testData/codegen/box/ir/genericCompanion.kt");
+        }
+
         @TestMetadata("kt25405.kt")
         public void testKt25405() throws Exception {
             runTest("compiler/testData/codegen/box/ir/kt25405.kt");
@@ -19919,6 +19924,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("initOrderMultiModule.kt")
         public void testInitOrderMultiModule() throws Exception {
             runTest("compiler/testData/codegen/box/properties/initOrderMultiModule.kt");
+        }
+
+        @TestMetadata("javaGenericSynthProperty.kt")
+        public void testJavaGenericSynthProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/javaGenericSynthProperty.kt");
         }
 
         @TestMetadata("javaPropertyBoxedGetter.kt")
@@ -26651,6 +26661,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("interpolation.kt")
         public void testInterpolation() throws Exception {
             runTest("compiler/testData/codegen/box/strings/interpolation.kt");
+        }
+
+        @TestMetadata("javaToStringNPE.kt")
+        public void testJavaToStringNPE() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/javaToStringNPE.kt");
         }
 
         @TestMetadata("kt2592.kt")

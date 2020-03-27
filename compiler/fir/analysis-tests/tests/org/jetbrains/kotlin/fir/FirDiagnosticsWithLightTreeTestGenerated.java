@@ -740,6 +740,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("incompatibleModifiers.kt")
+        public void testIncompatibleModifiers() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/incompatibleModifiers.kt");
+        }
+
         @TestMetadata("infixFunctions.kt")
         public void testInfixFunctions() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/infixFunctions.kt");
@@ -748,6 +753,16 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestMetadata("notASupertype.kt")
         public void testNotASupertype() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/notASupertype.kt");
+        }
+
+        @TestMetadata("redundantModifier.kt")
+        public void testRedundantModifier() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/redundantModifier.kt");
+        }
+
+        @TestMetadata("repeatedModifier.kt")
+        public void testRepeatedModifier() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/repeatedModifier.kt");
         }
 
         @TestMetadata("superIsNotAnExpression.kt")

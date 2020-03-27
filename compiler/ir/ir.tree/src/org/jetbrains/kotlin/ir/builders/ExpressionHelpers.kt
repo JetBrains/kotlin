@@ -349,7 +349,7 @@ inline fun IrBuilderWithScope.irBlock(
     origin: IrStatementOrigin? = null,
     resultType: IrType? = null,
     body: IrBlockBuilder.() -> Unit
-): IrExpression =
+): IrContainerExpression =
     IrBlockBuilder(
         context, scope,
         startOffset,

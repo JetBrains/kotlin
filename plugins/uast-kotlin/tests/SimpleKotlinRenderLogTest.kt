@@ -131,10 +131,19 @@ class SimpleKotlinRenderLogTest : AbstractKotlinUastTest(), AbstractKotlinRender
     fun testReified() = doTest("Reified")
 
     @Test
+    fun testReifiedReturnType() = doTest("ReifiedReturnType")
+
+    @Test
+    fun testReifiedParameters() = doTest("ReifiedParameters")
+
+    @Test
     fun testSuspend() = doTest("Suspend")
 
     @Test
     fun testDeprecatedHidden() = doTest("DeprecatedHidden")
+
+    @Test
+    fun testTryCatch() = doTest("TryCatch")
 }
 
 fun withForceUInjectionHostValue(call: () -> Unit) {

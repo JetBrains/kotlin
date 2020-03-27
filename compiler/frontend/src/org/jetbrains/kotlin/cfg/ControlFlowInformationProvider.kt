@@ -745,6 +745,11 @@ class ControlFlowInformationProvider private constructor(
                             }
                             return
                         }
+                        else -> {
+                            if (owner.containingClassOrObject != null) {
+                                return
+                            }
+                        }
                     }
                 }
                 if (functionDescriptor.isOperator && functionName in OperatorNameConventions.DELEGATED_PROPERTY_OPERATORS) {

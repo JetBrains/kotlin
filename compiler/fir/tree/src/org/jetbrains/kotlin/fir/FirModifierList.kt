@@ -37,14 +37,34 @@ class FirLightModifierList(val modifierList: LighterASTNode, val tree: Flyweight
             val modifierNodes = kidsRef.get()
             return modifierNodes.filterNotNull()
                 .filter { it.tokenType is KtModifierKeywordToken }
-                .map { FirLightModifier(it, it.tokenType as KtModifierKeywordToken) }
+                .map { FirLightModifier(it, it.tokenType as KtModifierKeywordToken, tree) }
         }
 }
 
 sealed class FirModifier<Node : Any>(val node: Node, val token: KtModifierKeywordToken)
 
-class FirPsiModifier(node: ASTNode, token: KtModifierKeywordToken) : FirModifier<ASTNode>(node, token)
+class FirPsiModifier(
+    node: ASTNode,
+    token: KtModifierKeywordToken
+) : FirModifier<ASTNode>(node, token)
 
-class FirLightModifier(node: LighterASTNode, token: KtModifierKeywordToken) : FirModifier<LighterASTNode>(node, token)
+class FirLightModifier(
+    node: LighterASTNode,
+    token: KtModifierKeywordToken,
+    val tree: FlyweightCapableTreeStructure<LighterASTNode>
+) : FirModifier<LighterASTNode>(node, token)
 
 val FirModifier<*>.psi: PsiElement? get() = (this as? FirPsiModifier)?.node?.psi
+
+val FirModifier<*>.lightNode: LighterASTNode? get() = (this as? FirLightModifier)?.node
+
+val FirModifier<*>.source: FirSourceElement?
+    get() = when (this) {
+        is FirPsiModifier -> this.psi?.toFirPsiSourceElement()
+        is FirLightModifier -> {
+            // TODO pretty sure I got offsets wrong here
+            val startOffset = tree.getStartOffset(node)
+            val endOffset = tree.getEndOffset(node)
+            node.toFirLightSourceElement(startOffset, endOffset, tree)
+        }
+    }

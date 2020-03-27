@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.util.application
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.progress.ProgressManager
@@ -53,3 +54,9 @@ inline fun invokeLater(crossinline action: () -> Unit) {
 }
 
 inline fun isUnitTestMode(): Boolean = ApplicationManager.getApplication().isUnitTestMode
+
+fun <T> Project.getServiceSafe(serviceClass: Class<T>): T =
+    ServiceManager.getService(this, serviceClass) ?: error("Unable to locate service ${serviceClass.name}")
+
+fun <T> Project.getServiceIfCreated(serviceClass: Class<T>): T? =
+    ServiceManager.getServiceIfCreated(this, serviceClass)

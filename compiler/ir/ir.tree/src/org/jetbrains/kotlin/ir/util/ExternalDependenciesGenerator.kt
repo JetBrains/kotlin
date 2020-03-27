@@ -31,6 +31,8 @@ class ExternalDependenciesGenerator(val symbolTable: SymbolTable, private val ir
         /*
             Deserializing a reference may lead to new unbound references, so we loop until none are left.
          */
+        require(symbolTable.unboundTypeParameters.isEmpty()) { "Unbound type parameters are forbidden" }
+
         lateinit var unbound: List<IrSymbol>
         do {
             unbound = symbolTable.allUnbound
@@ -57,7 +59,6 @@ private val SymbolTable.allUnbound: List<IrSymbol>
         r.addAll(unboundFields)
         r.addAll(unboundSimpleFunctions)
         r.addAll(unboundProperties)
-        r.addAll(unboundTypeParameters)
         r.addAll(unboundTypeAliases)
         return r
     }

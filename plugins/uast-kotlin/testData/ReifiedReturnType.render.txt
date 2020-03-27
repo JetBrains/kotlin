@@ -1,0 +1,33 @@
+public final class ReifiedReturnTypeKt {
+    public static final fun function1(@org.jetbrains.annotations.Nullable t: T, @org.jetbrains.annotations.NotNull i: int, @org.jetbrains.annotations.NotNull s: java.lang.String) : void {
+    }
+    public static final fun function2(@org.jetbrains.annotations.Nullable t: T, @org.jetbrains.annotations.NotNull i: int, @org.jetbrains.annotations.NotNull s: java.lang.String) : T {
+        return t
+    }
+    fun function3(@org.jetbrains.annotations.Nullable t: T, @org.jetbrains.annotations.NotNull i: int, @org.jetbrains.annotations.NotNull s: java.lang.String) : void {
+    }
+    fun function4(@org.jetbrains.annotations.Nullable t: T, @org.jetbrains.annotations.NotNull i: int, @org.jetbrains.annotations.NotNull s: java.lang.String) : T {
+        return t
+    }
+    fun function5(@org.jetbrains.annotations.Nullable t: T, @org.jetbrains.annotations.NotNull i: int, @org.jetbrains.annotations.NotNull s: java.lang.String) : int {
+        return 42
+    }
+    fun function6(@org.jetbrains.annotations.Nullable t: T, i: int, s: java.lang.String) : T {
+        return t
+    }
+    fun function7(@org.jetbrains.annotations.Nullable t: T, @org.jetbrains.annotations.NotNull i: int, @org.jetbrains.annotations.NotNull s: java.lang.String) : T {
+        return t
+    }
+    fun function8(@org.jetbrains.annotations.Nullable t: T, @org.jetbrains.annotations.NotNull i: int, @org.jetbrains.annotations.NotNull s: java.lang.String) : T {
+        return t
+    }
+    fun function9(@org.jetbrains.annotations.Nullable t: T, @org.jetbrains.annotations.NotNull i: int, @org.jetbrains.annotations.NotNull s: java.lang.String) : T {
+        return t
+    }
+    fun function10(@org.jetbrains.annotations.Nullable t: T, @org.jetbrains.annotations.NotNull i: int, @org.jetbrains.annotations.NotNull s: java.lang.String) : T {
+        return t
+    }
+    fun function11(@org.jetbrains.annotations.Nullable t: T, i: int, s: java.lang.String) : T {
+        return t
+    }
+}

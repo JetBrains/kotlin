@@ -87,7 +87,7 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
     object NativeBuiltInsCacheKey : BuiltInsCacheKey
 
     companion object {
-        private val NativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
+        private val metadataFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
 
         fun createNativeKlibPackageFragmentProvider(
             moduleInfo: ModuleInfo,
@@ -99,7 +99,7 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
                 ?.resolvedKotlinLibrary
                 ?.createKlibPackageFragmentProvider(
                     storageManager = storageManager,
-                    metadataModuleDescriptorFactory = NativeFactories.DefaultDeserializedDescriptorFactory,
+                    metadataModuleDescriptorFactory = metadataFactories.DefaultDeserializedDescriptorFactory,
                     languageVersionSettings = languageVersionSettings,
                     moduleDescriptor = moduleDescriptor
                 )
@@ -111,7 +111,7 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
             val project = projectContext.project
             val storageManager = projectContext.storageManager
 
-            val builtInsModule = NativeFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(
+            val builtInsModule = metadataFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(
                 KotlinBuiltIns.BUILTINS_MODULE_NAME,
                 storageManager,
                 DeserializedKlibModuleOrigin(stdlibInfo.resolvedKotlinLibrary),
@@ -136,7 +136,7 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
                     listOf(
                         stdlibPackageFragmentProvider,
                         functionInterfacePackageFragmentProvider(storageManager, builtInsModule),
-                        (NativeFactories.DefaultDeserializedDescriptorFactory as KlibMetadataModuleDescriptorFactoryImpl)
+                        (metadataFactories.DefaultDeserializedDescriptorFactory as KlibMetadataModuleDescriptorFactoryImpl)
                             .createForwardDeclarationHackPackagePartProvider(storageManager, builtInsModule)
                     )
                 )

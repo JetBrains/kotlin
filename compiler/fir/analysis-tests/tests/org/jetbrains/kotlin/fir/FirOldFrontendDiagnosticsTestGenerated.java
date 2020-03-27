@@ -10725,6 +10725,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/inference/constraints/approximationWithDefNotNullInInvPositionDuringInference.kt");
             }
 
+            @TestMetadata("complexDependencyWihtoutProperConstraints.kt")
+            public void testComplexDependencyWihtoutProperConstraints() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/constraints/complexDependencyWihtoutProperConstraints.kt");
+            }
+
             @TestMetadata("constraintFromVariantTypeWithNestedProjection.kt")
             public void testConstraintFromVariantTypeWithNestedProjection() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/constraints/constraintFromVariantTypeWithNestedProjection.kt");

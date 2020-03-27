@@ -72,7 +72,7 @@ class KotlinCodeBlockModificationListener(
 
     init {
         val model = PomManager.getModel(project)
-        val messageBusConnection = project.messageBus.connect()
+        val messageBusConnection = project.messageBus.connect(project)
 
         if (isLanguageTrackerEnabled) {
             (PsiManager.getInstance(project) as PsiManagerImpl).addTreeChangePreprocessor(this)
@@ -175,7 +175,7 @@ class KotlinCodeBlockModificationListener(
             // When a code fragment is reparsed, Intellij doesn't do an AST diff and considers the entire
             // contents to be replaced, which is represented in a POM event as an empty list of changed elements
 
-            return elements.mapNotNull { element ->
+            return elements.map { element ->
                 val modificationScope = getInsideCodeBlockModificationScope(element.psi) ?: return emptyList()
                 modificationScope.blockDeclaration
             }

@@ -38,7 +38,7 @@ class KotlinConfigurationCheckerComponent(val project: Project) : ProjectCompone
         NotificationsConfiguration.getNotificationsConfiguration()
             .register(CONFIGURE_NOTIFICATION_GROUP_ID, NotificationDisplayType.STICKY_BALLOON, true)
 
-        val connection = project.messageBus.connect()
+        val connection = project.messageBus.connect(project)
         connection.subscribe(ProjectDataImportListener.TOPIC, ProjectDataImportListener {
             notifyOutdatedBundledCompilerIfNecessary(project)
         })

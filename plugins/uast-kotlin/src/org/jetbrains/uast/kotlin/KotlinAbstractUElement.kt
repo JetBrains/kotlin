@@ -34,6 +34,7 @@ import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.expressions.KotlinLocalFunctionULambdaExpression
 import org.jetbrains.uast.kotlin.expressions.KotlinUElvisExpression
 import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
+import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
 abstract class KotlinAbstractUElement(private val givenParent: UElement?) : KotlinUElementWithComments,
@@ -86,16 +87,16 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : Kotl
                              ?: parent
                 AnnotationUseSiteTarget.FIELD ->
                     parent = (parentUnwrapped as? KtProperty)
-                             ?: (parentUnwrapped as? KtParameter)
-                                     ?.takeIf { it.isPropertyParameter() }
-                                     ?.let(LightClassUtil::getLightClassBackingField)
-                             ?: parent
+                        ?: (parentUnwrapped as? KtParameter)
+                            ?.takeIf { it.isPropertyParameter() }
+                            ?.let(LightClassUtil::getLightClassBackingField)
+                                ?: parent
                 AnnotationUseSiteTarget.SETTER_PARAMETER ->
                     parent = (parentUnwrapped as? KtParameter)
-                                     ?.toLightSetter()?.parameterList?.parameters?.firstOrNull() ?: parent
+                        ?.toLightSetter()?.parameterList?.parameters?.firstOrNull() ?: parent
             }
         }
-        if (psi is UastKotlinPsiVariable && parent != null) {
+        if ((psi is UastKotlinPsiVariable || psi is UastKotlinPsiParameter) && parent != null) {
             parent = parent.parent
         }
 

@@ -7,7 +7,7 @@ annotation class A
 @A
 open class B1 {
     @A
-    private open fun foo() {}
+    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>open<!> fun foo() {}
 }
 
 class D1 : B1() {

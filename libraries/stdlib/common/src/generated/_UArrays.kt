@@ -3982,6 +3982,7 @@ public inline fun ShortArray.toUShortArray(): UShortArray {
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V> UIntArray.associateWith(valueSelector: (UInt) -> V): Map<UInt, V> {
     val result = LinkedHashMap<UInt, V>()
@@ -4000,6 +4001,7 @@ public inline fun <V> UIntArray.associateWith(valueSelector: (UInt) -> V): Map<U
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V> ULongArray.associateWith(valueSelector: (ULong) -> V): Map<ULong, V> {
     val result = LinkedHashMap<ULong, V>()
@@ -4018,6 +4020,7 @@ public inline fun <V> ULongArray.associateWith(valueSelector: (ULong) -> V): Map
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V> UByteArray.associateWith(valueSelector: (UByte) -> V): Map<UByte, V> {
     val result = LinkedHashMap<UByte, V>()
@@ -4036,6 +4039,7 @@ public inline fun <V> UByteArray.associateWith(valueSelector: (UByte) -> V): Map
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V> UShortArray.associateWith(valueSelector: (UShort) -> V): Map<UShort, V> {
     val result = LinkedHashMap<UShort, V>()
@@ -4052,6 +4056,7 @@ public inline fun <V> UShortArray.associateWith(valueSelector: (UShort) -> V): M
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in UInt, in V>> UIntArray.associateWithTo(destination: M, valueSelector: (UInt) -> V): M {
     for (element in this) {
@@ -4070,6 +4075,7 @@ public inline fun <V, M : MutableMap<in UInt, in V>> UIntArray.associateWithTo(d
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in ULong, in V>> ULongArray.associateWithTo(destination: M, valueSelector: (ULong) -> V): M {
     for (element in this) {
@@ -4088,6 +4094,7 @@ public inline fun <V, M : MutableMap<in ULong, in V>> ULongArray.associateWithTo
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in UByte, in V>> UByteArray.associateWithTo(destination: M, valueSelector: (UByte) -> V): M {
     for (element in this) {
@@ -4106,6 +4113,7 @@ public inline fun <V, M : MutableMap<in UByte, in V>> UByteArray.associateWithTo
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in UShort, in V>> UShortArray.associateWithTo(destination: M, valueSelector: (UShort) -> V): M {
     for (element in this) {

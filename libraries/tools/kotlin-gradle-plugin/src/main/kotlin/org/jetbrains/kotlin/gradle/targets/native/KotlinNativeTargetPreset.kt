@@ -33,7 +33,7 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
 ) : KotlinTargetPreset<T> {
 
     init {
-        // This is required to obtain Kotlin/Native home in CLion plugin:
+        // This is required to obtain Kotlin/Native home in IDE plugin:
         setupNativeHomePrivateProperty()
     }
 

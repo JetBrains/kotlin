@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.builder
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.Modality
@@ -36,7 +35,6 @@ import org.jetbrains.kotlin.lexer.KtTokens.OPEN_QUOTE
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.resolve.constants.evaluate.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -57,6 +55,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     abstract fun T.getReferencedNameAsName(): Name
     abstract fun T.getLabelName(): String?
     abstract fun T.getExpressionInParentheses(): T?
+    abstract fun T.getAnnotatedExpression(): T?
     abstract fun T.getChildNodeByType(type: IElementType): T?
     abstract val T?.selectorExpression: T?
 
@@ -173,12 +172,13 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     fun FirLoopJumpBuilder.bindLabel(expression: T): FirLoopJumpBuilder {
         val labelName = expression.getLabelName()
         val lastLoopTarget = context.firLoopTargets.lastOrNull()
+        val sourceElement = expression.toFirSourceElement()
         if (labelName == null) {
             target = lastLoopTarget ?: FirLoopTarget(labelName).apply {
                 bind(
                     buildErrorLoop(
-                        expression.getSourceOrNull(),
-                        ConeSimpleDiagnostic("Cannot bind unlabeled jump to a loop", DiagnosticKind.Syntax)
+                        sourceElement,
+                        ConeSimpleDiagnostic("Cannot bind unlabeled jump to a loop", DiagnosticKind.JumpOutsideLoop)
                     )
                 )
             }
@@ -192,7 +192,11 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             target = FirLoopTarget(labelName).apply {
                 bind(
                     buildErrorLoop(
-                        expression.getSourceOrNull(), ConeSimpleDiagnostic("Cannot bind label $labelName to a loop", DiagnosticKind.Syntax)
+                        sourceElement,
+                        ConeSimpleDiagnostic(
+                            "Cannot bind label $labelName to a loop",
+                            lastLoopTarget?.let { DiagnosticKind.NotLoopLabel } ?: DiagnosticKind.JumpOutsideLoop
+                        )
                     )
                 )
             }
@@ -200,14 +204,10 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         return this
     }
 
-    /**** Conversion utils ****/
-    private fun <T> T.getSourceOrNull(): FirSourceElement? {
-        return if (this is PsiElement) FirPsiSourceElement(this) else null
-    }
-
     fun generateConstantExpressionByLiteral(expression: T): FirExpression {
         val type = expression.elementType
         val text: String = expression.asText
+        val sourceElement = expression.toFirSourceElement()
         val convertedText: Any? = when (type) {
             INTEGER_CONSTANT, FLOAT_CONSTANT -> parseNumericLiteral(text, type)
             BOOLEAN_CONSTANT -> parseBoolean(text)
@@ -217,7 +217,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             INTEGER_CONSTANT -> {
                 val kind = when {
                     convertedText !is Long -> return buildErrorExpression {
-                        source = expression.getSourceOrNull()
+                        source = sourceElement
                         diagnostic = ConeSimpleDiagnostic(
                             "Incorrect constant expression: $text",
                             DiagnosticKind.IllegalConstExpression
@@ -240,44 +240,44 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 }
 
                 buildConstOrErrorExpression(
-                    expression.getSourceOrNull(),
+                    sourceElement,
                     kind,
                     convertedText,
-                    ConeSimpleDiagnostic("Incorrect integer literal: $text", DiagnosticKind.Syntax)
+                    ConeSimpleDiagnostic("Incorrect integer literal: $text", DiagnosticKind.IllegalConstExpression)
                 )
             }
             FLOAT_CONSTANT ->
                 if (convertedText is Float) {
                     buildConstOrErrorExpression(
-                        expression.getSourceOrNull(),
+                        sourceElement,
                         FirConstKind.Float,
                         convertedText,
-                        ConeSimpleDiagnostic("Incorrect float: $text", DiagnosticKind.Syntax)
+                        ConeSimpleDiagnostic("Incorrect float: $text", DiagnosticKind.IllegalConstExpression)
                     )
                 } else {
                     buildConstOrErrorExpression(
-                        expression.getSourceOrNull(),
+                        sourceElement,
                         FirConstKind.Double,
                         convertedText as Double,
-                        ConeSimpleDiagnostic("Incorrect double: $text", DiagnosticKind.Syntax)
+                        ConeSimpleDiagnostic("Incorrect double: $text", DiagnosticKind.IllegalConstExpression)
                     )
                 }
             CHARACTER_CONSTANT ->
                 buildConstOrErrorExpression(
-                    expression.getSourceOrNull(),
+                    sourceElement,
                     FirConstKind.Char,
                     text.parseCharacter(),
-                    ConeSimpleDiagnostic("Incorrect character: $text", DiagnosticKind.Syntax)
+                    ConeSimpleDiagnostic("Incorrect character: $text", DiagnosticKind.IllegalConstExpression)
                 )
             BOOLEAN_CONSTANT ->
                 buildConstExpression(
-                    expression.getSourceOrNull(),
+                    sourceElement,
                     FirConstKind.Boolean,
                     convertedText as Boolean
                 )
             NULL ->
                 buildConstExpression(
-                    expression.getSourceOrNull(),
+                    sourceElement,
                     FirConstKind.Null,
                     null
                 )
@@ -287,7 +287,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     }
 
     fun Array<out T?>.toInterpolatingCall(
-        base: KtStringTemplateExpression?,
+        base: T,
         convertTemplateEntry: T?.(String) -> FirExpression
     ): FirExpression {
         return buildStringConcatenationCall {
@@ -300,11 +300,11 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                         OPEN_QUOTE, CLOSING_QUOTE -> continue@L
                         LITERAL_STRING_TEMPLATE_ENTRY -> {
                             sb.append(entry.asText)
-                            buildConstExpression(entry.getSourceOrNull(), FirConstKind.String, entry.asText)
+                            buildConstExpression(entry.toFirSourceElement(), FirConstKind.String, entry.asText)
                         }
                         ESCAPE_STRING_TEMPLATE_ENTRY -> {
                             sb.append(entry.unescapedValue)
-                            buildConstExpression(entry.getSourceOrNull(), FirConstKind.String, entry.unescapedValue)
+                            buildConstExpression(entry.toFirSourceElement(), FirConstKind.String, entry.unescapedValue)
                         }
                         SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
                             hasExpressions = true
@@ -322,7 +322,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                         else -> {
                             hasExpressions = true
                             buildErrorExpression {
-                                source = entry.getSourceOrNull()
+                                source = entry.toFirSourceElement()
                                 diagnostic = ConeSimpleDiagnostic("Incorrect template entry: ${entry.asText}", DiagnosticKind.Syntax)
                             }
                         }
@@ -361,7 +361,8 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
     // TODO: Refactor, support receiver capturing in case of a.b
     fun generateIncrementOrDecrementBlock(
-        baseExpression: KtUnaryExpression?,
+        baseExpression: T,
+        operationReference: T?,
         argument: T?,
         callName: Name,
         prefix: Boolean,
@@ -383,7 +384,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             val resultInitializer = buildFunctionCall {
                 source = baseSource
                 calleeReference = buildSimpleNamedReference {
-                    source = baseExpression?.operationReference?.toFirSourceElement()
+                    source = operationReference?.toFirSourceElement()
                     name = callName
                 }
                 explicitReceiver = generateResolvedAccessExpression(source, temporaryVariable)
@@ -432,13 +433,13 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             when (tokenType) {
                 REFERENCE_EXPRESSION -> {
                     return buildSimpleNamedReference {
-                        source = left.getSourceOrNull()
+                        source = left.toFirSourceElement()
                         name = left.getReferencedNameAsName()
                     }
                 }
                 THIS_EXPRESSION -> {
                     return buildExplicitThisReference {
-                        source = left.getSourceOrNull()
+                        source = left.toFirSourceElement()
                         labelName = left.getLabelName()
                     }
                 }
@@ -450,7 +451,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                         firMemberAccess.calleeReference
                     } else {
                         buildErrorNamedReference {
-                            source = left.getSourceOrNull()
+                            source = left.toFirSourceElement()
                             diagnostic = ConeSimpleDiagnostic("Unsupported qualified LValue: ${left.asText}", DiagnosticKind.Syntax)
                         }
                     }
@@ -458,11 +459,14 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 PARENTHESIZED -> {
                     return initializeLValue(left.getExpressionInParentheses(), convertQualified)
                 }
+                ANNOTATED_EXPRESSION -> {
+                    return initializeLValue(left.getAnnotatedExpression(), convertQualified)
+                }
             }
         }
         return buildErrorNamedReference {
-            source = left.getSourceOrNull()
-            diagnostic = ConeSimpleDiagnostic("Unsupported LValue: $tokenType", DiagnosticKind.Syntax)
+            source = left?.toFirSourceElement()
+            diagnostic = ConeSimpleDiagnostic("Unsupported LValue: $tokenType", DiagnosticKind.VariableExpected)
         }
     }
 
@@ -497,7 +501,9 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 argumentList = buildBinaryArgumentList(
                     this@generateAssignment?.convert() ?: buildErrorExpression {
                         source = null
-                        diagnostic = ConeSimpleDiagnostic("Unsupported left value of assignment: ${baseSource?.psi?.text}", DiagnosticKind.Syntax)
+                        diagnostic = ConeSimpleDiagnostic(
+                            "Unsupported left value of assignment: ${baseSource?.psi?.text}", DiagnosticKind.ExpressionRequired
+                        )
                     },
                     value
                 )
@@ -678,7 +684,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
     fun List<Pair<T, FirProperty>>.generateCopyFunction(
         session: FirSession,
-        classOrObject: KtClassOrObject?,
+        classOrObject: T,
         classBuilder: AbstractFirRegularClassBuilder,
         packageFqName: FqName,
         classFqName: FqName,

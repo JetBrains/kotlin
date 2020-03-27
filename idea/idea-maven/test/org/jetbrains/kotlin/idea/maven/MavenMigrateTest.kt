@@ -13,8 +13,9 @@ import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.concurrency.FutureResult
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent
+import org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectService
 import org.jetbrains.kotlin.idea.configuration.MigrationInfo
+import org.jetbrains.kotlin.idea.configuration.MigrationTestState
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.Assert
 import org.junit.runner.RunWith
@@ -106,8 +107,8 @@ class MavenMigrateTest : MavenImportingTestCase() {
             }
         }
 
-        val importResult = FutureResult<KotlinMigrationProjectComponent.MigrationTestState?>()
-        val migrationProjectComponent = KotlinMigrationProjectComponent.getInstanceIfNotDisposed(myProject)
+        val importResult = FutureResult<MigrationTestState?>()
+        val migrationProjectComponent = KotlinMigrationProjectService.getInstanceIfNotDisposed(myProject)
             ?: error("Disposed project")
 
         migrationProjectComponent.setImportFinishListener { migrationState ->
