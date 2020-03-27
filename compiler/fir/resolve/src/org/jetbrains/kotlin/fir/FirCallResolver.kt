@@ -51,7 +51,7 @@ class FirCallResolver(
     }
 
     private val towerResolver = FirTowerResolver(
-        returnTypeCalculator, components, resolutionStageRunner,
+        components, resolutionStageRunner,
     )
 
     private val conflictResolver =

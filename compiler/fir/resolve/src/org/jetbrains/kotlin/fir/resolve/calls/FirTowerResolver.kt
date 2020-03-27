@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 
 class FirTowerResolver(
-    val typeCalculator: ReturnTypeCalculator,
-    val components: BodyResolveComponents,
+    private val components: BodyResolveComponents,
     resolutionStageRunner: ResolutionStageRunner,
 ) {
     private val collector = CandidateCollector(components, resolutionStageRunner)
@@ -61,8 +59,7 @@ class FirTowerResolver(
             invokeReceiverCandidateFactory,
             invokeBuiltinExtensionReceiverCandidateFactory,
             stubReceiverCandidateFactory,
-            invokeReceiverCollector,
-            this
+            invokeReceiverCollector
         )
     }
 

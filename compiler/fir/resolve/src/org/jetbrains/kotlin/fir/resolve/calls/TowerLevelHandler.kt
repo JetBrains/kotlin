@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessExpressionBuilder
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.transformQualifiedAccessUsingSmartcastInfo
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
@@ -30,8 +31,7 @@ internal class CallResolutionContext(
     val invokeReceiverCandidateFactory: CandidateFactory?,
     val invokeBuiltinExtensionReceiverCandidateFactory: CandidateFactory?,
     val stubReceiverCandidateFactory: CandidateFactory?,
-    val invokeReceiverCollector: CandidateCollector?,
-    val towerResolver: FirTowerResolver
+    val invokeReceiverCollector: CandidateCollector?
 ) {
     // TODO: Get rid of the property, storing state here looks like a hack
     internal lateinit var invokeOnGivenReceiverCandidateFactory: CandidateFactory
@@ -43,11 +43,11 @@ internal class LevelHandler(
     private val group: TowerGroup,
     private val callResolutionContext: CallResolutionContext,
     private val manager: TowerResolveManager,
-    private val towerResolverSession: FirTowerResolverSession
+    private val towerResolverSession: FirTowerResolverSession,
+    private val components: BodyResolveComponents
 ) {
 
     private val resultCollector: CandidateCollector get() = callResolutionContext.resultCollector
-    private val towerResolver: FirTowerResolver get() = callResolutionContext.towerResolver
 
     private fun enqueueResolverTask(group: TowerGroup = TowerGroup.Start, task: suspend () -> Unit) =
         manager.enqueueResolverTask(group, task)
@@ -55,7 +55,7 @@ internal class LevelHandler(
     private fun createExplicitReceiverForInvoke(candidate: Candidate): FirQualifiedAccessExpressionBuilder {
         val (name, typeRef) = when (val symbol = candidate.symbol) {
             is FirCallableSymbol<*> -> {
-                symbol.callableId.callableName to towerResolver.typeCalculator.tryCalculateReturnType(symbol.firUnsafe())
+                symbol.callableId.callableName to components.returnTypeCalculator.tryCalculateReturnType(symbol.firUnsafe())
             }
             is FirRegularClassSymbol -> {
                 symbol.classId.shortClassName to buildResolvedTypeRef {
@@ -170,7 +170,7 @@ internal class LevelHandler(
             if (symbol !is FirCallableSymbol<*> && symbol !is FirRegularClassSymbol) continue
 
             val isExtensionFunctionType =
-                (symbol as? FirCallableSymbol<*>)?.fir?.returnTypeRef?.isExtensionFunctionType(towerResolver.components.session) == true
+                (symbol as? FirCallableSymbol<*>)?.fir?.returnTypeRef?.isExtensionFunctionType(components.session) == true
 
             if (invokeBuiltinExtensionMode && !isExtensionFunctionType) {
                 continue
@@ -188,7 +188,7 @@ internal class LevelHandler(
                     it.explicitReceiver = info.explicitReceiver
                     it.safe = info.isSafeCall
                 }
-                towerResolver.components.transformQualifiedAccessUsingSmartcastInfo(it.build())
+                components.transformQualifiedAccessUsingSmartcastInfo(it.build())
             }
 
             val invokeFunctionInfo =
@@ -200,7 +200,7 @@ internal class LevelHandler(
                 }
 
             val explicitReceiver = ExpressionReceiverValue(invokeReceiverExpression)
-            callResolutionContext.invokeOnGivenReceiverCandidateFactory = CandidateFactory(towerResolver.components, invokeFunctionInfo)
+            callResolutionContext.invokeOnGivenReceiverCandidateFactory = CandidateFactory(components, invokeFunctionInfo)
             when {
                 invokeBuiltinExtensionMode -> {
                     enqueueResolverTask {
