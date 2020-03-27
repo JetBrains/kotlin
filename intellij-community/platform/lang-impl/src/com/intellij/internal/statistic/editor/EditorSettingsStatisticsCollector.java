@@ -16,6 +16,7 @@ import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
 import com.intellij.openapi.editor.impl.softwrap.SoftWrapAppliancePlaces;
 import com.intellij.openapi.editor.richcopy.settings.RichCopySettings;
 import com.intellij.openapi.project.Project;
+import com.intellij.ui.tabs.FileColorManagerImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -34,7 +35,7 @@ final class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector
 
   @Override
   public int getVersion() {
-    return 4;
+    return 5;
   }
 
   @NotNull
@@ -56,6 +57,7 @@ final class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector
     addBoolIfDiffers(set, es, esDefault, s -> s.isEnsureNewLineAtEOF(), "ensureNewlineAtEOF");
     addBoolIfDiffers(set, es, esDefault, s -> s.isShowQuickDocOnMouseOverElement(), "quickDocOnMouseHover");
     addBoolIfDiffers(set, es, esDefault, s -> s.isBlinkCaret(), "blinkingCaret");
+    addIfDiffers(set, es, esDefault, s -> s.getBlinkPeriod(), "blinkPeriod");
     addBoolIfDiffers(set, es, esDefault, s -> s.isBlockCursor(), "blockCaret");
     addBoolIfDiffers(set, es, esDefault, s -> s.isRightMarginShown(), "rightMargin");
     addBoolIfDiffers(set, es, esDefault, s -> s.isLineNumbersShown(), "lineNumbers");
@@ -106,6 +108,7 @@ final class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector
     addBoolIfDiffers(set, cis, cisDefault, s -> s.SMART_INDENT_ON_ENTER, "indentOnEnter");
     addBoolIfDiffers(set, cis, cisDefault, s -> s.INSERT_BRACE_ON_ENTER, "braceOnEnter");
     addBoolIfDiffers(set, cis, cisDefault, s -> s.JAVADOC_STUB_ON_ENTER, "javadocOnEnter");
+    addBoolIfDiffers(set, cis, cisDefault, s -> s.INSERT_SCRIPTLET_END_ON_ENTER, "scriptletEndOnEnter");
     addBoolIfDiffers(set, cis, cisDefault, s -> s.SMART_END_ACTION, "smartEnd");
     addBoolIfDiffers(set, cis, cisDefault, s -> s.JAVADOC_GENERATE_CLOSING_TAG, "autoCloseJavadocTags");
     addBoolIfDiffers(set, cis, cisDefault, s -> s.SURROUND_SELECTION_ON_QUOTE_TYPED, "surroundByQuoteOrBrace");
@@ -137,6 +140,17 @@ final class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector
     final CaretStopOptionsTransposed caretStop = CaretStopOptionsTransposed.fromCaretStopOptions(es.getCaretStopOptions());
     addIfDiffers(set, caretStop.getLineBoundary(), defaultCaretStop.getLineBoundary(), s -> toCaretStopValue(s), "caret.movement.line");
     addIfDiffers(set, caretStop.getWordBoundary(), defaultCaretStop.getWordBoundary(), s -> toCaretStopValue(s), "caret.movement.word");
+
+    if (!FileColorManagerImpl._isEnabled()) {
+      set.add(newBooleanMetric("fileColorsEnabled", false));
+    }
+    if (!FileColorManagerImpl._isEnabledForProjectView()) {
+      set.add(newBooleanMetric("fileColorsEnabledForProjectView", false));
+    }
+    if (!FileColorManagerImpl._isEnabledForTabs()) {
+      set.add(newBooleanMetric("fileColorsEnabledForTabs", false));
+    }
+
     return set;
   }
 
