@@ -20,19 +20,19 @@ class FirTowerResolver(
         collector: CandidateCollector = this.collector,
         manager: TowerResolveManager = this.manager
     ): CandidateCollector {
-        val callResolutionContext = buildCallResolutionContext(info, collector)
+        val candidateFactoriesAndCollectors = buildCandidateFactoriesAndCollectors(info, collector)
 
-        val towerResolverSession = FirTowerResolverSession(components, implicitReceiverValues, manager, callResolutionContext)
+        val towerResolverSession = FirTowerResolverSession(components, implicitReceiverValues, manager, candidateFactoriesAndCollectors)
         towerResolverSession.runResolution(info)
 
         manager.runTasks()
         return collector
     }
 
-    private fun buildCallResolutionContext(
+    private fun buildCandidateFactoriesAndCollectors(
         info: CallInfo,
         collector: CandidateCollector
-    ): CallResolutionContext {
+    ): CandidateFactoriesAndCollectors {
         val candidateFactory = CandidateFactory(components, info)
         val stubReceiverCandidateFactory =
             if (info.callKind == CallKind.CallableReference && info.stubReceiver != null)
@@ -53,13 +53,13 @@ class FirTowerResolver(
             }
         }
 
-        return CallResolutionContext(
+        return CandidateFactoriesAndCollectors(
             candidateFactory,
             collector,
-            invokeReceiverCandidateFactory,
-            invokeBuiltinExtensionReceiverCandidateFactory,
             stubReceiverCandidateFactory,
-            invokeReceiverCollector
+            invokeReceiverCandidateFactory,
+            invokeReceiverCollector,
+            invokeBuiltinExtensionReceiverCandidateFactory
         )
     }
 

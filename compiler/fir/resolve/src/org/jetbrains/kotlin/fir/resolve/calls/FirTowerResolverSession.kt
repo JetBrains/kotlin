@@ -38,7 +38,7 @@ class FirTowerResolverSession internal constructor(
     val components: BodyResolveComponents,
     implicitReceiverValues: List<ImplicitReceiverValue<*>>,
     private val manager: TowerResolveManager,
-    private val callResolutionContext: CallResolutionContext,
+    private val candidateFactoriesAndCollectors: CandidateFactoriesAndCollectors,
 ) {
     private data class ImplicitReceiver(
         val receiver: ImplicitReceiverValue<*>,
@@ -94,7 +94,10 @@ class FirTowerResolverSession internal constructor(
             LevelHandler(
             )
 
-        return levelHandler.handleLevel(callInfo, explicitReceiverKind, group, callResolutionContext, towerLevel, invokeResolveMode) {
+        return levelHandler.handleLevel(
+            callInfo, explicitReceiverKind, group,
+            candidateFactoriesAndCollectors, towerLevel, invokeResolveMode
+        ) {
             enqueueResolverTasksForInvokeReceiverCandidates(
                 invokeResolveMode, callInfo
             )
@@ -549,7 +552,7 @@ class FirTowerResolverSession internal constructor(
     ) {
         val invokeBuiltinExtensionMode = invokeResolveMode == InvokeResolveMode.RECEIVER_FOR_INVOKE_BUILTIN_EXTENSION
 
-        for (invokeReceiverCandidate in callResolutionContext.invokeReceiverCollector!!.bestCandidates()) {
+        for (invokeReceiverCandidate in candidateFactoriesAndCollectors.invokeReceiverCollector!!.bestCandidates()) {
             val symbol = invokeReceiverCandidate.symbol
             if (symbol !is FirCallableSymbol<*> && symbol !is FirRegularClassSymbol) continue
 
@@ -584,7 +587,7 @@ class FirTowerResolverSession internal constructor(
                 }
 
             val explicitReceiver = ExpressionReceiverValue(invokeReceiverExpression)
-            callResolutionContext.invokeOnGivenReceiverCandidateFactory = CandidateFactory(components, invokeFunctionInfo)
+            candidateFactoriesAndCollectors.invokeOnGivenReceiverCandidateFactory = CandidateFactory(components, invokeFunctionInfo)
             enqueueResolverTasksForInvoke(
                 invokeFunctionInfo,
                 explicitReceiver,

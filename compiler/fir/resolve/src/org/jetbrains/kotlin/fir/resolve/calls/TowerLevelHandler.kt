@@ -17,13 +17,13 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
-internal class CallResolutionContext(
+internal class CandidateFactoriesAndCollectors(
     val candidateFactory: CandidateFactory,
     val resultCollector: CandidateCollector,
-    val invokeReceiverCandidateFactory: CandidateFactory?,
-    val invokeBuiltinExtensionReceiverCandidateFactory: CandidateFactory?,
     val stubReceiverCandidateFactory: CandidateFactory?,
-    val invokeReceiverCollector: CandidateCollector?
+    val invokeReceiverCandidateFactory: CandidateFactory?,
+    val invokeReceiverCollector: CandidateCollector?,
+    val invokeBuiltinExtensionReceiverCandidateFactory: CandidateFactory?
 ) {
     // TODO: Get rid of the property, storing state here looks like a hack
     internal lateinit var invokeOnGivenReceiverCandidateFactory: CandidateFactory
@@ -40,12 +40,12 @@ internal class LevelHandler {
         info: CallInfo,
         explicitReceiverKind: ExplicitReceiverKind,
         group: TowerGroup,
-        callResolutionContext: CallResolutionContext,
+        candidateFactoriesAndCollectors: CandidateFactoriesAndCollectors,
         towerLevel: SessionBasedTowerLevel,
         invokeResolveMode: InvokeResolveMode?,
         enqueueResolverTasksForInvokeReceiverCandidates: EnqueueTasksForInvokeReceiverCandidates
     ): ProcessorAction {
-        val resultCollector = callResolutionContext.resultCollector
+        val resultCollector = candidateFactoriesAndCollectors.resultCollector
         val processor =
             TowerScopeLevelProcessor(
                 info.explicitReceiver,
@@ -53,9 +53,9 @@ internal class LevelHandler {
                 resultCollector,
                 // TODO: performance?
                 if (invokeResolveMode == InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER)
-                    callResolutionContext.invokeOnGivenReceiverCandidateFactory
+                    candidateFactoriesAndCollectors.invokeOnGivenReceiverCandidateFactory
                 else
-                    callResolutionContext.candidateFactory,
+                    candidateFactoriesAndCollectors.candidateFactory,
                 group
             )
         when (info.callKind) {
@@ -83,16 +83,16 @@ internal class LevelHandler {
                 val invokeReceiverProcessor = TowerScopeLevelProcessor(
                     info.explicitReceiver,
                     explicitReceiverKind,
-                    callResolutionContext.invokeReceiverCollector!!,
-                    if (invokeBuiltinExtensionMode) callResolutionContext.invokeBuiltinExtensionReceiverCandidateFactory!!
-                    else callResolutionContext.invokeReceiverCandidateFactory!!,
+                    candidateFactoriesAndCollectors.invokeReceiverCollector!!,
+                    if (invokeBuiltinExtensionMode) candidateFactoriesAndCollectors.invokeBuiltinExtensionReceiverCandidateFactory!!
+                    else candidateFactoriesAndCollectors.invokeReceiverCandidateFactory!!,
                     group
                 )
-                callResolutionContext.invokeReceiverCollector.newDataSet()
+                candidateFactoriesAndCollectors.invokeReceiverCollector.newDataSet()
                 towerLevel.processProperties(info.name, invokeReceiverProcessor)
                 towerLevel.processObjectsAsVariables(info.name, invokeReceiverProcessor)
 
-                if (callResolutionContext.invokeReceiverCollector.isSuccess()) {
+                if (candidateFactoriesAndCollectors.invokeReceiverCollector.isSuccess()) {
                     enqueueResolverTasksForInvokeReceiverCandidates()
                 }
             }
@@ -108,7 +108,7 @@ internal class LevelHandler {
                             ExplicitReceiverKind.EXTENSION_RECEIVER
                         },
                         resultCollector,
-                        callResolutionContext.stubReceiverCandidateFactory!!, group
+                        candidateFactoriesAndCollectors.stubReceiverCandidateFactory!!, group
                     )
                     val towerLevelWithStubReceiver = towerLevel.replaceReceiverValue(stubReceiverValue)
                     towerLevelWithStubReceiver.processFunctionsAndProperties(info.name, stubProcessor)
