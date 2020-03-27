@@ -159,7 +159,7 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
                 node.addChildren(groups, true)
             } else {
                 node.addChildren(
-                    XValueChildrenList.singleton(ErrorNode("To enable information breakpoint suspend policy should be set to 'All' threads.")),
+                    XValueChildrenList.singleton(ErrorNode("to.enable.information.breakpoint.suspend.policy.should.be.set.to.all.threads")),
                     true,
                 )
             }

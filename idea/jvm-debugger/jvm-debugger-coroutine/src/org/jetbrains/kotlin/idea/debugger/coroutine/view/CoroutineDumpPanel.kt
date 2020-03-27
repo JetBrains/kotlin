@@ -273,10 +273,7 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
             ).notify(myProject)
         }
 
-        private val group = NotificationGroup.toolWindowGroup(
-            KotlinDebuggerCoroutinesBundle.message("coroutine.dump.copy.analyze"),
-            ToolWindowId.RUN, false
-        )
+        private val group = NotificationGroup.toolWindowGroup("Analyze coroutine dump", ToolWindowId.RUN, false)
     }
 
     private class MyToFileExporter(
