@@ -8,16 +8,16 @@ class Bzz(public <!REPEATED_MODIFIER!>public<!> val q: Int = 1) {
     public <!REPEATED_MODIFIER!>public<!> val x: Int = 2
 
     public val y: Int
-    public <!REPEATED_MODIFIER!>public<!> get() = 3
+        public <!REPEATED_MODIFIER!>public<!> get() = 3
 
     val z: Int
-    <!INCOMPATIBLE_MODIFIERS!>open<!> <!INCOMPATIBLE_MODIFIERS!>final<!> get() = 4
+        <!INCOMPATIBLE_MODIFIERS!>open<!> <!INCOMPATIBLE_MODIFIERS!>final<!> get() = 4
 
     public <!REPEATED_MODIFIER!>public<!> class B(public <!REPEATED_MODIFIER!>public<!> val z: Int = 1) {
         public <!REPEATED_MODIFIER!>public<!> val y: Int = 2
 
         public val x: Int
-        public <!REPEATED_MODIFIER!>public<!> get() = 3
+            public <!REPEATED_MODIFIER!>public<!> get() = 3
     }
 
     public <!REPEATED_MODIFIER!>public<!> object C {
@@ -35,7 +35,7 @@ fun test() {
         public <!REPEATED_MODIFIER!>public<!> val y: Int = 2
 
         public val x: Int
-        public <!REPEATED_MODIFIER!>public<!> get() = 3
+            public <!REPEATED_MODIFIER!>public<!> get() = 3
     }
 }
 
