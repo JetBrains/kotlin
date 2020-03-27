@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.KotlinIdeaReplBundle
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 
 class ConsoleModuleDialog(private val project: Project) {
-    private val TITLE get() = KotlinIdeaReplBundle.message("choose.context.module")
-
     fun showIfNeeded(dataContext: DataContext) {
         val module = getModule(dataContext)
         if (module != null) return runConsole(module)
@@ -30,7 +28,12 @@ class ConsoleModuleDialog(private val project: Project) {
         val moduleGroup = DefaultActionGroup(moduleActions)
 
         val modulePopup = JBPopupFactory.getInstance().createActionGroupPopup(
-            TITLE, moduleGroup, dataContext, JBPopupFactory.ActionSelectionAid.SPEEDSEARCH, true, ActionPlaces.UNKNOWN
+            TITLE,
+            moduleGroup,
+            dataContext,
+            JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+            true,
+            ActionPlaces.UNKNOWN
         )
 
         modulePopup.showCenteredInCurrentWindow(project)
@@ -51,5 +54,9 @@ class ConsoleModuleDialog(private val project: Project) {
 
     private fun createRunAction(module: Module) = object : AnAction(module.name) {
         override fun actionPerformed(e: AnActionEvent) = runConsole(module)
+    }
+
+    companion object {
+        private val TITLE get() = KotlinIdeaReplBundle.message("choose.context.module")
     }
 }

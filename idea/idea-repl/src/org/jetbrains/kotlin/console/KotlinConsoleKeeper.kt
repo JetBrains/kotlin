@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
-private val REPL_TITLE: String get() = KotlinIdeaReplBundle.message("kotlin.repl")
-
 class KotlinConsoleKeeper(val project: Project) {
     private val consoleMap: MutableMap<VirtualFile, KotlinConsoleRunner> = ConcurrentHashMap()
 
@@ -28,8 +26,15 @@ class KotlinConsoleKeeper(val project: Project) {
     fun run(module: Module, previousCompilationFailed: Boolean = false): KotlinConsoleRunner? {
         val path = module.moduleFilePath
         val cmdLine = createReplCommandLine(project, module)
+        val consoleRunner = KotlinConsoleRunner(
+            module,
+            cmdLine,
+            previousCompilationFailed,
+            project,
+            KotlinIdeaReplBundle.message("name.kotlin.repl"),
+            path
+        )
 
-        val consoleRunner = KotlinConsoleRunner(module, cmdLine, previousCompilationFailed, project, REPL_TITLE, path)
         consoleRunner.initAndRun()
         return consoleRunner
     }

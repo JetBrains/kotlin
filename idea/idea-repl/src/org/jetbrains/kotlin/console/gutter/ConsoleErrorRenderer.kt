@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.diagnostics.Severity
 
 class ConsoleErrorRenderer(private val messages: List<SeverityDetails>) : GutterIconRenderer() {
     private fun msgType(severity: Severity) = when (severity) {
-        Severity.ERROR -> KotlinIdeaReplBundle.message("error")
-        Severity.WARNING -> KotlinIdeaReplBundle.message("warning")
-        Severity.INFO -> KotlinIdeaReplBundle.message("info")
+        Severity.ERROR -> KotlinIdeaReplBundle.message("message.type.error")
+        Severity.WARNING -> KotlinIdeaReplBundle.message("message.type.warning")
+        Severity.INFO -> KotlinIdeaReplBundle.message("message.type.info")
     }
 
     override fun getTooltipText(): String {

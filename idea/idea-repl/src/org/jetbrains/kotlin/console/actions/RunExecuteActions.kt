@@ -47,7 +47,9 @@ class BuildAndRestartConsoleAction(
     private val runner: KotlinConsoleRunner
 ) : AnAction(
     KotlinIdeaReplBundle.message("build.and.restart"),
-    KotlinIdeaReplBundle.message("build.module.0.and.restart", runner.module.name), AllIcons.Actions.Restart) {
+    KotlinIdeaReplBundle.message("build.module.0.and.restart", runner.module.name),
+    AllIcons.Actions.Restart
+) {
 
     override fun actionPerformed(e: AnActionEvent) = runner.compilerHelper.compileModule()
 }
