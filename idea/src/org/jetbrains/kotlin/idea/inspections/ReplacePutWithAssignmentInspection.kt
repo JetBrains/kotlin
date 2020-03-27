@@ -86,7 +86,7 @@ class ReplacePutWithAssignmentInspection : AbstractApplicabilityBasedInspection<
     override fun inspectionText(element: KtDotQualifiedExpression): String =
         KotlinBundle.message("map.put.should.be.converted.to.assignment")
 
-    override val defaultFixText = KotlinBundle.message("convert.put.to.assignment")
+    override val defaultFixText get() = KotlinBundle.message("convert.put.to.assignment")
 
     companion object {
         private val compatibleNames = setOf("put")

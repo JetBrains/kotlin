@@ -107,8 +107,7 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
 
     override fun inspectionText(element: KtDotQualifiedExpression) = KotlinBundle.message("call.replaceable.with.binary.operator")
 
-    override val defaultFixText: String
-        get() = KotlinBundle.message("replace.with.binary.operator")
+    override val defaultFixText: String get() = KotlinBundle.message("replace.with.binary.operator")
 
     override fun fixText(element: KtDotQualifiedExpression): String {
         val calleeExpression = element.callExpression?.calleeExpression as? KtSimpleNameExpression ?: return defaultFixText
@@ -117,7 +116,7 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
         }
 
         val operation = operation(calleeExpression) ?: return defaultFixText
-        return "${KotlinBundle.message("replace.with.0", operation.value)}"
+        return KotlinBundle.message("replace.with.0", operation.value)
     }
 
     override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {

@@ -26,7 +26,7 @@ class ConvertTwoComparisonsToRangeCheckInspection :
     AbstractApplicabilityBasedInspection<KtBinaryExpression>(KtBinaryExpression::class.java) {
     override fun inspectionText(element: KtBinaryExpression) = KotlinBundle.message("two.comparisons.should.be.converted.to.a.range.check")
 
-    override val defaultFixText = KotlinBundle.message("convert.to.a.range.check")
+    override val defaultFixText get() = KotlinBundle.message("convert.to.a.range.check")
 
     override fun isApplicable(element: KtBinaryExpression) = generateRangeExpressionData(element) != null
 

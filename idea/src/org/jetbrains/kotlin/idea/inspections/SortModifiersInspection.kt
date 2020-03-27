@@ -42,7 +42,7 @@ class SortModifiersInspection : AbstractApplicabilityBasedInspection<KtModifierL
     override fun inspectionText(element: KtModifierList) =
         if (element.modifiersBeforeAnnotations()) KotlinBundle.message("modifiers.should.follow.annotations") else KotlinBundle.message("non.canonical.modifiers.order")
 
-    override val defaultFixText = KotlinBundle.message("sort.modifiers")
+    override val defaultFixText get() = KotlinBundle.message("sort.modifiers")
 
     override fun applyTo(element: KtModifierList, project: Project, editor: Editor?) {
         val owner = element.parent as? KtModifierListOwner ?: return

@@ -33,5 +33,5 @@ class ReplaceToStringWithStringTemplateInspection : AbstractApplicabilityBasedIn
         "call.of.tostring.could.be.replaced.with.string.template"
     )
 
-    override val defaultFixText = KotlinBundle.message("replace.tostring.with.string.template")
+    override val defaultFixText get() = KotlinBundle.message("replace.tostring.with.string.template")
 }

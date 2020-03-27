@@ -51,7 +51,7 @@ class UnnecessaryVariableInspection : AbstractApplicabilityBasedInspection<KtPro
         else -> ""
     }
 
-    override val defaultFixText = KotlinBundle.message("inline.variable")
+    override val defaultFixText get() = KotlinBundle.message("inline.variable")
 
     override val startFixInWriteAction = false
 

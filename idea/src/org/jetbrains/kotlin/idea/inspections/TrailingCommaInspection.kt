@@ -17,6 +17,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.codeStyle.CodeStyleManager
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.formatter.*
 import org.jetbrains.kotlin.idea.util.isLineBreak
 import org.jetbrains.kotlin.psi.KtElement
@@ -67,7 +68,10 @@ class TrailingCommaInspection(
 
         private fun checkCommaPosition(commaOwner: KtElement) {
             for (invalidComma in TrailingCommaHelper.findInvalidCommas(commaOwner)) {
-                reportProblem(invalidComma, "Comma loses the advantages in this position", "Fix comma position")
+                reportProblem(invalidComma,
+                              KotlinBundle.message("inspection.trailing.comma.comma.loses.the.advantages.in.this.position"),
+                              KotlinBundle.message("inspection.trailing.comma.fix.comma.position")
+                )
             }
         }
 
@@ -77,8 +81,8 @@ class TrailingCommaInspection(
                 if (!TrailingCommaHelper.trailingCommaAllowedInModule(commaOwner) || trailingCommaOrLastElement.isComma) return
                 reportProblem(
                     trailingCommaOrLastElement,
-                    "Missing trailing comma",
-                    "Add trailing comma",
+                    KotlinBundle.message("inspection.trailing.comma.missing.trailing.comma"),
+                    KotlinBundle.message("inspection.trailing.comma.add.trailing.comma"),
                     if (addCommaWarning || ApplicationManager.getApplication().isUnitTestMode)
                         ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                     else
@@ -86,7 +90,10 @@ class TrailingCommaInspection(
                 )
             } else if (action == TrailingCommaAction.REMOVE) {
                 if (!trailingCommaOrLastElement.isComma) return
-                reportProblem(trailingCommaOrLastElement, "Useless trailing comma", "Remove trailing comma")
+                reportProblem(trailingCommaOrLastElement,
+                              KotlinBundle.message("inspection.trailing.comma.useless.trailing.comma"),
+                              KotlinBundle.message("inspection.trailing.comma.remove.trailing.comma")
+                )
             }
         }
 
@@ -116,10 +123,10 @@ class TrailingCommaInspection(
             val problemElement = commaOwner.parent
             holder.registerProblem(
                 problemElement,
-                "Missing line break",
+                KotlinBundle.message("inspection.trailing.comma.missing.line.break"),
                 highlightType,
                 TextRange.from(elementForTextRange.startOffset, 1).shiftLeft(problemElement.startOffset),
-                createQuickFix("Add line break", commaOwner),
+                createQuickFix(KotlinBundle.message("inspection.trailing.comma.add.line.break"), commaOwner),
             )
         }
 
@@ -161,7 +168,7 @@ class TrailingCommaInspection(
 
     override fun createOptionsPanel(): JComponent? {
         val panel = MultipleCheckboxOptionsPanel(this)
-        panel.addCheckbox("Report also a missing comma", "addCommaWarning")
+        panel.addCheckbox(KotlinBundle.message("inspection.trailing.comma.report.also.a.missing.comma"), "addCommaWarning")
         return panel
     }
 }

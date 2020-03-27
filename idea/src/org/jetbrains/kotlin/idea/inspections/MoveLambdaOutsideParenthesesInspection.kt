@@ -47,5 +47,5 @@ class MoveLambdaOutsideParenthesesInspection : AbstractApplicabilityBasedInspect
         ?.getStrictParentOfType<KtValueArgument>()?.asElement()
         ?.textRangeIn(element)
 
-    override val defaultFixText = KotlinBundle.message("move.lambda.argument.out.of.parentheses")
+    override val defaultFixText get() = KotlinBundle.message("move.lambda.argument.out.of.parentheses")
 }

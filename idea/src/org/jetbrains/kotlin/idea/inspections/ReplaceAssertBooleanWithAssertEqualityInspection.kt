@@ -28,7 +28,7 @@ class ReplaceAssertBooleanWithAssertEqualityInspection : AbstractApplicabilityBa
 ) {
     override fun inspectionText(element: KtCallExpression) = KotlinBundle.message("replace.assert.boolean.with.assert.equality")
 
-    override val defaultFixText = KotlinBundle.message("replace.assert.boolean.with.assert.equality")
+    override val defaultFixText get() = KotlinBundle.message("replace.assert.boolean.with.assert.equality")
 
     override fun fixText(element: KtCallExpression): String {
         val assertion = element.replaceableAssertion() ?: return defaultFixText

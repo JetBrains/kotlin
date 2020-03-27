@@ -16,7 +16,7 @@ class ReplaceSubstringWithSubstringAfterInspection : ReplaceSubstringInspection(
     override fun inspectionText(element: KtDotQualifiedExpression): String =
         KotlinBundle.message("replace.substring.call.with.substringafter.call")
 
-    override val defaultFixText: String = KotlinBundle.message("replace.substring.call.with.substringafter.call")
+    override val defaultFixText: String get() = KotlinBundle.message("replace.substring.call.with.substringafter.call")
 
     override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {
         element.replaceWith(
@@ -35,7 +35,7 @@ class ReplaceSubstringWithSubstringBeforeInspection : ReplaceSubstringInspection
     override fun inspectionText(element: KtDotQualifiedExpression): String =
         KotlinBundle.message("replace.substring.call.with.substringbefore.call")
 
-    override val defaultFixText: String = KotlinBundle.message("replace.substring.call.with.substringbefore.call")
+    override val defaultFixText: String get() = KotlinBundle.message("replace.substring.call.with.substringbefore.call")
 
     override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {
         element.replaceWith(
