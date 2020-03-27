@@ -52,8 +52,11 @@ public inline class Worker @PublishedApi internal constructor(val id: Int) {
         /**
          * Create worker object from a C pointer.
          *
+         * This function is deprecated. See [Worker.asCPointer] for more details.
+         *
          * @param pointer value returned earlier by [Worker.asCPointer]
          */
+        @Deprecated("Use kotlinx.cinterop.StableRef instead", level = DeprecationLevel.WARNING)
         public fun fromCPointer(pointer: COpaquePointer?): Worker =
                 if (pointer != null) Worker(pointer.toLong().toInt()) else throw IllegalArgumentException()
     }
@@ -156,8 +159,13 @@ public inline class Worker @PublishedApi internal constructor(val id: Int) {
      * Convert worker to a COpaquePointer value that could be passed via native void* pointer.
      * Can be used as an argument of [Worker.fromCPointer].
      *
+     * This function is deprecated. Use `kotlinx.cinterop.StableRef.create(worker).asCPointer()` instead.
+     * The result can be unwrapped with `pointer.asStableRef<Worker>().get()`.
+     * [StableRef] should be eventually disposed manually with [StableRef.dispose].
+     *
      * @return worker identifier as C pointer.
      */
+    @Deprecated("Use kotlinx.cinterop.StableRef instead", level = DeprecationLevel.WARNING)
     public fun asCPointer() : COpaquePointer? = id.toLong().toCPointer()
 }
 
