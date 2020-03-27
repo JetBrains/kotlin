@@ -750,6 +750,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/infixFunctions.kt");
         }
 
+        @TestMetadata("notASupertype.kt")
+        public void testNotASupertype() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/notASupertype.kt");
+        }
+
         @TestMetadata("redundantModifier.kt")
         public void testRedundantModifier() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/redundantModifier.kt");
@@ -763,6 +768,16 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestMetadata("superIsNotAnExpression.kt")
         public void testSuperIsNotAnExpression() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/superIsNotAnExpression.kt");
+        }
+
+        @TestMetadata("superNotAvailable.kt")
+        public void testSuperNotAvailable() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/superNotAvailable.kt");
+        }
+
+        @TestMetadata("superclassNotAccessibleFromInterface.kt")
+        public void testSuperclassNotAccessibleFromInterface() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/superclassNotAccessibleFromInterface.kt");
         }
     }
 

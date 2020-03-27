@@ -1,5 +1,5 @@
 fun foo() {
-    <!NO_SUPERTYPE, NO_SUPERTYPE!>super<!>
-    <!NO_SUPERTYPE, NO_SUPERTYPE!>super<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
-    super<Nothing>.<!UNRESOLVED_REFERENCE!>foo<!>()
+    <!NO_SUPERTYPE, NO_SUPERTYPE, SUPER_NOT_AVAILABLE!>super<!>
+    <!NO_SUPERTYPE, NO_SUPERTYPE, SUPER_NOT_AVAILABLE!>super<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
+    <!SUPER_NOT_AVAILABLE!>super<Nothing><!>.<!UNRESOLVED_REFERENCE!>foo<!>()
 }

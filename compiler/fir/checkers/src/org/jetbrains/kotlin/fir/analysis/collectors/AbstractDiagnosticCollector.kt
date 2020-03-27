@@ -48,7 +48,8 @@ abstract class AbstractDiagnosticCollector(
     private var componentsInitialized = false
     private val visitor = Visitor()
 
-    private var context = PersistentCheckerContext()
+    @Suppress("LeakingThis")
+    private var context = PersistentCheckerContext(this)
 
     fun initializeComponents(vararg components: AbstractDiagnosticCollectorComponent) {
         if (componentsInitialized) {

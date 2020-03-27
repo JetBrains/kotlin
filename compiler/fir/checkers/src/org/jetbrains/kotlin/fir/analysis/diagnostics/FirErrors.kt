@@ -37,6 +37,9 @@ object FirErrors {
     val VARIABLE_EXPECTED by error0<FirSourceElement, PsiElement>()
     val RETURN_NOT_ALLOWED by error0<FirSourceElement, PsiElement>()
     val SUPER_IS_NOT_AN_EXPRESSION by error0<FirSourceElement, PsiElement>()
+    val SUPER_NOT_AVAILABLE by error0<FirSourceElement, PsiElement>()
+    val NOT_A_SUPERTYPE by error0<FirSourceElement, PsiElement>()
+    val SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE by error0<FirSourceElement, PsiElement>()
 
     val INAPPLICABLE_INFIX_MODIFIER by existing<FirSourceElement, PsiElement, String>(Errors.INAPPLICABLE_INFIX_MODIFIER)
     val CONSTRUCTOR_IN_OBJECT by existing<FirSourceElement, KtDeclaration>(Errors.CONSTRUCTOR_IN_OBJECT)

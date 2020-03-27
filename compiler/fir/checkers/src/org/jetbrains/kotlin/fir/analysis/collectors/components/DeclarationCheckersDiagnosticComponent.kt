@@ -57,6 +57,10 @@ class DeclarationCheckersDiagnosticComponent(collector: AbstractDiagnosticCollec
         runCheck { DeclarationCheckers.DECLARATIONS.check(enumEntry, data, it) }
     }
 
+    override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: CheckerContext) {
+        runCheck { DeclarationCheckers.DECLARATIONS.check(anonymousObject, data, it) }
+    }
+
     private fun <D : FirDeclaration> List<FirDeclarationChecker<D>>.check(
         declaration: D,
         context: CheckerContext,
