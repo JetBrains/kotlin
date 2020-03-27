@@ -31,7 +31,8 @@ internal class CallResolutionContext(
     val invokeBuiltinExtensionReceiverCandidateFactory: CandidateFactory?,
     val stubReceiverCandidateFactory: CandidateFactory?,
     val invokeReceiverCollector: CandidateCollector?,
-    val towerResolver: FirTowerResolver
+    val towerResolver: FirTowerResolver,
+    val towerResolverSession: FirTowerResolverSession
 ) {
     // TODO: Get rid of the property, storing state here looks like a hack
     internal lateinit var invokeOnGivenReceiverCandidateFactory: CandidateFactory
@@ -47,6 +48,7 @@ internal class LevelHandler(
 
     private val resultCollector: CandidateCollector get() = callResolutionContext.resultCollector
     private val towerResolver: FirTowerResolver get() = callResolutionContext.towerResolver
+    private val towerResolverSession: FirTowerResolverSession get() = callResolutionContext.towerResolverSession
 
     private fun enqueueResolverTask(group: TowerGroup = TowerGroup.Start, task: suspend () -> Unit) =
         manager.enqueueResolverTask(group, task)
@@ -203,26 +205,26 @@ internal class LevelHandler(
             when {
                 invokeBuiltinExtensionMode -> {
                     enqueueResolverTask {
-                        towerResolver.runResolverForBuiltinInvokeExtensionWithExplicitArgument(
+                        towerResolverSession.runResolverForBuiltinInvokeExtensionWithExplicitArgument(
                             invokeFunctionInfo, explicitReceiver, manager
                         )
                     }
                 }
                 useImplicitReceiverAsBuiltinInvokeArgument -> {
                     enqueueResolverTask {
-                        towerResolver.runResolverForBuiltinInvokeExtensionWithImplicitArgument(
+                        towerResolverSession.runResolverForBuiltinInvokeExtensionWithImplicitArgument(
                             invokeFunctionInfo, explicitReceiver, manager
                         )
                     }
                     enqueueResolverTask {
-                        towerResolver.runResolverForInvoke(
+                        towerResolverSession.runResolverForInvoke(
                             invokeFunctionInfo, explicitReceiver, manager
                         )
                     }
                 }
                 else -> {
                     enqueueResolverTask {
-                        towerResolver.runResolverForInvoke(
+                        towerResolverSession.runResolverForInvoke(
                             invokeFunctionInfo, explicitReceiver, manager
                         )
                     }
