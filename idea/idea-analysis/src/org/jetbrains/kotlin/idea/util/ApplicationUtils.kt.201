@@ -51,3 +51,6 @@ inline fun invokeLater(crossinline action: () -> Unit) {
 }
 
 inline fun isUnitTestMode(): Boolean = ApplicationManager.getApplication().isUnitTestMode
+
+fun <T> Project.getServiceSafe(serviceClass: Class<T>) =
+    this.getService(serviceClass) ?: error("Unable to locate service ${serviceClass.name}")

@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.idea.configuration.ui
 
 import com.intellij.notification.NotificationDisplayType
 import com.intellij.notification.NotificationsConfiguration
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction.nonBlocking
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
@@ -28,6 +30,9 @@ import org.jetbrains.kotlin.idea.configuration.getModulesWithKotlinFiles
 import org.jetbrains.kotlin.idea.configuration.notifyOutdatedBundledCompilerIfNecessary
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.notifyKotlinStyleUpdateIfNeeded
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
+import org.jetbrains.kotlin.idea.util.ProgressIndicatorUtils
+import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
+import java.util.concurrent.Callable
 import java.util.concurrent.atomic.AtomicInteger
 
 class KotlinConfigurationCheckerStartupActivity : StartupActivity {
@@ -53,15 +58,24 @@ class KotlinConfigurationCheckerService(val project: Project) {
     private val syncDepth = AtomicInteger()
 
     fun performProjectPostOpenActions() {
-        nonBlocking {
-            val modulesWithKotlinFiles = getModulesWithKotlinFiles(project)
-            for (module in modulesWithKotlinFiles) {
-                module.getAndCacheLanguageLevelByDependencies()
-            }
-        }
+        nonBlocking(Callable {
+            return@Callable getModulesWithKotlinFiles(project)
+        })
             .inSmartMode(project)
             .expireWith(project)
             .coalesceBy(this)
+            .finishOnUiThread(ModalityState.any()) { modulesWithKotlinFiles ->
+                val promise = ApplicationManager.getApplication().executeOnPooledThread {
+                    for (module in modulesWithKotlinFiles) {
+                        runReadAction {
+                            module.getAndCacheLanguageLevelByDependencies()
+                        }
+                    }
+                }
+                if (isUnitTestMode()) {
+                    ProgressIndicatorUtils.awaitWithCheckCanceled(promise)
+                }
+            }
             .submit(AppExecutorUtil.getAppExecutorService())
     }
 
