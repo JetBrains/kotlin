@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.pill.combo.intellij
 import org.jetbrains.kotlin.pill.xml
 import java.io.File
 import java.io.OutputStream
+import java.nio.file.attribute.FileTime
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
@@ -40,6 +41,7 @@ class IntellijRepoGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBase
                 ZipOutputStream(fos).use { zos ->
                     for (path in substitutionsForArtifact.keys) {
                         val entry = ZipEntry(path)
+                        entry.setZeroDate()
                         zos.putNextEntry(entry)
 
                         if (path.toLowerCase().endsWith(".jar")) {
@@ -50,6 +52,8 @@ class IntellijRepoGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBase
                     }
                 }
             }
+
+            artifactFile.setZeroDate()
 
             writePom(File(groupDir, "$nameBase.pom"), artifactId, "zip")
 
@@ -82,8 +86,21 @@ class IntellijRepoGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBase
         )
     }
 
+    private fun File.setZeroDate() {
+        // Avoid meaningless Git changes for binary files
+        this.setLastModified(0)
+    }
+
+    private fun ZipEntry.setZeroDate() {
+        // Avoid meaningless Git changes
+        creationTime = FileTime.fromMillis(1)
+        lastAccessTime = FileTime.fromMillis(1)
+        lastModifiedTime = FileTime.fromMillis(1)
+    }
+
     private fun writeEmptyZipFile(file: File) {
         file.outputStream().use { writeEmptyZipFile(it) }
+        file.setZeroDate()
     }
 
     private fun writeEmptyZipFile(zos: OutputStream) {
