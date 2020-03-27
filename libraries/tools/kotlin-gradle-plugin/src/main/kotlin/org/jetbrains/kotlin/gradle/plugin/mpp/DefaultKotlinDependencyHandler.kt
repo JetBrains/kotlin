@@ -7,6 +7,8 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
+import org.jetbrains.kotlin.gradle.targets.js.npm.fileVersion
+import org.jetbrains.kotlin.gradle.targets.js.npm.moduleName
 import java.io.File
 
 class DefaultKotlinDependencyHandler(
@@ -88,9 +90,14 @@ class DefaultKotlinDependencyHandler(
         )
 
     override fun npm(name: String, directory: File): NpmDependency =
-        NpmDependency(
-            project = project,
+        npm(
             name = name,
+            version = fileVersion(directory)
+        )
+
+    override fun npm(directory: File): NpmDependency =
+        npm(
+            name = moduleName(directory),
             directory = directory
         )
 

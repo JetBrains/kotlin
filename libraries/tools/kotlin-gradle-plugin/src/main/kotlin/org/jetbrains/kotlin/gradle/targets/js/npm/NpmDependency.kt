@@ -30,25 +30,6 @@ data class NpmDependency(
     ResolvableDependency,
     FileCollectionDependency {
 
-    constructor(
-        project: Project,
-        name: String,
-        directory: File
-    ) : this(
-        project,
-        name,
-        "$FILE_VERSION_PREFIX${directory.canonicalPath}"
-    )
-
-    constructor(
-        project: Project,
-        directory: File
-    ) : this(
-        project,
-        moduleName(directory),
-        directory
-    )
-
     enum class Scope {
         NORMAL,
         DEV,
@@ -146,7 +127,10 @@ data class NpmDependency(
     override fun getReason(): String? = reason
 }
 
-private fun moduleName(directory: File): String {
+internal fun fileVersion(directory: File): String =
+    "$FILE_VERSION_PREFIX${directory.canonicalPath}"
+
+internal fun moduleName(directory: File): String {
     val packageJson = directory.resolve(PACKAGE_JSON)
 
     check(!packageJson.isFile) {

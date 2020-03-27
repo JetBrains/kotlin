@@ -29,10 +29,9 @@ fun Project.addNpmDependencyExtension() {
             )
 
         override operator fun invoke(name: String, directory: File): NpmDependency =
-            NpmDependency(
-                project = this@addNpmDependencyExtension,
+            invoke(
                 name = name,
-                directory = directory
+                version = fileVersion(directory)
             )
 
         override fun call(vararg args: Any?): NpmDependency {
