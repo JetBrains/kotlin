@@ -53,7 +53,7 @@ internal class KotlinCompilationNpmResolver(
 
     override fun toString(): String = "KotlinCompilationNpmResolver(${npmProject.name})"
 
-    val aggregatedConfiguration: Configuration by lazy {
+    private val aggregatedConfiguration: Configuration by lazy {
         createAggregatedConfiguration()
     }
 
@@ -247,6 +247,9 @@ internal class KotlinCompilationNpmResolver(
         @get:Input
         val internalDependencies: Collection<String>,
 
+        @get:Input
+        val internalCompositeDependencies: Collection<String>,
+
         @get:InputFiles
         val externalGradleDependencies: Collection<File>,
 
@@ -264,6 +267,7 @@ internal class KotlinCompilationNpmResolver(
         val inputs: PackageJsonProducerInputs
             get() = PackageJsonProducerInputs(
                 internalDependencies.map { it.npmProject.name },
+                internalCompositeDependencies.map { it.includedBuild.projectDir.canonicalPath },
                 externalGradleDependencies.map { it.artifact.file },
                 externalNpmDependencies.map { "${it.scope} ${it.key}:${it.version}" }
             )
