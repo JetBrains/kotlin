@@ -16,6 +16,7 @@ import org.gradle.api.internal.artifacts.dependencies.SelfResolvingDependencyInt
 import org.gradle.api.tasks.TaskDependency
 import org.gradle.internal.component.local.model.DefaultLibraryBinaryIdentifier
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.File
 
@@ -37,6 +38,15 @@ data class NpmDependency(
         project,
         name,
         "$FILE_VERSION_PREFIX${directory.canonicalPath}"
+    )
+
+    constructor(
+        project: Project,
+        directory: File
+    ) : this(
+        project,
+        moduleName(directory),
+        directory
     )
 
     enum class Scope {
@@ -134,6 +144,16 @@ data class NpmDependency(
     }
 
     override fun getReason(): String? = reason
+}
+
+private fun moduleName(directory: File): String {
+    val packageJson = directory.resolve(PACKAGE_JSON)
+
+    check(!packageJson.isFile) {
+        "There is no NPM module in $directory. Declare valid $PACKAGE_JSON in it."
+    }
+
+    return fromSrcPackageJson(packageJson)!!.name
 }
 
 const val FILE_VERSION_PREFIX = "file:"
