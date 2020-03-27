@@ -16,7 +16,7 @@
 
 package kotlinx.cinterop
 
-@Deprecated("Use StableRef<T> instead", ReplaceWith("StableRef<T>"))
+@Deprecated("Use StableRef<T> instead", ReplaceWith("StableRef<T>"), DeprecationLevel.ERROR)
 typealias StableObjPtr = StableRef<*>
 
 /**
@@ -43,10 +43,11 @@ public inline class StableRef<out T : Any> @PublishedApi internal constructor(
          *
          * @param value must be a [value] of some [StableRef]
          */
-        @Deprecated("Use CPointer<*>.asStableRef<T>() instead", ReplaceWith("ptr.asStableRef<T>()"))
+        @Deprecated("Use CPointer<*>.asStableRef<T>() instead", ReplaceWith("ptr.asStableRef<T>()"),
+                DeprecationLevel.ERROR)
         fun fromValue(value: COpaquePointer) = value.asStableRef<Any>()
     }
-    @Deprecated("Use .asCPointer() instead", ReplaceWith("this.asCPointer()"))
+    @Deprecated("Use .asCPointer() instead", ReplaceWith("this.asCPointer()"), DeprecationLevel.ERROR)
     val value: COpaquePointer get() = this.asCPointer()
 
     /**
