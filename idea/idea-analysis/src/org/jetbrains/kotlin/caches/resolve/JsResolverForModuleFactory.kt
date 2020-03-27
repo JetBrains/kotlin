@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.caches.resolve
 
 import org.jetbrains.kotlin.analyzer.*
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.caches.resolve.JsPlatformKindResolution.Companion.createJsKlibPackageFragmentProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.get
@@ -15,18 +15,14 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
-import org.jetbrains.kotlin.idea.klib.createKlibPackageFragmentProvider
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
-import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
-import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.createKotlinJavascriptPackageFragmentProvider
-import org.jetbrains.kotlin.serialization.konan.impl.KlibMetadataModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 
 class JsResolverForModuleFactory(
@@ -77,33 +73,14 @@ internal fun <M : ModuleInfo> createPackageFragmentProvider(
     moduleDescriptor: ModuleDescriptorImpl
 ): List<PackageFragmentProvider> = when (moduleInfo) {
     is JsKlibLibraryInfo -> {
-        if (moduleInfo.compatibilityInfo.isCompatible) {
-            val library = moduleInfo.resolvedKotlinLibrary
-            val languageVersionSettings = container.get<LanguageVersionSettings>()
-
-            val metadataFactories = KlibMetadataFactories(
-                { DefaultBuiltIns.Instance },
-                DynamicTypeDeserializer
-            )
-
-            val klibMetadataModuleDescriptorFactory = KlibMetadataModuleDescriptorFactoryImpl(
-                metadataFactories.DefaultDescriptorFactory,
-                metadataFactories.DefaultPackageFragmentsFactory,
-                metadataFactories.flexibleTypeDeserializer,
-                metadataFactories.platformDependentTypeTransformer
-            )
-
-            val klibBasedPackageFragmentProvider = library.createKlibPackageFragmentProvider(
+        listOfNotNull(
+            createJsKlibPackageFragmentProvider(
+                moduleInfo,
                 moduleContext.storageManager,
-                klibMetadataModuleDescriptorFactory,
-                languageVersionSettings,
+                container.get<LanguageVersionSettings>(),
                 moduleDescriptor
             )
-
-            listOfNotNull(klibBasedPackageFragmentProvider)
-        } else {
-            emptyList()
-        }
+        )
     }
     is LibraryModuleInfo -> {
         moduleInfo.getLibraryRoots()

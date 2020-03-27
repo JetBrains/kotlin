@@ -16,17 +16,25 @@ import org.jetbrains.kotlin.analyzer.PlatformAnalysisParameters
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.resolve.BuiltInsCacheKey
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.klib.AbstractKlibLibraryInfo
+import org.jetbrains.kotlin.idea.klib.createKlibPackageFragmentProvider
 import org.jetbrains.kotlin.idea.klib.isKlibLibraryRootForPlatform
+import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.resolve.TargetEnvironment
+import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
+import org.jetbrains.kotlin.serialization.konan.impl.KlibMetadataModuleDescriptorFactoryImpl
+import org.jetbrains.kotlin.storage.StorageManager
 
 class JsPlatformKindResolution : IdePlatformKindResolution {
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {
@@ -67,6 +75,33 @@ class JsPlatformKindResolution : IdePlatformKindResolution {
             }
         } else {
             super.createLibraryInfo(project, library)
+        }
+    }
+
+    companion object {
+        private val metadataFactories = KlibMetadataFactories({ DefaultBuiltIns.Instance }, DynamicTypeDeserializer)
+
+        private val metadataModuleDescriptorFactory = KlibMetadataModuleDescriptorFactoryImpl(
+            metadataFactories.DefaultDescriptorFactory,
+            metadataFactories.DefaultPackageFragmentsFactory,
+            metadataFactories.flexibleTypeDeserializer,
+            metadataFactories.platformDependentTypeTransformer
+        )
+
+        fun createJsKlibPackageFragmentProvider(
+            moduleInfo: ModuleInfo,
+            storageManager: StorageManager,
+            languageVersionSettings: LanguageVersionSettings,
+            moduleDescriptor: ModuleDescriptor
+        ): PackageFragmentProvider? {
+            return (moduleInfo as? JsKlibLibraryInfo)
+                ?.resolvedKotlinLibrary
+                ?.createKlibPackageFragmentProvider(
+                    storageManager = storageManager,
+                    metadataModuleDescriptorFactory = metadataModuleDescriptorFactory,
+                    languageVersionSettings = languageVersionSettings,
+                    moduleDescriptor = moduleDescriptor
+                )
         }
     }
 }
