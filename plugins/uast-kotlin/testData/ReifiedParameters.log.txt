@@ -21,6 +21,22 @@ UFile (package = )
                     UArrayAccessExpression
                         USimpleNameReferenceExpression (identifier = t)
                         ULiteralExpression (value = 0)
+        UMethod (name = functionWithReceiver)
+            UParameter (name = $this$functionWithReceiver)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UParameter (name = i)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UBlockExpression
+                UReturnExpression
+                    UThisExpression (label = null)
+        UMethod (name = name with spaces)
+            UParameter (name = $this$name with spaces)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UParameter (name = i)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UBlockExpression
+                UReturnExpression
+                    UThisExpression (label = null)
         UMethod (name = functionWithParamAnnotation)
             UParameter (name = t)
                 UAnnotation (fqName = org.jetbrains.annotations.Nullable)

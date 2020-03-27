@@ -12,7 +12,7 @@ public final class ReifiedReturnTypeKt {
     fun function5(@org.jetbrains.annotations.Nullable t: T, @org.jetbrains.annotations.NotNull i: int, @org.jetbrains.annotations.NotNull s: java.lang.String) : int {
         return 42
     }
-    fun function6(@org.jetbrains.annotations.Nullable t: T, i: int, s: java.lang.String) : T {
+    fun function6(@org.jetbrains.annotations.Nullable $this$function6: T, @org.jetbrains.annotations.Nullable t: T, @org.jetbrains.annotations.NotNull i: int, @org.jetbrains.annotations.NotNull s: java.lang.String) : T {
         return t
     }
     fun function7(@org.jetbrains.annotations.Nullable t: T, @org.jetbrains.annotations.NotNull i: int, @org.jetbrains.annotations.NotNull s: java.lang.String) : T {
@@ -27,7 +27,7 @@ public final class ReifiedReturnTypeKt {
     fun function10(@org.jetbrains.annotations.Nullable t: T, @org.jetbrains.annotations.NotNull i: int, @org.jetbrains.annotations.NotNull s: java.lang.String) : T {
         return t
     }
-    fun function11(@org.jetbrains.annotations.Nullable t: T, i: int, s: java.lang.String) : T {
+    fun function11(@org.jetbrains.annotations.Nullable $this$function11: T, @org.jetbrains.annotations.Nullable t: T, @org.jetbrains.annotations.NotNull i: int, @org.jetbrains.annotations.NotNull s: java.lang.String) : T {
         return t
     }
 }

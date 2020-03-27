@@ -47,10 +47,14 @@ UFile (package = )
                 UReturnExpression
                     ULiteralExpression (value = 42)
         UMethod (name = function6)
+            UParameter (name = $this$function6)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
             UParameter (name = t)
                 UAnnotation (fqName = org.jetbrains.annotations.Nullable)
             UParameter (name = i)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UParameter (name = s)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UBlockExpression
                 UReturnExpression
                     USimpleNameReferenceExpression (identifier = t)
@@ -95,10 +99,14 @@ UFile (package = )
                 UReturnExpression
                     USimpleNameReferenceExpression (identifier = t)
         UMethod (name = function11)
+            UParameter (name = $this$function11)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
             UParameter (name = t)
                 UAnnotation (fqName = org.jetbrains.annotations.Nullable)
             UParameter (name = i)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UParameter (name = s)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UBlockExpression
                 UReturnExpression
                     USimpleNameReferenceExpression (identifier = t)

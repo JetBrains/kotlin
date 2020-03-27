@@ -8,6 +8,7 @@ import com.intellij.psi.PsiType
 import com.intellij.psi.impl.light.LightParameter
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -21,12 +22,12 @@ import org.jetbrains.uast.kotlin.toPsiType
 class UastKotlinPsiParameter(
     name: String,
     type: PsiType,
-    private val parent: PsiElement,
+    parent: PsiElement,
     language: Language,
     isVarArgs: Boolean,
-    val ktDefaultValue: KtExpression?,
-    val ktParameter: KtParameter
-) : LightParameter(name, type, parent, language, isVarArgs) {
+    ktDefaultValue: KtExpression?,
+    ktParameter: KtParameter
+) : UastKotlinPsiParameterBase<KtParameter>(name, type, parent, ktParameter, language, isVarArgs, ktDefaultValue) {
     companion object {
         fun create(parameter: KtParameter, parent: PsiElement, containingElement: UElement, index: Int): PsiParameter {
             val psiParent = containingElement.getParentOfType<UDeclaration>()?.javaPsi ?: parent
@@ -42,15 +43,29 @@ class UastKotlinPsiParameter(
         }
     }
 
+    val ktParameter: KtParameter get() = ktOrigin
+
+}
+
+open class UastKotlinPsiParameterBase<T : KtElement>(
+    name: String,
+    type: PsiType,
+    private val parent: PsiElement,
+    val ktOrigin: T,
+    language: Language = ktOrigin.language,
+    isVarArgs: Boolean = false,
+    val ktDefaultValue: KtExpression? = null,
+) : LightParameter(name, type, parent, language, isVarArgs) {
+
     override fun getParent(): PsiElement = parent
 
-    override fun getContainingFile(): PsiFile? = ktParameter.containingFile
+    override fun getContainingFile(): PsiFile? = ktOrigin.containingFile
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || other::class.java != this::class.java) return false
-        return ktParameter == (other as? UastKotlinPsiParameter)?.ktParameter
+        return ktOrigin == (other as? UastKotlinPsiParameterBase<*>)?.ktOrigin
     }
 
-    override fun hashCode() = ktParameter.hashCode()
+    override fun hashCode(): Int = ktOrigin.hashCode()
 }

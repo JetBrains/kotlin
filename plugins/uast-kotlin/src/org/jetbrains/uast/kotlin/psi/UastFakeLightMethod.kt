@@ -13,6 +13,7 @@ import com.intellij.psi.impl.light.LightTypeParameterBuilder
 import org.jetbrains.kotlin.asJava.elements.KotlinLightTypeParameterListBuilder
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.UastErrorType
@@ -53,6 +54,19 @@ internal class UastFakeLightMethod(internal val original: KtFunction, containing
 
             init {
                 val parameterList = this
+
+                original.receiverTypeReference?.let { receiver ->
+                    this.addParameter(
+                        UastKotlinPsiParameterBase(
+                            "\$this\$${original.name}",
+                            receiver.getType()
+                                ?.toPsiType(this@UastFakeLightMethod, original, false)
+                                ?: UastErrorType,
+                            parameterList, receiver
+                        )
+                    )
+                }
+
                 for ((i, p) in original.valueParameters.withIndex()) {
                     this.addParameter(
                         UastKotlinPsiParameter(

@@ -64,19 +64,18 @@ open class KotlinUMethod(
     private val receiver by lz { (sourcePsi as? KtCallableDeclaration)?.receiverTypeReference }
 
     override val uastParameters by lz {
-        val lightParams = psi.parameterList.parameters
-        val receiver = receiver ?: return@lz lightParams.map {
-            KotlinUParameter(
-                it, when (it) {
-                    is KtLightElement<*, *> -> it.kotlinOrigin
-                    is UastKotlinPsiParameter -> it.ktParameter
-                    else -> null
-                }, this
-            )
+
+        fun parameterOrigin(psiParameter: PsiParameter?): KtElement? = when (psiParameter) {
+            is KtLightElement<*, *> -> psiParameter.kotlinOrigin
+            is UastKotlinPsiParameter -> psiParameter.ktParameter
+            else -> null
         }
+
+        val lightParams = psi.parameterList.parameters
+        val receiver = receiver ?: return@lz lightParams.map { KotlinUParameter(it, parameterOrigin(it), this) }
         val receiverLight = lightParams.firstOrNull() ?: return@lz emptyList<UParameter>()
         val uParameters = SmartList<UParameter>(KotlinReceiverUParameter(receiverLight, receiver, this))
-        lightParams.drop(1).mapTo(uParameters) { KotlinUParameter(it, (it as? KtLightElement<*, *>)?.kotlinOrigin, this) }
+        lightParams.drop(1).mapTo(uParameters) { KotlinUParameter(it, parameterOrigin(it), this) }
         uParameters
     }
 

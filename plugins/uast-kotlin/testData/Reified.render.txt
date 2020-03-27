@@ -4,7 +4,7 @@ public final class ReifiedKt {
     public static final fun systemService2(@org.jetbrains.annotations.NotNull $this$systemService2: test.pkg.Context) : error.NonExistentClass {
         return <anonymous class>(java.lang.String.java)
     }
-    fun systemService1() : <ErrorType> {
+    fun systemService1(@org.jetbrains.annotations.NotNull $this$systemService1: test.pkg.Context) : <ErrorType> {
         return <anonymous class>(T.java)
     }
 }
