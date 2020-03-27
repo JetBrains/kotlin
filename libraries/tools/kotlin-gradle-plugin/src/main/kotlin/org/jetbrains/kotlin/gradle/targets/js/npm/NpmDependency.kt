@@ -133,7 +133,7 @@ internal fun fileVersion(directory: File): String =
 internal fun moduleName(directory: File): String {
     val packageJson = directory.resolve(PACKAGE_JSON)
 
-    check(!packageJson.isFile) {
+    check(packageJson.isFile) {
         "There is no NPM module in $directory. Declare valid $PACKAGE_JSON in it."
     }
 
