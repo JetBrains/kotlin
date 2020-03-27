@@ -10,6 +10,8 @@ plugins {
 val ultimateTools: Map<String, Any> by rootProject.extensions
 val addIdeaNativeModuleDeps: (Project) -> Unit by ultimateTools
 
+val isStandaloneBuild: Boolean by rootProject.extra
+
 val cidrVersion: String by rootProject.extra
 val kotlinNativeBackendVersion: String by rootProject.extra
 val kotlinNativeBackendRepo: String by rootProject.extra
@@ -18,6 +20,9 @@ repositories {
     maven("https://repo.labs.intellij.net/intellij-proprietary-modules")
     teamcityServer {
         setUrl("https://buildserver.labs.intellij.net")
+    }
+    if (!isStandaloneBuild) {
+        maven("https://jetbrains.bintray.com/markdown")
     }
 }
 
@@ -28,12 +33,31 @@ dependencies {
     compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa:$cidrVersion")
     compileOnly("com.jetbrains.intellij.platform:external-system-rt:$cidrVersion")
     compileOnly("com.esotericsoftware.kryo:kryo:2.24.0")
-    compileOnly(tc("$kotlinNativeBackendRepo:$kotlinNativeBackendVersion:backend.native.jar"))
+
+    implementation(tc("$kotlinNativeBackendRepo:$kotlinNativeBackendVersion:backend.native.jar"))
+    testRuntime(tc("$kotlinNativeBackendRepo:${kotlinNativeBackendVersion}:konan.serializer.jar")) // required for backend.native
+    testRuntime(files("${System.getProperty("java.home")}/../lib/tools.jar"))
 }
 
 the<JavaPluginConvention>().sourceSets["main"].apply {
     java.setSrcDirs(listOf("src"))
     resources.setSrcDirs(listOf("resources"))
+}
+
+if (!isStandaloneBuild) {
+    dependencies {
+        testCompile(project(":idea", configuration = "tests-jar"))
+        testRuntime(project(":idea", configuration = "testRuntime"))
+    }
+
+    the<JavaPluginConvention>().sourceSets["test"].apply {
+        java.setSrcDirs(listOf("test"))
+    }
+
+    tasks.withType(Test::class.java).getByName("test") {
+        dependsOn(":dist")
+        workingDir = rootDir
+    }
 }
 
 tasks.withType<KotlinCompile> {
