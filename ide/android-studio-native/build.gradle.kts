@@ -11,7 +11,9 @@ proprietaryRepositories(project)
 dependencies {
     compileOnly(kotlin("stdlib"))
     compileOnly(project(":compiler:util")) { isTransitive = false }
+    compileOnly(project(":idea")) { isTransitive = false }
     compileOnly(project(":idea:idea-gradle")) { isTransitive = false }
+    compileOnly(project(":idea:idea-core")) { isTransitive = false }
     compileOnly(intellijDep()) { includeJars(
         "external-system-rt",
         "extensions",
