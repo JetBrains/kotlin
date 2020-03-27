@@ -64,15 +64,12 @@ fun createSuppressWarningActions(element: PsiElement, severity: Severity, suppre
                         KotlinIdeaAnalysisBundle.message("declaration.kind.statement")
                     else
                         KotlinIdeaAnalysisBundle.message("declaration.kind.initializer")
+
                     actions.add(
                         KotlinSuppressIntentionAction(
                             current,
                             suppressionKey,
-                            AnnotationHostKind(
-                                KotlinIdeaAnalysisBundle.message("declaration.kind.file"),
-                                "",
-                                true
-                            )
+                            AnnotationHostKind(kind, "", true)
                         )
                     )
                     suppressAtStatementAllowed = false
