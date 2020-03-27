@@ -123,7 +123,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
                 else -> TODO("${this.javaClass} not supported")
             }
 
-            return when (code) {
+            return when (code) { // TODO move to label class
                 Code.RETURN -> when (this) {
                     is IrCall -> if (code.info == this.symbol.descriptor.toString()) Code.NEXT else code
                     is IrReturnableBlock -> if (code.info == this.symbol.descriptor.toString()) Code.NEXT else code
@@ -150,36 +150,12 @@ class IrInterpreter(irModule: IrModuleFragment) {
             val exceptionName = e::class.java.simpleName
             val irExceptionClass = irExceptions.firstOrNull { it.name.asString() == exceptionName } ?: irBuiltIns.throwableClass.owner
 
-            // TODO do we really need this?... It will point to JVM stdlib
-            val additionalStack = mutableListOf<String>()
-            if (e.stackTrace.any { it.className == "java.lang.invoke.MethodHandle" }) {
-                for ((index, stackTraceElement) in e.stackTrace.withIndex()) {
-                    if (stackTraceElement.methodName == "invokeWithArguments") {
-                        additionalStack.addAll(e.stackTrace.slice(0 until index).reversed().map { "at $it" })
-                        break
-                    }
-                }
-
-                var cause = e.cause
-                val lastNeededValue = e.stackTrace.first().className + "." + e.stackTrace.first().methodName
-                while (cause != null) {
-                    for ((causeStackIndex, causeStackTraceElement) in cause.stackTrace.withIndex()) {
-                        val currentStackTraceValue = causeStackTraceElement.className + "." + causeStackTraceElement.methodName
-                        if (currentStackTraceValue == lastNeededValue) {
-                            cause.stackTrace = cause.stackTrace.sliceArray(0 until causeStackIndex).reversedArray()
-                            break
-                        }
-                    }
-                    cause = cause.cause
-                }
-            }
-
             val exceptionState = when {
                 // this block is used to replace jvm null pointer exception with common one
                 // TODO figure something better
                 irExceptionClass == irBuiltIns.throwableClass.owner && exceptionName == "KotlinNullPointerException" ->
-                    ExceptionState(e, irExceptions.first { it.name.asString() == "NullPointerException" }, stackTrace + additionalStack)
-                else -> ExceptionState(e, irExceptionClass, stackTrace + additionalStack)
+                    ExceptionState(e, irExceptions.first { it.name.asString() == "NullPointerException" }, stackTrace)
+                else -> ExceptionState(e, irExceptionClass, stackTrace)
             }
 
             data.pushReturnValue(exceptionState)

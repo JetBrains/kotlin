@@ -322,7 +322,7 @@ class ExceptionState private constructor(
     init {
         instance = this
         this.stackTrace = stackTrace.reversed()
-        if (!this::exceptionFqName.isInitialized) this.exceptionFqName = irClass.fqNameForIrSerialization.asString()
+        if (!this::exceptionFqName.isInitialized) this.exceptionFqName = irClassFqName()
 
         if (fields.none { it.descriptor.equalTo(messageProperty.descriptor) }) {
             setMessage()
@@ -341,7 +341,7 @@ class ExceptionState private constructor(
 
     constructor(
         exception: Throwable, irClass: IrClass, stackTrace: List<String>
-    ) : this(irClass, evaluateFields(exception, irClass, stackTrace), stackTrace) {
+    ) : this(irClass, evaluateFields(exception, irClass, stackTrace), stackTrace + evaluateAdditionalStackTrace(exception)) {
         if (irClass.name.asString() != exception::class.java.simpleName) {
             // ir class wasn't found in classpath, a stub was passed => need to save java class hierarchy
             this.exceptionFqName = exception::class.java.name
@@ -413,6 +413,33 @@ class ExceptionState private constructor(
                 Variable(causeProperty.descriptor, ExceptionState(it, irClass, stackTrace + it.stackTrace.reversed().map { "at $it" }))
             }
             return listOfNotNull(messageVar, causeVar).toMutableList()
+        }
+
+        private fun evaluateAdditionalStackTrace(e: Throwable): List<String> {
+            // TODO do we really need this?... It will point to JVM stdlib
+            val additionalStack = mutableListOf<String>()
+            if (e.stackTrace.any { it.className == "java.lang.invoke.MethodHandle" }) {
+                for ((index, stackTraceElement) in e.stackTrace.withIndex()) {
+                    if (stackTraceElement.methodName == "invokeWithArguments") {
+                        additionalStack.addAll(e.stackTrace.slice(0 until index).reversed().map { "at $it" })
+                        break
+                    }
+                }
+
+                var cause = e.cause
+                val lastNeededValue = e.stackTrace.first().let { it.className + "." + it.methodName }
+                while (cause != null) {
+                    for ((causeStackIndex, causeStackTraceElement) in cause.stackTrace.withIndex()) {
+                        val currentStackTraceValue = causeStackTraceElement.let { it.className + "." + it.methodName }
+                        if (currentStackTraceValue == lastNeededValue) {
+                            cause.stackTrace = cause.stackTrace.sliceArray(0 until causeStackIndex).reversedArray()
+                            break
+                        }
+                    }
+                    cause = cause.cause
+                }
+            }
+            return additionalStack
         }
     }
 }
