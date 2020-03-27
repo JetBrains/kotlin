@@ -320,7 +320,7 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
                 val archiveName = project.convention.findPlugin(BasePluginConvention::class.java)!!.archivesBaseName
                 val classesJars = listOf(File(distLibDir, "$archiveName.jar")).filterExisting()
                 val sourcesJars = listOf(File(distLibDir, "$archiveName-sources.jar")).filterExisting()
-                result["$path/main"] = Optional.of(PLibrary(archiveName, classesJars, sourcesJars, originalName = path))
+                result["$path/main"] = Optional.of(PLibrary(archiveName, classes = classesJars, sources = sourcesJars, originalName = path))
             }
 
             for (path in IGNORED_LIBRARIES) {
