@@ -3,11 +3,13 @@ package org.jetbrains.konan.resolve.symbols
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.psi.PsiElement
+import com.jetbrains.cidr.CidrLog
 import com.jetbrains.cidr.lang.symbols.DeepEqual
 import com.jetbrains.cidr.lang.symbols.OCSymbolBase
 import org.jetbrains.konan.resolve.symbols.KtLazySymbol.StubState
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
 import org.jetbrains.kotlin.backend.konan.objcexport.Stub
+import org.jetbrains.kotlin.descriptors.InvalidModuleException
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -47,10 +49,13 @@ abstract class KtLazySymbol<State : StubState, Stb : ObjCTopLevel<*>> : KtSymbol
             _state?.let { return validStateOrNull }
             stubAndProject?.let { (moduleDescriptor, stub, project) ->
                 val newState = runReadAction {
-                    if (project.isDisposed || !moduleDescriptor.isValid) {
-                        return@runReadAction null
+                    if (project.isDisposed || !moduleDescriptor.isValid) return@runReadAction null
+                    try {
+                        computeState(stub, project)
+                    } catch (e: InvalidModuleException) {
+                        CidrLog.LOG.error(e)
+                        null
                     }
-                    computeState(stub, project)
                 }
                 if (valueUpdater.compareAndSet(this, null, newState ?: AbortedState(stub))) {
                     stubAndProject = null
