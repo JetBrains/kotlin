@@ -25,8 +25,8 @@ OBJ_GETTER(InitInstance,
 }
 
 OBJ_GETTER(InitSharedInstance,
-    ObjHeader** location, ObjHeader** localLocation, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-  RETURN_RESULT_OF(InitSharedInstanceRelaxed, location, localLocation, typeInfo, ctor);
+    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
+  RETURN_RESULT_OF(InitSharedInstanceRelaxed, location, typeInfo, ctor);
 }
 
 void ReleaseHeapRef(const ObjHeader* object) {

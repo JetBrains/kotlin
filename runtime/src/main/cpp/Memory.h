@@ -461,11 +461,11 @@ OBJ_GETTER(InitInstance,
     ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
 
 OBJ_GETTER(InitSharedInstanceStrict,
-    ObjHeader** location, ObjHeader** localLocation, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
+    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
 OBJ_GETTER(InitSharedInstanceRelaxed,
-    ObjHeader** location, ObjHeader** localLocation, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
+    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
 OBJ_GETTER(InitSharedInstance,
-    ObjHeader** location, ObjHeader** localLocation, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
+    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
 
 // Weak reference operations.
 // Atomically clears counter object reference.
