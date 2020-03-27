@@ -3319,7 +3319,7 @@
                      displayName="Main parameter is not necessary"
                      groupPath="Kotlin"
                      groupName="Style issues"
-                     enabledByDefault="true"
+                     enabledByDefault="false"
                      level="WEAK WARNING"
                      language="kotlin"
     />
