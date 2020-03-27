@@ -13,6 +13,9 @@ actual class LibCommonMainExpect : LibCommonMainIface {
         libCommonMainTopLevelFun()
         println(CArrayPointer::class)
         libCommonMainInternalFun()
+
+        /** Test KT-37832 */
+        throw MyCustomException()
     }
 
     fun additionalFunInLinuxActual() {

@@ -69,6 +69,11 @@ class KlibBasedMppIT : BaseGradleIT() {
 
     private fun testBuildWithDependency(configureDependency: Project.() -> Unit) = with(Project("common-klib-lib-and-app")) {
         embedProject(Project("common-klib-lib-and-app"), renameTo = dependencyModuleName)
+
+        projectDir.resolve("$dependencyModuleName/src/commonMain/kotlin/TestKt37832.kt").writeText(
+            "package com.example.test.kt37832" + "\n" + "class MyException : RuntimeException()"
+        )
+
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
         projectDir.resolve(dependencyModuleName + "/src").walkTopDown().filter { it.extension == "kt" }.forEach { file ->

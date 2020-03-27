@@ -160,6 +160,8 @@ class CommonResolverForModuleFactory(
 
             val moduleDescriptor = resolver.descriptorForModule(moduleInfo)
 
+            dependenciesContainer?.registerDependencyForAllModules(moduleInfo, moduleDescriptor)
+
             val container = resolver.resolverForModule(moduleInfo).componentProvider
 
             container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
@@ -173,6 +175,11 @@ interface CommonDependenciesContainer {
     val moduleInfos: List<ModuleInfo>
 
     fun moduleDescriptorForModuleInfo(moduleInfo: ModuleInfo): ModuleDescriptor
+
+    fun registerDependencyForAllModules(
+        moduleInfo: ModuleInfo,
+        descriptorForModule: ModuleDescriptorImpl
+    )
 
     fun packageFragmentProviderForModuleInfo(moduleInfo: ModuleInfo): PackageFragmentProvider?
     val friendModuleInfos: List<ModuleInfo>

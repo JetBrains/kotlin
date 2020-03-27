@@ -122,9 +122,9 @@ private class KlibMetadataDependencyContainer(
     private class KlibModuleInfo(
         override val name: Name,
         val kotlinLibrary: KotlinLibrary,
-        private val dependOnKlibModules: List<ModuleInfo>
+        private val dependOnModules: List<ModuleInfo>
     ) : ModuleInfo {
-        override fun dependencies(): List<ModuleInfo> = dependOnKlibModules
+        override fun dependencies(): List<ModuleInfo> = dependOnModules
 
         override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns = ModuleInfo.DependencyOnBuiltIns.LAST
 
@@ -135,6 +135,12 @@ private class KlibMetadataDependencyContainer(
             get() = CommonPlatformAnalyzerServices
     }
 
+    private val mutableDependenciesForAllModuleDescriptors = mutableListOf<ModuleDescriptorImpl>().apply {
+        add(builtIns.builtInsModule)
+    }
+
+    private val mutableDependenciesForAllModules = mutableListOf<ModuleInfo>()
+
     private val moduleDescriptorsForKotlinLibraries: Map<KotlinLibrary, ModuleDescriptorImpl> =
         kotlinLibraries.keysToMap { library ->
             val moduleHeader = parseModuleHeader(library.moduleHeaderData)
@@ -144,19 +150,20 @@ private class KlibMetadataDependencyContainer(
                 moduleName, storageManager, builtIns, moduleOrigin
             )
         }.also { result ->
-            val resultValues = result.values.toList()
-            val dependenciesForModuleDescriptors = resultValues + builtIns.builtInsModule
+            val resultValues = result.values
             resultValues.forEach { module ->
-                module.setDependencies(dependenciesForModuleDescriptors)
+                module.setDependencies(mutableDependenciesForAllModuleDescriptors)
             }
+            mutableDependenciesForAllModuleDescriptors.addAll(resultValues)
         }
 
     private val moduleInfosImpl: List<KlibModuleInfo> = mutableListOf<KlibModuleInfo>().apply {
         addAll(
             moduleDescriptorsForKotlinLibraries.map { (kotlinLibrary, moduleDescriptor) ->
-                KlibModuleInfo(moduleDescriptor.name, kotlinLibrary, this@apply)
+                KlibModuleInfo(moduleDescriptor.name, kotlinLibrary, mutableDependenciesForAllModules)
             }
         )
+        mutableDependenciesForAllModules.addAll(this@apply)
     }
 
     override val moduleInfos: List<ModuleInfo> get() = moduleInfosImpl
@@ -179,6 +186,14 @@ private class KlibMetadataDependencyContainer(
         packageFragmentProviderForModuleInfo(moduleInfo)
 
         return moduleDescriptorsForKotlinLibraries.getValue(moduleInfo.kotlinLibrary)
+    }
+
+    override fun registerDependencyForAllModules(
+        moduleInfo: ModuleInfo,
+        descriptorForModule: ModuleDescriptorImpl
+    ) {
+        mutableDependenciesForAllModules.add(moduleInfo)
+        mutableDependenciesForAllModuleDescriptors.add(descriptorForModule)
     }
 
     override fun packageFragmentProviderForModuleInfo(
