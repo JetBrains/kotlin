@@ -37,6 +37,7 @@ dependencies {
         runtime(project(":kotlin-android-extensions-runtime"))
         runtime(project(":plugins:android-extensions-compiler"))
     }
+    runtime("com.jetbrains.intellij.android:android-kotlin-extensions-common:$cidrVersion") { isTransitive = false }
     runtime("com.android.tools.ddms:ddmlib:26.0.0") {
         exclude("com.google.guava", "guava")
     }
