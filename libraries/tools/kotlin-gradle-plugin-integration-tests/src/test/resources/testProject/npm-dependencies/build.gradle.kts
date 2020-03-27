@@ -18,6 +18,7 @@ kotlin.sourceSets {
             implementation(npm("@yworks/optimizer", "1.0.6"))
             implementation(npm("file-dependency", projectDir.resolve("file-dependency")))
             implementation(npm(projectDir.resolve("file-dependency-2")))
+            implementation(npm(projectDir.resolve("file-dependency-3")))
         }
     }
 

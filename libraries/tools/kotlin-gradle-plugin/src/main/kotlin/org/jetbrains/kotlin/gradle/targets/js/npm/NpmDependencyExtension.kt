@@ -30,11 +30,15 @@ fun Project.addNpmDependencyExtension() {
                 version = version
             )
 
-        override operator fun invoke(name: String, directory: File): NpmDependency =
-            invoke(
+        override operator fun invoke(name: String, directory: File): NpmDependency {
+            check(directory.isDirectory) {
+                "Dependency on local path should point on directory but $directory found"
+            }
+            return invoke(
                 name = name,
                 version = fileVersion(directory)
             )
+        }
 
         override operator fun invoke(directory: File): NpmDependency =
             invoke(

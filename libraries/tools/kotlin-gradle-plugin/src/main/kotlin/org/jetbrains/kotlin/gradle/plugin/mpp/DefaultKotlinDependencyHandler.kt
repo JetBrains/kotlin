@@ -89,11 +89,15 @@ class DefaultKotlinDependencyHandler(
             version = version
         )
 
-    override fun npm(name: String, directory: File): NpmDependency =
-        npm(
+    override fun npm(name: String, directory: File): NpmDependency {
+        check(directory.isDirectory) {
+            "Dependency on local path should point on directory but $directory found"
+        }
+        return npm(
             name = name,
             version = fileVersion(directory)
         )
+    }
 
     override fun npm(directory: File): NpmDependency =
         npm(
