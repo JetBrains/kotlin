@@ -7,8 +7,11 @@ val propertiesFile: File = File(scriptDirectory , "versions.properties")
 FileReader(propertiesFile).use {
     val properties = Properties()
     properties.load(it)
-    properties.forEach { (k, v) ->
-        extra[k.toString()] = v
+    properties.forEach { (rawKey, value) ->
+        val key = rawKey.toString()
+        if (!extra.has(key)) {
+            extra[key] = value
+        }
     }
 }
 
