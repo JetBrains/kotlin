@@ -132,6 +132,7 @@ class BridgesConstruction(val context: CommonBackendContext) : DeclarationTransf
             isTailrec = bridge.isTailrec,
             isSuspend = bridge.isSuspend,
             isExpect = bridge.isExpect,
+            isFakeOverride = false,
             origin = origin
         ).apply {
             copyTypeParametersFrom(bridge)
