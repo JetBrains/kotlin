@@ -207,6 +207,9 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
         val ideaPathContext = ProjectContext(ideaProjectDir)
         val comboPathContext = ProjectContext(comboProjectDir)
 
+        val ultimateMainImlFileName = "intellij.idea.ultimate.main.iml"
+        val comboUltimateMainImlFile = ".idea/modules/$ultimateMainImlFileName"
+
         fun createModuleElement(url: String, path: String): Element {
             return ideaModules.createElement("module").apply {
                 setAttribute("fileurl", url)
@@ -218,7 +221,16 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
         for (module in ideaProjectModuleManager.getElementsByTagName("module").elements) {
             val filePath = module.getAttribute("filepath") ?: continue
             val file = File(ideaPathContext.substituteWithValues(filePath)).canonicalFile
-            val newModule = createModuleElement(comboPathContext.getUrlWithVariables(file), comboPathContext.substituteWithVariables(file))
+            val url = comboPathContext.getUrlWithVariables(file)
+            val path = comboPathContext.substituteWithVariables(file)
+            //println("url: '$url'")
+            val newModule = if (path == "\$PROJECT_DIR\$/intellij/$ultimateMainImlFileName") {
+                val newPath = "\$PROJECT_DIR\$/$comboUltimateMainImlFile"
+                createModuleElement("file://$newPath", newPath)
+            }
+            else {
+                createModuleElement(url, path)
+            }
             module.parentNode.replaceChild(newModule, module)
         }
 
@@ -245,6 +257,38 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
 
         addBulkModule("\$PROJECT_DIR\$/$MODULES_DIR_PATH/$KOTLIN_IDE_IML_NAME")
         addBulkModule("\$PROJECT_DIR\$/$COMBO_IML_NAME")
+
+        fun mergeKotlinPluginIntoIdeaUltimateMainModule() {
+            val kotlinPluginArtifact = File(kotlinProjectDir, ".idea/artifacts/KotlinPlugin.xml").loadXml()
+
+            val intellijMainIml = File(ideaProjectDir, ultimateMainImlFileName).loadXml()
+
+            fun iterateInDepth(element: Element, consumer: (Element) -> Unit) {
+                element.childElements.forEach {
+                    consumer(it)
+                    iterateInDepth(it, consumer)
+                }
+            }
+
+            val intellijMainModuleRootManager = findComponent(intellijMainIml, "NewModuleRootManager")
+
+            iterateInDepth(kotlinPluginArtifact.childElements.first()) {
+                if (it.tagName == "element" && it.hasAttribute("id") && it.getAttribute("id") == "module-output" &&
+                    it.hasAttribute("name")) {
+                    intellijMainModuleRootManager.appendChild(
+                      intellijMainIml.createElement("orderEntry").apply {
+                        setAttribute("type", "module")
+                        setAttribute("module-name", it.getAttribute("name"))
+                        setAttribute("scope", it.getAttribute("RUNTIME"))
+                    })
+                }
+            }
+
+            val targetFile = File(comboProjectDir, comboUltimateMainImlFile)
+            intellijMainIml.saveXml(targetFile)
+        }
+
+        mergeKotlinPluginIntoIdeaUltimateMainModule()
 
         val targetFile = File(comboProjectDir, MODULES_XML_PATH)
         ideaModules.saveXml(targetFile)
