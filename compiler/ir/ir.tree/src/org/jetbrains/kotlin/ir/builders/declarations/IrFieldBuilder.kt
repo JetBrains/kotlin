@@ -16,6 +16,7 @@ class IrFieldBuilder : IrDeclarationBuilder() {
     var isFinal: Boolean = false
     var isExternal: Boolean = false
     var isStatic: Boolean = false
+    var isFakeOverride: Boolean = false
     var metadata: MetadataSource.Property? = null
 
     fun updateFrom(from: IrField) {
@@ -25,6 +26,7 @@ class IrFieldBuilder : IrDeclarationBuilder() {
         isFinal = from.isFinal
         isExternal = from.isExternal
         isStatic = from.isStatic
+        isFakeOverride = from.isFakeOverride
         metadata = from.metadata
     }
 }

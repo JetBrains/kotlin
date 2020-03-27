@@ -425,7 +425,7 @@ private fun IrFunction.generateDefaultsFunction(
     if (this is IrSimpleFunction) {
         // If this is an override of a function with default arguments, produce a fake override of a default stub.
         if (overriddenSymbols.any { it.owner.findBaseFunctionWithDefaultArguments(skipInlineMethods, skipExternalMethods) != null })
-            return generateDefaultsFunctionImpl(context, IrDeclarationOrigin.FAKE_OVERRIDE, visibility).also {
+            return generateDefaultsFunctionImpl(context, IrDeclarationOrigin.FAKE_OVERRIDE, visibility, isFakeOverride = true).also {
                 context.mapping.defaultArgumentsDispatchFunction[this] = it
                 context.mapping.defaultArgumentsOriginalFunction[it] = this
 
@@ -453,7 +453,9 @@ private fun IrFunction.generateDefaultsFunction(
     // Since this bug causes the metadata serializer to write the "has default value" flag into compiled
     // binaries, it's way too late to fix it. Hence the workaround.
     if (valueParameters.any { it.defaultValue != null }) {
-        return generateDefaultsFunctionImpl(context, IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER, visibility).also {
+        return generateDefaultsFunctionImpl(
+            context, IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER, visibility, isFakeOverride = false
+        ).also {
             context.mapping.defaultArgumentsDispatchFunction[this] = it
             context.mapping.defaultArgumentsOriginalFunction[it] = this
         }
@@ -464,7 +466,8 @@ private fun IrFunction.generateDefaultsFunction(
 private fun IrFunction.generateDefaultsFunctionImpl(
     context: CommonBackendContext,
     newOrigin: IrDeclarationOrigin,
-    newVisibility: Visibility
+    newVisibility: Visibility,
+    isFakeOverride: Boolean
 ): IrFunction {
     val newFunction = when (this) {
         is IrConstructor ->
@@ -481,6 +484,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(
                 updateFrom(this@generateDefaultsFunctionImpl)
                 name = Name.identifier("${this@generateDefaultsFunctionImpl.name}\$default")
                 origin = newOrigin
+                this.isFakeOverride = isFakeOverride
                 modality = Modality.FINAL
                 isExternal = false
                 isTailrec = false

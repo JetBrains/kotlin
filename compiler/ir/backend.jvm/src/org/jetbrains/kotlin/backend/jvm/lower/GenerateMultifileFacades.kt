@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -215,19 +216,21 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
 
     val function = buildFun {
         updateFrom(target)
-        origin = if (shouldGeneratePartHierarchy) IrDeclarationOrigin.FAKE_OVERRIDE else JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE
+        isFakeOverride = shouldGeneratePartHierarchy
         name = target.name
     }
 
     function.copyParameterDeclarationsFrom(target)
-    function.returnType = target.returnType
+    function.returnType = target.returnType.substitute(target.typeParameters, function.typeParameters.map { it.defaultType })
     function.parent = facadeClass
-    function.annotations = target.annotations
+    function.annotations = target.annotations.map { it.deepCopyWithSymbols() }
 
     if (shouldGeneratePartHierarchy) {
+        function.origin = IrDeclarationOrigin.FAKE_OVERRIDE
         function.body = null
         function.overriddenSymbols = listOf(symbol)
     } else {
+        function.origin = JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE
         function.overriddenSymbols = overriddenSymbols.toList()
         function.body = context.createIrBuilder(function.symbol).irBlockBody {
             +irReturn(irCall(target).also { call ->

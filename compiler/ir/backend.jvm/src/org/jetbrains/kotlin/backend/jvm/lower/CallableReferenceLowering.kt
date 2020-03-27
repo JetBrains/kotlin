@@ -153,6 +153,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
 
         val fakeOverrideReceiverField = functionReferenceClass.addField {
             name = receiverFieldFromSuper.name
+            isFakeOverride = true
             origin = IrDeclarationOrigin.FAKE_OVERRIDE
             type = receiverFieldFromSuper.type
             isFinal = receiverFieldFromSuper.isFinal

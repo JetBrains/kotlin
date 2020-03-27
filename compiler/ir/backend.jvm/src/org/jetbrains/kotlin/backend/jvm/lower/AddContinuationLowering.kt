@@ -527,6 +527,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             irFunction.name.toSuspendImplementationName(),
             irFunction,
             origin = JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION,
+            isFakeOverride = false,
             copyMetadata = false
         )
         static.body = irFunction.moveBodyTo(static)

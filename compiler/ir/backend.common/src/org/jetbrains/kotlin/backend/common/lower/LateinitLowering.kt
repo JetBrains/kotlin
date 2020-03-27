@@ -213,4 +213,4 @@ private fun CommonBackendContext.buildOrGetNullableField(originalField: IrField)
     }
 }
 
-private val IrProperty.isRealLateinit get() = isLateinit && getter?.isFakeOverride != true
+private val IrProperty.isRealLateinit get() = isLateinit && !isFakeOverride

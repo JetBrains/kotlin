@@ -333,6 +333,7 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
             origin = IrDeclarationOrigin.DEFINED
             name = irFunction.name
             returnType = irFunction.returnType
+            isFakeOverride = false
         }.apply {
             copyParametersWithErasure(this@addAbstractMethodStub, irFunction, needsArgumentBoxing)
         }

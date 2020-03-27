@@ -180,8 +180,8 @@ class JvmDeclarationFactory(
     fun getStaticBackingField(irProperty: IrProperty): IrField? {
         // Only fields defined directly in objects should be made static.
         // Fake overrides never point to those, as objects are final.
+        if (irProperty.isFakeOverride) return null
         val oldField = irProperty.backingField ?: return null
-        if (oldField.isFakeOverride) return null
         val oldParent = irProperty.parent as? IrClass ?: return null
         if (!oldParent.isObject) return null
         return staticBackingFields.getOrPut(irProperty) {
@@ -238,6 +238,7 @@ class JvmDeclarationFactory(
                 // We should rather not generate a bridge to clone when interface inherits from Cloneable at all.
                 visibility = if (interfaceFun.visibility == Visibilities.PRIVATE) Visibilities.PRIVATE else Visibilities.PUBLIC,
 
+                isFakeOverride = false,
                 typeParametersFromContext = parent.typeParameters
             )
         }
@@ -270,7 +271,6 @@ class JvmDeclarationFactory(
 
     fun getDefaultImplsRedirection(fakeOverride: IrSimpleFunction): IrSimpleFunction =
         defaultImplsRedirections.getOrPut(fakeOverride) {
-            assert(fakeOverride.origin == IrDeclarationOrigin.FAKE_OVERRIDE)
             assert(fakeOverride.isFakeOverride)
             val irClass = fakeOverride.parentAsClass
             val descriptor = DescriptorsToIrRemapper.remapDeclaredSimpleFunction(fakeOverride.descriptor)
