@@ -84,7 +84,7 @@ class FoldingHintMouseMotionListener implements EditorMouseMotionListener {
         }
 
         // Show only the non-displayed top part of the target fold region
-        int endOffset = editor.logicalPositionToOffset(editor.visualToLogicalPosition(new VisualPosition(endVisualLine, 0)));
+        int endOffset = editor.visualPositionToOffset(new VisualPosition(endVisualLine, 0));
         TextRange textRange = new UnfairTextRange(textOffset, endOffset);
         hint = EditorFragmentComponent.showEditorFragmentHint(editor, textRange, true, true);
         myCurrentFold = fold;
