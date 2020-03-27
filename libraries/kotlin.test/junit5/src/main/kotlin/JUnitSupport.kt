@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Assertions
 import kotlin.test.*
 
 /**
- * Provides [JUnitAsserter] if `org.junit.Assert` is found in the classpath.
+ * Provides [JUnit5Asserter] if `org.junit.jupiter.api.Assertions` class is found in the classpath.
  */
 class JUnit5Contributor : AsserterContributor {
     override fun contribute(): Asserter? {
