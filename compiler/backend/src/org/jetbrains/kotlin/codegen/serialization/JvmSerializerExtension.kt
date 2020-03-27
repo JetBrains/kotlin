@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.codegen.createFreeFakeLocalPropertyDescriptor
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPrivateApi
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
+import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.isCompiledToJvmDefaultIfNoAbstract
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.DescriptorSerializer.Companion.writeVersionRequirement
@@ -102,15 +104,19 @@ class JvmSerializerExtension @JvmOverloads constructor(
         builder: ProtoBuf.Class.Builder,
         versionRequirementTable: MutableVersionRequirementTable
     ) {
-        if (
-            isInterface(classDescriptor) &&
-            classDescriptor.unsubstitutedMemberScope.getContributedDescriptors().any {
-                it is CallableMemberDescriptor && it.isCompiledToJvmDefaultIfNoAbstract(jvmDefaultMode) //TODO: new requirements for new option
+        if (isInterface(classDescriptor)) {
+            if (jvmDefaultMode == JvmDefaultMode.ENABLE && classDescriptor.unsubstitutedMemberScope.getContributedDescriptors().any {
+                    it is CallableMemberDescriptor && it.hasJvmDefaultAnnotation()
+                }) {
+                builder.addVersionRequirement(
+                    writeVersionRequirement(1, 2, 40, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
+                )
             }
-        ) {
-            builder.addVersionRequirement(
-                writeVersionRequirement(1, 2, 40, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
-            )
+            if (jvmDefaultMode == JvmDefaultMode.ALL_INCOMPATIBLE) {
+                builder.addVersionRequirement(
+                    writeVersionRequirement(1, 4, 0, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
+                )
+            }
         }
     }
 
