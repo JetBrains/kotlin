@@ -3,7 +3,6 @@ package com.intellij.util.indexing;
 
 import com.intellij.ProjectTopics;
 import com.intellij.diagnostic.PerformanceWatcher;
-import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -67,7 +66,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
         throw new IllegalStateException("Indexing progress indicator must be suspendable!");
       }
       if (!suspender.isSuspended()) {
-        suspender.suspendProcess(IdeBundle.message("progress.indexing.started.as.suspended"));
+        suspender.suspendProcess(IndexingBundle.message("progress.indexing.started.as.suspended"));
       }
     }
 
@@ -84,7 +83,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
     FileBasedIndexInfrastructureExtension.EP_NAME.extensions().forEach(ex -> ex.processIndexingProject(myProject, indicator));
 
     indicator.setIndeterminate(true);
-    indicator.setText(IdeBundle.message("progress.indexing.scanning"));
+    indicator.setText(IndexingBundle.message("progress.indexing.scanning"));
 
     List<IndexableFilesProvider> orderedProviders = myIndex.getOrderedIndexableFilesProviders(myProject);
 
@@ -111,7 +110,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
     ProgressIndicator poweredIndicator = PoweredProgressIndicator.wrap(indicator, getPowerForSmoothProgressIndicator());
     poweredIndicator.setIndeterminate(false);
     poweredIndicator.setFraction(0);
-    poweredIndicator.setText(IdeBundle.message("progress.indexing.updating"));
+    poweredIndicator.setText(IndexingBundle.message("progress.indexing.updating"));
     ConcurrentTasksProgressManager concurrentTasksProgressManager = new ConcurrentTasksProgressManager(poweredIndicator, totalFiles);
 
     for (IndexableFilesProvider provider : orderedProviders) {
@@ -144,7 +143,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
     Map<IndexableFilesProvider, List<VirtualFile>> providerToFiles = new IdentityHashMap<>();
     ConcurrentBitSet visitedFileSet = new ConcurrentBitSet();
 
-    indicator.setText(IdeBundle.message("progress.indexing.scanning"));
+    indicator.setText(IndexingBundle.message("progress.indexing.scanning"));
     indicator.setIndeterminate(false);
     indicator.setFraction(0);
 

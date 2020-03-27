@@ -6,7 +6,6 @@
 package com.intellij.util.indexing;
 
 import com.intellij.diagnostic.PerformanceWatcher;
-import com.intellij.ide.IdeBundle;
 import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.Service;
@@ -136,7 +135,7 @@ public final class FileBasedIndexProjectHandler implements IndexableFileSet {
         long calcDuration = System.currentTimeMillis() - start;
 
         indicator.setIndeterminate(false);
-        indicator.setText(IdeBundle.message("progress.indexing.updating"));
+        indicator.setText(IndexingBundle.message("progress.indexing.updating"));
 
         LOG.info("Reindexing refreshed files: " + files.size() + " to update, calculated in " + calcDuration + "ms");
         if (!files.isEmpty()) {
