@@ -10,6 +10,7 @@ import org.jetbrains.plugins.gradle.util.GradleProperties.GradleProperty
 import java.io.File
 import java.util.*
 
+const val USER_HOME = "user.home"
 const val GRADLE_CACHE_DIR_NAME = ".gradle"
 const val PROPERTIES_FILE_NAME = "gradle.properties"
 const val GRADLE_JAVA_HOME_PROPERTY = "org.gradle.java.home"
@@ -30,11 +31,11 @@ private fun getPossiblePropertiesFiles(externalProjectPath: String): List<String
 }
 
 private fun getGradleHomePropertiesPath(): String {
-  val gradleUserHome = Environment.getEnvVariable(GradleConstants.SYSTEM_DIRECTORY_PATH_KEY)
+  val gradleUserHome = Environment.getVariable(GradleConstants.SYSTEM_DIRECTORY_PATH_KEY)
   if (gradleUserHome != null) {
     return FileUtil.join(gradleUserHome, PROPERTIES_FILE_NAME)
   }
-  val userHome = Environment.getUserHome()
+  val userHome = Environment.getProperty(USER_HOME)
   return FileUtil.join(userHome, GRADLE_CACHE_DIR_NAME, PROPERTIES_FILE_NAME)
 }
 

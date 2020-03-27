@@ -5,22 +5,19 @@ import com.intellij.openapi.components.service
 
 interface Environment {
 
-  fun getProperty(name: String): String?
+  fun property(name: String): String?
 
-  fun getVariable(name: String): String?
+  fun variable(name: String): String?
 
   companion object {
-    const val USER_HOME = "user.home"
 
     @JvmStatic
     fun getInstance() = service<Environment>()
 
     @JvmStatic
-    fun getEnvProperty(name: String) = getInstance().getProperty(name)
+    fun getProperty(name: String) = getInstance().property(name)
 
     @JvmStatic
-    fun getEnvVariable(name: String) = getInstance().getVariable(name)
-
-    fun getUserHome() = getEnvProperty(USER_HOME)
+    fun getVariable(name: String) = getInstance().variable(name)
   }
 }

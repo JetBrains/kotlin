@@ -32,17 +32,17 @@ class TestEnvironment : Environment {
     }
   }
 
-  override fun getProperty(name: String): String? {
+  override fun property(name: String): String? {
     return when (name) {
       in properties -> properties[name]
-      else -> previousEnvironment.getProperty(name)
+      else -> previousEnvironment.property(name)
     }
   }
 
-  override fun getVariable(name: String): String? {
+  override fun variable(name: String): String? {
     return when (name) {
       in variables -> variables[name]
-      else -> previousEnvironment.getVariable(name)
+      else -> previousEnvironment.variable(name)
     }
   }
 }

@@ -36,7 +36,7 @@ fun validateJavaHome(project: Project, externalProjectPath: String, gradleVersio
     }
   }
   else {
-    val javaHome = Environment.getEnvVariable(JAVA_HOME)
+    val javaHome = Environment.getVariable(JAVA_HOME)
     when (val validationStatus = validateGradleJavaHome(gradleVersion, javaHome)) {
       JavaHomeValidationStatus.Invalid -> notifyInvalidJavaHomeInfo(project, validationStatus)
       is JavaHomeValidationStatus.Unsupported -> notifyInvalidJavaHomeInfo(project, validationStatus)

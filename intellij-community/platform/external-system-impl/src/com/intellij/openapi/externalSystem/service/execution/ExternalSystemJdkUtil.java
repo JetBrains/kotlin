@@ -15,7 +15,6 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTracke
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.EnvironmentUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -90,7 +89,7 @@ public class ExternalSystemJdkUtil {
   }
 
   public static @Nullable String getJavaHome() {
-    return Environment.getEnvVariable("JAVA_HOME");
+    return Environment.getVariable("JAVA_HOME");
   }
 
   @Nullable

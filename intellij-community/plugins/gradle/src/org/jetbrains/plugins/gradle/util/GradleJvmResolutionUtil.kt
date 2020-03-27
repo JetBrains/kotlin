@@ -120,7 +120,7 @@ private fun GradleJvmResolutionContext.getOrAddGradleJavaHomeJdkReference(): Sdk
 }
 
 private fun GradleJvmResolutionContext.getOrAddEnvJavaHomeJdkReference(): Sdk? {
-  val javaHome = Environment.getEnvVariable(JAVA_HOME)
+  val javaHome = Environment.getVariable(JAVA_HOME)
   val validationStatus = validateGradleJavaHome(gradleVersion, javaHome)
   if (validationStatus !is Success) return null
   return findOrAddGradleJdk(validationStatus.javaHome)

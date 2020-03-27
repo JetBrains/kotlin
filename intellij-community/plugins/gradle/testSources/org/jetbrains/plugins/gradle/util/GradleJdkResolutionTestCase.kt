@@ -52,7 +52,7 @@ abstract class GradleJdkResolutionTestCase : SdkTestCase() {
     latestSdk = TestSdkGenerator.createNextSdk("11")
     unsupportedSdk = TestSdkGenerator.createNextSdk("13")
 
-    environment.properties(Environment.USER_HOME to null)
+    environment.properties(USER_HOME to null)
     environment.variables(JAVA_HOME to null, GradleConstants.SYSTEM_DIRECTORY_PATH_KEY to null)
   }
 

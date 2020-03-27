@@ -5,11 +5,11 @@ import com.intellij.util.EnvironmentUtil
 
 class SystemEnvironment : Environment {
 
-  override fun getProperty(name: String): String? {
+  override fun property(name: String): String? {
     return System.getProperty(name)
   }
 
-  override fun getVariable(name: String): String? {
+  override fun variable(name: String): String? {
     return EnvironmentUtil.getValue(name)
   }
 }

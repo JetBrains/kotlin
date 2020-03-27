@@ -153,7 +153,7 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
   }
 
   protected void collectAllowedRoots(final List<String> roots, PathAssembler.LocalDistribution distribution) {
-    String javaHome = Environment.getEnvVariable("JAVA_HOME");
+    String javaHome = Environment.getVariable("JAVA_HOME");
     if (javaHome != null) roots.add(javaHome);
   }
 

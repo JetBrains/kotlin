@@ -2,7 +2,6 @@
 package org.jetbrains.plugins.gradle.util
 
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil.USE_PROJECT_JDK
-import com.intellij.openapi.externalSystem.util.environment.Environment.Companion.USER_HOME
 import org.jetbrains.plugins.gradle.util.GradleConstants.SYSTEM_DIRECTORY_PATH_KEY
 import org.junit.Test
 

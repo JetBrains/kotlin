@@ -174,7 +174,7 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
     roots.add(myJdkHome);
     roots.addAll(collectRootsInside(myJdkHome));
     roots.add(PathManager.getConfigPath());
-    String javaHome = Environment.getEnvVariable("JAVA_HOME");
+    String javaHome = Environment.getVariable("JAVA_HOME");
     if (javaHome != null) roots.add(javaHome);
   }
 
