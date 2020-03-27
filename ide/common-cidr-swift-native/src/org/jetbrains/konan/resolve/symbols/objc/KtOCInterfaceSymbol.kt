@@ -7,6 +7,7 @@ package org.jetbrains.konan.resolve.symbols.objc
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.containers.nullize
 import com.jetbrains.cidr.lang.symbols.OCSymbolKind
 import com.jetbrains.cidr.lang.symbols.OCTypeParameterSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCGenericParameterSymbol
@@ -69,7 +70,7 @@ class KtOCInterfaceSymbol : KtOCClassSymbol<KtOCInterfaceSymbol.InterfaceState, 
         val isTemplateSymbol: Boolean
 
         constructor(clazz: KtOCInterfaceSymbol, stub: ObjCInterface, project: Project) : super(clazz, stub, project) {
-            this.superType = createSuperType(stub.superClass, stub.superProtocols)
+            this.superType = createSuperType(stub.superClass, stub.superProtocols.nullize())
             this.isTemplateSymbol = stub.generics.isNotEmpty()
         }
 

@@ -3,6 +3,7 @@ package org.jetbrains.konan.resolve.symbols.swift
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.MostlySingularMultiMap
+import com.intellij.util.containers.nullize
 import com.jetbrains.swift.codeinsight.resolve.SwiftSymbolResult
 import com.jetbrains.swift.psi.SwiftDeclarationKind
 import com.jetbrains.swift.psi.types.SwiftClassType
@@ -52,7 +53,7 @@ class KtSwiftProtocolSymbol : KtSwiftTypeSymbol<KtSwiftProtocolSymbol.ProtocolSt
             stub: ObjCProtocol,
             project: Project
         ) : super(protocolSymbol, stub, project) {
-            this.superTypes = stub.superProtocols.map { ref -> createClassType(ref, protocolSymbol) }
+            this.superTypes = stub.superProtocols.nullize()?.map { ref -> createClassType(ref, protocolSymbol) } ?: emptyList()
         }
 
         constructor() : super()

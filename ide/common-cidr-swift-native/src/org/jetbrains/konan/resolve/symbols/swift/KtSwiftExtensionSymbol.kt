@@ -2,6 +2,7 @@ package org.jetbrains.konan.resolve.symbols.swift
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.containers.nullize
 import com.jetbrains.swift.psi.SwiftDeclarationKind
 import com.jetbrains.swift.psi.types.SwiftClassType
 import com.jetbrains.swift.psi.types.SwiftContext
@@ -37,7 +38,7 @@ class KtSwiftExtensionSymbol : KtSwiftTypeSymbol<KtSwiftExtensionSymbol.Extensio
 
         constructor(ext: KtSwiftExtensionSymbol, stub: ObjCInterface, project: Project) : super(ext, stub, project) {
             this.baseType = SwiftTypeFactory.getInstance().createClassType(stub.name, SwiftContext.of(ext))
-            this.superTypes = stub.superProtocols.map { ref -> createClassType(ref, ext) }
+            this.superTypes = stub.superProtocols.nullize()?.map { ref -> createClassType(ref, ext) } ?: emptyList()
         }
 
         constructor() : super()

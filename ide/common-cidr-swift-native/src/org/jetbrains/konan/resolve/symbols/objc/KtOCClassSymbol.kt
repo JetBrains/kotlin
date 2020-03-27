@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Processor
 import com.intellij.util.containers.MostlySingularMultiMap
+import com.intellij.util.containers.nullize
 import com.jetbrains.cidr.lang.symbols.OCQualifiedName
 import com.jetbrains.cidr.lang.symbols.OCResolveContext
 import com.jetbrains.cidr.lang.symbols.OCSymbol
@@ -81,7 +82,7 @@ abstract class KtOCClassSymbol<State : KtOCClassSymbol.ClassState, Stub : ObjCCl
         lateinit var protocolNames: List<String>
 
         constructor(clazz: KtOCClassSymbol<*, *>, stub: ObjCClass<*>, project: Project) : super(stub) {
-            protocolNames = stub.superProtocols
+            protocolNames = stub.superProtocols.nullize() ?: emptyList()
             members = createTranslator(project).translateMembers(stub, clazz)
         }
 

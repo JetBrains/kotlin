@@ -8,6 +8,7 @@ package org.jetbrains.konan.resolve.translation
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.ArrayUtil
 import com.jetbrains.cidr.lang.psi.OCTypeElement
 import com.jetbrains.cidr.lang.symbols.OCQualifiedName
 import com.jetbrains.cidr.lang.symbols.OCQualifiedNameWithArguments
@@ -110,6 +111,6 @@ private class TypeBuilder(
     }
 }
 
-fun createSuperType(superClass: String?, superProtocols: List<String>): OCReferenceType {
-    return OCReferenceType.fromText(superClass ?: "", superProtocols.toTypedArray())
+fun createSuperType(superClass: String?, superProtocols: List<String>?): OCReferenceType {
+    return OCReferenceType.fromText(superClass ?: "", superProtocols?.toTypedArray() ?: ArrayUtil.EMPTY_STRING_ARRAY)
 }

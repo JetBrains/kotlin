@@ -7,6 +7,7 @@ package org.jetbrains.konan.resolve.symbols.objc
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.containers.nullize
 import com.jetbrains.cidr.lang.symbols.OCSymbolKind
 import com.jetbrains.cidr.lang.symbols.objc.OCInterfaceSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCProtocolSymbol
@@ -39,7 +40,7 @@ class KtOCProtocolSymbol : KtOCClassSymbol<KtOCProtocolSymbol.ProtocolState, Obj
         lateinit var superType: OCReferenceType
 
         constructor(clazz: KtOCProtocolSymbol, stub: ObjCProtocol, project: Project) : super(clazz, stub, project) {
-            this.superType = createSuperType(null, stub.superProtocols)
+            this.superType = createSuperType(null, stub.superProtocols.nullize())
         }
 
         constructor() : super()
