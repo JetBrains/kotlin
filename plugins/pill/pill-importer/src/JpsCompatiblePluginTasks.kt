@@ -313,13 +313,11 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
             val distLibDir = File(rootProject.extra["distLibDir"].toString())
             val result = HashMap<String, Optional<PLibrary>>()
 
-            fun List<File>.filterExisting() = filter { it.exists() }
-
             for (path in DIST_LIBRARIES) {
                 val project = rootProject.findProject(path) ?: error("Project not found")
                 val archiveName = project.convention.findPlugin(BasePluginConvention::class.java)!!.archivesBaseName
-                val classesJars = listOf(File(distLibDir, "$archiveName.jar")).filterExisting()
-                val sourcesJars = listOf(File(distLibDir, "$archiveName-sources.jar")).filterExisting()
+                val classesJars = listOf(File(distLibDir, "$archiveName.jar"))
+                val sourcesJars = listOf(File(distLibDir, "$archiveName-sources.jar"))
                 result["$path/main"] = Optional.of(PLibrary(archiveName, classes = classesJars, sources = sourcesJars, originalName = path))
             }
 
