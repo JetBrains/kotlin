@@ -261,11 +261,12 @@ class FirCallResolver(
             expectedType, constraintSystemBuilder,
         )
         // No reset here!
+        val localCollector = CandidateCollector(this, resolutionStageRunner)
         val result = towerResolver.runResolver(
             implicitReceiverStack.receiversAsReversed(),
             info,
-            collector = CandidateCollector(this, resolutionStageRunner),
-            manager = TowerResolveManager(),
+            collector = localCollector,
+            manager = TowerResolveManager(localCollector),
         )
         val bestCandidates = result.bestCandidates()
         val noSuccessfulCandidates = result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED

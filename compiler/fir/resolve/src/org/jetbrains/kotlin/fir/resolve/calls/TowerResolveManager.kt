@@ -5,19 +5,14 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import java.util.*
 import kotlin.coroutines.*
 
-class TowerResolveManager internal constructor() {
+class TowerResolveManager private constructor(private val isSuccess: () -> Boolean) {
+
+    constructor(collector: CandidateCollector) : this({ collector.isSuccess() })
 
     private val queue = PriorityQueue<SuspendedResolverTask>()
-
-    // TODO: Get rid of the property (it should be passed in a different way)
-    internal lateinit var callResolutionContext: CallResolutionContext
-
-    private fun isSuccess() = callResolutionContext.resultCollector.isSuccess()
 
     fun reset() {
         queue.clear()
@@ -25,7 +20,7 @@ class TowerResolveManager internal constructor() {
 
     private suspend fun suspendResolverTask(group: TowerGroup) = suspendCoroutine<Unit> { queue += SuspendedResolverTask(it, group) }
 
-    private suspend fun requestGroup(requested: TowerGroup) {
+    suspend fun requestGroup(requested: TowerGroup) {
         val peeked = queue.peek()
 
         // Task ordering should be FIFO
@@ -37,33 +32,8 @@ class TowerResolveManager internal constructor() {
 
     private suspend fun stopResolverTask(): Nothing = suspendCoroutine { }
 
-    suspend fun processLevel(
-        towerLevel: SessionBasedTowerLevel,
-        callInfo: CallInfo,
-        group: TowerGroup,
-        explicitReceiverKind: ExplicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-        invokeResolveMode: InvokeResolveMode? = null
-    ): ProcessorAction {
-        requestGroup(group)
-
-        val result = with(LevelHandler(callInfo, explicitReceiverKind, group, callResolutionContext, this)) {
-            towerLevel.handleLevel(invokeResolveMode)
-        }
-
+    suspend fun stopIfSuccess() {
         if (isSuccess()) stopResolverTask()
-
-        return result
-    }
-
-    suspend fun processLevelForPropertyWithInvoke(
-        towerLevel: SessionBasedTowerLevel,
-        callInfo: CallInfo,
-        group: TowerGroup,
-        explicitReceiverKind: ExplicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
-    ) {
-        if (callInfo.callKind == CallKind.Function) {
-            processLevel(towerLevel, callInfo, group, explicitReceiverKind, InvokeResolveMode.RECEIVER_FOR_INVOKE_BUILTIN_EXTENSION)
-        }
     }
 
     private data class SuspendedResolverTask(

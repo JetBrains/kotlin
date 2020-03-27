@@ -31,8 +31,7 @@ internal class CallResolutionContext(
     val invokeBuiltinExtensionReceiverCandidateFactory: CandidateFactory?,
     val stubReceiverCandidateFactory: CandidateFactory?,
     val invokeReceiverCollector: CandidateCollector?,
-    val towerResolver: FirTowerResolver,
-    val towerResolverSession: FirTowerResolverSession
+    val towerResolver: FirTowerResolver
 ) {
     // TODO: Get rid of the property, storing state here looks like a hack
     internal lateinit var invokeOnGivenReceiverCandidateFactory: CandidateFactory
@@ -43,12 +42,12 @@ internal class LevelHandler(
     private val explicitReceiverKind: ExplicitReceiverKind,
     private val group: TowerGroup,
     private val callResolutionContext: CallResolutionContext,
-    private val manager: TowerResolveManager
+    private val manager: TowerResolveManager,
+    private val towerResolverSession: FirTowerResolverSession
 ) {
 
     private val resultCollector: CandidateCollector get() = callResolutionContext.resultCollector
     private val towerResolver: FirTowerResolver get() = callResolutionContext.towerResolver
-    private val towerResolverSession: FirTowerResolverSession get() = callResolutionContext.towerResolverSession
 
     private fun enqueueResolverTask(group: TowerGroup = TowerGroup.Start, task: suspend () -> Unit) =
         manager.enqueueResolverTask(group, task)
