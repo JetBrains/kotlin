@@ -222,6 +222,8 @@ data class ModuleTestSourceInfo internal constructor(override val module: Module
 
     override val name = Name.special("<test sources for module ${module.name}>")
 
+    override val displayedName get() = KotlinIdeaAnalysisBundle.message("module.name.0.test", module.name)
+
     override val stableName: Name = module.getStableName()
 
     override fun contentScope(): GlobalSearchScope = enlargedSearchScope(ModuleTestSourceScope(module), module, isTestScope = true)
