@@ -201,34 +201,43 @@ internal class LevelHandler(
 
             val explicitReceiver = ExpressionReceiverValue(invokeReceiverExpression)
             callResolutionContext.invokeOnGivenReceiverCandidateFactory = CandidateFactory(components, invokeFunctionInfo)
-            when {
-                invokeBuiltinExtensionMode -> {
-                    enqueueResolverTask {
-                        towerResolverSession.runResolverForBuiltinInvokeExtensionWithExplicitArgument(
-                            invokeFunctionInfo, explicitReceiver
-                        )
-                    }
-                }
-                useImplicitReceiverAsBuiltinInvokeArgument -> {
-                    enqueueResolverTask {
-                        towerResolverSession.runResolverForBuiltinInvokeExtensionWithImplicitArgument(
-                            invokeFunctionInfo, explicitReceiver
-                        )
-                    }
-                    enqueueResolverTask {
-                        towerResolverSession.runResolverForInvoke(
-                            invokeFunctionInfo, explicitReceiver
-                        )
-                    }
-                }
-                else -> {
-                    enqueueResolverTask {
-                        towerResolverSession.runResolverForInvoke(
-                            invokeFunctionInfo, explicitReceiver
-                        )
-                    }
-                }
+            enqueueResolverTasksForInvoke(
+                invokeFunctionInfo,
+                explicitReceiver,
+                invokeBuiltinExtensionMode,
+                useImplicitReceiverAsBuiltinInvokeArgument
+            )
+        }
+    }
+
+    private fun enqueueResolverTasksForInvoke(
+        invokeFunctionInfo: CallInfo,
+        explicitReceiver: ExpressionReceiverValue,
+        invokeBuiltinExtensionMode: Boolean,
+        useImplicitReceiverAsBuiltinInvokeArgument: Boolean
+    ) {
+        if (invokeBuiltinExtensionMode) {
+            enqueueResolverTask {
+                towerResolverSession.runResolverForBuiltinInvokeExtensionWithExplicitArgument(
+                    invokeFunctionInfo, explicitReceiver
+                )
             }
+
+            return
+        }
+
+        if (useImplicitReceiverAsBuiltinInvokeArgument) {
+            enqueueResolverTask {
+                towerResolverSession.runResolverForBuiltinInvokeExtensionWithImplicitArgument(
+                    invokeFunctionInfo, explicitReceiver
+                )
+            }
+        }
+
+        enqueueResolverTask {
+            towerResolverSession.runResolverForInvoke(
+                invokeFunctionInfo, explicitReceiver
+            )
         }
     }
 }
