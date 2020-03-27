@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
 class FirTowerResolverSession(
     val components: BodyResolveComponents,
     implicitReceiverValues: List<ImplicitReceiverValue<*>>,
+    private val manager: TowerResolveManager
 ) {
     private data class ImplicitReceiver(
         val receiver: ImplicitReceiverValue<*>,
@@ -56,18 +57,18 @@ class FirTowerResolverSession(
         else
             components.typeParametersScopes.asReversed() + components.fileImportsScope.asReversed()
 
-    fun runResolve(manager: TowerResolveManager, info: CallInfo) {
+    fun runResolution(info: CallInfo) {
         when (val receiver = info.explicitReceiver) {
-            is FirResolvedQualifier -> manager.enqueueResolverTask { runResolverForQualifierReceiver(info, receiver, manager) }
-            null -> manager.enqueueResolverTask { runResolverForNoReceiver(info, manager) }
+            is FirResolvedQualifier -> manager.enqueueResolverTask { runResolverForQualifierReceiver(info, receiver) }
+            null -> manager.enqueueResolverTask { runResolverForNoReceiver(info) }
             else -> run {
                 if (receiver is FirQualifiedAccessExpression) {
                     val calleeReference = receiver.calleeReference
                     if (calleeReference is FirSuperReference) {
-                        return@run manager.enqueueResolverTask { runResolverForSuperReceiver(info, receiver.typeRef, manager) }
+                        return@run manager.enqueueResolverTask { runResolverForSuperReceiver(info, receiver.typeRef) }
                     }
                 }
-                manager.enqueueResolverTask { runResolverForExpressionReceiver(info, receiver, manager) }
+                manager.enqueueResolverTask { runResolverForExpressionReceiver(info, receiver) }
             }
         }
     }
@@ -91,7 +92,6 @@ class FirTowerResolverSession(
     )
 
     private suspend fun processQualifierScopes(
-        manager: TowerResolveManager,
         info: CallInfo, qualifierReceiver: QualifierReceiver?
     ) {
         if (qualifierReceiver == null) return
@@ -104,7 +104,6 @@ class FirTowerResolverSession(
     }
 
     private suspend fun processClassifierScope(
-        manager: TowerResolveManager,
         info: CallInfo, qualifierReceiver: QualifierReceiver?, prioritized: Boolean
     ) {
         if (qualifierReceiver == null) return
@@ -121,19 +120,18 @@ class FirTowerResolverSession(
 
     private suspend fun runResolverForQualifierReceiver(
         info: CallInfo,
-        resolvedQualifier: FirResolvedQualifier,
-        manager: TowerResolveManager
+        resolvedQualifier: FirResolvedQualifier
     ) {
         val qualifierReceiver = createQualifierReceiver(resolvedQualifier, session, components.scopeSession)
 
         when {
             info.isPotentialQualifierPart -> {
-                processClassifierScope(manager, info, qualifierReceiver, prioritized = true)
-                processQualifierScopes(manager, info, qualifierReceiver)
+                processClassifierScope(info, qualifierReceiver, prioritized = true)
+                processQualifierScopes(info, qualifierReceiver)
             }
             else -> {
-                processQualifierScopes(manager, info, qualifierReceiver)
-                processClassifierScope(manager, info, qualifierReceiver, prioritized = false)
+                processQualifierScopes(info, qualifierReceiver)
+                processClassifierScope(info, qualifierReceiver, prioritized = false)
             }
         }
 
@@ -142,31 +140,30 @@ class FirTowerResolverSession(
             // NB: yet built-in Unit is used for "no-value" type
             if (info.callKind == CallKind.CallableReference) {
                 if (info.stubReceiver != null || typeRef !is FirImplicitBuiltinTypeRef) {
-                    runResolverForExpressionReceiver(info, resolvedQualifier, manager)
+                    runResolverForExpressionReceiver(info, resolvedQualifier)
                 }
             } else {
                 if (typeRef !is FirImplicitBuiltinTypeRef) {
-                    runResolverForExpressionReceiver(info, resolvedQualifier, manager)
+                    runResolverForExpressionReceiver(info, resolvedQualifier)
                 }
             }
         }
     }
 
     private suspend fun runResolverForNoReceiver(
-        info: CallInfo,
-        manager: TowerResolveManager
+        info: CallInfo
     ) {
-        manager.processExtensionsThatHideMembers(info, explicitReceiverValue = null)
+        processExtensionsThatHideMembers(info, explicitReceiverValue = null)
         val nonEmptyLocalScopes = mutableListOf<FirLocalScope>()
-        manager.processLocalScopesWithNoReceiver(info, nonEmptyLocalScopes)
+        processLocalScopesWithNoReceiver(info, nonEmptyLocalScopes)
 
         val emptyTopLevelScopes = mutableSetOf<FirScope>()
-        manager.processImplicitReceiversWithNoExplicit(info, nonEmptyLocalScopes, emptyTopLevelScopes)
+        processImplicitReceiversWithNoExplicit(info, nonEmptyLocalScopes, emptyTopLevelScopes)
 
-        manager.processTopLevelScopesNoReceiver(info, emptyTopLevelScopes)
+        processTopLevelScopesNoReceiver(info, emptyTopLevelScopes)
     }
 
-    private suspend fun TowerResolveManager.processExtensionsThatHideMembers(
+    private suspend fun processExtensionsThatHideMembers(
         info: CallInfo,
         explicitReceiverValue: ReceiverValue?
     ) {
@@ -186,25 +183,25 @@ class FirTowerResolverSession(
         }
     }
 
-    private suspend fun TowerResolveManager.processHideMembersLevel(
+    private suspend fun processHideMembersLevel(
         receiverValue: ReceiverValue,
         topLevelScope: FirScope,
         info: CallInfo,
         index: Int,
         depth: Int?
-    ) = processLevel(
+    ) = manager.processLevel(
         topLevelScope.toScopeTowerLevel(
             extensionReceiver = receiverValue, extensionsOnly = true
         ),
         info, TowerGroup.TopPrioritized(index).let { if (depth != null) it.Implicit(depth) else it }
     )
 
-    private suspend fun TowerResolveManager.processLocalScopesWithNoReceiver(
+    private suspend fun processLocalScopesWithNoReceiver(
         info: CallInfo,
         nonEmptyLocalScopes: MutableList<FirLocalScope>
     ) {
         for ((index, localScope) in localScopes.withIndex()) {
-            val result = processLevel(
+            val result = manager.processLevel(
                 localScope.toScopeTowerLevel(), info, TowerGroup.Local(index)
             )
             if (result != ProcessorAction.NONE) {
@@ -213,7 +210,7 @@ class FirTowerResolverSession(
         }
     }
 
-    private suspend fun TowerResolveManager.processImplicitReceiversWithNoExplicit(
+    private suspend fun processImplicitReceiversWithNoExplicit(
         info: CallInfo,
         nonEmptyLocalScopes: MutableList<FirLocalScope>,
         emptyTopLevelScopes: MutableSet<FirScope>
@@ -226,7 +223,6 @@ class FirTowerResolverSession(
             if (usableAsValue) {
                 processCandidatesWithGivenImplicitReceiverAsValue(
                     implicitReceiverValue,
-                    this,
                     info,
                     parentGroup,
                     implicitReceiverValuesWithEmptyScopes,
@@ -238,7 +234,7 @@ class FirTowerResolverSession(
             if (implicitReceiverValue is ImplicitDispatchReceiverValue) {
                 val scope = implicitReceiverValue.scope(session, components.scopeSession)
                 if (scope != null) {
-                    processLevel(
+                    manager.processLevel(
                         FirStaticScope(scope).toScopeTowerLevel(),
                         info, parentGroup.Static(depth)
                     )
@@ -249,7 +245,6 @@ class FirTowerResolverSession(
 
     private suspend fun processCandidatesWithGivenImplicitReceiverAsValue(
         receiver: ImplicitReceiverValue<*>,
-        manager: TowerResolveManager,
         info: CallInfo,
         parentGroup: TowerGroup,
         implicitReceiverValuesWithEmptyScopes: MutableSet<ImplicitReceiverValue<*>>,
@@ -291,7 +286,7 @@ class FirTowerResolverSession(
         }
     }
 
-    private suspend fun TowerResolveManager.processTopLevelScopesNoReceiver(
+    private suspend fun processTopLevelScopesNoReceiver(
         info: CallInfo,
         emptyTopLevelScopes: Collection<FirScope>
     ) {
@@ -299,7 +294,7 @@ class FirTowerResolverSession(
             // NB: this check does not work for variables
             // because we do not search for objects if we have extension receiver
             if (info.callKind != CallKind.VariableAccess && topLevelScope in emptyTopLevelScopes) continue
-            processLevel(
+            manager.processLevel(
                 topLevelScope.toScopeTowerLevel(), info, TowerGroup.Top(index)
             )
         }
@@ -307,13 +302,12 @@ class FirTowerResolverSession(
 
     private suspend fun runResolverForExpressionReceiver(
         info: CallInfo,
-        receiver: FirExpression,
-        manager: TowerResolveManager
+        receiver: FirExpression
     ) {
         val explicitReceiverValue = ExpressionReceiverValue(receiver)
 
-        manager.processExtensionsThatHideMembers(info, explicitReceiverValue)
-        manager.processMembersForExplicitReceiver(explicitReceiverValue, info)
+        processExtensionsThatHideMembers(info, explicitReceiverValue)
+        processMembersForExplicitReceiver(explicitReceiverValue, info)
 
         val shouldProcessExplicitReceiverScopeOnly =
             info.callKind == CallKind.Function && info.explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() != null
@@ -324,7 +318,7 @@ class FirTowerResolverSession(
 
         val nonEmptyLocalScopes = mutableListOf<FirLocalScope>()
         for ((index, localScope) in localScopes.withIndex()) {
-            if (manager.processScopeForExplicitReceiver(
+            if (processScopeForExplicitReceiver(
                     localScope,
                     explicitReceiverValue,
                     info,
@@ -336,11 +330,11 @@ class FirTowerResolverSession(
         }
 
         for ((implicitReceiverValue, depth) in implicitReceiversUsableAsValues) {
-            processCombinationOfReceivers(manager, implicitReceiverValue, explicitReceiverValue, info, depth, nonEmptyLocalScopes)
+            processCombinationOfReceivers(implicitReceiverValue, explicitReceiverValue, info, depth, nonEmptyLocalScopes)
         }
 
         for ((index, topLevelScope) in topLevelScopes.withIndex()) {
-            manager.processScopeForExplicitReceiver(
+            processScopeForExplicitReceiver(
                 topLevelScope,
                 explicitReceiverValue,
                 info,
@@ -349,35 +343,34 @@ class FirTowerResolverSession(
         }
     }
 
-    private suspend fun TowerResolveManager.processScopeForExplicitReceiver(
+    private suspend fun processScopeForExplicitReceiver(
         scope: FirScope,
         explicitReceiverValue: ExpressionReceiverValue,
         info: CallInfo,
         towerGroup: TowerGroup,
     ): ProcessorAction {
-        val result = processLevel(
+        val result = manager.processLevel(
             scope.toScopeTowerLevel(extensionReceiver = explicitReceiverValue),
             info, towerGroup, ExplicitReceiverKind.EXTENSION_RECEIVER
         )
 
-        processLevelForPropertyWithInvoke(
+        manager.processLevelForPropertyWithInvoke(
             scope.toScopeTowerLevel(), info, towerGroup
         )
 
         return result
     }
 
-    private suspend fun TowerResolveManager.processMembersForExplicitReceiver(
+    private suspend fun processMembersForExplicitReceiver(
         explicitReceiverValue: ExpressionReceiverValue,
         info: CallInfo
     ) {
-        processLevel(
+        manager.processLevel(
             explicitReceiverValue.toMemberScopeTowerLevel(), info, TowerGroup.Member, ExplicitReceiverKind.DISPATCH_RECEIVER
         )
     }
 
     private suspend fun processCombinationOfReceivers(
-        manager: TowerResolveManager,
         implicitReceiverValue: ImplicitReceiverValue<*>,
         explicitReceiverValue: ExpressionReceiverValue,
         info: CallInfo,
@@ -421,8 +414,7 @@ class FirTowerResolverSession(
 
     private suspend fun runResolverForSuperReceiver(
         info: CallInfo,
-        superTypeRef: FirTypeRef,
-        manager: TowerResolveManager
+        superTypeRef: FirTypeRef
     ) {
         val scope = when (superTypeRef) {
             is FirResolvedTypeRef -> superTypeRef.type.scope(session, components.scopeSession)
@@ -439,8 +431,7 @@ class FirTowerResolverSession(
 
     internal suspend fun runResolverForInvoke(
         info: CallInfo,
-        invokeReceiverValue: ExpressionReceiverValue,
-        manager: TowerResolveManager
+        invokeReceiverValue: ExpressionReceiverValue
     ) {
         manager.processLevel(
             invokeReceiverValue.toMemberScopeTowerLevel(),
@@ -482,8 +473,7 @@ class FirTowerResolverSession(
     // Here we already know extension receiver for invoke, and it's stated in info as first argument
     internal suspend fun runResolverForBuiltinInvokeExtensionWithExplicitArgument(
         info: CallInfo,
-        invokeReceiverValue: ExpressionReceiverValue,
-        manager: TowerResolveManager
+        invokeReceiverValue: ExpressionReceiverValue
     ) {
         manager.processLevel(
             invokeReceiverValue.toMemberScopeTowerLevel(),
@@ -496,8 +486,7 @@ class FirTowerResolverSession(
     // Here we don't know extension receiver for invoke, assuming it's one of implicit receivers
     internal suspend fun runResolverForBuiltinInvokeExtensionWithImplicitArgument(
         info: CallInfo,
-        invokeReceiverValue: ExpressionReceiverValue,
-        manager: TowerResolveManager
+        invokeReceiverValue: ExpressionReceiverValue
     ) {
         for ((implicitReceiverValue, depth) in implicitReceiversUsableAsValues) {
             val parentGroup = TowerGroup.Implicit(depth)

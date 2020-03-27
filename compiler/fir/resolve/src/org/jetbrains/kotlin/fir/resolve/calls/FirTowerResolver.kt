@@ -22,10 +22,10 @@ class FirTowerResolver(
         collector: CandidateCollector = this.collector,
         manager: TowerResolveManager = this.manager
     ): CandidateCollector {
-        val towerResolverSession = FirTowerResolverSession(components, implicitReceiverValues)
+        val towerResolverSession = FirTowerResolverSession(components, implicitReceiverValues, manager)
         manager.callResolutionContext = buildCallResolutionContext(info, collector, towerResolverSession)
 
-        towerResolverSession.runResolve(manager, info)
+        towerResolverSession.runResolution(info)
 
         manager.runTasks()
         return collector

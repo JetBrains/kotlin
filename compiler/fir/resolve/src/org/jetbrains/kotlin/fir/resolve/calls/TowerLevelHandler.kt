@@ -206,26 +206,26 @@ internal class LevelHandler(
                 invokeBuiltinExtensionMode -> {
                     enqueueResolverTask {
                         towerResolverSession.runResolverForBuiltinInvokeExtensionWithExplicitArgument(
-                            invokeFunctionInfo, explicitReceiver, manager
+                            invokeFunctionInfo, explicitReceiver
                         )
                     }
                 }
                 useImplicitReceiverAsBuiltinInvokeArgument -> {
                     enqueueResolverTask {
                         towerResolverSession.runResolverForBuiltinInvokeExtensionWithImplicitArgument(
-                            invokeFunctionInfo, explicitReceiver, manager
+                            invokeFunctionInfo, explicitReceiver
                         )
                     }
                     enqueueResolverTask {
                         towerResolverSession.runResolverForInvoke(
-                            invokeFunctionInfo, explicitReceiver, manager
+                            invokeFunctionInfo, explicitReceiver
                         )
                     }
                 }
                 else -> {
                     enqueueResolverTask {
                         towerResolverSession.runResolverForInvoke(
-                            invokeFunctionInfo, explicitReceiver, manager
+                            invokeFunctionInfo, explicitReceiver
                         )
                     }
                 }
