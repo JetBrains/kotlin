@@ -51,7 +51,7 @@ class SuggestedRefactoringChangeListener(
   override fun dispose() {
   }
 
-  fun reset() {
+  fun reset(withNewIdentifiers: Boolean = false) {
     if (editingState != null) {
       editingState!!.signatureRangeMarker.dispose()
       editingState!!.importRangeMarker?.dispose()
@@ -59,6 +59,9 @@ class SuggestedRefactoringChangeListener(
         watcher.reset()
       }
       editingState = null
+    }
+    if (withNewIdentifiers) {
+      newIdentifierWatcher.reset()
     }
   }
 

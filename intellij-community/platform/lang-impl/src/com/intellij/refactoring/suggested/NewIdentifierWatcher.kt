@@ -76,7 +76,7 @@ class NewIdentifierWatcher(private val maxIdentifiers: Int) {
     }
   }
 
-  private fun reset() {
+  fun reset() {
     newIdentifierMarkers.forEach { it.marker.dispose() }
     newIdentifierMarkers.clear()
   }
