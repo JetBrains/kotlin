@@ -86,15 +86,12 @@ class FirTowerResolverSession internal constructor(
         val levelHandler =
             LevelHandler(
                 callInfo, explicitReceiverKind, group,
-                callResolutionContext, manager, this, components
+                callResolutionContext, manager, this, components,
             )
-        val result = with(levelHandler) {
-            towerLevel.handleLevel(invokeResolveMode)
+
+        return levelHandler.handleLevel(towerLevel, invokeResolveMode).also {
+            manager.stopIfSuccess()
         }
-
-        manager.stopIfSuccess()
-
-        return result
     }
 
     private suspend fun processLevelForPropertyWithInvoke(

@@ -75,7 +75,7 @@ internal class LevelHandler(
         }
     }
 
-    fun SessionBasedTowerLevel.handleLevel(invokeResolveMode: InvokeResolveMode? = null): ProcessorAction {
+    fun handleLevel(towerLevel: SessionBasedTowerLevel, invokeResolveMode: InvokeResolveMode? = null): ProcessorAction {
         var result = ProcessorAction.NONE
         val processor =
             TowerScopeLevelProcessor(
@@ -90,19 +90,19 @@ internal class LevelHandler(
             )
         when (info.callKind) {
             CallKind.VariableAccess -> {
-                result += processElementsByName(TowerScopeLevel.Token.Properties, info.name, processor)
+                result += towerLevel.processElementsByName(TowerScopeLevel.Token.Properties, info.name, processor)
                 // TODO: more accurate condition, or process properties/object in some other way
                 if (!resultCollector.isSuccess() &&
-                    (this !is ScopeTowerLevel || this.extensionReceiver == null)
+                    (towerLevel !is ScopeTowerLevel || towerLevel.extensionReceiver == null)
                 ) {
-                    result += processElementsByName(TowerScopeLevel.Token.Objects, info.name, processor)
+                    result += towerLevel.processElementsByName(TowerScopeLevel.Token.Objects, info.name, processor)
                 }
             }
             CallKind.Function -> {
                 val invokeBuiltinExtensionMode =
                     invokeResolveMode == InvokeResolveMode.RECEIVER_FOR_INVOKE_BUILTIN_EXTENSION
                 if (!invokeBuiltinExtensionMode) {
-                    result += processElementsByName(TowerScopeLevel.Token.Functions, info.name, processor)
+                    result += towerLevel.processElementsByName(TowerScopeLevel.Token.Functions, info.name, processor)
                 }
                 if (invokeResolveMode == InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER ||
                     resultCollector.isSuccess()
@@ -119,9 +119,9 @@ internal class LevelHandler(
                     group
                 )
                 callResolutionContext.invokeReceiverCollector.newDataSet()
-                result += processElementsByName(TowerScopeLevel.Token.Properties, info.name, invokeReceiverProcessor)
-                if (this !is ScopeTowerLevel || this.extensionReceiver == null) {
-                    result += processElementsByName(TowerScopeLevel.Token.Objects, info.name, invokeReceiverProcessor)
+                result += towerLevel.processElementsByName(TowerScopeLevel.Token.Properties, info.name, invokeReceiverProcessor)
+                if (towerLevel !is ScopeTowerLevel || towerLevel.extensionReceiver == null) {
+                    result += towerLevel.processElementsByName(TowerScopeLevel.Token.Objects, info.name, invokeReceiverProcessor)
                 }
 
                 if (callResolutionContext.invokeReceiverCollector.isSuccess()) {
@@ -134,7 +134,7 @@ internal class LevelHandler(
                     val stubReceiverValue = ExpressionReceiverValue(stubReceiver)
                     val stubProcessor = TowerScopeLevelProcessor(
                         info.explicitReceiver,
-                        if (this is MemberScopeTowerLevel && dispatchReceiver is AbstractExplicitReceiver<*>) {
+                        if (towerLevel is MemberScopeTowerLevel && towerLevel.dispatchReceiver is AbstractExplicitReceiver<*>) {
                             ExplicitReceiverKind.DISPATCH_RECEIVER
                         } else {
                             ExplicitReceiverKind.EXTENSION_RECEIVER
@@ -142,19 +142,19 @@ internal class LevelHandler(
                         resultCollector,
                         callResolutionContext.stubReceiverCandidateFactory!!, group
                     )
-                    val towerLevelWithStubReceiver = replaceReceiverValue(stubReceiverValue)
+                    val towerLevelWithStubReceiver = towerLevel.replaceReceiverValue(stubReceiverValue)
                     with(towerLevelWithStubReceiver) {
                         result += processElementsByName(TowerScopeLevel.Token.Functions, info.name, stubProcessor)
                         result += processElementsByName(TowerScopeLevel.Token.Properties, info.name, stubProcessor)
                     }
                     // NB: we don't perform this for implicit Unit
                     if (!resultCollector.isSuccess() && info.explicitReceiver?.typeRef !is FirImplicitBuiltinTypeRef) {
-                        result += processElementsByName(TowerScopeLevel.Token.Functions, info.name, processor)
-                        result += processElementsByName(TowerScopeLevel.Token.Properties, info.name, processor)
+                        result += towerLevel.processElementsByName(TowerScopeLevel.Token.Functions, info.name, processor)
+                        result += towerLevel.processElementsByName(TowerScopeLevel.Token.Properties, info.name, processor)
                     }
                 } else {
-                    result += processElementsByName(TowerScopeLevel.Token.Functions, info.name, processor)
-                    result += processElementsByName(TowerScopeLevel.Token.Properties, info.name, processor)
+                    result += towerLevel.processElementsByName(TowerScopeLevel.Token.Functions, info.name, processor)
+                    result += towerLevel.processElementsByName(TowerScopeLevel.Token.Properties, info.name, processor)
                 }
             }
             else -> {
