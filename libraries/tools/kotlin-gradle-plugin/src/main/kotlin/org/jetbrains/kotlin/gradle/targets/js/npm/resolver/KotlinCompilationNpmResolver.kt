@@ -172,6 +172,7 @@ internal class KotlinCompilationNpmResolver(
             plugins.forEach {
                 it.hookDependencies(
                     internalDependencies,
+                    internalCompositeDependencies,
                     externalGradleDependencies,
                     externalNpmDependencies
                 )
