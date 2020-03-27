@@ -1585,6 +1585,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/detectProperties/IsPrefix.java");
         }
 
+        @TestMetadata("IsPrefixSetterCall.java")
+        public void testIsPrefixSetterCall() throws Exception {
+            runTest("nj2k/testData/newJ2k/detectProperties/IsPrefixSetterCall.java");
+        }
+
         @TestMetadata("JavaKeywordPropertyName.java")
         public void testJavaKeywordPropertyName() throws Exception {
             runTest("nj2k/testData/newJ2k/detectProperties/JavaKeywordPropertyName.java");
