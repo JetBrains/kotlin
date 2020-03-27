@@ -72,7 +72,6 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             IllegalConstExpression -> FirErrors.ILLEGAL_CONST_EXPRESSION
             DeserializationError -> FirErrors.DESERIALIZATION_ERROR
             InferenceError -> FirErrors.INFERENCE_ERROR
-            NoSupertype -> FirErrors.NO_SUPERTYPE
             TypeParameterAsSupertype -> FirErrors.TYPE_PARAMETER_AS_SUPERTYPE
             EnumAsSupertype -> FirErrors.ENUM_AS_SUPERTYPE
             RecursionInSupertypes -> FirErrors.RECURSION_IN_SUPERTYPES

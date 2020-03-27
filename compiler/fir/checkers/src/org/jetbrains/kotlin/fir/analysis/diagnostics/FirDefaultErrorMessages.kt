@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_CONST_EXP
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_CANDIDATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_MODIFIERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_ERROR
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OTHER_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_IMPLICIT_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_SUPERTYPES
@@ -49,7 +48,6 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(ILLEGAL_CONST_EXPRESSION, "Illegal const expression")
             map.put(DESERIALIZATION_ERROR, "Deserialization error")
             map.put(INFERENCE_ERROR, "Inference error")
-            map.put(NO_SUPERTYPE, "No supertype")
             map.put(TYPE_PARAMETER_AS_SUPERTYPE, "Type parameter as supertype")
             map.put(ENUM_AS_SUPERTYPE, "Enum as supertype")
             map.put(RECURSION_IN_SUPERTYPES, "Recursion in supertypes")

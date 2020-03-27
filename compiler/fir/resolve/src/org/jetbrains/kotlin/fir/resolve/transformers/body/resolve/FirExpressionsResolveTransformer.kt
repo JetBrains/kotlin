@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
@@ -93,7 +94,8 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                             superTypeRefs?.isNotEmpty() != true -> {
                                 buildErrorTypeRef {
                                     source = qualifiedAccessExpression.source
-                                    diagnostic = ConeSimpleDiagnostic("No super type", DiagnosticKind.NoSupertype)
+                                    // NB: NOT_A_SUPERTYPE is reported by a separate checker
+                                    diagnostic = ConeStubDiagnostic(ConeSimpleDiagnostic("No super type", DiagnosticKind.Other))
                                 }
                             }
                             superTypeRefs.size == 1 -> {

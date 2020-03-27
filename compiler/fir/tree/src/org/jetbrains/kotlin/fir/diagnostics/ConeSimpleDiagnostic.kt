@@ -19,7 +19,6 @@ enum class DiagnosticKind {
     IllegalConstExpression,
     DeserializationError,
     InferenceError,
-    NoSupertype,
     TypeParameterAsSupertype,
     EnumAsSupertype,
     RecursionInSupertypes,

@@ -23,7 +23,6 @@ object FirErrors {
     val ILLEGAL_CONST_EXPRESSION by error0<FirSourceElement, PsiElement>()
     val DESERIALIZATION_ERROR by error0<FirSourceElement, PsiElement>()
     val INFERENCE_ERROR by error0<FirSourceElement, PsiElement>()
-    val NO_SUPERTYPE by error0<FirSourceElement, PsiElement>()
     val TYPE_PARAMETER_AS_SUPERTYPE by error0<FirSourceElement, PsiElement>()
     val ENUM_AS_SUPERTYPE by error0<FirSourceElement, PsiElement>()
     val RECURSION_IN_SUPERTYPES by error0<FirSourceElement, PsiElement>()
