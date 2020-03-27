@@ -38,6 +38,7 @@ abstract class KonanSwiftModule : SwiftModule, UserDataHolder by UserDataHolderB
         val file = konanBridgeFile() ?: return SwiftGlobalSymbols.EMPTY
         val psiFile = PsiManager.getInstance(project).findFile(file) ?: return SwiftGlobalSymbols.EMPTY
         val context = OCInclusionContext.empty(SwiftLanguageKind, psiFile)
+        context.addProcessedFile(file)
         val table = FileSymbolTable.forFile(file, context)?.takeIf { !it.isEmpty } ?: return SwiftGlobalSymbols.EMPTY
 
         val bridgedSymbols = SwiftGlobalSymbolsImpl(SwiftGlobalSymbols.SymbolsOrigin.OBJC, this)
