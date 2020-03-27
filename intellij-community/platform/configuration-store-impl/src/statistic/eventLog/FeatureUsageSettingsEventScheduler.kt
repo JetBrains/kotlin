@@ -33,6 +33,10 @@ internal class FeatureUsageSettingsEventScheduler : FeatureUsageStateEventTracke
 
     AppExecutorUtil.getAppScheduledExecutorService().scheduleWithFixedDelay({ logConfigStateEvents() }, INITIAL_DELAY.toLong(), PERIOD_DELAY.toLong(), TimeUnit.MINUTES)
   }
+
+  override fun reportNow() {
+    logConfigStateEvents()
+  }
 }
 
 private fun logConfigStateEvents() {
