@@ -87,11 +87,11 @@ class DifferentMavenStdlibVersionInspection : DomElementsInspection<MavenDomProj
     private class SetVersionQuickFix(val versionElement: GenericDomValue<*>, val newVersion: String, val versionResolved: String?) :
         LocalQuickFix {
         override fun getName() = when (versionResolved) {
-            null -> KotlinMavenBundle.message("change.version.to", newVersion)
-            else -> KotlinMavenBundle.message("change.version.to.resolved", newVersion, versionResolved)
+            null -> KotlinMavenBundle.message("fix.set.version.name", newVersion)
+            else -> KotlinMavenBundle.message("fix.set.version.name1", newVersion, versionResolved)
         }
 
-        override fun getFamilyName() = KotlinMavenBundle.message("change.version")
+        override fun getFamilyName() = KotlinMavenBundle.message("fix.set.version.family")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             versionElement.value = newVersion
