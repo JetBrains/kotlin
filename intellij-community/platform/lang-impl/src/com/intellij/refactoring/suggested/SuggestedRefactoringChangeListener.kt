@@ -61,6 +61,12 @@ class SuggestedRefactoringChangeListener(
     }
   }
 
+  fun undoToState(state: SuggestedRefactoringState, signatureRange: TextRange) {
+    val psiFile = state.declaration.containingFile
+    val document = PsiDocumentManager.getInstance(psiFile.project).getDocument(psiFile)!!
+    editingState = createEditingState(document, state.declaration, signatureRange, state.refactoringSupport)
+  }
+
   fun suppressForCurrentDeclaration() {
     if (editingState != null && !editingState!!.isRefactoringSuppressed) {
       editingState = editingState!!.copy(isRefactoringSuppressed = true)
@@ -112,11 +118,23 @@ class SuggestedRefactoringChangeListener(
     val signatureRange = refactoringSupport.signatureRange(declaration) ?: return
     val extendedSignatureRange = signatureRange.union(truncatedChangeRange)
 
-    val signatureRangeMarker = document.createRangeMarker(extendedSignatureRange).apply {
+    editingState = createEditingState(document, declaration, extendedSignatureRange, refactoringSupport)
+    if (!editingState!!.isRefactoringSuppressed) {
+      watcher.editingStarted(declaration, refactoringSupport)
+    }
+  }
+
+  private fun createEditingState(
+    document: Document,
+    declaration: PsiElement,
+    signatureRange: TextRange,
+    refactoringSupport: SuggestedRefactoringSupport
+  ): SignatureEditingState? {
+    val signatureRangeMarker = document.createRangeMarker(signatureRange).apply {
       isGreedyToLeft = true
       isGreedyToRight = true
     }
-    val importRangeMarker = refactoringSupport.importsRange(psiFile)
+    val importRangeMarker = refactoringSupport.importsRange(declaration.containingFile)
       ?.let { document.createRangeMarker(it) }
       ?.apply {
         isGreedyToLeft = true
@@ -124,11 +142,7 @@ class SuggestedRefactoringChangeListener(
       }
 
     val refactoringSuppressed = shouldSuppressRefactoring(declaration, document, refactoringSupport)
-
-    editingState = SignatureEditingState(signatureRangeMarker, importRangeMarker, refactoringSuppressed)
-    if (!refactoringSuppressed) {
-      watcher.editingStarted(declaration, refactoringSupport)
-    }
+    return SignatureEditingState(signatureRangeMarker, importRangeMarker, refactoringSuppressed)
   }
 
   private fun shouldSuppressRefactoring(

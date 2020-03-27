@@ -4,6 +4,7 @@ package com.intellij.refactoring.suggested
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.annotations.TestOnly
 
 class SuggestedRefactoringProviderImpl(project: Project) : SuggestedRefactoringProvider {
@@ -24,6 +25,11 @@ class SuggestedRefactoringProviderImpl(project: Project) : SuggestedRefactoringP
 
   override fun reset() {
     listener.reset()
+  }
+
+  fun undoToState(state: SuggestedRefactoringState, signatureRange: TextRange) {
+    listener.undoToState(state, signatureRange)
+    changeCollector.undoToState(state)
   }
 
   fun suppressForCurrentDeclaration() {

@@ -4,9 +4,8 @@ package com.intellij.refactoring.suggested
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
-import com.intellij.openapi.command.undo.DocumentReferenceManager
+import com.intellij.openapi.command.undo.BasicUndoableAction
 import com.intellij.openapi.command.undo.UndoManager
-import com.intellij.openapi.command.undo.UndoableAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
@@ -53,6 +52,13 @@ class SuggestedRefactoringChangeCollector(
     ApplicationManager.getApplication().assertIsDispatchThread()
     state = null
     updateAvailabilityIndicator()
+  }
+
+  fun undoToState(state: SuggestedRefactoringState) {
+    ApplicationManager.getApplication().assertIsDispatchThread()
+    this.state = state
+    updateAvailabilityIndicator()
+    amendStateInBackground()
   }
 
   private fun amendStateInBackground() {
@@ -119,18 +125,12 @@ class SuggestedRefactoringChangeCollector(
       }
     }
 
-  private class EditingStartedUndoableAction(document: Document, private val project: Project) : UndoableAction {
-    val documentReference = DocumentReferenceManager.getInstance().create(document)
-
+  private class EditingStartedUndoableAction(document: Document, private val project: Project) : BasicUndoableAction(document) {
     override fun undo() {
       SuggestedRefactoringProvider.getInstance(project).reset()
     }
 
     override fun redo() {
     }
-
-    override fun isGlobal() = false
-
-    override fun getAffectedDocuments() = arrayOf(documentReference)
   }
 }
