@@ -19,11 +19,16 @@ private const val KOTLIN_IDE_IML_NAME = "kotlinide.iml"
 private const val COMBO_IML_NAME = "kombo.iml"
 private const val COMBO_OLD_IML_NAME = "combo.iml"
 
+private const val DEFAULT_BUILD_PROCESS_HEAP_SIZE = 2000
+
 class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBase(kotlinProjectDir), ComboGenerator {
+    private val lastJpsProcessBuildHeapSize = readJpsBuildProcessHeapSize()
+
     override fun generate() {
         copyIdeaSettings()
         patchIdeaVcsSettings()
         patchIdeaMiscSettings()
+        patchIdeaCompilerSettings()
         patchIdeaExternalDependenciesSettings()
         addKotlinLibraries()
 
@@ -36,6 +41,21 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
         generateModule(File(comboProjectDir, COMBO_IML_NAME), "\$MODULE_DIR\$")
 
         copyKotlinModules()
+    }
+
+    private fun readJpsBuildProcessHeapSize(): Int {
+        val compilerFile = File(comboProjectDir, ".idea/compiler.xml")
+        if (!compilerFile.isFile) {
+            return DEFAULT_BUILD_PROCESS_HEAP_SIZE
+        }
+
+        val compiler = compilerFile.loadXml()
+        val compilerConfigurationComponent = findComponent(compiler, "CompilerConfiguration")
+
+        return compilerConfigurationComponent.getElementsByTagName("option").elements
+            .find { it.getAttribute("name") == "BUILD_PROCESS_HEAP_SIZE" }
+            ?.getAttribute("value")?.toIntOrNull()
+            ?: DEFAULT_BUILD_PROCESS_HEAP_SIZE
     }
 
     private fun copyIdeaSettings() {
@@ -149,6 +169,19 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
         projectRootManagerComponent.appendChild(newOutput)
 
         misc.saveXml(miscFile)
+    }
+
+    private fun patchIdeaCompilerSettings() {
+        val compilerFile = File(comboProjectDir, ".idea/compiler.xml")
+        val compiler = compilerFile.loadXml()
+
+        val compilerConfigurationComponent = findComponent(compiler, "CompilerConfiguration")
+        val buildProcessHeapSizeOption = compilerConfigurationComponent.getElementsByTagName("option").elements
+            .first { it.getAttribute("name") == "BUILD_PROCESS_HEAP_SIZE" }
+
+        buildProcessHeapSizeOption.setAttribute("value", lastJpsProcessBuildHeapSize.toString())
+
+        compiler.saveXml(compilerFile)
     }
 
     private fun patchIdeaExternalDependenciesSettings() {
