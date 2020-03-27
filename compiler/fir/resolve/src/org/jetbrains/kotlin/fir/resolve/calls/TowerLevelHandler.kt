@@ -52,29 +52,6 @@ internal class LevelHandler(
     private fun enqueueResolverTask(group: TowerGroup = TowerGroup.Start, task: suspend () -> Unit) =
         manager.enqueueResolverTask(group, task)
     
-    private fun createExplicitReceiverForInvoke(candidate: Candidate): FirQualifiedAccessExpressionBuilder {
-        val (name, typeRef) = when (val symbol = candidate.symbol) {
-            is FirCallableSymbol<*> -> {
-                symbol.callableId.callableName to components.returnTypeCalculator.tryCalculateReturnType(symbol.firUnsafe())
-            }
-            is FirRegularClassSymbol -> {
-                symbol.classId.shortClassName to buildResolvedTypeRef {
-                    type = symbol.constructType(emptyArray(), isNullable = false)
-                }
-            }
-            else -> throw AssertionError()
-        }
-        return FirQualifiedAccessExpressionBuilder().apply {
-            calleeReference = FirNamedReferenceWithCandidate(
-                null,
-                name,
-                candidate
-            )
-            dispatchReceiver = candidate.dispatchReceiverExpression()
-            this.typeRef = typeRef
-        }
-    }
-
     fun handleLevel(towerLevel: SessionBasedTowerLevel, invokeResolveMode: InvokeResolveMode? = null): ProcessorAction {
         var result = ProcessorAction.NONE
         val processor =
@@ -181,7 +158,7 @@ internal class LevelHandler(
                 !invokeBuiltinExtensionMode && isExtensionFunctionType &&
                         invokeReceiverCandidate.explicitReceiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
 
-            val invokeReceiverExpression = createExplicitReceiverForInvoke(invokeReceiverCandidate).let {
+            val invokeReceiverExpression = components.createExplicitReceiverForInvoke(invokeReceiverCandidate).let {
                 if (!invokeBuiltinExtensionMode) {
                     it.extensionReceiver = extensionReceiverExpression
                     // NB: this should fix problem in DFA (KT-36014)
@@ -296,5 +273,28 @@ private class TowerScopeLevelProcessor(
 
     companion object {
         val defaultPackage = Name.identifier("kotlin")
+    }
+}
+
+private fun BodyResolveComponents.createExplicitReceiverForInvoke(candidate: Candidate): FirQualifiedAccessExpressionBuilder {
+    val (name, typeRef) = when (val symbol = candidate.symbol) {
+        is FirCallableSymbol<*> -> {
+            symbol.callableId.callableName to returnTypeCalculator.tryCalculateReturnType(symbol.firUnsafe())
+        }
+        is FirRegularClassSymbol -> {
+            symbol.classId.shortClassName to buildResolvedTypeRef {
+                type = symbol.constructType(emptyArray(), isNullable = false)
+            }
+        }
+        else -> throw AssertionError()
+    }
+    return FirQualifiedAccessExpressionBuilder().apply {
+        calleeReference = FirNamedReferenceWithCandidate(
+            null,
+            name,
+            candidate
+        )
+        dispatchReceiver = candidate.dispatchReceiverExpression()
+        this.typeRef = typeRef
     }
 }
