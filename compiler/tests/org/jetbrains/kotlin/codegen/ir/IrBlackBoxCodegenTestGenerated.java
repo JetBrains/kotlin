@@ -14938,6 +14938,36 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                     runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridge3.kt");
                 }
 
+                @TestMetadata("bridgeInClass.kt")
+                public void testBridgeInClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridgeInClass.kt");
+                }
+
+                @TestMetadata("bridgeInInterface.kt")
+                public void testBridgeInInterface() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridgeInInterface.kt");
+                }
+
+                @TestMetadata("bridgeInInterface2.kt")
+                public void testBridgeInInterface2() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridgeInInterface2.kt");
+                }
+
+                @TestMetadata("bridgeInInterfaceWithProperties.kt")
+                public void testBridgeInInterfaceWithProperties() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridgeInInterfaceWithProperties.kt");
+                }
+
+                @TestMetadata("bridgeInInterfaceWithProperties2.kt")
+                public void testBridgeInInterfaceWithProperties2() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridgeInInterfaceWithProperties2.kt");
+                }
+
+                @TestMetadata("bridgeWithJava.kt")
+                public void testBridgeWithJava() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridgeWithJava.kt");
+                }
+
                 @TestMetadata("bridgeWithProperties.kt")
                 public void testBridgeWithProperties() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/bridgeWithProperties.kt");
@@ -15135,6 +15165,36 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 @TestMetadata("bridge3.kt")
                 public void testBridge3() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridge3.kt");
+                }
+
+                @TestMetadata("bridgeInClass.kt")
+                public void testBridgeInClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridgeInClass.kt");
+                }
+
+                @TestMetadata("bridgeInInterface.kt")
+                public void testBridgeInInterface() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridgeInInterface.kt");
+                }
+
+                @TestMetadata("bridgeInInterface2.kt")
+                public void testBridgeInInterface2() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridgeInInterface2.kt");
+                }
+
+                @TestMetadata("bridgeInInterfaceWithProperties.kt")
+                public void testBridgeInInterfaceWithProperties() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridgeInInterfaceWithProperties.kt");
+                }
+
+                @TestMetadata("bridgeInInterfaceWithProperties2.kt")
+                public void testBridgeInInterfaceWithProperties2() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridgeInInterfaceWithProperties2.kt");
+                }
+
+                @TestMetadata("bridgeWithJava.kt")
+                public void testBridgeWithJava() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/bridgeWithJava.kt");
                 }
 
                 @TestMetadata("bridgeWithProperties.kt")

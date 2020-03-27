@@ -1460,7 +1460,8 @@ public class FunctionCodegen {
             iv.invokespecial(parentInternalName, delegateTo.getName(), delegateTo.getDescriptor(), false);
         }
         else {
-            if (JvmAnnotationUtilKt.isCompiledToJvmDefaultIfNoAbstract(descriptor, state.getJvmDefaultMode())) {
+            if (isInterface(descriptor.getContainingDeclaration()) &&
+                JvmAnnotationUtilKt.isCompiledToJvmDefaultIfNoAbstract(descriptor, state.getJvmDefaultMode())) {
                 iv.invokeinterface(v.getThisName(), delegateTo.getName(), delegateTo.getDescriptor());
             }
             else {
