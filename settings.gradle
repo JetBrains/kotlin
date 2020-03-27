@@ -39,6 +39,7 @@ include ':performance:helloworld'
 include ':performance:numerical'
 include ':performance:videoplayer'
 include ':performance:framework'
+include ':performance:startup'
 if (System.getProperty("os.name") == "Mac OS X") {
     include ':performance:objcinterop'
     include ':performance:swiftinterop'

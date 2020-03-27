@@ -8,6 +8,7 @@ package org.jetbrains.kotlin
 import org.gradle.api.DefaultTask
 import org.gradle.api.Task
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
+import org.jetbrains.report.json.*
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.api.tasks.Input
@@ -19,6 +20,11 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
                                                    private val executable: String,
                                                    private val outputFileName: String
 ) : DefaultTask() {
+    enum class RepeatingType {
+        INTERNAL,  // Let the benchmark perform warmups and repeats.
+        EXTERNAL,  // Repeat by relaunching benchmark
+    }
+
     @Input
     @Option(option = "filter", description = "Benchmarks to run (comma-separated)")
     var filter: String = ""
@@ -28,6 +34,12 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
     @Input
     @Option(option = "verbose", description = "Verbose mode of running benchmarks")
     var verbose: Boolean = false
+    @Input
+    var warmupCount: Int = 0
+    @Input
+    var repeatCount: Int = 0
+    @Input
+    var repeatingType = RepeatingType.INTERNAL
 
     private val argumentsList = mutableListOf<String>()
 
@@ -44,9 +56,41 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
         argumentsList.addAll(arguments.toList())
     }
 
+    private fun execBenchmarkOnce(benchmark: String, warmupCount: Int, repeatCount: Int) : String {
+        val output = ByteArrayOutputStream()
+        project.exec {
+            it.executable = executable
+            it.args(argumentsList)
+            it.args("-f", benchmark)
+            if (verbose) {
+                it.args("-v")
+            }
+            it.args("-w", warmupCount.toString())
+            it.args("-r", repeatCount.toString())
+            it.standardOutput = output
+        }
+        return output.toString().removePrefix("[").removeSuffix("]")
+    }
+
+    private fun execBenchmarkRepeatedly(benchmark: String, warmupCount: Int, repeatCount: Int) : List<String> {
+        for (i in 0..warmupCount) {
+            execBenchmarkOnce(benchmark, 0, 1)
+        }
+        val result = mutableListOf<String>()
+        for (i in 0..repeatCount) {
+            val benchmarkReport = JsonTreeParser.parse(execBenchmarkOnce(benchmark, 0, 1)).jsonObject
+            val modifiedBenchmarkReport = JsonObject(HashMap(benchmarkReport.content).apply {
+                put("repeat", JsonLiteral(i))
+                put("warmup", JsonLiteral(warmupCount))
+            })
+            result.add(modifiedBenchmarkReport.toString())
+        }
+        return result
+    }
+
     @TaskAction
     fun run() {
-        var output = ByteArrayOutputStream()
+        val output = ByteArrayOutputStream()
         project.exec {
             it.executable = executable
             it.args("list")
@@ -60,18 +104,11 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
             benchmarks.filter { benchmark -> benchmark in filterArgs || regexes.any { it.matches(benchmark) } }
         } else benchmarks.filter { !it.isEmpty() }
 
-        val results = benchmarksToRun.map { benchmark ->
-            output = ByteArrayOutputStream()
-            project.exec {
-                it.executable = executable
-                it.args(argumentsList)
-                it.args("-f", benchmark)
-                if (verbose) {
-                    it.args("-v")
-                }
-                it.standardOutput = output
+        val results = benchmarksToRun.flatMap { benchmark ->
+            when (repeatingType) {
+                RepeatingType.INTERNAL -> listOf(execBenchmarkOnce(benchmark, warmupCount, repeatCount))
+                RepeatingType.EXTERNAL -> execBenchmarkRepeatedly(benchmark, warmupCount, repeatCount)
             }
-            output.toString().removePrefix("[").removeSuffix("]")
         }
 
         File(outputFileName).printWriter().use { out ->

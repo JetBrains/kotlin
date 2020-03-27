@@ -109,6 +109,12 @@ and then a final native binary is produced from this klibrary using the -Xinclud
  To measure performance of Kotlin/Native compiler on existing benchmarks:
  
     ./gradlew :performance:konanRun
+
+ **NOTE**: **konanRun** task needs built compiler and libs. To test against working tree make sure to run
+
+    ./gradlew dist distPlatformLibs
+
+ before **konanRun**
     
  **konanRun** task can be run separately for one/several benchmark applications:
  

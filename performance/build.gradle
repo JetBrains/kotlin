@@ -233,6 +233,11 @@ task numerical {
     dependsOn 'numerical:konanRun'
 }
 
+task startup {
+    dependsOn 'clean'
+    dependsOn 'startup:konanRun'
+}
+
 task swiftinterop {
     dependsOn 'clean'
     dependsOn 'swiftinterop:konanRun'
