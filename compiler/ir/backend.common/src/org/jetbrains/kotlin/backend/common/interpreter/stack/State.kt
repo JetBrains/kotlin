@@ -96,17 +96,16 @@ class Primitive<T>(var value: T, val type: IrType) : State {
     }
 }
 
-abstract class Complex(override val irClass: IrClass, override val fields: MutableList<Variable>) : State {
-    var superType: Complex? = null
-    var instance: Complex? = null
-
-    fun setInstanceRecursive(instance: Complex) {
-        this.instance = instance
-        superType?.setInstanceRecursive(instance)
+abstract class Complex(
+    override val irClass: IrClass, override val fields: MutableList<Variable>, var superClass: Complex?, var subClass: Complex?
+) : State {
+    fun setSuperClassInstance(superClass: Complex) {
+        this.superClass = superClass
+        superClass.subClass = this
     }
 
-    fun getReceiver(): DeclarationDescriptor {
-        return irClass.thisReceiver!!.descriptor
+    fun getOriginal(): Complex {
+        return subClass?.getOriginal() ?: this
     }
 
     fun irClassFqName(): String {
@@ -130,7 +129,12 @@ abstract class Complex(override val irClass: IrClass, override val fields: Mutab
     }
 }
 
-class Common(override val irClass: IrClass, override val fields: MutableList<Variable>) : Complex(irClass, fields) {
+class Common private constructor(
+    override val irClass: IrClass, override val fields: MutableList<Variable>, superClass: Complex?, subClass: Complex?
+) : Complex(irClass, fields, superClass, subClass) {
+
+    constructor(irClass: IrClass) : this(irClass, mutableListOf(), null, null)
+
     fun getToStringFunction(): IrFunctionImpl {
         return irClass.declarations.filterIsInstance<IrFunction>()
             .filter { it.descriptor.name.asString() == "toString" }
@@ -138,24 +142,22 @@ class Common(override val irClass: IrClass, override val fields: MutableList<Var
     }
 
     override fun copy(): State {
-        return Common(irClass, fields).apply {
-            this@apply.superType = this@Common.superType
-            this@apply.instance = this@Common.instance
-        }
+        return Common(irClass, fields, superClass, subClass ?: this)
     }
 
     override fun toString(): String {
-        return "Common(obj='${irClass.fqNameForIrSerialization}', super=$superType, values=$fields)"
+        return "Common(obj='${irClass.fqNameForIrSerialization}', super=$superClass, values=$fields)"
     }
 }
 
-class Wrapper(val value: Any, override val irClass: IrClass) : Complex(irClass, mutableListOf()) {
+class Wrapper private constructor(
+    val value: Any, override val irClass: IrClass, subClass: Complex?
+) : Complex(irClass, mutableListOf(), null, subClass) {
+
     private val typeFqName = irClass.fqNameForIrSerialization.toUnsafe()
     private val receiverClass = irClass.defaultType.getClass(true)
 
-    init {
-        instance = this
-    }
+    constructor(value: Any, irClass: IrClass) : this(value, irClass, null)
 
     fun getMethod(irFunction: IrFunction): MethodHandle? {
         // if function is actually a getter, then use "get${property.name.capitalize()}" as method name
@@ -280,7 +282,7 @@ class Wrapper(val value: Any, override val irClass: IrClass) : Complex(irClass, 
     }
 
     override fun copy(): State {
-        return Wrapper(value, irClass).apply { this@apply.instance = this@Wrapper.instance }
+        return Wrapper(value, irClass, subClass ?: this)
     }
 
     override fun toString(): String {
@@ -288,7 +290,9 @@ class Wrapper(val value: Any, override val irClass: IrClass) : Complex(irClass, 
     }
 }
 
-class Lambda(val irFunction: IrFunction, override val irClass: IrClass) : Complex(irClass, mutableListOf()) {
+class Lambda(val irFunction: IrFunction, override val irClass: IrClass) : State {
+    override val fields: MutableList<Variable> = mutableListOf()
+
     // irFunction is anonymous declaration, but irCall will contain descriptor of invoke method from Function interface
     private val invokeDescriptor = irClass.declarations.single { it.nameForIrSerialization.asString() == "invoke" }.descriptor
 
@@ -301,7 +305,7 @@ class Lambda(val irFunction: IrFunction, override val irClass: IrClass) : Comple
     }
 
     override fun copy(): State {
-        return Lambda(irFunction, irClass).apply { this@apply.instance = this@Lambda.instance }
+        return Lambda(irFunction, irClass)
     }
 
     override fun toString(): String {
@@ -310,18 +314,17 @@ class Lambda(val irFunction: IrFunction, override val irClass: IrClass) : Comple
 }
 
 class ExceptionState private constructor(
-    override val irClass: IrClass, override val fields: MutableList<Variable>, stackTrace: List<String>
-) : Complex(irClass, fields) {
+    override val irClass: IrClass, override val fields: MutableList<Variable>, stackTrace: List<String>, subClass: Complex? = null
+) : Complex(irClass, fields, null, subClass) {
+
     private lateinit var exceptionFqName: String
     private val exceptionHierarchy = mutableListOf<String>()
     private val messageProperty = irClass.getPropertyByName("message")
     private val causeProperty = irClass.getPropertyByName("cause")
 
-    private val stackTrace: List<String>
+    private val stackTrace: List<String> = stackTrace.reversed()
 
     init {
-        instance = this
-        this.stackTrace = stackTrace.reversed()
         if (!this::exceptionFqName.isInitialized) this.exceptionFqName = irClassFqName()
 
         if (fields.none { it.descriptor.equalTo(messageProperty.descriptor) }) {
@@ -331,7 +334,7 @@ class ExceptionState private constructor(
 
     constructor(common: Common, stackTrace: List<String>) : this(common.irClass, common.fields, stackTrace) {
         var wrapperSuperType: Complex? = common
-        while (wrapperSuperType != null && wrapperSuperType !is Wrapper) wrapperSuperType = (wrapperSuperType as Common).superType
+        while (wrapperSuperType != null && wrapperSuperType !is Wrapper) wrapperSuperType = (wrapperSuperType as Common).superClass
         setUpCauseIfNeeded(wrapperSuperType as? Wrapper)
     }
 
@@ -349,6 +352,13 @@ class ExceptionState private constructor(
             generateSequence(exception::class.java.superclass) { it.superclass }.forEach { exceptionHierarchy += it.name }
             exceptionHierarchy.removeAt(exceptionHierarchy.lastIndex) // remove unnecessary java.lang.Object
         }
+    }
+
+    data class ExceptionData(val state: ExceptionState) : Throwable() {
+        override val message: String? = state.getMessage().value
+        override fun fillInStackTrace() = this
+
+        override fun toString(): String = state.getMessageWithName()
     }
 
     private fun setUpCauseIfNeeded(wrapper: Wrapper?) {
@@ -376,7 +386,7 @@ class ExceptionState private constructor(
     }
 
     fun getMessage(): Primitive<String?> = getState(messageProperty.descriptor) as Primitive<String?>
-    fun getMessageWithName(): String = getMessage().value?.let { "$exceptionFqName: $it" } ?: exceptionFqName
+    private fun getMessageWithName(): String = getMessage().value?.let { "$exceptionFqName: $it" } ?: exceptionFqName
 
     fun getCause(): ExceptionState? = getState(causeProperty.descriptor)?.let { if (it is ExceptionState) it else null }
 
@@ -394,7 +404,7 @@ class ExceptionState private constructor(
     fun getThisAsCauseForException() = ExceptionData(this)
 
     override fun copy(): State {
-        return ExceptionState(irClass, fields, stackTrace).apply { this@apply.instance = this@ExceptionState.instance }
+        return ExceptionState(irClass, fields, stackTrace, subClass ?: this)
     }
 
     companion object {
@@ -442,13 +452,4 @@ class ExceptionState private constructor(
             return additionalStack
         }
     }
-}
-
-// TODO remove this data class and make ExceptionState a child of Throwable
-// this is possible by converting Complex to an interface
-data class ExceptionData(val state: ExceptionState) : Throwable() {
-    override val message: String? = state.getMessage().value
-    override fun fillInStackTrace() = this
-
-    override fun toString(): String = state.getMessageWithName()
 }

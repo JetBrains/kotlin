@@ -268,7 +268,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
     private suspend fun calculateAbstract(irFunction: IrFunction, data: Frame): Code {
         if (irFunction.body == null) {
             val receiver = data.getVariableState(irFunction.symbol.getReceiver()!!) as Complex
-            val instance = receiver.instance!!
+            val instance = receiver.getOriginal()
 
             val functionImplementation = instance.getIrFunction(irFunction.descriptor)
             if (functionImplementation?.body == null) throw NoSuchMethodException("Method \"${irFunction.name}\" wasn't implemented")
@@ -283,7 +283,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
     private suspend fun calculateOverridden(owner: IrSimpleFunction, data: Frame): Code {
         val variableDescriptor = owner.symbol.getReceiver()!!
-        val superQualifier = (data.getVariableState(variableDescriptor) as? Complex)?.superType
+        val superQualifier = (data.getVariableState(variableDescriptor) as? Complex)?.superClass
         if (superQualifier == null) {
             // superQualifier is null for exception state => find method in builtins
             return calculateBuiltIns(owner.getLastOverridden() as IrSimpleFunction, data)
@@ -298,7 +298,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val overriddenOwner = overridden.owner
         return when {
             overriddenOwner.body != null -> overriddenOwner.interpret(newStates)
-            superQualifier.superType == null -> calculateBuiltIns(overriddenOwner, newStates)
+            superQualifier.superClass == null -> calculateBuiltIns(overriddenOwner, newStates)
             else -> calculateOverridden(overriddenOwner, newStates)
         }.apply { data.pushReturnValue(newStates) }
     }
@@ -313,7 +313,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
         val receiverType = descriptor.dispatchReceiverParameter?.type ?: descriptor.extensionReceiverParameter?.type
         val argsType = listOfNotNull(receiverType) + descriptor.valueParameters.map { it.original.type }
-        val argsValues = args.map { (it as? Complex)?.instance ?: (it as Primitive<*>).value }
+        val argsValues = args.map { (it as? Complex)?.getOriginal() ?: (it as Primitive<*>).value }
         val signature = CompileTimeFunction(methodName, argsType.map { it.toString() })
 
         val result = when (argsType.size) {
@@ -376,7 +376,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
         val dispatchReceiver = rawDispatchReceiver?.let { data.popReturnValue() }
         val irFunctionReceiver = when (expression.superQualifierSymbol) {
             null -> dispatchReceiver
-            else -> (dispatchReceiver as Complex).superType?.takeIf { it.irClass.isSubclassOf(expression.superQualifierSymbol!!.owner) }
+            else -> (dispatchReceiver as Complex).superClass?.takeIf { it.irClass.isSubclassOf(expression.superQualifierSymbol!!.owner) }
         }
         // it is important firstly to add receiver, then arguments; this order is used in builtin method call
         val irFunction = irFunctionReceiver?.getIrFunction(expression.symbol.descriptor) ?: expression.symbol.owner
@@ -400,7 +400,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
 
         irFunction.takeIf { it.isInline }?.typeParameters?.forEachIndexed { index, typeParameter ->
             if (typeParameter.isReified) {
-                val typeArgumentState = Common(expression.getTypeArgument(index)?.classOrNull!!.owner, mutableListOf())
+                val typeArgumentState = Common(expression.getTypeArgument(index)?.classOrNull!!.owner)
                 newFrame.addVar(Variable(typeParameter.descriptor, typeArgumentState))
             }
         }
@@ -497,30 +497,25 @@ class IrInterpreter(irModule: IrModuleFragment) {
             return Code.NEXT
         }
 
-        val state = Common(parent, mutableListOf())
+        val state = Common(parent)
         newFrame.addVar(Variable(constructorCall.getThisAsReceiver(), state)) //used to set up fields in body
         constructorCall.getBody()?.interpret(newFrame)?.checkForReturn(newFrame, data) { return it }
         val returnedState = newFrame.popReturnValue() as Complex
-        data.pushReturnValue(if (isPrimary) state.apply { superType = returnedState } else returnedState.apply { setStatesFrom(state) })
+        data.pushReturnValue(if (isPrimary) state.apply { this.setSuperClassInstance(returnedState) } else returnedState.apply { setStatesFrom(state) })
         return Code.NEXT
     }
 
     private suspend fun interpretConstructorCall(constructorCall: IrConstructorCall, data: Frame): Code {
-        return interpretConstructor(constructorCall, data).apply {
-            // constructor can return primitive object; fot example, when create array by constructor
-            (data.peekReturnValue() as? Complex)?.let { it.setInstanceRecursive(it) }
-        }
+        return interpretConstructor(constructorCall, data)
     }
 
     private suspend fun interpretEnumConstructorCall(enumConstructorCall: IrEnumConstructorCall, data: Frame): Code {
-        return interpretConstructor(enumConstructorCall, data).apply {
-            (data.peekReturnValue() as Complex).let { it.setInstanceRecursive(it) }
-        }
+        return interpretConstructor(enumConstructorCall, data)
     }
 
     private suspend fun interpretDelegatedConstructorCall(delegatingConstructorCall: IrDelegatingConstructorCall, data: Frame): Code {
         if (delegatingConstructorCall.symbol.descriptor.containingDeclaration.defaultType == DefaultBuiltIns.Instance.anyType) {
-            val anyAsStateObject = Common(irBuiltIns.anyClass.owner, mutableListOf())
+            val anyAsStateObject = Common(irBuiltIns.anyClass.owner)
             data.pushReturnValue(anyAsStateObject)
             return Code.NEXT
         }
@@ -665,7 +660,7 @@ class IrInterpreter(irModule: IrModuleFragment) {
             data.pushReturnValue(Wrapper.getCompanionObject(owner))
             return Code.NEXT
         }
-        val objectState = Common(owner, mutableListOf()).apply { this.instance = this }
+        val objectState = Common(owner)
         data.pushReturnValue(objectState)
         return Code.NEXT
     }
