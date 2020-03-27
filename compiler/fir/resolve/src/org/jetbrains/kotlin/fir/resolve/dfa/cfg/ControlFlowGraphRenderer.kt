@@ -42,6 +42,7 @@ class FirControlFlowGraphRenderVisitor(
 
     private var indexOffset = 0
     private var clusterCounter = 0
+    private val indices = mutableMapOf<CFGNode<*>, Int>()
 
     override fun visitFile(file: FirFile) {
         printer
@@ -82,7 +83,7 @@ class FirControlFlowGraphRenderVisitor(
         with(printer) {
             val graph = this@dotRenderToStringBuilder
             val sortedNodes = graph.sortNodes()
-            val indices = sortedNodes.indicesMap().mapValues { (_, index) -> index + indexOffset }
+            sortedNodes.indicesMap().mapValuesTo(indices) { (_, index) -> index + indexOffset }
 
             var color = RED
             sortedNodes.forEach {
@@ -117,7 +118,7 @@ class FirControlFlowGraphRenderVisitor(
                 if (node.followingNodes.isEmpty()) return@forEachIndexed
 
                 fun renderEdges(kind: EdgeKind) {
-                    val edges = node.followingNodes.filter { node.outgoingEdges.getValue(it) == kind }
+                    val edges = node.followingNodes.filter { node.outgoingEdges.getValue(it) == kind && it.owner == graph }
                     if (edges.isEmpty()) return
                     print(
                         i + indexOffset,
@@ -224,11 +225,14 @@ private fun CFGNode<*>.render(): String =
                 is PostponedLambdaEnterNode -> "Postponed enter to lambda"
                 is PostponedLambdaExitNode -> "Postponed exit from lambda"
 
-                is AnonymousObjectExitNode -> "Exit anonymous object"
-
                 is UnionFunctionCallArgumentsNode -> "Call arguments union"
 
-                else -> TODO(this@render.toString())
+                is ClassEnterNode -> "Enter class ${owner.name}"
+                is ClassExitNode -> "Exit class ${owner.name}"
+                is LocalClassExitNode -> "Exit local class ${owner.name}"
+                is AnonymousObjectExitNode -> "Exit anonymous object"
+
+                is AbstractBinaryExitNode -> throw IllegalStateException()
             },
         )
     }
@@ -249,14 +253,16 @@ private fun FirLoop.type(): String = when (this) {
 }
 
 private fun ControlFlowGraph.sortNodes(): List<CFGNode<*>> {
-    return DFS.topologicalOrder(nodes) {
+    val nodesToSort = nodes.filter { it != enterNode }
+    val topologicalOrder = DFS.topologicalOrder(nodesToSort) {
         val result = if (it !is WhenBranchConditionExitNode || it.followingNodes.size < 2) {
             it.followingNodes
         } else {
             it.followingNodes.sortedBy { node -> if (node is BlockEnterNode) 1 else 0 }
-        }
+        }.filter { it.owner == this }
         result
     }
+    return listOf(enterNode) + topologicalOrder
 }
 
 private fun List<CFGNode<*>>.indicesMap(): Map<CFGNode<*>, Int> = mapIndexed { i, node -> node to i }.toMap()

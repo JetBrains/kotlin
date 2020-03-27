@@ -61,6 +61,8 @@ inline val FirPropertyAccessor.visibility get() = status.visibility
 inline val FirPropertyAccessor.allowsToHaveFakeOverride: Boolean
     get() = !Visibilities.isPrivate(visibility) && this != Visibilities.INVISIBLE_FAKE
 
+inline val FirRegularClass.isLocal get() = symbol.classId.isLocal
+
 fun AbstractFirRegularClassBuilder.addDeclaration(declaration: FirDeclaration) {
     declarations += declaration
     if (companionObject == null && declaration is FirRegularClass && declaration.isCompanion) {

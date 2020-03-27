@@ -273,11 +273,12 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         context.storeClass(regularClass)
 
-        if (regularClass.symbol.classId.isLocal && regularClass !in context.targetedLocalClasses) {
+        if (regularClass.isLocal && regularClass !in context.targetedLocalClasses) {
             return regularClass.runAllPhasesForLocalClass(components, data).compose()
         }
 
         return withTypeParametersOf(regularClass) {
+            dataFlowAnalyzer.enterClass()
             val oldConstructorScope = primaryConstructorParametersScope
             val oldContainingClass = containingClass
             primaryConstructorParametersScope = null
@@ -292,12 +293,18 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                         scope
                     }
                 }
-                transformDeclarationContent(regularClass, data)
+                transformDeclarationContent(regularClass, data).single as FirRegularClass
+            }
+            if (!implicitTypeOnly) {
+                val controlFlowGraph = dataFlowAnalyzer.exitRegularClass(result)
+                result.transformControlFlowGraphReference(ControlFlowGraphReferenceTransformer, controlFlowGraph)
+            } else {
+                dataFlowAnalyzer.exitClass()
             }
             containingClass = oldContainingClass
             primaryConstructorParametersScope = oldConstructorScope
             @Suppress("UNCHECKED_CAST")
-            result as CompositeTransformResult<FirStatement>
+            result.compose()
         }
     }
 
@@ -308,18 +315,22 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         if (anonymousObject !in context.targetedLocalClasses) {
             return anonymousObject.runAllPhasesForLocalClass(components, data).compose()
         }
-
+        dataFlowAnalyzer.enterClass()
         val type = anonymousObject.defaultType()
         anonymousObject.resultType = buildResolvedTypeRef {
             source = anonymousObject.source
             this.type = type
         }
-        val result = withLabelAndReceiverType(null, anonymousObject, type) {
-            transformDeclarationContent(anonymousObject, data)
+        var result = withLabelAndReceiverType(null, anonymousObject, type) {
+            transformDeclarationContent(anonymousObject, data).single as FirAnonymousObject
         }
-        dataFlowAnalyzer.exitAnonymousObject(result.single as FirAnonymousObject)
-        @Suppress("UNCHECKED_CAST")
-        return result as CompositeTransformResult<FirStatement>
+        if (!implicitTypeOnly) {
+            val graph = dataFlowAnalyzer.exitAnonymousObject(result)
+            result = result.transformControlFlowGraphReference(ControlFlowGraphReferenceTransformer, graph)
+        } else {
+            dataFlowAnalyzer.exitClass()
+        }
+        return result.compose()
     }
 
     private fun transformAnonymousFunctionWithLambdaResolution(
