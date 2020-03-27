@@ -30,7 +30,6 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
             ":kotlin-test:kotlin-test-jvm",
             ":kotlin-test:kotlin-test-junit",
             ":kotlin-script-runtime",
-            ":kotlin-serialization",
             ":kotlin-coroutines-experimental-compat"
         )
 
@@ -38,6 +37,7 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
             // Libraries
             ":kotlin-stdlib-common",
             ":kotlin-reflect-api",
+            ":kotlin-serialization",
             ":kotlin-test:kotlin-test-common",
             ":kotlin-test:kotlin-test-annotations-common",
             // Other
