@@ -18,18 +18,26 @@ import org.jetbrains.kotlin.analyzer.common.CommonAnalysisParameters
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.resolve.BuiltInsCacheKey
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.klib.AbstractKlibLibraryInfo
+import org.jetbrains.kotlin.idea.klib.createKlibPackageFragmentProvider
 import org.jetbrains.kotlin.idea.klib.isKlibLibraryRootForPlatform
+import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
+import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
+import org.jetbrains.kotlin.serialization.konan.impl.KlibMetadataModuleDescriptorFactoryImpl
+import org.jetbrains.kotlin.storage.StorageManager
 
 class CommonPlatformKindResolution : IdePlatformKindResolution {
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {
@@ -75,6 +83,33 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
             platform,
             shouldCheckExpectActual = true
         )
+    }
+
+    companion object {
+        private val metadataFactories = KlibMetadataFactories({ DefaultBuiltIns.Instance }, NullFlexibleTypeDeserializer)
+
+        private val metadataModuleDescriptorFactory = KlibMetadataModuleDescriptorFactoryImpl(
+            metadataFactories.DefaultDescriptorFactory,
+            metadataFactories.DefaultPackageFragmentsFactory,
+            metadataFactories.flexibleTypeDeserializer,
+            metadataFactories.platformDependentTypeTransformer
+        )
+
+        fun createCommonKlibPackageFragmentProvider(
+            moduleInfo: ModuleInfo,
+            storageManager: StorageManager,
+            languageVersionSettings: LanguageVersionSettings,
+            moduleDescriptor: ModuleDescriptor
+        ): PackageFragmentProvider? {
+            return (moduleInfo as? CommonKlibLibraryInfo)
+                ?.resolvedKotlinLibrary
+                ?.createKlibPackageFragmentProvider(
+                    storageManager = storageManager,
+                    metadataModuleDescriptorFactory = metadataModuleDescriptorFactory,
+                    languageVersionSettings = languageVersionSettings,
+                    moduleDescriptor = moduleDescriptor
+                )
+        }
     }
 }
 

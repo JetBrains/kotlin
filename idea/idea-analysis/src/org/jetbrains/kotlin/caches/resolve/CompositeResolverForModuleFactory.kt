@@ -11,7 +11,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.analyzer.common.CommonAnalysisParameters
 import org.jetbrains.kotlin.analyzer.common.configureCommonSpecificComponents
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.caches.resolve.CommonPlatformKindResolution.Companion.createCommonKlibPackageFragmentProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.ModuleContext
@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
 import org.jetbrains.kotlin.frontend.java.di.configureJavaSpecificComponents
 import org.jetbrains.kotlin.frontend.java.di.initializeJavaSpecificComponents
-import org.jetbrains.kotlin.idea.klib.createKlibPackageFragmentProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
-import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -49,12 +46,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmentProvider
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
-import org.jetbrains.kotlin.serialization.js.createKotlinJavascriptPackageFragmentProvider
-import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
-import org.jetbrains.kotlin.serialization.konan.impl.KlibMetadataModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 
 class CompositeResolverForModuleFactory(
     private val commonAnalysisParameters: CommonAnalysisParameters,
@@ -127,33 +119,17 @@ class CompositeResolverForModuleFactory(
         container: StorageComponentContainer
     ): List<PackageFragmentProvider> {
         if (!targetPlatform.isCommon()) return emptyList()
-        val metadataProvder = container.get<MetadataPackageFragmentProvider>()
-        var klibMetadataProvider: PackageFragmentProvider? = null
 
-        if (moduleInfo is CommonKlibLibraryInfo) {
-            val library = moduleInfo.resolvedKotlinLibrary
-            val languageVersionSettings = container.get<LanguageVersionSettings>()
+        val metadataProvider = container.get<MetadataPackageFragmentProvider>()
 
-            val metadataFactories = KlibMetadataFactories(
-                { DefaultBuiltIns.Instance },
-                NullFlexibleTypeDeserializer
-            )
+        val klibMetadataProvider = createCommonKlibPackageFragmentProvider(
+            moduleInfo,
+            moduleContext.storageManager,
+            container.get<LanguageVersionSettings>(),
+            moduleDescriptor
+        )
 
-            val klibMetadataModuleDescriptorFactory = KlibMetadataModuleDescriptorFactoryImpl(
-                metadataFactories.DefaultDescriptorFactory,
-                metadataFactories.DefaultPackageFragmentsFactory,
-                metadataFactories.flexibleTypeDeserializer,
-                metadataFactories.platformDependentTypeTransformer
-            )
-
-            klibMetadataProvider = library.createKlibPackageFragmentProvider(
-                moduleContext.storageManager,
-                klibMetadataModuleDescriptorFactory,
-                languageVersionSettings,
-                moduleDescriptor
-            )
-        }
-        return listOfNotNull(metadataProvder, klibMetadataProvider)
+        return listOfNotNull(metadataProvider, klibMetadataProvider)
     }
 
     private fun getJvmProvidersIfAny(container: StorageComponentContainer): List<PackageFragmentProvider> =
