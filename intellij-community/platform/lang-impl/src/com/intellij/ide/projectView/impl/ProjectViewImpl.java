@@ -17,6 +17,7 @@ import com.intellij.ide.util.DeleteHandler;
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.NodeDescriptor;
+import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -518,12 +519,12 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
 
       @Override
       protected String getActionName() {
-        return myAutoscrollToSource.getName();
+        return ActionsBundle.message("action.ProjectView.AutoscrollToSource.text" );
       }
 
       @Override
       protected String getActionDescription() {
-        return myAutoscrollToSource.getDescription();
+        return ActionsBundle.message("action.ProjectView.AutoscrollToSource.description" );
       }
     };
 
@@ -1901,12 +1902,12 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
 
     @Override
     protected String getActionName() {
-      return myAutoscrollFromSource.getName();
+      return ActionsBundle.message("action.ProjectView.AutoscrollFromSource.text");
     }
 
     @Override
     protected String getActionDescription() {
-      return myAutoscrollFromSource.getDescription();
+      return ActionsBundle.message("action.ProjectView.AutoscrollFromSource.description");
     }
   }
 
