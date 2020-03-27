@@ -15,6 +15,8 @@ interface NpmDependencyExtension {
     operator fun invoke(name: String, version: String = "*"): NpmDependency
 
     operator fun invoke(name: String, directory: File): NpmDependency
+
+    operator fun invoke(directory: File): NpmDependency
 }
 
 fun Project.addNpmDependencyExtension() {
@@ -34,13 +36,28 @@ fun Project.addNpmDependencyExtension() {
                 version = fileVersion(directory)
             )
 
+        override operator fun invoke(directory: File): NpmDependency =
+            invoke(
+                name = moduleName(directory),
+                directory = directory
+            )
+
         override fun call(vararg args: Any?): NpmDependency {
-            val size = args.size
-            if (size > 2) throw npmDeclarationException(args)
+            if (args.size > 2) throw npmDeclarationException(args)
 
-            val name = args[0] as String
-            val arg = if (size > 1) args[1] else null
+            val arg = args[0]
+            return when (arg) {
+                is String -> withName(
+                    name = arg,
+                    args = *args
+                )
+                is File -> invoke(arg)
+                else -> throw npmDeclarationException(args)
+            }
+        }
 
+        private fun withName(name: String, vararg args: Any?): NpmDependency {
+            val arg = if (args.size > 1) args[1] else null
             return when (arg) {
                 null -> invoke(
                     name = name
