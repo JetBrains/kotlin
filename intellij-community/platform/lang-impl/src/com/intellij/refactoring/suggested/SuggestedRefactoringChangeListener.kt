@@ -6,6 +6,7 @@ import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.command.CommandEvent
 import com.intellij.openapi.command.CommandListener
+import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.RangeMarker
@@ -88,6 +89,9 @@ class SuggestedRefactoringChangeListener(
 
     // suppress if live template is active - otherwise refactoring appears for create from usage and other features
     if (editors.any { TemplateManager.getInstance(project).getActiveTemplate(it) != null }) return
+
+    // undo of some action can't be a start of signature editing
+    if (UndoManager.getInstance(project).isUndoInProgress) return
 
     fun declarationByOffsetInSignature(offset: Int): PsiElement? {
       val declaration = refactoringSupport.declarationByOffset(psiFile, offset) ?: return null
