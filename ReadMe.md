@@ -73,7 +73,7 @@ command line parameters on the first run:
 
 - `clean` - clean build results
 - `dist` - assembles the compiler distribution into `dist/kotlinc/` folder
-- `ideaPlugin` - assembles the Kotlin IDEA plugin distribution into `dist/artifacts/Kotlin` folder
+- `ideaPlugin` - assembles the Kotlin IDEA plugin distribution into `dist/artifacts/ideaPlugin/Kotlin/` folder
 - `install` - build and install all public artifacts into local maven repository
 - `runIde` - build IDEA plugin and run IDEA with it
 - `coreLibsTest` - build and run stdlib, reflect and kotlin-test tests
