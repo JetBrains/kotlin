@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.interpreter
 
 import org.jetbrains.kotlin.backend.common.interpreter.builtins.evaluateIntrinsicAnnotation
 import org.jetbrains.kotlin.backend.common.interpreter.stack.*
+import org.jetbrains.kotlin.backend.common.interpreter.state.*
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -76,14 +77,6 @@ private fun DeclarationDescriptor.hasSameNameAs(other: DeclarationDescriptor): B
             (this is FunctionDescriptor && other is FunctionDescriptor &&
                     this.valueParameters.map { it.type.toString() } == other.valueParameters.map { it.type.toString() } &&
                     this.name == other.name)
-}
-
-fun IrCall.isAbstract(): Boolean {
-    return (this.symbol.owner as? IrSimpleFunction)?.modality == Modality.ABSTRACT
-}
-
-fun IrCall.isFakeOverridden(): Boolean {
-    return this.symbol.owner.isFakeOverride
 }
 
 fun IrFunction.isAbstract(): Boolean {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.interpreter.stack
 
 import org.jetbrains.kotlin.backend.common.interpreter.equalTo
+import org.jetbrains.kotlin.backend.common.interpreter.state.State
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import kotlin.NoSuchElementException
