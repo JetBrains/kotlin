@@ -319,12 +319,6 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
                                 @NotNull UsageSearcher usageSearcher,
                                 @NotNull ShowUsagesActionHandler actionHandler) {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    UsageViewSettings usageViewSettings = UsageViewSettings.getInstance();
-    ShowUsagesSettings showUsagesSettings = ShowUsagesSettings.getInstance();
-    UsageViewSettings savedGlobalSettings = new UsageViewSettings();
-
-    savedGlobalSettings.loadState(usageViewSettings);
-    usageViewSettings.loadState(showUsagesSettings.getState());
 
     UsageViewImpl usageView = createUsageView(project);
     if (editor != null) {
@@ -334,11 +328,6 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
         usageView.setOriginUsage(origin);
       }
     }
-
-    Disposer.register(usageView, () -> {
-      showUsagesSettings.applyUsageViewSettings(usageViewSettings);
-      usageViewSettings.loadState(savedGlobalSettings);
-    });
 
     final SearchScope searchScope = actionHandler.getSelectedScope();
     final AtomicInteger outOfScopeUsages = new AtomicInteger();
@@ -531,12 +520,14 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
 
   @NotNull
   private static UsageViewImpl createUsageView(@NotNull Project project) {
-    UsageViewManager manager = UsageViewManager.getInstance(project);
     UsageViewPresentation usageViewPresentation = new UsageViewPresentation();
     usageViewPresentation.setDetachedMode(true);
-    return (UsageViewImpl)manager.createUsageView(
-      UsageTarget.EMPTY_ARRAY, Usage.EMPTY_ARRAY, usageViewPresentation, null
-    );
+    return new UsageViewImpl(project, usageViewPresentation, UsageTarget.EMPTY_ARRAY, null) {
+      @Override
+      public @NotNull UsageViewSettings getUsageViewSettings() {
+        return ShowUsagesSettings.getInstance().getState();
+      }
+    };
   }
 
   @NotNull
