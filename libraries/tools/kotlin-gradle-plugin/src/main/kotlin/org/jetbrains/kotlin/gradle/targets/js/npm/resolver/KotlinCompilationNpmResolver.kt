@@ -308,18 +308,6 @@ internal class KotlinCompilationNpmResolver(
 
             packageJson.main = npmProject.main
 
-            compositeDependencies.forEach {
-                packageJson.dependencies[it.name] = it.version
-            }
-
-            resolvedInternalDependencies.forEach {
-                packageJson.dependencies[it.packageJson.name] = it.packageJson.version
-            }
-
-            importedExternalGradleDependencies.forEach {
-                packageJson.dependencies[it.name] = it.version
-            }
-
             val dependencies = mutableMapOf<String, String>()
 
             externalNpmDependencies.forEach {
