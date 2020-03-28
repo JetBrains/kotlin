@@ -17,10 +17,10 @@ public interface FileBasedIndexInfrastructureExtension {
   /**
    * This notification is sent from the IDE to let the extension point implementation
    * update it's internal state in order to supply indexes.
-   * Called every time the project structure is updated.
+   * Extension point must not run any heavy tasks in this thread.
+   * @param indexingIndicator used only to track cancellation of the indexing, must not be used for updating texts/fractions.
    */
-  void processIndexingProject(@NotNull Project project,
-                              @NotNull ProgressIndicator indicator);
+  void processIndexingProject(@NotNull Project project, @NotNull ProgressIndicator indexingIndicator);
 
 
   interface FileIndexingStatusProcessor {
