@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.configureModule
-import org.jetbrains.kotlin.platform.konan.KonanPlatforms
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
@@ -28,7 +28,7 @@ fun createTopDownAnalyzerProviderForKonan(
         initContainer: StorageComponentContainer.() -> Unit
 ): ComponentProvider {
     return createContainer("TopDownAnalyzerForKonan", NativePlatformAnalyzerServices) {
-        configureModule(moduleContext, KonanPlatforms.defaultKonanPlatform, NativePlatformAnalyzerServices, bindingTrace, languageVersionSettings)
+        configureModule(moduleContext, NativePlatforms.defaultNativePlatform, NativePlatformAnalyzerServices, bindingTrace, languageVersionSettings)
 
         useInstance(declarationProviderFactory)
         useImpl<AnnotationResolverImpl>()
