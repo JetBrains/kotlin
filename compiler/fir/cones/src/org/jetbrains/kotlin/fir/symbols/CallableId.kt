@@ -11,9 +11,17 @@ import org.jetbrains.kotlin.name.Name
 
 // NB: with className == null we are at top level
 data class CallableId(val packageName: FqName, val className: FqName?, val callableName: Name) {
-    val classId: ClassId? get() = className?.let { ClassId(packageName, it, false) }
+    var classId: ClassId? = null
+        get() {
+            if (field == null && className != null) {
+                field = ClassId(packageName, className, false)
+            }
+            return field
+        }
 
-    constructor(classId: ClassId, callableName: Name) : this(classId.packageFqName, classId.relativeClassName, callableName)
+    constructor(classId: ClassId, callableName: Name) : this(classId.packageFqName, classId.relativeClassName, callableName) {
+        this.classId = classId
+    }
 
     constructor(packageName: FqName, callableName: Name) : this(packageName, null, callableName)
 

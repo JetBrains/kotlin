@@ -338,7 +338,8 @@ internal class CallAndReferenceGenerator(
                 // Object case
                 val callableReference = calleeReference as? FirResolvedNamedReference
                 val ownerClassId = (callableReference?.resolvedSymbol as? FirCallableSymbol<*>)?.callableId?.classId
-                val ownerClassSymbol = ownerClassId?.let { session.firSymbolProvider.getClassLikeSymbolByFqName(it) }
+                val ownerClassSymbol =
+                    ownerClassId?.takeUnless { it.isLocal }?.let { session.firSymbolProvider.getClassLikeSymbolByFqName(it) }
                 val firClass = (ownerClassSymbol?.fir as? FirClass)?.takeIf {
                     it is FirAnonymousObject || it is FirRegularClass && it.classKind == ClassKind.OBJECT
                 }
