@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.matchingIsInstance
 import javax.inject.Inject
 
 open class KotlinJsIrTarget
@@ -127,7 +126,7 @@ constructor(
             it.compileKotlinTask.configureCommonJsOptions()
 
             binaries
-                .matchingIsInstance<JsIrBinary>()
+                .withType(JsIrBinary::class.java)
                 .all {
                     it.linkTask.configure { linkTask ->
                         linkTask.configureCommonJsOptions()

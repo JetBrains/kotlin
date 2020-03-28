@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
-import org.jetbrains.kotlin.gradle.utils.matchingIsInstance
 
 open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
     KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget>(true, true, kotlinPluginVersion),
@@ -75,7 +74,7 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
             }
 
             it.binaries
-                .matchingIsInstance<JsIrBinary>()
+                .withType(JsIrBinary::class.java)
                 .all {
                     it.linkTask.configure { linkTask ->
                         linkTask.kotlinOptions.configureOptions()
