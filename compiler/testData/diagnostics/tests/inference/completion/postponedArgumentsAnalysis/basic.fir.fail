@@ -1,0 +1,11 @@
+Failures detected in FirBodyResolveTransformerAdapter, file: /basic.fir.kt
+Cause: java.lang.RuntimeException: While resolving call R?C|/selectFloat|(R?C|/id|(<L> = id@fun <implicit>.<anonymous>(): <implicit> {
+    ^@id Unit
+}
+), R?C|/id|(<L> = id@fun <implicit>.<anonymous>(x: <implicit>): <implicit> {
+    ^@id Unit
+}
+), R?C|/id|(<L> = id@fun <implicit>.<anonymous>(): <implicit> {
+    it#
+}
+))

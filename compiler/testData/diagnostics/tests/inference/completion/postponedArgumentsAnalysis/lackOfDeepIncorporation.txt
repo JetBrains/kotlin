@@ -1,0 +1,23 @@
+package
+
+public fun </*0*/ T> materialize(): T
+
+public final class Foo</*0*/ out A> {
+    public constructor Foo</*0*/ out A>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun </*0*/ B, /*1*/ R> foo1(/*0*/ other1: Foo<B>, /*1*/ function: (A, B) -> R): kotlin.Unit
+    public final fun </*0*/ B, /*1*/ C, /*2*/ R> foo2(/*0*/ other1: Foo<B>, /*1*/ other2: Foo<C>, /*2*/ function: (A, B, C) -> R): kotlin.Unit
+    public final fun </*0*/ B, /*1*/ C, /*2*/ D, /*3*/ E, /*4*/ R> foo3(/*0*/ other1: Foo<B>, /*1*/ other2: Foo<C>, /*2*/ other3: Foo<D>, /*3*/ other4: Foo<E>, /*4*/ function: (A, B, C, D) -> R): kotlin.Unit
+    public final fun </*0*/ B, /*1*/ C, /*2*/ D, /*3*/ E, /*4*/ R> foo4(/*0*/ other1: Foo<B>, /*1*/ other2: Foo<C>, /*2*/ other3: Foo<D>, /*3*/ other4: Foo<E>, /*4*/ function: (A, B, C, D, E) -> R): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun </*0*/ B> product(/*0*/ other: Foo<(A) -> B>): Foo<B>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public final fun </*0*/ A> bar(/*0*/ x: A): Foo<A>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

@@ -61,6 +61,12 @@ enum class ConstraintKind {
     fun isLower(): Boolean = this == LOWER
     fun isUpper(): Boolean = this == UPPER
     fun isEqual(): Boolean = this == EQUALITY
+
+    fun opposite() = when (this) {
+        LOWER -> UPPER
+        UPPER -> LOWER
+        EQUALITY -> EQUALITY
+    }
 }
 
 class Constraint(

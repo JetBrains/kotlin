@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.model.OnlyInputTypesDiagnostic
@@ -31,6 +32,7 @@ class NewConstraintSystemImpl(
     ConstraintInjector.Context,
     ResultTypeResolver.Context,
     KotlinConstraintSystemCompleter.Context,
+    PostponedArgumentInputTypesResolver.Context,
     PostponedArgumentsAnalyzer.Context {
     private val storage = MutableConstraintStorage()
     private var state = State.BUILDING
@@ -86,6 +88,8 @@ class NewConstraintSystemImpl(
     override fun asConstraintSystemCompleterContext() = apply { checkState(State.BUILDING) }
 
     override fun asPostponedArgumentsAnalyzerContext() = apply { checkState(State.BUILDING) }
+
+    override fun asPostponedArgumentInputTypesResolverContext() = apply { checkState(State.BUILDING) }
 
     // ConstraintSystemOperation
     override fun registerVariable(variable: TypeVariableMarker) {

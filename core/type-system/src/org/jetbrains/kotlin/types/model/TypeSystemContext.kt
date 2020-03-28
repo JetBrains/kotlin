@@ -132,6 +132,8 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun KotlinTypeMarker.isUnit(): Boolean
 
+    fun KotlinTypeMarker.isBuiltinFunctionalTypeOrSubtype(): Boolean
+
     fun KotlinTypeMarker.withNullability(nullable: Boolean): KotlinTypeMarker
 
 

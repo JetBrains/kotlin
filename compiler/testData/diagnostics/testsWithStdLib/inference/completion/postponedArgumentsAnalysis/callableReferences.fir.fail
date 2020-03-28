@@ -1,0 +1,8 @@
+Failures detected in FirBodyResolveTransformerAdapter, file: /callableReferences.fir.kt
+Cause: java.lang.RuntimeException: While resolving call R?C|/selectNumber|(R?C|/id|(::R?C|/foo6|), R?C|/id|(<L> = id@fun <implicit>.<anonymous>(x: <implicit>): <implicit> {
+    x#
+}
+), R?C|/id|(<L> = id@fun <implicit>.<anonymous>(): <implicit> {
+    it#
+}
+))

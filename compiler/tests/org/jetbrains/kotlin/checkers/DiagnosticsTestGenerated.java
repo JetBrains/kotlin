@@ -10748,6 +10748,44 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 public void testWithExact() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/completion/withExact.kt");
                 }
+
+                @TestMetadata("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class PostponedArgumentsAnalysis extends AbstractDiagnosticsTestWithFirValidation {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInPostponedArgumentsAnalysis() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+
+                    @TestMetadata("basic.kt")
+                    public void testBasic() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis/basic.kt");
+                    }
+
+                    @TestMetadata("callableReferenceLambdaCombinationInsideCall.kt")
+                    public void testCallableReferenceLambdaCombinationInsideCall() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis/callableReferenceLambdaCombinationInsideCall.kt");
+                    }
+
+                    @TestMetadata("callableReferences.kt")
+                    public void testCallableReferences() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis/callableReferences.kt");
+                    }
+
+                    @TestMetadata("lackOfDeepIncorporation.kt")
+                    public void testLackOfDeepIncorporation() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis/lackOfDeepIncorporation.kt");
+                    }
+
+                    @TestMetadata("lambdasInTryCatch.kt")
+                    public void testLambdasInTryCatch() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis/lambdasInTryCatch.kt");
+                    }
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/inference/constraints")

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 
@@ -35,4 +36,5 @@ interface NewConstraintSystem {
 
     fun asConstraintSystemCompleterContext(): KotlinConstraintSystemCompleter.Context
     fun asPostponedArgumentsAnalyzerContext(): PostponedArgumentsAnalyzer.Context
+    fun asPostponedArgumentInputTypesResolverContext(): PostponedArgumentInputTypesResolver.Context
 }

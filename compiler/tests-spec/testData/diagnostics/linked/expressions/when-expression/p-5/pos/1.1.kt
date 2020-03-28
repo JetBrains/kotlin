@@ -119,14 +119,13 @@ fun case_8(value_1: Int, value_2: Int) = when (value_1) {
 
 /*
  * TESTCASE NUMBER: 9
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-37249
  */
 fun case_9(value_1: Int, value_2: String, value_3: String): Any {
     return when (value_1) {
         1 -> try { 4 } catch (e: Exception) { 5 }
         2 -> try { throw Exception() } catch (e: Exception) { value_2 }
-        else -> try { throw Exception() } catch (e: Exception) <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>{ {<!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>value_3<!>} }<!> finally { }
+        else -> try { throw Exception() } catch (e: Exception) { {value_3} } finally { }
     }
 }
 

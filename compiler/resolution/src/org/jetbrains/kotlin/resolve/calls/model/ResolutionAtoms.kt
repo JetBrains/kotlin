@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMa
 import org.jetbrains.kotlin.resolve.calls.components.extractInputOutputTypesFromCallableReferenceExpectedType
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintError
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForCallableReferenceReturnType
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaReturnType
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.types.KotlinType
@@ -98,6 +95,12 @@ interface PostponedResolvedAtomMarker {
     val analyzed: Boolean
 }
 
+interface PostponedAtomWithRevisableExpectedType {
+    var revisedExpectedType: UnwrappedType?
+    val expectedType: UnwrappedType?
+    val atom: PostponableKotlinCallArgument
+}
+
 sealed class PostponedResolvedAtom : ResolvedAtom(), PostponedResolvedAtomMarker {
     abstract override val inputTypes: Collection<UnwrappedType>
     abstract override val outputType: UnwrappedType?
@@ -107,10 +110,13 @@ sealed class PostponedResolvedAtom : ResolvedAtom(), PostponedResolvedAtomMarker
 class LambdaWithTypeVariableAsExpectedTypeAtom(
     override val atom: LambdaKotlinCallArgument,
     override val expectedType: UnwrappedType
-) : PostponedResolvedAtom() {
+) : PostponedResolvedAtom(), PostponedAtomWithRevisableExpectedType {
     override val inputTypes: Collection<UnwrappedType> get() = listOf(expectedType)
     override val outputType: UnwrappedType? get() = null
-    var isReturnArgumentOfAnotherLambda: Boolean = false
+
+    override var revisedExpectedType: UnwrappedType? = null
+
+    var parameterTypesFromDeclaration: List<UnwrappedType?>? = null
 
     fun setAnalyzed(resolvedLambdaAtom: ResolvedLambdaAtom) {
         setAnalyzedResults(listOf(resolvedLambdaAtom))
@@ -180,15 +186,16 @@ sealed class AbstractPostponedCallableReferenceAtom(
         get() = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType)?.outputType
 }
 
-class CallableReferenceWithTypeVariableAsExpectedTypeAtom(
+class CallableReferenceWithRevisedExpectedTypeAtom(
     atom: CallableReferenceKotlinCallArgument,
     expectedType: UnwrappedType?,
-    val typeVariableForReturnType: TypeVariableForCallableReferenceReturnType?
 ) : AbstractPostponedCallableReferenceAtom(atom, expectedType)
 
 class PostponedCallableReferenceAtom(
     eagerCallableReferenceAtom: EagerCallableReferenceAtom
-) : AbstractPostponedCallableReferenceAtom(eagerCallableReferenceAtom.atom, eagerCallableReferenceAtom.expectedType)
+) : AbstractPostponedCallableReferenceAtom(eagerCallableReferenceAtom.atom, eagerCallableReferenceAtom.expectedType), PostponedAtomWithRevisableExpectedType {
+    override var revisedExpectedType: UnwrappedType? = null
+}
 
 class ResolvedCollectionLiteralAtom(
     override val atom: CollectionLiteralKotlinCallArgument,

@@ -204,6 +204,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.typeConstructor().isUnitTypeConstructor() && !this.isNullable
     }
 
+    override fun KotlinTypeMarker.isBuiltinFunctionalTypeOrSubtype() = TODO()
+
     override fun KotlinTypeMarker.withNullability(nullable: Boolean): KotlinTypeMarker {
         require(this is ConeKotlinType)
         return this.withNullability(ConeNullability.create(nullable), this@ConeInferenceContext)

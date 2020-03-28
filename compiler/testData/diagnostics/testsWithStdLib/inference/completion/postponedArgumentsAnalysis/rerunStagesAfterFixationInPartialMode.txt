@@ -1,0 +1,21 @@
+package
+
+public fun </*0*/ T> select(/*0*/ x: T): kotlin.Unit
+public inline fun </*0*/ T, /*1*/ R> Wrapper<T>.unwrap(/*0*/ validator: (T) -> R): R
+
+public final class Foo</*0*/ W> {
+    public constructor Foo</*0*/ W>(/*0*/ y: Wrapper<kotlin.collections.List<W>>)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun </*0*/ T> kotlin.collections.MutableCollection<T>.foo(/*0*/ x: T): kotlin.Unit
+    public final fun </*0*/ T> kotlin.collections.MutableCollection<T>.foo(/*0*/ x: kotlin.collections.Iterable<T>): kotlin.Unit
+}
+
+public final class Wrapper</*0*/ T> {
+    public constructor Wrapper</*0*/ T>(/*0*/ x: T)
+    public final val x: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

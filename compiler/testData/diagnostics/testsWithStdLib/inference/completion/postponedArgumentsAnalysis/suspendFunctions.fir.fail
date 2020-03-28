@@ -1,0 +1,8 @@
+Failures detected in FirBodyResolveTransformerAdapter, file: /suspendFunctions.fir.kt
+Cause: java.lang.RuntimeException: While resolving call R?C|/takeSuspend|(R?C|/id|(<L> = id@fun <implicit>.<anonymous>(): <implicit> {
+    it#
+}
+), takeSuspend@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Unit| {
+    ^ R|<local>/x|
+}
+)

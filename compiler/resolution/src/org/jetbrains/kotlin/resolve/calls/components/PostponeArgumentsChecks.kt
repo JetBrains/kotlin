@@ -93,7 +93,7 @@ private fun extraLambdaInfo(
     val isFunctionSupertype = expectedType != null && KotlinBuiltIns.isNotNullOrNullableFunctionSupertype(expectedType)
     val argumentAsFunctionExpression = argument.safeAs<FunctionExpression>()
 
-    val typeVariable = TypeVariableForLambdaReturnType(argument, builtIns, "_L")
+    val typeVariable = TypeVariableForLambdaReturnType(builtIns, "_L")
 
     val receiverType = argumentAsFunctionExpression?.receiverType
     val returnType =
