@@ -147,6 +147,8 @@ internal fun getHostSpecificSourceSets(project: Project): List<KotlinSourceSet> 
     fun canBeBuiltOnHosts(konanTarget: KonanTarget) = enabledByHost.filterValues { konanTarget in it }.keys
 
     return project.kotlinExtension.sourceSets.filter { sourceSet ->
+        if (sourceSet !in compilationsBySourceSet) return@filter false
+
         // If the source set participates in compilations such that some host can't run either of them, then on that host,
         // we can't analyze the source set, so the source set's metadata can't be published from that host, and therefore
         // we consider it platform-specific and publish as a part of the Native targets where the source set takes part,
