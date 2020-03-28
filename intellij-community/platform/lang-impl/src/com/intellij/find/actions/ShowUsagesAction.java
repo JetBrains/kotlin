@@ -399,32 +399,21 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
       List<UsageNode> data = new ArrayList<>(nodes);
       int filteredOutCount = getFilteredOutNodeCount(copy, usageView);
       if (filteredOutCount != 0) {
-        DefaultActionGroup filteringActions = new DefaultActionGroup();
-        usageView.addFilteringActions(filteringActions);
+        DefaultActionGroup filteringActions = popup.getUserData(DefaultActionGroup.class);
+        if (filteringActions == null) return;
+
         List<ToggleAction> unselectedActions = Arrays.stream(filteringActions.getChildren(null))
           .filter(action -> action instanceof ToggleAction)
           .map(action -> (ToggleAction)action)
           .filter(ta -> !ta.isSelected(new AnActionEvent(null, DataContext.EMPTY_CONTEXT, "", ta.getTemplatePresentation(), ActionManager.getInstance(), 0)))
           .filter(ta -> !StringUtil.isEmpty(ta.getTemplatePresentation().getText()))
           .collect(Collectors.toList());
-        String unselectedActionTexts = unselectedActions
-          .stream()
-          .map(ta -> ta.getTemplatePresentation().getText())
-          .filter(Objects::nonNull)
-          .map(text -> StringUtil.wrapWithDoubleQuote(text))
-          .collect(Collectors.joining(", "));
-
         data.add(new FilteredOutUsagesNode(table.USAGES_FILTERED_OUT_SEPARATOR,
                                            UsageViewBundle.message("usages.were.filtered.out", filteredOutCount),
-                                           UsageViewBundle.message("usages.were.filtered.out.tooltip", unselectedActionTexts)) {
+                                           UsageViewBundle.message("usages.were.filtered.out.tooltip")) {
           @Override
           public void onSelected() {
-            // toggle back unselected toggle actions and restart show usages in hope it will show filtered out items now
-            for (ToggleAction action : unselectedActions) {
-              AnActionEvent fakeEvent = new AnActionEvent(null, DataContext.EMPTY_CONTEXT, "", action.getTemplatePresentation(), ActionManager.getInstance(), 0);
-              action.actionPerformed(fakeEvent);
-            }
-            showElementUsages(project, editor, popupPosition, maxUsages, minWidth, presentation, usageSearcher, actionHandler);
+            restartShowUsagesWithFiltersToggled(unselectedActions, project, editor, popupPosition, maxUsages, minWidth, presentation, usageSearcher, actionHandler);
           }
         });
       }
@@ -516,6 +505,23 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
       },
       project.getDisposed()
     ));
+  }
+
+  private static void restartShowUsagesWithFiltersToggled(@NotNull List<? extends ToggleAction> unselectedActions,
+                                                          @NotNull Project project,
+                                                          @Nullable Editor editor,
+                                                          @NotNull RelativePoint popupPosition,
+                                                          int maxUsages,
+                                                          @NotNull IntRef minWidth,
+                                                          @NotNull UsageSearchPresentation presentation,
+                                                          @NotNull UsageSearcher usageSearcher,
+                                                          @NotNull ShowUsagesActionHandler actionHandler) {
+    // toggle back unselected toggle actions and restart show usages in hope it will show filtered out items now
+    for (ToggleAction action : unselectedActions) {
+      AnActionEvent fakeEvent = new AnActionEvent(null, DataContext.EMPTY_CONTEXT, "", action.getTemplatePresentation(), ActionManager.getInstance(), 0);
+      action.actionPerformed(fakeEvent);
+    }
+    showElementUsages(project, editor, popupPosition, maxUsages, minWidth, presentation, usageSearcher, actionHandler);
   }
 
   @NotNull
@@ -691,8 +697,10 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
       action.unregisterCustomShortcutSet(usageView.getComponent());
       action.registerCustomShortcutSet(action.getShortcutSet(), content);
     }
-
-    return popup[0];
+    /** save toolbar actions for using later, in automatic filter toggling in {@link #restartShowUsagesWithFiltersToggled(List} */
+    AbstractPopup createdPopup = (AbstractPopup)popup[0];
+    createdPopup.setUserData(Collections.singletonList(toolbar));
+    return createdPopup;
   }
 
   @NotNull
