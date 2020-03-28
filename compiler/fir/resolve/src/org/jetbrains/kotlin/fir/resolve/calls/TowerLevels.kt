@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.fir.types.withNullability
@@ -190,8 +191,18 @@ class ScopeTowerLevel(
                 empty = false
                 if (candidate.hasConsistentReceivers(extensionReceiver)) {
                     val dispatchReceiverValue =
-                        if (candidate !is FirBackingFieldSymbol) null
-                        else bodyResolveComponents.implicitReceiverStack.lastDispatchReceiver()
+                        when {
+                            candidate !is FirBackingFieldSymbol -> null
+                            candidate.callableId.classId != null -> {
+                                val propertyHolderId = candidate.callableId.classId
+                                bodyResolveComponents.implicitReceiverStack.lastDispatchReceiver { implicitReceiverValue ->
+                                    implicitReceiverValue.type.classId == propertyHolderId
+                                }
+                            }
+                            else -> {
+                                bodyResolveComponents.implicitReceiverStack.lastDispatchReceiver()
+                            }
+                        }
                     processor.consumeCandidate(
                         candidate as T, dispatchReceiverValue,
                         implicitExtensionReceiverValue = extensionReceiver as? ImplicitReceiverValue<*>
