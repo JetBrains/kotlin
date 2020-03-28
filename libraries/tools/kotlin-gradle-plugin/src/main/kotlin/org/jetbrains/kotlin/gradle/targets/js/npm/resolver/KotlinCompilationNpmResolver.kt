@@ -285,7 +285,7 @@ internal class KotlinCompilationNpmResolver(
             val compositeDependencies = internalCompositeDependencies.mapNotNull { dependency ->
                 val packages = dependency.includedBuild
                     .projectDir
-                    .resolve(nodeJs.projectPackagesDir.relativeTo(nodeJs.rootProject.buildDir))
+                    .resolve(nodeJs.projectPackagesDir.relativeTo(nodeJs.rootProject.rootDir))
                 packages
                     .list()
                     ?.map { fileName ->
