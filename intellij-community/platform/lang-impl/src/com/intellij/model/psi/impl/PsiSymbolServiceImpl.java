@@ -1,16 +1,12 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.model.psi.impl;
 
-import com.intellij.codeInsight.TargetEvaluatorAwareReference;
 import com.intellij.model.Symbol;
-import com.intellij.model.psi.PsiSymbolReference;
 import com.intellij.model.psi.PsiSymbolService;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static com.intellij.util.containers.ContainerUtil.map;
 
 public class PsiSymbolServiceImpl implements PsiSymbolService {
 
@@ -36,11 +32,5 @@ public class PsiSymbolServiceImpl implements PsiSymbolService {
       // hence we consider brand new Symbol implementations as inapplicable for old APIs
       return null;
     }
-  }
-
-  @Contract(pure = true)
-  @Override
-  public @NotNull Iterable<? extends @NotNull PsiSymbolReference> getOwnReferences(@NotNull PsiElement element) {
-    return map(element.getReferences(), TargetEvaluatorAwareReference::new);
   }
 }

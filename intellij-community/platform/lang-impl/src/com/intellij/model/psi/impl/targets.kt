@@ -1,9 +1,16 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.model.psi.impl
 
+import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.model.Symbol
 import com.intellij.model.psi.PsiSymbolDeclaration
 import com.intellij.model.psi.PsiSymbolReference
+import com.intellij.model.psi.PsiSymbolService
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.impl.ImaginaryEditor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.util.SmartList
 import org.jetbrains.annotations.ApiStatus.Experimental
@@ -29,7 +36,27 @@ private fun referencedSymbols(file: PsiFile, offset: Int): Collection<Symbol> {
       it.target
     }
   }
+  result += fromTargetEvaluator(file, offset)
   return result
+}
+
+private fun fromTargetEvaluator(file: PsiFile, offset: Int): Collection<Symbol> {
+  val project = file.project
+  val document = PsiDocumentManager.getInstance(project).getDocument(file) ?: return emptyList()
+  val editor = mockEditor(project, document)
+  val targetElement = TargetElementUtil.getInstance().findTargetElement(editor, TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED, offset)
+  if (targetElement != null) {
+    return listOf(PsiSymbolService.getInstance().asSymbol(targetElement))
+  }
+  val reference = TargetElementUtil.findReference(editor, offset) ?: return emptyList()
+  return TargetElementUtil.getInstance().getTargetCandidates(reference).map(PsiSymbolService.getInstance()::asSymbol)
+}
+
+private fun mockEditor(project: Project, document: Document): Editor {
+  return object : ImaginaryEditor(document) {
+    override fun getProject(): Project? = project
+    override fun toString(): String = "API compatibility editor"
+  }
 }
 
 private fun declaredSymbols(file: PsiFile, offset: Int): Collection<Symbol> {
