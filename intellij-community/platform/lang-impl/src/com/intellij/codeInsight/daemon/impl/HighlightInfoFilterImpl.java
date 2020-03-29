@@ -19,6 +19,7 @@ package com.intellij.codeInsight.daemon.impl;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.psi.PsiCompiledFile;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,6 +30,10 @@ public class HighlightInfoFilterImpl implements HighlightInfoFilter {
 
   @Override
   public boolean accept(@NotNull HighlightInfo info, PsiFile file) {
+    if (file != null && file.getOriginalFile() instanceof PsiCompiledFile) {
+      return info.getSeverity() == HighlightInfoType.SYMBOL_TYPE_SEVERITY;
+    }
+
     if (Holder.ourTestMode) {
       return true; // Tests need to verify highlighting is applied no matter what attributes are defined for this kind of highlighting
     }
