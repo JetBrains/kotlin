@@ -13,7 +13,7 @@ import org.jetbrains.annotations.ApiStatus
 
 @ApiStatus.Internal
 class SdkIndexableFilesProvider(val sdk: Sdk) : IndexableFilesProvider {
-  override fun getDebugName() = sdk.name
+  override fun getDebugName() = "$sdkPresentableName ${sdk.name}"
 
   private val sdkPresentableName: String
     get() = (sdk.sdkType as? SdkType)?.presentableName.takeUnless { it.isNullOrEmpty() }

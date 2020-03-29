@@ -11,7 +11,7 @@ import com.intellij.util.containers.ConcurrentBitSet
 import com.intellij.util.indexing.IndexingBundle
 
 internal class ModuleIndexableFilesProvider(val module: Module) : IndexableFilesProvider {
-  override fun getDebugName() = module.name
+  override fun getDebugName() = "Module '${module.name}'"
 
   override fun getIndexingProgressText() = IndexingBundle.message("indexable.files.provider.indexing.module.name", module.name)
 
