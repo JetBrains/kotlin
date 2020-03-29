@@ -316,7 +316,7 @@ public class CreateFileFromTemplateDialog extends DialogWrapper {
   public interface Builder {
     Builder setTitle(@DialogTitle String title);
     Builder setValidator(InputValidator validator);
-    Builder addKind(@Nls @NlsUI.ListItem @NotNull String kind, @Nullable Icon icon, @NonNls @NotNull String templateName);
+    Builder addKind(@NlsUI.ListItem @NotNull String kind, @Nullable Icon icon, @NonNls @NotNull String templateName);
     @Nullable
     <T extends PsiElement> T show(@DialogTitle @NotNull String errorTitle,
                                   @NonNls @Nullable String selectedItem,

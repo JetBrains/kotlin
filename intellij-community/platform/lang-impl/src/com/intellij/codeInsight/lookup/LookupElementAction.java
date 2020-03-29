@@ -30,7 +30,7 @@ public abstract class LookupElementAction {
   private final Icon myIcon;
   private final String myText;
 
-  protected LookupElementAction(@Nullable Icon icon, @NotNull @Nls @ListItem String text) {
+  protected LookupElementAction(@Nullable Icon icon, @NotNull @ListItem String text) {
     myIcon = icon;
     myText = text;
   }

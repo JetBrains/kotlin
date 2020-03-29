@@ -35,7 +35,7 @@ public interface AutomaticRenamerFactory {
    * @return the checkbox title.
    */
   @Nullable
-  @Nls @NlsUI.Checkbox
+  @NlsUI.Checkbox
   String getOptionName();
 
   /**

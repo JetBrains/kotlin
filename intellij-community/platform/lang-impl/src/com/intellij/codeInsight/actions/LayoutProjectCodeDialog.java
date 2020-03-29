@@ -56,7 +56,7 @@ public class LayoutProjectCodeDialog extends DialogWrapper implements ReformatFi
 
   public LayoutProjectCodeDialog(@NotNull Project project,
                                  @NotNull @NlsContexts.DialogTitle String title,
-                                 @NotNull @Nls @NlsUI.Label String text,
+                                 @NotNull @NlsUI.Label String text,
                                  boolean enableOnlyVCSChangedTextCb)
   {
     super(project, false);

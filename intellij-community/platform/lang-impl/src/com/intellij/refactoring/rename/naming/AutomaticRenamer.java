@@ -164,7 +164,7 @@ public abstract class AutomaticRenamer {
   @NlsContexts.DialogTitle
   public abstract String getDialogTitle();
 
-  @Nls @NlsUI.Button
+  @NlsUI.Button
   public abstract String getDialogDescription();
 
   public abstract String entityName();

@@ -32,11 +32,11 @@ abstract class DetectedFrameworkTreeNodeBase extends CheckedTreeNode {
   public abstract void renderNode(ColoredTreeCellRenderer renderer);
 
   @Nullable
-  @Nls @Label
+  @Label
   public abstract String getCheckedDescription();
 
   @Nullable
-  @Nls @Label
+  @Label
   public abstract String getUncheckedDescription();
 
   public abstract void disableDetection(DetectionExcludesConfiguration configuration);

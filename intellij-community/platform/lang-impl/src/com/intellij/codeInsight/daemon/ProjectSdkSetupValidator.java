@@ -24,7 +24,7 @@ public interface ProjectSdkSetupValidator {
   boolean isApplicableFor(@NotNull Project project, @NotNull VirtualFile file);
 
   @Nullable
-  @Nls @NlsUI.Label
+  @NlsUI.Label
   String getErrorMessage(@NotNull Project project, @NotNull VirtualFile file);
 
   /**
