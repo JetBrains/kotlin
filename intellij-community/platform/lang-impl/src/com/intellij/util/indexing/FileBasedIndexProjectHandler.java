@@ -20,10 +20,12 @@ import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.util.Processor;
+import com.intellij.util.indexing.caches.IndexUpdateRunner;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -140,7 +142,9 @@ public final class FileBasedIndexProjectHandler implements IndexableFileSet {
         LOG.info("Reindexing refreshed files: " + files.size() + " to update, calculated in " + calcDuration + "ms");
         if (!files.isEmpty()) {
           PerformanceWatcher.Snapshot snapshot = PerformanceWatcher.takeSnapshot();
-          index.indexFiles(project, files, indicator);
+          int numberOfIndexingThreads = UnindexedFilesUpdater.getNumberOfIndexingThreads();
+          LOG.info("Using " + numberOfIndexingThreads + " " + StringUtil.pluralize("thread", numberOfIndexingThreads) + " for indexing");
+          new IndexUpdateRunner(index, UnindexedFilesUpdater.GLOBAL_INDEXING_EXECUTOR, numberOfIndexingThreads).indexFiles(project, files, indicator);
           snapshot.logResponsivenessSinceCreation("Reindexing refreshed files");
         }
       }

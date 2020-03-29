@@ -18,12 +18,9 @@ import com.intellij.openapi.vfs.InvalidVirtualFileAccessException;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ArchiveFileSystem;
-import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.PathUtil;
-import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.indexing.FileBasedIndexImpl;
-import com.intellij.util.indexing.UnindexedFilesUpdater;
 import com.intellij.util.progress.SubTaskProgressIndicator;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -48,12 +45,20 @@ public final class IndexUpdateRunner {
 
   private final FileBasedIndexImpl myFileBasedIndex;
 
+  private final ExecutorService myIndexingExecutor;
+
+  private final int myNumberOfIndexingThreads;
+
   private static final CachedFileLoadLimiter LOAD_LIMITER_FOR_USUAL_FILES = new MaxTotalSizeCachedFileLoadLimiter(16 * 1024 * 1024);
 
   private static final CachedFileLoadLimiter LOAD_LIMITER_FOR_LARGE_FILES = new UnlimitedSingleCachedFileLoadLimiter();
 
-  public IndexUpdateRunner(@NotNull FileBasedIndexImpl fileBasedIndex) {
+  public IndexUpdateRunner(@NotNull FileBasedIndexImpl fileBasedIndex,
+                           @NotNull ExecutorService indexingExecutor,
+                           int numberOfIndexingThreads) {
     myFileBasedIndex = fileBasedIndex;
+    myIndexingExecutor = indexingExecutor;
+    myNumberOfIndexingThreads = numberOfIndexingThreads;
   }
 
   public void indexFiles(@NotNull Project project,
@@ -70,23 +75,9 @@ public final class IndexUpdateRunner {
     IndexingJob indexingJob = new IndexingJob(project, queue, queueOfLargeFiles, indicator, new AtomicInteger(), files.size());
     ourIndexingJobs.add(indexingJob);
 
-    int numberOfIndexingThreads = ApplicationManager.getApplication().isWriteAccessAllowed()
-                                  ? 1 : UnindexedFilesUpdater.getNumberOfIndexingThreads();
-    ExecutorService indexingExecutor;
-    if (numberOfIndexingThreads == 1) {
-      indexingExecutor = ConcurrencyUtil.newSameThreadExecutorService();
-    }
-    else {
-      indexingExecutor = AppExecutorUtil.createBoundedApplicationPoolExecutor(
-        "Indexing",
-        UnindexedFilesUpdater.getNumberOfIndexingThreads(),
-        true
-      );
-    }
-
     try {
       while (!project.isDisposed() && !indexingJob.myIsFinished.get() && !indicator.isCanceled()) {
-        processIndexJobsWhileUserIsInactive(numberOfIndexingThreads, indexingExecutor, indicator);
+        processIndexJobsWhileUserIsInactive(indicator);
       }
     }
     finally {
@@ -100,17 +91,20 @@ public final class IndexUpdateRunner {
     indicator.checkCanceled();
   }
 
-  private void processIndexJobsWhileUserIsInactive(int numberOfWorkers,
-                                                   @NotNull ExecutorService executorService,
-                                                   @NotNull ProgressIndicator indicator) throws ProcessCanceledException {
+  private void processIndexJobsWhileUserIsInactive(@NotNull ProgressIndicator indicator) throws ProcessCanceledException {
     Runnable indexingWorker = () -> indexFilesOfJobsOneByOneWhileUserIsInactive();
 
-    List<Future<?>> futures = new ArrayList<>(numberOfWorkers);
-    for (int i = 0; i < numberOfWorkers; i++) {
-      futures.add(executorService.submit(indexingWorker));
-    }
-    for (Future<?> future : futures) {
-      ProgressIndicatorUtils.awaitWithCheckCanceled(future, indicator);
+    if (ApplicationManager.getApplication().isWriteAccessAllowed()) {
+      //If the current thread has acquired the write lock, we can't grant it to worker threads, so we must do the work in the current thread.
+      indexingWorker.run();
+    } else {
+      List<Future<?>> futures = new ArrayList<>(myNumberOfIndexingThreads);
+      for (int i = 0; i < myNumberOfIndexingThreads; i++) {
+        futures.add(myIndexingExecutor.submit(indexingWorker));
+      }
+      for (Future<?> future : futures) {
+        ProgressIndicatorUtils.awaitWithCheckCanceled(future, indicator);
+      }
     }
   }
 

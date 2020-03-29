@@ -48,7 +48,6 @@ import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.gist.GistManager;
 import com.intellij.util.indexing.caches.CachedFileContent;
-import com.intellij.util.indexing.caches.IndexUpdateRunner;
 import com.intellij.util.indexing.snapshot.IndexedHashesSupport;
 import com.intellij.util.indexing.snapshot.SnapshotInputMappings;
 import com.intellij.util.indexing.snapshot.SnapshotSingleValueIndexStorage;
@@ -1133,10 +1132,6 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     if (getChangedFilesCollector().isScheduledForUpdate(file)) {
       indexFileContent(project, fileContent);
     }
-  }
-
-  public void indexFiles(@NotNull Project project, @NotNull Collection<VirtualFile> files, @NotNull ProgressIndicator indexingIndicator) {
-    new IndexUpdateRunner(this).indexFiles(project, files, indexingIndicator);
   }
 
   @ApiStatus.Internal
