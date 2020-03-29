@@ -35,3 +35,9 @@ val specConsistencyTests by task<Test> {
         includeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
     }
 }
+
+tasks.named<Test>("test") {
+    filter {
+        excludeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
+    }
+}
