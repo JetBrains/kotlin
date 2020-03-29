@@ -159,7 +159,7 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
                 return false
 
             // We don't produce bridges for abstract functions in interfaces.
-            if (irFunction.isJvmAbstract)
+            if (irFunction.isJvmAbstract(context.state.jvmDefaultMode))
                 return !irFunction.parentAsClass.isJvmInterface
 
             // Finally, the JVM backend also ignores concrete fake overrides whose implementation is directly inherited from an interface.
@@ -213,7 +213,7 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
                 // exists in a superclass, since we do not generate bridges for fake overrides of interface methods.
                 if (irFunction.isFakeOverride) {
                     bridgeTarget = when {
-                        irFunction.isJvmAbstract -> {
+                        irFunction.isJvmAbstract(context.state.jvmDefaultMode) -> {
                             irClass.declarations.remove(irFunction)
                             irClass.addAbstractMethodStub(irFunction, specialBridge.methodInfo?.needsArgumentBoxing == true)
                         }
@@ -244,7 +244,7 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
             if (!irFunction.isFakeOverride && specialBridge.methodInfo != null) {
                 irFunction.rewriteSpecialMethodBody(targetMethod, specialBridge.signature, specialBridge.methodInfo)
             }
-        } else if (irFunction.isJvmAbstract) {
+        } else if (irFunction.isJvmAbstract(context.state.jvmDefaultMode)) {
             // Do not generate bridge methods for abstract methods which do not override a special bridge method.
             // This matches the behavior of the JVM backend, but it does mean that we generate superfluous bridges
             // for abstract methods overriding a special bridge for which we do not create a bridge due to,
@@ -270,9 +270,10 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
         //
         // This can still break binary compatibility, but it matches the behavior of the JVM backend.
         if (irFunction.isFakeOverride) {
-            irFunction.overriddenSymbols.asSequence().map { it.owner }.filter { !it.isJvmAbstract }.forEach { override ->
-                override.allOverridden().mapTo(blacklist) { it.jvmMethod }
-            }
+            irFunction.overriddenSymbols.asSequence().map { it.owner }.filter { !it.isJvmAbstract(context.state.jvmDefaultMode) }
+                .forEach { override ->
+                    override.allOverridden().mapTo(blacklist) { it.jvmMethod }
+                }
         }
 
         generated.values.filter { it.signature !in blacklist }.forEach { irClass.addBridge(it, bridgeTarget) }

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.getJvmNameFromAnnotation
 import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
+import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -358,7 +359,9 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
                 current = classCallable
                 continue
             }
-            if (isSuperCall && !current.hasJvmDefault() && !current.parentAsClass.isInterface) {
+            if (isSuperCall && !current.parentAsClass.isInterface &&
+                current.resolveFakeOverride()?.isCompiledToJvmDefault(context.state.jvmDefaultMode) != true
+            ) {
                 return current
             }
 

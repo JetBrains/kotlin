@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.intrinsics.receiverAndArgs
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
+import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.isLambda
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.hasMangledParameters
 import org.jetbrains.kotlin.codegen.syntheticAccessorToSuperSuffix
@@ -500,7 +501,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
             // The only function accessors placed on interfaces are for private functions and JvmDefault implementations.
             // The two cannot clash.
-            parentAsClass.isJvmInterface -> if (!Visibilities.isPrivate(visibility) && hasJvmDefault()) "\$jd" else ""
+            parentAsClass.isJvmInterface -> if (!Visibilities.isPrivate(visibility) && isCompiledToJvmDefault(context.state.jvmDefaultMode)) "\$jd" else ""
 
             // Accessor for _s_uper-qualified call
             superQualifier != null -> "\$s" + superQualifier.descriptor.syntheticAccessorToSuperSuffix()
