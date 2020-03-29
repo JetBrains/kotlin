@@ -45,8 +45,8 @@ import java.util.function.Supplier;
 import static com.intellij.util.ObjectUtils.notNull;
 
 public abstract class CreateFromTemplateActionBase extends AnAction {
-  public CreateFromTemplateActionBase(@Nls @NlsActions.ActionText String title,
-                                      @Nls @NlsActions.ActionDescription String description,
+  public CreateFromTemplateActionBase(@NlsActions.ActionText String title,
+                                      @NlsActions.ActionDescription String description,
                                       Icon icon) {
     super(title, description, icon);
   }

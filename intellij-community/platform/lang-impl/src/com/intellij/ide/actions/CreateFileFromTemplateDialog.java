@@ -336,7 +336,7 @@ public class CreateFileFromTemplateDialog extends DialogWrapper {
     @Nullable
     T createFile(@NonNls @NotNull String name, @NonNls @NotNull String templateName);
 
-    @Nls @CommandName
+    @CommandName
     @NotNull
     String getActionName(@NonNls @NotNull String name, @NonNls @NotNull String templateName);
 

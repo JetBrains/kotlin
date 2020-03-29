@@ -45,8 +45,8 @@ public class CreateFileAction extends CreateElementActionBase implements DumbAwa
     super(ActionsBundle.messagePointer("action.NewFile.text"), IdeBundle.messagePointer("action.create.new.file.description"), AllIcons.FileTypes.Text);
   }
 
-  public CreateFileAction(@Nls @NlsActions.ActionText String text,
-                          @Nls @NlsActions.ActionDescription String description,
+  public CreateFileAction(@NlsActions.ActionText String text,
+                          @NlsActions.ActionDescription String description,
                           final Icon icon) {
     super(text, description, icon);
   }

@@ -34,8 +34,8 @@ import java.util.function.Supplier;
 public abstract class CreateFromTemplateAction<T extends PsiElement> extends AnAction implements WriteActionAware {
   protected static final Logger LOG = Logger.getInstance(CreateFromTemplateAction.class);
 
-  public CreateFromTemplateAction(@Nls @NlsActions.ActionText String text,
-                                  @Nls @NlsActions.ActionDescription String description, Icon icon) {
+  public CreateFromTemplateAction(@NlsActions.ActionText String text,
+                                  @NlsActions.ActionDescription String description, Icon icon) {
     super(text, description, icon);
   }
 
@@ -142,7 +142,7 @@ public abstract class CreateFromTemplateAction<T extends PsiElement> extends AnA
     return project != null && view != null && view.getDirectories().length != 0;
   }
 
-  @Nls @CommandName
+  @CommandName
   protected abstract String getActionName(PsiDirectory directory, @NonNls @NotNull String newName, @NonNls String templateName);
 
   @Nls(capitalization = Nls.Capitalization.Title)

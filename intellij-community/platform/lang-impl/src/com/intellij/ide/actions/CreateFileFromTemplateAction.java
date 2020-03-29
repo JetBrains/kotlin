@@ -44,8 +44,8 @@ import java.util.function.Supplier;
  */
 public abstract class CreateFileFromTemplateAction extends CreateFromTemplateAction<PsiFile> {
 
-  public CreateFileFromTemplateAction(@Nls @NlsActions.ActionText String text,
-                                      @Nls @NlsActions.ActionDescription String description, Icon icon) {
+  public CreateFileFromTemplateAction(@NlsActions.ActionText String text,
+                                      @NlsActions.ActionDescription String description, Icon icon) {
     super(text, description, icon);
   }
 
