@@ -42,7 +42,7 @@ public abstract class PullUpDialogBase<Storage extends AbstractMemberInfoStorage
                           Class aClass,
                           List<Class> superClasses,
                           Storage memberInfoStorage,
-                          @Nls @NlsContexts.DialogTitle String title) {
+                          @NlsContexts.DialogTitle String title) {
     super(project, true);
     myClass = aClass;
     mySuperClasses = superClasses;

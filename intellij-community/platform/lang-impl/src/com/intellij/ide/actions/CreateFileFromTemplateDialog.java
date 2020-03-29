@@ -148,7 +148,7 @@ public class CreateFileFromTemplateDialog extends DialogWrapper {
     }
 
     @Override
-    public Builder setTitle(@Nls @NlsContexts.DialogTitle String title) {
+    public Builder setTitle(@NlsContexts.DialogTitle String title) {
       myDialog.setTitle(title);
       return this;
     }
@@ -318,15 +318,15 @@ public class CreateFileFromTemplateDialog extends DialogWrapper {
   }
 
   public interface Builder {
-    Builder setTitle(@Nls @DialogTitle String title);
+    Builder setTitle(@DialogTitle String title);
     Builder setValidator(InputValidator validator);
     Builder addKind(@Nls @NlsUI.ListItem @NotNull String kind, @Nullable Icon icon, @NonNls @NotNull String templateName);
     @Nullable
-    <T extends PsiElement> T show(@Nls @DialogTitle @NotNull String errorTitle,
+    <T extends PsiElement> T show(@DialogTitle @NotNull String errorTitle,
                                   @NonNls @Nullable String selectedItem,
                                   @NotNull FileCreator<T> creator);
 
-    <T extends PsiElement> void show(@Nls @DialogTitle @NotNull String errorTitle,
+    <T extends PsiElement> void show(@DialogTitle @NotNull String errorTitle,
                                      @NonNls @Nullable String selectedItem,
                                      @NotNull FileCreator<T> creator,
                                      Consumer<? super T> elementConsumer);

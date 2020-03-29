@@ -57,7 +57,7 @@ public class SelectExternalSystemNodeDialog extends DialogWrapper {
 
   public SelectExternalSystemNodeDialog(@NotNull ProjectSystemId systemId,
                                         @NotNull Project project,
-                                        @NotNull @Nls @NlsContexts.DialogTitle String title,
+                                        @NotNull @NlsContexts.DialogTitle String title,
                                         final Class<? extends ExternalSystemNode>[] nodeClasses,
                                         @Nullable Predicate<SimpleNode> selector) {
     super(project, false);

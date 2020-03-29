@@ -42,7 +42,7 @@ public class RemoveInvalidElementsDialog extends DialogWrapper {
   private JLabel myDescriptionLabel;
   private final Map<JCheckBox, ConfigurationErrorDescription> myCheckboxes = new HashMap<>();
 
-  private RemoveInvalidElementsDialog(@Nls @NlsContexts.DialogTitle String title,
+  private RemoveInvalidElementsDialog(@NlsContexts.DialogTitle String title,
                                       ConfigurationErrorType type,
                                       String invalidElements,
                                       final Project project,
@@ -76,7 +76,7 @@ public class RemoveInvalidElementsDialog extends DialogWrapper {
   /**
    * @return {@code true} if the problems are resolved
    */
-  public static boolean showDialog(@NotNull Project project, @NotNull @Nls @NlsContexts.DialogTitle String title, ConfigurationErrorType type,
+  public static boolean showDialog(@NotNull Project project, @NotNull @NlsContexts.DialogTitle String title, ConfigurationErrorType type,
                                    @NotNull String invalidElements, @NotNull List<? extends ConfigurationErrorDescription> errors) {
     if (errors.isEmpty()) {
       return true;

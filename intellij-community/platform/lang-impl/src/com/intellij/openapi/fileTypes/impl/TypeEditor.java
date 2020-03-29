@@ -18,7 +18,7 @@ class TypeEditor<T extends UserFileType<T>> extends DialogWrapper {
   private final T myFileType;
   private final SettingsEditor<T> myEditor;
 
-  TypeEditor(@NotNull Component parent, @NotNull T fileType, @NotNull @Nls @NlsContexts.DialogTitle String title) {
+  TypeEditor(@NotNull Component parent, @NotNull T fileType, @NotNull @NlsContexts.DialogTitle String title) {
     super(parent, false);
     myFileType = fileType;
     myEditor = fileType.getEditor();

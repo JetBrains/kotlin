@@ -55,7 +55,7 @@ public class LayoutProjectCodeDialog extends DialogWrapper implements ReformatFi
   private JCheckBox myCbCleanupCode;
 
   public LayoutProjectCodeDialog(@NotNull Project project,
-                                 @NotNull @Nls @NlsContexts.DialogTitle String title,
+                                 @NotNull @NlsContexts.DialogTitle String title,
                                  @NotNull @Nls @NlsUI.Label String text,
                                  boolean enableOnlyVCSChangedTextCb)
   {

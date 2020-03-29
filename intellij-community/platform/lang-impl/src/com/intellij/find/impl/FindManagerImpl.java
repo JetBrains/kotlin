@@ -130,7 +130,7 @@ public final class FindManagerImpl extends FindManager {
 
   @PromptResultValue
   private int showPromptDialogImpl(@NotNull final FindModel model,
-                                   @Nls @NlsContexts.DialogTitle String title,
+                                   @NlsContexts.DialogTitle String title,
                                    @Nullable final MalformedReplacementStringException exception) {
     ReplacePromptDialog replacePromptDialog = new ReplacePromptDialog(model.isMultipleFiles(), title, myProject, exception) {
       @Override

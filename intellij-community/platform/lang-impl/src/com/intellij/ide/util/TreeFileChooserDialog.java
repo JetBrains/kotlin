@@ -83,7 +83,7 @@ public final class TreeFileChooserDialog extends DialogWrapper implements TreeFi
   private boolean mySelectSearchByNameTab = false;
 
   public TreeFileChooserDialog(@NotNull Project project,
-                               @Nls @NlsContexts.DialogTitle String title,
+                               @NlsContexts.DialogTitle String title,
                                @Nullable final PsiFile initialFile,
                                @Nullable FileType fileType,
                                @Nullable PsiFileFilter filter,

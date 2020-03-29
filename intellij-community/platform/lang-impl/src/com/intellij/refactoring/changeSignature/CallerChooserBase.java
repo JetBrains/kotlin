@@ -84,7 +84,7 @@ public abstract class CallerChooserBase<M extends PsiElement> extends DialogWrap
     return "";
   }
 
-  public CallerChooserBase(M method, Project project, @Nls @NlsContexts.DialogTitle String title, Tree previousTree, String fileName, Consumer<? super Set<M>> callback) {
+  public CallerChooserBase(M method, Project project, @NlsContexts.DialogTitle String title, Tree previousTree, String fileName, Consumer<? super Set<M>> callback) {
     super(true);
     myMethod = method;
     myProject = project;
