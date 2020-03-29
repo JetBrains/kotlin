@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
@@ -27,19 +26,31 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 @Suppress("EqualsOrHashCode")
 abstract class SelfTargetingIntention<TElement : PsiElement>(
     val elementType: Class<TElement>,
-    @Nls private var text: String,
-    @Nls private val familyName: String = text
+    @Nls private var textGetter: () -> String,
+    @Nls private val familyNameGetter: () -> String = textGetter,
 ) : IntentionAction {
 
-    @Nls
-    protected val defaultText: String = text
+    @Deprecated("Replace with primary constructor", ReplaceWith("SelfTargetingIntention(elementType, { text }, { familyName })"))
+    constructor(
+        elementType: Class<TElement>,
+        @Nls text: String,
+        @Nls familyName: String = text,
+    ) : this(elementType, { text }, { familyName })
 
+    protected val defaultText: String get() = defaultTextGetter()
+    private val defaultTextGetter: () -> String = textGetter
+
+    @Deprecated("Replace with `setTextGetter`", ReplaceWith("setTextGetter { text }"))
     protected fun setText(@Nls text: String) {
-        this.text = text
+        this.textGetter = { text }
     }
 
-    final override fun getText() = text
-    final override fun getFamilyName() = familyName
+    protected fun setTextGetter(@Nls textGetter: () -> String) {
+        this.textGetter = textGetter
+    }
+
+    final override fun getText() = textGetter()
+    final override fun getFamilyName() = familyNameGetter()
 
     abstract fun isApplicableTo(element: TElement, caretOffset: Int): Boolean
 
@@ -101,7 +112,7 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
 
     override fun startInWriteAction() = true
 
-    override fun toString(): String = getText()
+    override fun toString(): String = text
 
     override fun equals(other: Any?): Boolean {
         // Nasty code because IntentionWrapper itself does not override equals
@@ -115,9 +126,16 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
 
 abstract class SelfTargetingRangeIntention<TElement : PsiElement>(
     elementType: Class<TElement>,
-    @Nls text: String,
-    @Nls familyName: String = text
-) : SelfTargetingIntention<TElement>(elementType, text, familyName) {
+    @Nls textGetter: () -> String,
+    @Nls familyNameGetter: () -> String = textGetter,
+) : SelfTargetingIntention<TElement>(elementType, textGetter, familyNameGetter) {
+
+    @Deprecated("Replace with primary constructor", ReplaceWith("SelfTargetingRangeIntention(elementType, { text }, { familyName })"))
+    constructor(
+        elementType: Class<TElement>,
+        @Nls text: String,
+        @Nls familyName: String = text,
+    ) : this(elementType, { text }, { familyName })
 
     abstract fun applicabilityRange(element: TElement): TextRange?
 
@@ -129,9 +147,19 @@ abstract class SelfTargetingRangeIntention<TElement : PsiElement>(
 
 abstract class SelfTargetingOffsetIndependentIntention<TElement : KtElement>(
     elementType: Class<TElement>,
-    @Nls text: String,
-    @Nls familyName: String = text
-) : SelfTargetingRangeIntention<TElement>(elementType, text, familyName) {
+    @Nls textGetter: () -> String,
+    @Nls familyNameGetter: () -> String = textGetter,
+) : SelfTargetingRangeIntention<TElement>(elementType, textGetter, familyNameGetter) {
+
+    @Deprecated(
+        "Replace with primary constructor",
+        ReplaceWith("SelfTargetingOffsetIndependentIntention(elementType, { text }, { familyName })")
+    )
+    constructor(
+        elementType: Class<TElement>,
+        @Nls text: String,
+        @Nls familyName: String = text,
+    ) : this(elementType, { text }, { familyName })
 
     abstract fun isApplicableTo(element: TElement): Boolean
 
