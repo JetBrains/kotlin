@@ -3591,7 +3591,7 @@ public inline fun CharArray.dropWhile(predicate: (Char) -> Boolean): List<Char> 
 /**
  * Returns a list containing only elements matching the given [predicate].
  * 
- *  @sample samples.collections.Collections.Filtering.filter
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun <T> Array<out T>.filter(predicate: (T) -> Boolean): List<T> {
     return filterTo(ArrayList<T>(), predicate)
@@ -3599,6 +3599,8 @@ public inline fun <T> Array<out T>.filter(predicate: (T) -> Boolean): List<T> {
 
 /**
  * Returns a list containing only elements matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun ByteArray.filter(predicate: (Byte) -> Boolean): List<Byte> {
     return filterTo(ArrayList<Byte>(), predicate)
@@ -3606,6 +3608,8 @@ public inline fun ByteArray.filter(predicate: (Byte) -> Boolean): List<Byte> {
 
 /**
  * Returns a list containing only elements matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun ShortArray.filter(predicate: (Short) -> Boolean): List<Short> {
     return filterTo(ArrayList<Short>(), predicate)
@@ -3613,6 +3617,8 @@ public inline fun ShortArray.filter(predicate: (Short) -> Boolean): List<Short> 
 
 /**
  * Returns a list containing only elements matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun IntArray.filter(predicate: (Int) -> Boolean): List<Int> {
     return filterTo(ArrayList<Int>(), predicate)
@@ -3620,6 +3626,8 @@ public inline fun IntArray.filter(predicate: (Int) -> Boolean): List<Int> {
 
 /**
  * Returns a list containing only elements matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun LongArray.filter(predicate: (Long) -> Boolean): List<Long> {
     return filterTo(ArrayList<Long>(), predicate)
@@ -3627,6 +3635,8 @@ public inline fun LongArray.filter(predicate: (Long) -> Boolean): List<Long> {
 
 /**
  * Returns a list containing only elements matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun FloatArray.filter(predicate: (Float) -> Boolean): List<Float> {
     return filterTo(ArrayList<Float>(), predicate)
@@ -3634,6 +3644,8 @@ public inline fun FloatArray.filter(predicate: (Float) -> Boolean): List<Float> 
 
 /**
  * Returns a list containing only elements matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun DoubleArray.filter(predicate: (Double) -> Boolean): List<Double> {
     return filterTo(ArrayList<Double>(), predicate)
@@ -3641,6 +3653,8 @@ public inline fun DoubleArray.filter(predicate: (Double) -> Boolean): List<Doubl
 
 /**
  * Returns a list containing only elements matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun BooleanArray.filter(predicate: (Boolean) -> Boolean): List<Boolean> {
     return filterTo(ArrayList<Boolean>(), predicate)
@@ -3648,6 +3662,8 @@ public inline fun BooleanArray.filter(predicate: (Boolean) -> Boolean): List<Boo
 
 /**
  * Returns a list containing only elements matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun CharArray.filter(predicate: (Char) -> Boolean): List<Char> {
     return filterTo(ArrayList<Char>(), predicate)
@@ -3859,6 +3875,8 @@ public inline fun <reified R, C : MutableCollection<in R>> Array<*>.filterIsInst
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun <T> Array<out T>.filterNot(predicate: (T) -> Boolean): List<T> {
     return filterNotTo(ArrayList<T>(), predicate)
@@ -3866,6 +3884,8 @@ public inline fun <T> Array<out T>.filterNot(predicate: (T) -> Boolean): List<T>
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun ByteArray.filterNot(predicate: (Byte) -> Boolean): List<Byte> {
     return filterNotTo(ArrayList<Byte>(), predicate)
@@ -3873,6 +3893,8 @@ public inline fun ByteArray.filterNot(predicate: (Byte) -> Boolean): List<Byte> 
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun ShortArray.filterNot(predicate: (Short) -> Boolean): List<Short> {
     return filterNotTo(ArrayList<Short>(), predicate)
@@ -3880,6 +3902,8 @@ public inline fun ShortArray.filterNot(predicate: (Short) -> Boolean): List<Shor
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun IntArray.filterNot(predicate: (Int) -> Boolean): List<Int> {
     return filterNotTo(ArrayList<Int>(), predicate)
@@ -3887,6 +3911,8 @@ public inline fun IntArray.filterNot(predicate: (Int) -> Boolean): List<Int> {
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun LongArray.filterNot(predicate: (Long) -> Boolean): List<Long> {
     return filterNotTo(ArrayList<Long>(), predicate)
@@ -3894,6 +3920,8 @@ public inline fun LongArray.filterNot(predicate: (Long) -> Boolean): List<Long> 
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun FloatArray.filterNot(predicate: (Float) -> Boolean): List<Float> {
     return filterNotTo(ArrayList<Float>(), predicate)
@@ -3901,6 +3929,8 @@ public inline fun FloatArray.filterNot(predicate: (Float) -> Boolean): List<Floa
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun DoubleArray.filterNot(predicate: (Double) -> Boolean): List<Double> {
     return filterNotTo(ArrayList<Double>(), predicate)
@@ -3908,6 +3938,8 @@ public inline fun DoubleArray.filterNot(predicate: (Double) -> Boolean): List<Do
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun BooleanArray.filterNot(predicate: (Boolean) -> Boolean): List<Boolean> {
     return filterNotTo(ArrayList<Boolean>(), predicate)
@@ -3915,6 +3947,8 @@ public inline fun BooleanArray.filterNot(predicate: (Boolean) -> Boolean): List<
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun CharArray.filterNot(predicate: (Char) -> Boolean): List<Char> {
     return filterNotTo(ArrayList<Char>(), predicate)

@@ -792,10 +792,12 @@ class Collections {
 
         @Sample
         fun filter() {
-            val numbers: List<Int> = listOf(1, 2, 3, 4)
-            val evenNumbers = numbers.filter { number -> number.rem(2) == 0 }
+            val numbers: List<Int> = listOf(1, 2, 3, 4, 5, 6, 7)
+            val evenNumbers = numbers.filter { it % 2 == 0 }
+            val notMultiplesOf3 = numbers.filterNot { number -> number % 3 == 0 }
 
-            assertPrints(evenNumbers, "[2, 4]")
+            assertPrints(evenNumbers, "[2, 4, 6]")
+            assertPrints(notMultiplesOf3, "[1, 2, 4, 5, 7]")
         }
 
         @Sample
