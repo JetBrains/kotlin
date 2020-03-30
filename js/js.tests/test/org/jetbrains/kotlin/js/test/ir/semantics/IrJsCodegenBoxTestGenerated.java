@@ -3609,6 +3609,16 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInObject2.kt");
             }
 
+            @TestMetadata("outerCapturedInPrimaryConstructorDefaultParameter.kt")
+            public void testOuterCapturedInPrimaryConstructorDefaultParameter() throws Exception {
+                runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInPrimaryConstructorDefaultParameter.kt");
+            }
+
+            @TestMetadata("outerCapturedInSecondaryConstructorDefaultParameter.kt")
+            public void testOuterCapturedInSecondaryConstructorDefaultParameter() throws Exception {
+                runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerCapturedInSecondaryConstructorDefaultParameter.kt");
+            }
+
             @TestMetadata("outerEnumEntryCapturedInLambdaInInnerClass.kt")
             public void testOuterEnumEntryCapturedInLambdaInInnerClass() throws Exception {
                 runTest("compiler/testData/codegen/box/closures/captureInSuperConstructorCall/outerEnumEntryCapturedInLambdaInInnerClass.kt");

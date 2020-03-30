@@ -854,6 +854,19 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         checkSamCall(call);
     }
 
+    @Override
+    public void visitParameter(@NotNull KtParameter parameter) {
+        PsiElement parent = parameter.getParent(); // KtParameterList
+        if (parent != null && parent.getParent() instanceof KtConstructor<?>) {
+            KtExpression defaultValue = parameter.getDefaultValue();
+            if (defaultValue != null) {
+                withinUninitializedClass(defaultValue, () -> defaultValue.accept(this));
+            }
+        } else {
+            super.visitParameter(parameter);
+        }
+    }
+
     private void withinUninitializedClass(@NotNull KtElement element, @NotNull Runnable operation) {
         ClassDescriptor currentClass = peekFromStack(classStack);
         assert currentClass != null : element.getClass().getSimpleName() + " should be inside a class: " + element.getText();

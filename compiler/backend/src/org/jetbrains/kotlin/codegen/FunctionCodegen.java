@@ -1207,6 +1207,10 @@ public class FunctionCodegen {
             @NotNull MemberCodegen<?> parentCodegen,
             @NotNull Method defaultMethod
     ) {
+        if (methodContext instanceof ConstructorContext) {
+            ((ConstructorContext) methodContext).setThisInitialized(false);
+        }
+
         GenerationState state = parentCodegen.state;
         JvmMethodSignature signature = state.getTypeMapper().mapSignatureWithGeneric(functionDescriptor, methodContext.getContextKind());
 
