@@ -23,6 +23,8 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction.nonBlocking
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.util.concurrency.AppExecutorUtil
@@ -30,7 +32,6 @@ import org.jetbrains.kotlin.idea.configuration.getModulesWithKotlinFiles
 import org.jetbrains.kotlin.idea.configuration.notifyOutdatedBundledCompilerIfNecessary
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.notifyKotlinStyleUpdateIfNeeded
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
-import org.jetbrains.kotlin.idea.util.ProgressIndicatorUtils
 import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import java.util.concurrent.Callable
 import java.util.concurrent.atomic.AtomicInteger
@@ -58,25 +59,33 @@ class KotlinConfigurationCheckerService(val project: Project) {
     private val syncDepth = AtomicInteger()
 
     fun performProjectPostOpenActions() {
-        nonBlocking(Callable {
+        val callable = Callable {
             return@Callable getModulesWithKotlinFiles(project)
-        })
-            .inSmartMode(project)
-            .expireWith(project)
-            .coalesceBy(this)
-            .finishOnUiThread(ModalityState.any()) { modulesWithKotlinFiles ->
-                val promise = ApplicationManager.getApplication().executeOnPooledThread {
-                    for (module in modulesWithKotlinFiles) {
-                        runReadAction {
-                            module.getAndCacheLanguageLevelByDependencies()
-                        }
-                    }
-                }
-                if (isUnitTestMode()) {
-                    ProgressIndicatorUtils.awaitWithCheckCanceled(promise)
+        }
+
+        fun continuation(modulesWithKotlinFiles: Collection<Module>) {
+            for (module in modulesWithKotlinFiles) {
+                ProgressManager.checkCanceled()
+                runReadAction {
+                    module.getAndCacheLanguageLevelByDependencies()
                 }
             }
-            .submit(AppExecutorUtil.getAppExecutorService())
+        }
+
+        if (!isUnitTestMode()) {
+            nonBlocking(callable)
+                .inSmartMode(project)
+                .expireWith(project)
+                .coalesceBy(this)
+                .finishOnUiThread(ModalityState.any()) { modulesWithKotlinFiles ->
+                    ApplicationManager.getApplication().executeOnPooledThread {
+                        continuation(modulesWithKotlinFiles)
+                    }
+                }
+                .submit(AppExecutorUtil.getAppExecutorService())
+        } else {
+            continuation(callable.call())
+        }
     }
 
     val isSyncing: Boolean get() = syncDepth.get() > 0
