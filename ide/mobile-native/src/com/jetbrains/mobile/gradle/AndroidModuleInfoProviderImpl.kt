@@ -21,21 +21,27 @@ class AndroidModuleInfoProviderImpl(override val module: Module) : AndroidModule
     override fun isAndroidModule(): Boolean = module.isAndroid
     override fun isGradleModule(): Boolean = ExternalSystemApiUtil.isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, module)
 
-    override fun getMainSourceProvider(): AndroidModuleInfoProvider.SourceProviderMirror? {
-        @Suppress("UnstableApiUsage")
-        val moduleNode = GradleUtil.findGradleModuleData(module)
-        val resDirectories = ExternalSystemApiUtil.findAllRecursively(moduleNode, ProjectKeys.CONTENT_ROOT)
-            .flatMap { it.data.getPaths(ExternalSystemSourceType.RESOURCE) }
-            .map { File(it.path) }
-        return Mirror("main", resDirectories)
-    }
-
     override fun getActiveSourceProviders(): List<AndroidModuleInfoProvider.SourceProviderMirror> =
-        listOfNotNull(getMainSourceProvider())
+        findResDirectories()
+            .groupBy { it.parentFile.name }
+            .map { Mirror(it.key, it.value) }
+
+    override fun getMainSourceProvider(): AndroidModuleInfoProvider.SourceProviderMirror? =
+        getActiveSourceProviders().find { it.name == "main" }
 
     @Suppress("OverridingDeprecatedMember")
     override fun getMainAndFlavorSourceProviders(): List<AndroidModuleInfoProvider.SourceProviderMirror> =
         getActiveSourceProviders()
+
+    private fun findResDirectories(): List<File> {
+        @Suppress("UnstableApiUsage")
+        val moduleNode = GradleUtil.findGradleModuleData(module)
+        return ExternalSystemApiUtil.findAllRecursively(moduleNode, ProjectKeys.CONTENT_ROOT)
+            .flatMap { it.data.getPaths(ExternalSystemSourceType.RESOURCE) }
+            .mapNotNull { sourceRoot ->
+                File(sourceRoot.path).takeIf { it.name == "res" }
+            }
+    }
 
     override fun getApplicationPackage(): String? = "main"
 
