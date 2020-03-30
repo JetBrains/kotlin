@@ -104,6 +104,9 @@ abstract class KtLazySymbol<State : StubState, Stb : ObjCTopLevel<*>> : KtSymbol
         state
     }
 
+    val stateLoaded: Boolean
+        get() = validStateOrNull != null
+
     abstract class StubState {
         constructor(stub: Stub<*>) {
             this.offset = stub.offset

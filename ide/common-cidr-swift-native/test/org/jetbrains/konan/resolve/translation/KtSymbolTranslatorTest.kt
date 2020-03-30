@@ -39,8 +39,10 @@ class KtSymbolTranslatorTest : KotlinLightCodeInsightFixtureTestCase() {
         val translator = KtOCSymbolTranslator(project)
         val translatedSymbols = translator.translate(file, TestTarget).toList()
         val translatedSymbol = translatedSymbols.single() as KtOCInterfaceSymbol
+        assertFalse("state already loaded", translatedSymbol.stateLoaded)
         assertEquals("MyModuleA", translatedSymbol.name)
         assertFalse(translatedSymbol.isTemplateSymbol)
         assertEquals("MyModuleBase", translatedSymbol.superType.name)
+        assertTrue("state not loaded", translatedSymbol.stateLoaded)
     }
 }
