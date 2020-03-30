@@ -24,10 +24,7 @@ internal class CandidateFactoriesAndCollectors(
     val invokeReceiverCandidateFactory: CandidateFactory?,
     val invokeReceiverCollector: CandidateCollector?,
     val invokeBuiltinExtensionReceiverCandidateFactory: CandidateFactory?
-) {
-    // TODO: Get rid of the property, storing state here looks like a hack
-    internal lateinit var invokeOnGivenReceiverCandidateFactory: CandidateFactory
-}
+)
 
 typealias EnqueueTasksForInvokeReceiverCandidates = () -> Unit
 
@@ -43,6 +40,7 @@ internal class LevelHandler {
         candidateFactoriesAndCollectors: CandidateFactoriesAndCollectors,
         towerLevel: SessionBasedTowerLevel,
         invokeResolveMode: InvokeResolveMode?,
+        candidateFactory: CandidateFactory,
         enqueueResolverTasksForInvokeReceiverCandidates: EnqueueTasksForInvokeReceiverCandidates
     ): ProcessorAction {
         val resultCollector = candidateFactoriesAndCollectors.resultCollector
@@ -51,11 +49,7 @@ internal class LevelHandler {
                 info.explicitReceiver,
                 explicitReceiverKind,
                 resultCollector,
-                // TODO: performance?
-                if (invokeResolveMode == InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER)
-                    candidateFactoriesAndCollectors.invokeOnGivenReceiverCandidateFactory
-                else
-                    candidateFactoriesAndCollectors.candidateFactory,
+                candidateFactory,
                 group
             )
         when (info.callKind) {

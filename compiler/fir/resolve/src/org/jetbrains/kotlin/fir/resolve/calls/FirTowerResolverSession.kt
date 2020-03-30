@@ -86,7 +86,8 @@ class FirTowerResolverSession internal constructor(
         callInfo: CallInfo,
         group: TowerGroup,
         explicitReceiverKind: ExplicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-        invokeResolveMode: InvokeResolveMode? = null
+        invokeResolveMode: InvokeResolveMode? = null,
+        candidateFactory: CandidateFactory = candidateFactoriesAndCollectors.candidateFactory
     ): ProcessorAction {
         manager.requestGroup(group)
 
@@ -96,7 +97,7 @@ class FirTowerResolverSession internal constructor(
 
         return levelHandler.handleLevel(
             callInfo, explicitReceiverKind, group,
-            candidateFactoriesAndCollectors, towerLevel, invokeResolveMode
+            candidateFactoriesAndCollectors, towerLevel, invokeResolveMode, candidateFactory
         ) {
             enqueueResolverTasksForInvokeReceiverCandidates(
                 invokeResolveMode, callInfo
@@ -475,13 +476,15 @@ class FirTowerResolverSession internal constructor(
 
     private suspend fun runResolverForInvoke(
         info: CallInfo,
-        invokeReceiverValue: ExpressionReceiverValue
+        invokeReceiverValue: ExpressionReceiverValue,
+        invokeOnGivenReceiverCandidateFactory: CandidateFactory
     ) {
         processLevel(
             invokeReceiverValue.toMemberScopeTowerLevel(),
             info, TowerGroup.Member,
             ExplicitReceiverKind.DISPATCH_RECEIVER,
-            InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER
+            InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER,
+            invokeOnGivenReceiverCandidateFactory
         )
 
         for ((index, localScope) in localScopes.withIndex()) {
@@ -489,7 +492,8 @@ class FirTowerResolverSession internal constructor(
                 localScope.toScopeTowerLevel(extensionReceiver = invokeReceiverValue),
                 info, TowerGroup.Local(index),
                 ExplicitReceiverKind.EXTENSION_RECEIVER,
-                InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER
+                InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER,
+                invokeOnGivenReceiverCandidateFactory
             )
         }
 
@@ -500,7 +504,8 @@ class FirTowerResolverSession internal constructor(
                 implicitReceiverValue.toMemberScopeTowerLevel(extensionReceiver = invokeReceiverValue),
                 info, parentGroup.Member,
                 ExplicitReceiverKind.EXTENSION_RECEIVER,
-                InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER
+                InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER,
+                invokeOnGivenReceiverCandidateFactory
             )
         }
 
@@ -509,7 +514,8 @@ class FirTowerResolverSession internal constructor(
                 topLevelScope.toScopeTowerLevel(extensionReceiver = invokeReceiverValue),
                 info, TowerGroup.Top(index),
                 ExplicitReceiverKind.EXTENSION_RECEIVER,
-                InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER
+                InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER,
+                invokeOnGivenReceiverCandidateFactory
             )
         }
     }
@@ -517,20 +523,23 @@ class FirTowerResolverSession internal constructor(
     // Here we already know extension receiver for invoke, and it's stated in info as first argument
     private suspend fun runResolverForBuiltinInvokeExtensionWithExplicitArgument(
         info: CallInfo,
-        invokeReceiverValue: ExpressionReceiverValue
+        invokeReceiverValue: ExpressionReceiverValue,
+        invokeOnGivenReceiverCandidateFactory: CandidateFactory
     ) {
         processLevel(
             invokeReceiverValue.toMemberScopeTowerLevel(),
             info, TowerGroup.Member,
             ExplicitReceiverKind.DISPATCH_RECEIVER,
-            InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER
+            InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER,
+            invokeOnGivenReceiverCandidateFactory
         )
     }
 
     // Here we don't know extension receiver for invoke, assuming it's one of implicit receivers
     private suspend fun runResolverForBuiltinInvokeExtensionWithImplicitArgument(
         info: CallInfo,
-        invokeReceiverValue: ExpressionReceiverValue
+        invokeReceiverValue: ExpressionReceiverValue,
+        invokeOnGivenReceiverCandidateFactory: CandidateFactory
     ) {
         for ((implicitReceiverValue, depth) in implicitReceiversUsableAsValues) {
             val parentGroup = TowerGroup.Implicit(depth)
@@ -541,7 +550,8 @@ class FirTowerResolverSession internal constructor(
                 ),
                 info, parentGroup.InvokeExtension,
                 ExplicitReceiverKind.DISPATCH_RECEIVER,
-                InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER
+                InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER,
+                invokeOnGivenReceiverCandidateFactory
             )
         }
     }
@@ -587,7 +597,6 @@ class FirTowerResolverSession internal constructor(
                 }
 
             val explicitReceiver = ExpressionReceiverValue(invokeReceiverExpression)
-            candidateFactoriesAndCollectors.invokeOnGivenReceiverCandidateFactory = CandidateFactory(components, invokeFunctionInfo)
             enqueueResolverTasksForInvoke(
                 invokeFunctionInfo,
                 explicitReceiver,
@@ -603,10 +612,11 @@ class FirTowerResolverSession internal constructor(
         invokeBuiltinExtensionMode: Boolean,
         useImplicitReceiverAsBuiltinInvokeArgument: Boolean
     ) {
+        val invokeOnGivenReceiverCandidateFactory = CandidateFactory(components, invokeFunctionInfo)
         if (invokeBuiltinExtensionMode) {
             manager.enqueueResolverTask {
                 runResolverForBuiltinInvokeExtensionWithExplicitArgument(
-                    invokeFunctionInfo, explicitReceiver
+                    invokeFunctionInfo, explicitReceiver, invokeOnGivenReceiverCandidateFactory
                 )
             }
 
@@ -616,14 +626,14 @@ class FirTowerResolverSession internal constructor(
         if (useImplicitReceiverAsBuiltinInvokeArgument) {
             manager.enqueueResolverTask {
                 runResolverForBuiltinInvokeExtensionWithImplicitArgument(
-                    invokeFunctionInfo, explicitReceiver
+                    invokeFunctionInfo, explicitReceiver, invokeOnGivenReceiverCandidateFactory
                 )
             }
         }
 
         manager.enqueueResolverTask {
             runResolverForInvoke(
-                invokeFunctionInfo, explicitReceiver
+                invokeFunctionInfo, explicitReceiver, invokeOnGivenReceiverCandidateFactory
             )
         }
     }
