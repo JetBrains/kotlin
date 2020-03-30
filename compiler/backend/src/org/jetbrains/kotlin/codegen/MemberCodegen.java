@@ -403,7 +403,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             if (context instanceof MethodContext) {
                 FunctionDescriptor functionDescriptor = ((MethodContext) context).getFunctionDescriptor();
                 if (isInterface(functionDescriptor.getContainingDeclaration()) && !JvmAnnotationUtilKt
-                        .isCompiledToJvmDefaultIfNoAbstract(functionDescriptor, state.getJvmDefaultMode())) {
+                        .isCompiledToJvmDefault(functionDescriptor, state.getJvmDefaultMode())) {
                     return typeMapper.mapDefaultImpls(classDescriptor);
                 }
             }
@@ -746,7 +746,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     protected final void generateSyntheticAccessors() {
         for (AccessorForCallableDescriptor<?> accessor : ((CodegenContext<?>) context).getAccessors()) {
             boolean compiledToJvmDefault =
-                    JvmAnnotationUtilKt.isCompiledToJvmDefaultIfNoAbstract(accessor.getCalleeDescriptor(), state.getJvmDefaultMode());
+                    JvmAnnotationUtilKt.isCompiledToJvmDefault(accessor.getCalleeDescriptor(), state.getJvmDefaultMode());
             OwnerKind kind = context.getContextKind();
 
             if (!isInterface(context.getContextDescriptor()) ||

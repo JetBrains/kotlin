@@ -19,5 +19,5 @@ object JvmFlags {
         IS_MOVED_FROM_INTERFACE_COMPANION.toFlags(booleanToIntFlag)
 
     //Class
-    val IS_NEW_PLACE_FOR_BODY_GENERATION = Flags.FlagField.booleanFirst()
+    val ARE_INTERFACE_METHOD_BODIES_INSIDE = Flags.FlagField.booleanFirst()
 }

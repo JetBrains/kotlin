@@ -309,7 +309,7 @@ public class AsmUtil {
     public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind, JvmDefaultMode jvmDefaultMode) {
         return (functionDescriptor.getModality() == Modality.ABSTRACT ||
                 (isJvmInterface(functionDescriptor.getContainingDeclaration()) && !JvmAnnotationUtilKt
-                        .isCompiledToJvmDefaultIfNoAbstract(functionDescriptor, jvmDefaultMode)))
+                        .isCompiledToJvmDefault(functionDescriptor, jvmDefaultMode)))
                && !isStaticMethod(kind, functionDescriptor);
     }
 

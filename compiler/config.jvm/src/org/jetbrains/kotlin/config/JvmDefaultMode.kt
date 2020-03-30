@@ -18,7 +18,7 @@ enum class JvmDefaultMode(val description: String) {
     val isCompatibility
         get() = this == ENABLE_WITH_DEFAULT_IMPLS || this == ALL_COMPATIBILITY
 
-    val forAllMehtodsWithBody
+    val forAllMethodsWithBody
         get() = this == ALL_COMPATIBILITY || this == ALL_INCOMPATIBLE
 
     companion object {

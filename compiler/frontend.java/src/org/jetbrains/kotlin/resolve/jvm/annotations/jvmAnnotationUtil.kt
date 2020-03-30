@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.resolve.jvm.annotations
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
 val JVM_DEFAULT_FQ_NAME = FqName("kotlin.jvm.JvmDefault")
@@ -45,10 +43,10 @@ fun DeclarationDescriptor.findJvmFieldAnnotation(): AnnotationDescriptor? =
 fun DeclarationDescriptor.hasJvmFieldAnnotation(): Boolean =
     findJvmFieldAnnotation() != null
 
-fun DeclarationDescriptor.isCallableMemberCompiledToJvmDefaultIfNoAbstract(jvmDefault: JvmDefaultMode): Boolean =
-    this is CallableMemberDescriptor && isCompiledToJvmDefaultIfNoAbstract(jvmDefault)
+fun DeclarationDescriptor.isCallableMemberCompiledToJvmDefault(jvmDefault: JvmDefaultMode): Boolean =
+    this is CallableMemberDescriptor && isCompiledToJvmDefault(jvmDefault)
 
-fun CallableMemberDescriptor.isCompiledToJvmDefaultIfNoAbstract(jvmDefault: JvmDefaultMode): Boolean {
+fun CallableMemberDescriptor.isCompiledToJvmDefault(jvmDefault: JvmDefaultMode): Boolean {
     val directMember = DescriptorUtils.getDirectMember(this)
 
     val clazz = directMember.containingDeclaration

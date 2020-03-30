@@ -31,7 +31,7 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityAccessFlag;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isInSamePackage;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isNonDefaultInterfaceMember;
 import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isInlineOnlyPrivateInBytecode;
-import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.isCallableMemberCompiledToJvmDefaultIfNoAbstract;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.isCallableMemberCompiledToJvmDefault;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PROTECTED;
 
@@ -594,8 +594,8 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         CodegenContext properContext = getFirstCrossInlineOrNonInlineContext();
         DeclarationDescriptor enclosing = descriptor.getContainingDeclaration();
         boolean isInliningContext = properContext.isInlineMethodContext();
-        boolean sameJvmDefault = JvmAnnotationUtilKt.isCompiledToJvmDefaultIfNoAbstract(descriptor, getState().getJvmDefaultMode()) ==
-                                 isCallableMemberCompiledToJvmDefaultIfNoAbstract(properContext.contextDescriptor, getState().getJvmDefaultMode()) ||
+        boolean sameJvmDefault = JvmAnnotationUtilKt.isCompiledToJvmDefault(descriptor, getState().getJvmDefaultMode()) ==
+                                 isCallableMemberCompiledToJvmDefault(properContext.contextDescriptor, getState().getJvmDefaultMode()) ||
                                  properContext.contextDescriptor instanceof AccessorForCallableDescriptor;
         if (!isInliningContext && (
                 !properContext.hasThisDescriptor() ||

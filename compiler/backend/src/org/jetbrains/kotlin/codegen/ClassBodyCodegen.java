@@ -223,7 +223,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
             FunctionDescriptor interfaceFun = entry.getKey();
             //skip java 8 default methods
             if (!CodegenUtilKt.isDefinitelyNotDefaultImplsMethod(interfaceFun) &&
-                !JvmAnnotationUtilKt.isCallableMemberCompiledToJvmDefaultIfNoAbstract(
+                !JvmAnnotationUtilKt.isCallableMemberCompiledToJvmDefault(
                         DescriptorUtils.unwrapFakeOverrideToAnyDeclaration(interfaceFun), state.getJvmDefaultMode()
                 )
             ) {

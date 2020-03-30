@@ -76,7 +76,7 @@ public class JvmCodegenUtil {
             return descriptor.getModality() == Modality.ABSTRACT;
         }
 
-        return !JvmAnnotationUtilKt.isCompiledToJvmDefaultIfNoAbstract(descriptor, jvmDefaultMode);
+        return !JvmAnnotationUtilKt.isCompiledToJvmDefault(descriptor, jvmDefaultMode);
     }
 
     public static boolean isJvmInterface(@Nullable DeclarationDescriptor descriptor) {
