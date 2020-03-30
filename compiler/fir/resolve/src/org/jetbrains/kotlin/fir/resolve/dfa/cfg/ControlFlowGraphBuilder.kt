@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.isNothing
+import kotlin.random.Random
 
 class ControlFlowGraphBuilder {
     private val graphs: Stack<ControlFlowGraph> = stackOf(ControlFlowGraph(null, "<TOP_LEVEL_GRAPH>", ControlFlowGraph.Kind.TopLevel))
@@ -60,7 +61,7 @@ class ControlFlowGraphBuilder {
     var levelCounter: Int = 0
         private set
 
-    private var idCounter: Int = 0
+    private var idCounter: Int = Random.nextInt()
     private val shouldPassFlowFromInplaceLambda: Stack<Boolean> = stackOf(true)
 
     fun createId(): Int = idCounter++

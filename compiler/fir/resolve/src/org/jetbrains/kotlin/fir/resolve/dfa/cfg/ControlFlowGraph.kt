@@ -102,7 +102,7 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
     
     final override fun equals(other: Any?): Boolean {
         if (other !is CFGNode<*>) return false
-        return this.id == other.id
+        return this === other
     }
 
     final override fun hashCode(): Int {
