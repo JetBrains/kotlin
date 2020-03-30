@@ -346,11 +346,12 @@ internal class KotlinCompilationNpmResolver(
         }
 
         private fun CompositeDependency.getPackages(): List<File> {
-            return includedBuild
+            val packages = includedBuild
                 .projectDir
                 .resolve(nodeJs.projectPackagesDir.relativeTo(nodeJs.rootProject.rootDir))
+            return packages
                 .list()
-                ?.map(::File)
+                ?.map { packages.resolve(it) }
                 ?.map { it.resolve(PACKAGE_JSON) }
                 ?: emptyList()
         }
