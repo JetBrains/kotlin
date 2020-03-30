@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.konan.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.library.shortName
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -857,7 +860,14 @@ private fun ObjCExportMapper.canHaveSameName(first: PropertyDescriptor, second: 
 internal val ModuleDescriptor.namePrefix: String get() {
     if (this.isNativeStdlib()) return "Kotlin"
 
-    return abbreviate(this.name.asString().let { it.substring(1, it.lastIndex) })
+    val fullPrefix = when(val module = this.klibModuleOrigin) {
+        CurrentKlibModuleOrigin, SyntheticModulesOrigin ->
+            this.name.asString().let { it.substring(1, it.lastIndex) }
+        is DeserializedKlibModuleOrigin ->
+            module.library.let { it.shortName ?: it.uniqueName }
+    }
+
+    return abbreviate(fullPrefix)
 }
 
 internal fun abbreviate(name: String): String {

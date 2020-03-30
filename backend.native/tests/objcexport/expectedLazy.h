@@ -205,6 +205,14 @@ __attribute__((swift_name("GH4002Argument")))
 @end;
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("LibraryKt")))
+@interface KtLibraryKt : KtBase
++ (NSString *)readDataFromLibraryClassInput:(KtA *)input __attribute__((swift_name("readDataFromLibraryClass(input:)")));
++ (NSString *)readDataFromLibraryInterfaceInput:(id<KtI>)input __attribute__((swift_name("readDataFromLibraryInterface(input:)")));
++ (NSString *)readDataFromLibraryEnumInput:(KtE *)input __attribute__((swift_name("readDataFromLibraryEnum(input:)")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("DelegateClass")))
 @interface KtDelegateClass : KtBase <KtKotlinReadWriteProperty>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));

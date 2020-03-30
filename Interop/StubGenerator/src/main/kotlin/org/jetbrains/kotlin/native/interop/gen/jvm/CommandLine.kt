@@ -112,7 +112,7 @@ open class CInteropArguments(argParser: ArgParser =
 
     val shortModuleName by argParser.option(ArgType.String,
             fullName = SHORT_MODULE_NAME,
-            description = "A short name used to denote this library in the IDE and during Objective-C export"
+            description = "A short name used to denote this library in the IDE"
     )
 
     val moduleName by argParser.option(ArgType.String,

@@ -3894,12 +3894,27 @@ if (isAppleTarget(project)) {
         }
 
         konanArtifacts {
+            def libraryName = frameworkName + "Library"
+            library(libraryName, targets: [target.name]) {
+                srcDir "objcexport/library"
+                artifactName "test-library"
+
+                extraOpts "-Xshort-module-name=MyLibrary"
+                extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
+            }
+
             framework(frameworkName, targets: [target.name]) {
-                srcDir 'objcexport'
+                srcFiles fileTree("objcexport") {
+                    include "*.kt"
+                }
                 baseDir dir
 
                 if (!useCustomDist) {
                     dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
+                }
+
+                libraries {
+                    artifact libraryName
                 }
 
                 extraOpts "-Xembed-bitcode-marker"
@@ -3924,12 +3939,27 @@ if (isAppleTarget(project)) {
         final String dir = "$testOutputFramework/$testName"
 
         konanArtifacts {
+            def libraryName = frameworkName + "Library"
+            library(libraryName, targets: [target.name]) {
+                srcDir "objcexport/library"
+                artifactName "test-library"
+
+                extraOpts "-Xshort-module-name=MyLibrary"
+                extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
+            }
+
             framework(frameworkName, targets: [target.name]) {
-                srcDir 'objcexport'
+                srcFiles fileTree("objcexport") {
+                    include "*.kt"
+                }
                 baseDir dir
 
                 if (!useCustomDist) {
                     dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
+                }
+
+                libraries {
+                    artifact libraryName
                 }
 
                 extraOpts "-Xembed-bitcode-marker"

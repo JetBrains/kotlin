@@ -202,7 +202,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-Xshort-module-name",
         valueDescription = "<name>",
-        description = "A short name used to denote this library in the IDE and during Objective-C export"
+        description = "A short name used to denote this library in the IDE and in a generated Objective-C header"
     )
     var shortModuleName: String? = null
 
