@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -62,14 +63,8 @@ internal class CallGenerator(
                         typeArgumentsCount = 0,
                         reflectionTarget = symbol
                     ).apply {
-                        val firReceiver = callableReferenceAccess.explicitReceiver
-                        if (firReceiver != null && firReceiver !is FirResolvedQualifier) {
-                            val irReceiver = visitor.convertToIrExpression(firReceiver)
-                            if (symbol.owner.dispatchReceiverParameter != null) {
-                                this.dispatchReceiver = irReceiver
-                            } else if (symbol.owner.extensionReceiverParameter != null) {
-                                this.extensionReceiver = irReceiver
-                            }
+                        if (callableReferenceAccess.explicitReceiver !is FirResolvedQualifier) {
+                            applyReceivers(callableReferenceAccess)
                         }
                     }
                 }
@@ -354,12 +349,12 @@ internal class CallGenerator(
 
     private fun IrExpression.applyReceivers(qualifiedAccess: FirQualifiedAccess): IrExpression {
         return when (this) {
-            is IrCallImpl -> {
-                val ownerFunction = symbol.owner
-                if (ownerFunction.dispatchReceiverParameter != null) {
+            is IrCallWithIndexedArgumentsBase -> {
+                val ownerFunction = symbol.owner as? IrFunction
+                if (ownerFunction?.dispatchReceiverParameter != null) {
                     dispatchReceiver = qualifiedAccess.findIrDispatchReceiver()
                 }
-                if (ownerFunction.extensionReceiverParameter != null) {
+                if (ownerFunction?.extensionReceiverParameter != null) {
                     extensionReceiver = qualifiedAccess.findIrExtensionReceiver()
                 }
                 this

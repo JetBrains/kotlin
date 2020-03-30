@@ -4,6 +4,8 @@ FILE fqName:<root> fileName:/constructorWithOwnTypeParametersCall.kt
       RETURN type=kotlin.Nothing from='public final fun testKotlin (): <root>.K1.K2<kotlin.String> declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.K1.K2' type=<root>.K1.K2<kotlin.String> origin=null
           <class: T2>: kotlin.String
+          $outer: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.K1' type=<root>.K1<kotlin.Int> origin=null
+            <class: T1>: kotlin.Int
   FUN name:testJava visibility:public modality:FINAL <> () returnType:<root>.J1.J2<kotlin.Double?>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testJava (): <root>.J1.J2<kotlin.Double?> declared in <root>'

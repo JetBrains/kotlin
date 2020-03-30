@@ -67,3 +67,4 @@ FILE fqName:<root> fileName:/withAdaptedArguments.kt
       RETURN type=kotlin.Nothing from='public final fun testImportedObjectMember (): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
           FUNCTION_REFERENCE 'public final fun importedObjectMemberWithVarargs (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.String> origin=null reflectionTarget=<same>
+            $this: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
