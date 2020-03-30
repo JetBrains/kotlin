@@ -115,7 +115,6 @@ dependencies {
     testCompileOnly(intellijPluginDep("coverage"))
 
     testRuntimeOnly(toolsJar())
-    testRuntime(project(":native:kotlin-native-utils")) { isTransitive = false }
     testRuntime(commonDep("org.jetbrains", "markdown"))
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
     testRuntime(project(":kotlin-reflect"))
