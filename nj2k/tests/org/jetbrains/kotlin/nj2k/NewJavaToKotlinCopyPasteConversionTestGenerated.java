@@ -83,6 +83,11 @@ public class NewJavaToKotlinCopyPasteConversionTestGenerated extends AbstractNew
         runTest("nj2k/testData/copyPaste/ConversionInCorrectContext.java");
     }
 
+    @TestMetadata("ConvertedMethodReference.java")
+    public void testConvertedMethodReference() throws Exception {
+        runTest("nj2k/testData/copyPaste/ConvertedMethodReference.java");
+    }
+
     @TestMetadata("CopyAnnotation.java")
     public void testCopyAnnotation() throws Exception {
         runTest("nj2k/testData/copyPaste/CopyAnnotation.java");
@@ -221,5 +226,10 @@ public class NewJavaToKotlinCopyPasteConversionTestGenerated extends AbstractNew
     @TestMetadata("SingleWordFromIdentifier.java")
     public void testSingleWordFromIdentifier() throws Exception {
         runTest("nj2k/testData/copyPaste/SingleWordFromIdentifier.java");
+    }
+
+    @TestMetadata("UnconvertedMethodReference.java")
+    public void testUnconvertedMethodReference() throws Exception {
+        runTest("nj2k/testData/copyPaste/UnconvertedMethodReference.java");
     }
 }
