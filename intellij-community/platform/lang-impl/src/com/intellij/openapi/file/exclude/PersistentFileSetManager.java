@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.file.exclude;
 
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -22,18 +22,18 @@ class PersistentFileSetManager implements PersistentStateComponent<Element> {
   private static final String PATH_ATTR = "url";
 
   private final Set<VirtualFile> myFiles = new THashSet<>();
-  
+
   protected boolean addFile(@NotNull VirtualFile file) {
     if (!(file instanceof VirtualFileWithId) || file.isDirectory()) return false;
     myFiles.add(file);
     onFileAdded(file);
     return true;
   }
-  
+
   protected boolean containsFile(@NotNull VirtualFile file) {
     return myFiles.contains(file);
   }
-  
+
   protected boolean removeFile(@NotNull VirtualFile file) {
     boolean isRemoved = myFiles.remove(file);
     if (isRemoved) {
@@ -58,10 +58,10 @@ class PersistentFileSetManager implements PersistentStateComponent<Element> {
   @NotNull
   private Collection<VirtualFile> getSortedFiles() {
     List<VirtualFile> sortedFiles = new ArrayList<>(myFiles);
-    Collections.sort(sortedFiles, Comparator.comparing(file -> StringUtil.toLowerCase(file.getPath())));
+    sortedFiles.sort(Comparator.comparing(file -> StringUtil.toLowerCase(file.getPath())));
     return sortedFiles;
   }
-  
+
   @Override
   public Element getState() {
     final Element root = new Element("root");

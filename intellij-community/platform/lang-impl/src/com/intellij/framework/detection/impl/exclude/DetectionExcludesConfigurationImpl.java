@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.framework.detection.impl.exclude;
 
 import com.intellij.framework.FrameworkType;
@@ -162,7 +162,7 @@ public class DetectionExcludesConfigurationImpl extends DetectionExcludesConfigu
     final ExcludesConfigurationState state = new ExcludesConfigurationState();
     state.setDetectionEnabled(myDetectionEnabled);
     state.getFrameworkTypes().addAll(myExcludedFrameworks);
-    Collections.sort(state.getFrameworkTypes(), String.CASE_INSENSITIVE_ORDER);
+    state.getFrameworkTypes().sort(String.CASE_INSENSITIVE_ORDER);
 
     for (String typeId : myExcludedFiles.keySet()) {
       final VirtualFilePointerContainer container = myExcludedFiles.get(typeId);
@@ -170,8 +170,8 @@ public class DetectionExcludesConfigurationImpl extends DetectionExcludesConfigu
         state.getFiles().add(new ExcludedFileState(url, typeId));
       }
     }
-    Collections.sort(state.getFiles(),
-                     (o1, o2) -> StringUtil.comparePairs(o1.getFrameworkType(), o1.getUrl(), o2.getFrameworkType(), o2.getUrl(), true));
+    state.getFiles()
+      .sort((o1, o2) -> StringUtil.comparePairs(o1.getFrameworkType(), o1.getUrl(), o2.getFrameworkType(), o2.getUrl(), true));
     return state;
   }
 

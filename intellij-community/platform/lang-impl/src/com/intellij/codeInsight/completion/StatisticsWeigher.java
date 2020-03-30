@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.completion;
 
 import com.intellij.codeInsight.lookup.Classifier;
@@ -100,7 +100,7 @@ public class StatisticsWeigher extends CompletionWeigher {
       map.put(0, noStats);
       for (String s : byName.keySet()) {
         List<LookupElement> group = (List<LookupElement>)byName.get(s);
-        Collections.sort(group, Comparator.comparing(this::getScalarWeight).reversed());
+        group.sort(Comparator.comparing(this::getScalarWeight).reversed());
         map.computeIfAbsent(getMaxWeight(group), __ -> new ArrayList<>()).addAll(group);
       }
       return map;

@@ -39,8 +39,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
 
 /**
  * @author Kirill Kalishev
@@ -218,7 +220,7 @@ public class RegistryUi implements Disposable {
       myAll.addAll(ContainerUtil.map(Experiments.EP_NAME.getExtensionList(), ExperimentalFeatureRegistryValueWrapper::new));
       final List<String> recent = getRecent();
 
-      Collections.sort(myAll, (o1, o2) -> {
+      myAll.sort((o1, o2) -> {
         final String key1 = o1.getKey();
         boolean changed1 = o1.isChangedFromDefault();
         boolean changed2 = o2.isChangedFromDefault();

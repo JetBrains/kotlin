@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.testIntegration;
 
@@ -65,7 +65,7 @@ public class TestFinderHelper {
   public static List<PsiElement> getSortedElements(final List<? extends Pair<? extends PsiNamedElement, Integer>> elementsWithWeights,
                                                    final boolean weightsAscending,
                                                    @Nullable final Comparator<? super PsiElement> sameNameComparator) {
-    Collections.sort(elementsWithWeights, (o1, o2) -> {
+    elementsWithWeights.sort((o1, o2) -> {
       int result = weightsAscending ? o1.second.compareTo(o2.second) : o2.second.compareTo(o1.second);
       if (result == 0) result = Comparing.compare(o1.first.getName(), o2.first.getName());
       if (result == 0 && sameNameComparator != null) result = sameNameComparator.compare(o1.first, o2.first);

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.view;
 
 import com.intellij.ide.util.treeView.NodeDescriptor;
@@ -220,7 +220,7 @@ public abstract class ExternalSystemNode<T> extends SimpleNode implements Compar
 
   protected void sort(List<? extends ExternalSystemNode<?>> list) {
     if (!list.isEmpty()) {
-      Collections.sort(list, ORDER_AWARE_COMPARATOR);
+      list.sort(ORDER_AWARE_COMPARATOR);
     }
   }
 

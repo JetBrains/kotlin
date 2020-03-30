@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.searcheverywhere;
 
 import com.intellij.ide.actions.searcheverywhere.statistics.SearchEverywhereUsageTriggerCollector;
@@ -70,7 +70,7 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
     for (SearchEverywhereContributorFactory<?> factory : SearchEverywhereContributor.EP_NAME.getExtensionList()) {
       contributors.add(factory.createContributor(initEvent));
     }
-    Collections.sort(contributors, Comparator.comparingInt(SearchEverywhereContributor::getSortWeight));
+    contributors.sort(Comparator.comparingInt(SearchEverywhereContributor::getSortWeight));
 
     mySearchEverywhereUI = createView(myProject, contributors);
     mySearchEverywhereUI.switchToContributor(contributorID);

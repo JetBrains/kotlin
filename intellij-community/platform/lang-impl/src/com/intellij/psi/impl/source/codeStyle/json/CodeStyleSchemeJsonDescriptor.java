@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.impl.source.codeStyle.json;
 
 import com.intellij.application.options.codeStyle.properties.AbstractCodeStylePropertyMapper;
@@ -13,7 +13,6 @@ import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class CodeStyleSchemeJsonDescriptor {
@@ -42,7 +41,7 @@ public class CodeStyleSchemeJsonDescriptor {
         holder.add(mapper);
       }
     });
-    Collections.sort(holder, (m1, m2) -> {
+    holder.sort((m1, m2) -> {
       int result = Comparing.compare(getPriority(m1), getPriority(m2));
       if (result == 0) {
         return Comparing.compare(m1.getLanguageDomainId(), m2.getLanguageDomainId());

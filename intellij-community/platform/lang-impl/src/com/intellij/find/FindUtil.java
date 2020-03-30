@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.find;
 
@@ -56,7 +56,10 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class FindUtil {
@@ -596,7 +599,7 @@ public class FindUtil {
       else {
         CharSequence text = document.getCharsSequence();
         final StringBuilder newText = new StringBuilder(document.getTextLength());
-        Collections.sort(rangesToChange, Comparator.comparingInt(o -> o.getFirst().getStartOffset()));
+        rangesToChange.sort(Comparator.comparingInt(o -> o.getFirst().getStartOffset()));
         int offsetBefore = 0;
         for (Pair<TextRange, String> pair : rangesToChange) {
           TextRange range = pair.getFirst();

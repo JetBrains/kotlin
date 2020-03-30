@@ -334,7 +334,7 @@ public class IdentifierHighlighterPass extends TextEditorHighlightingPass {
       return;
     }
     ArrayList<TextRange> markers = new ArrayList<>(myCodeBlockMarkerRanges);
-    Collections.sort(markers, Segment.BY_START_OFFSET_THEN_END_OFFSET);
+    markers.sort(Segment.BY_START_OFFSET_THEN_END_OFFSET);
     TextRange leftBraceRange = markers.get(0);
     TextRange rightBraceRange = markers.get(markers.size() - 1);
     final int startLine = myEditor.offsetToLogicalPosition(leftBraceRange.getStartOffset()).line;

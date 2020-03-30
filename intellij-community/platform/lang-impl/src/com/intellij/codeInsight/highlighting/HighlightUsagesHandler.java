@@ -379,7 +379,7 @@ public class HighlightUsagesHandler extends HighlightHandlerBase {
     if (editor instanceof EditorWindow) editor = ((EditorWindow)editor).getDelegate();
     RangeHighlighter[] highlighters = ((HighlightManagerImpl)highlightManager).getHighlighters(editor);
     Arrays.sort(highlighters, Comparator.comparingInt(RangeMarker::getStartOffset));
-    Collections.sort(rangesToHighlight, Comparator.comparingInt(TextRange::getStartOffset));
+    rangesToHighlight.sort(Comparator.comparingInt(TextRange::getStartOffset));
     int i = 0;
     int j = 0;
     while (i < highlighters.length && j < rangesToHighlight.size()) {

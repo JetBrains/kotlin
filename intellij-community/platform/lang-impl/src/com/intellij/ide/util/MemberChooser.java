@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.util;
 
@@ -521,7 +521,7 @@ public class MemberChooser<T extends ClassMember> extends DialogWrapper implemen
       arrayList.add((ElementNode)children.nextElement());
     }
 
-    Collections.sort(arrayList, sortComparator);
+    arrayList.sort(sortComparator);
 
     replaceChildren(node, arrayList);
   }
@@ -571,7 +571,7 @@ public class MemberChooser<T extends ClassMember> extends DialogWrapper implemen
         while (memberNodes.hasMoreElements()) {
           arrayList.add((MemberNode)memberNodes.nextElement());
         }
-        Collections.sort(arrayList, myComparator);
+        arrayList.sort(myComparator);
         for (MemberNode memberNode : arrayList) {
           myNodeToParentMap.get(memberNode).add(memberNode);
         }

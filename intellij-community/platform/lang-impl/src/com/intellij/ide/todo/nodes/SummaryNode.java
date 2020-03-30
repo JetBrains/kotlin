@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 
 public class SummaryNode extends BaseToDoNode<ToDoSummary> {
@@ -68,7 +67,7 @@ public class SummaryNode extends BaseToDoNode<ToDoSummary> {
         }
       }
     }
-    Collections.sort(children, TodoFileDirAndModuleComparator.INSTANCE);
+    children.sort(TodoFileDirAndModuleComparator.INSTANCE);
     return children;
 
   }

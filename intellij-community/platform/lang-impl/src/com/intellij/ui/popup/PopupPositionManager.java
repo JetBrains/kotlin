@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ui.popup;
 
 import com.intellij.codeInsight.lookup.LookupEvent;
@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -233,7 +232,7 @@ public class PopupPositionManager {
       }
       else {
         // ok, popup does not fit, will try to resize it
-        Collections.sort(boxes, Comparator.comparingInt((Rectangle o) -> o.width).thenComparingInt(o -> o.height));
+        boxes.sort(Comparator.comparingInt((Rectangle o) -> o.width).thenComparingInt(o -> o.height));
 
         final Rectangle suitableBox = boxes.get(boxes.size() - 1);
         final Rectangle crop = crop(suitableBox,

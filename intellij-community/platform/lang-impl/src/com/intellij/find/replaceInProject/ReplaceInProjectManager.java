@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.find.replaceInProject;
 
@@ -522,7 +522,7 @@ public class ReplaceInProjectManager {
     }
 
     final List<Usage> usages = new ArrayList<>(usagesSet);
-    Collections.sort(usages, UsageViewImpl.USAGE_COMPARATOR);
+    usages.sort(UsageViewImpl.USAGE_COMPARATOR);
 
     if (!ensureUsagesWritable(replaceContext, usages)) return;
 

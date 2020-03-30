@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.internal;
 
@@ -32,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class ComputeVirtualFileNameStatAction extends AnAction implements DumbAware {
@@ -59,7 +44,7 @@ public class ComputeVirtualFileNameStatAction extends AnAction implements DumbAw
         return true;
       }
     });
-    Collections.sort(names, (o1, o2) -> o2.second - o1.second);
+    names.sort((o1, o2) -> o2.second - o1.second);
 
     System.out.println("Most frequent names ("+names.size()+" total):");
     int saveByIntern = 0;
@@ -114,7 +99,7 @@ public class ComputeVirtualFileNameStatAction extends AnAction implements DumbAw
       final String candidate = cp.first;
       picked.add(candidate);
       System.out.println("Candidate: '"+candidate+"', save = "+cp.second);
-      Collections.sort(picked, (o1, o2) -> {
+      picked.sort((o1, o2) -> {
         return o2.length() - o1.length(); // longer first
       });
       saveSorted.clear();
@@ -134,11 +119,11 @@ public class ComputeVirtualFileNameStatAction extends AnAction implements DumbAw
           return true;
         }
       });
-      Collections.sort(saveSorted, (o1, o2) -> o2.second.compareTo(o1.second));
+      saveSorted.sort((o1, o2) -> o2.second.compareTo(o1.second));
     }
 
     System.out.println("Picked: "+ StringUtil.join(picked, s -> "\"" + s + "\"", ","));
-    Collections.sort(picked, (o1, o2) -> {
+    picked.sort((o1, o2) -> {
       return o2.length() - o1.length(); // longer first
     });
 
@@ -168,7 +153,7 @@ public class ComputeVirtualFileNameStatAction extends AnAction implements DumbAw
         return true;
       }
     });
-    Collections.sort(prefs, (o1, o2) -> o2.second.compareTo(o1.second));
+    prefs.sort((o1, o2) -> o2.second.compareTo(o1.second));
     int i =0;
     for (Pair<String, Integer> pref : prefs) {
       Integer count = pref.second;

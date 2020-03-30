@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.application.options.colors;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
@@ -39,8 +39,10 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
 
 import static com.intellij.application.options.colors.ColorAndFontOptions.selectOrEditColor;
 import static com.intellij.ui.SimpleTextAttributes.*;
@@ -113,7 +115,7 @@ public class JumpToColorsAndFontsAction extends DumbAwareAction {
     }
     else {
       ArrayList<Pair<ColorAndFontDescriptorsProvider, AttributesDescriptor>> attrs = new ArrayList<>(keyMap.values());
-      Collections.sort(attrs, (o1, o2) -> StringUtil.naturalCompare(
+      attrs.sort((o1, o2) -> StringUtil.naturalCompare(
         o1.first.getDisplayName() + o1.second.getDisplayName(), o2.first.getDisplayName() + o2.second.getDisplayName()));
 
       EditorColorsScheme colorsScheme = editor.getColorsScheme();

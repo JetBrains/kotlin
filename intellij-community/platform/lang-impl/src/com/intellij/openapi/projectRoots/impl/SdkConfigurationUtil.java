@@ -229,7 +229,7 @@ public class SdkConfigurationUtil {
       List<Sdk> sdks = ProjectJdkTable.getInstance().getSdksOfType(type);
       if (!sdks.isEmpty()) {
         if (comparator != null) {
-          Collections.sort(sdks, comparator);
+          sdks.sort(comparator);
         }
         return sdks.get(0);
       }

@@ -1,4 +1,4 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.profile.codeInspection.ui;
 
 import com.intellij.analysis.AnalysisBundle;
@@ -28,7 +28,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class ScopesOrderDialog extends DialogWrapper {
@@ -89,7 +88,7 @@ public class ScopesOrderDialog extends DialogWrapper {
       }
     }
     scopes.remove(CustomScopesProviderEx.getAllScope().getName());
-    Collections.sort(scopes, new ScopeOrderComparator(myInspectionProfile));
+    scopes.sort(new ScopeOrderComparator(myInspectionProfile));
     for (String scopeName : scopes) {
       myModel.addElement(scopeName);
     }

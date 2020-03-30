@@ -225,7 +225,7 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
     final List<String> groupOrder = getGroupOrder(options);
     List<BooleanOptionKey> result = new ArrayList<>(options.size());
     result.addAll(options);
-    Collections.sort(result, (key1, key2) -> {
+    result.sort((key1, key2) -> {
       String group1 = key1.groupName;
       String group2 = key2.groupName;
       if (group1 == null) {

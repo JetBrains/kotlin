@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.packageDependencies.ui;
 
@@ -233,7 +233,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
       for (PsiFile from : searchIn) {
         for (PsiFile to : initialSearchFor) {
           final List<List<PsiFile>> paths = builder.findPaths(from, to);
-          Collections.sort(paths, Comparator.comparingInt(List::size));
+          paths.sort(Comparator.comparingInt(List::size));
           for (List<PsiFile> path : paths) {
             if (!path.isEmpty()){
               path.add(0, from);
@@ -652,7 +652,7 @@ public class DependenciesPanel extends JPanel implements Disposable, DataProvide
       final Element rootElement = new Element("root");
       rootElement.setAttribute("isBackward", String.valueOf(!myForward));
       final List<PsiFile> files = new ArrayList<>(myDependencies.keySet());
-      Collections.sort(files, (f1, f2) -> {
+      files.sort((f1, f2) -> {
         final VirtualFile virtualFile1 = f1.getVirtualFile();
         final VirtualFile virtualFile2 = f2.getVirtualFile();
         if (virtualFile1 != null && virtualFile2 != null) {

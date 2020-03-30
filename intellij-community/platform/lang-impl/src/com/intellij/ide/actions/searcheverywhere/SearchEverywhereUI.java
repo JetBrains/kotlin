@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions.searcheverywhere;
 
 import com.google.common.collect.Lists;
@@ -1123,8 +1123,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
         List<SearchEverywhereFoundElementInfo> list = itemsMap.computeIfAbsent(info.getContributor(), contributor -> new ArrayList<>());
         list.add(info);
       });
-      itemsMap.forEach((contributor, list) -> Collections.sort(
-        list, Comparator.comparingInt(SearchEverywhereFoundElementInfo::getPriority).reversed()));
+      itemsMap.forEach((contributor, list) -> list.sort(Comparator.comparingInt(SearchEverywhereFoundElementInfo::getPriority).reversed()));
 
       if (resultsExpired) {
         retainContributors(itemsMap.keySet());
@@ -1574,7 +1573,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
 
   private String getNotFoundText() {
     return mySelectedTab.getContributor()
-      .map(c -> IdeBundle.message("searcheverywhere.nothing.found.for.contributor.anywhere", 
+      .map(c -> IdeBundle.message("searcheverywhere.nothing.found.for.contributor.anywhere",
                                   c.getFullGroupName().toLowerCase(Locale.ROOT)))
       .orElse(IdeBundle.message("searcheverywhere.nothing.found.for.all.anywhere"));
   }

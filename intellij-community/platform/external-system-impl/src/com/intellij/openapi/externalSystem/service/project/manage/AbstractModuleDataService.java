@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.project.manage;
 
 import com.intellij.build.BuildContentManager;
@@ -466,7 +466,7 @@ public abstract class AbstractModuleDataService<E extends ModuleData> extends Ab
       }
     }
 
-    Collections.sort(noOrderAwareItems, new Comparator<OrderEntry>() {
+    noOrderAwareItems.sort(new Comparator<OrderEntry>() {
       @Override
       public int compare(OrderEntry o1, OrderEntry o2) {
         return o1.toString().compareTo(o2.toString());

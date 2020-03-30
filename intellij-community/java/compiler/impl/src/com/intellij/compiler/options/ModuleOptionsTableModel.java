@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.compiler.options;
 
 import com.intellij.openapi.module.Module;
@@ -10,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class ModuleOptionsTableModel extends AbstractTableModel implements ItemRemovable {
   private static class Item {
@@ -67,7 +67,7 @@ public class ModuleOptionsTableModel extends AbstractTableModel implements ItemR
     }
 
     if (!candidates.isEmpty()) {
-      Collections.sort(candidates, Comparator.comparing(Module::getName));
+      candidates.sort(Comparator.comparing(Module::getName));
       ChooseModulesDialog chooser = new ChooseModulesDialog(parent, candidates, "Choose module");
       chooser.show();
       List<Module> chosen = chooser.getChosenElements();
@@ -91,7 +91,7 @@ public class ModuleOptionsTableModel extends AbstractTableModel implements ItemR
   }
 
   private void sortItems() {
-    Collections.sort(myItems, Comparator.comparing(o -> o.module.getName()));
+    myItems.sort(Comparator.comparing(o -> o.module.getName()));
   }
 
   @Override

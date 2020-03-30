@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.task.ui;
 
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
@@ -109,7 +109,7 @@ public class ExternalSystemTasksTree extends Tree implements Supplier<ExternalTa
       // that it automatically expands parent paths on child path expansion.
       List<TreePath> paths = new ArrayList<>(myPathsToProcessCollapseState);
       myPathsToProcessCollapseState.clear();
-      Collections.sort(paths, PATH_COMPARATOR);
+      paths.sort(PATH_COMPARATOR);
       for (TreePath treePath : paths) {
         applyCollapseState(treePath);
       }

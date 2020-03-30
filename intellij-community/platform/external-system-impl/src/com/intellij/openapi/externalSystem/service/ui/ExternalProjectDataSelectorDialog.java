@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.ui;
 
 import com.intellij.icons.AllIcons;
@@ -402,8 +402,8 @@ public class ExternalProjectDataSelectorDialog extends DialogWrapper {
     }
 
     List<TreeNode> nodes = projectNode != null ? TreeUtil.listChildren(projectNode) : ContainerUtil.emptyList();
-    Collections.sort(nodes, (o1, o2) -> {
-      if(o1 instanceof DataNodeCheckedTreeNode && o2 instanceof DataNodeCheckedTreeNode) {
+    nodes.sort((o1, o2) -> {
+      if (o1 instanceof DataNodeCheckedTreeNode && o2 instanceof DataNodeCheckedTreeNode) {
         if (rootModuleComment.equals(((DataNodeCheckedTreeNode)o1).comment)) return -1;
         if (rootModuleComment.equals(((DataNodeCheckedTreeNode)o2).comment)) return 1;
         return StringUtil.naturalCompare(((DataNodeCheckedTreeNode)o1).text, ((DataNodeCheckedTreeNode)o2).text);

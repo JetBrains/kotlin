@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.util.ui.tree;
 
 import com.intellij.injected.editor.VirtualFileWindow;
@@ -802,7 +802,7 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
         renderValue(target, o, text);
         return text.toString();
       };
-      Collections.sort(values, (o1, o2) -> StringUtil.naturalCompare(toString.fun(o1), toString.fun(o2)));
+      values.sort((o1, o2) -> StringUtil.naturalCompare(toString.fun(o1), toString.fun(o2)));
     }
     for (T t : values) {
       group.add(choseAction.fun(t));
@@ -860,7 +860,7 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
 
     @Override
     public void fireTableDataChanged() {
-      Collections.sort(data, (o1, o2) -> StringUtil.naturalCompare(keyToString(o1.first), keyToString(o2.first)));
+      data.sort((o1, o2) -> StringUtil.naturalCompare(keyToString(o1.first), keyToString(o2.first)));
       super.fireTableDataChanged();
     }
   }

@@ -353,10 +353,10 @@ public abstract class AbstractListBuilder {
 
     SelectionInfo selection = storeSelection();
     if (myComparator != null) {
-      Collections.sort(resultDescriptors, myComparator);
+      resultDescriptors.sort(myComparator);
     }
     else {
-      Collections.sort(resultDescriptors, IndexComparator.INSTANCE);
+      resultDescriptors.sort(IndexComparator.INSTANCE);
     }
 
     if (shouldAddTopElement()) {

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.conversion.impl;
 
 import com.intellij.application.options.PathMacrosImpl;
@@ -530,7 +530,7 @@ public final class ConversionContextImpl implements ConversionContext {
       ComponentManagerSettings settings = getProjectFileVersionSettings();
       if (settings != null) {
         List<String> performedConversionsList = new ArrayList<>(performedConversions);
-        Collections.sort(performedConversionsList, String.CASE_INSENSITIVE_ORDER);
+        performedConversionsList.sort(String.CASE_INSENSITIVE_ORDER);
         Element element = JDomSerializationUtil.findOrCreateComponentElement(settings.getRootElement(), PROJECT_FILE_VERSION_COMPONENT_NAME);
         XmlSerializer.serializeInto(new ProjectFileVersionState(performedConversionsList), element);
       }

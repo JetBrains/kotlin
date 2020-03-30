@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.actions;
 
 import com.intellij.featureStatistics.FeatureUsageTracker;
@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public final class SelectInAction extends AnAction implements DumbAware {
@@ -118,7 +117,7 @@ public final class SelectInAction extends AnAction implements DumbAware {
       if (target instanceof CompositeSelectInTarget) {
         final ArrayList<SelectInTarget> subTargets = new ArrayList<>(((CompositeSelectInTarget)target).getSubTargets(mySelectInContext));
         if (subTargets.size() > 0) {
-          Collections.sort(subTargets, new SelectInManager.SelectInTargetComparator());
+          subTargets.sort(new SelectInManager.SelectInTargetComparator());
           return new SelectInActionsStep(subTargets, mySelectInContext);
         }
       }

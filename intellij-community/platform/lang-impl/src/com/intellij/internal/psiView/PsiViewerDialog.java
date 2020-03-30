@@ -540,7 +540,7 @@ public class PsiViewerDialog extends DialogWrapper implements DataProvider, Disp
       final Language baseLang = ((LanguageFileType)source).getLanguage();
       items.add(baseLang);
       List<Language> dialects = new ArrayList<>(baseLang.getDialects());
-      Collections.sort(dialects, LanguageUtil.LANGUAGE_COMPARATOR);
+      dialects.sort(LanguageUtil.LANGUAGE_COMPARATOR);
       items.addAll(dialects);
     }
     myDialectComboBox.setModel(new CollectionComboBoxModel<>(items));
@@ -562,7 +562,7 @@ public class PsiViewerDialog extends DialogWrapper implements DataProvider, Disp
       List<String> extensions = getAllExtensions((LanguageFileType)source);
       if (extensions.size() > 1) {
         ExtensionComparator comp = new ExtensionComparator(extensions.get(0));
-        Collections.sort(extensions, comp);
+        extensions.sort(comp);
         SortedComboBoxModel<String> model = new SortedComboBoxModel<>(comp);
         model.setAll(extensions);
         myExtensionComboBox.setModel(model);

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.services;
 
 import com.intellij.execution.ExecutionBundle;
@@ -137,7 +137,7 @@ class ServiceTreeView extends ServiceView {
     for (int i = 0; i < rows.length; i++) {
       objectRows.add(Pair.create(objects.get(i), rows[i]));
     }
-    Collections.sort(objectRows, Comparator.comparing(pair -> pair.second));
+    objectRows.sort(Comparator.comparing(pair -> pair.second));
     return ContainerUtil.mapNotNull(objectRows, pair -> ObjectUtils.tryCast(pair.first, ServiceViewItem.class));
   }
 

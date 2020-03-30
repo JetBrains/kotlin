@@ -211,7 +211,7 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
       Collections.sort(answer);
     }
     else {
-      Collections.sort(answer, Comparator.comparingInt(b -> b.index));
+      answer.sort(Comparator.comparingInt(b -> b.index));
     }
     return answer;
   }
@@ -353,7 +353,7 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
   private void writeExternal(Element element) {
     List<Bookmark> bookmarks = new ArrayList<>(myBookmarks.values());
     // store in reverse order so that loadExternal() will assign them correct indices
-    Collections.sort(bookmarks, Comparator.<Bookmark>comparingInt(o -> o.index).reversed());
+    bookmarks.sort(Comparator.<Bookmark>comparingInt(o -> o.index).reversed());
 
     for (Bookmark bookmark : bookmarks) {
       if (!bookmark.isValid()) continue;
@@ -421,7 +421,7 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
     List<Bookmark> bookmarksForDocument = new ArrayList<>(myBookmarks.get(file));
     if (bookmarksForDocument.isEmpty()) return null;
     int sign = next ? 1 : -1;
-    Collections.sort(bookmarksForDocument, (o1, o2) -> sign * (o1.getLine() - o2.getLine()));
+    bookmarksForDocument.sort((o1, o2) -> sign * (o1.getLine() - o2.getLine()));
     int caretLine = editor.getCaretModel().getLogicalPosition().line;
     for (Bookmark bookmark : bookmarksForDocument) {
       if (next && bookmark.getLine() > caretLine) return bookmark;

@@ -125,7 +125,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
   private static List<TemplateGroup> getSortedGroups(TemplateSettings templateSettings) {
     List<TemplateGroup> groups = new ArrayList<>(templateSettings.getTemplateGroups());
 
-    Collections.sort(groups, (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+    groups.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
     return groups;
   }
 
@@ -232,7 +232,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
     for (TemplateGroup group : groups) {
       result.addAll(group.getElements());
     }
-    Collections.sort(result, (o1, o2) -> {
+    result.sort((o1, o2) -> {
       final int groupsEqual = o1.getGroupName().compareToIgnoreCase(o2.getGroupName());
       if (groupsEqual != 0) {
         return groupsEqual;
@@ -941,7 +941,7 @@ public class TemplateListPanel extends JPanel implements Disposable {
 
   private void addTemplateNodes(TemplateGroup group, CheckedTreeNode groupNode) {
     List<TemplateImpl> templates = new ArrayList<>(group.getElements());
-    Collections.sort(templates, TEMPLATE_COMPARATOR);
+    templates.sort(TEMPLATE_COMPARATOR);
     for (final TemplateImpl template : templates) {
       myTemplateOptions.put(template, template.createOptions());
       myTemplateContext.put(template, template.createContext());

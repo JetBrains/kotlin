@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.packaging.impl.artifacts;
 
 import com.intellij.compiler.server.BuildManager;
@@ -117,7 +117,7 @@ public final class ArtifactManagerImpl extends ArtifactManager implements Persis
             artifactState.getPropertiesList().add(propertiesState);
           }
         }
-        Collections.sort(artifactState.getPropertiesList(), Comparator.comparing(ArtifactPropertiesState::getId));
+        artifactState.getPropertiesList().sort(Comparator.comparing(ArtifactPropertiesState::getId));
       }
       state.getArtifacts().add(artifactState);
     }

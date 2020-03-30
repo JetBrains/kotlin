@@ -20,7 +20,10 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 public class TodoTreeHelper {
   private final Project myProject;
@@ -135,7 +138,7 @@ public class TodoTreeHelper {
         }
       }
     }
-   Collections.sort(children, TodoFileDirAndModuleComparator.INSTANCE);
+   children.sort(TodoFileDirAndModuleComparator.INSTANCE);
    return children;
   }
 
