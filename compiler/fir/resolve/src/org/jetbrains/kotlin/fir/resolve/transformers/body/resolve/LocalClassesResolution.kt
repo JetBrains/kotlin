@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.fir.resolve.transformers.runTypeResolvePhaseForLocal
 import org.jetbrains.kotlin.fir.scopes.impl.createCurrentScopeList
 
 fun <F : FirClass<F>> F.runAllPhasesForLocalClass(
+    transformer: FirAbstractBodyResolveTransformer,
     components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
     resolutionMode: ResolutionMode
 ): F {
     if (this.resolvePhase > FirResolvePhase.RAW_FIR) return this
+    this.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
     val localClassesNavigationInfo = collectLocalClassesNavigationInfo()
     runSupertypeResolvePhaseForLocalClass(
         components.session,

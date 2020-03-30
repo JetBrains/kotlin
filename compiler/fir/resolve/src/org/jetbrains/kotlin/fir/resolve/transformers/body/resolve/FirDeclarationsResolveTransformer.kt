@@ -276,7 +276,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         context.storeClass(regularClass)
 
         if (regularClass.isLocal && regularClass !in context.targetedLocalClasses) {
-            return regularClass.runAllPhasesForLocalClass(components, data).compose()
+            return regularClass.runAllPhasesForLocalClass(transformer, components, data).compose()
         }
 
         return withTypeParametersOf(regularClass) {
@@ -315,7 +315,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         data: ResolutionMode
     ): CompositeTransformResult<FirStatement> {
         if (anonymousObject !in context.targetedLocalClasses) {
-            return anonymousObject.runAllPhasesForLocalClass(components, data).compose()
+            return anonymousObject.runAllPhasesForLocalClass(transformer, components, data).compose()
         }
         dataFlowAnalyzer.enterClass()
         val type = anonymousObject.defaultType()

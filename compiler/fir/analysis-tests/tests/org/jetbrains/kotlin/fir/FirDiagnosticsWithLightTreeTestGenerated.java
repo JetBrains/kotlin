@@ -607,6 +607,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/cfg"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("annotatedLocalClass.kt")
+        public void testAnnotatedLocalClass() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/cfg/annotatedLocalClass.kt");
+        }
+
         @TestMetadata("binaryOperations.kt")
         public void testBinaryOperations() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/binaryOperations.kt");
