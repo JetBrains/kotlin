@@ -215,7 +215,7 @@ val Operation.wasmTypedReturnMapping get() = returnType.wasmTypedReturnMapping()
 
 val Attribute.wasmTypedReturnMapping get() = type.wasmTypedReturnMapping()
 
-fun List<Arg>.wasmTypedMapping()
+fun List<Arg>.wasmTypedMapping():List<String>
     = this.map(Arg::wasmTypedMapping)
 
 // TODO: more complex return types, such as returning a pair of Ints
