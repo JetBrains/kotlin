@@ -6,6 +6,7 @@ import com.intellij.facet.ui.ValidationResult;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.impl.ProjectUtil;
+import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -116,7 +117,7 @@ public class ProjectSettingsStepBase<T> extends AbstractActionWithPanel implemen
   }
 
   protected final JButton createActionButton() {
-    JButton button = new JButton("Create");
+    JButton button = new JButton(IdeBundle.message("new.dir.project.create"));
     button.putClientProperty(DialogWrapper.DEFAULT_ACTION, Boolean.TRUE);
 
     myCreateButton = button;
