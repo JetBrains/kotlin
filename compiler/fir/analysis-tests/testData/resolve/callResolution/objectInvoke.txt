@@ -1,0 +1,13 @@
+FILE: objectInvoke.kt
+    public final object Bar : R|kotlin/Any| {
+        private constructor(): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun invoke(x: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        Q|Bar|.R|/Bar.invoke|(String(asd))
+    }

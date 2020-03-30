@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessExpressionBuilder
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.constructType
+import org.jetbrains.kotlin.fir.resolve.buildResolvedQualifierForClass
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.transformQualifiedAccessUsingSmartcastInfo
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirStaticScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
@@ -688,25 +687,30 @@ private fun BodyResolveComponents.createExplicitReceiverForInvoke(
     invokeBuiltinExtensionMode: Boolean,
     extensionReceiverExpression: FirExpression
 ): FirExpression {
-    val (name, typeRef) = when (val symbol = candidate.symbol) {
-        is FirCallableSymbol<*> -> {
-            symbol.callableId.callableName to returnTypeCalculator.tryCalculateReturnType(symbol.firUnsafe())
-        }
-        is FirRegularClassSymbol -> {
-            symbol.classId.shortClassName to buildResolvedTypeRef {
-                type = symbol.constructType(emptyArray(), isNullable = false)
-            }
-        }
+    return when (val symbol = candidate.symbol) {
+        is FirCallableSymbol<*> -> createExplicitReceiverForInvokeByCallable(
+            candidate, info, invokeBuiltinExtensionMode, extensionReceiverExpression, symbol
+        )
+        is FirRegularClassSymbol -> buildResolvedQualifierForClass(symbol, sourceElement = null)
         else -> throw AssertionError()
     }
+}
+
+private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
+    candidate: Candidate,
+    info: CallInfo,
+    invokeBuiltinExtensionMode: Boolean,
+    extensionReceiverExpression: FirExpression,
+    symbol: FirCallableSymbol<*>
+): FirExpression {
     return FirQualifiedAccessExpressionBuilder().apply {
         calleeReference = FirNamedReferenceWithCandidate(
             null,
-            name,
+            symbol.callableId.callableName,
             candidate
         )
         dispatchReceiver = candidate.dispatchReceiverExpression()
-        this.typeRef = typeRef
+        this.typeRef = returnTypeCalculator.tryCalculateReturnType(symbol.firUnsafe())
 
         if (!invokeBuiltinExtensionMode) {
             extensionReceiver = extensionReceiverExpression

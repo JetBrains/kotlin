@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 object A
 
 operator fun A.invoke(i: Int) = i

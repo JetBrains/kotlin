@@ -567,6 +567,29 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         }
     }
 
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/callResolution")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CallResolution extends AbstractFirDiagnosticsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCallResolution() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/callResolution"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("companionInvoke.kt")
+        public void testCompanionInvoke() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/companionInvoke.kt");
+        }
+
+        @TestMetadata("objectInvoke.kt")
+        public void testObjectInvoke() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/objectInvoke.kt");
+        }
+    }
+
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/cfg")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
-import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedReifiedParameterReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -210,22 +209,7 @@ class FirCallResolver(
 
         when {
             referencedSymbol is FirClassLikeSymbol<*> -> {
-                val classId = referencedSymbol.classId
-                return buildResolvedQualifier {
-                    source = nameReference.source
-                    packageFqName = classId.packageFqName
-                    relativeClassFqName = classId.relativeClassName
-                    safe = false
-                    typeArguments.addAll(qualifiedAccess.typeArguments)
-                    symbol = referencedSymbol
-                }.apply {
-                    resultType = if (classId.isLocal) {
-                        typeForQualifierByDeclaration(referencedSymbol.fir, resultType, session)
-                            ?: session.builtinTypes.unitType
-                    } else {
-                        typeForQualifier(this)
-                    }
-                }
+                return buildResolvedQualifierForClass(referencedSymbol, nameReference.source, qualifiedAccess.typeArguments)
             }
             referencedSymbol is FirTypeParameterSymbol && referencedSymbol.fir.isReified -> {
                 return buildResolvedReifiedParameterReference {
