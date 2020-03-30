@@ -936,21 +936,18 @@ class KotlinTypeMapper @JvmOverloads constructor(
     private fun forceBoxedReturnType(descriptor: FunctionDescriptor): Boolean {
         if (isBoxMethodForInlineClass(descriptor)) return true
 
-        return isJvmPrimitive(descriptor.returnType!!) &&
-                getAllOverriddenDescriptors(descriptor).any { !isJvmPrimitive(it.returnType!!) }
+        return isJvmPrimitiveOrInlineClass(descriptor.returnType!!) &&
+                getAllOverriddenDescriptors(descriptor).any { !isJvmPrimitiveOrInlineClass(it.returnType!!) }
     }
+
+    private fun isJvmPrimitiveOrInlineClass(kotlinType: KotlinType) =
+        KotlinBuiltIns.isPrimitiveType(kotlinType) || kotlinType.isInlineClassType()
 
     private fun isBoxMethodForInlineClass(descriptor: FunctionDescriptor): Boolean {
         val containingDeclaration = descriptor.containingDeclaration
         return containingDeclaration.isInlineClass() &&
                 descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED &&
                 descriptor.name == InlineClassDescriptorResolver.BOX_METHOD_NAME
-    }
-
-    private fun isJvmPrimitive(kotlinType: KotlinType): Boolean {
-        if (KotlinBuiltIns.isPrimitiveType(kotlinType)) return true
-
-        return kotlinType.isInlineClassType() && !kotlinType.isError && AsmUtil.isPrimitive(mapInlineClassType(kotlinType))
     }
 
     fun mapFieldSignature(backingFieldType: KotlinType, propertyDescriptor: PropertyDescriptor): String? {

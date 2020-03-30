@@ -88,6 +88,6 @@ fun <Signature> generateBridgesForFunctionDescriptorForJvm(
     descriptor: FunctionDescriptor,
     signature: (FunctionDescriptor) -> Signature,
     state: GenerationState
-): Set<Bridge<Signature>> {
+): Set<Bridge<Signature, DescriptorBasedFunctionHandleForJvm>> {
     return generateBridges(DescriptorBasedFunctionHandleForJvm(descriptor, state)) { signature(it.descriptor) }
 }
