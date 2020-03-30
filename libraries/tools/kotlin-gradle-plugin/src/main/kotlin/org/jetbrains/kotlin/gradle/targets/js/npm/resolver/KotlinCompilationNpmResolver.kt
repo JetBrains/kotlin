@@ -19,12 +19,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
+import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
-import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
-import org.jetbrains.kotlin.gradle.targets.js.npm.fixSemver
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.CompilationResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
@@ -317,7 +314,7 @@ internal class KotlinCompilationNpmResolver(
             }
 
             importedExternalGradleDependencies.forEach {
-                packageJson.dependencies[it.name] = it.version
+                packageJson.dependencies[it.name] = fileVersion(it.path)
             }
 
             val dependencies = mutableMapOf<String, String>()
