@@ -256,7 +256,6 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
             val file = File(ideaPathContext.substituteWithValues(filePath)).canonicalFile
             val url = comboPathContext.getUrlWithVariables(file)
             val path = comboPathContext.substituteWithVariables(file)
-            //println("url: '$url'")
             val newModule = if (path == "\$PROJECT_DIR\$/intellij/$ultimateMainImlFileName") {
                 val newPath = "\$PROJECT_DIR\$/$comboUltimateMainImlFile"
                 createModuleElement("file://$newPath", newPath)
