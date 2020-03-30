@@ -245,8 +245,8 @@ internal class KotlinCompilationNpmResolver(
         @get:Input
         val internalDependencies: Collection<String>,
 
-        @get:Input
-        val internalCompositeDependencies: Collection<String>,
+        @get:InputFiles
+        val internalCompositeDependencies: Collection<File>,
 
         @get:InputFiles
         val externalGradleDependencies: Collection<File>,
@@ -265,7 +265,7 @@ internal class KotlinCompilationNpmResolver(
         val inputs: PackageJsonProducerInputs
             get() = PackageJsonProducerInputs(
                 internalDependencies.map { it.npmProject.name },
-                internalCompositeDependencies.map { it.includedBuild.projectDir.canonicalPath },
+                internalCompositeDependencies.flatMap { it.getPackages() },
                 externalGradleDependencies.map { it.artifact.file },
                 externalNpmDependencies.map { "${it.scope} ${it.key}:${it.version}" }
             )
@@ -279,23 +279,15 @@ internal class KotlinCompilationNpmResolver(
                 resolver.gradleNodeModules.get(it.dependency, it.artifact.file)
             }
 
-            val compositeDependencies = internalCompositeDependencies.mapNotNull { dependency ->
-                val packages = dependency.includedBuild
-                    .projectDir
-                    .resolve(nodeJs.projectPackagesDir.relativeTo(nodeJs.rootProject.rootDir))
-                packages
-                    .list()
-                    ?.map { fileName ->
-                        packages.resolve(fileName).resolve(PACKAGE_JSON)
-                    }
-                    ?.map { file ->
+            val compositeDependencies = internalCompositeDependencies.flatMap { dependency ->
+                dependency.getPackages()
+                    .map { file ->
                         resolver.compositeNodeModules.get(
                             dependency.dependency,
                             file
                         )
                     }
             }
-                .flatten()
                 .filterNotNull()
 
             val packageJson = PackageJson(
@@ -351,6 +343,16 @@ internal class KotlinCompilationNpmResolver(
                 externalNpmDependencies,
                 packageJson
             )
+        }
+
+        private fun CompositeDependency.getPackages(): List<File> {
+            return includedBuild
+                .projectDir
+                .resolve(nodeJs.projectPackagesDir.relativeTo(nodeJs.rootProject.rootDir))
+                .list()
+                ?.map(::File)
+                ?.map { it.resolve(PACKAGE_JSON) }
+                ?: emptyList()
         }
 
         // TODO: real versions conflict resolution
