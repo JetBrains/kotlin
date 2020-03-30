@@ -398,6 +398,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         annotationCall.configure {
             +field("useSiteTarget", annotationUseSiteTargetType, nullable = true)
             +field("annotationTypeRef", typeRef)
+            +booleanField("resolved", withReplace = true)
         }
 
         arraySetCall.configure {
