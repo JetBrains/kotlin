@@ -308,8 +308,7 @@ class KotlinCodeBlockModificationListener(project: Project) : PsiTreeChangePrepr
             KtScriptInitializer::class.java
         )
 
-        fun getInstance(project: Project): KotlinCodeBlockModificationListener =
-            project.getServiceSafe(KotlinCodeBlockModificationListener::class.java)
+        fun getInstance(project: Project): KotlinCodeBlockModificationListener = project.getServiceSafe()
     }
 }
 

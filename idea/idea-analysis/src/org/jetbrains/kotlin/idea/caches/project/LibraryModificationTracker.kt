@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.util.application.getServiceSafe
 class LibraryModificationTracker(project: Project) : SimpleModificationTracker() {
     companion object {
         @JvmStatic
-        fun getInstance(project: Project) = project.getServiceSafe(LibraryModificationTracker::class.java)
+        fun getInstance(project: Project): LibraryModificationTracker = project.getServiceSafe()
     }
 
     init {

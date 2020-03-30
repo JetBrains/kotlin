@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 class KotlinCodeHintsModel(val project: Project) : EditorFactoryListener {
     companion object {
-        fun getInstance(project: Project): KotlinCodeHintsModel = project.getServiceSafe(KotlinCodeHintsModel::class.java)
+        fun getInstance(project: Project): KotlinCodeHintsModel = project.getServiceSafe()
     }
 
     private class DocumentExtensionInfoModel(val document: Document) {

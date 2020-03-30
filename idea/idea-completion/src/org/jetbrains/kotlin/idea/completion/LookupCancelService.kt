@@ -86,7 +86,7 @@ class LookupCancelService {
     private var lastReminiscence: Reminiscence? = null
 
     companion object {
-        fun getInstance(project: Project): LookupCancelService = project.getServiceSafe(LookupCancelService::class.java)
+        fun getInstance(project: Project): LookupCancelService = project.getServiceSafe()
 
         fun getServiceIfCreated(project: Project): LookupCancelService? = project.getServiceIfCreated(LookupCancelService::class.java)
 

@@ -46,8 +46,7 @@ class CompletionBindingContextProvider(project: Project) {
     internal var TEST_LOG: StringBuilder? = null
 
     companion object {
-        fun getInstance(project: Project): CompletionBindingContextProvider =
-            project.getServiceSafe(CompletionBindingContextProvider::class.java)
+        fun getInstance(project: Project): CompletionBindingContextProvider = project.getServiceSafe()
 
         var ENABLED = true
     }

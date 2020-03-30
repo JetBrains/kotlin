@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.idea.script
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionSourceAsContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
+import org.jetbrains.kotlin.idea.util.application.executeOnPooledThread
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -100,7 +100,7 @@ abstract class AsyncScriptDefinitionsContributor(protected val project: Project)
                     if (isHeadless) {
                         // If new script definitions found, then ScriptDefinitionsManager.reloadDefinitionsBy should be called
                         // This may cause deadlock because Task.Backgroundable.queue executes task synchronously in headless mode
-                        ApplicationManager.getApplication().executeOnPooledThread {
+                        executeOnPooledThread {
                             ScriptDefinitionsManager.getInstance(project).reloadDefinitionsBy(this@AsyncScriptDefinitionsContributor)
                         }
                     } else {
