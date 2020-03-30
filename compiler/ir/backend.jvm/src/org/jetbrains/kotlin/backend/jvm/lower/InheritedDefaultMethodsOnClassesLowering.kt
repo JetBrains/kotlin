@@ -153,7 +153,7 @@ private class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : Ir
 
         if (!callee.hasInterfaceParent() ||
             callee.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
-            callee.isCompiledToJvmDefault(context.state.jvmDefaultMode)
+            callee.isSimpleFunctionCompiledToJvmDefault(context.state.jvmDefaultMode)
         ) {
             return super.visitCall(expression)
         }
@@ -171,14 +171,19 @@ private class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : Ir
     }
 }
 
-private fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod(jvmDefaultMode: JvmDefaultMode) =
-    resolveFakeOverride()?.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB ||
-            origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
+private fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod(jvmDefaultMode: JvmDefaultMode): Boolean {
+    if (resolveFakeOverride()?.run {
+            origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB || isCompiledToJvmDefault(
+                jvmDefaultMode
+            )
+        } != false) return true
+
+    return origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
             hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME) ||
-            isCompiledToJvmDefault(jvmDefaultMode) ||
             (name.asString() == "clone" &&
                     parent.safeAs<IrClass>()?.fqNameWhenAvailable?.asString() == "kotlin.Cloneable" &&
                     valueParameters.isEmpty())
+}
 
 internal val interfaceObjectCallsPhase = makeIrFilePhase(
     lowering = ::InterfaceObjectCallsLowering,

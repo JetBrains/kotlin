@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -78,7 +77,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                  *    - the implementation is private, or belongs to java.lang.Object,
                  *      or is a stub for function with default parameters ($default)
                  *    - we're in -Xjvm-default=compatibility|all-compatibility mode, in which case we go via
-                 *      accessors on the parent class rather than the DefaultImpls if inherited method compiled to JVM default
+                 *      accessors on the parent class rather than the DefaultImpls if inherited method is compiled to JVM default
                  *    - we're in -Xjvm-default=enable|all mode, and we have that default implementation,
                  *      in which case we simply leave it.
                  *

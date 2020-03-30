@@ -53,6 +53,11 @@ fun CallableMemberDescriptor.isCompiledToJvmDefaultIfNoAbstract(jvmDefault: JvmD
 
     val clazz = directMember.containingDeclaration
 
+//  TODO add checks after fixes in diagnostics
+//    assert(this.kind.isReal && isInterface(clazz) && modality != Modality.ABSTRACT) {
+//        "`isCompiledToJvmDefault` should be called on non-fakeoverrides and non-abstract methods from interfaces $this"
+//    }
+
     if (directMember.annotations.hasAnnotation(JVM_DEFAULT_FQ_NAME)) return true
     if (clazz !is DeserializedClassDescriptor) return jvmDefault.forAllMethodsWithBody
     return JvmProtoBufUtil.isNewPlaceForBodyGeneration(clazz.classProto)
