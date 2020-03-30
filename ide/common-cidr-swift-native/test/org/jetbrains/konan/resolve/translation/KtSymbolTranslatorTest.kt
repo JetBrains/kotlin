@@ -63,6 +63,21 @@ class KtSymbolTranslatorTest : KotlinLightCodeInsightFixtureTestCase() {
         assertFalse("state not loaded", translatedSymbol.stateLoaded)
     }
 
-    private fun configure(code: String): KtFile =
-        myFixture.configureByText("toTranslate.kt", code) as KtFile
+    fun `test stop translating after invalidation by adjacent file`() {
+        val file = configure("class A")
+
+        val translator = KtOCSymbolTranslator(project)
+        val translatedSymbols = translator.translate(file, TestTarget).toList()
+        val translatedSymbol = translatedSymbols.single() as KtOCInterfaceSymbol
+        assertFalse("state already loaded", translatedSymbol.stateLoaded)
+
+        configure("typealias B = Unit", fileName = "other")
+
+        assertEquals("MyModuleA", translatedSymbol.name)
+        assertEquals("", translatedSymbol.superType.name)
+        assertFalse("state not loaded", translatedSymbol.stateLoaded)
+    }
+
+    private fun configure(code: String, fileName: String = "toTranslate"): KtFile =
+        myFixture.configureByText("$fileName.kt", code) as KtFile
 }
