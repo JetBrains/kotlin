@@ -14,4 +14,5 @@ kotlin.target.nodejs()
 
 dependencies {
     implementation(kotlin("stdlib-js"))
+    implementation(npm("async", "2.6.2"))
 }

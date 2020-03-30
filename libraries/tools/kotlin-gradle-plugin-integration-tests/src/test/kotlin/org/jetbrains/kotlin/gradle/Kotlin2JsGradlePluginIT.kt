@@ -2,6 +2,9 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
+import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
 import org.jetbrains.kotlin.gradle.util.getFileByName
@@ -570,9 +573,21 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
 
         libProject.projectDir.copyRecursively(appProject.projectDir.resolve(libProject.projectDir.name))
 
+        fun Project.asyncVersion(rootModulePath: String, moduleName: String): String =
+            NpmProjectModules(projectDir.resolve(rootModulePath))
+                .require(moduleName)
+                .let { File(it).parentFile.parentFile.resolve(NpmProject.PACKAGE_JSON) }
+                .let { fromSrcPackageJson(it) }
+                .let { it!!.version }
+
         with(appProject) {
             build("build") {
                 assertSuccessful()
+                val appAsyncVersion = asyncVersion("build/js/node_modules/app", "async")
+                assertEquals("3.2.0", appAsyncVersion)
+
+                val libAsyncVersion = asyncVersion("build/js/node_modules/lib2", "async")
+                assertEquals("2.6.2", libAsyncVersion)
             }
         }
     }
