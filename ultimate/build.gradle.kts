@@ -125,8 +125,7 @@ dependencies {
     }
     testCompile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
-    testRuntime(project(":native:frontend.native")) { isTransitive = false }
-    testRuntime(project(":native:kotlin-native-utils")) { isTransitive = false }
+    testRuntime(project(":native:frontend.native"))
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":kotlin-script-runtime"))
     testRuntime(project(":plugins:android-extensions-ide")) { isTransitive = false }
