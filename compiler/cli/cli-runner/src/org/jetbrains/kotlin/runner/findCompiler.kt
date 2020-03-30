@@ -9,7 +9,8 @@ import java.io.File
 import java.net.URL
 
 fun findCompilerJar(classFromJarInTheSameLocation: Class<*>, kotlinHome: File): List<File> {
-    val baseDir = (tryGetResourcePathForClass(classFromJarInTheSameLocation)?.parentFile ?: kotlinHome).takeIf { it.isDirectory }
+    val baseDir = (tryGetResourcePathForClass(classFromJarInTheSameLocation)?.takeUnless { it.isDirectory }?.parentFile
+        ?: kotlinHome).takeIf { it.isDirectory }
         ?: return emptyList()
     val compilerJars = baseDir.listFiles { f: File ->
         COMPILER_JARS.any { expected ->
