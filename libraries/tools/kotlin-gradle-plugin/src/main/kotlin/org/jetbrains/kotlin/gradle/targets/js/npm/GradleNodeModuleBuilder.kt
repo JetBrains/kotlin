@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ResolvedDependency
@@ -62,11 +61,6 @@ internal class GradleNodeModuleBuilder(
         }
     }
 }
-
-internal fun fromSrcPackageJson(packageJson: File?): PackageJson? =
-    packageJson?.reader()?.use {
-        Gson().fromJson(it, PackageJson::class.java)
-    }
 
 private val File.isCompatibleArchive
     get() = isFile
