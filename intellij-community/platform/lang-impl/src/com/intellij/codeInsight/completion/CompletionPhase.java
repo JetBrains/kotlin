@@ -9,16 +9,15 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.CaretModel;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.ex.FocusChangeListenerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Pair;
+import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -35,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.event.FocusEvent;
-import java.util.EventObject;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -238,64 +237,39 @@ public abstract class CompletionPhase implements Disposable {
 
   public static abstract class ZombiePhase extends CompletionPhase {
 
-    protected ZombiePhase(@Nullable final LightweightHint hint, final CompletionProgressIndicator indicator) {
+    ZombiePhase(CompletionProgressIndicator indicator) {
       super(indicator);
-      @NotNull Editor editor = indicator.getEditor();
-      final HintListener hintListener = new HintListener() {
-        @Override
-        public void hintHidden(@NotNull final EventObject event) {
-          CompletionServiceImpl.setCompletionPhase(NoCompletion);
-        }
-      };
-      final DocumentListener documentListener = new DocumentListener() {
+    }
+
+    void expireOnAnyEditorChange(@NotNull Editor editor) {
+      editor.getDocument().addDocumentListener(new DocumentListener() {
         @Override
         public void beforeDocumentChange(@NotNull DocumentEvent e) {
           CompletionServiceImpl.setCompletionPhase(NoCompletion);
         }
-      };
-      final SelectionListener selectionListener = new SelectionListener() {
+      }, this);
+      editor.getSelectionModel().addSelectionListener(new SelectionListener() {
         @Override
         public void selectionChanged(@NotNull SelectionEvent e) {
           CompletionServiceImpl.setCompletionPhase(NoCompletion);
         }
-      };
-      final CaretListener caretListener = new CaretListener() {
+      }, this);
+      editor.getCaretModel().addCaretListener(new CaretListener() {
         @Override
         public void caretPositionChanged(@NotNull CaretEvent e) {
           CompletionServiceImpl.setCompletionPhase(NoCompletion);
         }
-      };
-
-      final Document document = editor.getDocument();
-      final SelectionModel selectionModel = editor.getSelectionModel();
-      final CaretModel caretModel = editor.getCaretModel();
-
-
-      if (hint != null) {
-        hint.addHintListener(hintListener);
-      }
-      document.addDocumentListener(documentListener, this);
-      selectionModel.addSelectionListener(selectionListener, this);
-      caretModel.addCaretListener(caretListener, this);
-
-      Disposer.register(this, new Disposable() {
-        @Override
-        public void dispose() {
-          if (hint != null) {
-            hint.removeHintListener(hintListener);
-          }
-        }
-      });
+      }, this);
     }
-
   }
 
   public static class InsertedSingleItem extends ZombiePhase {
     public final Runnable restorePrefix;
 
-    public InsertedSingleItem(CompletionProgressIndicator indicator, Runnable restorePrefix) {
-      super(null, indicator);
+    InsertedSingleItem(CompletionProgressIndicator indicator, Runnable restorePrefix) {
+      super(indicator);
       this.restorePrefix = restorePrefix;
+      expireOnAnyEditorChange(indicator.getEditor());
     }
 
     @Override
@@ -309,8 +283,14 @@ public abstract class CompletionPhase implements Disposable {
 
   }
   public static class NoSuggestionsHint extends ZombiePhase {
-    public NoSuggestionsHint(@Nullable LightweightHint hint, CompletionProgressIndicator indicator) {
-      super(hint, indicator);
+    NoSuggestionsHint(@Nullable LightweightHint hint, CompletionProgressIndicator indicator) {
+      super(indicator);
+      expireOnAnyEditorChange(indicator.getEditor());
+      if (hint != null) {
+        HintListener hintListener = event -> CompletionServiceImpl.setCompletionPhase(NoCompletion);
+        hint.addHintListener(hintListener);
+        Disposer.register(this, () -> hint.removeHintListener(hintListener));
+      }
     }
 
     @Override
@@ -319,6 +299,35 @@ public abstract class CompletionPhase implements Disposable {
       return indicator.nextInvocationCount(time, repeated);
     }
 
+  }
+
+  public static class EmptyAutoPopup extends ZombiePhase {
+    private final ActionTracker myTracker;
+    private final Editor myEditor;
+    private final Set<Pair<Integer, ElementPattern<String>>> myRestartingPrefixConditions;
+
+    EmptyAutoPopup(Editor editor, Set<Pair<Integer, ElementPattern<String>>> restartingPrefixConditions) {
+      super(null);
+      myTracker = new ActionTracker(editor, this);
+      myEditor = editor;
+      myRestartingPrefixConditions = restartingPrefixConditions;
+    }
+
+    public boolean allowsSkippingNewAutoPopup(@NotNull Editor editor, char toType) {
+      if (myEditor == editor &&
+          !myTracker.hasAnythingHappened() &&
+          !CompletionProgressIndicator.shouldRestartCompletion(editor, myRestartingPrefixConditions, String.valueOf(toType))) {
+        myTracker.ignoreCurrentDocumentChange();
+        return true;
+      }
+      return false;
+    }
+
+    @Override
+    public int newCompletionStarted(int time, boolean repeated) {
+      CompletionServiceImpl.setCompletionPhase(NoCompletion);
+      return time;
+    }
   }
 
 }

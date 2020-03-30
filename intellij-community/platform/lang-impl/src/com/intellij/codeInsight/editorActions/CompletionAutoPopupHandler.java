@@ -2,6 +2,8 @@
 package com.intellij.codeInsight.editorActions;
 
 import com.intellij.codeInsight.AutoPopupController;
+import com.intellij.codeInsight.completion.CompletionPhase;
+import com.intellij.codeInsight.completion.CompletionPhase.EmptyAutoPopup;
 import com.intellij.codeInsight.completion.impl.CompletionServiceImpl;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
@@ -27,9 +29,10 @@ public class CompletionAutoPopupHandler extends TypedHandlerDelegate {
   public Result checkAutoPopup(char charTyped, @NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file) {
     LookupImpl lookup = (LookupImpl)LookupManager.getActiveLookup(editor);
 
+    CompletionPhase phase = CompletionServiceImpl.getCompletionPhase();
     if (LOG.isDebugEnabled()) {
       LOG.debug("checkAutoPopup: character=" + charTyped + ";");
-      LOG.debug("phase=" + CompletionServiceImpl.getCompletionPhase());
+      LOG.debug("phase=" + phase);
       LOG.debug("lookup=" + lookup);
       LOG.debug("currentCompletion=" + CompletionServiceImpl.getCompletionService().getCurrentCompletion());
     }
@@ -42,6 +45,10 @@ public class CompletionAutoPopupHandler extends TypedHandlerDelegate {
     }
 
     if (Character.isLetterOrDigit(charTyped) || charTyped == '_') {
+      if (phase instanceof EmptyAutoPopup && ((EmptyAutoPopup)phase).allowsSkippingNewAutoPopup(editor, charTyped)) {
+        return Result.CONTINUE;
+      }
+
       AutoPopupController.getInstance(project).scheduleAutoPopup(editor);
       return Result.STOP;
     }

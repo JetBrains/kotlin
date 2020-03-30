@@ -597,11 +597,13 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
           LOG.assertTrue(current == null, current + "!=" + this);
 
           handleEmptyLookup(!((CompletionPhase.BgCalculation)phase).modifiersChanged);
+        } else {
+          CompletionServiceImpl.setCompletionPhase(new CompletionPhase.EmptyAutoPopup(myEditor, myRestartingPrefixConditions));
         }
       }
       else {
         updateLookup();
-        if (CompletionServiceImpl.getCompletionPhase() != CompletionPhase.NoCompletion) {
+        if (!CompletionServiceImpl.isPhase(CompletionPhase.NoCompletion.getClass(), CompletionPhase.EmptyAutoPopup.class)) {
           CompletionServiceImpl.setCompletionPhase(new CompletionPhase.ItemsCalculated(this));
         }
       }
@@ -625,7 +627,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
 
       myLookup.hideLookup(false);
       LOG.assertTrue(CompletionServiceImpl.getCompletionService().getCurrentCompletion() == null);
-      CompletionServiceImpl.setCompletionPhase(CompletionPhase.NoCompletion);
+      CompletionServiceImpl.setCompletionPhase(new CompletionPhase.EmptyAutoPopup(myEditor, myRestartingPrefixConditions));
       return true;
     }
     return false;
@@ -703,20 +705,30 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
       return;
     }
 
-    final CharSequence text = myEditor.getDocument().getCharsSequence();
-    for (Pair<Integer, ElementPattern<String>> pair : myRestartingPrefixConditions) {
-      int start = pair.first;
-      if (caretOffset >= start && start >= 0 && caretOffset <= text.length()) {
-        final String newPrefix = text.subSequence(start, caretOffset).toString();
-        if (pair.second.accepts(newPrefix)) {
-          scheduleRestart();
-          myRestartingPrefixConditions.clear();
-          return;
-        }
-      }
+    if (shouldRestartCompletion(myEditor, myRestartingPrefixConditions, "")) {
+      scheduleRestart();
+      myRestartingPrefixConditions.clear();
+      return;
     }
 
     hideAutopopupIfMeaningless();
+  }
+
+  static boolean shouldRestartCompletion(@NotNull Editor editor,
+                                         @NotNull Set<Pair<Integer, ElementPattern<String>>> restartingPrefixConditions,
+                                         @NotNull String toAppend) {
+    int caretOffset = editor.getCaretModel().getOffset();
+    CharSequence text = editor.getDocument().getCharsSequence();
+    for (Pair<Integer, ElementPattern<String>> pair : restartingPrefixConditions) {
+      int start = pair.first;
+      if (caretOffset >= start && start >= 0 && caretOffset <= text.length()) {
+        String newPrefix = text.subSequence(start, caretOffset).toString() + toAppend;
+        if (pair.second.accepts(newPrefix)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   @Override
