@@ -60,6 +60,7 @@ open class KotlinPackageJsonTask : DefaultTask() {
             val rootClean = project.rootProject.tasks.getByName(BasePlugin.CLEAN_TASK_NAME)
             val npmInstallTask = nodeJs.npmInstallTask
             val packageJsonTaskName = npmProject.packageJsonTaskName
+            val packageJsonUmbrella = project.rootProject.tasks.named(PACKAGE_JSON_UMBRELLA_TASK_NAME)
             val packageJsonTask = project.registerTask<KotlinPackageJsonTask>(packageJsonTaskName) { task ->
                 task.nodeJs = nodeJs
                 task.compilation = compilation
@@ -67,8 +68,10 @@ open class KotlinPackageJsonTask : DefaultTask() {
                 task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
 
                 task.dependsOn(target.project.provider { task.findDependentTasks() })
-                task.dependsOn(project.rootProject.tasks.named(PACKAGE_JSON_UMBRELLA_TASK_NAME))
                 task.mustRunAfter(rootClean)
+            }
+            packageJsonUmbrella.configure { task ->
+                task.inputs.file(packageJsonTask.map { it.packageJson })
             }
 
             npmInstallTask.mustRunAfter(rootClean, packageJsonTask)
