@@ -549,6 +549,35 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
     }
 
     @Test
+    fun testJsCompositeBuild() {
+        val rootProjectName = "js-composite-build"
+        val appProject = transformProjectWithPluginsDsl(
+            projectName = "app",
+            directoryPrefix = rootProjectName,
+            wrapperVersion = GradleVersionRequired.AtLeast("5.3")
+        )
+
+        val libProject = transformProjectWithPluginsDsl(
+            projectName = "lib",
+            directoryPrefix = rootProjectName,
+            wrapperVersion = GradleVersionRequired.AtLeast("5.3")
+        )
+
+        if (irBackend) {
+            libProject.gradleProperties().appendText(jsCompilerType(KotlinJsCompilerType.IR))
+            appProject.gradleProperties().appendText(jsCompilerType(KotlinJsCompilerType.IR))
+        }
+
+        libProject.projectDir.copyRecursively(appProject.projectDir.resolve(libProject.projectDir.name))
+
+        with(appProject) {
+            build("build") {
+                assertSuccessful()
+            }
+        }
+    }
+
+    @Test
     fun testBrowserDistribution() = with(Project("kotlin-js-browser-project", GradleVersionRequired.AtLeast("4.10.2"))) {
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
