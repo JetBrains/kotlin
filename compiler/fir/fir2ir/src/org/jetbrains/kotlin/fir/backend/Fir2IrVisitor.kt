@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.backend.generators.CallGenerator
+import org.jetbrains.kotlin.fir.backend.generators.CallAndReferenceGenerator
 import org.jetbrains.kotlin.fir.backend.generators.ClassMemberGenerator
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -67,7 +67,7 @@ class Fir2IrVisitor(
 
     private val memberGenerator = ClassMemberGenerator(components, this, conversionScope, fakeOverrideMode)
 
-    private val callGenerator = CallGenerator(components, this, conversionScope)
+    private val callGenerator = CallAndReferenceGenerator(components, this, conversionScope)
 
     private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }
 

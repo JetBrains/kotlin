@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.defaultType
 
-internal class CallGenerator(
+internal class CallAndReferenceGenerator(
     private val components: Fir2IrComponents,
     private val visitor: Fir2IrVisitor,
     private val conversionScope: Fir2IrConversionScope
