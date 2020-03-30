@@ -172,9 +172,10 @@ class Strings {
 
     @Sample
     fun partition() {
-        val string = "Hello"
-        val result = string.partition { it == 'l' }
-        assertPrints(result, "(ll, Heo)")
+        fun isVowel(c: Char) = "aeuio".contains(c, ignoreCase = true)
+        val string = "Discussion"
+        val result = string.partition(::isVowel)
+        assertPrints(result, "(iuio, Dscssn)")
     }
 
     @Sample

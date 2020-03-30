@@ -150,8 +150,9 @@ class Arrays {
         @Sample
         fun partitionArrayOfPrimitives() {
             val array = intArrayOf(1, 2, 3, 4, 5)
-            val partition = array.partition { it % 2 == 0 }
-            assertPrints(partition, "([2, 4], [1, 3, 5])")
+            val (even, odd) = array.partition { it % 2 == 0 }
+            assertPrints(even, "[2, 4]")
+            assertPrints(odd, "[1, 3, 5]")
         }
     }
 
