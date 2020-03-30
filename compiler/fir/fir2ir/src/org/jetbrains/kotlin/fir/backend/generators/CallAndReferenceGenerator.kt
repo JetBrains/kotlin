@@ -52,32 +52,30 @@ internal class CallAndReferenceGenerator(
             when (symbol) {
                 is IrPropertySymbol -> {
                     IrPropertyReferenceImpl(
-                        startOffset, endOffset, type, symbol, 0,
+                        startOffset, endOffset, type, symbol,
+                        typeArgumentsCount = symbol.owner.getter?.typeParameters?.size ?: 0,
                         symbol.owner.backingField?.symbol,
                         symbol.owner.getter?.symbol,
                         symbol.owner.setter?.symbol
-                    ).apply {
-                        if (callableReferenceAccess.explicitReceiver !is FirResolvedQualifier) {
-                            applyReceivers(callableReferenceAccess)
-                        }
-                    }
+                    )
                 }
                 is IrFunctionSymbol -> {
                     IrFunctionReferenceImpl(
                         startOffset, endOffset, type, symbol,
-                        typeArgumentsCount = 0,
+                        typeArgumentsCount = symbol.owner.typeParameters.size,
                         reflectionTarget = symbol
-                    ).apply {
-                        if (callableReferenceAccess.explicitReceiver !is FirResolvedQualifier) {
-                            applyReceivers(callableReferenceAccess)
-                        }
-                    }
+                    )
                 }
                 else -> {
                     IrErrorCallExpressionImpl(
                         startOffset, endOffset, type, "Unsupported callable reference: ${callableReferenceAccess.render()}"
                     )
                 }
+            }
+        }.apply {
+            applyTypeArguments(callableReferenceAccess)
+            if (callableReferenceAccess.explicitReceiver !is FirResolvedQualifier) {
+                applyReceivers(callableReferenceAccess)
             }
         }
     }
@@ -300,7 +298,7 @@ internal class CallAndReferenceGenerator(
 
     private fun IrExpression.applyTypeArguments(access: FirQualifiedAccess): IrExpression {
         return when (this) {
-            is IrCallWithIndexedArgumentsBase -> {
+            is IrMemberAccessExpressionBase -> {
                 val argumentsCount = access.typeArguments.size
                 if (argumentsCount <= typeArgumentsCount) {
                     apply {

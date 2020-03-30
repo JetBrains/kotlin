@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 inline fun <TT> id(x: TT): TT = x
 inline fun <TT> String.extId(x: TT): String = this
 

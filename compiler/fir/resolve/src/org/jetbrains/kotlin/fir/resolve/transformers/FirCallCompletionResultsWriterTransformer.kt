@@ -106,6 +106,8 @@ class FirCallCompletionResultsWriterTransformer(
     ): CompositeTransformResult<FirStatement> {
         val calleeReference =
             callableReferenceAccess.calleeReference as? FirNamedReferenceWithCandidate ?: return callableReferenceAccess.compose()
+        val subCandidate = calleeReference.candidate
+        val typeArguments = computeTypeArguments(callableReferenceAccess, subCandidate)
 
         val typeRef = callableReferenceAccess.typeRef as FirResolvedTypeRef
 
@@ -114,6 +116,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         val resultType = typeRef.withReplacedConeType(finalType)
         callableReferenceAccess.replaceTypeRef(resultType)
+        callableReferenceAccess.replaceTypeArguments(typeArguments)
 
         return callableReferenceAccess.transformCalleeReference(
             StoreCalleeReference,
