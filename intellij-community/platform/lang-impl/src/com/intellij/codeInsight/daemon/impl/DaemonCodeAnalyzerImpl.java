@@ -652,7 +652,6 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
    * @param includeFixRange states whether the rage of a fix associated with an info should be taken into account during the range checking
    * @param highestPriorityOnly states whether to include all infos or only the ones with the highest HighlightSeverity
    * @param minSeverity the minimum HighlightSeverity starting from which infos are considered for collection
-   * @return
    */
   @Nullable
   public HighlightInfo findHighlightsByOffset(@NotNull Document document,
@@ -841,9 +840,9 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
       if (HeavyProcessLatch.INSTANCE.isRunning()) {
         boolean hasPasses = false;
         for (Map.Entry<FileEditor, HighlightingPass[]> entry : passes.entrySet()) {
-          HighlightingPass[] filtered = Arrays.stream(entry.getValue()).filter(DumbService::isDumbAware).toArray(HighlightingPass[]::new);
-          entry.setValue(filtered);
-          hasPasses |= filtered.length != 0;
+          HighlightingPass[] dumbAwarePasses = Arrays.stream(entry.getValue()).filter(DumbService::isDumbAware).toArray(HighlightingPass[]::new);
+          entry.setValue(dumbAwarePasses);
+          hasPasses |= dumbAwarePasses.length != 0;
         }
         if (!hasPasses) {
           HeavyProcessLatch.INSTANCE.executeOutOfHeavyProcess(() ->
