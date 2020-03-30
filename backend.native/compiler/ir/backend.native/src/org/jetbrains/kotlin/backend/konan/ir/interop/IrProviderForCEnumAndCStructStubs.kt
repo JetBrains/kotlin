@@ -60,15 +60,12 @@ internal class IrProviderForCEnumAndCStructStubs(
     private val cStructClassGenerator =
             CStructVarClassGenerator(context, interopBuiltIns)
 
-    var module: IrModuleFragment? = null
-        set(value) {
-            if (value == null)
-                error("Provide a valid non-null module")
-            if (field != null)
-                error("Module has already been set")
-            field = value
-            value.files += filesMap.values
-        }
+    /**
+     * The final output of this provider is a list of files which contain IR declarations
+     * of enums and structs that should be generated.
+     */
+    val outputFiles: List<IrFile>
+        get() = filesMap.values.toList()
 
     fun canHandleSymbol(symbol: IrSymbol): Boolean {
         if (!symbol.isPublicApi) return false
@@ -116,9 +113,7 @@ internal class IrProviderForCEnumAndCStructStubs(
     private fun irParentFor(descriptor: ClassDescriptor): IrDeclarationContainer {
         val packageFragmentDescriptor = descriptor.findPackage()
         return filesMap.getOrPut(packageFragmentDescriptor) {
-            IrFileImpl(NaiveSourceBasedFileEntryImpl(cTypeDefinitionsFileName), packageFragmentDescriptor).also {
-                this@IrProviderForCEnumAndCStructStubs.module?.files?.add(it)
-            }
+            IrFileImpl(NaiveSourceBasedFileEntryImpl(cTypeDefinitionsFileName), packageFragmentDescriptor)
         }
     }
 
