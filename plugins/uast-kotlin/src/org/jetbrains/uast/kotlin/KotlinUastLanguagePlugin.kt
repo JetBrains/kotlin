@@ -487,22 +487,23 @@ internal object KotlinConverter {
         givenParent: UElement?,
         expectedTypes: Array<out Class<out UElement>>
     ): UElement? {
+        val original = element.originalElement
+
         fun <P : PsiElement> build(ctor: (P, UElement?) -> UElement): () -> UElement? = {
             @Suppress("UNCHECKED_CAST")
-            ctor(element as P, givenParent)
+            ctor(original as P, givenParent)
         }
 
         fun <P : PsiElement, K : KtElement> buildKt(ktElement: K, ctor: (P, K, UElement?) -> UElement): () -> UElement? = {
             @Suppress("UNCHECKED_CAST")
-            ctor(element as P, ktElement, givenParent)
+            ctor(original as P, ktElement, givenParent)
         }
 
         fun <P : PsiElement, K : KtElement> buildKtOpt(ktElement: K?, ctor: (P, K?, UElement?) -> UElement): () -> UElement? = {
             @Suppress("UNCHECKED_CAST")
-            ctor(element as P, ktElement, givenParent)
+            ctor(original as P, ktElement, givenParent)
         }
 
-        val original = element.originalElement
         return with(expectedTypes) {
             when (original) {
                 is KtLightMethod -> el<UMethod>(build(KotlinUMethod.Companion::create))   // .Companion is needed because of KT-13934
@@ -562,7 +563,7 @@ internal object KotlinConverter {
 
                 is KtProperty ->
                     if (original.isLocal) {
-                        KotlinConverter.convertPsiElement(element, givenParent, expectedTypes)
+                        KotlinConverter.convertPsiElement(original, givenParent, expectedTypes)
                     } else {
                         convertNonLocalProperty(original, givenParent, expectedTypes).firstOrNull()
                     }
