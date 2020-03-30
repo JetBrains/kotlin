@@ -30,7 +30,7 @@ object StringSettingType : SettingType<String>() {
 
     class Builder(
         path: String,
-        private val title: String,
+        val title: String,
         neededAtPhase: GenerationPhase
     ) : SettingBuilder<String, StringSettingType>(path, title, neededAtPhase) {
         fun shouldNotBeBlank() {

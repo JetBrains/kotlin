@@ -33,21 +33,21 @@ class StructurePlugin(context: Context) : Plugin(context) {
     ) {
         isSavable = true
         shouldNotBeBlank()
-        validate(StringValidators.shouldBeValidIdentifier(title, setOf('.', '_')))
+        validate(StringValidators.shouldBeValidIdentifier(title, ALLOWED_SPECIAL_CHARS_IN_GROUP_ID))
     }
     val artifactId by stringSetting(
         KotlinNewProjectWizardBundle.message("plugin.structure.setting.artifact.id"),
         GenerationPhase.FIRST_STEP
     ) {
         shouldNotBeBlank()
-        validate(StringValidators.shouldBeValidIdentifier(title, setOf('_')))
+        validate(StringValidators.shouldBeValidIdentifier(title, ALLOWED_SPECIAL_CHARS_IN_ARTIFACT_ID))
     }
     val version by stringSetting(
         KotlinNewProjectWizardBundle.message("plugin.structure.setting.version"),
         GenerationPhase.FIRST_STEP
     ) {
         shouldNotBeBlank()
-        validate(StringValidators.shouldBeValidIdentifier(title, setOf('_', '-', '.')))
+        validate(StringValidators.shouldBeValidIdentifier(title, ALLOWED_SPECIAL_CHARS_IN_VERSION))
         defaultValue = value("1.0-SNAPSHOT")
     }
 
@@ -55,6 +55,12 @@ class StructurePlugin(context: Context) : Plugin(context) {
         withAction {
             service<FileSystemWizardService>().createDirectory(StructurePlugin::projectPath.reference.settingValue)
         }
+    }
+
+    companion object {
+        private val ALLOWED_SPECIAL_CHARS_IN_GROUP_ID = Module.ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES + '.'
+        private val ALLOWED_SPECIAL_CHARS_IN_ARTIFACT_ID = Module.ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES
+        private val ALLOWED_SPECIAL_CHARS_IN_VERSION = setOf('_', '-', '.')
     }
 }
 
