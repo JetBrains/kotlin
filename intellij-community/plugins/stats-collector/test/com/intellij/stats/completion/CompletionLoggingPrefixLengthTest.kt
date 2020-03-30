@@ -17,50 +17,47 @@ package com.intellij.stats.completion
 
 import org.assertj.core.api.Assertions.assertThat
 
-
 class CompletionLoggingPrefixLengthTest: CompletionLoggingTestBase() {
+  override fun setUp() {
+    super.setUp()
+    myFixture.addClass("interface Rum {}")
+    myFixture.addClass("interface Runn {}")
+  }
 
-
-    override fun setUp() {
-        super.setUp()
-        myFixture.addClass("interface Rum {}")
-        myFixture.addClass("interface Runn {}")
-    }
-
-    fun `test completion on dot starts has prefix length 1`() {
+  fun `test completion with prefix 0 after dot`() {
     myFixture.type('.')
     myFixture.completeBasic()
 
     val prefixLength = lookup.prefixLength()
 
     myFixture.type("ru\n")
-    assertThat(prefixLength).isEqualTo(1)
+    assertThat(prefixLength).isEqualTo(0)
   }
 
-  fun `test prefix length 1`() {
+  fun `test completion with prefix 2 after dot`() {
     myFixture.type(".ru")
     myFixture.completeBasic()
 
     val prefixLength = lookup.prefixLength()
 
-    assertThat(prefixLength).isEqualTo(1)
+    assertThat(prefixLength).isEqualTo(2)
   }
 
 
-    fun `test if completion starts with 3 chars prefix is still 1`() {
-        myFixture.type('\b')
-        myFixture.type("Run")
-        myFixture.completeBasic()
+  fun `test completion with prefix 3`() {
+    myFixture.type('\b')
+    myFixture.type("Run")
+    myFixture.completeBasic()
 
-        val prefixLength = lookup.prefixLength()
+    val prefixLength = lookup.prefixLength()
 
-        myFixture.type('\n')
+    myFixture.type('\n')
 
-        assertThat(prefixLength).isEqualTo(1)
-    }
+    assertThat(prefixLength).isEqualTo(3)
+  }
 
 
-  fun `test if completion starts with 1 char prefix is 1`() {
+  fun `test completion with prefix 1`() {
     myFixture.type('\b')
     myFixture.type('R')
     myFixture.completeBasic()
@@ -71,6 +68,4 @@ class CompletionLoggingPrefixLengthTest: CompletionLoggingTestBase() {
 
     assertThat(prefixLength).isEqualTo(1)
   }
-
-
 }

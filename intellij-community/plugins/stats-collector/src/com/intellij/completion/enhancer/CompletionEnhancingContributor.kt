@@ -25,7 +25,7 @@ import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.util.PsiUtilCore
-import com.intellij.stats.completion.prefixLength
+import com.intellij.stats.completion.queryLength
 
 
 /**
@@ -59,7 +59,7 @@ class InvocationCountEnhancingContributor : CompletionContributor() {
 
         parameters.language()?.registerCompletionContributorsTime(end - start)
 
-        val typedChars = lookup.prefixLength()
+        val typedChars = lookup.queryLength()
         if (parameters.invocationCount < MAX_INVOCATION_COUNT && typedChars > RUN_COMPLETION_AFTER_CHARS) {
             startMaxInvocationCountCompletion(parameters, result, newSorter, addedElements)
         }

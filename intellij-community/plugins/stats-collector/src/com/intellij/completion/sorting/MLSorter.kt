@@ -12,9 +12,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.stats.PerformanceTracker
-import com.intellij.stats.completion.ItemsDiffCustomizingContributor
-import com.intellij.stats.completion.RelevanceUtil
-import com.intellij.stats.completion.prefixLength
+import com.intellij.stats.completion.*
 import com.intellij.stats.personalization.session.SessionFactorsUtils
 import com.intellij.stats.storage.factors.MutableLookupStorage
 import java.util.*
@@ -75,6 +73,7 @@ class MLSorter : CompletionFinalSorter() {
     // Do nothing if unable to reorder items or to log the weights
     if (!lookupStorage.shouldComputeFeatures()) return items
     val startedTimestamp = System.currentTimeMillis()
+    val queryLength = lookup.queryLength()
     val prefixLength = lookup.prefixLength()
 
     val element2score = mutableMapOf<LookupElement, Double?>()
@@ -82,10 +81,10 @@ class MLSorter : CompletionFinalSorter() {
 
     val positionsBefore = elements.withIndex().associate { it.value to it.index }
 
-    tryFillFromCache(element2score, elements, prefixLength)
+    tryFillFromCache(element2score, elements, queryLength)
     val itemsForScoring = if (element2score.size == elements.size) emptyList() else elements
     calculateScores(element2score, itemsForScoring, positionsBefore,
-                    prefixLength, lookup, lookupStorage, parameters)
+                    queryLength, prefixLength, lookup, lookupStorage, parameters)
     val finalRanking = sortByMlScores(elements, element2score, positionsBefore, lookupStorage)
 
     lookupStorage.performanceTracker.sortingPerformed(itemsForScoring.size, System.currentTimeMillis() - startedTimestamp)
@@ -95,9 +94,9 @@ class MLSorter : CompletionFinalSorter() {
 
   private fun tryFillFromCache(element2score: MutableMap<LookupElement, Double?>,
                                items: List<LookupElement>,
-                               prefixLength: Int) {
+                               queryLength: Int) {
     for ((position, element) in items.withIndex()) {
-      val cachedInfo = getCachedRankInfo(element, prefixLength, position)
+      val cachedInfo = getCachedRankInfo(element, queryLength, position)
       if (cachedInfo == null) return
       element2score[element] = cachedInfo.mlRank
     }
@@ -106,6 +105,7 @@ class MLSorter : CompletionFinalSorter() {
   private fun calculateScores(element2score: MutableMap<LookupElement, Double?>,
                               items: List<LookupElement>,
                               positionsBefore: Map<LookupElement, Int>,
+                              queryLength: Int,
                               prefixLength: Int,
                               lookup: LookupImpl,
                               lookupStorage: MutableLookupStorage,
@@ -124,9 +124,9 @@ class MLSorter : CompletionFinalSorter() {
       val position = positionsBefore.getValue(element)
       val (relevance, additional) = RelevanceUtil.asRelevanceMaps(relevanceObjects.getOrDefault(element, emptyList()))
       SessionFactorsUtils.saveElementFactorsTo(additional, lookupStorage, element)
-      calculateAdditionalFeaturesTo(additional, element, prefixLength, position, items.size, parameters)
+      calculateAdditionalFeaturesTo(additional, element, queryLength, prefixLength, position, items.size, parameters)
       val score = tracker.measure {
-        calculateElementScore(rankingModel, element, position, features.withElementFeatures(relevance, additional), prefixLength)
+        calculateElementScore(rankingModel, element, position, features.withElementFeatures(relevance, additional), queryLength)
       }
       element2score[element] = score
 
@@ -158,6 +158,7 @@ class MLSorter : CompletionFinalSorter() {
   private fun calculateAdditionalFeaturesTo(
     additionalMap: MutableMap<String, Any>,
     lookupElement: LookupElement,
+    oldQueryLength: Int,
     prefixLength: Int,
     position: Int,
     itemsCount: Int,
@@ -165,7 +166,8 @@ class MLSorter : CompletionFinalSorter() {
 
     additionalMap["position"] = position
     additionalMap["relative_position"] = position.toDouble() / itemsCount
-    additionalMap["query_length"] = prefixLength
+    additionalMap["query_length"] = oldQueryLength // old version of prefix_length feature
+    additionalMap["prefix_length"] = prefixLength
     additionalMap["result_length"] = lookupElement.lookupString.length
     additionalMap["auto_popup"] = parameters.isAutoPopup
     additionalMap["completion_type"] = parameters.completionType.toString()

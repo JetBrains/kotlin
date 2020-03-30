@@ -16,14 +16,33 @@
 
 package com.intellij.stats.completion
 
+import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.lang.Language
 import com.intellij.psi.util.PsiUtilCore
 
-fun LookupImpl.prefixLength(): Int {
+/**
+ * @return a number of requests in the current completion session
+ */
+fun LookupImpl.queryLength(): Int {
     val lookupOriginalStart = this.lookupOriginalStart
     val caretOffset = this.editor.caretModel.offset
     return if (lookupOriginalStart < 0) 0 else caretOffset - lookupOriginalStart + 1
+}
+
+/**
+ * @return a length of prefix in the current completion session
+ */
+fun Lookup.prefixLength(): Int {
+    val text = editor.document.text
+    val offset = editor.caretModel.offset
+    var startOffset = offset
+    for (i in offset - 1 downTo 0) {
+        if (!text[i].isJavaIdentifierPart()) break
+        startOffset = i
+    }
+    val prefix = text.substring(startOffset, offset)
+    return prefix.length
 }
 
 fun LookupImpl.language(): Language? {
