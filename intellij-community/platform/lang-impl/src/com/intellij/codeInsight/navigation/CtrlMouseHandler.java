@@ -351,20 +351,23 @@ public final class CtrlMouseHandler {
     @NotNull
     public abstract DocInfo getInfo();
 
-    public abstract boolean isValid(@NotNull Document document);
+    public abstract boolean isValid();
 
     public boolean isNavigatable() {
       return true;
     }
+  }
 
-    boolean rangesAreCorrect(@NotNull Document document) {
-      final TextRange docRange = new TextRange(0, document.getTextLength());
-      for (TextRange range : getRanges()) {
-        if (!docRange.contains(range)) return false;
-      }
-
-      return true;
+  private static boolean isValidAndRangesAreCorrect(@NotNull Info info, @NotNull Document document) {
+    if (!info.isValid()) {
+      return false;
     }
+    List<TextRange> ranges = info.getRanges();
+    final TextRange docRange = new TextRange(0, document.getTextLength());
+    for (TextRange range : ranges) {
+      if (!docRange.contains(range)) return false;
+    }
+    return true;
   }
 
   private static void showDumbModeNotification(@NotNull Project project) {
@@ -396,8 +399,8 @@ public final class CtrlMouseHandler {
     }
 
     @Override
-    public boolean isValid(@NotNull Document document) {
-      return areElementsValid() && rangesAreCorrect(document);
+    public boolean isValid() {
+      return areElementsValid();
     }
 
     @Override
@@ -422,8 +425,8 @@ public final class CtrlMouseHandler {
     }
 
     @Override
-    public boolean isValid(@NotNull Document document) {
-      return rangesAreCorrect(document);
+    public boolean isValid() {
+      return true;
     }
   }
 
@@ -526,8 +529,8 @@ public final class CtrlMouseHandler {
           }
 
           @Override
-          public boolean isValid(@NotNull Document document) {
-            return element.isValid() && rangesAreCorrect(document);
+          public boolean isValid() {
+            return element.isValid();
           }
         };
       }
@@ -733,7 +736,7 @@ public final class CtrlMouseHandler {
         }
       }
 
-      if (!info.isValid(editor.getDocument()) || !info.isNavigatable() && docInfo.text == null) {
+      if (!isValidAndRangesAreCorrect(info, editor.getDocument()) || !info.isNavigatable() && docInfo.text == null) {
         return;
       }
 
@@ -813,7 +816,7 @@ public final class CtrlMouseHandler {
         .finishOnUiThread(ModalityState.defaultModalityState(), Runnable::run)
         .withDocumentsCommitted(myProject)
         .expireWith(hintDisposable)
-        .expireWhen(() -> !info.isValid(editor.getDocument()))
+        .expireWhen(() -> !isValidAndRangesAreCorrect(info, editor.getDocument()))
         .coalesceBy(CtrlMouseHandler.class, hint)
         .submit(AppExecutorUtil.getAppExecutorService()));
     }
