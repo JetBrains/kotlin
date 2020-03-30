@@ -530,7 +530,7 @@ public final class CtrlMouseHandler {
 
           @Override
           public boolean isValid(@NotNull Document document) {
-            return element.isValid();
+            return element.isValid() && rangesAreCorrect(document);
           }
 
           @Override
