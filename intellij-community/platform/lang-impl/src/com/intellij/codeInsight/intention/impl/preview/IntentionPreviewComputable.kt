@@ -16,7 +16,6 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiFileFactory
 import java.util.concurrent.Callable
 
 internal class IntentionPreviewComputable(private val project: Project,
@@ -24,7 +23,7 @@ internal class IntentionPreviewComputable(private val project: Project,
                                           private val originalFile: PsiFile,
                                           private val originalEditor: Editor) : Callable<IntentionPreviewResult?> {
   override fun call(): IntentionPreviewResult? {
-    val psiFileCopy = nonPhysicalPsiCopy(originalFile, project)
+    val psiFileCopy = nonPhysicalPsiCopy(originalFile)
     ProgressManager.checkCanceled()
     val editorCopy = IntentionPreviewEditor(psiFileCopy, originalEditor.caretModel.offset)
 
@@ -62,12 +61,9 @@ internal class IntentionPreviewComputable(private val project: Project,
     }
   }
 
-  private fun nonPhysicalPsiCopy(psiFile: PsiFile, project: Project): PsiFile {
+  private fun nonPhysicalPsiCopy(psiFile: PsiFile): PsiFile {
     ProgressManager.checkCanceled()
-    return PsiFileFactory.getInstance(project).createFileFromText(psiFile.name,
-                                                                  psiFile.language,
-                                                                  psiFile.text, false, true, false,
-                                                                  psiFile.virtualFile)
+    return psiFile.copy() as PsiFile
   }
 
   companion object {
