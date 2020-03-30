@@ -14,12 +14,13 @@ import java.util.zip.ZipOutputStream
 
 class IntellijRepoGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBase(kotlinProjectDir) {
     companion object {
-        private const val GROUP_ID = "com.jetbrains.intellij.idea"
-        private const val VERSION = "202.0"
+        const val GROUP_ID = "com.jetbrains.intellij.idea"
     }
 
     fun generate() {
         val repoPath = System.getProperty("pill.combo.intellij.repo.path", null) ?: error("Repository path is not specified")
+        val version = System.getProperty("pill.combo.intellij.version", null) ?: error("Version is not specified")
+
         val repoDir = File(repoPath)
         check(repoDir.parentFile.isDirectory) { "Repository path parent does not exist" }
 
@@ -29,7 +30,7 @@ class IntellijRepoGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBase
 
         val groupDir = File(repoDir, GROUP_ID.replace('.', '/'))
 
-        fun getNameBase(artifactId: String) = "$artifactId/$VERSION/$artifactId-$VERSION"
+        fun getNameBase(artifactId: String) = "$artifactId/$version/$artifactId-$version"
 
         for (artifactId in substitutions.artifacts) {
             val substitutionsForArtifact = substitutions.getForArtifact(artifactId) ?: continue
@@ -55,7 +56,7 @@ class IntellijRepoGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBase
 
             artifactFile.setZeroDate()
 
-            writePom(File(groupDir, "$nameBase.pom"), artifactId, "zip")
+            writePom(File(groupDir, "$nameBase.pom"), artifactId, version, "zip")
 
             if (artifactId == "ideaIC" || artifactId == "ideaIU") {
                 writeEmptyZipFile(File(groupDir, "$nameBase-sources.jar"))
@@ -70,17 +71,17 @@ class IntellijRepoGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBase
             artifactFile.parentFile.mkdirs()
 
             writeEmptyZipFile(artifactFile)
-            writePom(File(groupDir, "$nameBase.pom"), artifactId, "jar")
+            writePom(File(groupDir, "$nameBase.pom"), artifactId, version, "jar")
         }
     }
 
-    private fun writePom(file: File, artifactId: String, packaging: String) {
+    private fun writePom(file: File, artifactId: String, version: String, packaging: String) {
         file.writeText(
             xml("project") {
                 xml("modelVersion") { raw("4.0.0") }
                 xml("groupId") { raw(GROUP_ID) }
                 xml("artifactId") { raw(artifactId) }
-                xml("version") { raw(VERSION) }
+                xml("version") { raw(version) }
                 xml("packaging") { raw(packaging) }
             }.toString()
         )
