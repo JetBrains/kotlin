@@ -18,11 +18,18 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 internal class CandidateFactoriesAndCollectors(
+    // Common calls
     val candidateFactory: CandidateFactory,
     val resultCollector: CandidateCollector,
+
+    // Callable references
     val stubReceiverCandidateFactory: CandidateFactory?,
+
+    // invoke receivers
     val invokeReceiverCandidateFactory: CandidateFactory?,
     val invokeReceiverCollector: CandidateCollector?,
+
+    // invokeExtensionReceivers
     val invokeBuiltinExtensionReceiverCandidateFactory: CandidateFactory?
 )
 
