@@ -44,7 +44,6 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
@@ -339,10 +338,6 @@ public final class CtrlMouseHandler {
       return Collections.singletonList(new TextRange(textOffset, range.getEndOffset()));
     }
 
-    boolean isSimilarTo(@NotNull Info that) {
-      return Comparing.equal(myElementAtPointer, that.myElementAtPointer) && myRanges.equals(that.myRanges);
-    }
-
     @NotNull
     public List<TextRange> getRanges() {
       return myRanges;
@@ -356,6 +351,11 @@ public final class CtrlMouseHandler {
     public boolean isNavigatable() {
       return true;
     }
+  }
+
+  private static boolean areSimilar(@NotNull Info info1, @NotNull Info info2) {
+    return info1.myElementAtPointer.equals(info2.myElementAtPointer)
+           && info1.myRanges.equals(info2.myRanges);
   }
 
   private static boolean isValidAndRangesAreCorrect(@NotNull Info info, @NotNull Document document) {
@@ -724,7 +724,7 @@ public final class CtrlMouseHandler {
     private void addHighlighterAndShowHint(@NotNull Info info, @NotNull DocInfo docInfo, @NotNull EditorEx editor) {
       if (myDisposed || editor.isDisposed()) return;
       if (myHighlighter != null) {
-        if (!info.isSimilarTo(myHighlighter.getStoredInfo())) {
+        if (!areSimilar(info, myHighlighter.getStoredInfo())) {
           disposeHighlighter();
         }
         else {
