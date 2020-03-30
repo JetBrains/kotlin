@@ -219,14 +219,16 @@ internal class MoveKotlinTopLevelDeclarationsModel(
     }
 
     private fun getFUSParameters(): Pair<MovedEntity, MoveRefactoringDestination> {
-        val classType = if (elementsToMoveHasMPP) MovedEntity.MPPCLASSES else MovedEntity.CLASSES
-        val functionType = if (elementsToMoveHasMPP) MovedEntity.MPPFUNCTIONS else MovedEntity.FUNCTIONS
-        val mixedType = if (elementsToMoveHasMPP) MovedEntity.MPPMIXED else MovedEntity.MIXED
+        val (classType, functionType, mixedType) =
+            if (elementsToMoveHasMPP)
+                Triple(MovedEntity.MPPCLASSES, MovedEntity.MPPFUNCTIONS, MovedEntity.MPPMIXED)
+            else
+                Triple(MovedEntity.CLASSES, MovedEntity.FUNCTIONS, MovedEntity.MIXED)
 
-        val allClasses = elementsToMove.any { element -> element is KtClassOrObject }
-        val allFunctions = elementsToMove.any { element -> element is KtFunction }
-        val entity = if (allClasses && allFunctions) mixedType else
-            if (allClasses) classType else functionType
+        val classesAreGoingToMove = elementsToMove.any { it is KtClassOrObject }
+        val functionsAreGoingToMove = elementsToMove.any { it is KtFunction }
+        val entity = if (classesAreGoingToMove && functionsAreGoingToMove) mixedType else
+            if (classesAreGoingToMove) classType else functionType
 
         val destination = if (isMoveToPackage) MoveRefactoringDestination.PACKAGE else MoveRefactoringDestination.FILE
 

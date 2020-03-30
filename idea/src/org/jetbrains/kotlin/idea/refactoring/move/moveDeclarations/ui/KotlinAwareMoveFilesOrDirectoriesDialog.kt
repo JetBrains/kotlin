@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.idea.refactoring.isInKotlinAwareSourceRoot
 import org.jetbrains.kotlin.idea.refactoring.move.logFusForMoveRefactoring
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.psi.KtFile
-import java.util.*
 import javax.swing.JComponent
 
 class KotlinAwareMoveFilesOrDirectoriesDialog(
@@ -66,6 +65,12 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
             !ApplicationManager.getApplication().isUnitTestMode && PropertiesComponent.getInstance().getBoolean(id, defaultValue)
     }
 
+    private data class CheckboxesState(
+        val searchReferences: Boolean,
+        val openInEditor: Boolean,
+        val updatePackageDirective: Boolean
+    )
+
     private val nameLabel = JBLabelDecorator.createJBLabelDecorator().setBold(true)
     private val targetDirectoryField = TextFieldWithHistoryWithBrowseButton()
     private val searchReferencesCb = NonFocusableCheckBox(KotlinBundle.message("checkbox.text.search.references")).apply {
@@ -73,7 +78,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
     }
     private val openInEditorCb = NonFocusableCheckBox(KotlinBundle.message("checkbox.text.open.moved.files.in.editor"))
     private val updatePackageDirectiveCb = NonFocusableCheckBox()
-    private val initializedCheckBoxesState: BitSet
+    private val initializedCheckBoxesState: CheckboxesState
 
     override fun getHelpId() = HELP_ID
 
@@ -85,11 +90,11 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
         initializedCheckBoxesState = getCheckboxesState(applyDefaults = true)
     }
 
-    private fun getCheckboxesState(applyDefaults: Boolean) = BitSet(3).apply {
-        set(0, applyDefaults || searchReferencesCb.isSelected) //searchReferencesCb is true by default
-        set(1, !applyDefaults && openInEditorCb.isSelected) //openInEditorCb is false by default
-        set(2, updatePackageDirectiveCb.isSelected)
-    }
+    private fun getCheckboxesState(applyDefaults: Boolean) = CheckboxesState(
+        searchReferences = applyDefaults || searchReferencesCb.isSelected, //searchReferencesCb is true by default
+        openInEditor = !applyDefaults && openInEditorCb.isSelected, //openInEditorCb is false by default
+        updatePackageDirective = updatePackageDirectiveCb.isSelected
+    )
 
     override fun createActions() = arrayOf(okAction, cancelAction, helpAction)
 
@@ -212,11 +217,11 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
         project.executeCommand(MoveHandler.REFACTORING_NAME) {
             with(modelResult) {
                 logFusForMoveRefactoring(
-                    elementsCount,
-                    entityToMove,
-                    destination,
-                    getCheckboxesState(applyDefaults = false) == initializedCheckBoxesState,
-                    Runnable { processor.run() }
+                    numberOfEntities = elementsCount,
+                    entity = entityToMove,
+                    destination = destination,
+                    isDefault = getCheckboxesState(applyDefaults = false) == initializedCheckBoxesState,
+                    body = processor
                 )
             }
         }

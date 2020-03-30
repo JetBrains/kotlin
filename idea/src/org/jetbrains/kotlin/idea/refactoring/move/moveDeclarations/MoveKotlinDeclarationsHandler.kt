@@ -172,11 +172,11 @@ class MoveKotlinDeclarationsHandler internal constructor(private val handlerActi
             }
             val initialTargetDirectory = MoveFilesOrDirectoriesUtil.resolveToDirectory(project, initialTargetElement)
 
-            if (!ApplicationManager.getApplication().isUnitTestMode && elementsToSearch.any { it.isExpectDeclaration() || it.isEffectivelyActual() }
+            if (!ApplicationManager.getApplication().isUnitTestMode &&
+                elementsToSearch.any { it.isExpectDeclaration() || it.isEffectivelyActual() }
             ) {
-                val message = RefactoringBundle.getCannotRefactorMessage(
-                    "This refactoring will move selected declaration without it's expect/actual counterparts that may lead to compilation errors.\n\"Do you wish to proceed?\"")
-                val title = RefactoringBundle.getCannotRefactorMessage("MPP declarations does not supported by this refactoring.")
+                val message = RefactoringBundle.getCannotRefactorMessage(KotlinBundle.message("text.move.declaration.proceed.move.without.mpp.counterparts.text"))
+                val title = RefactoringBundle.getCannotRefactorMessage(KotlinBundle.message("text.move.declaration.proceed.move.without.mpp.counterparts.title"))
                 val proceedWithIncompleteRefactoring = Messages.showYesNoDialog(project, message, title, Messages.getWarningIcon())
                 if (proceedWithIncompleteRefactoring != Messages.YES) return true
             }

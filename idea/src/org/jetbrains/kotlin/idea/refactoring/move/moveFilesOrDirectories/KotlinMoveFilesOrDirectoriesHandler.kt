@@ -79,7 +79,7 @@ class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandlerCompat(
                                 entityToMove,
                                 destination,
                                 true,
-                                Runnable { processor.run() }
+                                processor
                             )
                         } else {
                             processor.run()

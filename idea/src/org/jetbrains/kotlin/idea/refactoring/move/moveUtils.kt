@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.refactoring.move
 
 import com.intellij.ide.util.DirectoryUtil
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -43,6 +42,7 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector
 import org.jetbrains.kotlin.idea.util.application.executeCommand
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -720,15 +720,14 @@ internal fun <T> List<KtNamedDeclaration>.mapWithReadActionInProcess(
     val result = mutableListOf<T>()
     val task: Task.Modal = object : Task.Modal(project, title, false) {
         override fun run(indicator: ProgressIndicator) {
-            val count = 0
             val fraction: Double = 1.0 / declarations.size
             indicator.fraction = 0.0
-            ApplicationManager.getApplication().runReadAction(Runnable {
-                for (declaration in declarations) {
+            runReadAction {
+                declarations.forEachIndexed { index, declaration ->
                     result.add(body(declaration))
-                    indicator.fraction = fraction * count
+                    indicator.fraction = fraction * index
                 }
-            })
+            }
         }
     }
     ProgressManager.getInstance().run(task)

@@ -180,7 +180,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             @NotNull Set<KtNamedDeclaration> elementsToMove,
             @NotNull List<KtNamedDeclaration> declarations
     ) {
-        ////KotlinMemberInfo run resolve on declaration so it is good to place it to the process
+        //KotlinMemberInfo run resolve on declaration so it is good to place it to the process
         List<KotlinMemberInfo> memberInfos = MoveUtilsKt.mapWithReadActionInProcess(declarations, myProject, MoveHandler.REFACTORING_NAME, (declaration) -> {
             KotlinMemberInfo memberInfo = new KotlinMemberInfo(declaration, false);
             memberInfo.setChecked(elementsToMove.contains(declaration));
@@ -336,7 +336,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     }
 
     private boolean isMPPDeclarationInList(List<KtNamedDeclaration> declarations) {
-        for(KtNamedDeclaration element : declarations) {
+        for (KtNamedDeclaration element : declarations) {
             if (ExpectActualUtilKt.isEffectivelyActual(element, true) ||
                 ExpectActualUtilKt.isExpectDeclaration(element)) {
                 return true;
