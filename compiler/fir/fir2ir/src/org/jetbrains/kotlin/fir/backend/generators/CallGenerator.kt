@@ -43,6 +43,45 @@ internal class CallGenerator(
 
     private fun ConeKotlinType.toIrType(): IrType = with(typeConverter) { toIrType() }
 
+    fun convertToIrCallableReference(callableReferenceAccess: FirCallableReferenceAccess): IrExpression {
+        val symbol = callableReferenceAccess.calleeReference.toSymbol(session, classifierStorage, declarationStorage)
+        val type = callableReferenceAccess.typeRef.toIrType()
+        return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
+            when (symbol) {
+                is IrPropertySymbol -> {
+                    IrPropertyReferenceImpl(
+                        startOffset, endOffset, type, symbol, 0,
+                        symbol.owner.backingField?.symbol,
+                        symbol.owner.getter?.symbol,
+                        symbol.owner.setter?.symbol
+                    )
+                }
+                is IrFunctionSymbol -> {
+                    IrFunctionReferenceImpl(
+                        startOffset, endOffset, type, symbol,
+                        typeArgumentsCount = 0,
+                        reflectionTarget = symbol
+                    ).apply {
+                        val firReceiver = callableReferenceAccess.explicitReceiver
+                        if (firReceiver != null && firReceiver !is FirResolvedQualifier) {
+                            val irReceiver = visitor.convertToIrExpression(firReceiver)
+                            if (symbol.owner.dispatchReceiverParameter != null) {
+                                this.dispatchReceiver = irReceiver
+                            } else if (symbol.owner.extensionReceiverParameter != null) {
+                                this.extensionReceiver = irReceiver
+                            }
+                        }
+                    }
+                }
+                else -> {
+                    IrErrorCallExpressionImpl(
+                        startOffset, endOffset, type, "Unsupported callable reference: ${callableReferenceAccess.render()}"
+                    )
+                }
+            }
+        }
+    }
+
     fun convertToIrCall(qualifiedAccess: FirQualifiedAccess, typeRef: FirTypeRef): IrExpression {
         val explicitReceiver = qualifiedAccess.explicitReceiver
         if (!qualifiedAccess.safe || explicitReceiver == null) {

@@ -327,42 +327,7 @@ class Fir2IrVisitor(
     }
 
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: Any?): IrElement {
-        val symbol = callableReferenceAccess.calleeReference.toSymbol(session, classifierStorage, declarationStorage)
-        val type = callableReferenceAccess.typeRef.toIrType()
-        return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
-            when (symbol) {
-                is IrPropertySymbol -> {
-                    IrPropertyReferenceImpl(
-                        startOffset, endOffset, type, symbol, 0,
-                        symbol.owner.backingField?.symbol,
-                        symbol.owner.getter?.symbol,
-                        symbol.owner.setter?.symbol
-                    )
-                }
-                is IrFunctionSymbol -> {
-                    IrFunctionReferenceImpl(
-                        startOffset, endOffset, type, symbol,
-                        typeArgumentsCount = 0,
-                        reflectionTarget = symbol
-                    ).apply {
-                        val firReceiver = callableReferenceAccess.explicitReceiver
-                        if (firReceiver != null && firReceiver !is FirResolvedQualifier) {
-                            val irReceiver = convertToIrExpression(firReceiver)
-                            if (symbol.owner.dispatchReceiverParameter != null) {
-                                this.dispatchReceiver = irReceiver
-                            } else if (symbol.owner.extensionReceiverParameter != null) {
-                                this.extensionReceiver = irReceiver
-                            }
-                        }
-                    }
-                }
-                else -> {
-                    IrErrorCallExpressionImpl(
-                        startOffset, endOffset, type, "Unsupported callable reference: ${callableReferenceAccess.render()}"
-                    )
-                }
-            }
-        }
+        return callGenerator.convertToIrCallableReference(callableReferenceAccess)
     }
 
     override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: Any?): IrElement {
