@@ -89,7 +89,6 @@ ext {
     kotlinTestAnnotationsCommonModule="org.jetbrains.kotlin:kotlin-test-annotations-common:${kotlinStdlibVersion}:sources"
     kotlinReflectModule="org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
     kotlinScriptRuntimeModule="org.jetbrains.kotlin:kotlin-script-runtime:${kotlinVersion}"
-    kotlinNativeUtilsModule="org.jetbrains.kotlin:kotlin-native-utils:${kotlinVersion}"
     kotlinUtilKliMetadatabModule="org.jetbrains.kotlin:kotlin-util-klib-metadata:${kotlinVersion}"
 
     konanVersionFull = CompilerVersionGeneratedKt.getCurrentCompilerVersion()
@@ -299,7 +298,7 @@ task detectJarCollision(type: CollisionDetector) {
     resolvingRules["org/jetbrains/kotlin/builtins/konan/KonanBuiltIns.class"] = "kotlin-compiler"
     resolvingRules["org/jetbrains/kotlin/resolve/konan/platform/NativeInliningRule.class"] = "kotlin-compiler"
     resolvingRules["org/jetbrains/kotlin/resolve/konan/platform/NativePlatformAnalyzerServices.class"] = "kotlin-compiler"
-    librariesWithIgnoredClassCollisions.addAll(["kotlin-util-klib", "kotlin-util-io", "kotlinx-metadata-klib"])
+    librariesWithIgnoredClassCollisions.addAll(["kotlin-util-klib", "kotlin-util-io", "kotlinx-metadata-klib", "kotlin-native-utils"])
     if (project.hasProperty('kotlinProjectPath')) {
         resolvingRulesWithRegexes[new Regex("META-INF/.+\\.kotlin_module")] = "kotlin-compiler"
         resolvingRules["META-INF/extensions/compiler.xml"] = "kotlin-compiler"
