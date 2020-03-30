@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.idea.test.CompilerTestDirectives.LANGUAGE_VERSION_DI
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils.getAbsolutePath
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.rethrow
@@ -70,9 +71,8 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
     protected open fun fileName(): String = KotlinTestUtils.getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
 
-    override fun getTestDataPath(): String {
-        return this::class.findAnnotation<TestMetadata>()?.value ?: super.getTestDataPath()
-    }
+    override fun getTestDataPath() =
+        getAbsolutePath(this::class.findAnnotation<TestMetadata>()?.value ?: super.getTestDataPath())
 
     override fun setUp() {
         super.setUp()

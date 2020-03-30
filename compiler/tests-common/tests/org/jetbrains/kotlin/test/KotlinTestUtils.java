@@ -102,6 +102,18 @@ public class KotlinTestUtils {
     private KotlinTestUtils() {
     }
 
+    public static String kotlinHome() {
+        return System.getenv("KOTLIN_HOME");
+    }
+
+    public static String getAbsolutePath(String path) {
+        if (KotlinTestUtils.kotlinHome() == null) {
+            return path;
+        } else {
+            return kotlinHome() + File.separator + path;
+        }
+    }
+
     @NotNull
     public static AnalysisResult analyzeFile(@NotNull KtFile file, @NotNull KotlinCoreEnvironment environment) {
         return JvmResolveUtil.analyze(file, environment);
@@ -755,10 +767,11 @@ public class KotlinTestUtils {
     }
 
     private static void runTestImpl(@NotNull DoTest test, @Nullable TestCase testCase, String testDataFilePath) throws Exception {
+        String absTestDataFilePath = getAbsolutePath(testDataFilePath);
         if (testCase != null) {
             Function0<Unit> wrapWithMuteInDatabase = MuteWithDatabaseKt.wrapWithMuteInDatabase(testCase, () -> {
                 try {
-                    test.invoke(testDataFilePath);
+                    test.invoke(absTestDataFilePath);
                 }
                 catch (Exception e) {
                     throw new IllegalStateException(e);
@@ -774,7 +787,7 @@ public class KotlinTestUtils {
         DoTest wrappedTest = testCase != null ?
                              MuteWithFileKt.testWithMuteInFile(test, testCase) :
                              MuteWithFileKt.testWithMuteInFile(test, "");
-        wrappedTest.invoke(testDataFilePath);
+        wrappedTest.invoke(absTestDataFilePath);
     }
 
     private static DoTest testWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, String ignoreDirective) throws Exception {
