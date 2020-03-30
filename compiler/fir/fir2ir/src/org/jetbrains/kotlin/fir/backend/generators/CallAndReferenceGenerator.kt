@@ -51,12 +51,18 @@ internal class CallAndReferenceGenerator(
         return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
             when (symbol) {
                 is IrPropertySymbol -> {
+                    val referencedProperty = symbol.owner
+                    val referencedPropertyGetter = referencedProperty.getter
+                    val backingFieldSymbol = when {
+                        referencedPropertyGetter != null -> null
+                        else -> referencedProperty.backingField?.symbol
+                    }
                     IrPropertyReferenceImpl(
                         startOffset, endOffset, type, symbol,
-                        typeArgumentsCount = symbol.owner.getter?.typeParameters?.size ?: 0,
-                        symbol.owner.backingField?.symbol,
-                        symbol.owner.getter?.symbol,
-                        symbol.owner.setter?.symbol
+                        typeArgumentsCount = referencedPropertyGetter?.typeParameters?.size ?: 0,
+                        backingFieldSymbol,
+                        referencedPropertyGetter?.symbol,
+                        referencedProperty.setter?.symbol
                     )
                 }
                 is IrFunctionSymbol -> {
