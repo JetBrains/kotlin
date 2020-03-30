@@ -63,7 +63,7 @@ class LinkedSpecTest(
 
             return LinkedSpecTest(
                 specVersion, testArea, testType, specPlaces.first(),
-                specPlaces.subList(1, specPlaces.size - 1), 0, description,
+                if (specPlaces.size > 1) specPlaces.subList(1, specPlaces.size) else null, 0, description,
                 SpecTestCasesSet(mutableMapOf(), mutableMapOf(), mutableMapOf()),
                 unexpectedBehavior = false, unspecifiedBehavior = false, issues = setOf(), helpers = null, exception = null
             )
