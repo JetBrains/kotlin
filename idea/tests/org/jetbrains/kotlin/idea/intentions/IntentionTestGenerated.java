@@ -10528,6 +10528,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/lambdaToAnonymousFunction/returnUnit.kt");
         }
 
+        @TestMetadata("suspendFunction.kt")
+        public void testSuspendFunction() throws Exception {
+            runTest("idea/testData/intentions/lambdaToAnonymousFunction/suspendFunction.kt");
+        }
+
         @TestMetadata("underscoreParameter.kt")
         public void testUnderscoreParameter() throws Exception {
             runTest("idea/testData/intentions/lambdaToAnonymousFunction/underscoreParameter.kt");
