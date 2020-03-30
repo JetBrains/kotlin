@@ -38,11 +38,17 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
  *   compiler phases.
  * 2. It is an easier and more obvious approach. Since implementation of metadata-based
  *  libraries generation already took too much time we take an easier approach here.
+ *
+ *  [moduleFilter] -- We want to select modules that should be part of compiler's output.
+ *
+ *  For example, when we generate compiler cache,
+ *  declarations from dependencies should not be added to the current module.
  */
 internal class IrProviderForCEnumAndCStructStubs(
         context: GeneratorContext,
         private val interopBuiltIns: InteropBuiltIns,
-        symbols: KonanSymbols
+        symbols: KonanSymbols,
+        private val moduleFilter: (ModuleDescriptor) -> Boolean
 ) : IrProvider {
 
     private val symbolTable: SymbolTable = context.symbolTable
@@ -65,7 +71,7 @@ internal class IrProviderForCEnumAndCStructStubs(
      * of enums and structs that should be generated.
      */
     val outputFiles: List<IrFile>
-        get() = filesMap.values.toList()
+        get() = filesMap.filterKeys { moduleFilter(it.module) }.values.toList()
 
     fun canHandleSymbol(symbol: IrSymbol): Boolean {
         if (!symbol.isPublicApi) return false
