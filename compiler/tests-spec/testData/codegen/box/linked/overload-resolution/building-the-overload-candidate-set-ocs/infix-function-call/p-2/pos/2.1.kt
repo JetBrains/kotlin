@@ -3,8 +3,8 @@
 /*
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-268
- * PLACE: overload-resolution, building-the-overload-candidate-set-ocs, infix-function-call -> paragraph 4 -> sentence 1
+ * SPEC VERSION: 0.1-313
+ * PLACE: overload-resolution, building-the-overload-candidate-set-ocs, infix-function-call -> paragraph 2 -> sentence 2
  * NUMBER: 1
  * DESCRIPTION: infix calls for properties
  */
@@ -26,10 +26,10 @@ val B.extensionValC: C
 
 fun box(): String{
     val b = B()
-    b memberValC 3         //resolved to (1) o_O
+    b memberValC 3         //resolved to (1)
     if (b.memberValC.isInvokeCalled) {
         c.isInvokeCalled = false
-        b extensionValC 4      //resolved to (1) o_O
+        b extensionValC 4      //resolved to (1)
         if (b.extensionValC.isInvokeCalled)
             return "OK"
     }

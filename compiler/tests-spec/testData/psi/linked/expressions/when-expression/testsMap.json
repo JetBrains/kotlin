@@ -111,19 +111,19 @@
     "neg": {
       "1": [
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "\u0027When\u0027 with bound value and empty \u0027when condition\u0027.",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "\u0027When\u0027 with bound value and with invalid list of the conditions in \u0027when entry\u0027.",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "\u0027When\u0027 with bound value and empty control structure body.",
           "unexpectedBehaviour": false

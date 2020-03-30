@@ -30,7 +30,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch bypass val",
           "path": "compiler/testData/diagnostics/tests/when/BranchBypassVal.kt",
@@ -44,21 +44,21 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch bypass var",
           "path": "compiler/testData/diagnostics/tests/when/BranchBypassVar.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive enum mixed",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveEnumMixed.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive enum is",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveEnumIs.kt",
@@ -95,7 +95,7 @@
       ],
       "7": [
         {
-          "specVersion": "0.1-201",
+          "specVersion": "0.1-313",
           "casesNumber": 3,
           "description": "\u0027When\u0027 with bound value and with else branch not in the last position.",
           "unexpectedBehaviour": false
@@ -132,21 +132,21 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Empty condition with expression enum",
           "path": "compiler/testData/diagnostics/tests/when/EmptyConditionWithExpressionEnum.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive enum mixed",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveEnumMixed.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Empty condition with expression",
           "path": "compiler/testData/diagnostics/tests/when/EmptyConditionWithExpression.kt",
@@ -214,14 +214,14 @@
           "unexpectedBehaviour": true
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch false bypass",
           "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypass.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch false bypass else",
           "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypassElse.kt",
@@ -265,7 +265,7 @@
       ],
       "7": [
         {
-          "specVersion": "0.1-201",
+          "specVersion": "0.1-313",
           "casesNumber": 3,
           "description": "\u0027When\u0027 with bound value and else branch.",
           "unexpectedBehaviour": false
@@ -281,7 +281,7 @@
       ],
       "5": [
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Annotated when statement",
           "path": "compiler/testData/diagnostics/tests/when/AnnotatedWhenStatement.kt",
@@ -295,7 +295,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive initialization",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveInitialization.kt",
@@ -324,14 +324,14 @@
     "neg": {
       "1": [
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Empty condition with expression enum",
           "path": "compiler/testData/diagnostics/tests/when/EmptyConditionWithExpressionEnum.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Empty condition with expression",
           "path": "compiler/testData/diagnostics/tests/when/EmptyConditionWithExpression.kt",
@@ -340,14 +340,14 @@
       ],
       "2": [
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Empty condition with expression enum",
           "path": "compiler/testData/diagnostics/tests/when/EmptyConditionWithExpressionEnum.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Empty condition with expression",
           "path": "compiler/testData/diagnostics/tests/when/EmptyConditionWithExpression.kt",
@@ -360,7 +360,7 @@
     "neg": {
       "1": [
         {
-          "specVersion": "0.1-218",
+          "specVersion": "0.1-313",
           "casesNumber": 4,
           "description": " it is possible to  replace the else condition with an always-true condition",
           "unexpectedBehaviour": false
@@ -370,7 +370,7 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-218",
+          "specVersion": "0.1-313",
           "casesNumber": 4,
           "description": " it is possible to  replace the else condition with an always-true condition",
           "unexpectedBehaviour": false
@@ -488,7 +488,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Comma in when condition without argument",
           "path": "compiler/testData/diagnostics/tests/when/CommaInWhenConditionWithoutArgument.kt",
@@ -504,7 +504,7 @@
       ],
       "4": [
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Duplicated labels",
           "path": "compiler/testData/diagnostics/tests/when/DuplicatedLabels.kt",
@@ -513,7 +513,7 @@
       ],
       "5": [
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Duplicated labels",
           "path": "compiler/testData/diagnostics/tests/when/DuplicatedLabels.kt",
@@ -526,33 +526,33 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-313",
           "casesNumber": 2,
           "description": "\u0027When\u0027 with bound value and allowed break and continue expression (without labels) in the control structure body.",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-313",
           "casesNumber": 25,
           "description": "\u0027When\u0027 with bound value and with different variants of expressions in the control structure body.",
           "unexpectedBehaviour": true
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Annotated when statement",
           "path": "compiler/testData/diagnostics/tests/when/AnnotatedWhenStatement.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive platform enum else",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumElse.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch false bypass",
           "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypass.kt",
@@ -580,7 +580,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Duplicated labels",
           "path": "compiler/testData/diagnostics/tests/when/DuplicatedLabels.kt",
@@ -601,35 +601,35 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive platform enum",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnum.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Comma in when condition without argument",
           "path": "compiler/testData/diagnostics/tests/when/CommaInWhenConditionWithoutArgument.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive nullable",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNullable.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch false bypass else",
           "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypassElse.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive initialization",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveInitialization.kt",
@@ -650,7 +650,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive platform enum annotated",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumAnnotated.kt",
@@ -685,7 +685,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive no initialization",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNoInitialization.kt",
@@ -706,7 +706,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive platform enum null",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumNull.kt",
@@ -724,7 +724,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean nullable",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanNullable.kt",
@@ -752,7 +752,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch bypass val",
           "path": "compiler/testData/diagnostics/tests/when/BranchBypassVal.kt",
@@ -773,7 +773,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean brackets",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanBrackets.kt",
@@ -787,7 +787,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean complex",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanComplex.kt",
@@ -822,14 +822,14 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBoolean.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch bypass var",
           "path": "compiler/testData/diagnostics/tests/when/BranchBypassVar.kt",
@@ -857,21 +857,21 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Empty condition with expression enum",
           "path": "compiler/testData/diagnostics/tests/when/EmptyConditionWithExpressionEnum.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive enum mixed",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveEnumMixed.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Empty condition with expression",
           "path": "compiler/testData/diagnostics/tests/when/EmptyConditionWithExpression.kt",
@@ -913,7 +913,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive enum is",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveEnumIs.kt",
@@ -927,7 +927,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive break continue",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBreakContinue.kt",
@@ -941,14 +941,14 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Else on nullable enum",
           "path": "compiler/testData/diagnostics/tests/when/ElseOnNullableEnum.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Else on nullable enum with smart cast",
           "path": "compiler/testData/diagnostics/tests/when/ElseOnNullableEnumWithSmartCast.kt",
@@ -961,7 +961,7 @@
     "pos": {
       "2": [
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Annotated when statement",
           "path": "compiler/testData/diagnostics/tests/when/AnnotatedWhenStatement.kt",
@@ -977,7 +977,7 @@
       ],
       "1": [
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Duplicated labels",
           "path": "compiler/testData/diagnostics/tests/when/DuplicatedLabels.kt",

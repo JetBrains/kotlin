@@ -3,7 +3,7 @@
 /*
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-213
+ * SPEC VERSION: 0.1-313
  * PLACE: expressions, postfix-operator-expressions, postfix-decrement-expression -> paragraph 6 -> sentence 1
  * RELEVANT PLACES: expressions, prefix-expressions, prefix-decrement-expression -> paragraph 5 -> sentence 1
  * overloadable-operators -> paragraph 4 -> sentence 1

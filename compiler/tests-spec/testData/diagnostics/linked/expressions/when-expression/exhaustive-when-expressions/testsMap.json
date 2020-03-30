@@ -21,7 +21,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean nullable",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanNullable.kt",
@@ -35,14 +35,14 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Else on nullable enum",
           "path": "compiler/testData/diagnostics/tests/when/ElseOnNullableEnum.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Else on nullable enum with smart cast",
           "path": "compiler/testData/diagnostics/tests/when/ElseOnNullableEnumWithSmartCast.kt",
@@ -106,7 +106,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean nullable",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanNullable.kt",
@@ -120,21 +120,21 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean brackets",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanBrackets.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean complex",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanComplex.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBoolean.kt",
@@ -186,28 +186,28 @@
       ],
       "4": [
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean nullable",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanNullable.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean brackets",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanBrackets.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean complex",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanComplex.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBoolean.kt",
@@ -244,7 +244,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive enum mixed",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveEnumMixed.kt",
@@ -279,28 +279,28 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive enum is",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveEnumIs.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive break continue",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBreakContinue.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Else on nullable enum",
           "path": "compiler/testData/diagnostics/tests/when/ElseOnNullableEnum.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Else on nullable enum with smart cast",
           "path": "compiler/testData/diagnostics/tests/when/ElseOnNullableEnumWithSmartCast.kt",
@@ -309,21 +309,21 @@
       ],
       "5": [
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean brackets",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanBrackets.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean complex",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBooleanComplex.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive boolean",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBoolean.kt",
@@ -377,7 +377,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive nullable",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNullable.kt",
@@ -391,7 +391,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive platform enum null",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumNull.kt",
@@ -418,7 +418,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive platform enum else",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumElse.kt",
@@ -446,7 +446,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch false bypass else",
           "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypassElse.kt",
@@ -482,7 +482,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive no initialization",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNoInitialization.kt",
@@ -507,14 +507,14 @@
       ],
       "9": [
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive platform enum else",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumElse.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch false bypass",
           "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypass.kt",
@@ -542,21 +542,21 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive platform enum",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnum.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive nullable",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNullable.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive initialization",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveInitialization.kt",
@@ -570,7 +570,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive platform enum annotated",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumAnnotated.kt",
@@ -591,7 +591,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive platform enum null",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumNull.kt",
@@ -607,7 +607,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive no initialization",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNoInitialization.kt",
@@ -623,7 +623,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive no initialization",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveNoInitialization.kt",
@@ -657,7 +657,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch bypass val",
           "path": "compiler/testData/diagnostics/tests/when/BranchBypassVal.kt",
@@ -685,7 +685,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch bypass var",
           "path": "compiler/testData/diagnostics/tests/when/BranchBypassVar.kt",

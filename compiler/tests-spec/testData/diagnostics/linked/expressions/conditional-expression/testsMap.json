@@ -3,7 +3,7 @@
     "neg": {
       "1": [
         {
-          "specVersion": "0.1-218",
+          "specVersion": "0.1-313",
           "casesNumber": 3,
           "description": "The type of the condition expression must be a subtype of kotlin.Boolean",
           "unexpectedBehaviour": true
@@ -13,7 +13,7 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-218",
+          "specVersion": "0.1-313",
           "casesNumber": 4,
           "description": "The type of the condition expression must be a subtype of kotlin.Boolean",
           "unexpectedBehaviour": false

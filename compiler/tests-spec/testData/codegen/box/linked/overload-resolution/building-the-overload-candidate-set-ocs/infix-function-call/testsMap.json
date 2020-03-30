@@ -1,9 +1,9 @@
 {
-  "4": {
+  "2": {
     "pos": {
-      "1": [
+      "2": [
         {
-          "specVersion": "0.1-268",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "infix calls for properties",
           "unexpectedBehaviour": false

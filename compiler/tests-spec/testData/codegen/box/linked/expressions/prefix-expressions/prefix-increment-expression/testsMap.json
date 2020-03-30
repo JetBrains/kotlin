@@ -3,7 +3,7 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-213",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "check postfix increment expression has the same type as its operand expression",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-6/pos/1.2.kt",

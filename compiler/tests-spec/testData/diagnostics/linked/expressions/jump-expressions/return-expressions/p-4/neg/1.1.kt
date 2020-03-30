@@ -5,8 +5,8 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SPEC VERSION: 0.1-218
- * PLACE: expressions, jump-expressions, return-expressions -> paragraph 5 -> sentence 2
+ * SPEC VERSION: 0.1-313
+ * PLACE: expressions, jump-expressions, return-expressions -> paragraph 4 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: check returning is not allowed from run{...}
  */

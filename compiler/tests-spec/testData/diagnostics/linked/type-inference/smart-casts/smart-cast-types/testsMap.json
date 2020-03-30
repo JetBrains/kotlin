@@ -3,7 +3,7 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch false bypass",
           "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypass.kt",
@@ -24,7 +24,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch false bypass else",
           "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypassElse.kt",
@@ -54,14 +54,14 @@
       ],
       "8": [
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch false bypass",
           "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypass.kt",
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch false bypass else",
           "path": "compiler/testData/diagnostics/tests/when/BranchFalseBypassElse.kt",
@@ -79,7 +79,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch bypass val",
           "path": "compiler/testData/diagnostics/tests/when/BranchBypassVal.kt",
@@ -93,7 +93,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch bypass var",
           "path": "compiler/testData/diagnostics/tests/when/BranchBypassVar.kt",
@@ -109,7 +109,7 @@
       ],
       "6": [
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch bypass val",
           "path": "compiler/testData/diagnostics/tests/when/BranchBypassVal.kt",
@@ -118,7 +118,7 @@
       ],
       "8": [
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Branch bypass var",
           "path": "compiler/testData/diagnostics/tests/when/BranchBypassVar.kt",

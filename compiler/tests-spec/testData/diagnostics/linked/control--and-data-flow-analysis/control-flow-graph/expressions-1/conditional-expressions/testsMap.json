@@ -86,7 +86,7 @@
           "unexpectedBehaviour": false
         },
         {
-          "specVersion": "0.1-152",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "Exhaustive break continue",
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveBreakContinue.kt",

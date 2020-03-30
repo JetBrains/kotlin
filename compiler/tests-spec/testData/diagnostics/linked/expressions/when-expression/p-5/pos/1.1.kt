@@ -4,7 +4,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-100
+ * SPEC VERSION: 0.1-313
  * PLACE: expressions, when-expression -> paragraph 5 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: 'When' with bound value and with different variants of expressions in the control structure body.
