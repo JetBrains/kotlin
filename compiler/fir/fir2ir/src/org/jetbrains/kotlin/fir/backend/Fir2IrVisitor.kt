@@ -344,7 +344,17 @@ class Fir2IrVisitor(
                         startOffset, endOffset, type, symbol,
                         typeArgumentsCount = 0,
                         reflectionTarget = symbol
-                    )
+                    ).apply {
+                        val firReceiver = callableReferenceAccess.explicitReceiver
+                        if (firReceiver != null && firReceiver !is FirResolvedQualifier) {
+                            val irReceiver = convertToIrExpression(firReceiver)
+                            if (symbol.owner.dispatchReceiverParameter != null) {
+                                this.dispatchReceiver = irReceiver
+                            } else if (symbol.owner.extensionReceiverParameter != null) {
+                                this.extensionReceiver = irReceiver
+                            }
+                        }
+                    }
                 }
                 else -> {
                     IrErrorCallExpressionImpl(
