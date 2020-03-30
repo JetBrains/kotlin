@@ -19,7 +19,6 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.io.Decompressor
 import com.intellij.util.io.HttpRequests
 import com.intellij.util.lang.JavaVersion
-import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.jps.model.java.JdkVersionDetector
 import org.tukaani.xz.XZInputStream
@@ -153,6 +152,19 @@ data class JdkPredicate(
   private val ideBuildNumber: BuildNumber,
   private val expectedOS: String
 ) {
+
+  companion object {
+    fun createInstance(): JdkPredicate {
+      val expectedOS = when {
+        SystemInfo.isWindows -> "windows"
+        SystemInfo.isMac -> "macOS"
+        SystemInfo.isLinux -> "linux"
+        else -> error("Unsupported OS")
+      }
+      return JdkPredicate(ApplicationInfoImpl.getShadowInstance().build, expectedOS)
+    }
+  }
+
   fun testJdkProduct(product: ObjectNode): Boolean {
     val filterNode = product["filter"]
     return testPredicate(filterNode) == true
@@ -248,45 +260,49 @@ object JdkListParser {
 
     val result = mutableListOf<JdkItem>()
     for (item in items.filterIsInstance<ObjectNode>()) {
-      // check this package is OK to show for that instance of the IDE
-      if (!filters.testJdkProduct(item)) continue
-
-      val packages = item["packages"] as? ArrayNode ?: continue
-      // take the first matching package
-      val pkg = packages.filterIsInstance<ObjectNode>().firstOrNull(filters::testJdkPackage) ?: continue
-
-      val product = JdkProduct(
-        vendor = item["vendor"]?.asText() ?: continue,
-        product = item["product"]?.asText(),
-        flavour = item["flavour"]?.asText()
-      )
-
-      result += JdkItem(product = product,
-                        isDefaultItem = item["default"]?.let { filters.testPredicate(it) == true } ?: false,
-                        isVisibleOnUI = item["listed"]?.let { filters.testPredicate(it) == true } ?: true,
-
-                        jdkMajorVersion = item["jdk_version_major"]?.asInt() ?: continue,
-                        jdkVersion = item["jdk_version"]?.asText() ?: continue,
-                        jdkVendorVersion = item["jdk_vendor_version"]?.asText(),
-                        suggestedSdkName = item["suggested_sdk_name"]?.asText() ?: continue,
-
-                        arch = pkg["arch"]?.asText() ?: continue,
-                        packageType = pkg["package_type"]?.asText()?.let(JdkPackageType.Companion::findType) ?: continue,
-                        url = pkg["url"]?.asText() ?: continue,
-                        sha256 = pkg["sha256"]?.asText() ?: continue,
-                        archiveSize = pkg["archive_size"]?.asLong() ?: continue,
-                        archiveFileName = pkg["archive_file_name"]?.asText() ?: continue,
-                        packageRootPrefix = pkg["package_root_prefix"]?.asText() ?: continue,
-                        packageToBinJavaPrefix = pkg["package_to_java_home_prefix"]?.asText() ?: continue,
-
-                        unpackedSize = pkg["unpacked_size"]?.asLong() ?: continue,
-                        installFolderName = pkg["install_folder_name"]?.asText() ?: continue,
-
-                        sharedIndexAliases = (item["shared_index_aliases"] as? ArrayNode)?.mapNotNull { it.asText() } ?: listOf()
-      )
+      result += parseJdkItem(item, filters) ?: continue
     }
 
     return result.toList()
+  }
+
+  fun parseJdkItem(item: ObjectNode, filters: JdkPredicate): JdkItem? {
+    // check this package is OK to show for that instance of the IDE
+    if (!filters.testJdkProduct(item)) return null
+
+    val packages = item["packages"] as? ArrayNode ?: return null
+    // take the first matching package
+    val pkg = packages.filterIsInstance<ObjectNode>().firstOrNull(filters::testJdkPackage) ?: return null
+
+    val product = JdkProduct(
+      vendor = item["vendor"]?.asText() ?: return null,
+      product = item["product"]?.asText(),
+      flavour = item["flavour"]?.asText()
+    )
+
+    return JdkItem(product = product,
+                   isDefaultItem = item["default"]?.let { filters.testPredicate(it) == true } ?: false,
+                   isVisibleOnUI = item["listed"]?.let { filters.testPredicate(it) == true } ?: true,
+
+                   jdkMajorVersion = item["jdk_version_major"]?.asInt() ?: return null,
+                   jdkVersion = item["jdk_version"]?.asText() ?: return null,
+                   jdkVendorVersion = item["jdk_vendor_version"]?.asText(),
+                   suggestedSdkName = item["suggested_sdk_name"]?.asText() ?: return null,
+
+                   arch = pkg["arch"]?.asText() ?: return null,
+                   packageType = pkg["package_type"]?.asText()?.let(JdkPackageType.Companion::findType) ?: return null,
+                   url = pkg["url"]?.asText() ?: return null,
+                   sha256 = pkg["sha256"]?.asText() ?: return null,
+                   archiveSize = pkg["archive_size"]?.asLong() ?: return null,
+                   archiveFileName = pkg["archive_file_name"]?.asText() ?: return null,
+                   packageRootPrefix = pkg["package_root_prefix"]?.asText() ?: return null,
+                   packageToBinJavaPrefix = pkg["package_to_java_home_prefix"]?.asText() ?: return null,
+
+                   unpackedSize = pkg["unpacked_size"]?.asLong() ?: return null,
+                   installFolderName = pkg["install_folder_name"]?.asText() ?: return null,
+
+                   sharedIndexAliases = (item["shared_index_aliases"] as? ArrayNode)?.mapNotNull { it.asText() } ?: listOf()
+    )
   }
 }
 
@@ -365,13 +381,7 @@ class JdkListDownloader {
     }
 
     try {
-      val expectedOS = when {
-        SystemInfo.isWindows -> "windows"
-        SystemInfo.isMac -> "macOS"
-        SystemInfo.isLinux -> "linux"
-        else -> error("Unsupported OS")
-      }
-      return ImmutableList.copyOf(JdkListParser.parseJdkList(json, JdkPredicate(ApplicationInfoImpl.getShadowInstance().build, expectedOS)))
+      return ImmutableList.copyOf(JdkListParser.parseJdkList(json, JdkPredicate.createInstance()))
     }
     catch (t: Throwable) {
       throw RuntimeException("Failed to process the downloaded list of available JDKs from $feedUrl. ${t.message}", t)
