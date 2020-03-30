@@ -27,7 +27,6 @@ import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.ListTableModel;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,10 +35,6 @@ import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -95,9 +90,7 @@ class ShowUsagesTable extends JBTable implements DataProvider {
   }
 
   @NotNull
-  Runnable prepareTable(final boolean previewMode,
-                        @NotNull Runnable appendMoreUsageRunnable,
-                        @NotNull Runnable showInMaximalScopeRunnable) {
+  Runnable prepareTable(@NotNull Runnable appendMoreUsageRunnable, @NotNull Runnable showInMaximalScopeRunnable) {
     SpeedSearchBase<JTable> speedSearch = new MySpeedSearch(this);
     speedSearch.setComparator(new SpeedSearchComparator(false));
 
@@ -147,7 +140,7 @@ class ShowUsagesTable extends JBTable implements DataProvider {
       selectedUsages.set(usages);
     });
 
-    final Runnable itemChosenCallback = () -> {
+    return () -> {
       if (moreUsagesSelected.get()) {
         appendMoreUsageRunnable.run();
         return;
@@ -173,27 +166,6 @@ class ShowUsagesTable extends JBTable implements DataProvider {
         }
       }
     };
-
-    if (previewMode) {
-      addMouseListener(new MouseAdapter() {
-        @Override
-        public void mouseReleased(MouseEvent e) {
-          if (UIUtil.isActionClick(e, MouseEvent.MOUSE_RELEASED) && !UIUtil.isSelectionButtonDown(e) && !e.isConsumed()) {
-            itemChosenCallback.run();
-          }
-        }
-      });
-      addKeyListener(new KeyAdapter() {
-        @Override
-        public void keyPressed(KeyEvent e) {
-          if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            itemChosenCallback.run();
-          }
-        }
-      });
-    }
-
-    return itemChosenCallback;
   }
 
   @Nullable

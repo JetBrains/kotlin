@@ -9,7 +9,6 @@ import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.find.FindBundle;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindSettings;
-import com.intellij.find.UsagesPreviewPanelProvider;
 import com.intellij.find.findUsages.*;
 import com.intellij.find.impl.FindManagerImpl;
 import com.intellij.icons.AllIcons;
@@ -29,7 +28,6 @@ import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.impl.text.AsyncEditorLoader;
 import com.intellij.openapi.keymap.KeymapUtil;
-import com.intellij.openapi.preview.PreviewManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -41,7 +39,6 @@ import com.intellij.openapi.ui.popup.PopupChooserBuilder;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.IntRef;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -342,10 +339,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     Set<UsageNode> visibleNodes = new LinkedHashSet<>();
     table.setTableModel(new SmartList<>(createStringNode(UsageViewBundle.message("progress.searching"))));
 
-    boolean isPreviewMode =
-      Boolean.TRUE == PreviewManager.SERVICE.preview(project, UsagesPreviewPanelProvider.ID, Pair.create(usageView, table), false);
     Runnable itemChosenCallback = table.prepareTable(
-      isPreviewMode,
       () -> showElementUsages(
         project, editor, popupPosition,
         maxUsages + getUsagesPageSize(), minWidth,
@@ -354,12 +348,12 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     );
 
 
-    JBPopup popup = isPreviewMode ? null : createUsagePopup(project,
-                                                            usageView, table, itemChosenCallback, presentation, statusPanel, minWidth,
-                                                            () -> actionHandler.showDialogAndShowUsages(editor),
-                                                            actionHandler);
+    JBPopup popup = createUsagePopup(project,
+                                     usageView, table, itemChosenCallback, presentation, statusPanel, minWidth,
+                                     () -> actionHandler.showDialogAndShowUsages(editor),
+                                     actionHandler);
     ProgressIndicator indicator = new ProgressIndicatorBase();
-    if (popup != null && !popup.isDisposed()) {
+    if (!popup.isDisposed()) {
       Disposer.register(popup, usageView);
       Disposer.register(popup, indicator::cancel);
 
@@ -374,14 +368,14 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     UsageNode USAGES_OUTSIDE_SCOPE_NODE = new UsageNode(null, table.USAGES_OUTSIDE_SCOPE_SEPARATOR);
     UsageNode MORE_USAGES_SEPARATOR_NODE = new UsageNode(null, table.MORE_USAGES_SEPARATOR);
 
-    PingEDT pingEDT = new PingEDT("Rebuild popup in EDT", o -> popup != null && popup.isDisposed(), 100, () -> {
-      if (popup != null && popup.isDisposed()) return;
+    PingEDT pingEDT = new PingEDT("Rebuild popup in EDT", o -> popup.isDisposed(), 100, () -> {
+      if (popup.isDisposed()) return;
 
       List<UsageNode> nodes = new ArrayList<>(usages.size());
       List<Usage> copy;
       synchronized (usages) {
         // open up popup as soon as the first usage has been found
-        if (popup != null && !popup.isVisible() && (usages.isEmpty() || !showPopupIfNeedTo(popup, popupPosition))) {
+        if (!popup.isVisible() && (usages.isEmpty() || !showPopupIfNeedTo(popup, popupPosition))) {
           return;
         }
         addUsageNodes(usageView.getRoot(), usageView, nodes);
