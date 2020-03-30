@@ -247,6 +247,7 @@ extra["compilerModules"] = arrayOf(
     ":js:js.translator",
     ":js:js.dce",
     ":native:frontend.native",
+    ":native:kotlin-native-utils",
     ":compiler",
     ":kotlin-build-common",
     ":core:metadata",
@@ -559,6 +560,10 @@ tasks {
 //        dependsOn(":js:js.tests:wasmTest")
     }
 
+    register("nativeCompilerTest") {
+        dependsOn(":native:kotlin-native-utils:test")
+    }
+
     register("firCompilerTest") {
         dependsOn(":compiler:fir:raw-fir:psi2fir:test")
         dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")
@@ -600,6 +605,7 @@ tasks {
         dependsOn("jvmCompilerTest")
         dependsOn("jsCompilerTest")
         dependsOn("wasmCompilerTest")
+        dependsOn("nativeCompilerTest")
         dependsOn("firCompilerTest")
 
         dependsOn("scriptingTest")
@@ -612,7 +618,6 @@ tasks {
 
     register("toolsTest") {
         dependsOn(":tools:kotlinp:test")
-        dependsOn(":native:kotlin-native-utils:test")
         dependsOn(":native:kotlin-klib-commonizer:test")
     }
 
