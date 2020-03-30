@@ -6,7 +6,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.SmartList;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -139,8 +138,9 @@ class RegisteredIndexes {
     myNoLimitCheckTypes.addAll(extension.getFileTypesWithSizeLimitNotApplicable());
   }
 
-  boolean skipLimitCheck(@NotNull VirtualFile file) {
-    return myNoLimitCheckTypes.contains(file.getFileType());
+  @NotNull
+  Set<FileType> getNoLimitCheckFileTypes() {
+    return myNoLimitCheckTypes;
   }
 
   boolean areIndexesReady() {
