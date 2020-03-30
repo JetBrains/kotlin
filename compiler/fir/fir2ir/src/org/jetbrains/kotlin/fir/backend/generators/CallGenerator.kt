@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -55,7 +56,11 @@ internal class CallGenerator(
                         symbol.owner.backingField?.symbol,
                         symbol.owner.getter?.symbol,
                         symbol.owner.setter?.symbol
-                    )
+                    ).apply {
+                        if (callableReferenceAccess.explicitReceiver !is FirResolvedQualifier) {
+                            applyReceivers(callableReferenceAccess)
+                        }
+                    }
                 }
                 is IrFunctionSymbol -> {
                     IrFunctionReferenceImpl(
@@ -355,6 +360,16 @@ internal class CallGenerator(
                     dispatchReceiver = qualifiedAccess.findIrDispatchReceiver()
                 }
                 if (ownerFunction?.extensionReceiverParameter != null) {
+                    extensionReceiver = qualifiedAccess.findIrExtensionReceiver()
+                }
+                this
+            }
+            is IrNoArgumentsCallableReferenceBase -> {
+                val ownerPropertyGetter = (symbol.owner as? IrProperty)?.getter
+                if (ownerPropertyGetter?.dispatchReceiverParameter != null) {
+                    dispatchReceiver = qualifiedAccess.findIrDispatchReceiver()
+                }
+                if (ownerPropertyGetter?.extensionReceiverParameter != null) {
                     extensionReceiver = qualifiedAccess.findIrExtensionReceiver()
                 }
                 this

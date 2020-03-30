@@ -49,6 +49,7 @@ FILE fqName:<root> fileName:/boundCallableReferences.kt
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KProperty0<kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
         PROPERTY_REFERENCE 'public final bar: kotlin.Int [val]' field='FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:private [final]' getter='public final fun <get-bar> (): kotlin.Int declared in <root>.A' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
+          $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KProperty0<kotlin.Int>
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
