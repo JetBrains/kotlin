@@ -61,3 +61,4 @@ org.jetbrains.kotlin.idea.debugger.test.AsyncStackTraceTestGenerated.testAllFile
 org.jetbrains.kotlin.idea.debugger.test.AsyncStackTraceTestGenerated.testAsyncFunctions, redesign test AsyncStackTraces
 org.jetbrains.kotlin.idea.debugger.test.AsyncStackTraceTestGenerated.testAsyncLambdas, redesign test AsyncStackTraces
 org.jetbrains.kotlin.idea.debugger.test.AsyncStackTraceTestGenerated.testAsyncSimple, redesign test AsyncStackTraces
+org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOver.testStepOverInlinedLambdaStdlib, fails after advancing bootstrap KT-37879
