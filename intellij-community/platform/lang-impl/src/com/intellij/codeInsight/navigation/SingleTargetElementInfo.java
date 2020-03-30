@@ -13,7 +13,7 @@ import com.intellij.usageView.UsageViewTypeLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class SingleTargetElementInfo extends CtrlMouseInfo {
+class SingleTargetElementInfo extends BaseCtrlMouseInfo {
 
   private final @NotNull PsiElement myTargetElement;
 

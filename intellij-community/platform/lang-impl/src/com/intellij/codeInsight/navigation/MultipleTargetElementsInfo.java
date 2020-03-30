@@ -7,7 +7,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.ReferenceRange;
 import org.jetbrains.annotations.NotNull;
 
-class MultipleTargetElementsInfo extends CtrlMouseInfo {
+class MultipleTargetElementsInfo extends BaseCtrlMouseInfo {
 
   MultipleTargetElementsInfo(@NotNull PsiElement elementAtPointer) {
     super(elementAtPointer);

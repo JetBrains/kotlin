@@ -368,7 +368,7 @@ public final class CtrlMouseHandler {
     if (element instanceof PsiNameIdentifierOwner) {
       PsiElement identifier = ((PsiNameIdentifierOwner)element).getNameIdentifier();
       if (identifier != null && identifier.isValid()) {
-        return new CtrlMouseInfo(identifier){
+        return new BaseCtrlMouseInfo(identifier){
           @Override
           public @NotNull CtrlMouseDocInfo getInfo() {
             String name = UsageViewUtil.getType(element) + " '" + UsageViewUtil.getShortName(element) + "'";
