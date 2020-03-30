@@ -257,7 +257,7 @@ public final class CtrlMouseHandler {
   }
 
   private static boolean areSimilar(@NotNull CtrlMouseInfo info1, @NotNull CtrlMouseInfo info2) {
-    return info1.myElementAtPointer.equals(info2.myElementAtPointer)
+    return info1.getElementAtPointer().equals(info2.getElementAtPointer())
            && info1.getRanges().equals(info2.getRanges());
   }
 
@@ -369,10 +369,9 @@ public final class CtrlMouseHandler {
       PsiElement identifier = ((PsiNameIdentifierOwner)element).getNameIdentifier();
       if (identifier != null && identifier.isValid()) {
         return new CtrlMouseInfo(identifier){
-          @NotNull
           @Override
-          public CtrlMouseDocInfo getInfo() {
-            String name = UsageViewUtil.getType(element) + " '"+ UsageViewUtil.getShortName(element)+"'";
+          public @NotNull CtrlMouseDocInfo getInfo() {
+            String name = UsageViewUtil.getType(element) + " '" + UsageViewUtil.getShortName(element) + "'";
             return new CtrlMouseDocInfo("Show usages of " + name, null);
           }
 
@@ -597,7 +596,7 @@ public final class CtrlMouseHandler {
 
       HyperlinkListener hyperlinkListener = docInfo.docProvider == null
                                    ? null
-                                   : new QuickDocHyperlinkListener(docInfo.docProvider, info.myElementAtPointer);
+                                   : new QuickDocHyperlinkListener(docInfo.docProvider, info.getElementAtPointer());
       Ref<Consumer<? super String>> newTextConsumerRef = new Ref<>();
       JComponent component = HintUtil.createInformationLabel(docInfo.text, hyperlinkListener, null, newTextConsumerRef);
       component.setBorder(JBUI.Borders.empty(6, 6, 5, 6));

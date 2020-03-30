@@ -14,36 +14,33 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 class SingleTargetElementInfo extends CtrlMouseInfo {
-  @NotNull private final PsiElement myTargetElement;
+
+  private final @NotNull PsiElement myTargetElement;
 
   SingleTargetElementInfo(@NotNull PsiElement elementAtPointer, @NotNull PsiElement targetElement) {
     super(elementAtPointer);
     myTargetElement = targetElement;
   }
 
-  SingleTargetElementInfo(@NotNull PsiReference ref, @NotNull final PsiElement targetElement) {
-    super(ref.getElement(), ReferenceRange.getAbsoluteRanges(ref));
+  SingleTargetElementInfo(@NotNull PsiReference reference, @NotNull PsiElement targetElement) {
+    super(reference.getElement(), ReferenceRange.getAbsoluteRanges(reference));
     myTargetElement = targetElement;
   }
 
   @Override
-  @NotNull
-  public CtrlMouseDocInfo getInfo() {
-    return areElementsValid() ? generateInfo(myTargetElement, myElementAtPointer, isNavigatable()) : CtrlMouseDocInfo.EMPTY;
-  }
-
-  private boolean areElementsValid() {
-    return myTargetElement.isValid() && myElementAtPointer.isValid();
+  public @NotNull CtrlMouseDocInfo getInfo() {
+    return isValid() ? generateInfo(myTargetElement, getElementAtPointer(), isNavigatable()) : CtrlMouseDocInfo.EMPTY;
   }
 
   @Override
   public boolean isValid() {
-    return areElementsValid();
+    return myTargetElement.isValid() && getElementAtPointer().isValid();
   }
 
   @Override
   public boolean isNavigatable() {
-    return myTargetElement != myElementAtPointer && myTargetElement != myElementAtPointer.getParent();
+    PsiElement elementAtPointer = getElementAtPointer();
+    return myTargetElement != elementAtPointer && myTargetElement != elementAtPointer.getParent();
   }
 
   @NotNull

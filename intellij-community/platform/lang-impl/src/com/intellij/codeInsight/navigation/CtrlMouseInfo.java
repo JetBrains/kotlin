@@ -11,10 +11,11 @@ import java.util.List;
 import static com.intellij.codeInsight.navigation.CtrlMouseHandler.LOG;
 
 public abstract class CtrlMouseInfo {
-  @NotNull final PsiElement myElementAtPointer;
-  @NotNull private final List<TextRange> myRanges;
 
-  public CtrlMouseInfo(@NotNull PsiElement elementAtPointer, @NotNull List<TextRange> ranges) {
+  private final @NotNull PsiElement myElementAtPointer;
+  private final @NotNull List<@NotNull TextRange> myRanges;
+
+  public CtrlMouseInfo(@NotNull PsiElement elementAtPointer, @NotNull List<@NotNull TextRange> ranges) {
     myElementAtPointer = elementAtPointer;
     myRanges = ranges;
   }
@@ -38,13 +39,15 @@ public abstract class CtrlMouseInfo {
     return Collections.singletonList(new TextRange(textOffset, range.getEndOffset()));
   }
 
-  @NotNull
-  public List<TextRange> getRanges() {
+  public final @NotNull PsiElement getElementAtPointer() {
+    return myElementAtPointer;
+  }
+
+  public final @NotNull List<@NotNull TextRange> getRanges() {
     return myRanges;
   }
 
-  @NotNull
-  public abstract CtrlMouseDocInfo getInfo();
+  public abstract @NotNull CtrlMouseDocInfo getInfo();
 
   public abstract boolean isValid();
 

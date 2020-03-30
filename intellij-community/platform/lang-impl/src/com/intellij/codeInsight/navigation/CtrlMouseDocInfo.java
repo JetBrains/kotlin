@@ -5,10 +5,11 @@ import com.intellij.lang.documentation.DocumentationProvider;
 import org.jetbrains.annotations.Nullable;
 
 public final class CtrlMouseDocInfo {
+
   public static final CtrlMouseDocInfo EMPTY = new CtrlMouseDocInfo(null, null);
 
-  @Nullable public final String text;
-  @Nullable final DocumentationProvider docProvider;
+  public final @Nullable String text;
+  final @Nullable DocumentationProvider docProvider;
 
   CtrlMouseDocInfo(@Nullable String text, @Nullable DocumentationProvider provider) {
     this.text = text;

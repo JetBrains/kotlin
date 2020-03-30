@@ -8,17 +8,17 @@ import com.intellij.psi.ReferenceRange;
 import org.jetbrains.annotations.NotNull;
 
 class MultipleTargetElementsInfo extends CtrlMouseInfo {
-  MultipleTargetElementsInfo(@NotNull final PsiElement elementAtPointer) {
+
+  MultipleTargetElementsInfo(@NotNull PsiElement elementAtPointer) {
     super(elementAtPointer);
   }
 
-  MultipleTargetElementsInfo(@NotNull final PsiElement elementAtPointer, @NotNull PsiReference ref) {
-    super(elementAtPointer, ReferenceRange.getAbsoluteRanges(ref));
+  MultipleTargetElementsInfo(@NotNull PsiElement elementAtPointer, @NotNull PsiReference reference) {
+    super(elementAtPointer, ReferenceRange.getAbsoluteRanges(reference));
   }
 
   @Override
-  @NotNull
-  public CtrlMouseDocInfo getInfo() {
+  public @NotNull CtrlMouseDocInfo getInfo() {
     return new CtrlMouseDocInfo(CodeInsightBundle.message("multiple.implementations.tooltip"), null);
   }
 
