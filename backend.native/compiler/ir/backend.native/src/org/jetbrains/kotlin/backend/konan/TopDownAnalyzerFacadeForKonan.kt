@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
-import org.jetbrains.kotlin.backend.konan.descriptors.isKonanStdlib
+import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -52,7 +52,7 @@ internal object TopDownAnalyzerFacadeForKonan {
                 config.friendModuleFiles)
 
         val additionalPackages = mutableListOf<PackageFragmentProvider>()
-        if (!module.isKonanStdlib()) {
+        if (!module.isNativeStdlib()) {
             val dependencies = listOf(module) + resolvedDependencies.moduleDescriptors.resolvedDescriptors + resolvedDependencies.moduleDescriptors.forwardDeclarationsModule
             module.setDependencies(dependencies, resolvedDependencies.friends)
         } else {

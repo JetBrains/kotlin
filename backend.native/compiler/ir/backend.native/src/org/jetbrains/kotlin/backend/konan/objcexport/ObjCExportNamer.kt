@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
-import org.jetbrains.kotlin.backend.konan.descriptors.isKonanStdlib
+import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -855,7 +855,7 @@ private fun ObjCExportMapper.canHaveSameName(first: PropertyDescriptor, second: 
 }
 
 internal val ModuleDescriptor.namePrefix: String get() {
-    if (this.isKonanStdlib()) return "Kotlin"
+    if (this.isNativeStdlib()) return "Kotlin"
 
     return abbreviate(this.name.asString().let { it.substring(1, it.lastIndex) })
 }

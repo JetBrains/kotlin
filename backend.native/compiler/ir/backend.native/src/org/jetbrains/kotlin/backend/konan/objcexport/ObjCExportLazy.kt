@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.backend.konan.descriptors.isKonanStdlib
+import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -445,7 +445,7 @@ private fun createNamerConfiguration(configuration: ObjCExportLazy.Configuration
 
 // TODO: find proper solution.
 private fun ModuleDescriptor.isStdlib(): Boolean =
-        this.builtIns == this || this.isCommonStdlib() || this.isKonanStdlib()
+        this.builtIns == this || this.isCommonStdlib() || this.isNativeStdlib()
 
 private val kotlinSequenceClassId = ClassId.topLevel(FqName("kotlin.sequences.Sequence"))
 

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.klibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.kotlinLibrary
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
-import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.library.BaseKotlinLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
@@ -51,8 +50,12 @@ fun DeclarationDescriptor.findTopLevelDescriptor(): DeclarationDescriptor {
     else this.containingDeclaration!!.findTopLevelDescriptor()
 }
 
-val ModuleDescriptor.isForwardDeclarationModule get() =
-    name == Name.special("<forward declarations>")
+val ModuleDescriptor.isForwardDeclarationModule: Boolean
+    get() {
+        // TODO: use KlibResolvedModuleDescriptorsFactoryImpl.FORWARD_DECLARATIONS_MODULE_NAME instead of
+        //  manually created Name instance
+        return name == Name.special("<forward declarations>")
+    }
 
 fun BaseKotlinLibrary.isInteropLibrary() =
         manifestProperties["ir_provider"] == KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
@@ -60,7 +63,3 @@ fun BaseKotlinLibrary.isInteropLibrary() =
 fun ModuleDescriptor.isFromInteropLibrary() =
         if (klibModuleOrigin !is DeserializedKlibModuleOrigin) false
         else kotlinLibrary.isInteropLibrary()
-
-private val STDLIB_MODULE_NAME = Name.special("<$KONAN_STDLIB_NAME>")
-
-fun ModuleDescriptor.isKonanStdlib() = name == STDLIB_MODULE_NAME

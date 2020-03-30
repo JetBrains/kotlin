@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import org.jetbrains.kotlin.library.unpackZippedKonanLibraryTo
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
-import org.jetbrains.kotlin.backend.konan.descriptors.isKonanStdlib
+import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentTypeTransformer
 import org.jetbrains.kotlin.util.Logger
@@ -167,7 +167,7 @@ class Library(val name: String, val requestedRepository: String?, val target: St
         val module = KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(library, versionSpec, storageManager, null)
 
         val defaultModules = mutableListOf<ModuleDescriptorImpl>()
-        if (!module.isKonanStdlib()) {
+        if (!module.isNativeStdlib()) {
             val resolver = resolverByName(
                     emptyList(),
                     distributionKlib = Distribution().klib,
