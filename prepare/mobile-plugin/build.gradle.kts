@@ -34,8 +34,8 @@ dependencies {
     if (isStandaloneBuild) {
         runtime("org.jetbrains.kotlin:kotlin-android-extensions-runtime:$kotlinAndroidExtensionsVersion") { isTransitive = false }
     } else {
-        runtime(project(":kotlin-android-extensions-runtime"))
-        runtime(project(":plugins:android-extensions-compiler"))
+        runtime(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
+        runtime(project(":plugins:android-extensions-compiler")) { isTransitive = false }
     }
     runtime("com.jetbrains.intellij.android:android-kotlin-extensions-common:$cidrVersion") { isTransitive = false }
     runtime("com.android.tools.ddms:ddmlib:26.0.0") {
