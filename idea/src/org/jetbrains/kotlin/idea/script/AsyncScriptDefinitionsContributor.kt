@@ -72,8 +72,6 @@ abstract class AsyncScriptDefinitionsContributor(protected val project: Project)
             }
         }
 
-        override fun isHeadless(): Boolean = false
-
         override fun run(indicator: ProgressIndicator) {
             while (true) {
                 if (indicator.isCanceled || !shouldStartNewUpdate) {
