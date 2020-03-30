@@ -36,4 +36,7 @@ class KotlinUastIdentifiersTest : AbstractKotlinIdentifiersTest() {
     @Test
     fun testEnumValuesConstructors() = doTest("EnumValuesConstructors")
 
+    @Test
+    fun testNonTrivialIdentifiers() = doTest("NonTrivialIdentifiers")
+
 }

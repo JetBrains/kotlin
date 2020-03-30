@@ -147,6 +147,9 @@ class SimpleKotlinRenderLogTest : AbstractKotlinUastTest(), AbstractKotlinRender
 
     @Test
     fun testAnnotatedExpressions() = doTest("AnnotatedExpressions")
+
+    @Test
+    fun testNonTrivialIdentifiers() = doTest("NonTrivialIdentifiers")
 }
 
 fun withForceUInjectionHostValue(call: () -> Unit) {
