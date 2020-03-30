@@ -79,7 +79,7 @@ fun callSuspendFun(suspendFun: SuspendFun, doYield: Boolean, doThrow: Boolean, r
             .startCoroutine(ResultHolderCompletion(resultHolder))
 }
 
-@Throws
+@Throws(CoroutineException::class)
 suspend fun callSuspendFun2(suspendFun: SuspendFun, doYield: Boolean, doThrow: Boolean): Int {
     return suspendFun.suspendFun(doYield = doYield, doThrow = doThrow)
 }
@@ -127,7 +127,7 @@ private suspend fun callAbstractSuspendBridgeImpl(bridge: AbstractSuspendBridge)
     assertFailsWith<ObjCErrorException> { bridge.nothingAsUnit(10) }
 }
 
-@Throws
+@Throws(CoroutineException::class)
 fun callSuspendBridge(bridge: AbstractSuspendBridge, resultHolder: ResultHolder<Unit>) {
     suspend {
         callSuspendBridgeImpl(bridge)
