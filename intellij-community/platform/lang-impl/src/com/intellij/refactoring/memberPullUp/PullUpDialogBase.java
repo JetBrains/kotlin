@@ -12,8 +12,7 @@ import com.intellij.refactoring.ui.AbstractMemberSelectionTable;
 import com.intellij.refactoring.ui.MemberSelectionPanelBase;
 import com.intellij.refactoring.ui.RefactoringDialog;
 import com.intellij.usageView.UsageViewUtil;
-import com.intellij.util.nls.NlsContexts;
-import org.jetbrains.annotations.Nls;
+import com.intellij.openapi.util.NlsContexts;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;

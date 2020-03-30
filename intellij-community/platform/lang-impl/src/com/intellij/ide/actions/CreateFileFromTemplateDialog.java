@@ -19,7 +19,7 @@ import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.util.Consumer;
 import com.intellij.util.PlatformIcons;
-import com.intellij.util.nls.NlsContexts;
+import com.intellij.openapi.util.NlsContexts;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.intellij.util.nls.NlsContexts.DialogTitle;
+import static com.intellij.openapi.util.NlsContexts.DialogTitle;
 
 /**
  * @author peter

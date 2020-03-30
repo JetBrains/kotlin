@@ -16,9 +16,8 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.FieldPanel
-import com.intellij.util.nls.NlsContexts
+import com.intellij.openapi.util.NlsContexts
 import gnu.trove.THashSet
-import org.jetbrains.annotations.Nls
 import org.jetbrains.concurrency.AsyncPromise
 import org.jetbrains.concurrency.Promise
 import java.awt.Component
