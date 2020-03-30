@@ -1,6 +1,7 @@
 package org.jetbrains.konan.resolve.translation
 
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.konan.resolve.konan.KonanTarget
 import org.jetbrains.konan.resolve.symbols.objc.KtOCInterfaceSymbol
@@ -8,6 +9,7 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.junit.runner.RunWith
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
@@ -30,19 +32,37 @@ class KtSymbolTranslatorTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     fun `test simple class translation`() {
-        val file = myFixture.configureByText(
-            "ClassToTranslate.kt", """
-            class A
-        """.trimIndent()
-        ) as KtFile
+        val file = configure("class A")
+
+        val translator = KtOCSymbolTranslator(project)
+        val translatedSymbols = translator.translate(file, TestTarget).toList()
+        val translatedSymbol = translatedSymbols.single() as KtOCInterfaceSymbol
+        assertEquals("MyModuleA", translatedSymbol.name)
+        assertFalse("state already loaded", translatedSymbol.stateLoaded)
+        assertFalse(translatedSymbol.isTemplateSymbol)
+        assertEquals("MyModuleBase", translatedSymbol.superType.name)
+        assertTrue("state not loaded", translatedSymbol.stateLoaded)
+    }
+
+    fun `test stop translating after invalidation`() {
+        val file = configure("class A")
 
         val translator = KtOCSymbolTranslator(project)
         val translatedSymbols = translator.translate(file, TestTarget).toList()
         val translatedSymbol = translatedSymbols.single() as KtOCInterfaceSymbol
         assertFalse("state already loaded", translatedSymbol.stateLoaded)
+
+        runWriteAction {
+            val document = myFixture.getDocument(file)
+            document.setText("class B")
+            PsiDocumentManager.getInstance(project).commitDocument(document)
+        }
+
         assertEquals("MyModuleA", translatedSymbol.name)
-        assertFalse(translatedSymbol.isTemplateSymbol)
-        assertEquals("MyModuleBase", translatedSymbol.superType.name)
-        assertTrue("state not loaded", translatedSymbol.stateLoaded)
+        assertEquals("", translatedSymbol.superType.name)
+        assertFalse("state not loaded", translatedSymbol.stateLoaded)
     }
+
+    private fun configure(code: String): KtFile =
+        myFixture.configureByText("toTranslate.kt", code) as KtFile
 }
