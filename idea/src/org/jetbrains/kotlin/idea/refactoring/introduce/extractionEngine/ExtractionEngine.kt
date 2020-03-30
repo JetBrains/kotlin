@@ -22,7 +22,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.util.Computable
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.ui.awt.RelativePoint
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -61,9 +60,9 @@ class ExtractionEngine(
         val project = extractionData.project
 
         val adjustExtractionData = helper.adjustExtractionData(extractionData)
-        val analysisResult = ProgressIndicatorUtils.underModalProgress(project, "Analyze extraction data...", Computable {
+        val analysisResult = ProgressIndicatorUtils.underModalProgress(project, "Analyze extraction data...") {
             adjustExtractionData.performAnalysis()
-        })
+        }
 
         if (ApplicationManager.getApplication()!!.isUnitTestMode && analysisResult.status != AnalysisResult.Status.SUCCESS) {
             throw BaseRefactoringProcessor.ConflictsInTestsException(analysisResult.messages.map { it.renderMessage() })

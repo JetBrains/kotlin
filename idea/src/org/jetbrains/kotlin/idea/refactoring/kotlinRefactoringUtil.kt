@@ -78,6 +78,7 @@ import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.refactoring.rename.canonicalRender
 import org.jetbrains.kotlin.idea.roots.isOutsideKotlinAwareSourceRoot
 import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.idea.util.ProgressIndicatorUtils.underModalProgress
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.OVERRIDE_KEYWORD
@@ -859,31 +860,31 @@ fun checkSuperMethods(
     val project = declaration.project
 
     val (declarationDescriptor, overriddenElementsToDescriptor) =
-        ProgressIndicatorUtils.underModalProgress(
+        underModalProgress(
             project,
-            KotlinBundle.message("find.usages.progress.text.declaration.superMethods"),
-            Computable {
-                val declarationDescriptor = declaration.unsafeResolveToDescriptor() as CallableDescriptor
+            KotlinBundle.message("find.usages.progress.text.declaration.superMethods"))
+        {
+            val declarationDescriptor = declaration.unsafeResolveToDescriptor() as CallableDescriptor
 
-                if (declarationDescriptor is LocalVariableDescriptor) return@Computable (declarationDescriptor to emptyMap<PsiElement, CallableDescriptor>())
+            if (declarationDescriptor is LocalVariableDescriptor) return@underModalProgress (declarationDescriptor to emptyMap<PsiElement, CallableDescriptor>())
 
-                val overriddenElementsToDescriptor = HashMap<PsiElement, CallableDescriptor>()
-                for (overriddenDescriptor in DescriptorUtils.getAllOverriddenDescriptors(
-                    declarationDescriptor
-                )) {
-                    val overriddenDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(
-                        project,
-                        overriddenDescriptor
-                    ) ?: continue
-                    if (overriddenDeclaration is KtNamedFunction || overriddenDeclaration is KtProperty || overriddenDeclaration is PsiMethod || overriddenDeclaration is KtParameter) {
-                        overriddenElementsToDescriptor[overriddenDeclaration] = overriddenDescriptor
-                    }
+            val overriddenElementsToDescriptor = HashMap<PsiElement, CallableDescriptor>()
+            for (overriddenDescriptor in DescriptorUtils.getAllOverriddenDescriptors(
+                declarationDescriptor
+            )) {
+                val overriddenDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(
+                    project,
+                    overriddenDescriptor
+                ) ?: continue
+                if (overriddenDeclaration is KtNamedFunction || overriddenDeclaration is KtProperty || overriddenDeclaration is PsiMethod || overriddenDeclaration is KtParameter) {
+                    overriddenElementsToDescriptor[overriddenDeclaration] = overriddenDescriptor
                 }
-                if (ignore != null) {
-                    overriddenElementsToDescriptor.keys.removeAll(ignore)
-                }
-                (declarationDescriptor to overriddenElementsToDescriptor)
-            })
+            }
+            if (ignore != null) {
+                overriddenElementsToDescriptor.keys.removeAll(ignore)
+            }
+            (declarationDescriptor to overriddenElementsToDescriptor)
+        }
 
     if (overriddenElementsToDescriptor.isEmpty()) return listOf(declaration)
 

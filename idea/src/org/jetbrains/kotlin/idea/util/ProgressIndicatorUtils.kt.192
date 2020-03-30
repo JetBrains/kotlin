@@ -25,12 +25,12 @@ object ProgressIndicatorUtils {
     fun <T> underModalProgress(
         project: Project,
         @Nls progressTitle: String,
-        computable: Computable<T>
+        computable: () -> T
     ): T {
         val dumbService = DumbService.getInstance(project)
         val useAlternativeResolve = dumbService.isAlternativeResolveEnabled
         val inReadAction =
-            ThrowableComputable<T, RuntimeException> { runReadAction { return@runReadAction computable.compute() } }
+            ThrowableComputable<T, RuntimeException> { runReadAction { return@runReadAction computable() } }
         val prioritizedRunnable =
             ThrowableComputable<T, RuntimeException> { ProgressManager.getInstance().computePrioritized(inReadAction) }
         val process =
