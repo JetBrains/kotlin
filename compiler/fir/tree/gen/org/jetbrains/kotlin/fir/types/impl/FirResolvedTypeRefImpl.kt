@@ -29,8 +29,13 @@ internal class FirResolvedTypeRefImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedTypeRefImpl {
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         delegatedTypeRef = delegatedTypeRef?.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedTypeRefImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 }

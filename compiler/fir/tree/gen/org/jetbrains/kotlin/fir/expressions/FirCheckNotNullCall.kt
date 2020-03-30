@@ -24,5 +24,7 @@ abstract class FirCheckNotNullCall : FirExpression(), FirCall, FirResolvable {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCheckNotNullCall(this, data)
 
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCheckNotNullCall
+
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirCheckNotNullCall
 }

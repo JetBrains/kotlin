@@ -37,6 +37,10 @@ sealed class FirImplicitBuiltinTypeRef(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         return this
     }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedTypeRef {
+        return this
+    }
 }
 
 class FirImplicitUnitTypeRef(

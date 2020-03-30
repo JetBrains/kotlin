@@ -55,5 +55,7 @@ abstract class FirValueParameter : FirVariable<FirValueParameter>() {
 
     abstract override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirValueParameter
 
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirValueParameter
+
     abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirValueParameter
 }

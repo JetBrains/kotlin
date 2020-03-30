@@ -44,6 +44,8 @@ abstract class FirSealedClass : FirRegularClass() {
 
     abstract fun replaceInheritors(newInheritors: List<ClassId>)
 
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSealedClass
+
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirSealedClass
 
     abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirSealedClass

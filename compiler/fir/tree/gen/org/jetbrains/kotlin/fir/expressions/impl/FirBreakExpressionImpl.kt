@@ -33,6 +33,11 @@ internal class FirBreakExpressionImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirBreakExpressionImpl {
         typeRef = typeRef.transformSingle(transformer, data)
+        transformAnnotations(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirBreakExpressionImpl {
         annotations.transformInplace(transformer, data)
         return this
     }

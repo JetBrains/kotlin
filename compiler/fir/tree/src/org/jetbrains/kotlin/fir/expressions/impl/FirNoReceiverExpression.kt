@@ -25,5 +25,9 @@ object FirNoReceiverExpression : FirExpression() {
         return this
     }
 
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpression {
+        return this
+    }
+
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 }

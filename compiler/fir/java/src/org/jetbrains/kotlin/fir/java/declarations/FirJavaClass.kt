@@ -76,11 +76,11 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirJavaClass {
-        declarations.transformInplace(transformer, data)
-        annotations.transformInplace(transformer, data)
         typeParameters.transformInplace(transformer, data)
+        declarations.transformInplace(transformer, data)
         status = status.transformSingle(transformer, data)
         superTypeRefs.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         return this
     }
 
@@ -90,6 +90,11 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirRegularClass {
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJavaClass {
+        annotations.transformInplace(transformer, data)
         return this
     }
 }

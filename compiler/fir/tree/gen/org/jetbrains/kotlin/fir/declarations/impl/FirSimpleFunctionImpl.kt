@@ -73,7 +73,7 @@ open class FirSimpleFunctionImpl @FirImplementationDetail constructor(
         body = body?.transformSingle(transformer, data)
         transformStatus(transformer, data)
         transformContractDescription(transformer, data)
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         return this
     }
 
@@ -104,6 +104,11 @@ open class FirSimpleFunctionImpl @FirImplementationDetail constructor(
 
     override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
         contractDescription = contractDescription.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 

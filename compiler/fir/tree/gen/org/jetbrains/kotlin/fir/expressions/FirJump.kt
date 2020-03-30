@@ -23,4 +23,6 @@ abstract class FirJump<E : FirTargetElement> : FirExpression() {
     abstract val target: FirTarget<E>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitJump(this, data)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJump<E>
 }

@@ -23,4 +23,6 @@ abstract class FirTypeOperatorCall : FirExpression(), FirCall {
     abstract val conversionTypeRef: FirTypeRef
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeOperatorCall(this, data)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeOperatorCall
 }

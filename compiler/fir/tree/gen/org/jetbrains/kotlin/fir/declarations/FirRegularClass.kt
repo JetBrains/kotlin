@@ -43,6 +43,8 @@ abstract class FirRegularClass : FirPureAbstractElement(), FirMemberDeclaration,
 
     abstract override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirRegularClass
+
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirRegularClass
 
     abstract fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirRegularClass

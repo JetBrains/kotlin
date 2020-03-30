@@ -20,4 +20,6 @@ interface FirTypeRef : FirAnnotationContainer {
     override val annotations: List<FirAnnotationCall>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeRef(this, data)
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeRef
 }

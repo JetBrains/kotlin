@@ -22,4 +22,6 @@ abstract class FirUserTypeRef : FirPureAbstractElement(), FirTypeRefWithNullabil
     abstract val qualifier: List<FirQualifierPart>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitUserTypeRef(this, data)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirUserTypeRef
 }

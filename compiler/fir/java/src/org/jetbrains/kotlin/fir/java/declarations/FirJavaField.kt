@@ -67,7 +67,7 @@ class FirJavaField @FirImplementationDetail constructor(
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirField {
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         typeParameters.transformInplace(transformer, data)
         return this
     }
@@ -99,6 +99,11 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
         returnTypeRef = newReturnTypeRef
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJavaField {
+        annotations.transformInplace(transformer, data)
+        return this
     }
 
     override val delegate: FirExpression?

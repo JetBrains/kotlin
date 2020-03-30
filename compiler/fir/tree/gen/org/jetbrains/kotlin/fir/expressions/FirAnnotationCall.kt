@@ -24,4 +24,6 @@ abstract class FirAnnotationCall : FirExpression(), FirCall {
     abstract val annotationTypeRef: FirTypeRef
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotationCall(this, data)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotationCall
 }

@@ -42,6 +42,11 @@ internal class FirBinaryLogicExpressionImpl(
         return this
     }
 
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpressionImpl {
+        annotations.transformInplace(transformer, data)
+        return this
+    }
+
     override fun <D> transformLeftOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpressionImpl {
         leftOperand = leftOperand.transformSingle(transformer, data)
         return this
@@ -54,7 +59,7 @@ internal class FirBinaryLogicExpressionImpl(
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpressionImpl {
         typeRef = typeRef.transformSingle(transformer, data)
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         return this
     }
 

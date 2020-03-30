@@ -21,4 +21,6 @@ abstract class FirWrappedExpression : FirExpression() {
     abstract val expression: FirExpression
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWrappedExpression(this, data)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWrappedExpression
 }

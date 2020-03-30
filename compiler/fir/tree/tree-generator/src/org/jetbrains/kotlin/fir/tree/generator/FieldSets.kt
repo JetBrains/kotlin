@@ -37,7 +37,7 @@ object FieldSets {
     val declarations = fieldList(declaration)
 
     val annotations =
-        fieldList("annotations", annotationCall)
+        fieldList("annotations", annotationCall).withTransform(needTransformInOtherChildren = true)
 
     fun symbolWithPackage(packageName: String?, symbolClassName: String, argument: String? = null): Field {
         return field("symbol", type(packageName, symbolClassName), argument)

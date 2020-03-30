@@ -53,9 +53,14 @@ internal class FirAnonymousObjectImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnonymousObjectImpl {
         superTypeRefs.transformInplace(transformer, data)
         declarations.transformInplace(transformer, data)
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         typeRef = typeRef.transformSingle(transformer, data)
         transformControlFlowGraphReference(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousObjectImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 

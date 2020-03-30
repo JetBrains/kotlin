@@ -26,4 +26,6 @@ abstract class FirResolvedFunctionTypeRef : FirResolvedTypeRef(), FirFunctionTyp
     abstract override val returnTypeRef: FirTypeRef
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedFunctionTypeRef(this, data)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedFunctionTypeRef
 }

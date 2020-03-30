@@ -34,10 +34,15 @@ internal class FirFunctionTypeRefImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFunctionTypeRefImpl {
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         receiverTypeRef = receiverTypeRef?.transformSingle(transformer, data)
         valueParameters.transformInplace(transformer, data)
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunctionTypeRefImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 }

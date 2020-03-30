@@ -30,6 +30,8 @@ abstract class FirFunctionCall : FirQualifiedAccessExpression(), FirCall {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFunctionCall(this, data)
 
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFunctionCall
+
     abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirFunctionCall
 
     abstract override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirFunctionCall

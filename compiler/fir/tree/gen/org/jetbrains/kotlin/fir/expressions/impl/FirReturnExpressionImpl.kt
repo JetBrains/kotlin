@@ -40,6 +40,11 @@ internal class FirReturnExpressionImpl(
         return this
     }
 
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirReturnExpressionImpl {
+        annotations.transformInplace(transformer, data)
+        return this
+    }
+
     override fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirReturnExpressionImpl {
         result = result.transformSingle(transformer, data)
         return this
@@ -47,7 +52,7 @@ internal class FirReturnExpressionImpl(
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirReturnExpressionImpl {
         typeRef = typeRef.transformSingle(transformer, data)
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         return this
     }
 

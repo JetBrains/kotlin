@@ -26,4 +26,6 @@ interface FirClassLikeDeclaration<F : FirClassLikeDeclaration<F>> : FirDeclarati
     override val symbol: FirClassLikeSymbol<F>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitClassLikeDeclaration(this, data)
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirClassLikeDeclaration<F>
 }
