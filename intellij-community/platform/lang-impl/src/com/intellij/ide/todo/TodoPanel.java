@@ -122,7 +122,7 @@ abstract class TodoPanel extends SimpleToolWindowPanel implements OccurenceNavig
     return todoTreeBuilder;
   }
 
-    public static class GroupByActionGroup extends DefaultActionGroup {
+  public static class GroupByActionGroup extends DefaultActionGroup {
     {
       getTemplatePresentation().setIcon(AllIcons.Actions.GroupBy);
       getTemplatePresentation().setText(IdeBundle.messagePointer("group.group.by"));
