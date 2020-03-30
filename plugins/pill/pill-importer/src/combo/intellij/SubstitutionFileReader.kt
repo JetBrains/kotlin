@@ -80,6 +80,7 @@ object SubstitutionFileReader {
             "ideaIU-project" -> listOf("ideaIU", "ideaIC")
             "intellij-core-project" -> listOf("intellij-core")
             "standalone-jps" -> listOf("jps-standalone")
+            "jps-build-test" -> listOf("jps-build-test")
             else -> error("Unknown artifact name $artifactName")
         }
     }

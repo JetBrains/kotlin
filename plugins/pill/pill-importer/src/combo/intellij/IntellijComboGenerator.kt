@@ -346,12 +346,18 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
         val kotlinPathContext = ModuleContext(kotlinProjectDir, moduleFile)
         val comboPathContext = ModuleContext(comboProjectDir, comboModuleFile)
 
+        var hasTestSourceRoots = false
+
         // Patch source paths
         for (contentRoot in moduleRootManager.getElementsByTagName("content").elements) {
             fun patchUrlEntity(entity: Element) {
                 val url = entity.getAttribute("url") ?: return
                 val path = kotlinPathContext.substituteWithValues(getUrlPath(url))
                 entity.setAttribute("url", comboPathContext.getUrlWithVariables(File(path).canonicalFile))
+
+                if (!hasTestSourceRoots && entity.hasAttribute("isTestSource")) {
+                    hasTestSourceRoots = true
+                }
             }
 
             patchUrlEntity(contentRoot)
@@ -363,6 +369,7 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
         val oldOrderEntries = oldOrderEntryElements.map { OrderEntryInfo.parse(it, kotlinPathContext) }
 
         val newOrderEntries = mutableListOf<ScopedOrderEntryInfo>()
+        val deferredOrderEntries = mutableListOf<ScopedOrderEntryInfo>()
 
         for (scopedEntry in oldOrderEntries) {
             when (val entry = scopedEntry.entry) {
@@ -375,13 +382,10 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
                     val sources = entry.library.sources.filter { !it.startsWith(kotlinDependenciesDir) }
 
                     for (classpathFile in entry.library.classes) {
-                        if (classpathFile.startsWith(kotlinProjectDir)) {
-                            val mappedLibrary = LibraryInfo(listOf(classpathFile), javadoc, sources)
-                            newOrderEntries += scopedEntry.copy(entry = OrderEntryInfo.ModuleLibrary(mappedLibrary))
-                        } else if (classpathFile.startsWith(kotlinDependenciesDir)) {
-                            val relativeClasspathFile = classpathFile.relativeToOrNull(kotlinDependenciesDir) ?: continue
-                            val relativeClasspathPath = relativeClasspathFile.path
-                            val artifactName = relativeClasspathPath.substringBefore(File.separatorChar, "")
+                        val dependenciesLocalPath = getDependenciesLocalPath(classpathFile)
+
+                        if (dependenciesLocalPath != null) {
+                            val artifactName = dependenciesLocalPath.substringBefore(File.separatorChar, "")
 
                             val substitutionsForArtifact = this.substitutions.getForArtifact(artifactName)
                             if (substitutionsForArtifact == null) {
@@ -389,7 +393,7 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
                                 continue
                             }
 
-                            val pathInsideIdea = getJarPathInsideIdeaPlatform(relativeClasspathPath) ?: continue
+                            val pathInsideIdea = getJarPathInsideIdeaPlatform(artifactName, dependenciesLocalPath) ?: continue
 
                             val substitutionsForFile = substitutionsForArtifact[pathInsideIdea]
                             if (substitutionsForFile == null) {
@@ -399,8 +403,16 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
 
                             for (substitution in substitutionsForFile) {
                                 when (substitution) {
-                                    is OrderEntryInfo.Library, is OrderEntryInfo.ModuleOutput -> {
+                                    is OrderEntryInfo.Library -> {
                                         newOrderEntries += scopedEntry.copy(entry = substitution)
+                                    }
+                                    is OrderEntryInfo.ModuleOutput -> {
+                                        newOrderEntries += scopedEntry.copy(entry = substitution)
+
+                                        val scope = scopedEntry.scope
+                                        if (hasTestSourceRoots && scope.compileAvailable && scope.runtimeAvailable) {
+                                            deferredOrderEntries += ScopedOrderEntryInfo(substitution, OrderEntryScope.TEST)
+                                        }
                                     }
                                     is OrderEntryInfo.ModuleLibrary -> {
                                         for (substitutionClasspathFile in substitution.library.classes) {
@@ -411,6 +423,9 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
                                     else -> error("Unexpected substitution entry $substitution")
                                 }
                             }
+                        } else if (classpathFile.startsWith(kotlinProjectDir)) {
+                            val mappedLibrary = LibraryInfo(listOf(classpathFile), javadoc, sources)
+                            newOrderEntries += scopedEntry.copy(entry = OrderEntryInfo.ModuleLibrary(mappedLibrary))
                         } else {
                             newOrderEntries += scopedEntry
                         }
@@ -422,7 +437,7 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
 
         oldOrderEntryElements.forEach { it.parentNode.removeChild(it) }
 
-        for (scopedEntry in newOrderEntries.distinct()) {
+        for (scopedEntry in (newOrderEntries + deferredOrderEntries).distinct()) {
             val element = scopedEntry.render(module, comboPathContext)
             moduleRootManager.appendChild(element)
         }
@@ -437,7 +452,11 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
         }
     }
 
-    private fun getJarPathInsideIdeaPlatform(relativePath: String): String? {
+    private fun getJarPathInsideIdeaPlatform(artifactName: String, relativePath: String): String? {
+        if (artifactName == "jps-build-test") {
+            return "jps-build-test.jar"
+        }
+
         val pathComponents = relativePath.split(File.separatorChar)
         val countToDrop = if (pathComponents.firstOrNull() == "intellij-runtime-annotations") 2 else 3
         return pathComponents.drop(countToDrop).joinToString("/")

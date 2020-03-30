@@ -19,6 +19,12 @@ enum class OrderEntrySetKind {
 enum class OrderEntryScope {
     COMPILE, PROVIDED, RUNTIME, TEST;
 
+    val compileAvailable: Boolean
+        get() = this == COMPILE || this == PROVIDED || this == TEST
+
+    val runtimeAvailable: Boolean
+        get() = this == COMPILE || this == RUNTIME || this == TEST
+
     companion object {
         fun get(orderEntry: Element): OrderEntryScope {
             val rawScope = orderEntry.getAttribute("scope")

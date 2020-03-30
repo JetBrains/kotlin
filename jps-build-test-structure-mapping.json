@@ -1,0 +1,17 @@
+[
+  {
+    "moduleName": "intellij.platform.jps.build",
+    "path": "jps-build-test.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.jps.model.tests",
+    "path": "jps-build-test.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.jps.model.serialization.tests",
+    "path": "jps-build-test.jar",
+    "type": "module-output"
+  }
+]
