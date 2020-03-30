@@ -242,6 +242,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     ) {
         if (accessor is FirDefaultPropertyAccessor || accessor.body == null) {
             transformFunction(accessor, withExpectedType(enhancedTypeRef))
+            return
         }
         val returnTypeRef = accessor.returnTypeRef
         val expectedReturnTypeRef = if (enhancedTypeRef is FirResolvedTypeRef && returnTypeRef !is FirResolvedTypeRef) {
