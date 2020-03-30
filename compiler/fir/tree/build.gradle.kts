@@ -6,7 +6,6 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:psi"))
     compile(project(":compiler:frontend.common"))
     compile(project(":core:descriptors"))
     compile(project(":compiler:fir:cones"))

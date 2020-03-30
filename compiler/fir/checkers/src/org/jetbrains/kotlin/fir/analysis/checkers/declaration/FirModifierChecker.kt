@@ -6,11 +6,18 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.analysis.checkers.FirModifier
+import org.jetbrains.kotlin.fir.analysis.checkers.FirModifierList
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
+import org.jetbrains.kotlin.fir.analysis.checkers.source
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
@@ -195,5 +202,4 @@ object FirModifierChecker : FirDeclarationChecker<FirDeclaration>() {
         val source = modifier.source
         source?.let { report(FirErrors.INCOMPATIBLE_MODIFIERS.on(it, firstKeyword, secondKeyword)) }
     }
-
 }
