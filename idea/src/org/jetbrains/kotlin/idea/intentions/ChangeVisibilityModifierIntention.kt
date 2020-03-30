@@ -74,7 +74,7 @@ open class ChangeVisibilityModifierIntention protected constructor(
         val defaultRange = noModifierYetApplicabilityRange(element) ?: return null
 
         if (element is KtPrimaryConstructor && defaultRange.isEmpty && element.visibilityModifier() == null) {
-            text = "${KotlinBundle.message("make.primary.constructor.0", modifier.value)}" // otherwise it may be confusing
+            text = KotlinBundle.message("make.primary.constructor.0", modifier.value) // otherwise it may be confusing
         }
 
         return if (modifierList != null)
