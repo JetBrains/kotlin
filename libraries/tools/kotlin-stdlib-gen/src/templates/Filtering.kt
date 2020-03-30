@@ -677,6 +677,7 @@ object Filtering : TemplateGroupBase() {
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc { "Returns a list containing all elements not matching the given [predicate]." }
+        sample("samples.collections.Collections.Filtering.filter")
         returns("List<T>")
         body {
             """

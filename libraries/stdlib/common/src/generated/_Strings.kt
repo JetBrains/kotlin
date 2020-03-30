@@ -366,6 +366,8 @@ public inline fun String.dropWhile(predicate: (Char) -> Boolean): String {
 
 /**
  * Returns a char sequence containing only those characters from the original char sequence that match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun CharSequence.filter(predicate: (Char) -> Boolean): CharSequence {
     return filterTo(StringBuilder(), predicate)
@@ -373,6 +375,8 @@ public inline fun CharSequence.filter(predicate: (Char) -> Boolean): CharSequenc
 
 /**
  * Returns a string containing only those characters from the original string that match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun String.filter(predicate: (Char) -> Boolean): String {
     return filterTo(StringBuilder(), predicate).toString()
@@ -410,6 +414,8 @@ public inline fun <C : Appendable> CharSequence.filterIndexedTo(destination: C, 
 
 /**
  * Returns a char sequence containing only those characters from the original char sequence that do not match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun CharSequence.filterNot(predicate: (Char) -> Boolean): CharSequence {
     return filterNotTo(StringBuilder(), predicate)
@@ -417,6 +423,8 @@ public inline fun CharSequence.filterNot(predicate: (Char) -> Boolean): CharSequ
 
 /**
  * Returns a string containing only those characters from the original string that do not match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun String.filterNot(predicate: (Char) -> Boolean): String {
     return filterNotTo(StringBuilder(), predicate).toString()

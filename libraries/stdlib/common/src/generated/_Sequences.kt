@@ -375,8 +375,8 @@ public fun <T> Sequence<T>.dropWhile(predicate: (T) -> Boolean): Sequence<T> {
  * Returns a sequence containing only elements matching the given [predicate].
  *
  * The operation is _intermediate_ and _stateless_.
- *
- *  @sample samples.collections.Collections.Filtering.filter
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public fun <T> Sequence<T>.filter(predicate: (T) -> Boolean): Sequence<T> {
     return FilteringSequence(this, true, predicate)
@@ -432,6 +432,8 @@ public inline fun <reified R, C : MutableCollection<in R>> Sequence<*>.filterIsI
  * Returns a sequence containing all elements not matching the given [predicate].
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public fun <T> Sequence<T>.filterNot(predicate: (T) -> Boolean): Sequence<T> {
     return FilteringSequence(this, false, predicate)

@@ -1792,6 +1792,8 @@ public inline fun UShortArray.dropWhile(predicate: (UShort) -> Boolean): List<US
 
 /**
  * Returns a list containing only elements matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1802,6 +1804,8 @@ public inline fun UIntArray.filter(predicate: (UInt) -> Boolean): List<UInt> {
 
 /**
  * Returns a list containing only elements matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1812,6 +1816,8 @@ public inline fun ULongArray.filter(predicate: (ULong) -> Boolean): List<ULong> 
 
 /**
  * Returns a list containing only elements matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1822,6 +1828,8 @@ public inline fun UByteArray.filter(predicate: (UByte) -> Boolean): List<UByte> 
 
 /**
  * Returns a list containing only elements matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1940,6 +1948,8 @@ public inline fun <C : MutableCollection<in UShort>> UShortArray.filterIndexedTo
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1950,6 +1960,8 @@ public inline fun UIntArray.filterNot(predicate: (UInt) -> Boolean): List<UInt> 
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1960,6 +1972,8 @@ public inline fun ULongArray.filterNot(predicate: (ULong) -> Boolean): List<ULon
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1970,6 +1984,8 @@ public inline fun UByteArray.filterNot(predicate: (UByte) -> Boolean): List<UByt
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes

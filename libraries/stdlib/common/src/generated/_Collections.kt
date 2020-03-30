@@ -744,6 +744,8 @@ public inline fun <reified R, C : MutableCollection<in R>> Iterable<*>.filterIsI
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun <T> Iterable<T>.filterNot(predicate: (T) -> Boolean): List<T> {
     return filterNotTo(ArrayList<T>(), predicate)
