@@ -578,15 +578,10 @@ class FirTowerResolverSession internal constructor(
                 !invokeBuiltinExtensionMode && isExtensionFunctionType &&
                         invokeReceiverCandidate.explicitReceiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
 
-            val invokeReceiverExpression = components.createExplicitReceiverForInvoke(invokeReceiverCandidate).let {
-                if (!invokeBuiltinExtensionMode) {
-                    it.extensionReceiver = extensionReceiverExpression
-                    // NB: this should fix problem in DFA (KT-36014)
-                    it.explicitReceiver = info.explicitReceiver
-                    it.safe = info.isSafeCall
-                }
-                components.transformQualifiedAccessUsingSmartcastInfo(it.build())
-            }
+            val invokeReceiverExpression =
+                components.createExplicitReceiverForInvoke(
+                    invokeReceiverCandidate, info, invokeBuiltinExtensionMode, extensionReceiverExpression
+                )
 
             val invokeFunctionInfo =
                 info.copy(explicitReceiver = invokeReceiverExpression, name = OperatorNameConventions.INVOKE).let {
@@ -687,7 +682,12 @@ class FirTowerResolverSession internal constructor(
     }
 }
 
-private fun BodyResolveComponents.createExplicitReceiverForInvoke(candidate: Candidate): FirQualifiedAccessExpressionBuilder {
+private fun BodyResolveComponents.createExplicitReceiverForInvoke(
+    candidate: Candidate,
+    info: CallInfo,
+    invokeBuiltinExtensionMode: Boolean,
+    extensionReceiverExpression: FirExpression
+): FirExpression {
     val (name, typeRef) = when (val symbol = candidate.symbol) {
         is FirCallableSymbol<*> -> {
             symbol.callableId.callableName to returnTypeCalculator.tryCalculateReturnType(symbol.firUnsafe())
@@ -707,5 +707,12 @@ private fun BodyResolveComponents.createExplicitReceiverForInvoke(candidate: Can
         )
         dispatchReceiver = candidate.dispatchReceiverExpression()
         this.typeRef = typeRef
-    }
+
+        if (!invokeBuiltinExtensionMode) {
+            extensionReceiver = extensionReceiverExpression
+            // NB: this should fix problem in DFA (KT-36014)
+            explicitReceiver = info.explicitReceiver
+            safe = info.isSafeCall
+        }
+    }.build().let(::transformQualifiedAccessUsingSmartcastInfo)
 }
