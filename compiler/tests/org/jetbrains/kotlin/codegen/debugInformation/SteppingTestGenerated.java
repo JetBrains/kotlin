@@ -86,6 +86,18 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     }
 
     @Test
+    @TestMetadata("lambdaStepInline.kt")
+    public void testLambdaStepInline() throws Exception {
+        runTest("compiler/testData/debug/stepping/lambdaStepInline.kt");
+    }
+
+    @Test
+    @TestMetadata("lambdaStepInlineWithDefaults.kt")
+    public void testLambdaStepInlineWithDefaults() throws Exception {
+        runTest("compiler/testData/debug/stepping/lambdaStepInlineWithDefaults.kt");
+    }
+
+    @Test
     @TestMetadata("namedCallableReference.kt")
     public void testNamedCallableReference() throws Exception {
         runTest("compiler/testData/debug/stepping/namedCallableReference.kt");
@@ -107,5 +119,11 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     @TestMetadata("throwException.kt")
     public void testThrowException() throws Exception {
         runTest("compiler/testData/debug/stepping/throwException.kt");
+    }
+
+    @Test
+    @TestMetadata("voidLambdaStepInline.kt")
+    public void testVoidLambdaStepInline() throws Exception {
+        runTest("compiler/testData/debug/stepping/voidLambdaStepInline.kt");
     }
 }
