@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import com.google.gson.GsonBuilder
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ResolvedDependency
 import java.io.File
@@ -28,34 +27,24 @@ internal class CompositeNodeModuleBuilder(
 
         val packageJson = fromSrcPackageJson(srcPackageJsonFile)!!
 
-        packageJson.main = srcDir.parentFile.resolve(packageJson.main!!).canonicalPath
-
         // yarn requires semver
         packageJson.version = fixSemver(packageJson.version)
 
-        return makeNodeModule2(cache.dir, packageJson)
+        val container = cache.dir
+        val importedPackageDir = importedPackageDir(container, packageJson.name, packageJson.version)
+
+        packageJson.main = srcDir.parentFile.resolve(packageJson.main!!)
+            .relativeToOrNull(importedPackageDir)
+            ?.path
+            ?: throw IllegalStateException("Unable to link composite builds for Kotlin/JS which have different roots")
+
+        return makeNodeModule(container, packageJson)
     }
 }
 
-fun makeNodeModule2(
+private fun makeNodeModule(
     container: File,
     packageJson: PackageJson
 ): File {
-    val dir = importedPackageDir(container, packageJson.name, packageJson.version)
-
-    if (dir.exists()) dir.deleteRecursively()
-
-    check(dir.mkdirs()) {
-        "Cannot create directory: $dir"
-    }
-
-    val gson = GsonBuilder()
-        .setPrettyPrinting()
-        .create()
-
-    dir.resolve("package.json").writer().use {
-        gson.toJson(packageJson, it)
-    }
-
-    return dir
+    return makeNodeModule(container, packageJson) {}
 }
