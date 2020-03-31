@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.isInner
+import org.jetbrains.kotlin.fir.declarations.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -65,9 +68,9 @@ class MemberScopeTowerLevel(
     session: FirSession,
     private val bodyResolveComponents: BodyResolveComponents,
     val dispatchReceiver: ReceiverValue,
-    val extensionReceiver: ReceiverValue? = null,
-    val implicitExtensionInvokeMode: Boolean = false,
-    val scopeSession: ScopeSession
+    private val extensionReceiver: ReceiverValue? = null,
+    private val implicitExtensionInvokeMode: Boolean = false,
+    private val scopeSession: ScopeSession
 ) : SessionBasedTowerLevel(session) {
     private fun <T : AbstractFirBasedSymbol<*>> processMembers(
         output: TowerScopeLevel.TowerScopeLevelProcessor<T>,
@@ -85,18 +88,18 @@ class MemberScopeTowerLevel(
                     return@processScopeMembers
                 }
                 val dispatchReceiverValue = NotNullableReceiverValue(dispatchReceiver)
+
+                output.consumeCandidate(
+                    candidate, dispatchReceiverValue,
+                    implicitExtensionReceiverValue = extensionReceiver as? ImplicitReceiverValue<*>
+                )
+
                 if (implicitExtensionInvokeMode) {
-                    output.consumeCandidate(
-                        candidate, dispatchReceiverValue,
-                        implicitExtensionReceiverValue = extensionReceiver as? ImplicitReceiverValue<*>
-                    )
                     output.consumeCandidate(
                         candidate, dispatchReceiverValue,
                         implicitExtensionReceiverValue = null,
                         builtInExtensionFunctionReceiverValue = this.extensionReceiver
                     )
-                } else {
-                    output.consumeCandidate(candidate, dispatchReceiverValue, extensionReceiver as? ImplicitReceiverValue<*>)
                 }
             } else if (candidate is FirClassLikeSymbol<*>) {
                 output.consumeCandidate(candidate, null, extensionReceiver as? ImplicitReceiverValue<*>)
