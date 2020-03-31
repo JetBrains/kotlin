@@ -16,7 +16,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
     private val experimentalEnabled = experimental || distribution.experimentalEnabled
     private val configurableSubtargets = zephyrSubtargets
 
-    val targetValues: List<KonanTarget> by lazy { KonanTarget.predefinedTargets.toList() + configurableSubtargets }
+    val targetValues: List<KonanTarget> by lazy { KonanTarget.predefinedTargets.values + configurableSubtargets }
 
     val targets = targetValues.associateBy { it.visibleName }
 

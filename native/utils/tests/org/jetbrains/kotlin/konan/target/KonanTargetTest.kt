@@ -14,7 +14,7 @@ class KonanTargetTest {
         assertEquals(
             "Some of predefined KonanTarget instances are not listed in 'KonanTarget.predefinedTargets'",
             KonanTarget::class.sealedSubclasses.mapNotNull { it.objectInstance }.toSet(),
-            KonanTarget.predefinedTargets
+            KonanTarget.predefinedTargets.values.toSet()
         )
     }
 }
