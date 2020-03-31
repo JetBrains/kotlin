@@ -431,12 +431,17 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     ): CompositeTransformResult<FirStatement> {
         return withLocalScopeCleanup {
             addLocalScope(FirLocalScope())
-            dataFlowAnalyzer.enterFunction(function)
+            val functionIsNotAnalyzed = transformerPhase != function.resolvePhase
+            if (functionIsNotAnalyzed) {
+                dataFlowAnalyzer.enterFunction(function)
+            }
             @Suppress("UNCHECKED_CAST")
             transformDeclarationContent(function, data).also {
-                val result = it.single as FirFunction<*>
-                dataFlowAnalyzer.exitFunction(result)?.let { controlFlowGraph ->
-                    result.transformControlFlowGraphReference(ControlFlowGraphReferenceTransformer, controlFlowGraph)
+                if (functionIsNotAnalyzed) {
+                    val result = it.single as FirFunction<*>
+                    dataFlowAnalyzer.exitFunction(result)?.let { controlFlowGraph ->
+                        result.transformControlFlowGraphReference(ControlFlowGraphReferenceTransformer, controlFlowGraph)
+                    }
                 }
             } as CompositeTransformResult<FirStatement>
         }
