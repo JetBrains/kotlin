@@ -382,13 +382,13 @@ internal class CallAndReferenceGenerator(
                     IrGetObjectValueImpl(startOffset, endOffset, irClass.defaultType, irClass.symbol)
                 }
             }
-        // TODO: uncomment after fixing KT-35730
-//            ?: run {
-//                val name = if (isDispatch) "Dispatch" else "Extension"
-//                throw AssertionError(
-//                    "$name receiver expected: ${render()} to ${calleeReference.render()}"
-//                )
-//            }
+            ?: run {
+                if (this is FirCallableReferenceAccess) return null
+                val name = if (isDispatch) "Dispatch" else "Extension"
+                throw AssertionError(
+                    "$name receiver expected: ${render()} to ${calleeReference.render()}"
+                )
+            }
     }
 
     private fun IrExpression.applyReceivers(qualifiedAccess: FirQualifiedAccess): IrExpression {
