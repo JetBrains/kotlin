@@ -2,7 +2,7 @@
 package com.intellij.openapi.externalSystem.service.execution
 
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
-import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
+import com.intellij.openapi.externalSystem.model.task.ExternalSystemTask
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.KeyedExtensionCollector
@@ -21,7 +21,7 @@ interface ExternalSystemExecutionAware {
    * [com.intellij.openapi.externalSystem.model.task.ExternalSystemTask.execute]
    */
   fun prepareExecution(
-    taskId: ExternalSystemTaskId,
+    task: ExternalSystemTask,
     externalProjectPath: String,
     isPreviewMode: Boolean,
     taskNotificationListener: ExternalSystemTaskNotificationListener,

@@ -97,7 +97,7 @@ class SdkLookupProviderImpl : SdkLookupProvider {
 
     fun setSdk(sdk: Sdk?) {
       when (sdk) {
-        null -> sdkInfo.set(SdkInfo.Unresolved)
+        null -> sdkInfo.set(SdkInfo.Undefined)
         else -> sdkInfo.set(SdkInfo.Resolved(sdk.name, sdk.versionString, sdk.homePath))
       }
       this.sdk.setResult(sdk)

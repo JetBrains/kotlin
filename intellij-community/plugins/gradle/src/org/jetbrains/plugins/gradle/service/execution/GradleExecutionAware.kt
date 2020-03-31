@@ -1,19 +1,21 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.execution
 
-import com.intellij.build.events.impl.FinishEventImpl
-import com.intellij.build.events.impl.ProgressBuildEventImpl
-import com.intellij.build.events.impl.StartEventImpl
-import com.intellij.build.events.impl.SuccessResultImpl
+import com.intellij.build.events.impl.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.externalSystem.model.task.ExternalSystemTask
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
+import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
+import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskState.CANCELED
+import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskState.CANCELING
 import com.intellij.openapi.externalSystem.model.task.event.ExternalSystemBuildEvent
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemExecutionAware
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkException
+import com.intellij.openapi.externalSystem.service.notification.ExternalSystemProgressNotificationManager
 import com.intellij.openapi.externalSystem.service.notification.callback.OpenExternalSystemSettingsCallback
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
@@ -23,6 +25,7 @@ import com.intellij.openapi.projectRoots.JdkUtil
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ui.configuration.SdkLookupProvider
 import com.intellij.openapi.roots.ui.configuration.SdkLookupProvider.SdkInfo
+import com.intellij.util.ConcurrencyUtil
 import org.jetbrains.annotations.PropertyKey
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleBundle
@@ -33,17 +36,17 @@ import java.lang.System.currentTimeMillis
 
 class GradleExecutionAware : ExternalSystemExecutionAware {
   override fun prepareExecution(
-    taskId: ExternalSystemTaskId,
+    task: ExternalSystemTask,
     externalProjectPath: String,
     isPreviewMode: Boolean,
     taskNotificationListener: ExternalSystemTaskNotificationListener,
     project: Project
   ) {
-    if (!isPreviewMode) prepareJvmForExecution(taskId, externalProjectPath, taskNotificationListener, project)
+    if (!isPreviewMode) prepareJvmForExecution(task, externalProjectPath, taskNotificationListener, project)
   }
 
   private fun prepareJvmForExecution(
-    taskId: ExternalSystemTaskId,
+    task: ExternalSystemTask,
     externalProjectPath: String,
     taskNotificationListener: ExternalSystemTaskNotificationListener,
     project: Project
@@ -55,7 +58,7 @@ class GradleExecutionAware : ExternalSystemExecutionAware {
     val provider = use(project) { getGradleJvmLookupProvider(it, projectSettings) }
     var sdkInfo = use(project) { provider.nonblockingResolveGradleJvmInfo(it, externalProjectPath, gradleJvm) }
     if (sdkInfo is SdkInfo.Unresolved || sdkInfo is SdkInfo.Resolving) {
-      provider.waitForGradleJvmResolving(taskId, taskNotificationListener)
+      provider.waitForGradleJvmResolving(task, taskNotificationListener)
       sdkInfo = use(project) { provider.nonblockingResolveGradleJvmInfo(it, externalProjectPath, gradleJvm) }
     }
 
@@ -63,9 +66,9 @@ class GradleExecutionAware : ExternalSystemExecutionAware {
     val homePath = sdkInfo.homePath ?: throw jdkConfigurationException("gradle.jvm.is.invalid")
     if (!JdkUtil.checkForJdk(homePath)) {
       if (JdkUtil.checkForJre(homePath)) {
-        throw jdkConfigurationException("gradle.jvm.is.jre");
+        throw jdkConfigurationException("gradle.jvm.is.jre")
       }
-      throw jdkConfigurationException("gradle.jvm.is.invalid");
+      throw jdkConfigurationException("gradle.jvm.is.invalid")
     }
   }
 
@@ -88,7 +91,7 @@ class GradleExecutionAware : ExternalSystemExecutionAware {
   }
 
   private fun SdkLookupProvider.waitForGradleJvmResolving(
-    taskId: ExternalSystemTaskId,
+    task: ExternalSystemTask,
     taskNotificationListener: ExternalSystemTaskNotificationListener
   ): Sdk? {
     if (ApplicationManager.getApplication().isDispatchThread) {
@@ -96,12 +99,26 @@ class GradleExecutionAware : ExternalSystemExecutionAware {
       throw jdkConfigurationException("gradle.jvm.is.being.resolved.error")
     }
 
-    val progressIndicator = createProgressIndicator(taskId, taskNotificationListener)
+    val progressIndicator = createProgressIndicator(task.id, taskNotificationListener)
+    taskNotificationListener.submitProgressStarted(task.id, progressIndicator)
     onProgress(progressIndicator)
-    taskNotificationListener.submitProgressStarted(taskId, progressIndicator)
+    task.onCancel { progressIndicator.cancel() }
     val result = blockingGetSdk()
-    taskNotificationListener.submitProgressFinished(taskId, progressIndicator)
+    taskNotificationListener.submitProgressFinished(task.id, progressIndicator)
     return result
+  }
+
+  private fun ExternalSystemTask.onCancel(callback: () -> Unit) {
+    val wrappedCallback = ConcurrencyUtil.once(callback)
+    val progressManager = ExternalSystemProgressNotificationManager.getInstance()
+    val notificationListener = object : ExternalSystemTaskNotificationListenerAdapter() {
+      override fun onCancel(id: ExternalSystemTaskId) {
+        wrappedCallback.run()
+        progressManager.removeNotificationListener(this)
+      }
+    }
+    progressManager.addNotificationListener(id, notificationListener)
+    if (state == CANCELED || state == CANCELING) wrappedCallback.run()
   }
 
   private fun createProgressIndicator(
@@ -130,7 +147,10 @@ class GradleExecutionAware : ExternalSystemExecutionAware {
     taskId: ExternalSystemTaskId,
     progressIndicator: ProgressIndicator
   ) {
-    val result = SuccessResultImpl()
+    val result = when {
+      progressIndicator.isCanceled -> SkippedResultImpl()
+      else -> SuccessResultImpl()
+    }
     val message = progressIndicator.text ?: GradleBundle.message("gradle.jvm.has.been.resolved")
     val buildEvent = FinishEventImpl(progressIndicator, taskId, currentTimeMillis(), message, result)
     val notificationEvent = ExternalSystemBuildEvent(taskId, buildEvent)

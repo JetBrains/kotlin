@@ -79,7 +79,7 @@ public class ExternalSystemResolveProjectTask extends AbstractExternalSystemTask
 
       ExternalSystemTaskNotificationListener progressNotificationListener = wrapWithListener(progressNotificationManager);
       for (ExternalSystemExecutionAware executionAware : ExternalSystemExecutionAware.getExtensions(getExternalSystemId())) {
-        executionAware.prepareExecution(id, myProjectPath, myIsPreviewMode, progressNotificationListener, ideProject);
+        executionAware.prepareExecution(this, myProjectPath, myIsPreviewMode, progressNotificationListener, ideProject);
       }
 
       final ExternalSystemFacadeManager manager = ServiceManager.getService(ExternalSystemFacadeManager.class);
