@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.packaging.impl.elements;
 
 import com.intellij.openapi.module.Module;
@@ -7,7 +7,6 @@ import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.packaging.artifacts.ArtifactType;
@@ -26,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class LibraryPackagingElement extends ComplexPackagingElement<LibraryPackagingElement> {
   @NonNls public static final String LIBRARY_NAME_ATTRIBUTE = "name";
@@ -86,7 +86,7 @@ public class LibraryPackagingElement extends ComplexPackagingElement<LibraryPack
     LibraryPackagingElement packagingElement = (LibraryPackagingElement)element;
     return myLevel != null && myLibraryName != null && myLevel.equals(packagingElement.getLevel())
            && myLibraryName.equals(packagingElement.getLibraryName())
-           && Comparing.equal(myModuleName, packagingElement.getModuleName());
+           && Objects.equals(myModuleName, packagingElement.getModuleName());
   }
 
   @Override

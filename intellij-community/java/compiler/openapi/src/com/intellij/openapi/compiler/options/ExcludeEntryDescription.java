@@ -1,15 +1,16 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.openapi.compiler.options;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public class ExcludeEntryDescription implements Disposable {
   private boolean myIsFile;
@@ -80,7 +81,7 @@ public class ExcludeEntryDescription implements Disposable {
     if(entryDescription.myIncludeSubdirectories != myIncludeSubdirectories) {
       return false;
     }
-    return Comparing.equal(entryDescription.getUrl(), getUrl());
+    return Objects.equals(entryDescription.getUrl(), getUrl());
   }
 
   public int hashCode() {

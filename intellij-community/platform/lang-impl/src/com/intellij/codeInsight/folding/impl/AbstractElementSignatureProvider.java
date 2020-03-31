@@ -1,7 +1,6 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.folding.impl;
 
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -10,13 +9,13 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Denis Zhdanov
@@ -80,7 +79,7 @@ public abstract class AbstractElementSignatureProvider implements ElementSignatu
     PsiFile file = parent.getContainingFile();
     Set<PsiElement> cache = file == null ? null :
       CachedValuesManager.getCachedValue(file, () -> new CachedValueProvider.Result<>(ContainerUtil.createWeakSet(), file));
-    if (cache != null && cache.contains(parent)) return -1; 
+    if (cache != null && cache.contains(parent)) return -1;
     PsiElement[] children = parent.getChildren();
     if (children.length > CHILDREN_COUNT_LIMIT) {
       if (cache != null) cache.add(parent);
@@ -94,7 +93,7 @@ public abstract class AbstractElementSignatureProvider implements ElementSignatu
         T namedChild = hisClass.cast(child);
         final String childName = namedChild.getName();
 
-        if (Comparing.equal(name, childName)) {
+        if (Objects.equals(name, childName)) {
           if (namedChild.equals(element)) {
             return index;
           }
@@ -119,7 +118,7 @@ public abstract class AbstractElementSignatureProvider implements ElementSignatu
         T namedChild = hisClass.cast(child);
         final String childName = namedChild.getName();
 
-        if (Comparing.equal(name, childName)) {
+        if (Objects.equals(name, childName)) {
           if (index == 0) {
             return namedChild;
           }

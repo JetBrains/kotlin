@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.packaging.impl.ui.properties;
 
 import com.intellij.openapi.compiler.JavaCompilerBundle;
@@ -6,7 +6,6 @@ import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -25,6 +24,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class ElementWithManifestPropertiesPanel<E extends CompositeElementWithManifest<?>> extends PackagingElementPropertiesPanel {
   private final E myElement;
@@ -128,8 +128,8 @@ public abstract class ElementWithManifestPropertiesPanel<E extends CompositeElem
   @Override
   public boolean isModified() {
     return myManifestFileConfiguration != null && (!myManifestFileConfiguration.getClasspath().equals(getConfiguredClasspath())
-           || !Comparing.equal(myManifestFileConfiguration.getMainClass(), getConfiguredMainClass())
-           || !Comparing.equal(myManifestFileConfiguration.getManifestFilePath(), getConfiguredManifestPath()));
+           || !Objects.equals(myManifestFileConfiguration.getMainClass(), getConfiguredMainClass())
+           || !Objects.equals(myManifestFileConfiguration.getManifestFilePath(), getConfiguredManifestPath()));
   }
 
   @Nullable

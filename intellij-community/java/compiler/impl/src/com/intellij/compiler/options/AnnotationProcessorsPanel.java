@@ -14,7 +14,6 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.ColoredTreeCellRenderer;
@@ -139,11 +138,11 @@ public class AnnotationProcessorsPanel extends JPanel {
           @Override
           public boolean checkInput(String inputString) {
             if (StringUtil.isEmpty(inputString) ||
-              Comparing.equal(inputString, myDefaultProfile.getName())) {
+                Objects.equals(inputString, myDefaultProfile.getName())) {
               return false;
             }
             for (ProcessorConfigProfile profile : myModuleProfiles) {
-              if (Comparing.equal(inputString, profile.getName())) {
+              if (Objects.equals(inputString, profile.getName())) {
                 return false;
               }
             }

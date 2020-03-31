@@ -1,26 +1,37 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.tools;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.options.CompoundScheme;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.ui.*;
+import com.intellij.ui.AnActionButton;
+import com.intellij.ui.AnActionButtonRunnable;
+import com.intellij.ui.CheckboxTree;
+import com.intellij.ui.CheckedTreeNode;
+import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.ToolbarDecorator;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.tree.TreeUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.*;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import javax.swing.JPanel;
+import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.DefaultTreeSelectionModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseToolsPanel<T extends Tool> extends JPanel {
   enum Direction {
@@ -341,7 +352,7 @@ public abstract class BaseToolsPanel<T extends Tool> extends JPanel {
     for (int i = 0; i < getTreeRoot().getChildCount(); i++) {
       CheckedTreeNode node = (CheckedTreeNode)getTreeRoot().getChildAt(i);
       ToolsGroup g = (ToolsGroup)node.getUserObject();
-      if (Comparing.equal(group, g.getName())) return node;
+      if (Objects.equals(group, g.getName())) return node;
     }
 
     return null;
@@ -446,7 +457,7 @@ public abstract class BaseToolsPanel<T extends Tool> extends JPanel {
         if (dlg.showAndGet()) {
           selected.copyFrom(dlg.getData());
           String newGroupName = selected.getGroup();
-          if (!Comparing.equal(oldGroupName, newGroupName)) {
+          if (!Objects.equals(oldGroupName, newGroupName)) {
             CheckedTreeNode oldGroupNode = (CheckedTreeNode)node.getParent();
             removeNodeFromParent(node);
             ((ToolsGroup<T>)oldGroupNode.getUserObject()).removeElement(selected);

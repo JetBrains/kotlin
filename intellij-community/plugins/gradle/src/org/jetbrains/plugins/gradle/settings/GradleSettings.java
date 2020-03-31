@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.settings;
 
 import com.intellij.openapi.Disposable;
@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.config.DelegatingGradleSettingsListenerAdapter;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -107,7 +108,7 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
 
   public void setServiceDirectoryPath(@Nullable String newPath) {
     String myServiceDirectoryPath = GradleSystemSettings.getInstance().getServiceDirectoryPath();
-    if (!Comparing.equal(myServiceDirectoryPath, newPath)) {
+    if (!Objects.equals(myServiceDirectoryPath, newPath)) {
       GradleSystemSettings.getInstance().setServiceDirectoryPath(newPath);
       getPublisher().onServiceDirectoryPathChange(myServiceDirectoryPath, newPath);
     }
@@ -120,7 +121,7 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
 
   public void setGradleVmOptions(@Nullable String gradleVmOptions) {
     String myGradleVmOptions = GradleSystemSettings.getInstance().getGradleVmOptions();
-    if (!Comparing.equal(myGradleVmOptions, gradleVmOptions)) {
+    if (!Objects.equals(myGradleVmOptions, gradleVmOptions)) {
       GradleSystemSettings.getInstance().setGradleVmOptions(gradleVmOptions);
       getPublisher().onGradleVmOptionsChange(myGradleVmOptions, gradleVmOptions);
     }
@@ -144,7 +145,7 @@ public class GradleSettings extends AbstractExternalSystemSettings<GradleSetting
 
   @Override
   protected void checkSettings(@NotNull GradleProjectSettings old, @NotNull GradleProjectSettings current) {
-    if (!Comparing.equal(old.getGradleHome(), current.getGradleHome())) {
+    if (!Objects.equals(old.getGradleHome(), current.getGradleHome())) {
       getPublisher().onGradleHomeChange(old.getGradleHome(), current.getGradleHome(), current.getExternalProjectPath());
     }
     if (old.getDistributionType() != current.getDistributionType()) {

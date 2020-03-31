@@ -1,23 +1,8 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.refactoring.invertBoolean;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
@@ -32,10 +17,14 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageViewDescriptor;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.MultiMap;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
 
 /**
  * @author ven
@@ -56,7 +45,7 @@ public class InvertBooleanProcessor extends BaseRefactoringProcessor {
     myNewName = newName;
     final Project project = namedElement.getProject();
     final boolean canRename =
-      namedElement instanceof PsiNamedElement && !Comparing.equal(((PsiNamedElement)namedElement).getName(), myNewName);
+      namedElement instanceof PsiNamedElement && !Objects.equals(((PsiNamedElement)namedElement).getName(), myNewName);
     myRenameProcessor = canRename ? new RenameProcessor(project, namedElement, newName, false, false) {
       @NotNull
       @Override
@@ -85,7 +74,7 @@ public class InvertBooleanProcessor extends BaseRefactoringProcessor {
     final MultiMap<PsiElement, String> conflicts = new MultiMap<>();
     final UsageInfo[] usageInfos = refUsages.get();
     myDelegate.findConflicts(usageInfos, conflicts);
-    
+
     if (!conflicts.isEmpty())  {
       return showConflicts(conflicts, usageInfos);
     }

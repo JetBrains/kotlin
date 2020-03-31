@@ -26,14 +26,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Objects;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Tool implements SchemeElement {
   private static final Logger LOG = Logger.getInstance(Tool.class);
@@ -230,9 +230,9 @@ public class Tool implements SchemeElement {
 
     Tool source = (Tool)obj;
     return
-      Comparing.equal(myName, source.myName) &&
-      Comparing.equal(myDescription, source.myDescription) &&
-      Comparing.equal(myGroup, source.myGroup) &&
+      Objects.equals(myName, source.myName) &&
+      Objects.equals(myDescription, source.myDescription) &&
+      Objects.equals(myGroup, source.myGroup) &&
       myShownInMainMenu == source.myShownInMainMenu &&
       myShownInEditor == source.myShownInEditor &&
       myShownInProjectViews == source.myShownInProjectViews &&
@@ -242,9 +242,9 @@ public class Tool implements SchemeElement {
       myShowConsoleOnStdOut == source.myShowConsoleOnStdOut &&
       myShowConsoleOnStdErr == source.myShowConsoleOnStdErr &&
       mySynchronizeAfterExecution == source.mySynchronizeAfterExecution &&
-      Comparing.equal(myWorkingDirectory, source.myWorkingDirectory) &&
-      Comparing.equal(myProgram, source.myProgram) &&
-      Comparing.equal(myParameters, source.myParameters) &&
+      Objects.equals(myWorkingDirectory, source.myWorkingDirectory) &&
+      Objects.equals(myProgram, source.myProgram) &&
+      Objects.equals(myParameters, source.myParameters) &&
       Comparing.equal(myOutputFilters, source.myOutputFilters);
   }
 
