@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
 import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.isNothing
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
@@ -58,7 +59,7 @@ class ControlFlowGraphBuilder {
 
     private val exitsFromCompletedPostponedAnonymousFunctions: MutableList<PostponedLambdaExitNode> = mutableListOf()
 
-    private val enterToLocalClassesMembers: MutableMap<FirCallableSymbol<*>, CFGNode<*>?> = mutableMapOf()
+    private val enterToLocalClassesMembers: MutableMap<AbstractFirBasedSymbol<*>, CFGNode<*>?> = mutableMapOf()
 
     var levelCounter: Int = 0
         private set
@@ -253,19 +254,19 @@ class ControlFlowGraphBuilder {
         return graphs.pop()
     }
 
-    fun prepareForLocalClassMembers(members: Collection<FirCallableMemberDeclaration<*>>) {
+    fun prepareForLocalClassMembers(members: Collection<FirSymbolOwner<*>>) {
         members.forEachMember {
             enterToLocalClassesMembers[it.symbol] = lastNodes.topOrNull()
         }
     }
 
-    fun cleanAfterForLocalClassMembers(members: Collection<FirCallableMemberDeclaration<*>>) {
+    fun cleanAfterForLocalClassMembers(members: Collection<FirSymbolOwner<*>>) {
         members.forEachMember {
             enterToLocalClassesMembers.remove(it.symbol)
         }
     }
 
-    private inline fun Collection<FirCallableMemberDeclaration<*>>.forEachMember(block: (FirCallableDeclaration<*>) -> Unit) {
+    private inline fun Collection<FirSymbolOwner<*>>.forEachMember(block: (FirSymbolOwner<*>) -> Unit) {
         for (member in this) {
             for (callableDeclaration in member.unwrap()) {
                 block(callableDeclaration)
@@ -273,9 +274,12 @@ class ControlFlowGraphBuilder {
         }
     }
 
-    private fun FirCallableMemberDeclaration<*>.unwrap(): List<FirCallableDeclaration<*>> =
+    private fun FirSymbolOwner<*>.unwrap(): List<FirSymbolOwner<*>> =
         when (this) {
-            is FirFunction<*> -> listOf(this)
+            is FirFunction<*>,
+            is FirAnonymousInitializer
+            -> listOf(this)
+
             is FirProperty -> listOfNotNull(this.getter, this.setter, this)
             else -> emptyList()
         }
@@ -824,6 +828,9 @@ class ControlFlowGraphBuilder {
             lexicalScopes.push(stackOf(it))
         }
         val exitNode = createInitBlockExitNode(initBlock)
+        enterToLocalClassesMembers[initBlock.symbol]?.let {
+            addEdge(it, enterNode, preferredKind = EdgeKind.Dfg)
+        }
         initBlockExitNodes.push(exitNode)
         exitNodes.push(exitNode)
         levelCounter++

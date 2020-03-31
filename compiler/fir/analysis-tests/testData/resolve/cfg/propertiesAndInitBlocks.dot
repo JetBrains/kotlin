@@ -144,27 +144,15 @@ digraph propertiesAndInitBlocks_kt {
             50 [label="Exit local class <getter>"];
             49 [label="Exit function getter" style="filled" fillcolor=red];
         }
-        subgraph cluster_16 {
-            color=blue
-            51 [label="Enter function <init>" style="filled" fillcolor=red];
-            53 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
-            52 [label="Exit function <init>" style="filled" fillcolor=red];
-        }
         65 [label="Postponed enter to lambda"];
-        subgraph cluster_17 {
+        subgraph cluster_16 {
             color=blue
             20 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
             22 [label="Exit local class <anonymous>"];
             23 [label="Function call: R|java/lang/Exception.Exception|()"];
             24 [label="Throw: throw R|java/lang/Exception.Exception|()"];
             25 [label="Stub" style="filled" fillcolor=gray];
-            subgraph cluster_18 {
-                color=blue
-                35 [label="Enter function <init>" style="filled" fillcolor=red];
-                37 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
-                36 [label="Exit function <init>" style="filled" fillcolor=red];
-            }
-            subgraph cluster_19 {
+            subgraph cluster_17 {
                 color=blue
                 26 [label="Enter function foo" style="filled" fillcolor=red];
                 28 [label="Const: Int(1)"];
@@ -188,7 +176,7 @@ digraph propertiesAndInitBlocks_kt {
     66 -> {67};
     67 -> {64};
     20 -> {21 22};
-    20 -> {26 35} [color=red];
+    20 -> {26 35 38} [color=red];
     21 -> {20};
     21 -> {66} [color=green];
     22 -> {23};
@@ -206,24 +194,24 @@ digraph propertiesAndInitBlocks_kt {
     33 -> {34} [style=dotted];
     34 -> {27} [style=dotted];
     48 -> {50};
-    48 -> {51} [color=red];
+    48 -> {51 54} [color=red];
     50 -> {49};
 
-    subgraph cluster_20 {
+    subgraph cluster_18 {
         color=red
         70 [label="Enter property" style="filled" fillcolor=red];
-        subgraph cluster_21 {
+        subgraph cluster_19 {
             color=blue
             68 [label="Enter function getter" style="filled" fillcolor=red];
             69 [label="Exit function getter" style="filled" fillcolor=red];
         }
-        subgraph cluster_22 {
+        subgraph cluster_20 {
             color=blue
             72 [label="Try expression enter"];
-            subgraph cluster_23 {
+            subgraph cluster_21 {
                 color=blue
                 74 [label="Try main block enter"];
-                subgraph cluster_24 {
+                subgraph cluster_22 {
                     color=blue
                     77 [label="Enter block"];
                     78 [label="Const: Int(1)"];
@@ -231,10 +219,10 @@ digraph propertiesAndInitBlocks_kt {
                 }
                 80 [label="Try main block exit"];
             }
-            subgraph cluster_25 {
+            subgraph cluster_23 {
                 color=blue
                 76 [label="Enter finally"];
-                subgraph cluster_26 {
+                subgraph cluster_24 {
                     color=blue
                     85 [label="Enter block"];
                     86 [label="Const: Int(0)"];
@@ -242,10 +230,10 @@ digraph propertiesAndInitBlocks_kt {
                 }
                 88 [label="Exit finally"];
             }
-            subgraph cluster_27 {
+            subgraph cluster_25 {
                 color=blue
                 75 [label="Catch enter"];
-                subgraph cluster_28 {
+                subgraph cluster_26 {
                     color=blue
                     81 [label="Enter block"];
                     82 [label="Const: Int(2)"];
