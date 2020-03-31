@@ -126,6 +126,21 @@ public class SequenceTest {
         assertEquals(sum, count)
     }
 
+    @Test
+    fun onEachIndexed() {
+        var count = 0
+        val data = sequenceOf("foo", "bar")
+        val newData = data.onEachIndexed { i, e -> count += i + e.length }
+        assertNotSame(data, newData)
+        assertEquals(0, count, "onEachIndex should be executed lazily")
+
+        data.forEach {  }
+        assertEquals(0, count, "onEachIndex should be executed only when resulting sequence is iterated")
+
+        val sum = newData.foldIndexed(0) { i, acc, e -> acc + i + e.length }
+        assertEquals(sum, count)
+    }
+
 
     @Test fun filterAndTakeWhileExtractTheElementsWithinRange() {
         assertEquals(listOf(144, 233, 377, 610, 987), fibonacci().filter { it > 100 }.takeWhile { it < 1000 }.toList())

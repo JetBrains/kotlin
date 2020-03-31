@@ -1115,7 +1115,7 @@ public inline fun <T> Sequence<T>.forEach(action: (T) -> Unit): Unit {
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
- * and performs the desired action on the element.
+ * and performs the action on the element.
  *
  * The operation is _terminal_.
  */
@@ -1353,6 +1353,21 @@ public fun <T> Sequence<T>.onEach(action: (T) -> Unit): Sequence<T> {
     return map {
         action(it)
         it
+    }
+}
+
+/**
+ * Returns a sequence which performs the given [action] on each element of the original sequence as they pass through it.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the action on the element.
+ *
+ * The operation is _intermediate_ and _stateless_.
+ */
+@SinceKotlin("1.4")
+public fun <T> Sequence<T>.onEachIndexed(action: (index: Int, T) -> Unit): Sequence<T> {
+    return mapIndexed { index, element ->
+        action(index, element)
+        element
     }
 }
 

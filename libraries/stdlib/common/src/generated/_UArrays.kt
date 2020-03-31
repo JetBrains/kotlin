@@ -5381,7 +5381,7 @@ public inline fun UShortArray.forEach(action: (UShort) -> Unit): Unit {
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
- * and performs the desired action on the element.
+ * and performs the action on the element.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5394,7 +5394,7 @@ public inline fun UIntArray.forEachIndexed(action: (index: Int, UInt) -> Unit): 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
- * and performs the desired action on the element.
+ * and performs the action on the element.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5407,7 +5407,7 @@ public inline fun ULongArray.forEachIndexed(action: (index: Int, ULong) -> Unit)
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
- * and performs the desired action on the element.
+ * and performs the action on the element.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5420,7 +5420,7 @@ public inline fun UByteArray.forEachIndexed(action: (index: Int, UByte) -> Unit)
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
- * and performs the desired action on the element.
+ * and performs the action on the element.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6008,6 +6008,58 @@ public inline fun UByteArray.onEach(action: (UByte) -> Unit): UByteArray {
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.onEach(action: (UShort) -> Unit): UShortArray {
     return apply { for (element in this) action(element) }
+}
+
+/**
+ * Performs the given [action] on each element, providing sequential index with the element,
+ * and returns the array itself afterwards.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the action on the element.
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.onEachIndexed(action: (index: Int, UInt) -> Unit): UIntArray {
+    return apply { forEachIndexed(action) }
+}
+
+/**
+ * Performs the given [action] on each element, providing sequential index with the element,
+ * and returns the array itself afterwards.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the action on the element.
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.onEachIndexed(action: (index: Int, ULong) -> Unit): ULongArray {
+    return apply { forEachIndexed(action) }
+}
+
+/**
+ * Performs the given [action] on each element, providing sequential index with the element,
+ * and returns the array itself afterwards.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the action on the element.
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.onEachIndexed(action: (index: Int, UByte) -> Unit): UByteArray {
+    return apply { forEachIndexed(action) }
+}
+
+/**
+ * Performs the given [action] on each element, providing sequential index with the element,
+ * and returns the array itself afterwards.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the action on the element.
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.onEachIndexed(action: (index: Int, UShort) -> Unit): UShortArray {
+    return apply { forEachIndexed(action) }
 }
 
 /**

@@ -1441,6 +1441,23 @@ class ArraysTest {
         assertEquals(listOf('1', '2', '3'), mutableListOf<Char>().apply { charArrayOf('1', '2', '3').onEach { add(it) } })
     }
 
+    @Test fun onEachIndexed() {
+        assertEquals(listOf(1, 3, 5), mutableListOf<Int>().apply { intArrayOf(1, 2, 3).onEachIndexed { i, e -> add(i + e) } })
+        assertEquals(listOf(1, 3, 5), mutableListOf<Int>().apply { byteArrayOf(1, 2, 3).onEachIndexed { i, e -> add(i + e) } })
+        assertEquals(listOf(1, 3, 5), mutableListOf<Int>().apply { shortArrayOf(1, 2, 3).onEachIndexed { i, e -> add(i + e) } })
+        assertEquals(listOf<Long>(1, 3, 5), mutableListOf<Long>().apply { longArrayOf(1, 2, 3).onEachIndexed { i, e -> add(i + e) } })
+        assertEquals(listOf(1f, 3f, 5f), mutableListOf<Float>().apply { floatArrayOf(1f, 2f, 3f).onEachIndexed { i, e -> add(i + e) } })
+        assertEquals(listOf(1.0, 3.0, 5.0), mutableListOf<Double>().apply { doubleArrayOf(1.0, 2.0, 3.0).onEachIndexed { i, e -> add(i + e) } })
+        assertEquals(listOf(true, false, true), mutableListOf<Boolean>().apply { booleanArrayOf(true, false, false).onEachIndexed { i, e -> add(i % 2 == 0 || e) } })
+        assertEquals(listOf('1', '3', '5'), mutableListOf<Char>().apply { charArrayOf('1', '2', '3').onEachIndexed { i, e -> add(e + i) } })
+        assertEquals(listOf("a0", "b1", "c2"), mutableListOf<String>().apply { arrayOf("a", "b", "c").onEachIndexed { i, e -> add(e + i) } })
+
+        val empty = arrayOf<Int>()
+        assertSame(empty, empty.onEachIndexed { i, e -> fail("Should be unreachable: $i, $e") })
+        val nonEmpty = longArrayOf(1, 2, 3)
+        assertSame(nonEmpty, nonEmpty.onEachIndexed { _, _ -> })
+    }
+
     @Test fun drop() {
         expect(listOf(1), { intArrayOf(1).drop(0) })
         expect(listOf(), { intArrayOf().drop(1) })

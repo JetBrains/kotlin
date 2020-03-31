@@ -128,6 +128,20 @@ class MapTest {
         )
     }
 
+    @Test
+    fun onEachIndexed() {
+        val map = mutableMapOf("beverage" to "beer", "location" to "Mells")
+        val result = StringBuilder()
+        val newMap = map.onEachIndexed { i, e -> result.append(i + 1).append('.').append(e.key).append("=").append(e.value).append(";") }
+        assertEquals("1.beverage=beer;2.location=Mells;", result.toString())
+        assertTrue(map === newMap)
+
+        // static types test
+        assertStaticTypeIs<HashMap<String, String>>(
+            hashMapOf("a" to "b").onEachIndexed { _, _ -> }
+        )
+    }
+
     @Test fun stream() {
         val map = mapOf("beverage" to "beer", "location" to "Mells", "name" to "James")
         val named = map.asSequence().filter { it.key == "name" }.single()

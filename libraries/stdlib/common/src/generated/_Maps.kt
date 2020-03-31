@@ -214,6 +214,17 @@ public inline fun <K, V, M : Map<out K, V>> M.onEach(action: (Map.Entry<K, V>) -
 }
 
 /**
+ * Performs the given [action] on each entry, providing sequential index with the entry,
+ * and returns the map itself afterwards.
+ * @param [action] function that takes the index of an entry and the entry itself
+ * and performs the action on the entry.
+ */
+@SinceKotlin("1.4")
+public inline fun <K, V, M : Map<out K, V>> M.onEachIndexed(action: (index: Int, Map.Entry<K, V>) -> Unit): M {
+    return apply { entries.forEachIndexed(action) }
+}
+
+/**
  * Creates an [Iterable] instance that wraps the original map returning its entries when being iterated.
  */
 @kotlin.internal.InlineOnly

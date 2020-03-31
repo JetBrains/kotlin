@@ -1609,6 +1609,61 @@ object Aggregates : TemplateGroupBase() {
         }
     }
 
+    val f_onEachIndexed = fn("onEachIndexed(action: (index: Int, T) -> Unit)") {
+        includeDefault()
+        include(Maps, CharSequences, ArraysOfUnsigned)
+    } builder {
+        since("1.4")
+
+        doc {
+            """
+                Performs the given [action] on each ${f.element}, providing sequential index with the ${f.element}, 
+                and returns the ${f.collection} itself afterwards.
+                @param [action] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
+                and performs the action on the ${f.element}.
+                """
+        }
+
+        specialFor(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            inlineOnly()
+            returns("SELF")
+            body { "return apply { forEachIndexed(action) }" }
+        }
+
+        specialFor(Maps, Iterables, CharSequences) {
+            inline()
+            val collectionType = when (f) {
+                Maps -> "M"
+                CharSequences -> "S"
+                else -> "C"
+            }
+            receiver(collectionType)
+            returns(collectionType)
+            typeParam("$collectionType : SELF")
+            body { "return apply { ${if (f == Maps) "entries." else ""}forEachIndexed(action) }" }
+        }
+
+        specialFor(Sequences) {
+            returns("SELF")
+            doc {
+                """
+                Returns a sequence which performs the given [action] on each ${f.element} of the original sequence as they pass through it.
+                @param [action] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
+                and performs the action on the ${f.element}.
+                """
+            }
+            sequenceClassification(intermediate, stateless)
+            body {
+                """
+                return mapIndexed { index, element ->
+                    action(index, element)
+                    element
+                }
+                """
+            }
+        }
+    }
+
     val f_forEach = fn("forEach(action: (T) -> Unit)") {
         includeDefault()
         include(Maps, CharSequences, ArraysOfUnsigned)
@@ -1637,7 +1692,7 @@ object Aggregates : TemplateGroupBase() {
             """
             Performs the given [action] on each ${f.element}, providing sequential index with the ${f.element}.
             @param [action] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
-            and performs the desired action on the ${f.element}.
+            and performs the action on the ${f.element}.
             """ }
         returns("Unit")
         body {

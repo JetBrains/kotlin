@@ -1065,7 +1065,7 @@ public inline fun CharSequence.forEach(action: (Char) -> Unit): Unit {
 /**
  * Performs the given [action] on each character, providing sequential index with the character.
  * @param [action] function that takes the index of a character and the character itself
- * and performs the desired action on the character.
+ * and performs the action on the character.
  */
 public inline fun CharSequence.forEachIndexed(action: (index: Int, Char) -> Unit): Unit {
     var index = 0
@@ -1193,6 +1193,17 @@ public inline fun CharSequence.none(predicate: (Char) -> Boolean): Boolean {
 @SinceKotlin("1.1")
 public inline fun <S : CharSequence> S.onEach(action: (Char) -> Unit): S {
     return apply { for (element in this) action(element) }
+}
+
+/**
+ * Performs the given [action] on each character, providing sequential index with the character,
+ * and returns the char sequence itself afterwards.
+ * @param [action] function that takes the index of a character and the character itself
+ * and performs the action on the character.
+ */
+@SinceKotlin("1.4")
+public inline fun <S : CharSequence> S.onEachIndexed(action: (index: Int, Char) -> Unit): S {
+    return apply { forEachIndexed(action) }
 }
 
 /**

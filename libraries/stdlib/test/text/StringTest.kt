@@ -948,6 +948,18 @@ class StringTest {
         assertStaticTypeIs<StringBuilder>(result.onEach { })
     }
 
+    @Test
+    fun onEachIndexed() = withOneCharSequenceArg("abcd") { data ->
+        val result = StringBuilder()
+        val newData = data.onEachIndexed { i, e -> result.append(e + i) }
+        assertEquals("aceg", result.toString())
+        assertSame(data, newData)
+
+        // static types test
+        assertStaticTypeIs<String>("x".onEachIndexed { _, _ -> })
+        assertStaticTypeIs<StringBuilder>(result.onEachIndexed { _, _ -> })
+    }
+
 
     @Test fun filter() {
         assertEquals("acdca", ("abcdcba").filter { !it.equals('b') })

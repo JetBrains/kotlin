@@ -995,6 +995,21 @@ class UnsignedArraysTest {
     }
 
     @Test
+    fun onEachIndexed() {
+        assertEquals(listOf<UInt>(1, 3, 5), mutableListOf<UInt>().apply { uintArrayOf(1, 2, 3).onEachIndexed { i, e -> add(i.toUInt() + e) } })
+        assertEquals(listOf<UInt>(1, 3, 5), mutableListOf<UInt>().apply { ubyteArrayOf(1, 2, 3).onEachIndexed { i, e -> add(i.toUByte() + e) } })
+        assertEquals(listOf<UInt>(1, 3, 5), mutableListOf<UInt>().apply { ushortArrayOf(1, 2, 3).onEachIndexed { i, e -> add(i.toUShort() + e) } })
+        assertEquals(listOf<ULong>(1, 3, 5), mutableListOf<ULong>().apply { ulongArrayOf(1, 2, 3).onEachIndexed { i, e -> add(i.toULong() + e) } })
+
+        val empty = arrayOf<UInt>()
+        assertSame(empty, empty.onEachIndexed { i, e -> fail("Should be unreachable: $i, $e") })
+
+        // Identity equality for arguments of types ULongArray and ULongArray is forbidden
+//        val nonEmpty = ulongArrayOf(1, 2, 3)
+//        assertSame(nonEmpty, nonEmpty.onEachIndexed { _, _ -> })
+    }
+
+    @Test
     fun drop() {
         expect(listOf(1.toUByte())) { ubyteArrayOf(1).drop(0) }
         expect(listOf()) { ushortArrayOf().drop(1) }

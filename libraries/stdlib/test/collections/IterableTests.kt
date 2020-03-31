@@ -314,6 +314,17 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
     }
 
     @Test
+    fun onEachIndexed() {
+        var count = 0
+        val newData = data.onEachIndexed { i, e -> count += i + e.length }
+        assertEquals(7, count)
+        assertSame(data, newData)
+
+        // static types test
+        assertStaticTypeIs<ArrayList<Int>>(arrayListOf(1, 2, 3).onEachIndexed { _, _ -> })
+    }
+
+    @Test
     fun contains() {
         assertTrue(data.contains("foo"))
         assertTrue("bar" in data)
