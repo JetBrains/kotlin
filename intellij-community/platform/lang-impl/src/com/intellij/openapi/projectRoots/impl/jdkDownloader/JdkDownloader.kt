@@ -16,7 +16,7 @@ import com.intellij.openapi.projectRoots.SimpleJavaSdkType.notSimpleJavaSdkTypeI
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownload
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTask
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.util.NlsProgress.ProgressTitle
+import com.intellij.openapi.util.NlsContexts.ProgressTitle
 import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.annotations.Nls
 import java.util.function.Consumer

@@ -11,7 +11,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.NlsUI;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.openapi.util.NlsContexts;
@@ -55,7 +54,7 @@ public class LayoutProjectCodeDialog extends DialogWrapper implements ReformatFi
 
   public LayoutProjectCodeDialog(@NotNull Project project,
                                  @NotNull @NlsContexts.DialogTitle String title,
-                                 @NotNull @NlsUI.Label String text,
+                                 @NotNull @NlsContexts.Label String text,
                                  boolean enableOnlyVCSChangedTextCb)
   {
     super(project, false);

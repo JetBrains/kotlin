@@ -15,13 +15,12 @@
  */
 package com.intellij.codeInsight.lookup;
 
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-import static com.intellij.openapi.util.NlsUI.ListItem;
+import static com.intellij.openapi.util.NlsContexts.ListItem;
 
 /**
  * @author peter

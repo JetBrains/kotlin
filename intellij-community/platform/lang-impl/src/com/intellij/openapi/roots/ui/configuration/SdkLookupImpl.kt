@@ -20,7 +20,7 @@ import com.intellij.openapi.projectRoots.impl.UnknownSdkTracker
 import com.intellij.openapi.roots.ui.configuration.UnknownSdkResolver.UnknownSdkLookup
 import com.intellij.openapi.roots.ui.configuration.projectRoot.SdkDownloadTracker
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.NlsProgress.ProgressTitle
+import com.intellij.openapi.util.NlsContexts.ProgressTitle
 import com.intellij.openapi.wm.ex.ProgressIndicatorEx
 import com.intellij.util.Consumer
 import org.jetbrains.annotations.Nls

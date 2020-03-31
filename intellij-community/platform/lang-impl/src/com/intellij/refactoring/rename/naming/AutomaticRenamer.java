@@ -2,7 +2,6 @@
 package com.intellij.refactoring.rename.naming;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.NlsUI;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.refactoring.rename.RenameProcessor;
@@ -163,7 +162,7 @@ public abstract class AutomaticRenamer {
   @NlsContexts.DialogTitle
   public abstract String getDialogTitle();
 
-  @NlsUI.Button
+  @NlsContexts.Button
   public abstract String getDialogDescription();
 
   public abstract String entityName();

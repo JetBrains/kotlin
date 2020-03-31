@@ -6,7 +6,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkType
-import com.intellij.openapi.util.NlsProgress.ProgressTitle
+import com.intellij.openapi.util.NlsContexts.ProgressTitle
 import org.jetbrains.annotations.Contract
 import org.jetbrains.annotations.Nls
 
