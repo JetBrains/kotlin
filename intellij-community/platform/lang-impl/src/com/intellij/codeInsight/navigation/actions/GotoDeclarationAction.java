@@ -7,7 +7,7 @@ import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.codeInsight.actions.BaseCodeInsightAction;
 import com.intellij.codeInsight.hint.HintManager;
-import com.intellij.codeInsight.navigation.NavigationUtil;
+import com.intellij.codeInsight.navigation.*;
 import com.intellij.codeInsight.navigation.action.GotoDeclarationUtil;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.find.actions.ShowUsagesAction;
@@ -35,14 +35,12 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.pom.Navigatable;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.awt.RelativePoint;
+import com.intellij.usageView.UsageViewUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -51,11 +49,11 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
+import java.util.*;
 
-public class GotoDeclarationAction extends BaseCodeInsightAction implements CodeInsightActionHandler, DumbAware {
+public class GotoDeclarationAction extends BaseCodeInsightAction implements CodeInsightActionHandler, DumbAware, CtrlMouseAction {
+
   private static final Logger LOG = Logger.getInstance(GotoDeclarationAction.class);
 
   @NotNull
@@ -377,4 +375,73 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
     return namesValidator.isKeyword(elementAtCaret.getText(), project);
   }
 
+  @Override
+  public @Nullable CtrlMouseInfo getCtrlMouseInfo(@NotNull Editor editor, @NotNull PsiFile file, int offset) {
+    final PsiReference ref = TargetElementUtil.findReference(editor, offset);
+    final List<PsiElement> resolvedElements = ref == null ? Collections.emptyList() : resolve(ref);
+    final PsiElement resolvedElement = resolvedElements.size() == 1 ? resolvedElements.get(0) : null;
+
+    final PsiElement[] targetElements = findTargetElementsNoVS(file.getProject(), editor, offset, false);
+    final PsiElement elementAtPointer = file.findElementAt(TargetElementUtil.adjustOffset(file, editor.getDocument(), offset));
+
+    if (targetElements != null) {
+      if (targetElements.length == 0) {
+        return null;
+      }
+      else if (targetElements.length == 1) {
+        if (targetElements[0] != resolvedElement && elementAtPointer != null && targetElements[0].isPhysical()) {
+          return ref != null ? new SingleTargetElementInfo(ref, targetElements[0])
+                             : new SingleTargetElementInfo(elementAtPointer, targetElements[0]);
+        }
+      }
+      else {
+        return elementAtPointer != null ? new MultipleTargetElementsInfo(elementAtPointer) : null;
+      }
+    }
+
+    if (resolvedElements.size() == 1) {
+      return new SingleTargetElementInfo(ref, resolvedElements.get(0));
+    }
+    if (resolvedElements.size() > 1) {
+      return elementAtPointer != null ? new MultipleTargetElementsInfo(elementAtPointer, ref) : null;
+    }
+
+    final PsiElement element = findElementToShowUsagesOf(editor, offset);
+    if (element instanceof PsiNameIdentifierOwner) {
+      PsiElement identifier = ((PsiNameIdentifierOwner)element).getNameIdentifier();
+      if (identifier != null && identifier.isValid()) {
+        return new BaseCtrlMouseInfo(identifier) {
+          @Override
+          public @NotNull CtrlMouseDocInfo getDocInfo() {
+            String name = UsageViewUtil.getType(element) + " '" + UsageViewUtil.getShortName(element) + "'";
+            return new CtrlMouseDocInfo("Show usages of " + name, null);
+          }
+
+          @Override
+          public boolean isValid() {
+            return element.isValid();
+          }
+        };
+      }
+    }
+    return null;
+  }
+
+  @NotNull
+  private static List<PsiElement> resolve(@NotNull PsiReference ref) {
+    // IDEA-56727 try resolve first as in GotoDeclarationAction
+    PsiElement resolvedElement = ref.resolve();
+
+    if (resolvedElement == null && ref instanceof PsiPolyVariantReference) {
+      List<PsiElement> result = new ArrayList<>();
+      final ResolveResult[] psiElements = ((PsiPolyVariantReference)ref).multiResolve(false);
+      for (ResolveResult resolveResult : psiElements) {
+        if (resolveResult.getElement() != null) {
+          result.add(resolveResult.getElement());
+        }
+      }
+      return result;
+    }
+    return resolvedElement == null ? Collections.emptyList() : Collections.singletonList(resolvedElement);
+  }
 }

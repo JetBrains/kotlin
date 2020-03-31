@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.navigation.actions;
 
@@ -7,7 +7,10 @@ import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.codeInsight.actions.BaseCodeInsightAction;
+import com.intellij.codeInsight.navigation.CtrlMouseAction;
+import com.intellij.codeInsight.navigation.CtrlMouseInfo;
 import com.intellij.codeInsight.navigation.NavigationUtil;
+import com.intellij.codeInsight.navigation.SingleTargetElementInfo;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
@@ -27,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public class GotoTypeDeclarationAction extends BaseCodeInsightAction implements CodeInsightActionHandler, DumbAware {
+public class GotoTypeDeclarationAction extends BaseCodeInsightAction implements CodeInsightActionHandler, DumbAware, CtrlMouseAction {
 
   @NotNull
   @Override
@@ -153,4 +156,16 @@ public class GotoTypeDeclarationAction extends BaseCodeInsightAction implements 
     return null;
   }
 
+  @Override
+  public @Nullable CtrlMouseInfo getCtrlMouseInfo(@NotNull Editor editor, @NotNull PsiFile file, int offset) {
+    PsiElement targetElement = findSymbolType(editor, offset);
+    if (targetElement == null || !targetElement.isPhysical()) {
+      return null;
+    }
+    PsiElement elementAtPointer = file.findElementAt(offset);
+    if (elementAtPointer != null) {
+      return new SingleTargetElementInfo(elementAtPointer, targetElement);
+    }
+    return null;
+  }
 }
