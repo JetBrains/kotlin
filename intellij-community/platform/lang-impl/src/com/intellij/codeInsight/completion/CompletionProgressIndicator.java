@@ -354,11 +354,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
   }
 
   void withSingleUpdate(Runnable action) {
-    Runnable finishBatch = myArranger.batchUpdate(action);
-    myLookup.withLock(() -> {
-      finishBatch.run();
-      return null;
-    });
+    myArranger.batchUpdate(action);
   }
 
   private void updateLookup() {
