@@ -50,7 +50,9 @@ public class JUnit3RunnerWithInnersForJPS extends Runner implements Filterable, 
     public JUnit3RunnerWithInnersForJPS(Class<?> klass) {
         this.klass = klass;
         requestedRunners.add(klass);
-        ensureCompilerXmlExists();
+        if (KotlinTestUtils.getKotlinComboRoot() == null) {
+            ensureCompilerXmlExists();
+        }
     }
 
     @Override

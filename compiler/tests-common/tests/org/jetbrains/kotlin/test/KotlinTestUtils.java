@@ -102,15 +102,23 @@ public class KotlinTestUtils {
     private KotlinTestUtils() {
     }
 
-    public static String kotlinHome() {
-        return System.getenv("KOTLIN_HOME");
+    @Nullable
+    public static File getKotlinComboRoot() {
+        String kotlinRoot = System.getProperty("kombo.kotlin.root", null);
+        if (kotlinRoot == null) {
+            return null;
+        }
+
+        return new File(kotlinRoot);
     }
 
     public static String getAbsolutePath(String path) {
-        if (KotlinTestUtils.kotlinHome() == null) {
+        File kotlinRoot = getKotlinComboRoot();
+
+        if (kotlinRoot == null) {
             return path;
         } else {
-            return kotlinHome() + File.separator + path;
+            return new File(kotlinRoot, path).getAbsolutePath();
         }
     }
 
