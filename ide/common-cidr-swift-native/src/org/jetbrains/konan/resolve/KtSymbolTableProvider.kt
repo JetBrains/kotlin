@@ -19,6 +19,7 @@ import com.jetbrains.cidr.lang.symbols.symtable.SymbolTableProvider
 import org.jetbrains.konan.resolve.konan.KonanBridgeVirtualFile
 import org.jetbrains.konan.resolve.translation.KtFileTranslator
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener.Companion.getInsideCodeBlockModificationScope
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -33,8 +34,8 @@ class KtSymbolTableProvider : SymbolTableProvider() {
     override fun isSource(project: Project, file: VirtualFile, inclusionContext: OCInclusionContext): Boolean =
         KtFileTranslator.isSupported(inclusionContext) && getBridgeFile(inclusionContext) != null && isSource(project, file)
 
-    //todo[medvedev] proper check for out of code block modification
-    override fun isOutOfCodeBlockChange(event: PsiTreeChangeEventImpl): Boolean = true
+    override fun isOutOfCodeBlockChange(event: PsiTreeChangeEventImpl): Boolean =
+        getInsideCodeBlockModificationScope(event.parent) == null
 
     override fun calcTableUsingPSI(file: PsiFile, virtualFile: VirtualFile, context: OCInclusionContext): FileSymbolTable {
         CidrLog.LOG.error("should not be called for this file: " + file.name)

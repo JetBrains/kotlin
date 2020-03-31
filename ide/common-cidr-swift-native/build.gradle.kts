@@ -34,6 +34,13 @@ dependencies {
     compileOnly("com.jetbrains.intellij.platform:external-system-rt:$cidrVersion")
     compileOnly("com.esotericsoftware.kryo:kryo:2.24.0")
 
+    testImplementation("com.jetbrains.intellij.swift:swift:$cidrVersion") {
+        exclude("com.jetbrains.intellij.platform", "ide")
+    }
+    testImplementation("com.jetbrains.intellij.c:c:$cidrVersion") {
+        exclude("com.jetbrains.intellij.platform", "ide")
+    }
+
     implementation(tc("$kotlinNativeBackendRepo:$kotlinNativeBackendVersion:backend.native.jar"))
     testRuntime(tc("$kotlinNativeBackendRepo:${kotlinNativeBackendVersion}:konan.serializer.jar")) // required for backend.native
     testRuntime(files("${System.getProperty("java.home")}/../lib/tools.jar"))
@@ -52,6 +59,7 @@ if (!isStandaloneBuild) {
 
     the<JavaPluginConvention>().sourceSets["test"].apply {
         java.setSrcDirs(listOf("test"))
+        resources.setSrcDirs(listOf("testResources"))
     }
 
     tasks.withType(Test::class.java).getByName("test") {

@@ -1,0 +1,17 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="/META-INF/CidrLangPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/KonanOCSwift.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <id>com.intellij.kotlin.ocswift.test</id>
+  <name>common-cidr-swift-native test</name>
+  <vendor>JetBrains</vendor>
+
+  <depends>org.jetbrains.kotlin</depends>
+
+  <project-components>
+    <component>
+      <interface-class>com.jetbrains.cidr.lang.workspace.OCWorkspace</interface-class>
+      <implementation-class>com.jetbrains.cidr.lang.workspace.OCWorkspaceImpl</implementation-class>
+    </component>
+  </project-components>
+</idea-plugin>
