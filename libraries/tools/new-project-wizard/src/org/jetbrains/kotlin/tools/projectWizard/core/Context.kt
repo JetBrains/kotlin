@@ -192,6 +192,9 @@ class Context private constructor(
         val <V : Any, T : SettingType<V>> SettingReference<V, T>.setting: Setting<V, T>
             get() = with(this) { getSetting() }
 
+        fun <V : Any, T : SettingType<V>> SettingReference<V, T>.validate() =
+            setting.validator.validate(this@Reader, settingValue)
+
         inline operator fun <T> invoke(reader: Reader.() -> T): T = reader()
     }
 

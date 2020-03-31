@@ -78,8 +78,11 @@ class ProjectSettingsComponent(ideWizard: IdeWizard) : DynamicComponent(ideWizar
         super.onValueUpdated(reference)
         when (reference?.path) {
             StructurePlugin::name.path -> {
-                tryUpdateLocationByProjectName()
-                tryArtifactIdByProjectName()
+                val isNameValid = read { StructurePlugin::name.reference.validate().isOk }
+                if (isNameValid) {
+                    tryUpdateLocationByProjectName()
+                    tryArtifactIdByProjectName()
+                }
             }
             StructurePlugin::artifactId.path -> {
                 artifactIdWasUpdatedByHand = true
