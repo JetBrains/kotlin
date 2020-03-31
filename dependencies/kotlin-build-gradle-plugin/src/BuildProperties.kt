@@ -33,13 +33,13 @@ class KotlinBuildProperties(
         }
     }
 
-    private operator fun get(key: String): Any? =
+    private fun getOrNull(key: String): Any? =
         localProperties.getProperty(key) ?: propertiesProvider.getProperty(key) ?: rootProperties.getProperty(key)
 
     private fun getBoolean(key: String, default: Boolean = false): Boolean =
-        this[key]?.toString()?.trim()?.toBoolean() ?: default
+        this.getOrNull(key)?.toString()?.trim()?.toBoolean() ?: default
 
-    private fun hasProperty(key: String): Boolean = get(key) != null
+    private fun hasProperty(key: String): Boolean = getOrNull(key) != null
 
     val isJpsBuildEnabled: Boolean = getBoolean("jpsBuild")
 
@@ -92,41 +92,41 @@ class KotlinBuildProperties(
 
     val jarCompression: Boolean get() = getBoolean("kotlin.build.jar.compression", isTeamcityBuild)
 
-    val buildCacheUrl: String? = get("kotlin.build.cache.url") as String?
+    val buildCacheUrl: String? = getOrNull("kotlin.build.cache.url") as String?
 
     val pushToBuildCache: Boolean = getBoolean("kotlin.build.cache.push", isTeamcityBuild)
 
     val localBuildCacheEnabled: Boolean = getBoolean("kotlin.build.cache.local.enabled", !isTeamcityBuild)
 
-    val localBuildCacheDirectory: String? = get("kotlin.build.cache.local.directory") as String?
+    val localBuildCacheDirectory: String? = getOrNull("kotlin.build.cache.local.directory") as String?
 
-    val buildScanServer: String? = get("kotlin.build.scan.url") as String?
+    val buildScanServer: String? = getOrNull("kotlin.build.scan.url") as String?
 
-    val buildCacheUser: String? = get("kotlin.build.cache.user") as String?
+    val buildCacheUser: String? = getOrNull("kotlin.build.cache.user") as String?
 
-    val buildCachePassword: String? = get("kotlin.build.cache.password") as String?
+    val buildCachePassword: String? = getOrNull("kotlin.build.cache.password") as String?
 
-    val kotlinBootstrapVersion: String? = get("bootstrap.kotlin.default.version") as String?
+    val kotlinBootstrapVersion: String? = getOrNull("bootstrap.kotlin.default.version") as String?
 
-    val defaultSnapshotVersion: String? = get("defaultSnapshotVersion") as String?
+    val defaultSnapshotVersion: String? = getOrNull("defaultSnapshotVersion") as String?
 
-    val customBootstrapVersion: String? = get("bootstrap.kotlin.version") as String?
+    val customBootstrapVersion: String? = getOrNull("bootstrap.kotlin.version") as String?
 
-    val customBootstrapRepo: String? = get("bootstrap.kotlin.repo") as String?
+    val customBootstrapRepo: String? = getOrNull("bootstrap.kotlin.repo") as String?
 
     val localBootstrap: Boolean = hasProperty("bootstrap.local")
 
-    val localBootstrapVersion: String? = get("bootstrap.local.version") as String?
+    val localBootstrapVersion: String? = getOrNull("bootstrap.local.version") as String?
 
-    val localBootstrapPath: String? = get("bootstrap.local.path") as String?
+    val localBootstrapPath: String? = getOrNull("bootstrap.local.path") as String?
 
-    val teamCityBootstrapVersion: String? = get("bootstrap.teamcity.kotlin.version") as String?
+    val teamCityBootstrapVersion: String? = getOrNull("bootstrap.teamcity.kotlin.version") as String?
 
-    val teamCityBootstrapBuildNumber: String? = get("bootstrap.teamcity.build.number") as String?
+    val teamCityBootstrapBuildNumber: String? = getOrNull("bootstrap.teamcity.build.number") as String?
 
-    val teamCityBootstrapProject: String? = get("bootstrap.teamcity.project") as String?
+    val teamCityBootstrapProject: String? = getOrNull("bootstrap.teamcity.project") as String?
 
-    val teamCityBootstrapUrl: String? = get("bootstrap.teamcity.url") as String?
+    val teamCityBootstrapUrl: String? = getOrNull("bootstrap.teamcity.url") as String?
 
     val rootProjectDir: File = propertiesProvider.rootProjectDir
 }
