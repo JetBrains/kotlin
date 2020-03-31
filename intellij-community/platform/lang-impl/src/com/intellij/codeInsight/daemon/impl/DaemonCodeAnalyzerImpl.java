@@ -96,6 +96,10 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
   @NonNls private static final String FILE_TAG = "file";
   @NonNls private static final String URL_ATT = "url";
   private final PassExecutorService myPassExecutorService;
+  // Timestamp of myUpdateRunnable which it's needed to start.
+  // May be later than the actual ScheduledFuture sitting in the myAlarm queue.
+  // When it's so happen that future is started sooner than myScheduledUpdateStart, it will re-schedule itself for later.
+  private long myScheduledUpdateTimestamp; // guarded by this
 
   public DaemonCodeAnalyzerImpl(@NotNull Project project) {
     // DependencyValidationManagerImpl adds scope listener, so, we need to force service creation
@@ -590,14 +594,23 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
   // return true if the progress really was canceled
   synchronized boolean stopProcess(boolean toRestartAlarm, @NotNull @NonNls String reason) {
     boolean canceled = cancelUpdateProgress(toRestartAlarm, reason);
-    // optimisation: this check is to avoid too many re-schedules in case of thousands of events spikes
     boolean restart = toRestartAlarm && !myDisposed && myInitialized;
 
-    if (restart && myUpdateRunnableFuture.isDone()) {
-      myUpdateRunnableFuture = myAlarm.schedule(myUpdateRunnable, mySettings.getAutoReparseDelay(), TimeUnit.MILLISECONDS);
+    // reset myScheduledUpdateStart always, but re-schedule myUpdateRunnable only rarely because of thread scheduling overhead
+    if (restart) {
+      myScheduledUpdateTimestamp = System.currentTimeMillis() + mySettings.getAutoReparseDelay();
+    }
+    // optimisation: this check is to avoid too many re-schedules in case of thousands of event spikes
+    boolean isDone = myUpdateRunnableFuture.isDone();
+    if (restart && isDone) {
+      scheduleUpdateRunnable(mySettings.getAutoReparseDelay());
     }
 
     return canceled;
+  }
+
+  private void scheduleUpdateRunnable(long delayMillis) {
+    myUpdateRunnableFuture = myAlarm.schedule(myUpdateRunnable, delayMillis, TimeUnit.MILLISECONDS);
   }
 
   // return true if the progress really was canceled
@@ -779,7 +792,7 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
     }
   }
 
-  // made this class static and fields cleareable to avoid leaks when this object stuck in invokeLater queue
+  // made this class static and fields clearable to avoid leaks when this object stuck in invokeLater queue
   private static class UpdateRunnable implements Runnable {
     private Project myProject;
     private UpdateRunnable(@NotNull Project project) {
@@ -800,7 +813,16 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
         return;
       }
 
-      final Collection<FileEditor> activeEditors = dca.getSelectedEditors();
+      synchronized (dca) {
+        long actualDelay = dca.myScheduledUpdateTimestamp - System.currentTimeMillis();
+        if (actualDelay > 0) {
+           // started too soon (there must've been some typings after we'd scheduled this; need to re-schedule)
+          dca.scheduleUpdateRunnable(actualDelay);
+          return;
+        }
+      }
+
+      Collection<FileEditor> activeEditors = dca.getSelectedEditors();
       boolean updateByTimerEnabled = dca.isUpdateByTimerEnabled();
       PassExecutorService.log(dca.getUpdateProgress(), null, "Update Runnable. myUpdateByTimerEnabled:",
                               updateByTimerEnabled, " something disposed:",
