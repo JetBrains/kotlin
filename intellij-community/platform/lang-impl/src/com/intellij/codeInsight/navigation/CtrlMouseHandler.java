@@ -123,8 +123,8 @@ public final class CtrlMouseHandler {
           }
           myStoredModifiers = modifiers;
           cancelPreviousTooltip();
-          myTooltipProvider = new TooltipProvider(tooltipProvider);
-          myTooltipProvider.execute(browseMode);
+          myTooltipProvider = new TooltipProvider(tooltipProvider, browseMode);
+          myTooltipProvider.execute();
         }
       }
     }
@@ -174,8 +174,8 @@ public final class CtrlMouseHandler {
         disposeHighlighter();
         return;
       }
-      myTooltipProvider = new TooltipProvider((EditorEx)editor, editor.xyToLogicalPosition(point));
-      myTooltipProvider.execute(browseMode);
+      myTooltipProvider = new TooltipProvider((EditorEx)editor, editor.xyToLogicalPosition(point), browseMode);
+      myTooltipProvider.execute();
     }
   };
 
@@ -470,23 +470,25 @@ public final class CtrlMouseHandler {
     });
   }
 
-
   private final class TooltipProvider {
-    @NotNull private final EditorEx myHostEditor;
+
+    private final @NotNull EditorEx myHostEditor;
     private final int myHostOffset;
-    private BrowseMode myBrowseMode;
+    private final @NotNull BrowseMode myBrowseMode;
+
     private boolean myDisposed;
     private CancellablePromise<?> myExecutionProgress;
 
-    TooltipProvider(@NotNull EditorEx hostEditor, @NotNull LogicalPosition hostPos) {
+    TooltipProvider(@NotNull EditorEx hostEditor, @NotNull LogicalPosition hostPos, @NotNull BrowseMode browseMode) {
       myHostEditor = hostEditor;
       myHostOffset = hostEditor.logicalPositionToOffset(hostPos);
+      myBrowseMode = browseMode;
     }
 
-    @SuppressWarnings("CopyConstructorMissesField")
-    TooltipProvider(@NotNull TooltipProvider source) {
+    TooltipProvider(@NotNull TooltipProvider source, @NotNull BrowseMode browseMode) {
       myHostEditor = source.myHostEditor;
       myHostOffset = source.myHostOffset;
+      myBrowseMode = browseMode;
     }
 
     void dispose() {
@@ -496,13 +498,11 @@ public final class CtrlMouseHandler {
       }
     }
 
-    BrowseMode getBrowseMode() {
+    @NotNull BrowseMode getBrowseMode() {
       return myBrowseMode;
     }
 
-    void execute(@NotNull BrowseMode browseMode) {
-      myBrowseMode = browseMode;
-
+    void execute() {
       if (PsiDocumentManager.getInstance(myProject).getPsiFile(myHostEditor.getDocument()) == null) return;
 
       int selStart = myHostEditor.getSelectionModel().getSelectionStart();
