@@ -89,8 +89,8 @@ data class KotlinWebpackConfig(
         with(target) {
             //language=JavaScript 1.8
             appendln(
-                """  
-                    var config = {
+                """
+                    let config = {
                       mode: '${mode.code}',
                       resolve: {
                         modules: [
