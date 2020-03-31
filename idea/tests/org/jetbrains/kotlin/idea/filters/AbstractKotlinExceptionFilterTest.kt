@@ -110,7 +110,11 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
         }
 
         val info = result.firstHyperlinkInfo as FileHyperlinkInfo
-        val descriptor = info.descriptor!!
+        val descriptor = if (InTextDirectivesUtils.isDirectiveDefined(fileText, "NAVIGATE_TO_CALL_SITE"))
+            (info as? InlineFunctionHyperLinkInfo)?.callSiteDescriptor
+                ?: throw AssertionError("`$stackTraceString` did not resolve to an inline function call")
+        else
+            info.descriptor!!
 
         val expectedFileName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// FILE: ")!!
         val expectedVirtualFile = File(rootDir, expectedFileName).toVirtualFile()

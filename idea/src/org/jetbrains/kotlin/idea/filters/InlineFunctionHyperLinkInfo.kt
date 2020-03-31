@@ -53,6 +53,12 @@ class InlineFunctionHyperLinkInfo(
         return file?.let { OpenFileDescriptor(project, file.file, file.line, 0) }
     }
 
+    val callSiteDescriptor: OpenFileDescriptor?
+        get() {
+            val file = inlineInfo.firstOrNull { it is InlineInfo.CallSiteInfo }
+            return file?.let { OpenFileDescriptor(project, file.file, file.line, 0) }
+        }
+
     sealed class InlineInfo(val prefix: String, val file: VirtualFile, val line: Int) {
         class CallSiteInfo(file: VirtualFile, line: Int) :
             InlineInfo(KotlinBundle.message("filters.text.inline.function.call.site"), file, line)
