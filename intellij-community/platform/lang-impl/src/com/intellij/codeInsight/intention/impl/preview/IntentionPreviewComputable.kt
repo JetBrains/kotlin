@@ -23,7 +23,7 @@ internal class IntentionPreviewComputable(private val project: Project,
                                           private val originalFile: PsiFile,
                                           private val originalEditor: Editor) : Callable<IntentionPreviewResult?> {
   override fun call(): IntentionPreviewResult? {
-    val psiFileCopy = nonPhysicalPsiCopy(originalFile)
+    val psiFileCopy = originalFile.copy() as PsiFile
     ProgressManager.checkCanceled()
     val editorCopy = IntentionPreviewEditor(psiFileCopy, originalEditor.caretModel.offset)
 
@@ -59,11 +59,6 @@ internal class IntentionPreviewComputable(private val project: Project,
       LOG.debug("There are exceptions on invocation the intention: '${action.text}' on a copy of the file.", e)
       return null
     }
-  }
-
-  private fun nonPhysicalPsiCopy(psiFile: PsiFile): PsiFile {
-    ProgressManager.checkCanceled()
-    return psiFile.copy() as PsiFile
   }
 
   companion object {
