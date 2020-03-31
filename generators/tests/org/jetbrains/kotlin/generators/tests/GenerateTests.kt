@@ -778,10 +778,6 @@ fun main() {
             model("multiModuleHighlighting/multiplatform/", recursive = false, extension = null)
         }
 
-        testClass<AbstractMultiplatformAnalysisTest> {
-            model("multiplatform", recursive = false, extension = null)
-        }
-
         testClass<AbstractQuickFixMultiModuleTest> {
             model("multiModuleQuickFix", extension = null, deep = 1)
         }
@@ -899,7 +895,7 @@ fun main() {
         testClass<AbstractSlicerNullnessGroupingTest> {
             model("slicer/inflow", singleClass = true)
         }
-        
+
         testClass<AbstractSlicerMultiplatformTest> {
             model("slicer/mpp", recursive = false, extension = null)
         }
