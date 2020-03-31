@@ -5,6 +5,8 @@
 
 package org.jetbrains.ring
 
+import org.jetbrains.benchmarksLauncher.Random
+
 class ChunkBuffer(var readPosition: Int, var writePosition: Int = readPosition + Random.nextInt(50)) {
     private val nextRef: AtomicRef<ChunkBuffer?> = atomic(null)
 

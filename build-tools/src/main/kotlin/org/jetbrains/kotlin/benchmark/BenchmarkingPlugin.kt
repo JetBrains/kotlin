@@ -70,7 +70,7 @@ open class BenchmarkExtension @Inject constructor(val project: Project) {
     var linkerOpts: Collection<String> = emptyList()
     var compilerOpts: List<String> = emptyList()
     var buildType: NativeBuildType = NativeBuildType.RELEASE
-    var repeatingType: RunKotlinNativeTask.RepeatingType = RunKotlinNativeTask.RepeatingType.INTERNAL
+    var repeatingType: BenchmarkRepeatingType = BenchmarkRepeatingType.INTERNAL
 
     val dependencies: BenchmarkDependencies = BenchmarkDependencies()
 

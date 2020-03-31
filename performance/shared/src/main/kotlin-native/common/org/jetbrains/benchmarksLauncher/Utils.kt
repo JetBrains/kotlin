@@ -60,3 +60,20 @@ actual class Blackhole {
         }
     }
 }
+
+actual class Random actual constructor() {
+    @kotlin.native.ThreadLocal
+    actual companion object {
+        actual var seedInt = 0
+        actual fun nextInt(boundary: Int): Int {
+            seedInt = (3 * seedInt + 11) % boundary
+            return seedInt
+        }
+
+        actual var seedDouble: Double = 0.1
+        actual fun nextDouble(boundary: Double): Double {
+            seedDouble = (7.0 * seedDouble + 7.0) % boundary
+            return seedDouble
+        }
+    }
+}

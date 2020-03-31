@@ -17,6 +17,7 @@
 package org.jetbrains.ring
 
 import org.jetbrains.benchmarksLauncher.Blackhole
+import org.jetbrains.benchmarksLauncher.Random
 
 open class ElvisBenchmark {
 

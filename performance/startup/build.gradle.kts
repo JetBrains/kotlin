@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.RunKotlinNativeTask
+import org.jetbrains.kotlin.BenchmarkRepeatingType
 
 /*
  * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
@@ -15,12 +16,12 @@ val defaultBuildType = NativeBuildType.RELEASE
 benchmark {
     applicationName = "Startup"
     commonSrcDirs = listOf("../../tools/benchmarks/shared/src", "src/main/kotlin", "../shared/src/main/kotlin")
-    jvmSrcDirs = listOf("src/main/kotlin-jvm", "../shared/src/main/kotlin-jvm")
-    nativeSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/common")
-    mingwSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/mingw")
-    posixSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/posix")
+    jvmSrcDirs = listOf("../shared/src/main/kotlin-jvm")
+    nativeSrcDirs = listOf("../shared/src/main/kotlin-native/common")
+    mingwSrcDirs = listOf("../shared/src/main/kotlin-native/mingw")
+    posixSrcDirs = listOf("../shared/src/main/kotlin-native/posix")
     buildType = (findProperty("nativeBuildType") as String?)?.let { NativeBuildType.valueOf(it) } ?: defaultBuildType
-    repeatingType = RunKotlinNativeTask.RepeatingType.EXTERNAL
+    repeatingType = BenchmarkRepeatingType.EXTERNAL
 
     dependencies.common(project(":endorsedLibraries:kotlinx.cli"))
 }

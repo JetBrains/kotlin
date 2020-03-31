@@ -67,17 +67,17 @@ abstract class Launcher {
         }
     }
 
-    fun runBenchmarkRepeatedly(logger: Logger,
-                               numWarmIterations: Int,
-                               numberOfAttempts: Int,
-                               name: String,
-                               recordMeasurement: (RecordTimeMeasurement) -> Unit,
-                               benchmarkInstance: Any?,
-                               benchmark: AbstractBenchmarkEntry) {
+    fun runBenchmark(logger: Logger,
+                     numWarmIterations: Int,
+                     numberOfAttempts: Int,
+                     name: String,
+                     recordMeasurement: (RecordTimeMeasurement) -> Unit,
+                     benchmark: AbstractBenchmarkEntry) {
+        val benchmarkInstance = (benchmark as? BenchmarkEntryWithInit)?.ctor?.invoke()
         logger.log("Warm up iterations for benchmark $name\n")
         runBenchmark(benchmarkInstance, benchmark, numWarmIterations)
         var autoEvaluatedNumberOfMeasureIteration = 1
-        while (true) {
+        while (true && benchmark.useAutoEvaluatedNumberOfMeasure) {
             var j = autoEvaluatedNumberOfMeasureIteration
             val time = runBenchmark(benchmarkInstance, benchmark, j)
             if (time >= 100L * 1_000_000) // 100ms
@@ -85,7 +85,7 @@ abstract class Launcher {
             autoEvaluatedNumberOfMeasureIteration *= 2
         }
         logger.log("Running benchmark $name ")
-        for (k in 0..numberOfAttempts) {
+        for (k in 0.until(numberOfAttempts)) {
             logger.log(".", usePrefix = false)
             var i = autoEvaluatedNumberOfMeasureIteration
             val time = runBenchmark(benchmarkInstance, benchmark, i)
@@ -94,43 +94,6 @@ abstract class Launcher {
             recordMeasurement(RecordTimeMeasurement(BenchmarkResult.Status.PASSED, k, numWarmIterations, scaledTime))
         }
         logger.log("\n", usePrefix = false)
-    }
-
-    fun runBenchmark(logger: Logger,
-                     numWarmIterations: Int,
-                     numberOfAttempts: Int,
-                     name: String,
-                     recordMeasurement: (RecordTimeMeasurement) -> Unit,
-                     benchmark: AbstractBenchmarkEntry) {
-        when (benchmark) {
-            is BenchmarkEntryWithInit -> {
-                val benchmarkInstance = benchmark.ctor?.invoke()
-                runBenchmarkRepeatedly(logger,
-                                       numWarmIterations,
-                                       numberOfAttempts,
-                                       name,
-                                       recordMeasurement,
-                                       benchmarkInstance,
-                                       benchmark)
-            }
-            is BenchmarkEntry -> {
-                runBenchmarkRepeatedly(logger,
-                                       numWarmIterations,
-                                       numberOfAttempts,
-                                       name,
-                                       recordMeasurement,
-                                       null,
-                                       benchmark)
-            }
-            is BenchmarkEntryManual -> {
-                logger.log("Running manual benchmark $name")
-                val result = benchmark.lambda()
-                for ((i, durationNs) in result.durationsNs.withIndex()) {
-                    recordMeasurement(RecordTimeMeasurement(result.status, i, result.warmupCount, durationNs))
-                }
-            }
-            else -> error("unknown benchmark type $benchmark")
-        }
     }
 
     fun launch(numWarmIterations: Int,
@@ -166,7 +129,10 @@ abstract class Launcher {
                 runBenchmark(logger, numWarmIterations, numberOfAttempts, name, recordMeasurement, benchmark)
             } catch (e: Throwable) {
                 printStderr("Failure while running benchmark $name: $e\n")
-                throw e
+                benchmarkResults.add(BenchmarkResult(
+                        "$prefix$name", BenchmarkResult.Status.FAILED, 0.0,
+                        BenchmarkResult.Metric.EXECUTION_TIME, 0.0, numberOfAttempts, numWarmIterations)
+                )
             }
         }
         return benchmarkResults

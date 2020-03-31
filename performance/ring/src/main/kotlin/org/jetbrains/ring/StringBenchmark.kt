@@ -16,6 +16,8 @@
 
 package org.jetbrains.ring
 
+import org.jetbrains.benchmarksLauncher.Random
+
 open class StringBenchmark {
     private var _data: ArrayList<String>? = null
     val data: ArrayList<String>

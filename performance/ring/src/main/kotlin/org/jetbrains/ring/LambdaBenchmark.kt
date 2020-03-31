@@ -16,6 +16,8 @@
 
 package org.jetbrains.ring
 
+import org.jetbrains.benchmarksLauncher.Random
+
 var globalAddendum = 0
 
 open class LambdaBenchmark {

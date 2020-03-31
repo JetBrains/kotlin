@@ -16,7 +16,8 @@
 
 package org.jetbrains.ring
 
-import org.jetbrains.ring.BENCHMARK_SIZE
+import org.jetbrains.benchmarksLauncher.Blackhole
+import org.jetbrains.benchmarksLauncher.Random
 
 /**
  * This class emulates matrix behaviour using a hash map as its implementation

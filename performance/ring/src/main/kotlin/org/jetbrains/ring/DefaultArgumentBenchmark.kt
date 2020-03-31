@@ -15,6 +15,7 @@
  */
 
 package org.jetbrains.ring
+import org.jetbrains.benchmarksLauncher.Random
 
 /**
  * Created by Mikhail.Glukhikh on 10/03/2015.

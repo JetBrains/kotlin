@@ -6,6 +6,7 @@
 package org.jetbrains.ring
 
 import org.jetbrains.benchmarksLauncher.Blackhole
+import org.jetbrains.benchmarksLauncher.Random
 
 private object A {
     val a = Random.nextInt(100)

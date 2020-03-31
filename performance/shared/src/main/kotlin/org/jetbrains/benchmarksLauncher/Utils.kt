@@ -36,3 +36,13 @@ expect class Blackhole {
         fun consume(value: Any)
     }
 }
+
+expect class Random() {
+    companion object {
+        var seedInt: Int
+        fun nextInt(boundary: Int = 100): Int
+
+        var seedDouble: Double
+        fun nextDouble(boundary: Double = 100.0): Double
+    }
+}

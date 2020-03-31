@@ -18,16 +18,6 @@ package org.jetbrains.ring
 
 const val BENCHMARK_SIZE = 10000
 
-expect class Random() {
-    companion object {
-        var seedInt: Int
-        fun nextInt(boundary: Int = 100): Int
-
-        var seedDouble: Double
-        fun nextDouble(boundary: Double = 100.0): Double
-    }
-}
-
 expect class AtomicRef<T> {
     /**
      * Reading/writing this property maps to read/write of volatile variable.

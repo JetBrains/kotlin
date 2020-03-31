@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.Executable
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.HostManager
 import javax.inject.Inject
 import kotlin.reflect.KClass
@@ -76,12 +75,11 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
 
             // Specify settings configured by a user in the benchmark extension.
             afterEvaluate {
-                task.args(
-                        "-w", jvmWarmup,
-                        "-r", attempts,
-                        "-o", buildDir.resolve(jvmBenchResults),
-                        "-p", "${benchmark.applicationName}::"
-                )
+                task.args("-p", "${benchmark.applicationName}::")
+                task.warmupCount = jvmWarmup
+                task.repeatCount = attempts
+                task.outputFileName = buildDir.resolve(jvmBenchResults).absolutePath
+                task.repeatingType = benchmark.repeatingType
             }
         }
     }
