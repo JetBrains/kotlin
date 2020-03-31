@@ -46,6 +46,7 @@ data class KotlinWebpackConfig(
 
             if (sourceMaps) {
                 it.add(versions.kotlinSourceMapLoader)
+                it.add(versions.sourceMapLoader)
             }
 
             if (devServer != null) {
