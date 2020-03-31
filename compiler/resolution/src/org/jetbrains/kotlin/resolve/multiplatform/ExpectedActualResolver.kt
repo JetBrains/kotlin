@@ -7,7 +7,11 @@ package org.jetbrains.kotlin.resolve.multiplatform
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.ModuleDependencies
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.SubpackagesScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
@@ -15,6 +19,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Compatible
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Incompatible
+import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
@@ -45,12 +50,11 @@ object ExpectedActualResolver {
 
     fun findActualForExpected(
         expected: MemberDescriptor,
-        platformModule: ModuleDescriptor,
-        moduleVisibilityFilter: ModuleFilter = onlyFromThisModule(platformModule)
+        platformModule: ModuleDescriptor
     ): Map<Compatibility, List<MemberDescriptor>>? {
         return when (expected) {
             is CallableMemberDescriptor -> {
-                expected.findNamesakesFromModule(platformModule, moduleVisibilityFilter).filter { actual ->
+                expected.findNamesakesFromModule(platformModule).filter { actual ->
                     expected != actual && !actual.isExpect &&
                     // TODO: use some other way to determine that the declaration is from Kotlin.
                     //       This way behavior differs between fast and PSI-based Java class reading mode
@@ -61,7 +65,7 @@ object ExpectedActualResolver {
                 }
             }
             is ClassDescriptor -> {
-                expected.findClassifiersFromModule(platformModule, moduleVisibilityFilter).filter { actual ->
+                expected.findClassifiersFromModule(platformModule).filter { actual ->
                     expected != actual && !actual.isExpect &&
                     actual.couldHaveASource
                 }.groupBy { actual ->
@@ -74,8 +78,7 @@ object ExpectedActualResolver {
 
     fun findExpectedForActual(
         actual: MemberDescriptor,
-        commonModule: ModuleDescriptor,
-        moduleFilter: (ModuleDescriptor) -> Boolean = onlyFromThisModule(commonModule)
+        commonModule: ModuleDescriptor
     ): Map<Compatibility, List<MemberDescriptor>>? {
         return when (actual) {
             is CallableMemberDescriptor -> {
@@ -84,10 +87,10 @@ object ExpectedActualResolver {
                     is ClassifierDescriptorWithTypeParameters -> {
                         // TODO: replace with 'singleOrNull' as soon as multi-module diagnostic tests are refactored
                         val expectedClass =
-                            findExpectedForActual(container, commonModule, moduleFilter)?.values?.firstOrNull()?.firstOrNull() as? ClassDescriptor
+                            findExpectedForActual(container, commonModule)?.values?.firstOrNull()?.firstOrNull() as? ClassDescriptor
                         expectedClass?.getMembers(actual.name)?.filterIsInstance<CallableMemberDescriptor>().orEmpty()
                     }
-                    is PackageFragmentDescriptor -> actual.findNamesakesFromModule(commonModule, moduleFilter)
+                    is PackageFragmentDescriptor -> actual.findNamesakesFromModule(commonModule)
                     else -> return null // do not report anything for incorrect code, e.g. 'actual' local function
                 }
 
@@ -106,7 +109,7 @@ object ExpectedActualResolver {
                 }
             }
             is ClassifierDescriptorWithTypeParameters -> {
-                actual.findClassifiersFromModule(commonModule, moduleFilter).filter { declaration ->
+                actual.findClassifiersFromModule(commonModule).filter { declaration ->
                     actual != declaration &&
                     declaration is ClassDescriptor && declaration.isExpect
                 }.groupBy { expected ->
@@ -118,15 +121,14 @@ object ExpectedActualResolver {
     }
 
     private fun CallableMemberDescriptor.findNamesakesFromModule(
-        module: ModuleDescriptor,
-        moduleFilter: (ModuleDescriptor) -> Boolean
+        module: ModuleDescriptor
     ): Collection<CallableMemberDescriptor> {
         val scopes = when (val containingDeclaration = containingDeclaration) {
             is PackageFragmentDescriptor -> {
-                listOf(module.getPackage(containingDeclaration.fqName).memberScope)
+                listOf(module.getPackageMemberScopeWithoutDependencies(containingDeclaration.fqName))
             }
             is ClassDescriptor -> {
-                val classes = containingDeclaration.findClassifiersFromModule(module, moduleFilter)
+                val classes = containingDeclaration.findClassifiersFromModule(module)
                     .mapNotNull { if (it is TypeAliasDescriptor) it.classDescriptor else it }
                     .filterIsInstance<ClassDescriptor>()
                 if (this is ConstructorDescriptor) return classes.flatMap { it.constructors }
@@ -150,12 +152,12 @@ object ExpectedActualResolver {
             }
 
             else -> throw AssertionError("Unsupported declaration: $this")
-        }.applyFilter(moduleFilter)
+        }
     }
 
     private fun ClassifierDescriptorWithTypeParameters.findClassifiersFromModule(
         module: ModuleDescriptor,
-        moduleFilter: (ModuleDescriptor) -> Boolean
+        includeDependencies: Boolean = false
     ): Collection<ClassifierDescriptorWithTypeParameters> {
         val classId = classId ?: return emptyList()
 
@@ -164,8 +166,13 @@ object ExpectedActualResolver {
                 .filterIsInstance<ClassifierDescriptorWithTypeParameters>()
 
         val segments = classId.relativeClassName.pathSegments()
-        var classifiers = module.getPackage(classId.packageFqName).memberScope.getAllClassifiers(segments.first())
-        classifiers = classifiers.applyFilter(moduleFilter)
+
+        val scope = if (includeDependencies)
+            module.getPackage(classId.packageFqName).memberScope
+        else
+            module.getPackageMemberScopeWithoutDependencies(classId.packageFqName)
+
+        var classifiers = scope.getAllClassifiers(segments.first())
 
         for (name in segments.subList(1, segments.size)) {
             classifiers = classifiers.mapNotNull { classifier ->
@@ -176,6 +183,14 @@ object ExpectedActualResolver {
         }
 
         return classifiers
+    }
+
+    private fun ModuleDescriptor.getPackageMemberScopeWithoutDependencies(fqName: FqName): MemberScope {
+        require(this is ModuleDescriptorImpl) { "Unexpected subtype of ModuleDescriptor: ${this::class}" }
+
+        val memberScopes = packageFragmentProviderForModuleContentWithoutDependencies.getPackageFragments(fqName)
+            .map { it.getMemberScope() }
+        return ChainedMemberScope("Scope of package $fqName in module $this without dependencies", memberScopes)
     }
 
     sealed class Compatibility {
@@ -351,7 +366,7 @@ object ExpectedActualResolver {
         return expected is ClassifierDescriptorWithTypeParameters &&
                 expected.isExpect &&
                 actual is ClassifierDescriptorWithTypeParameters &&
-                expected.findClassifiersFromModule(platformModule, moduleFilter = ALL_MODULES).any { classifier ->
+                expected.findClassifiersFromModule(platformModule, includeDependencies = true).any { classifier ->
                     // Note that it's fine to only check that this "actual typealias" expands to the expected class, without checking
                     // whether the type arguments in the expansion are in the correct order or have the correct variance, because we only
                     // allow simple cases like "actual typealias Foo<A, B> = FooImpl<A, B>", see DeclarationsChecker#checkActualTypeAlias
@@ -563,16 +578,14 @@ object ExpectedActualResolver {
 fun DeclarationDescriptor.findExpects(inModule: ModuleDescriptor = this.module): List<MemberDescriptor> {
     return ExpectedActualResolver.findExpectedForActual(
         this as MemberDescriptor,
-        inModule,
-        { true }
+        inModule
     )?.get(Compatible).orEmpty()
 }
 
 fun DeclarationDescriptor.findActuals(inModule: ModuleDescriptor = this.module): List<MemberDescriptor> {
     return ExpectedActualResolver.findActualForExpected(
         (this as MemberDescriptor),
-        inModule,
-        { true }
+        inModule
     )?.get(Compatible).orEmpty()
 }
 
