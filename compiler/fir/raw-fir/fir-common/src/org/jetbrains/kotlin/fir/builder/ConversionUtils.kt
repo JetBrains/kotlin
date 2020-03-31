@@ -36,8 +36,7 @@ import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitKPropertyTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
+import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
@@ -325,6 +324,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
         }
         else buildConstExpression(null, FirConstKind.Null, null)
 
+    val isVar = this@generateAccessorsByDelegate.isVar
     fun propertyRef() = buildCallableReferenceAccess {
         source = delegateBuilder.source
         calleeReference = buildResolvedNamedReference {
@@ -332,7 +332,23 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
             name = this@generateAccessorsByDelegate.name
             resolvedSymbol = this@generateAccessorsByDelegate.symbol
         }
-        typeRef = FirImplicitKPropertyTypeRef(null, ConeStarProjection)
+        typeRef = when {
+            !member && !extension -> if (isVar) {
+                FirImplicitKMutableProperty0TypeRef(null, ConeStarProjection)
+            } else {
+                FirImplicitKProperty0TypeRef(null, ConeStarProjection)
+            }
+            member && extension -> if (isVar) {
+                FirImplicitKMutableProperty2TypeRef(null, ConeStarProjection, ConeStarProjection, ConeStarProjection)
+            } else {
+                FirImplicitKProperty2TypeRef(null, ConeStarProjection, ConeStarProjection, ConeStarProjection)
+            }
+            else -> if (isVar) {
+                FirImplicitKMutableProperty1TypeRef(null, ConeStarProjection, ConeStarProjection)
+            } else {
+                FirImplicitKProperty1TypeRef(null, ConeStarProjection, ConeStarProjection)
+            }
+        }
     }
 
     delegateBuilder.delegateProvider = if (stubMode) buildExpressionStub() else buildFunctionCall {

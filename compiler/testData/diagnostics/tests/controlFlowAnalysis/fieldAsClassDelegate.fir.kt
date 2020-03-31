@@ -29,7 +29,7 @@ private fun <T> lazy(init: () -> T): kotlin.Lazy<T> {
 }
 
 object DefaultHttpClientWithBy : HttpClient by client {
-    val client by lazy { HttpClientImpl() }
+    val client by <!UNRESOLVED_REFERENCE!>lazy { HttpClientImpl() }<!>
 }
 
 object DefaultFqHttpClient : HttpClient by DefaultFqHttpClient.client {

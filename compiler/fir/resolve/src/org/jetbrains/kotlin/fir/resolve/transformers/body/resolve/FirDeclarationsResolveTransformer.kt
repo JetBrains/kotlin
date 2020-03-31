@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
@@ -139,6 +140,45 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         }
     }
 
+    private fun FirFunctionCall.replacePropertyReferenceTypeInDelegateAccessors(property: FirProperty) {
+        // var someProperty: SomeType
+        //     get() = delegate.getValue(thisRef, kProperty: KProperty0/1/2<..., SomeType>)
+        //     set() = delegate.getValue(thisRef, kProperty: KProperty0/1/2<..., SomeType>, value)
+        val propertyReferenceAccess = argumentMapping?.keys?.toList()?.getOrNull(1) as? FirCallableReferenceAccess ?: return
+        val typeRef = propertyReferenceAccess.typeRef
+        if (typeRef is FirResolvedTypeRef && property.returnTypeRef is FirResolvedTypeRef) {
+            val typeArguments = (typeRef.type as ConeClassLikeType).typeArguments
+            val extensionType = property.receiverTypeRef?.coneTypeSafe<ConeKotlinType>()
+            propertyReferenceAccess.replaceTypeRef(
+                buildResolvedTypeRef {
+                    source = typeRef.source
+                    annotations.addAll(typeRef.annotations)
+                    type = (typeRef.type as ConeClassLikeType).lookupTag.constructClassType(
+                        typeArguments.mapIndexed { index, argument ->
+                            when (index) {
+                                typeArguments.lastIndex -> property.returnTypeRef.coneTypeUnsafe()
+                                0 -> containingClass?.let { containingClass ->
+                                    containingClass.symbol.constructType(
+                                        Array(containingClass.typeParameters.size) { ConeStarProjection }, isNullable = false
+                                    )
+                                } ?: extensionType
+                                else -> extensionType
+                            } ?: argument
+                        }.toTypedArray(),
+                        isNullable = false
+                    )
+                }
+            )
+        }
+    }
+
+    private fun replacePropertyReferenceTypeInDelegateAccessors(property: FirProperty) {
+        (property.getter?.body?.statements?.singleOrNull() as? FirReturnExpression)?.let { returnExpression ->
+            (returnExpression.result as? FirFunctionCall)?.replacePropertyReferenceTypeInDelegateAccessors(property)
+        }
+        (property.setter?.body?.statements?.singleOrNull() as? FirFunctionCall)?.replacePropertyReferenceTypeInDelegateAccessors(property)
+    }
+
     private fun transformPropertyWithDelegate(property: FirProperty) {
         property.transformDelegate(transformer, ResolutionMode.ContextDependent)
 
@@ -164,6 +204,9 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             }
             val declarationCompletionResultsWriter = FirDeclarationCompletionResultsWriter(finalSubstitutor)
             property.transformSingle(declarationCompletionResultsWriter, null)
+        }
+        if (property.delegateFieldSymbol != null) {
+            replacePropertyReferenceTypeInDelegateAccessors(property)
         }
         property.transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
     }
