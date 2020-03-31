@@ -76,8 +76,12 @@ public final class IndexUpdateRunner {
     ourIndexingJobs.add(indexingJob);
 
     try {
-      while (!project.isDisposed() && !indexingJob.myIsFinished.get() && !indicator.isCanceled()) {
+      while (!indexingJob.isOutdated()) {
         processIndexJobsWhileUserIsInactive(indicator);
+        if (!indexingJob.isOutdated() &&
+            !ApplicationManager.getApplication().isDispatchThread()) { // damn tests with totally different threading
+          ProgressIndicatorUtils.yieldToPendingWriteActions();
+        }
       }
     }
     finally {
@@ -115,7 +119,7 @@ public final class IndexUpdateRunner {
     try {
       while (!ourIndexingJobs.isEmpty()) {
         for (IndexingJob job : ourIndexingJobs) {
-          if (job.myProject.isDisposed() || job.myIsFinished.get() || job.myIndicator.isCanceled()) {
+          if (job.isOutdated()) {
             ourIndexingJobs.remove(job);
             return;
           }
@@ -320,6 +324,10 @@ public final class IndexUpdateRunner {
       else {
         myIndicator.setText2(presentableLocation);
       }
+    }
+
+    private boolean isOutdated() {
+      return myProject.isDisposed() || myIsFinished.get() || myIndicator.isCanceled();
     }
   }
 }
