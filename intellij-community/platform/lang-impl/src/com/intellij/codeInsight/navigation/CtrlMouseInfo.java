@@ -21,5 +21,5 @@ public interface CtrlMouseInfo {
     return true;
   }
 
-  @NotNull CtrlMouseDocInfo getInfo();
+  @NotNull CtrlMouseDocInfo getDocInfo();
 }

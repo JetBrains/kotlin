@@ -253,7 +253,7 @@ public final class CtrlMouseHandler {
     PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
     if (file == null) return null;
     CtrlMouseInfo info = getInfoAt(project, editor, file, editor.getCaretModel().getOffset(), browseMode);
-    return info == null ? null : info.getInfo().text;
+    return info == null ? null : info.getDocInfo().text;
   }
 
   private static boolean areSimilar(@NotNull CtrlMouseInfo info1, @NotNull CtrlMouseInfo info2) {
@@ -370,7 +370,7 @@ public final class CtrlMouseHandler {
       if (identifier != null && identifier.isValid()) {
         return new BaseCtrlMouseInfo(identifier){
           @Override
-          public @NotNull CtrlMouseDocInfo getInfo() {
+          public @NotNull CtrlMouseDocInfo getDocInfo() {
             String name = UsageViewUtil.getType(element) + " '" + UsageViewUtil.getShortName(element) + "'";
             return new CtrlMouseDocInfo("Show usages of " + name, null);
           }
@@ -538,7 +538,7 @@ public final class CtrlMouseHandler {
       try {
         info = getInfoAt(editor, file, offset, myBrowseMode);
         if (info == null) return createDisposalContinuation();
-        docInfo = info.getInfo();
+        docInfo = info.getDocInfo();
       }
       catch (IndexNotReadyException e) {
         showDumbModeNotification(myProject);
@@ -648,7 +648,7 @@ public final class CtrlMouseHandler {
       myProject.getMessageBus().connect(hintDisposable).subscribe(PsiModificationTracker.TOPIC, () -> ReadAction
         .nonBlocking(() -> {
           try {
-            CtrlMouseDocInfo newDocInfo = info.getInfo();
+            CtrlMouseDocInfo newDocInfo = info.getDocInfo();
             return (Runnable)() -> {
               if (newDocInfo.text != null && !oldText.equals(newDocInfo.text)) {
                 updateText(newDocInfo.text, textConsumer, hint, editor);

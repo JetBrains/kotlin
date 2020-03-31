@@ -18,7 +18,7 @@ class MultipleTargetElementsInfo extends BaseCtrlMouseInfo {
   }
 
   @Override
-  public @NotNull CtrlMouseDocInfo getInfo() {
+  public @NotNull CtrlMouseDocInfo getDocInfo() {
     return new CtrlMouseDocInfo(CodeInsightBundle.message("multiple.implementations.tooltip"), null);
   }
 

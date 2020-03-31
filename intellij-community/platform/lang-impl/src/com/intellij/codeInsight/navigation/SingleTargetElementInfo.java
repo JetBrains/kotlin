@@ -28,7 +28,7 @@ class SingleTargetElementInfo extends BaseCtrlMouseInfo {
   }
 
   @Override
-  public @NotNull CtrlMouseDocInfo getInfo() {
+  public @NotNull CtrlMouseDocInfo getDocInfo() {
     return isValid() ? generateInfo(myTargetElement, getElementAtPointer(), isNavigatable()) : CtrlMouseDocInfo.EMPTY;
   }
 
