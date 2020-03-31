@@ -30,7 +30,7 @@ val JvmScriptingHostConfigurationKeys.jdkHome by PropertiesCollection.key<File>(
 val JvmScriptingHostConfigurationKeys.baseClassLoader by PropertiesCollection.key<ClassLoader>(
     {
         get(ScriptingHostConfiguration.configurationDependencies)?.let {
-            URLClassLoader(it.toClassPathOrEmpty().map { f -> f.toURI().toURL() }.toTypedArray())
+            URLClassLoader(it.toClassPathOrEmpty().map { f -> f.toURI().toURL() }.toTypedArray(), null)
         }
     },
     isTransient = true

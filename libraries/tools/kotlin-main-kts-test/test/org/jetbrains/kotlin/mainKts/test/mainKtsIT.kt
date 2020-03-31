@@ -9,6 +9,7 @@ import junit.framework.Assert
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.runWithK2JVMCompiler
+import org.jetbrains.kotlin.scripting.compiler.plugin.runWithKotlinLauncherScript
 import org.jetbrains.kotlin.scripting.compiler.plugin.runWithKotlinc
 import org.junit.Ignore
 import org.junit.Test
@@ -46,6 +47,19 @@ class MainKtsIT {
     fun testThreadContextClassLoader() {
         runWithKotlincAndMainKts("$TEST_DATA_ROOT/context-classloader.main.kts", listOf("MainKtsConfigurator"))
     }
+
+    @Test
+    fun testCachedReflection() {
+        val cache = createTempDir("main.kts.test")
+
+        try {
+            runWithKotlinRunner("$TEST_DATA_ROOT/use-reflect.main.kts", listOf("false"), cacheDir = cache)
+            // second run uses the cached script
+            runWithKotlinRunner("$TEST_DATA_ROOT/use-reflect.main.kts", listOf("false"), cacheDir = cache)
+        } finally {
+            cache.deleteRecursively()
+        }
+    }
 }
 
 fun runWithKotlincAndMainKts(
@@ -61,6 +75,18 @@ fun runWithKotlincAndMainKts(
                 Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}", it.exists())
             }
         ),
+        additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to (cacheDir?.absolutePath ?: ""))
+    )
+}
+
+fun runWithKotlinRunner(
+    scriptPath: String,
+    expectedOutPatterns: List<String> = emptyList(),
+    expectedExitCode: Int = 0,
+    cacheDir: File? = null
+) {
+    runWithKotlinLauncherScript(
+        "kotlin", listOf(scriptPath), expectedOutPatterns, expectedExitCode,
         additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to (cacheDir?.absolutePath ?: ""))
     )
 }
