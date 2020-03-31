@@ -98,8 +98,9 @@ public class CodeStyleStatusBarWidget extends EditorBasedStatusBarPopup implemen
   @Nullable
   private PsiFile getPsiFile() {
     Editor editor = getEditor();
-    if (editor != null) {
-      return PsiDocumentManager.getInstance(getProject()).getPsiFile(editor.getDocument());
+    Project project = getProject();
+    if (editor != null && !project.isDisposed()) {
+      return PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
     }
     return null;
   }
