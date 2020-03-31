@@ -14,6 +14,9 @@ import org.junit.runner.RunWith
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class KtSymbolTranslatorTest : KotlinLightCodeInsightFixtureTestCase() {
+    private val translator: KtOCSymbolTranslator
+        get() = KtOCSymbolTranslator(project)
+
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     private object TestTarget : KonanTarget {
@@ -33,10 +36,7 @@ class KtSymbolTranslatorTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun `test simple class translation`() {
         val file = configure("class A")
-
-        val translator = KtOCSymbolTranslator(project)
-        val translatedSymbols = translator.translate(file, TestTarget).toList()
-        val translatedSymbol = translatedSymbols.single() as KtOCInterfaceSymbol
+        val translatedSymbol = translator.translate(file, TestTarget).single() as KtOCInterfaceSymbol
         assertEquals("MyModuleA", translatedSymbol.name)
         assertFalse("state already loaded", translatedSymbol.stateLoaded)
         assertFalse(translatedSymbol.isTemplateSymbol)
@@ -46,10 +46,7 @@ class KtSymbolTranslatorTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun `test stop translating after invalidation`() {
         val file = configure("class A")
-
-        val translator = KtOCSymbolTranslator(project)
-        val translatedSymbols = translator.translate(file, TestTarget).toList()
-        val translatedSymbol = translatedSymbols.single() as KtOCInterfaceSymbol
+        val translatedSymbol = translator.translate(file, TestTarget).single() as KtOCInterfaceSymbol
         assertFalse("state already loaded", translatedSymbol.stateLoaded)
 
         runWriteAction {
@@ -65,10 +62,7 @@ class KtSymbolTranslatorTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun `test stop translating after invalidation by adjacent file`() {
         val file = configure("class A")
-
-        val translator = KtOCSymbolTranslator(project)
-        val translatedSymbols = translator.translate(file, TestTarget).toList()
-        val translatedSymbol = translatedSymbols.single() as KtOCInterfaceSymbol
+        val translatedSymbol = translator.translate(file, TestTarget).single() as KtOCInterfaceSymbol
         assertFalse("state already loaded", translatedSymbol.stateLoaded)
 
         configure("typealias B = Unit", fileName = "other")
