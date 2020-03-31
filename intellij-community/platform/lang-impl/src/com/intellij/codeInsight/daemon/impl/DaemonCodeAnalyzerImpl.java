@@ -987,10 +987,19 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
 
   @ApiStatus.Internal
   public void runLocalInspectionPassAfterCompletionOfGeneralHighlightPass(boolean flag) {
-    doRestart("runLocalInspectionPassAfterCompletionOfGeneralHighlightPass("+flag+") called");
-    TextEditorHighlightingPassRegistrarImpl registrar =
-      (TextEditorHighlightingPassRegistrarImpl)TextEditorHighlightingPassRegistrar.getInstance(myProject);
-    registrar.runInspectionsAfterCompletionOfGeneralHighlightPass(flag);
-    myPassExecutorService.resetNextPassId();
+    ApplicationManager.getApplication().assertIsDispatchThread();
+    setUpdateByTimerEnabled(false);
+    try {
+      cancelUpdateProgress(false, "runLocalInspectionPassAfterCompletionOfGeneralHighlightPass");
+      myPassExecutorService.cancelAll(true);
+
+      TextEditorHighlightingPassRegistrarImpl registrar =
+        (TextEditorHighlightingPassRegistrarImpl)TextEditorHighlightingPassRegistrar.getInstance(myProject);
+      registrar.runInspectionsAfterCompletionOfGeneralHighlightPass(flag);
+      myPassExecutorService.resetNextPassId();
+    }
+    finally {
+      setUpdateByTimerEnabled(true);
+    }
   }
 }
