@@ -6,4 +6,4 @@
 package org.jetbrains.kotlin.idea
 
 // BUNCH 201
-class KotlinQuickDocumentationProvider : KotlinQuickDocumentationProviderCompatBase()
+class KotlinDocumentationProvider : KotlinDocumentationProviderCompatBase()

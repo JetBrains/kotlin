@@ -118,7 +118,7 @@ class WrapValueParameterHandler(val base: DescriptorRenderer.ValueParametersHand
     }
 }
 
-open class KotlinQuickDocumentationProviderCompatBase : AbstractDocumentationProvider() {
+open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider() {
 
     override fun getCustomDocumentationElement(editor: Editor, fil: PsiFile, contextElement: PsiElement?): PsiElement? {
         return if (contextElement.isModifier()) contextElement else null
@@ -155,7 +155,7 @@ open class KotlinQuickDocumentationProviderCompatBase : AbstractDocumentationPro
     }
 
     companion object {
-        private val LOG = Logger.getInstance(KotlinQuickDocumentationProvider::class.java)
+        private val LOG = Logger.getInstance(KotlinDocumentationProvider::class.java)
 
         private val DESCRIPTOR_RENDERER = DescriptorRenderer.HTML.withOptions {
             classifierNamePolicy = HtmlClassifierNamePolicy(ClassifierNamePolicy.SHORT)

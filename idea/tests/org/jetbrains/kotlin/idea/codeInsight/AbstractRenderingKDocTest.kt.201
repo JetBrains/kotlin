@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.codeInsight
 
 import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.kotlin.idea.KotlinQuickDocumentationProvider
+import org.jetbrains.kotlin.idea.KotlinDocumentationProvider
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -20,7 +20,7 @@ abstract class AbstractRenderingKDocTest : KotlinLightCodeInsightFixtureTestCase
         myFixture.configureByFile(fileName())
         val file = myFixture.file
 
-        val kDocProvider = KotlinQuickDocumentationProvider()
+        val kDocProvider = KotlinDocumentationProvider()
 
         val comments = mutableListOf<String>()
         kDocProvider.collectDocComments(file) {
