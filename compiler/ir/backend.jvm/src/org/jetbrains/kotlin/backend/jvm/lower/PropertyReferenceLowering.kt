@@ -93,7 +93,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
         }
 
     private fun IrBuilderWithScope.buildReflectedContainerReference(expression: IrMemberAccessExpression): IrExpression =
-        with(CallableReferenceLowering) {
+        with(FunctionReferenceLowering) {
             calculateOwner(expression.propertyContainer, this@PropertyReferenceLowering.context)
         }
 

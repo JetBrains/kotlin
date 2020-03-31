@@ -36,24 +36,21 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
-internal val callableReferencePhase = makeIrFilePhase(
-    ::CallableReferenceLowering,
-    name = "CallableReference",
-    description = "Handle callable references"
+internal val functionReferencePhase = makeIrFilePhase(
+    ::FunctionReferenceLowering,
+    name = "FunctionReference",
+    description = "Construct instances of anonymous KFunction subclasses for function references"
 )
 
-
-
-// Originally copied from K/Native
-internal class CallableReferenceLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
+internal class FunctionReferenceLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     // This pass ignores suspend function references and function references used in inline arguments to inline functions.
     private val ignoredFunctionReferences = mutableSetOf<IrCallableReference>()
 
     private val IrFunctionReference.isIgnored: Boolean
-        get() = (!type.isFunctionOrKFunction() || ignoredFunctionReferences.contains(this)) && !isSuspendCallableReference()
+        get() = (!type.isFunctionOrKFunction() || ignoredFunctionReferences.contains(this)) && !isSuspendFunctionReference()
 
     // TODO: Currently, origin of callable references is null. Do we need to create one?
-    private fun IrFunctionReference.isSuspendCallableReference(): Boolean = isSuspend && origin == null
+    private fun IrFunctionReference.isSuspendFunctionReference(): Boolean = isSuspend && origin == null
 
     override fun lower(irFile: IrFile) {
         ignoredFunctionReferences.addAll(IrInlineReferenceLocator.scan(context, irFile))
@@ -351,7 +348,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
 
         private fun createGetOwnerMethod(superFunction: IrSimpleFunction): IrSimpleFunction = buildOverride(superFunction).apply {
             body = context.createIrBuilder(symbol, startOffset, endOffset).run {
-                irExprBody(calculateOwner(callee.parent, this@CallableReferenceLowering.context))
+                irExprBody(calculateOwner(callee.parent, this@FunctionReferenceLowering.context))
             }
         }
     }

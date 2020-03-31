@@ -143,7 +143,7 @@ internal val localDeclarationsPhase = makeIrFilePhase<CommonBackendContext>(
     },
     name = "JvmLocalDeclarations",
     description = "Move local declarations to classes",
-    prerequisite = setOf(callableReferencePhase, sharedVariablesPhase)
+    prerequisite = setOf(functionReferencePhase, sharedVariablesPhase)
 )
 
 private val jvmLocalClassExtractionPhase = makeIrFilePhase(
@@ -181,7 +181,7 @@ private val defaultArgumentInjectorPhase = makeIrFilePhase(
     ::JvmDefaultParameterInjector,
     name = "DefaultParameterInjector",
     description = "Transform calls with default arguments into calls to stubs",
-    prerequisite = setOf(callableReferencePhase, inlineCallableReferenceToLambdaPhase)
+    prerequisite = setOf(functionReferencePhase, inlineCallableReferenceToLambdaPhase)
 )
 
 private val interfacePhase = makeIrFilePhase(
@@ -303,7 +303,7 @@ private val jvmFilePhases =
         enumWhenPhase then
         singletonReferencesPhase then
 
-        callableReferencePhase then
+        functionReferencePhase then
         singleAbstractMethodPhase then
         assertionPhase then
         returnableBlocksPhase then
