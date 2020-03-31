@@ -24,7 +24,7 @@ FILE: simpleLazy.kt
         }
         )
             public get(): R|kotlin/String| {
-                ^ D|/Some.z|.R|kotlin/getValue|<R|kotlin/String|>(this@R|/Some|, ::R|/Some.z|)
+                ^ this@R|/Some|.D|/Some.z|.R|kotlin/getValue|<R|kotlin/String|>(this@R|/Some|, ::R|/Some.z|)
             }
 
         public final fun foo(): R|kotlin/Unit| {

@@ -11,29 +11,22 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirVariable
-import org.jetbrains.kotlin.fir.declarations.builder.FirPropertyBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
-import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
+import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
-import org.jetbrains.kotlin.fir.references.builder.buildDelegateFieldReference
-import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
-import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
+import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.constructStarProjectedType
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
 import org.jetbrains.kotlin.fir.types.impl.*
@@ -298,31 +291,52 @@ fun generateTemporaryVariable(
 
 fun FirPropertyBuilder.generateAccessorsByDelegate(
     delegateBuilder: FirWrappedDelegateExpressionBuilder?,
+    ownerClassBuilder: FirClassBuilder?,
     session: FirSession,
-    member: Boolean,
-    extension: Boolean,
+    isExtension: Boolean,
     stubMode: Boolean,
     receiver: FirExpression?
-
 ) {
     if (delegateBuilder == null) return
     val delegateFieldSymbol = FirDelegateFieldSymbol<FirProperty>(symbol.callableId).also {
         this.delegateFieldSymbol = it
     }
+    val ownerSymbol = when (ownerClassBuilder) {
+        is FirAnonymousObjectBuilder -> ownerClassBuilder.symbol
+        is AbstractFirRegularClassBuilder -> ownerClassBuilder.symbol
+        else -> null
+    }
+    val isMember = ownerSymbol != null
+
+    fun thisRef(): FirExpression =
+        when {
+            ownerSymbol != null -> buildThisReceiverExpression {
+                source = delegateBuilder.source
+                calleeReference = buildImplicitThisReference {
+                    boundSymbol = ownerSymbol
+                }
+                typeRef = buildResolvedTypeRef {
+                    val typeParameterNumber = (ownerClassBuilder as? AbstractFirRegularClassBuilder)?.typeParameters?.size ?: 0
+                    type = ownerSymbol.constructStarProjectedType(typeParameterNumber)
+                }
+            }
+            // ???
+            isExtension -> buildQualifiedAccessExpression {
+                source = delegateBuilder.source
+                calleeReference = buildExplicitThisReference {}
+            }
+            else -> buildConstExpression(null, FirConstKind.Null, null)
+        }
 
     fun delegateAccess() = buildQualifiedAccessExpression {
         source = delegateBuilder.source
         calleeReference = buildDelegateFieldReference {
             resolvedSymbol = delegateFieldSymbol
         }
-    }
-
-    fun thisRef(): FirExpression =
-        if (member || extension) buildQualifiedAccessExpression {
-            source = delegateBuilder.source
-            calleeReference = buildExplicitThisReference {}
+        if (ownerSymbol != null) {
+            dispatchReceiver = thisRef()
         }
-        else buildConstExpression(null, FirConstKind.Null, null)
+    }
 
     val isVar = this@generateAccessorsByDelegate.isVar
     fun propertyRef() = buildCallableReferenceAccess {
@@ -333,12 +347,12 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
             resolvedSymbol = this@generateAccessorsByDelegate.symbol
         }
         typeRef = when {
-            !member && !extension -> if (isVar) {
+            !isMember && !isExtension -> if (isVar) {
                 FirImplicitKMutableProperty0TypeRef(null, ConeStarProjection)
             } else {
                 FirImplicitKProperty0TypeRef(null, ConeStarProjection)
             }
-            member && extension -> if (isVar) {
+            isMember && isExtension -> if (isVar) {
                 FirImplicitKMutableProperty2TypeRef(null, ConeStarProjection, ConeStarProjection, ConeStarProjection)
             } else {
                 FirImplicitKProperty2TypeRef(null, ConeStarProjection, ConeStarProjection, ConeStarProjection)

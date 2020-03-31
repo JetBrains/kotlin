@@ -73,8 +73,8 @@ FILE fqName:<root> fileName:/memberExtension.kt
           RETURN type=kotlin.Nothing from='public final fun <get-plusK> (): kotlin.String declared in <root>.Host'
             CALL 'public final fun getValue (receiver: kotlin.String, p: kotlin.Any): kotlin.String [operator] declared in <root>.Host.StringDelegate' type=kotlin.String origin=null
               $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:plusK$delegate type:<root>.Host.StringDelegate visibility:private [final]' type=<root>.Host.StringDelegate origin=null
-                receiver: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
-              receiver: ERROR_CALL 'Unresolved reference: this@R|/Host.plusK|' type=kotlin.String
+                receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-plusK>' type=<root>.Host origin=null
+              receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-plusK>' type=<root>.Host origin=null
               p: PROPERTY_REFERENCE 'public final plusK: kotlin.String [delegated,val]' field=null getter='public final fun <get-plusK> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty2<<root>.Host, kotlin.String, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
                 $this: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
                 $receiver: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host

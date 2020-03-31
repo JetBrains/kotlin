@@ -37,7 +37,7 @@ FILE: delegateWithLambda.kt
         }
         )
             public get(): R|kotlin/String| {
-                ^ D|/Test.x|.R|FakeOverride</LazyDelegate.getValue: R|kotlin/String|>|(this@R|/Test|, ::R|/Test.x|)
+                ^ this@R|/Test|.D|/Test.x|.R|FakeOverride</LazyDelegate.getValue: R|kotlin/String|>|(this@R|/Test|, ::R|/Test.x|)
             }
 
     }
