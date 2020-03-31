@@ -8,7 +8,6 @@ digraph dataFlowInfoFromWhileCondition_kt {
         0 [label="Enter function foo" style="filled" fillcolor=red];
         1 [label="Exit function foo" style="filled" fillcolor=red];
     }
-
     0 -> {1};
 
     subgraph cluster_1 {
@@ -16,7 +15,6 @@ digraph dataFlowInfoFromWhileCondition_kt {
         2 [label="Enter class A" style="filled" fillcolor=red];
         3 [label="Exit class A" style="filled" fillcolor=red];
     }
-
     2 -> {3} [color=green];
 
     subgraph cluster_2 {
@@ -24,7 +22,6 @@ digraph dataFlowInfoFromWhileCondition_kt {
         4 [label="Enter class B" style="filled" fillcolor=red];
         5 [label="Exit class B" style="filled" fillcolor=red];
     }
-
     4 -> {5} [color=green];
 
     subgraph cluster_3 {
@@ -32,70 +29,68 @@ digraph dataFlowInfoFromWhileCondition_kt {
         6 [label="Enter class C" style="filled" fillcolor=red];
         7 [label="Exit class C" style="filled" fillcolor=red];
     }
-
     6 -> {7} [color=green];
 
     subgraph cluster_4 {
         color=red
         8 [label="Enter function test" style="filled" fillcolor=red];
-        9 [label="Const: Null(null)"];
-        10 [label="Variable declaration: lvar a: R|A?|"];
+        10 [label="Const: Null(null)"];
+        11 [label="Variable declaration: lvar a: R|A?|"];
         subgraph cluster_5 {
             color=blue
-            11 [label="Enter while loop"];
+            12 [label="Enter while loop"];
             subgraph cluster_6 {
                 color=blue
-                12 [label="Enter loop condition"];
+                14 [label="Enter loop condition"];
                 subgraph cluster_7 {
                     color=blue
-                    13 [label="Enter ||"];
-                    14 [label="Access variable R|<local>/a|"];
-                    15 [label="Type operator: (R|<local>/a| is R|B|)"];
-                    16 [label="Exit left part of ||"];
-                    17 [label="Enter right part of ||"];
-                    18 [label="Access variable R|<local>/a|"];
-                    19 [label="Type operator: (R|<local>/a| is R|C|)"];
-                    20 [label="Exit ||"];
+                    16 [label="Enter ||"];
+                    17 [label="Access variable R|<local>/a|"];
+                    18 [label="Type operator: (R|<local>/a| is R|B|)"];
+                    19 [label="Exit left part of ||"];
+                    20 [label="Enter right part of ||"];
+                    21 [label="Access variable R|<local>/a|"];
+                    22 [label="Type operator: (R|<local>/a| is R|C|)"];
+                    15 [label="Exit ||"];
                 }
-                21 [label="Exit loop condition"];
+                23 [label="Exit loop condition"];
             }
             subgraph cluster_8 {
                 color=blue
-                22 [label="Enter loop block"];
+                24 [label="Enter loop block"];
                 subgraph cluster_9 {
                     color=blue
-                    23 [label="Enter block"];
-                    24 [label="Access variable R|<local>/a|"];
-                    25 [label="Function call: R|<local>/a|.R|/A.foo|()"];
-                    26 [label="Exit block"];
+                    25 [label="Enter block"];
+                    26 [label="Access variable R|<local>/a|"];
+                    27 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+                    28 [label="Exit block"];
                 }
-                27 [label="Exit loop block"];
+                29 [label="Exit loop block"];
             }
-            28 [label="Exit whileloop"];
+            13 [label="Exit whileloop"];
         }
-        29 [label="Exit function test" style="filled" fillcolor=red];
+        9 [label="Exit function test" style="filled" fillcolor=red];
     }
-
-    8 -> {9};
-    9 -> {10};
+    8 -> {10};
     10 -> {11};
     11 -> {12};
-    12 -> {13};
-    13 -> {14};
-    14 -> {15};
-    15 -> {16};
-    16 -> {20 17};
+    12 -> {14};
+    13 -> {9};
+    14 -> {16};
+    15 -> {23};
+    16 -> {17};
     17 -> {18};
     18 -> {19};
-    19 -> {20};
+    19 -> {15 20};
     20 -> {21};
-    21 -> {28 22};
-    22 -> {23};
-    23 -> {24};
+    21 -> {22};
+    22 -> {15};
+    23 -> {13 24};
     24 -> {25};
     25 -> {26};
     26 -> {27};
-    27 -> {12};
+    27 -> {28};
     28 -> {29};
+    29 -> {14};
 
 }
