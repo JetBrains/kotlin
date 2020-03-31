@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
@@ -64,6 +65,15 @@ internal class CallAndReferenceGenerator(
                         backingFieldSymbol,
                         referencedPropertyGetter?.symbol,
                         referencedProperty.setter?.symbol
+                    )
+                }
+                is IrConstructorSymbol -> {
+                    val constructor = symbol.owner
+                    val klass = constructor.parent as? IrClass
+                    IrFunctionReferenceImpl(
+                        startOffset, endOffset, type, symbol,
+                        typeArgumentsCount = constructor.typeParameters.size + (klass?.typeParameters?.size ?: 0),
+                        reflectionTarget = symbol
                     )
                 }
                 is IrFunctionSymbol -> {
