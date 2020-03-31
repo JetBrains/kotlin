@@ -95,11 +95,9 @@ class ControlFlowGraphBuilder {
                 null
             }
 
-        if (!isInplace) {
-            graphs.push(ControlFlowGraph(function, name, ControlFlowGraph.Kind.Function))
-        }
+        graphs.push(ControlFlowGraph(function, name, ControlFlowGraph.Kind.Function))
 
-        val enterNode = createFunctionEnterNode(function, isInplace).also {
+        val enterNode = createFunctionEnterNode(function).also {
             if (isInplace) {
                 val postponedEnterNode = entersToPostponedAnonymousFunctions[function.symbol]
                 if (postponedEnterNode != null) {
@@ -117,7 +115,7 @@ class ControlFlowGraphBuilder {
         if (previousNode != null && !isInplace) {
             addEdge(previousNode, enterNode, preferredKind = EdgeKind.Dfg)
         }
-        val exitNode = createFunctionExitNode(function, isInplace)
+        val exitNode = createFunctionExitNode(function)
         if (function is FirAnonymousFunction) {
             exitsOfAnonymousFunctions[function] = exitNode
         }
@@ -137,7 +135,7 @@ class ControlFlowGraphBuilder {
         return enterNode to previousNode
     }
 
-    fun exitFunction(function: FirFunction<*>): Pair<FunctionExitNode, ControlFlowGraph?> {
+    fun exitFunction(function: FirFunction<*>): Pair<FunctionExitNode, ControlFlowGraph> {
         levelCounter--
         val exitNode = functionExitNodes.pop()
         val invocationKind = function.invocationKind
@@ -171,19 +169,14 @@ class ControlFlowGraphBuilder {
             lexicalScopes.pop()
         }
         exitNode.updateDeadStatus()
-        val graph = if (!isInplace) {
-            graphs.pop().also { graph ->
-                exitsFromCompletedPostponedAnonymousFunctions.removeAll { it.owner == graph }
-            }
-        } else {
-            null
+        val graph = graphs.pop().also { graph ->
+            exitsFromCompletedPostponedAnonymousFunctions.removeAll { it.owner == graph }
         }
-        if (graph != null) {
-            val previousGraph = parentGraphForAnonymousFunctions.remove(function.symbol) ?: graphs.top()
-            if (previousGraph.kind == ControlFlowGraph.Kind.Function) {
-                previousGraph.addSubGraph(graph)
-            }
+        val previousGraph = parentGraphForAnonymousFunctions.remove(function.symbol) ?: graphs.top()
+        if (previousGraph.kind == ControlFlowGraph.Kind.Function) {
+            previousGraph.addSubGraph(graph)
         }
+
         return exitNode to graph
     }
 

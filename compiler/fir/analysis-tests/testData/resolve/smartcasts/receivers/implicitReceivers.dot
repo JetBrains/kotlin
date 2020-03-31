@@ -207,76 +207,75 @@ digraph implicitReceivers_kt {
         73 [label="Postponed enter to lambda"];
         subgraph cluster_20 {
             color=blue
-            75 [label="Enter function anonymousFunction"];
-            77 [label="Access variable R|<local>/b|"];
-            78 [label="Postponed enter to lambda"];
+            77 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+            79 [label="Access variable R|<local>/b|"];
+            80 [label="Postponed enter to lambda"];
             subgraph cluster_21 {
                 color=blue
-                80 [label="Enter function anonymousFunction"];
-                82 [label="Access variable R|<local>/c|"];
-                83 [label="Postponed enter to lambda"];
+                83 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                85 [label="Access variable R|<local>/c|"];
+                86 [label="Postponed enter to lambda"];
                 subgraph cluster_22 {
                     color=blue
-                    85 [label="Enter function anonymousFunction"];
-                    87 [label="Access variable this@R|special/anonymous|"];
-                    88 [label="Type operator: (this@R|special/anonymous| as R|A|)"];
-                    89 [label="Access variable this@R|special/anonymous|"];
-                    90 [label="Function call: this@R|special/anonymous|.R|/A.foo|()"];
-                    91 [label="Function call: this@R|special/anonymous|.R|/A.foo|()"];
-                    86 [label="Exit function anonymousFunction"];
+                    93 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                    95 [label="Access variable this@R|special/anonymous|"];
+                    96 [label="Type operator: (this@R|special/anonymous| as R|A|)"];
+                    97 [label="Access variable this@R|special/anonymous|"];
+                    98 [label="Function call: this@R|special/anonymous|.R|/A.foo|()"];
+                    99 [label="Function call: this@R|special/anonymous|.R|/A.foo|()"];
+                    94 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                 }
-                93 [label="Call arguments union" style="filled" fillcolor=yellow];
-                84 [label="Postponed exit from lambda"];
-                92 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(...)"];
-                94 [label="Access variable this@R|special/anonymous|"];
-                95 [label="Function call: this@R|special/anonymous|.R|/A.foo|()"];
-                96 [label="Function call: this@R|special/anonymous|.R|/A.foo|()"];
-                81 [label="Exit function anonymousFunction"];
+                89 [label="Call arguments union" style="filled" fillcolor=yellow];
+                87 [label="Postponed exit from lambda"];
+                88 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(...)"];
+                90 [label="Access variable this@R|special/anonymous|"];
+                91 [label="Function call: this@R|special/anonymous|.R|/A.foo|()"];
+                92 [label="Function call: this@R|special/anonymous|.R|/A.foo|()"];
+                84 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
-            79 [label="Postponed exit from lambda"];
-            97 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(...)"];
-            76 [label="Exit function anonymousFunction"];
+            81 [label="Postponed exit from lambda"];
+            82 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(...)"];
+            78 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
         }
-        99 [label="Call arguments union" style="filled" fillcolor=yellow];
+        76 [label="Call arguments union" style="filled" fillcolor=yellow];
         74 [label="Postponed exit from lambda"];
-        98 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(...)"];
+        75 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(...)"];
         71 [label="Exit function test_3" style="filled" fillcolor=red];
     }
     70 -> {72};
     72 -> {73};
-    73 -> {75};
+    73 -> {77};
     73 -> {74} [color=red];
-    74 -> {98} [color=green];
-    75 -> {77};
-    76 -> {74} [color=green];
-    76 -> {99} [color=red];
-    77 -> {78};
-    78 -> {80};
-    78 -> {79} [color=red];
-    79 -> {97};
-    80 -> {82};
-    81 -> {79} [color=green];
-    81 -> {99} [color=red];
-    82 -> {83};
+    74 -> {75} [color=green];
+    75 -> {71};
+    76 -> {75} [color=red];
+    77 -> {79};
+    78 -> {74} [color=green];
+    78 -> {76} [color=red];
+    79 -> {80};
+    80 -> {83};
+    80 -> {81} [color=red];
+    81 -> {82};
+    82 -> {78};
     83 -> {85};
-    83 -> {84} [color=red];
-    84 -> {92} [color=green];
-    85 -> {87};
-    86 -> {84} [color=green];
-    86 -> {93} [color=red];
-    87 -> {88};
-    88 -> {89};
-    89 -> {90};
+    84 -> {81} [color=green];
+    85 -> {86};
+    86 -> {93};
+    86 -> {87} [color=red];
+    87 -> {88} [color=green];
+    88 -> {90};
+    89 -> {88} [color=red];
     90 -> {91};
-    91 -> {86};
-    92 -> {94};
-    93 -> {92} [color=red];
-    94 -> {95};
+    91 -> {92};
+    92 -> {84};
+    93 -> {95};
+    94 -> {87} [color=green];
+    94 -> {89} [color=red];
     95 -> {96};
-    96 -> {81};
-    97 -> {76};
-    98 -> {71};
-    99 -> {98} [color=red];
+    96 -> {97};
+    97 -> {98};
+    98 -> {99};
+    99 -> {94};
 
     subgraph cluster_23 {
         color=red

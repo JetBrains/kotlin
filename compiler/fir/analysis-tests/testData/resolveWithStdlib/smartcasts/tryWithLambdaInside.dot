@@ -40,29 +40,29 @@ digraph tryWithLambdaInside_kt {
                     15 [label="Postponed enter to lambda"];
                     subgraph cluster_6 {
                         color=blue
-                        17 [label="Enter function anonymousFunction"];
-                        19 [label="Access variable R|<local>/it|"];
-                        18 [label="Exit function anonymousFunction"];
+                        25 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                        27 [label="Access variable R|<local>/it|"];
+                        26 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
                     }
                     16 [label="Postponed exit from lambda"];
-                    20 [label="Function call: R|<local>/list|.R|kotlin/collections/filter|<R|kotlin/Boolean|>(...)"];
-                    21 [label="Exit block"];
+                    17 [label="Function call: R|<local>/list|.R|kotlin/collections/filter|<R|kotlin/Boolean|>(...)"];
+                    18 [label="Exit block"];
                 }
-                22 [label="Try main block exit"];
+                19 [label="Try main block exit"];
             }
             subgraph cluster_7 {
                 color=blue
                 12 [label="Enter finally"];
                 subgraph cluster_8 {
                     color=blue
-                    23 [label="Enter block"];
-                    24 [label="Exit block"];
+                    20 [label="Enter block"];
+                    21 [label="Exit block"];
                 }
-                25 [label="Exit finally"];
+                22 [label="Exit finally"];
             }
             10 [label="Try expression exit"];
         }
-        26 [label="Jump: ^testInPlace try {
+        23 [label="Jump: ^testInPlace try {
     R|<local>/list|.R|kotlin/collections/filter|<R|kotlin/Boolean|>(<L> = filter@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| <kind=UNKNOWN>  {
         ^ R|<local>/it|
     }
@@ -71,32 +71,32 @@ digraph tryWithLambdaInside_kt {
 finally {
 }
 "];
-        27 [label="Stub" style="filled" fillcolor=gray];
+        24 [label="Stub" style="filled" fillcolor=gray];
         8 [label="Exit function testInPlace" style="filled" fillcolor=red];
     }
     7 -> {9};
     9 -> {11};
-    10 -> {26};
+    10 -> {23};
     11 -> {8 12 13};
-    12 -> {23};
+    12 -> {20};
     13 -> {14};
     14 -> {15};
-    15 -> {17};
+    15 -> {25};
     15 -> {16} [color=red];
-    16 -> {20};
-    17 -> {18 19};
-    18 -> {17};
-    18 -> {16} [color=green];
-    19 -> {18};
+    16 -> {17};
+    17 -> {18};
+    18 -> {19};
+    19 -> {10};
     20 -> {21};
     21 -> {22};
     22 -> {10};
-    23 -> {24};
-    24 -> {25};
-    25 -> {10};
-    26 -> {8};
-    26 -> {27} [style=dotted];
-    27 -> {8} [style=dotted];
+    23 -> {8};
+    23 -> {24} [style=dotted];
+    24 -> {8} [style=dotted];
+    25 -> {26 27};
+    26 -> {25};
+    26 -> {16} [color=green];
+    27 -> {26};
 
     subgraph cluster_9 {
         color=red

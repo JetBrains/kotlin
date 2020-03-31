@@ -133,7 +133,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         functionEnterNode.mergeIncomingFlow(shouldForkFlow = previousNode != null)
     }
 
-    fun exitFunction(function: FirFunction<*>): ControlFlowGraph? {
+    fun exitFunction(function: FirFunction<*>): ControlFlowGraph {
         val (node, graph) = graphBuilder.exitFunction(function)
         node.mergeIncomingFlow()
         if (!graphBuilder.isTopLevel()) {

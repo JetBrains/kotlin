@@ -56,18 +56,14 @@ fun ControlFlowGraphBuilder.createPropertyInitializerExitNode(fir: FirProperty):
 fun ControlFlowGraphBuilder.createPropertyInitializerEnterNode(fir: FirProperty): PropertyInitializerEnterNode =
     PropertyInitializerEnterNode(graph, fir, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createFunctionEnterNode(fir: FirFunction<*>, isInPlace: Boolean): FunctionEnterNode =
+fun ControlFlowGraphBuilder.createFunctionEnterNode(fir: FirFunction<*>): FunctionEnterNode =
     FunctionEnterNode(graph, fir, levelCounter, createId()).also {
-        if (!isInPlace) {
-            graph.enterNode = it
-        }
+        graph.enterNode = it
     }
 
-fun ControlFlowGraphBuilder.createFunctionExitNode(fir: FirFunction<*>, isInPlace: Boolean): FunctionExitNode =
+fun ControlFlowGraphBuilder.createFunctionExitNode(fir: FirFunction<*>): FunctionExitNode =
     FunctionExitNode(graph, fir, levelCounter, createId()).also {
-        if (!isInPlace) {
-            graph.exitNode = it
-        }
+        graph.exitNode = it
     }
 
 fun ControlFlowGraphBuilder.createBinaryOrEnterNode(fir: FirBinaryLogicExpression): BinaryOrEnterNode =

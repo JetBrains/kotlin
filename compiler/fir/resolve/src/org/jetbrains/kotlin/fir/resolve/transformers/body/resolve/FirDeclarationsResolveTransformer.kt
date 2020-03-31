@@ -439,9 +439,8 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             transformDeclarationContent(function, data).also {
                 if (functionIsNotAnalyzed) {
                     val result = it.single as FirFunction<*>
-                    dataFlowAnalyzer.exitFunction(result)?.let { controlFlowGraph ->
-                        result.transformControlFlowGraphReference(ControlFlowGraphReferenceTransformer, controlFlowGraph)
-                    }
+                    val controlFlowGraph = dataFlowAnalyzer.exitFunction(result)
+                    result.transformControlFlowGraphReference(ControlFlowGraphReferenceTransformer, controlFlowGraph)
                 }
             } as CompositeTransformResult<FirStatement>
         }

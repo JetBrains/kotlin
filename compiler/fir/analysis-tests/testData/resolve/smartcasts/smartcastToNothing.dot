@@ -202,14 +202,14 @@ digraph smartcastToNothing_kt {
         88 [label="Postponed enter to lambda"];
         subgraph cluster_21 {
             color=blue
-            90 [label="Enter function anonymousFunction"];
-            92 [label="Access variable R|<local>/it|"];
-            93 [label="Access variable R|/A.a|"];
-            91 [label="Exit function anonymousFunction"];
+            92 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+            94 [label="Access variable R|<local>/it|"];
+            95 [label="Access variable R|/A.a|"];
+            93 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
         }
-        95 [label="Call arguments union" style="filled" fillcolor=yellow];
+        91 [label="Call arguments union" style="filled" fillcolor=yellow];
         89 [label="Postponed exit from lambda"];
-        94 [label="Function call: R|<local>/s|?.R|kotlin/let|<R|A|, R|kotlin/Int|>(...)"];
+        90 [label="Function call: R|<local>/s|?.R|kotlin/let|<R|A|, R|kotlin/Int|>(...)"];
         87 [label="Exit safe call"];
         48 [label="Exit function test_0" style="filled" fillcolor=red];
     }
@@ -254,15 +254,15 @@ digraph smartcastToNothing_kt {
     85 -> {86 87};
     86 -> {88};
     87 -> {48} [style=dotted];
-    88 -> {90};
+    88 -> {92};
     88 -> {89} [color=red];
-    89 -> {94} [color=green];
-    90 -> {92};
-    91 -> {89} [color=green];
-    91 -> {95} [color=red];
-    92 -> {93};
-    93 -> {91};
-    94 -> {87};
-    95 -> {94} [color=red];
+    89 -> {90} [color=green];
+    90 -> {87};
+    91 -> {90} [color=red];
+    92 -> {94};
+    93 -> {89} [color=green];
+    93 -> {91} [color=red];
+    94 -> {95};
+    95 -> {93};
 
 }
