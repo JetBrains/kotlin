@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Compatible
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Incompatible
-import org.jetbrains.kotlin.resolve.multiplatform.ModuleFilter
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -68,13 +67,18 @@ class ExpectedActualDeclarationChecker(
         } else {
             val checkActual = !context.languageVersionSettings.getFlag(AnalysisFlags.multiPlatformDoNotCheckActual)
 
-            val allImplementedModules = moduleStructureOracle.findAllDependsOnPaths(descriptor.module).flatMap { it.nodes }.toHashSet()
+            val allImplementedModules = moduleStructureOracle
+                .findAllDependsOnPaths(descriptor.module)
+                .flatMap { it.nodes }
+                .toHashSet()
+                .retainOnlyCombinedModuleDescriptorsIfNecessary()
+
             checkActualDeclarationHasExpected(
                 declaration,
                 descriptor,
                 context.trace,
                 checkActual,
-                moduleVisibilityFilter = { it in allImplementedModules }
+                allImplementedModules
             )
         }
     }
@@ -94,9 +98,8 @@ class ExpectedActualDeclarationChecker(
                 reportOn,
                 descriptor,
                 trace,
-                leafModule,
-                expectActualTracker,
-                moduleVisibilityFilter = { it in modulesVisibleFromLeaf }
+                modulesVisibleFromLeaf.retainOnlyCombinedModuleDescriptorsIfNecessary(),
+                expectActualTracker
             )
         }
 
@@ -118,9 +121,8 @@ class ExpectedActualDeclarationChecker(
         for those two cases, we can drop separate logic for DUPLICATE_ACTUALS
         */
         for (path in allActualizationPaths) {
-            val modulesOnThisPath = path.nodes.toSet()
             checkExpectedDeclarationHasAtMostOneActual(
-                reportOn, descriptor, trace, path, moduleVisibilityFilter = { it in modulesOnThisPath }
+                reportOn, descriptor, trace, path.nodes.retainOnlyCombinedModuleDescriptorsIfNecessary()
             )
         }
     }
@@ -129,15 +131,12 @@ class ExpectedActualDeclarationChecker(
         reportOn: KtNamedDeclaration,
         descriptor: MemberDescriptor,
         trace: BindingTrace,
-        path: ModulePath,
-        moduleVisibilityFilter: ModuleFilter
+        moduleDescriptors: Collection<ModuleDescriptor>
     ) {
-        val compatibility = path.nodes
-            .mapNotNull { ExpectedActualResolver.findActualForExpected(descriptor, it, moduleVisibilityFilter) }
+        val compatibility = moduleDescriptors
+            .mapNotNull { ExpectedActualResolver.findActualForExpected(descriptor, it) }
             .ifEmpty { return }
-            .fold(LinkedHashMap<Compatibility, List<MemberDescriptor>>()) { resultMap, partialMap ->
-                resultMap.apply { putAll(partialMap) }
-            }
+            .foldMaps()
 
         // Several compatible actuals on one path: report AMBIGUIOUS_ACTUALS here
         val atLeastWeaklyCompatibleActuals = compatibility
@@ -161,14 +160,16 @@ class ExpectedActualDeclarationChecker(
         reportOn: KtNamedDeclaration,
         descriptor: MemberDescriptor,
         trace: BindingTrace,
-        module: ModuleDescriptor,
-        expectActualTracker: ExpectActualTracker,
-        moduleVisibilityFilter: ModuleFilter
+        implementingModules: Collection<ModuleDescriptor>,
+        expectActualTracker: ExpectActualTracker
     ) {
         // Only look for top level actual members; class members will be handled as a part of that expected class
         if (descriptor.containingDeclaration !is PackageFragmentDescriptor) return
 
-        val compatibility = ExpectedActualResolver.findActualForExpected(descriptor, module, moduleVisibilityFilter) ?: return
+        val compatibility = implementingModules
+            .mapNotNull { ExpectedActualResolver.findActualForExpected(descriptor, it) }
+            .ifEmpty { return }
+            .foldMaps()
 
         // Only strong incompatibilities, but this is an OptionalExpectation -- don't report it
         if (compatibility.allStrongIncompatibilities() && isOptionalAnnotationClass(descriptor)) return
@@ -180,7 +181,7 @@ class ExpectedActualDeclarationChecker(
             assert(compatibility.keys.all { it is Incompatible })
             @Suppress("UNCHECKED_CAST")
             val incompatibility = compatibility as Map<Incompatible, Collection<MemberDescriptor>>
-            trace.report(Errors.NO_ACTUAL_FOR_EXPECT.on(reportOn, descriptor, module, incompatibility))
+            trace.report(Errors.NO_ACTUAL_FOR_EXPECT.on(reportOn, descriptor, implementingModules.last(), incompatibility))
             return
         }
 
@@ -223,10 +224,12 @@ class ExpectedActualDeclarationChecker(
         descriptor: MemberDescriptor,
         trace: BindingTrace,
         checkActual: Boolean,
-        moduleVisibilityFilter: ModuleFilter
+        implementedModules: Collection<ModuleDescriptor>
     ) {
-        val compatibility = ExpectedActualResolver.findExpectedForActual(descriptor, descriptor.module, moduleVisibilityFilter)
-            ?: return
+        val compatibility = implementedModules
+            .mapNotNull { ExpectedActualResolver.findExpectedForActual(descriptor, it) }
+            .ifEmpty { return }
+            .foldMaps()
 
         checkAmbiguousExpects(compatibility, trace, reportOn, descriptor)
 
@@ -415,15 +418,37 @@ class ExpectedActualDeclarationChecker(
         fun Map<out Compatibility, Collection<MemberDescriptor>>.allStrongIncompatibilities(): Boolean =
             this.keys.all { it is Incompatible && it.kind == Compatibility.IncompatibilityKind.STRONG }
 
-        private fun <K, V> LinkedHashMap<K, List<V>>.merge(other: Map<K, List<V>>): LinkedHashMap<K, List<V>> {
+        private fun <K, V> List<Map<K, List<V>>>.foldMaps(): LinkedHashMap<K, List<V>> = fold(LinkedHashMap()) { thisMap, other ->
             for ((key, newValue) in other) {
-                val oldValue = this[key] ?: emptyList()
-                this[key] = oldValue + newValue
+                val oldValue = thisMap[key] ?: emptyList()
+                thisMap[key] = oldValue + newValue
             }
 
-            return this
+            thisMap
         }
 
         private fun ModuleInfo.unwrapModuleInfo(): List<ModuleInfo> = if (this is CombinedModuleInfo) this.containedModules else listOf(this)
+
+        /**
+         * In IDE, without HMPP, platform module (say, jvm) is merged for analysis together with corresponding common ones (say, common)
+         * This means that we might get dependsOn paths, which look like:
+         *   [ModuleDescriptor("common"), ModuleDescriptor("jvm in context of common")]
+         *
+         * Both of them contain declarations from "common" in their scope, which is an issue, for example, if we're looking for a
+         * compatible 'expect' to actual declared in 'jvm' -- we'll resolve one 'expect' from 'common', and the same one from,
+         * 'jvm in context of common', leading to false-positive AMBIGUOUS_EXPECTS
+         *
+         * To fix it, we check if paths contains any merged modules. If it does, then it's enough to inspect only that exact module,
+         * as its scope already contains all needed declarations, so we band-fix path to contain only that module
+         *
+         * Note that this logic won't work in hierarchical projects, and it is fine, because:
+         *  a) CombinedModuleInfo doesn't work good with hierarchies anyways
+         *  b) Hierarchies work good with HMPP, and we never create CombinedModuleInfo when HMPP is enabled
+         */
+        private fun Collection<ModuleDescriptor>.retainOnlyCombinedModuleDescriptorsIfNecessary(): Collection<ModuleDescriptor> {
+            val combinedModuleDescriptorsIfAny = filter { it.getCapability(CombinedModuleInfo.IS_COMBINED_CAPABILITY) == true }
+            return if (combinedModuleDescriptorsIfAny.isNotEmpty()) combinedModuleDescriptorsIfAny else this
+        }
+
     }
 }

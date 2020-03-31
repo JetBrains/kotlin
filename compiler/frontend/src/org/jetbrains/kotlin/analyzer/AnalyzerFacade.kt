@@ -97,6 +97,10 @@ interface PlatformAnalysisParameters {
 interface CombinedModuleInfo : ModuleInfo {
     val containedModules: List<ModuleInfo>
     val platformModule: ModuleInfo
+
+    companion object {
+        val IS_COMBINED_CAPABILITY = ModuleDescriptor.Capability<Boolean>("isCombined")
+    }
 }
 
 fun ModuleInfo.flatten(): List<ModuleInfo> = when (this) {

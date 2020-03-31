@@ -513,8 +513,8 @@ data class PlatformModuleInfo(
     override val platformModule: ModuleSourceInfo,
     private val commonModules: List<ModuleSourceInfo> // NOTE: usually contains a single element for current implementation
 ) : IdeaModuleInfo, CombinedModuleInfo, TrackableModuleInfo {
-    override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
-        get() = platformModule.capabilities
+    override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?> =
+        platformModule.capabilities + mapOf(CombinedModuleInfo.IS_COMBINED_CAPABILITY to true)
 
     override fun contentScope() = GlobalSearchScope.union(containedModules.map { it.contentScope() }.toTypedArray())
 
