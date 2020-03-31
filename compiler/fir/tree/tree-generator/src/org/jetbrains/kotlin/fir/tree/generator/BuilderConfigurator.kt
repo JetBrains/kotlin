@@ -263,6 +263,10 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             useTypes(stubReferenceType)
         }
 
+        builder(anonymousInitializer) {
+            default("symbol", "FirAnonymousInitializerSymbol()")
+        }
+
         val elementsWithDefaultTypeRef = listOf(
             thisReceiverExpression,
             callableReferenceAccess,

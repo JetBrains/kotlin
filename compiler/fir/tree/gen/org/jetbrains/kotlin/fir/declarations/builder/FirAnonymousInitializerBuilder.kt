@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousInitializerImpl
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -28,6 +29,7 @@ class FirAnonymousInitializerBuilder {
     lateinit var session: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     var body: FirBlock? = null
+    var symbol: FirAnonymousInitializerSymbol = FirAnonymousInitializerSymbol()
 
     fun build(): FirAnonymousInitializer {
         return FirAnonymousInitializerImpl(
@@ -35,6 +37,7 @@ class FirAnonymousInitializerBuilder {
             session,
             resolvePhase,
             body,
+            symbol,
         )
     }
 

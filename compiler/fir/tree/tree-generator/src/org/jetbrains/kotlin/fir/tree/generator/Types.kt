@@ -60,6 +60,7 @@ val classLikeSymbolType = type("fir.symbols.impl", "FirClassLikeSymbol<*>")
 val typeParameterSymbolType = type("fir.symbols.impl", "FirTypeParameterSymbol")
 val emptyArgumentListType = type("fir.expressions", "FirEmptyArgumentList")
 val firScopeProviderType = type("fir.scopes", "FirScopeProvider")
+val anonymousInitializerSymbolType = type("fir.symbols.impl", "FirAnonymousInitializerSymbol")
 
 val pureAbstractElementType = generatedType("FirPureAbstractElement")
 val effectDeclarationType = type("fir.contracts.description", "ConeEffectDeclaration")

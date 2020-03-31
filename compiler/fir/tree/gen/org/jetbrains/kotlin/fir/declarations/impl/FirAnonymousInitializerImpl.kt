@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -24,8 +25,13 @@ internal class FirAnonymousInitializerImpl(
     override val session: FirSession,
     override var resolvePhase: FirResolvePhase,
     override var body: FirBlock?,
+    override val symbol: FirAnonymousInitializerSymbol,
 ) : FirAnonymousInitializer() {
     override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
+
+    init {
+        symbol.bind(this)
+    }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         body?.accept(visitor, data)

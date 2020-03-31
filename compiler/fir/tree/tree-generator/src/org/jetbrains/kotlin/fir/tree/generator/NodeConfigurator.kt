@@ -366,7 +366,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         anonymousInitializer.configure {
+            parentArg(symbolOwner, "E", anonymousInitializer)
             +body(nullable = true)
+            +symbol(anonymousInitializerSymbolType.type)
             +controlFlowGraphReferenceField
         }
 
