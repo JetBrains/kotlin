@@ -126,6 +126,8 @@ class KotlinBuildProperties(
 
     val teamCityBootstrapProject: String? = get("bootstrap.teamcity.project") as String?
 
+    val teamCityBootstrapUrl: String? = get("bootstrap.teamcity.url") as String?
+
     val rootProjectDir: File = propertiesProvider.rootProjectDir
 }
 

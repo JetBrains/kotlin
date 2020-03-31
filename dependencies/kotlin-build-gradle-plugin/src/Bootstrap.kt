@@ -33,6 +33,7 @@ fun Project.kotlinBootstrapFrom(defaultSource: BootstrapOption) {
             teamCityBootstrapVersion,
             kotlinBuildProperties.teamCityBootstrapBuildNumber,
             projectExtId = kotlinBuildProperties.teamCityBootstrapProject,
+            teamcityUrl = kotlinBuildProperties.teamCityBootstrapUrl,
             onlySuccessBootstrap = false
         )
         customBootstrapVersion != null -> BootstrapOption.Custom(
