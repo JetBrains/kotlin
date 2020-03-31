@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -637,6 +638,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         classKind(klass.classKind)
         ws
         anchoredName(klass.name, klass.classId.asString())
+        generateTypeParameters(klass)
         if (klass.superTypeRefs.isNotEmpty()) {
             +": "
             generateList(klass.superTypeRefs) {
@@ -934,7 +936,9 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 keyword("reified ")
             }
             if (describe)
-                simpleName(typeParameter.name)
+                symbolRef(typeParameter.symbol) {
+                    simpleName(typeParameter.name)
+                }
             else
                 symbolAnchor(typeParameter.symbol) {
                     simpleName(typeParameter.name)
@@ -951,7 +955,8 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 generateTypeParameter(it, describe)
             } else {
                 symbolRef(it.symbol) {
-                    generateTypeParameter(it.symbol.fir, describe = true)
+                    +"^"
+                    simpleName(it.symbol.fir.name)
                 }
             }
         }
@@ -1103,6 +1108,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         return when (this) {
             is FirClassLikeSymbol<*> -> classId.asString()
             is FirCallableSymbol<*> -> callableId.toString()
+            is FirTypeParameterSymbol -> name.asString()
             else -> ""
         }
     }
