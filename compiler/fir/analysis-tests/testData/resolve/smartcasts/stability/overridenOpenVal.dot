@@ -14,14 +14,12 @@ digraph overridenOpenVal_kt {
 
     subgraph cluster_1 {
         color=red
-        3 [label="Enter function getter" style="filled" fillcolor=red];
-        4 [label="Exit function getter" style="filled" fillcolor=red];
-    }
-    3 -> {4};
-
-    subgraph cluster_2 {
-        color=red
         8 [label="Enter class A" style="filled" fillcolor=red];
+        subgraph cluster_2 {
+            color=blue
+            3 [label="Enter function getter" style="filled" fillcolor=red];
+            4 [label="Exit function getter" style="filled" fillcolor=red];
+        }
         subgraph cluster_3 {
             color=blue
             5 [label="Enter property" style="filled" fillcolor=red];
@@ -34,6 +32,7 @@ digraph overridenOpenVal_kt {
     5 -> {7};
     6 -> {9} [color=green];
     7 -> {6};
+    3 -> {4};
 
     subgraph cluster_4 {
         color=red

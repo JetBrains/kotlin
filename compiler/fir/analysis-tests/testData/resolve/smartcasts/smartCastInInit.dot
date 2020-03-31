@@ -51,14 +51,12 @@ digraph smartCastInInit_kt {
 
     subgraph cluster_5 {
         color=red
-        15 [label="Enter function getter" style="filled" fillcolor=red];
-        16 [label="Exit function getter" style="filled" fillcolor=red];
-    }
-    15 -> {16};
-
-    subgraph cluster_6 {
-        color=red
         27 [label="Enter class Main" style="filled" fillcolor=red];
+        subgraph cluster_6 {
+            color=blue
+            15 [label="Enter function getter" style="filled" fillcolor=red];
+            16 [label="Exit function getter" style="filled" fillcolor=red];
+        }
         subgraph cluster_7 {
             color=blue
             17 [label="Enter property" style="filled" fillcolor=red];
@@ -83,6 +81,7 @@ digraph smartCastInInit_kt {
     27 -> {17} [color=green];
     17 -> {18};
     18 -> {19} [color=green];
+    15 -> {16};
     19 -> {21};
     20 -> {28} [color=green];
     21 -> {22};

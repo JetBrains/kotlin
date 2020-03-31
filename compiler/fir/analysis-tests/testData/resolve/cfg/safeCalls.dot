@@ -26,21 +26,17 @@ digraph safeCalls_kt {
 
     subgraph cluster_3 {
         color=red
-        6 [label="Enter function getter" style="filled" fillcolor=red];
-        7 [label="Exit function getter" style="filled" fillcolor=red];
-    }
-    6 -> {7};
-
-    subgraph cluster_4 {
-        color=red
-        10 [label="Enter function getter" style="filled" fillcolor=red];
-        11 [label="Exit function getter" style="filled" fillcolor=red];
-    }
-    10 -> {11};
-
-    subgraph cluster_5 {
-        color=red
         14 [label="Enter class B" style="filled" fillcolor=red];
+        subgraph cluster_4 {
+            color=blue
+            10 [label="Enter function getter" style="filled" fillcolor=red];
+            11 [label="Exit function getter" style="filled" fillcolor=red];
+        }
+        subgraph cluster_5 {
+            color=blue
+            6 [label="Enter function getter" style="filled" fillcolor=red];
+            7 [label="Exit function getter" style="filled" fillcolor=red];
+        }
         subgraph cluster_6 {
             color=blue
             8 [label="Enter property" style="filled" fillcolor=red];
@@ -56,8 +52,10 @@ digraph safeCalls_kt {
     14 -> {8} [color=green];
     8 -> {9};
     9 -> {12} [color=green];
+    6 -> {7};
     12 -> {13};
     13 -> {15} [color=green];
+    10 -> {11};
 
     subgraph cluster_8 {
         color=red

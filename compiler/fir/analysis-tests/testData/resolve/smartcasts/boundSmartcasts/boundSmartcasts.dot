@@ -297,14 +297,12 @@ digraph boundSmartcasts_kt {
 
     subgraph cluster_24 {
         color=red
-        110 [label="Enter function getter" style="filled" fillcolor=red];
-        111 [label="Exit function getter" style="filled" fillcolor=red];
-    }
-    110 -> {111};
-
-    subgraph cluster_25 {
-        color=red
         115 [label="Enter class D" style="filled" fillcolor=red];
+        subgraph cluster_25 {
+            color=blue
+            110 [label="Enter function getter" style="filled" fillcolor=red];
+            111 [label="Exit function getter" style="filled" fillcolor=red];
+        }
         subgraph cluster_26 {
             color=blue
             112 [label="Enter property" style="filled" fillcolor=red];
@@ -317,6 +315,7 @@ digraph boundSmartcasts_kt {
     112 -> {114};
     113 -> {116} [color=green];
     114 -> {113};
+    110 -> {111};
 
     subgraph cluster_27 {
         color=red

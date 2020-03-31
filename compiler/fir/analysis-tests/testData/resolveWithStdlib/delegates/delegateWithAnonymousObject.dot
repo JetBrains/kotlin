@@ -120,6 +120,25 @@ digraph delegateWithAnonymousObject_kt {
         66 [label="Enter class IssuesListUserProfile" style="filled" fillcolor=red];
         subgraph cluster_12 {
             color=blue
+            48 [label="Enter function setter" style="filled" fillcolor=red];
+            50 [label="Access variable D|/IssuesListUserProfile.issueListView|"];
+            51 [label="Access variable this@R|/IssuesListUserProfile|"];
+            52 [label="Access variable R|<local>/issueListView|"];
+            53 [label="Function call: D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(...)"];
+            49 [label="Exit function setter" style="filled" fillcolor=red];
+        }
+        subgraph cluster_13 {
+            color=blue
+            41 [label="Enter function getter" style="filled" fillcolor=red];
+            43 [label="Access variable D|/IssuesListUserProfile.issueListView|"];
+            44 [label="Access variable this@R|/IssuesListUserProfile|"];
+            45 [label="Function call: D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|IssueListView|>|(...)"];
+            46 [label="Jump: ^ D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|IssueListView|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|)"];
+            47 [label="Stub" style="filled" fillcolor=gray];
+            42 [label="Exit function getter" style="filled" fillcolor=red];
+        }
+        subgraph cluster_14 {
+            color=blue
             54 [label="Enter property" style="filled" fillcolor=red];
             56 [label="Postponed enter to lambda"];
             57 [label="Postponed exit from lambda"];
@@ -129,7 +148,7 @@ digraph delegateWithAnonymousObject_kt {
             61 [label="Access variable this@R|/IssuesListUserProfile|"];
             62 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...).<Unresolved name: provideDelegate>#(...)"];
             63 [label="Postponed enter to lambda"];
-            subgraph cluster_13 {
+            subgraph cluster_15 {
                 color=blue
                 21 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
                 23 [label="Exit anonymous object"];
@@ -138,25 +157,6 @@ digraph delegateWithAnonymousObject_kt {
             64 [label="Postponed exit from lambda"];
             65 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...)"];
             55 [label="Exit property" style="filled" fillcolor=red];
-        }
-        subgraph cluster_14 {
-            color=blue
-            48 [label="Enter function setter" style="filled" fillcolor=red];
-            50 [label="Access variable D|/IssuesListUserProfile.issueListView|"];
-            51 [label="Access variable this@R|/IssuesListUserProfile|"];
-            52 [label="Access variable R|<local>/issueListView|"];
-            53 [label="Function call: D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(...)"];
-            49 [label="Exit function setter" style="filled" fillcolor=red];
-        }
-        subgraph cluster_15 {
-            color=blue
-            41 [label="Enter function getter" style="filled" fillcolor=red];
-            43 [label="Access variable D|/IssuesListUserProfile.issueListView|"];
-            44 [label="Access variable this@R|/IssuesListUserProfile|"];
-            45 [label="Function call: D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|IssueListView|>|(...)"];
-            46 [label="Jump: ^ D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|IssueListView|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|)"];
-            47 [label="Stub" style="filled" fillcolor=gray];
-            42 [label="Exit function getter" style="filled" fillcolor=red];
         }
         67 [label="Exit class IssuesListUserProfile" style="filled" fillcolor=red];
     }
@@ -174,7 +174,6 @@ digraph delegateWithAnonymousObject_kt {
     63 -> {21} [color=red];
     64 -> {65};
     65 -> {55};
-    65 -> {41 48} [color=red];
     21 -> {23};
     21 -> {24 27 32} [color=red];
     23 -> {22};

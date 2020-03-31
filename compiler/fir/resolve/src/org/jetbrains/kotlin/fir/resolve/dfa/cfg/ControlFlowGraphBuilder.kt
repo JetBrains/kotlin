@@ -89,7 +89,7 @@ class ControlFlowGraphBuilder {
 
         val previousNode = entersToPostponedAnonymousFunctions[function.symbol]
             ?: enterToLocalClassesMembers[function.symbol]
-            ?: if (!isInplace && graphs.topOrNull()?.let { it.kind == ControlFlowGraph.Kind.Function } == true) {
+            ?: if (!isInplace && function !is FirPropertyAccessor && graphs.topOrNull()?.let { it.kind == ControlFlowGraph.Kind.Function } == true) {
                 lastNodes.top()
             } else {
                 null

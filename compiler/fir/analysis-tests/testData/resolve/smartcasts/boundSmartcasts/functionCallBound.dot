@@ -30,14 +30,12 @@ digraph functionCallBound_kt {
 
     subgraph cluster_3 {
         color=red
-        8 [label="Enter function getter" style="filled" fillcolor=red];
-        9 [label="Exit function getter" style="filled" fillcolor=red];
-    }
-    8 -> {9};
-
-    subgraph cluster_4 {
-        color=red
         13 [label="Enter class Sub" style="filled" fillcolor=red];
+        subgraph cluster_4 {
+            color=blue
+            8 [label="Enter function getter" style="filled" fillcolor=red];
+            9 [label="Exit function getter" style="filled" fillcolor=red];
+        }
         subgraph cluster_5 {
             color=blue
             10 [label="Enter property" style="filled" fillcolor=red];
@@ -50,6 +48,7 @@ digraph functionCallBound_kt {
     10 -> {12};
     11 -> {14} [color=green];
     12 -> {11};
+    8 -> {9};
 
     subgraph cluster_6 {
         color=red

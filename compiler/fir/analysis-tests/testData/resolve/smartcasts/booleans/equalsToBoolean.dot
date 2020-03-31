@@ -12,14 +12,12 @@ digraph equalsToBoolean_kt {
 
     subgraph cluster_1 {
         color=red
-        2 [label="Enter function getter" style="filled" fillcolor=red];
-        3 [label="Exit function getter" style="filled" fillcolor=red];
-    }
-    2 -> {3};
-
-    subgraph cluster_2 {
-        color=red
         6 [label="Enter class A" style="filled" fillcolor=red];
+        subgraph cluster_2 {
+            color=blue
+            2 [label="Enter function getter" style="filled" fillcolor=red];
+            3 [label="Exit function getter" style="filled" fillcolor=red];
+        }
         subgraph cluster_3 {
             color=blue
             4 [label="Enter property" style="filled" fillcolor=red];
@@ -30,6 +28,7 @@ digraph equalsToBoolean_kt {
     6 -> {4} [color=green];
     4 -> {5};
     5 -> {7} [color=green];
+    2 -> {3};
 
     subgraph cluster_4 {
         color=red

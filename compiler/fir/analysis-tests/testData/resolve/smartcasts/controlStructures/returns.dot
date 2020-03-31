@@ -371,24 +371,23 @@ digraph returns_kt {
 
     subgraph cluster_33 {
         color=red
-        132 [label="Enter function getter" style="filled" fillcolor=red];
-        134 [label="Access variable R|kotlin/String.length|"];
-        135 [label="Jump: ^ this@R|/ext|.R|kotlin/String.length|"];
-        136 [label="Stub" style="filled" fillcolor=gray];
-        133 [label="Exit function getter" style="filled" fillcolor=red];
+        137 [label="Enter property" style="filled" fillcolor=red];
+        subgraph cluster_34 {
+            color=blue
+            132 [label="Enter function getter" style="filled" fillcolor=red];
+            134 [label="Access variable R|kotlin/String.length|"];
+            135 [label="Jump: ^ this@R|/ext|.R|kotlin/String.length|"];
+            136 [label="Stub" style="filled" fillcolor=gray];
+            133 [label="Exit function getter" style="filled" fillcolor=red];
+        }
+        138 [label="Exit property" style="filled" fillcolor=red];
     }
+    137 -> {138};
     132 -> {134};
     134 -> {135};
     135 -> {133};
     135 -> {136} [style=dotted];
     136 -> {133} [style=dotted];
-
-    subgraph cluster_34 {
-        color=red
-        137 [label="Enter property" style="filled" fillcolor=red];
-        138 [label="Exit property" style="filled" fillcolor=red];
-    }
-    137 -> {138};
 
     subgraph cluster_35 {
         color=red

@@ -26,21 +26,19 @@ digraph nullability_kt {
 
     subgraph cluster_3 {
         color=red
-        6 [label="Enter function getter" style="filled" fillcolor=red];
-        7 [label="Exit function getter" style="filled" fillcolor=red];
-    }
-    6 -> {7};
-
-    subgraph cluster_4 {
-        color=red
         10 [label="Enter function fs" style="filled" fillcolor=red];
         11 [label="Exit function fs" style="filled" fillcolor=red];
     }
     10 -> {11};
 
-    subgraph cluster_5 {
+    subgraph cluster_4 {
         color=red
         12 [label="Enter class MyData" style="filled" fillcolor=red];
+        subgraph cluster_5 {
+            color=blue
+            6 [label="Enter function getter" style="filled" fillcolor=red];
+            7 [label="Exit function getter" style="filled" fillcolor=red];
+        }
         subgraph cluster_6 {
             color=blue
             8 [label="Enter property" style="filled" fillcolor=red];
@@ -51,24 +49,23 @@ digraph nullability_kt {
     12 -> {8} [color=green];
     8 -> {9};
     9 -> {13} [color=green];
+    6 -> {7};
 
     subgraph cluster_7 {
-        color=red
-        14 [label="Enter function getter" style="filled" fillcolor=red];
-        15 [label="Exit function getter" style="filled" fillcolor=red];
-    }
-    14 -> {15};
-
-    subgraph cluster_8 {
         color=red
         18 [label="Enter function fdata" style="filled" fillcolor=red];
         19 [label="Exit function fdata" style="filled" fillcolor=red];
     }
     18 -> {19};
 
-    subgraph cluster_9 {
+    subgraph cluster_8 {
         color=red
         20 [label="Enter class Q" style="filled" fillcolor=red];
+        subgraph cluster_9 {
+            color=blue
+            14 [label="Enter function getter" style="filled" fillcolor=red];
+            15 [label="Exit function getter" style="filled" fillcolor=red];
+        }
         subgraph cluster_10 {
             color=blue
             16 [label="Enter property" style="filled" fillcolor=red];
@@ -79,6 +76,7 @@ digraph nullability_kt {
     20 -> {16} [color=green];
     16 -> {17};
     17 -> {21} [color=green];
+    14 -> {15};
 
     subgraph cluster_11 {
         color=red
@@ -90,13 +88,6 @@ digraph nullability_kt {
     24 -> {23};
 
     subgraph cluster_12 {
-        color=red
-        25 [label="Enter function getter" style="filled" fillcolor=red];
-        26 [label="Exit function getter" style="filled" fillcolor=red];
-    }
-    25 -> {26};
-
-    subgraph cluster_13 {
         color=red
         30 [label="Enter function fdata" style="filled" fillcolor=red];
         32 [label="Const: Null(null)"];
@@ -110,9 +101,14 @@ digraph nullability_kt {
     33 -> {34} [style=dotted];
     34 -> {31} [style=dotted];
 
-    subgraph cluster_14 {
+    subgraph cluster_13 {
         color=red
         35 [label="Enter class QImpl" style="filled" fillcolor=red];
+        subgraph cluster_14 {
+            color=blue
+            25 [label="Enter function getter" style="filled" fillcolor=red];
+            26 [label="Exit function getter" style="filled" fillcolor=red];
+        }
         subgraph cluster_15 {
             color=blue
             27 [label="Enter property" style="filled" fillcolor=red];
@@ -125,6 +121,7 @@ digraph nullability_kt {
     27 -> {29};
     28 -> {36} [color=green];
     29 -> {28};
+    25 -> {26};
 
     subgraph cluster_16 {
         color=red
@@ -136,20 +133,6 @@ digraph nullability_kt {
     39 -> {38};
 
     subgraph cluster_17 {
-        color=red
-        40 [label="Enter function getter" style="filled" fillcolor=red];
-        41 [label="Exit function getter" style="filled" fillcolor=red];
-    }
-    40 -> {41};
-
-    subgraph cluster_18 {
-        color=red
-        42 [label="Enter function setter" style="filled" fillcolor=red];
-        43 [label="Exit function setter" style="filled" fillcolor=red];
-    }
-    42 -> {43};
-
-    subgraph cluster_19 {
         color=red
         47 [label="Enter function fdata" style="filled" fillcolor=red];
         49 [label="Const: Null(null)"];
@@ -163,9 +146,19 @@ digraph nullability_kt {
     50 -> {51} [style=dotted];
     51 -> {48} [style=dotted];
 
-    subgraph cluster_20 {
+    subgraph cluster_18 {
         color=red
         52 [label="Enter class QImplMutable" style="filled" fillcolor=red];
+        subgraph cluster_19 {
+            color=blue
+            42 [label="Enter function setter" style="filled" fillcolor=red];
+            43 [label="Exit function setter" style="filled" fillcolor=red];
+        }
+        subgraph cluster_20 {
+            color=blue
+            40 [label="Enter function getter" style="filled" fillcolor=red];
+            41 [label="Exit function getter" style="filled" fillcolor=red];
+        }
         subgraph cluster_21 {
             color=blue
             44 [label="Enter property" style="filled" fillcolor=red];
@@ -178,6 +171,8 @@ digraph nullability_kt {
     44 -> {46};
     45 -> {53} [color=green];
     46 -> {45};
+    40 -> {41};
+    42 -> {43};
 
     subgraph cluster_22 {
         color=red
@@ -189,20 +184,6 @@ digraph nullability_kt {
     56 -> {55};
 
     subgraph cluster_23 {
-        color=red
-        57 [label="Enter function getter" style="filled" fillcolor=red];
-        59 [label="Const: Null(null)"];
-        60 [label="Jump: ^ Null(null)"];
-        61 [label="Stub" style="filled" fillcolor=gray];
-        58 [label="Exit function getter" style="filled" fillcolor=red];
-    }
-    57 -> {59};
-    59 -> {60};
-    60 -> {58};
-    60 -> {61} [style=dotted];
-    61 -> {58} [style=dotted];
-
-    subgraph cluster_24 {
         color=red
         64 [label="Enter function fdata" style="filled" fillcolor=red];
         66 [label="Const: Null(null)"];
@@ -216,9 +197,17 @@ digraph nullability_kt {
     67 -> {68} [style=dotted];
     68 -> {65} [style=dotted];
 
-    subgraph cluster_25 {
+    subgraph cluster_24 {
         color=red
         69 [label="Enter class QImplWithCustomGetter" style="filled" fillcolor=red];
+        subgraph cluster_25 {
+            color=blue
+            57 [label="Enter function getter" style="filled" fillcolor=red];
+            59 [label="Const: Null(null)"];
+            60 [label="Jump: ^ Null(null)"];
+            61 [label="Stub" style="filled" fillcolor=gray];
+            58 [label="Exit function getter" style="filled" fillcolor=red];
+        }
         subgraph cluster_26 {
             color=blue
             62 [label="Enter property" style="filled" fillcolor=red];
@@ -229,6 +218,11 @@ digraph nullability_kt {
     69 -> {62} [color=green];
     62 -> {63};
     63 -> {70} [color=green];
+    57 -> {59};
+    59 -> {60};
+    60 -> {58};
+    60 -> {61} [style=dotted];
+    61 -> {58} [style=dotted];
 
     subgraph cluster_27 {
         color=red
