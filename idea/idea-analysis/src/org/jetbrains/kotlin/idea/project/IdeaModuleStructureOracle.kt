@@ -42,7 +42,7 @@ class IdeaModuleStructureOracle : ModuleStructureOracle {
         val currentPath: Stack<ModuleInfo> = Stack()
 
         return sequence<ModuleInfoPath> {
-            val root = module.moduleInfo
+            val root = module.moduleInfo?.unwrapModuleSourceInfo()
             if (root != null) {
                 yieldPathsFromSubgraph(
                     root,
