@@ -45,3 +45,19 @@ fun NodeList.asList(): List<Node> {
         override fun get(index: Int): Node = this@asList.item(index)
     }
 }
+
+fun Element.getOrCreateChild(name: String, vararg attributes: Pair<String, String>): Element {
+    for (child in this.getElementsByTagName(name).elements) {
+        if (attributes.all { (attribute, value) -> child.getAttribute(attribute) == value }) {
+            return child
+        }
+    }
+
+    return ownerDocument.createElement(name).apply {
+        for ((attributeName, value) in attributes) {
+            setAttribute(attributeName, value)
+        }
+
+        this@getOrCreateChild.appendChild(this@apply)
+    }
+}

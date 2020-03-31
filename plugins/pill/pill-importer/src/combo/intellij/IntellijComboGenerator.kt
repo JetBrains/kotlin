@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.pill.combo.intellij
 
+import org.gradle.kotlin.dsl.extra
 import org.jetbrains.kotlin.pill.*
 import org.jetbrains.kotlin.pill.combo.ComboGenerator
 import org.w3c.dom.Document
@@ -30,6 +31,7 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
         patchIdeaMiscSettings()
         patchIdeaCompilerSettings()
         patchIdeaExternalDependenciesSettings()
+        patchIdeaWorkspace()
         addKotlinLibraries()
 
         File(comboProjectDir, MODULES_DIR_PATH).deleteRecursively()
@@ -50,7 +52,7 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
         }
 
         val compiler = compilerFile.loadXml()
-        val compilerConfigurationComponent = findComponent(compiler, "CompilerConfiguration")
+        val compilerConfigurationComponent = getComponent(compiler, "CompilerConfiguration")
 
         return compilerConfigurationComponent.getElementsByTagName("option").elements
             .find { it.getAttribute("name") == "BUILD_PROCESS_HEAP_SIZE" }
@@ -132,7 +134,7 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
         val vcsFile = File(comboProjectDir, ".idea/vcs.xml")
         val vcs = vcsFile.loadXml()
 
-        val vcsDirectoryMappingsComponent = findComponent(vcs, "VcsDirectoryMappings")
+        val vcsDirectoryMappingsComponent = getComponent(vcs, "VcsDirectoryMappings")
 
         val newVcsDirectoryMappings = vcs.createElement("component").apply {
             setAttribute("name", "VcsDirectoryMappings")
@@ -158,7 +160,7 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
         val miscFile = File(comboProjectDir, ".idea/misc.xml")
         val misc = miscFile.loadXml()
 
-        val projectRootManagerComponent = findComponent(misc, "ProjectRootManager")
+        val projectRootManagerComponent = getComponent(misc, "ProjectRootManager")
 
         projectRootManagerComponent.getElementsByTagName("output").elements.forEach { it.parentNode.removeChild(it) }
 
@@ -175,7 +177,7 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
         val compilerFile = File(comboProjectDir, ".idea/compiler.xml")
         val compiler = compilerFile.loadXml()
 
-        val compilerConfigurationComponent = findComponent(compiler, "CompilerConfiguration")
+        val compilerConfigurationComponent = getComponent(compiler, "CompilerConfiguration")
         val buildProcessHeapSizeOption = compilerConfigurationComponent.getElementsByTagName("option").elements
             .first { it.getAttribute("name") == "BUILD_PROCESS_HEAP_SIZE" }
 
@@ -188,7 +190,7 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
         val externalDependenciesFile = File(comboProjectDir, ".idea/externalDependencies.xml")
         val externalDependencies = externalDependenciesFile.loadXml()
 
-        val externalDependenciesComponent = findComponent(externalDependencies, "ExternalDependencies")
+        val externalDependenciesComponent = getComponent(externalDependencies, "ExternalDependencies")
 
         for (element in externalDependenciesComponent.getElementsByTagName("plugin").elements) {
             if (element.getAttribute("id") == "org.jetbrains.kotlin") {
@@ -198,6 +200,46 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
         }
 
         externalDependencies.saveXml(externalDependenciesFile)
+    }
+
+    private fun patchIdeaWorkspace() {
+        val comboPathContext = ProjectContext(comboProjectDir)
+
+        val workspaceFile = File(comboProjectDir, ".idea/workspace.xml")
+        if (!workspaceFile.exists()) {
+            val emptyXml = xml("project", "version" to "4")
+            workspaceFile.writeText(emptyXml.toString())
+        }
+
+        val workspace = workspaceFile.loadXml()
+
+        val runManager = workspace.childElements.first().getOrCreateChild("component", "name" to "RunManager")
+
+        val junitConfiguration = runManager.getOrCreateChild(
+            "configuration",
+            "default" to "true",
+            "type" to "JUnit",
+            "factoryName" to "JUnit"
+        )
+
+        junitConfiguration.getOrCreateChild("option", "name" to "VM_PARAMETERS").also { vmParams ->
+            var options = vmParams.getAttribute("value")
+                .split(' ')
+                .map { it.trim() }
+                .filter { it.isNotEmpty() }
+
+            fun addOrReplaceOptionValue(name: String, value: Any?) {
+                val optionsWithoutNewValue = options.filter { !it.startsWith("-D$name=") }
+                options = if (value == null) optionsWithoutNewValue else (optionsWithoutNewValue + listOf("-D$name=$value"))
+            }
+
+            addOrReplaceOptionValue("use.jps", "true")
+            addOrReplaceOptionValue("kombo.kotlin.root", comboPathContext.substituteWithVariables(kotlinProjectDir))
+
+            vmParams.setAttribute("value", options.joinToString(" "))
+        }
+
+        workspace.saveXml(workspaceFile)
     }
 
     private fun copyTree(src: File, target: File, processor: (String) -> String) {
@@ -250,7 +292,7 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
             }
         }
 
-        val ideaProjectModuleManager = findComponent(ideaModules, "ProjectModuleManager")
+        val ideaProjectModuleManager = getComponent(ideaModules, "ProjectModuleManager")
         for (module in ideaProjectModuleManager.getElementsByTagName("module").elements) {
             val filePath = module.getAttribute("filepath") ?: continue
             val file = File(ideaPathContext.substituteWithValues(filePath)).canonicalFile
@@ -259,8 +301,7 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
             val newModule = if (path == "\$PROJECT_DIR\$/intellij/$ultimateMainImlFileName") {
                 val newPath = "\$PROJECT_DIR\$/$comboUltimateMainImlFile"
                 createModuleElement("file://$newPath", newPath)
-            }
-            else {
+            } else {
                 createModuleElement(url, path)
             }
             module.parentNode.replaceChild(newModule, module)
@@ -268,13 +309,14 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
 
         val ideaProjectModuleManagerModules = ideaProjectModuleManager.getElementsByTagName("modules").asList().single()
 
-        val kotlinProjectModuleManager = findComponent(kotlinModules, "ProjectModuleManager")
+        val kotlinProjectModuleManager = getComponent(kotlinModules, "ProjectModuleManager")
         for (module in kotlinProjectModuleManager.getElementsByTagName("module").elements) {
             val fileUrl = module.getAttribute("fileurl") ?: continue
             val filePath = module.getAttribute("filepath") ?: continue
 
             if (filePath == "\$PROJECT_DIR\$/kotlin.iml" ||
-                filePath == "\$PROJECT_DIR\$\\kotlin.iml") {
+                filePath == "\$PROJECT_DIR\$\\kotlin.iml"
+            ) {
                 continue
             }
 
@@ -302,17 +344,18 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
                 }
             }
 
-            val intellijMainModuleRootManager = findComponent(intellijMainIml, "NewModuleRootManager")
+            val intellijMainModuleRootManager = getComponent(intellijMainIml, "NewModuleRootManager")
 
             iterateInDepth(kotlinPluginArtifact.childElements.first()) {
                 if (it.tagName == "element" && it.hasAttribute("id") && it.getAttribute("id") == "module-output" &&
-                    it.hasAttribute("name")) {
+                    it.hasAttribute("name")
+                ) {
                     intellijMainModuleRootManager.appendChild(
-                      intellijMainIml.createElement("orderEntry").apply {
-                        setAttribute("type", "module")
-                        setAttribute("module-name", it.getAttribute("name"))
-                        setAttribute("scope", it.getAttribute("RUNTIME"))
-                    })
+                        intellijMainIml.createElement("orderEntry").apply {
+                            setAttribute("type", "module")
+                            setAttribute("module-name", it.getAttribute("name"))
+                            setAttribute("scope", it.getAttribute("RUNTIME"))
+                        })
                 }
             }
 
@@ -340,7 +383,7 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
         val comboModuleFile = File(comboProjectDir, relativePath)
 
         val module = moduleFile.loadXml()
-        val moduleRootManager = findComponent(module, "NewModuleRootManager")
+        val moduleRootManager = getComponent(module, "NewModuleRootManager")
 
         val kotlinPathContext = ModuleContext(kotlinProjectDir, moduleFile)
         val comboPathContext = ModuleContext(comboProjectDir, comboModuleFile)
@@ -461,9 +504,13 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
         return pathComponents.drop(countToDrop).joinToString("/")
     }
 
-    private fun findComponent(configurationFile: Document, componentName: String): Element {
+    private fun getComponent(configurationFile: Document, componentName: String): Element {
+        return findComponent(configurationFile, componentName) ?: error("Component $componentName not found")
+    }
+
+    private fun findComponent(configurationFile: Document, componentName: String): Element? {
         return configurationFile
             .childElements.first() // <project>
-            .childElements.first { it.tagName == "component" && it.getAttribute("name") == componentName }
+            .childElements.firstOrNull { it.tagName == "component" && it.getAttribute("name") == componentName }
     }
 }
