@@ -85,7 +85,7 @@ private val VirtualFile.isLegacyNativeKlibComponent: Boolean
     }
 
 
-fun <T> KotlinLibrary.readSafe(defaultValue: T, action: KotlinLibrary.() -> T) = try {
+fun <T> KotlinLibrary.safeRead(defaultValue: T, action: KotlinLibrary.() -> T) = try {
     action()
 } catch (_: IOException) {
     defaultValue

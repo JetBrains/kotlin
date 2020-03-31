@@ -163,7 +163,7 @@ class NativeKlibLibraryInfo(project: Project, library: Library, libraryRoot: Str
         get() {
             val capabilities = super.capabilities.toMutableMap()
             capabilities += KlibModuleOrigin.CAPABILITY to DeserializedKlibModuleOrigin(resolvedKotlinLibrary)
-            capabilities += ImplicitIntegerCoercion.MODULE_CAPABILITY to resolvedKotlinLibrary.readSafe(false) { isInterop }
+            capabilities += ImplicitIntegerCoercion.MODULE_CAPABILITY to resolvedKotlinLibrary.safeRead(false) { isInterop }
             return capabilities
         }
 
