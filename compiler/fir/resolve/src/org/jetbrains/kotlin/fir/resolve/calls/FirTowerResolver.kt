@@ -60,7 +60,7 @@ class FirTowerResolver(
                     if (!it.implicitCompanion && klass?.isCompanion == true) {
                         explicitCompanions += klass.symbol
                     }
-                    if (firstDispatchValue) {
+                    if (firstDispatchValue && !it.inDelegated) {
                         if (!it.implicitCompanion &&
                             klass?.isInner == false &&
                             !symbol.classId.isLocal
@@ -69,7 +69,7 @@ class FirTowerResolver(
                         }
                         true
                     } else {
-                        symbol.fir.classKind == ClassKind.OBJECT
+                        symbol.fir.classKind == ClassKind.OBJECT && !it.inDelegated
                     }
                 }
             }

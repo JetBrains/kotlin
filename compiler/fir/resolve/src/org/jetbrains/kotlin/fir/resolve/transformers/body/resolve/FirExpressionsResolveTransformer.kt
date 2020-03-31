@@ -594,13 +594,23 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         var callCompleted = true
         var result = delegatedConstructorCall
         try {
+            val lastDispatchReceiver = implicitReceiverStack.lastDispatchReceiver()
+            val name = lastDispatchReceiver?.boundSymbol?.classId?.shortClassName
+            if (lastDispatchReceiver != null) {
+                context.implicitReceiverStack.pop(name)
+                context.implicitReceiverStack.add(name, lastDispatchReceiver.copyForDelegated())
+            }
             delegatedConstructorCall.transformChildren(transformer, ResolutionMode.ContextDependent)
+            if (lastDispatchReceiver != null) {
+                context.implicitReceiverStack.pop(name)
+                context.implicitReceiverStack.add(name, lastDispatchReceiver)
+            }
             val typeArguments: List<FirTypeProjection>
             val symbol: FirClassSymbol<*> = when (val reference = delegatedConstructorCall.calleeReference) {
                 is FirThisReference -> {
                     typeArguments = emptyList()
                     if (reference.boundSymbol == null) {
-                        implicitReceiverStack.lastDispatchReceiver()?.boundSymbol?.also {
+                        lastDispatchReceiver?.boundSymbol?.also {
                             reference.replaceBoundSymbol(it)
                         } ?: return delegatedConstructorCall.compose()
                     } else {
@@ -611,15 +621,15 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                     // TODO: unresolved supertype
                     val supertype = reference.superTypeRef.coneTypeSafe<ConeClassLikeType>() ?: return delegatedConstructorCall.compose()
                     val expandedSupertype = supertype.fullyExpandedType(session)
-                val symbol =
-                    expandedSupertype.lookupTag.toSymbol(session) as? FirClassSymbol<*> ?: return delegatedConstructorCall.compose()
+                    val symbol =
+                        expandedSupertype.lookupTag.toSymbol(session) as? FirClassSymbol<*> ?: return delegatedConstructorCall.compose()
                     val classTypeParametersCount = (symbol.fir as? FirTypeParametersOwner)?.typeParameters?.size ?: 0
-                typeArguments = expandedSupertype.typeArguments
-                    .takeLast(classTypeParametersCount) // Hack for KT-37525
-                    .takeIf { it.isNotEmpty() }
-                    ?.map { it.toFirTypeProjection() }
-                    ?: emptyList()
-                symbol
+                    typeArguments = expandedSupertype.typeArguments
+                        .takeLast(classTypeParametersCount) // Hack for KT-37525
+                        .takeIf { it.isNotEmpty() }
+                        ?.map { it.toFirTypeProjection() }
+                        ?: emptyList()
+                    symbol
                 }
                 else -> return delegatedConstructorCall.compose()
             }
