@@ -125,6 +125,9 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     @Input
     var sourceMaps: Boolean = true
 
+    @Nested
+    val cssSettings: KotlinWebpackCssSettings = KotlinWebpackCssSettings()
+
     @Input
     @Optional
     var devServer: KotlinWebpackConfig.DevServer? = null

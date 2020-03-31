@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
 import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssExtractPolicy.*
 import java.io.File
 import java.io.Serializable
 import java.io.StringWriter
@@ -27,6 +28,7 @@ data class KotlinWebpackConfig(
     val bundleAnalyzerReportDir: File? = null,
     val reportEvaluatedConfigFile: File? = null,
     val devServer: DevServer? = null,
+    val cssSettings: KotlinWebpackCssSettings? = null,
     val devtool: String? = WebpackDevtool.EVAL_SOURCE_MAP,
     val showProgress: Boolean = false,
     val sourceMaps: Boolean = false,
@@ -231,6 +233,80 @@ data class KotlinWebpackConfig(
                     libraryTarget: "${output.libraryTarget}",
                 };
                 
+            """.trimIndent()
+        )
+    }
+
+    private fun Appendable.appendCssSettings() {
+        if (cssSettings == null || !cssSettings.enabled)
+            return
+
+        appendln(
+            """
+            // css settings
+            ;(function(config) {
+            """.trimIndent()
+        )
+
+        //language=ES6
+        appendln(
+            """
+            const use = [
+                {
+                    loader: 'css-loader',
+                    options: {},
+                }
+            ]
+            """.trimIndent()
+        )
+
+        //language=ES6
+        val extractedCss = """
+                const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+                use.unshift({
+                    loader: MiniCssExtractPlugin.loader,
+                    options: {}
+                })
+                plugins.push(new MiniCssExtractPlugin())
+            """.trimIndent()
+
+        //language=ES6
+        val nonExtractedCss = """
+                use.unshift({
+                    loader: 'style-loader',
+                    options: {}
+                })
+            """.trimIndent()
+
+        val extractedSettings = when (cssSettings.extractPolicy) {
+            ALWAYS -> extractedCss
+            //language=ES6
+            DEPENDS_ON_MODE -> """
+                if (config.mode === 'production') {
+                    $extractedCss
+                } else {
+                    $nonExtractedCss
+                }
+            """.trimIndent()
+            NONE -> nonExtractedCss
+        }
+
+        appendln(extractedSettings)
+
+        //language=ES6
+        appendln(
+            """
+                config.module.rules.push({
+                    test: /\.css${'$'}/,
+                    use: use
+                })
+
+            """.trimIndent()
+        )
+
+        appendln(
+            """
+            })(config);
             """.trimIndent()
         )
     }
