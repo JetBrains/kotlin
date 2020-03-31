@@ -11,6 +11,13 @@
         },
         {
           "specVersion": "0.1-300",
+          "casesNumber": 5,
+          "description": "call-with-trailing-lambda-expressions,Implicit receiver: sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.1.kt",
+          "unexpectedBehaviour": true
+        },
+        {
+          "specVersion": "0.1-300",
           "casesNumber": 3,
           "description": "call-with-trailing-lambda-expressions,Explicit receiver: The overload candidate sets for each pair of implicit receivers: Explicitly imported extension callables",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.14.kt",
@@ -116,6 +123,13 @@
         },
         {
           "specVersion": "0.1-280",
+          "casesNumber": 5,
+          "description": "Implicit receiver: sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.1.kt",
+          "unexpectedBehaviour": true
+        },
+        {
+          "specVersion": "0.1-280",
           "casesNumber": 3,
           "description": "Explicit receiver: The overload candidate sets for each pair of implicit receivers: Explicitly imported extension callables",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.14.kt",
@@ -216,6 +230,26 @@
     }
   },
   "3": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 5,
+          "description": "call-with-trailing-lambda-expressions,Implicit receiver: sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.1.kt",
+          "unexpectedBehaviour": true
+        },
+        {
+          "specVersion": "0.1-280",
+          "casesNumber": 5,
+          "description": "Implicit receiver: sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-named-parameters/p-1/pos/2.1.kt",
+          "unexpectedBehaviour": true
+        }
+      ]
+    }
+  },
+  "4": {
     "pos": {
       "1": [
         {

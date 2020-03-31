@@ -1,15 +1,64 @@
 {
-  "5": {
+  "7": {
     "pos": {
       "2": [
         {
-          "specVersion": "0.1-278",
+          "specVersion": "0.1-268",
           "casesNumber": 2,
-          "description": "The implicit this receiver has higher priority than phantom static implicit this",
+          "description": "The sets of local extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.1.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "set of non-extension member callables only",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.2.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "sets of non-extension member callables only",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.1.kt",
           "unexpectedBehaviour": false
         }
       ],
+      "3": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 2,
+          "description": "The sets of local extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.1.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "set of non-extension member callables only",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.2.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "sets of non-extension member callables only",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "5": {
+    "pos": {
       "1": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "sets of local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.4.kt",
+          "unexpectedBehaviour": false
+        },
         {
           "specVersion": "0.1-278",
           "casesNumber": 2,
@@ -22,6 +71,14 @@
           "casesNumber": 4,
           "description": "The phantom static implicit this receiver has higher priority than the current class companion object receiver",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5/pos/3.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 2,
+          "description": "The implicit this receiver has higher priority than phantom static implicit this",
           "unexpectedBehaviour": false
         }
       ],
