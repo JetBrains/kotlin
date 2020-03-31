@@ -478,20 +478,18 @@ class FirTowerResolverSession internal constructor(
         invokeReceiverValue: ExpressionReceiverValue,
         invokeOnGivenReceiverCandidateFactory: CandidateFactory
     ) {
-        processLevel(
+        processLevelForRegularInvoke(
             invokeReceiverValue.toMemberScopeTowerLevel(),
             info, TowerGroup.Member,
             ExplicitReceiverKind.DISPATCH_RECEIVER,
-            InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER,
             invokeOnGivenReceiverCandidateFactory
         )
 
         for ((index, localScope) in localScopes.withIndex()) {
-            processLevel(
+            processLevelForRegularInvoke(
                 localScope.toScopeTowerLevel(extensionReceiver = invokeReceiverValue),
                 info, TowerGroup.Local(index),
                 ExplicitReceiverKind.EXTENSION_RECEIVER,
-                InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER,
                 invokeOnGivenReceiverCandidateFactory
             )
         }
@@ -499,25 +497,31 @@ class FirTowerResolverSession internal constructor(
         for ((implicitReceiverValue, depth) in implicitReceiversUsableAsValues) {
             // NB: companions are processed via implicitReceiverValues!
             val parentGroup = TowerGroup.Implicit(depth)
-            processLevel(
+            processLevelForRegularInvoke(
                 implicitReceiverValue.toMemberScopeTowerLevel(extensionReceiver = invokeReceiverValue),
                 info, parentGroup.Member,
                 ExplicitReceiverKind.EXTENSION_RECEIVER,
-                InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER,
                 invokeOnGivenReceiverCandidateFactory
             )
         }
 
         for ((index, topLevelScope) in topLevelScopes.withIndex()) {
-            processLevel(
+            processLevelForRegularInvoke(
                 topLevelScope.toScopeTowerLevel(extensionReceiver = invokeReceiverValue),
                 info, TowerGroup.Top(index),
                 ExplicitReceiverKind.EXTENSION_RECEIVER,
-                InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER,
                 invokeOnGivenReceiverCandidateFactory
             )
         }
     }
+
+    private suspend fun processLevelForRegularInvoke(
+        towerLevel: SessionBasedTowerLevel,
+        callInfo: CallInfo,
+        group: TowerGroup,
+        explicitReceiverKind: ExplicitReceiverKind,
+        candidateFactory: CandidateFactory
+    ) = processLevel(towerLevel, callInfo, group, explicitReceiverKind, InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER, candidateFactory)
 
     // Here we already know extension receiver for invoke, and it's stated in info as first argument
     private suspend fun runResolverForBuiltinInvokeExtensionWithExplicitArgument(
