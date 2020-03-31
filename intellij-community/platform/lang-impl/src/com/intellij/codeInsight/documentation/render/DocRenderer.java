@@ -358,6 +358,7 @@ class DocRenderer implements EditorCustomElementRenderer {
     if (!Objects.equals(linkColorHex, ourCachedStyleSheetLinkColor) || !Objects.equals(editorFontName, ourCachedStyleSheetMonoFont)) {
       String escapedFontName = StringUtil.escapeQuotes(editorFontName);
       ourCachedStyleSheet = StartupUiUtil.createStyleSheet(
+        "body {overflow-wrap: anywhere}" + // supported by JetBrains Runtime
         "code {font-family:\"" + escapedFontName + "\"}" +
         "pre {font-family:\"" + escapedFontName + "\"}" +
         "h1, h2, h3, h4, h5, h6 { margin-top: 0; padding-top: 1px; }" +
