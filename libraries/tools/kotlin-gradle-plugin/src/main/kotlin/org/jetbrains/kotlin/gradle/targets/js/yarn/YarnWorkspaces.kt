@@ -19,7 +19,8 @@ class YarnWorkspaces : YarnBasics() {
     override fun resolveRootProject(
         rootProject: Project,
         subProjects: Collection<KotlinCompilationNpmResolution>,
-        skipExecution: Boolean
+        skipExecution: Boolean,
+        vararg cliArgs: String
     ) {
         check(rootProject == rootProject.rootProject)
         if (!skipExecution) setup(rootProject)

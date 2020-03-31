@@ -110,7 +110,12 @@ internal class KotlinRootNpmResolver internal constructor(
 
         val hasNodeModulesDependentTasks = projectResolvers.values.any { it.taskRequirements.hasNodeModulesDependentTasks }
         if (hasNodeModulesDependentTasks) {
-            nodeJs.packageManager.resolveRootProject(rootProject, allNpmPackages, upToDate)
+            nodeJs.packageManager.resolveRootProject(
+                rootProject,
+                allNpmPackages,
+                upToDate,
+                *nodeJs.npmInstallTask.args.toTypedArray()
+            )
         }
 
         nodeJs.rootNodeModulesStateFile.writeText(System.currentTimeMillis().toString())
