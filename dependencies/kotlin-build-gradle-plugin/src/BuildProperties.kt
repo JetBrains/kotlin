@@ -33,10 +33,10 @@ class KotlinBuildProperties(
         }
     }
 
-    private fun getOrNull(key: String): Any? =
+    fun getOrNull(key: String): Any? =
         localProperties.getProperty(key) ?: propertiesProvider.getProperty(key) ?: rootProperties.getProperty(key)
 
-    private fun getBoolean(key: String, default: Boolean = false): Boolean =
+    fun getBoolean(key: String, default: Boolean = false): Boolean =
         this.getOrNull(key)?.toString()?.trim()?.toBoolean() ?: default
 
     private fun hasProperty(key: String): Boolean = getOrNull(key) != null
@@ -61,12 +61,6 @@ class KotlinBuildProperties(
     val isInJpsBuildIdeaSync: Boolean
         get() = isJpsBuildEnabled && isInIdeaSync
 
-    val includeJava9: Boolean
-        get() = !isInJpsBuildIdeaSync && getBoolean("kotlin.build.java9", true)
-
-    val useBootstrapStdlib: Boolean
-        get() = isInJpsBuildIdeaSync || getBoolean("kotlin.build.useBootstrapStdlib", false)
-
     private val kotlinUltimateExists: Boolean = propertiesProvider.rootProjectDir.resolve("kotlin-ultimate").exists()
 
     val isTeamcityBuild: Boolean = getBoolean("teamcity") || System.getenv("TEAMCITY_VERSION") != null
@@ -83,14 +77,6 @@ class KotlinBuildProperties(
     val includeCidrPlugins: Boolean = kotlinUltimateExists && getBoolean("cidrPluginsEnabled")
 
     val includeUltimate: Boolean = kotlinUltimateExists && (isTeamcityBuild || intellijUltimateEnabled)
-
-    val postProcessing: Boolean get() = isTeamcityBuild || getBoolean("kotlin.build.postprocessing", true)
-
-    val relocation: Boolean get() = postProcessing
-
-    val proguard: Boolean get() = postProcessing && getBoolean("kotlin.build.proguard", isTeamcityBuild)
-
-    val jarCompression: Boolean get() = getBoolean("kotlin.build.jar.compression", isTeamcityBuild)
 
     val buildCacheUrl: String? = getOrNull("kotlin.build.cache.url") as String?
 
