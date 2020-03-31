@@ -39,7 +39,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class PostfixLiveTemplate extends CustomLiveTemplateBase {
@@ -219,9 +218,7 @@ public class PostfixLiveTemplate extends CustomLiveTemplateBase {
         if (key != null && editor.getCaretModel().getCaretCount() == 1) {
           Condition<PostfixTemplate> isApplicationTemplateFunction =
             createIsApplicationTemplateFunction(provider, key, file, editor, parentDisposable);
-          Set<PostfixTemplate> allTemplates = PostfixTemplatesUtils.getAvailableTemplates(provider);
-          List<PostfixTemplate> availableTemplates = DumbService.getInstance(file.getProject()).filterByDumbAwareness(allTemplates);
-          for (PostfixTemplate postfixTemplate : availableTemplates) {
+          for (PostfixTemplate postfixTemplate : PostfixTemplatesUtils.getAvailableTemplates(provider)) {
             ProgressManager.checkCanceled();
             if (isApplicationTemplateFunction.value(postfixTemplate)) {
               result.add(new PostfixTemplateLookupElement(this, postfixTemplate, postfixTemplate.getKey(), provider, false));
