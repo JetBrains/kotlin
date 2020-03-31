@@ -1,6 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
-// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 
 class A {
@@ -9,6 +7,8 @@ class A {
 }
 
 val topLevelProperty: Int = 0
+fun A.extensionFunction() {}
+val A.extensionProperty: String get() = ""
 
 fun check(reference: Any, expected: String, message: String) {
     val actual = reference.javaClass.declaredMethods.map { it.name }.sorted().toString()
@@ -21,9 +21,11 @@ fun box(): String {
     check(A::memberFunction, "[invoke, invoke]", "unbound function reference")
     check(A()::memberFunction, "[invoke, invoke]", "bound function reference")
 
-    check(::topLevelProperty, "[get]", "unbound property reference 0")
-    check(A::memberProperty, "[get]", "unbound property reference 1")
-    check(A()::memberProperty, "[get]", "bound property reference 1")
+    check(::topLevelProperty, "[get]", "unbound top-level property reference 0")
+    check(A::memberProperty, "[get]", "unbound member property reference 1")
+    check(A()::memberProperty, "[get]", "bound member property reference 1")
+    check(A::extensionProperty, "[get]", "unbound extension property reference 1")
+    check(A()::extensionProperty, "[get]", "bound extension property reference 1")
 
     return "OK"
 }

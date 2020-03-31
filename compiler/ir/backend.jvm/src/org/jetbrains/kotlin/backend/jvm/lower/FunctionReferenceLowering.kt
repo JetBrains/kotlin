@@ -11,14 +11,10 @@ import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
-import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
-import org.jetbrains.kotlin.backend.jvm.ir.irArray
-import org.jetbrains.kotlin.backend.jvm.ir.isLambda
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -123,8 +119,14 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     context.ir.symbols.getJvmFunctionClass(argumentTypes.size)
         private val superMethod =
             functionSuperClass.functions.single { it.owner.modality == Modality.ABSTRACT }
+        private val useOptimizedSuperClass =
+            context.state.generateOptimizedCallableReferenceSuperClasses
         private val superType =
-            samSuperType ?: (if (isLambda) context.ir.symbols.lambdaClass else context.ir.symbols.functionReference).defaultType
+            samSuperType ?: when {
+                isLambda -> context.ir.symbols.lambdaClass
+                useOptimizedSuperClass -> context.ir.symbols.functionReferenceImpl
+                else -> context.ir.symbols.functionReference
+            }.defaultType
 
         private val functionReferenceClass = buildClass {
             setSourceRange(irFunctionReference)
@@ -167,10 +169,16 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     } else null
                 )
 
-                if (!isLambda && samSuperType == null) {
-                    createGetSignatureMethod(this@run.irSymbols.functionReferenceGetSignature.owner)
-                    createGetNameMethod(this@run.irSymbols.functionReferenceGetName.owner)
-                    createGetOwnerMethod(this@run.irSymbols.functionReferenceGetOwner.owner)
+                if (!isLambda && samSuperType == null && !useOptimizedSuperClass) {
+                    createLegacyMethodOverride(irSymbols.functionReferenceGetSignature.owner) {
+                        generateSignature()
+                    }
+                    createLegacyMethodOverride(irSymbols.functionReferenceGetName.owner) {
+                        irString(callee.originalName.asString())
+                    }
+                    createLegacyMethodOverride(irSymbols.functionReferenceGetOwner.owner) {
+                        calculateOwner(callee.parent, backendContext)
+                    }
                 }
 
                 +functionReferenceClass
@@ -199,25 +207,43 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
                 // Super constructor:
                 // - For SAM references, the super class is Any
-                // - For function references with bound receivers, accepts arity and receiver
-                // - For lambdas and function references without bound receivers, accepts arity
+                // - For lambdas, accepts arity
+                // - For optimized function references (1.4+), accepts:
+                //       arity, [receiver], owner, name, signature, flags
+                // - For unoptimized function references, accepts:
+                //       arity, [receiver]
                 val constructor = if (samSuperType != null) {
                     context.irBuiltIns.anyClass.owner.constructors.single()
                 } else {
+                    val expectedArity =
+                        if (isLambda) 1
+                        else 1 + (if (boundReceiver != null) 1 else 0) + (if (useOptimizedSuperClass) 4 else 0)
                     superType.getClass()!!.constructors.single {
-                        it.valueParameters.size == if (boundReceiver != null) 2 else 1
+                        it.valueParameters.size == expectedArity
                     }
                 }
 
-                body = context.createIrBuilder(symbol).irBlockBody(startOffset, endOffset) {
-                    +irDelegatingConstructorCall(constructor).apply {
-                        if (samSuperType == null) {
-                            putValueArgument(0, irInt(argumentTypes.size + if (irFunctionReference.isSuspend) 1 else 0))
-                            if (boundReceiver != null)
-                                putValueArgument(1, irGet(valueParameters.first()))
+                body = context.createJvmIrBuilder(symbol).run {
+                    irBlockBody(startOffset, endOffset) {
+                        +irDelegatingConstructorCall(constructor).apply {
+                            if (samSuperType == null) {
+                                var index = 0
+                                putValueArgument(index++, irInt(argumentTypes.size + if (irFunctionReference.isSuspend) 1 else 0))
+                                if (boundReceiver != null) {
+                                    putValueArgument(index++, irGet(valueParameters.first()))
+                                }
+                                if (!isLambda && useOptimizedSuperClass) {
+                                    val owner = calculateOwnerKClass(callee.parent, backendContext)
+                                    putValueArgument(index++, kClassToJavaClass(owner, backendContext))
+                                    putValueArgument(index++, irString(callee.originalName.asString()))
+                                    putValueArgument(index++, generateSignature())
+                                    // TODO: use correct parents for adapted function references
+                                    putValueArgument(index, irInt(if (callee.parent.let { it is IrClass && it.isFileClass }) 1 else 0))
+                                }
+                            }
                         }
+                        +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClass.symbol, context.irBuiltIns.unitType)
                     }
-                    +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClass.symbol, context.irBuiltIns.unitType)
                 }
             }
 
@@ -320,37 +346,28 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         private val IrFunction.originalName: Name
             get() = (metadata as? MetadataSource.Function)?.descriptor?.name ?: name
 
-        private fun createGetSignatureMethod(superFunction: IrSimpleFunction): IrSimpleFunction = buildOverride(superFunction).apply {
-            body = context.createJvmIrBuilder(symbol, startOffset, endOffset).run {
-                irExprBody(irCall(backendContext.ir.symbols.signatureStringIntrinsic).apply {
-                    putValueArgument(
-                        0,
-                        //don't pass receivers otherwise LocalDeclarationLowering will create additional captured parameters
-                        IrFunctionReferenceImpl(
-                            UNDEFINED_OFFSET,
-                            UNDEFINED_OFFSET,
-                            irFunctionReference.type,
-                            irFunctionReference.symbol,
-                            0,
-                            irFunctionReference.reflectionTarget,
-                            null
-                        )
+        private fun JvmIrBuilder.generateSignature(): IrExpression =
+            irCall(backendContext.ir.symbols.signatureStringIntrinsic).apply {
+                putValueArgument(
+                    0,
+                    //don't pass receivers otherwise LocalDeclarationLowering will create additional captured parameters
+                    IrFunctionReferenceImpl(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunctionReference.type, irFunctionReference.symbol, 0,
+                        irFunctionReference.reflectionTarget, null
                     )
-                })
+                )
             }
-        }
 
-        private fun createGetNameMethod(superFunction: IrSimpleFunction): IrSimpleFunction = buildOverride(superFunction).apply {
-            body = context.createIrBuilder(symbol, startOffset, endOffset).run {
-                irExprBody(irString(callee.originalName.asString()))
+        private fun createLegacyMethodOverride(
+            superFunction: IrSimpleFunction,
+            generator: JvmIrBuilder.() -> IrExpression
+        ): IrSimpleFunction =
+            buildOverride(superFunction).apply {
+                body = context.createJvmIrBuilder(symbol, startOffset, endOffset).run {
+                    irExprBody(generator())
+                }
             }
-        }
 
-        private fun createGetOwnerMethod(superFunction: IrSimpleFunction): IrSimpleFunction = buildOverride(superFunction).apply {
-            body = context.createIrBuilder(symbol, startOffset, endOffset).run {
-                irExprBody(calculateOwner(callee.parent, this@FunctionReferenceLowering.context))
-            }
-        }
     }
 
     companion object {
@@ -359,7 +376,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 startOffset, endOffset, context.irBuiltIns.kClassClass.starProjectedType, context.irBuiltIns.kClassClass, classType
             )
 
-        private fun IrBuilderWithScope.kClassToJavaClass(kClassReference: IrExpression, context: JvmBackendContext) =
+        internal fun IrBuilderWithScope.kClassToJavaClass(kClassReference: IrExpression, context: JvmBackendContext) =
             irGet(context.ir.symbols.javaLangClass.starProjectedType, null, context.ir.symbols.kClassJava.owner.getter!!.symbol).apply {
                 extensionReceiver = kClassReference
             }
@@ -368,15 +385,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             kClassToJavaClass(kClassReference(classType), context)
 
         internal fun IrBuilderWithScope.calculateOwner(irContainer: IrDeclarationParent, context: JvmBackendContext): IrExpression {
-            val classType =
-                if (irContainer is IrClass) irContainer.defaultType
-                else {
-                    // For built-in members (i.e. top level `toString`) we generate reference to an internal class for an owner.
-                    // This allows kotlin-reflect to understand that this is a built-in intrinsic which has no real declaration,
-                    // and construct a special KCallable object.
-                    context.ir.symbols.intrinsicsKotlinClass.defaultType
-                }
-            val kClass = kClassReference(classType)
+            val kClass = calculateOwnerKClass(irContainer, context)
 
             if ((irContainer as? IrClass)?.isFileClass != true && irContainer !is IrPackageFragment)
                 return kClass
@@ -389,5 +398,16 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 putValueArgument(1, irString(context.state.moduleName))
             }
         }
+
+        internal fun IrBuilderWithScope.calculateOwnerKClass(irContainer: IrDeclarationParent, context: JvmBackendContext): IrExpression =
+            kClassReference(
+                if (irContainer is IrClass) irContainer.defaultType
+                else {
+                    // For built-in members (i.e. top level `toString`) we generate reference to an internal class for an owner.
+                    // This allows kotlin-reflect to understand that this is a built-in intrinsic which has no real declaration,
+                    // and construct a special KCallable object.
+                    context.ir.symbols.intrinsicsKotlinClass.defaultType
+                }
+            )
     }
 }

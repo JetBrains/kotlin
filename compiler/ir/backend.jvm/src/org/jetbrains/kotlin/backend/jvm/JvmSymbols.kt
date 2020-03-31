@@ -50,6 +50,8 @@ class JvmSymbols(
 
     private val irBuiltIns = context.irBuiltIns
 
+    private val generateOptimizedCallableReferenceSuperClasses = context.state.generateOptimizedCallableReferenceSuperClasses
+
     private val nullPointerExceptionClass: IrClassSymbol =
         createClass(FqName("java.lang.NullPointerException")) { klass ->
             klass.addConstructor().apply {
@@ -307,6 +309,26 @@ class JvmSymbols(
     val functionReferenceGetName: IrSimpleFunctionSymbol = functionReference.functionByName("getName")
     val functionReferenceGetOwner: IrSimpleFunctionSymbol = functionReference.functionByName("getOwner")
 
+    val functionReferenceImpl: IrClassSymbol =
+        createClass(FqName("kotlin.jvm.internal.FunctionReferenceImpl"), classModality = Modality.OPEN) { klass ->
+            klass.superTypes = listOf(functionReference.defaultType)
+
+            if (generateOptimizedCallableReferenceSuperClasses) {
+                for (hasBoundReceiver in listOf(false, true)) {
+                    klass.addConstructor().apply {
+                        addValueParameter("arity", irBuiltIns.intType)
+                        if (hasBoundReceiver) {
+                            addValueParameter("receiver", irBuiltIns.anyNType)
+                        }
+                        addValueParameter("owner", javaLangClass.starProjectedType)
+                        addValueParameter("name", irBuiltIns.stringType)
+                        addValueParameter("signature", irBuiltIns.stringType)
+                        addValueParameter("flags", irBuiltIns.intType)
+                    }
+                }
+            }
+        }
+
     fun getFunction(parameterCount: Int): IrClassSymbol =
         symbolTable.referenceClass(builtIns.getFunction(parameterCount))
 
@@ -379,6 +401,21 @@ class JvmSymbols(
                         addValueParameter("name", irBuiltIns.stringType)
                         addValueParameter("string", irBuiltIns.stringType)
                     }
+
+                    if (generateOptimizedCallableReferenceSuperClasses) {
+                        for (hasBoundReceiver in listOf(false, true)) {
+                            klass.addConstructor().apply {
+                                if (hasBoundReceiver) {
+                                    addValueParameter("receiver", irBuiltIns.anyNType)
+                                }
+                                addValueParameter("owner", javaLangClass.starProjectedType)
+                                addValueParameter("name", irBuiltIns.stringType)
+                                addValueParameter("signature", irBuiltIns.stringType)
+                                addValueParameter("flags", irBuiltIns.intType)
+                            }
+                        }
+                    }
+
                     klass.superTypes += getPropertyReferenceClass(mutable, parameterCount, false).defaultType
                 } else {
                     klass.addConstructor()
