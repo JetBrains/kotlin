@@ -7,19 +7,17 @@ package org.jetbrains.uast.test.kotlin
 
 import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiType
+import com.intellij.psi.PsiVariable
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UQualifiedReferenceExpression
-import org.jetbrains.uast.getContainingUMethod
+import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.KotlinUFunctionCallExpression
 import org.jetbrains.uast.test.env.kotlin.findElementByText
 import org.jetbrains.uast.test.env.kotlin.findElementByTextFromPsi
 import org.jetbrains.uast.test.env.kotlin.findUElementByTextFromPsi
-import org.jetbrains.uast.toUElement
 import org.junit.runner.RunWith
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
@@ -285,6 +283,23 @@ class KotlinUastResolveApiTest : KotlinLightCodeInsightFixtureTestCase() {
             "@JvmOverloads\n                    fun foo(i1: Int = 1, i2: Int = 2): Int = TODO()"
         )
         TestCase.assertEquals(PsiType.INT, functionCall.getExpressionType())
+    }
+
+    fun testLocalResolve() {
+
+        myFixture.configureByText(
+            "MyClass.kt", """
+            fun foo() {
+                fun bar() {}
+                
+                ba<caret>r()
+            }
+        """
+        )
+
+        val uCallExpression = myFixture.file.findElementAt(myFixture.caretOffset).toUElement().getUCallExpression().orFail("cant convert to UCallExpression")
+        val resolved = uCallExpression.resolve().orFail("cant resolve from $uCallExpression") as PsiVariable
+        TestCase.assertEquals("bar", resolved.name)
     }
 
 }
