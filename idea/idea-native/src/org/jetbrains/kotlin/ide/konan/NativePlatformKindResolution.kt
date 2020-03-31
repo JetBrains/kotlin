@@ -74,7 +74,7 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
     }
 
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean =
-        virtualFile.isKlibLibraryRootForPlatform(NativePlatforms.defaultNativePlatform)
+        virtualFile.isKlibLibraryRootForPlatform(NativePlatforms.unspecifiedNativePlatform)
 
     override fun createResolverForModuleFactory(
         settings: PlatformAnalysisParameters,
@@ -162,5 +162,6 @@ class NativeKlibLibraryInfo(project: Project, library: Library, libraryRoot: Str
         }
 
     override val platform: TargetPlatform
-        get() = NativePlatforms.defaultNativePlatform
+        // TODO: detect native platform by library
+        get() = NativePlatforms.unspecifiedNativePlatform
 }

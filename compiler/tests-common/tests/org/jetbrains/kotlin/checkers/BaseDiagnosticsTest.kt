@@ -511,7 +511,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             nameSuffix == "COMMON" -> CommonPlatforms.defaultCommonPlatform
             nameSuffix == "JVM" -> JvmPlatforms.unspecifiedJvmPlatform // TODO(dsavvinov): determine JvmTarget precisely
             nameSuffix == "JS" -> JsPlatforms.defaultJsPlatform
-            nameSuffix == "NATIVE" -> NativePlatforms.defaultNativePlatform
+            nameSuffix == "NATIVE" -> NativePlatforms.unspecifiedNativePlatform
             nameSuffix.isEmpty() -> null // TODO(dsavvinov): this leads to 'null'-platform in ModuleDescriptor
             else -> throw IllegalStateException("Can't determine platform by name $nameSuffix")
         }

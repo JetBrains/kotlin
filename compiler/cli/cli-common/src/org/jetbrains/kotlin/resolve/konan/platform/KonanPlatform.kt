@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 
 @Deprecated(
     message = "This class is deprecated and will be removed soon, use API from 'org.jetbrains.kotlin.platform.*' packages instead",
-    replaceWith = ReplaceWith("NativePlatforms.defaultNativePlatform", "org.jetbrains.kotlin.platform.konan.NativePlatforms"),
+    replaceWith = ReplaceWith("NativePlatforms.unspecifiedNativePlatform", "org.jetbrains.kotlin.platform.konan.NativePlatforms"),
     level = DeprecationLevel.ERROR
 )
 interface KonanPlatform : TargetPlatform {
