@@ -1221,11 +1221,12 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                         when (callDiagnostic) {
                             is NewConstraintError -> {
                                 ident()
-                                +"Lower: "
+
                                 generate(callDiagnostic.lowerType as ConeKotlinType)
-                                br
-                                ident()
-                                +"Upper: "
+
+                                ws
+                                span(classes = "subtype-error") { +"<:" }
+                                ws
                                 generate(callDiagnostic.upperType as ConeKotlinType)
                             }
                             else -> {
