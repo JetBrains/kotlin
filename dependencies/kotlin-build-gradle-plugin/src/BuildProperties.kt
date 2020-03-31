@@ -36,10 +36,11 @@ class KotlinBuildProperties(
     fun getOrNull(key: String): Any? =
         localProperties.getProperty(key) ?: propertiesProvider.getProperty(key) ?: rootProperties.getProperty(key)
 
-    fun getBoolean(key: String, default: Boolean = false): Boolean =
-        this.getOrNull(key)?.toString()?.trim()?.toBoolean() ?: default
-
-    private fun hasProperty(key: String): Boolean = getOrNull(key) != null
+    fun getBoolean(key: String, default: Boolean = false): Boolean {
+        val value = this.getOrNull(key)?.toString() ?: return default
+        if (value.isEmpty()) return true // has property without value means 'true'
+        return value.trim().toBoolean()
+    }
 
     val isJpsBuildEnabled: Boolean = getBoolean("jpsBuild")
 
@@ -100,7 +101,7 @@ class KotlinBuildProperties(
 
     val customBootstrapRepo: String? = getOrNull("bootstrap.kotlin.repo") as String?
 
-    val localBootstrap: Boolean = hasProperty("bootstrap.local")
+    val localBootstrap: Boolean = getBoolean("bootstrap.local")
 
     val localBootstrapVersion: String? = getOrNull("bootstrap.local.version") as String?
 
