@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.project
 
-import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.*
@@ -83,40 +82,14 @@ class IdeaModuleStructureOracle : ModuleStructureOracle {
         ModulePath(nodes.mapNotNull { it.unwrapModuleSourceInfo()?.toDescriptor() })
 }
 
-object DependsOnGraphHelper {
-    fun ModuleDescriptor.predecessorsInDependsOnGraph(): List<ModuleDescriptor> {
-        return moduleSourceInfo
-            ?.predecessorsInDependsOnGraph()
-            ?.mapNotNull { it.toDescriptor() }
-            ?: emptyList()
-    }
-
-    fun ModuleSourceInfo.predecessorsInDependsOnGraph(): List<ModuleSourceInfo> {
-        return this.module.predecessorsInDependsOnGraph().mapNotNull { it.toInfo(sourceType) }
-    }
-
-    fun Module.predecessorsInDependsOnGraph(): List<Module> {
-        return implementingModules
-    }
-
-    fun ModuleDescriptor.successorsInDependsOnGraph(): List<ModuleDescriptor> {
-        return moduleSourceInfo
-            ?.successorsInDependsOnGraph()
-            ?.mapNotNull { it.toDescriptor() }
-            ?: emptyList()
-    }
-
-    fun ModuleSourceInfo.successorsInDependsOnGraph(): List<ModuleSourceInfo> {
-        return module.successorsInDependsOnGraph().mapNotNull { it.toInfo(sourceType) }
-    }
-
-    fun Module.successorsInDependsOnGraph(): List<Module> {
-        return implementedModules
-    }
-}
-
 private val ModuleDescriptor.moduleInfo: ModuleInfo?
     get() = getCapability(ModuleInfo.Capability)?.unwrapModuleSourceInfo()
 
-private val ModuleDescriptor.moduleSourceInfo: ModuleSourceInfo?
-    get() = moduleInfo as? ModuleSourceInfo
+private fun ModuleSourceInfo.predecessorsInDependsOnGraph(): List<ModuleSourceInfo> {
+    return this.module.implementingModules.mapNotNull { it.toInfo(sourceType) }
+}
+
+private fun ModuleSourceInfo.successorsInDependsOnGraph(): List<ModuleSourceInfo> {
+    return module.implementedModules.mapNotNull { it.toInfo(sourceType) }
+}
+
