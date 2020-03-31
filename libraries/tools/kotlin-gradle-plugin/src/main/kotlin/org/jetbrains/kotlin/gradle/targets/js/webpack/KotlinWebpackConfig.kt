@@ -131,11 +131,12 @@ data class KotlinWebpackConfig(
         appendln(
             """
                 // save evaluated config file
-                var util = require('util');
-                var fs = require("fs");
-                var evaluatedConfig = util.inspect(config, {showHidden: false, depth: null, compact: false});
-                fs.writeFile($filePath, evaluatedConfig, function (err) {});
-                
+                ;(function(config) {
+                    const util = require('util');
+                    const fs = require('fs');
+                    const evaluatedConfig = util.inspect(config, {showHidden: false, depth: null, compact: false});
+                    fs.writeFile($filePath, evaluatedConfig, function (err) {});
+                })(config);
             """.trimIndent()
         )
     }
@@ -257,7 +258,7 @@ data class KotlinWebpackConfig(
                 ;(function(config) {
                     const webpack = require('webpack');
                     const handler = (percentage, message, ...args) => {
-                        let p = percentage * 100;
+                        const p = percentage * 100;
                         let msg = `${"$"}{Math.trunc(p / 10)}${"$"}{Math.trunc(p % 10)}% ${"$"}{message} ${"$"}{args.join(' ')}`;
                         ${if (progressReporterPathFilter == null) "" else """
                             msg = msg.replace(new RegExp(${progressReporterPathFilter.jsQuoted()}, 'g'), '');
