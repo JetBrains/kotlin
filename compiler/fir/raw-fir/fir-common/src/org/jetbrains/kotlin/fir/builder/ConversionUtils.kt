@@ -312,7 +312,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
     }
 
     fun delegateAccess() = buildQualifiedAccessExpression {
-        source = null
+        source = delegateBuilder.source
         calleeReference = buildDelegateFieldReference {
             resolvedSymbol = delegateFieldSymbol
         }
@@ -320,15 +320,15 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
 
     fun thisRef(): FirExpression =
         if (member || extension) buildQualifiedAccessExpression {
-            source = null
+            source = delegateBuilder.source
             calleeReference = buildExplicitThisReference {}
         }
         else buildConstExpression(null, FirConstKind.Null, null)
 
     fun propertyRef() = buildCallableReferenceAccess {
-        source = null
+        source = delegateBuilder.source
         calleeReference = buildResolvedNamedReference {
-            source = null
+            source = delegateBuilder.source
             name = this@generateAccessorsByDelegate.name
             resolvedSymbol = this@generateAccessorsByDelegate.symbol
         }
@@ -338,7 +338,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
     delegateBuilder.delegateProvider = if (stubMode) buildExpressionStub() else buildFunctionCall {
         explicitReceiver = receiver
         calleeReference = buildSimpleNamedReference {
-            source = null
+            source = delegateBuilder.source
             name = PROVIDE_DELEGATE
         }
         argumentList = buildBinaryArgumentList(thisRef(), propertyRef())
@@ -357,10 +357,10 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
             body = FirSingleExpressionBlock(
                 buildReturnExpression {
                     result = buildFunctionCall {
-                        source = null
+                        source = delegateBuilder.source
                         explicitReceiver = delegateAccess()
                         calleeReference = buildSimpleNamedReference {
-                            source = null
+                            source = delegateBuilder.source
                             name = GET_VALUE
                         }
                         argumentList = buildBinaryArgumentList(thisRef(), propertyRef())

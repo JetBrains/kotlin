@@ -86,7 +86,7 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
             <T>: kotlin.Int
             $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final,static]' type=kotlin.Lazy<kotlin.Int> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
-            property: PROPERTY_REFERENCE 'public final test7: kotlin.Int [delegated,val]' field=null getter='public final fun <get-test7> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty<*> origin=null
+            property: PROPERTY_REFERENCE 'public final test7: kotlin.Int [delegated,val]' field=null getter='public final fun <get-test7> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty<*> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   PROPERTY name:test8 visibility:public modality:FINAL [delegated,var]
     FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
@@ -99,12 +99,12 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
         RETURN type=kotlin.Nothing from='public final fun <get-test8> (): IrErrorType declared in <root>'
           ERROR_CALL 'Unresolved reference: <Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>#' type=IrErrorType
             CONST Null type=kotlin.Nothing? value=null
-            PROPERTY_REFERENCE 'public final test8: IrErrorType [delegated,var]' field=null getter='public final fun <get-test8> (): IrErrorType declared in <root>' setter='public final fun <set-test8> (<set-?>: IrErrorType): kotlin.Unit declared in <root>' type=kotlin.reflect.KProperty<*> origin=null
+            PROPERTY_REFERENCE 'public final test8: IrErrorType [delegated,var]' field=null getter='public final fun <get-test8> (): IrErrorType declared in <root>' setter='public final fun <set-test8> (<set-?>: IrErrorType): kotlin.Unit declared in <root>' type=kotlin.reflect.KProperty<*> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test8> visibility:public modality:FINAL <> (<set-?>:IrErrorType) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:test8 visibility:public modality:FINAL [delegated,var]
       VALUE_PARAMETER name:<set-?> index:0 type:IrErrorType
       BLOCK_BODY
         ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/collections/setValue]>#' type=IrErrorType
           CONST Null type=kotlin.Nothing? value=null
-          PROPERTY_REFERENCE 'public final test8: IrErrorType [delegated,var]' field=null getter='public final fun <get-test8> (): IrErrorType declared in <root>' setter='public final fun <set-test8> (<set-?>: IrErrorType): kotlin.Unit declared in <root>' type=kotlin.reflect.KProperty<*> origin=null
+          PROPERTY_REFERENCE 'public final test8: IrErrorType [delegated,var]' field=null getter='public final fun <get-test8> (): IrErrorType declared in <root>' setter='public final fun <set-test8> (<set-?>: IrErrorType): kotlin.Unit declared in <root>' type=kotlin.reflect.KProperty<*> origin=PROPERTY_REFERENCE_FOR_DELEGATE
           GET_VAR '<set-?>: IrErrorType declared in <root>.<set-test8>' type=IrErrorType origin=null

@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
             $this: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=null
             $receiver: CONST String type=kotlin.String value="K"
             host: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=null
-            p: PROPERTY_REFERENCE 'public final plusK: kotlin.String [delegated,val]' field=null getter='public final fun <get-plusK> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty<*> origin=null
+            p: PROPERTY_REFERENCE 'public final plusK: kotlin.String [delegated,val]' field=null getter='public final fun <get-plusK> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty<*> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               $this: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
               $receiver: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-plusK> visibility:public modality:FINAL <> ($this:<root>.Host, $receiver:kotlin.String) returnType:kotlin.String
@@ -75,7 +75,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
               $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:plusK$delegate type:<root>.Host.StringDelegate visibility:private [final]' type=<root>.Host.StringDelegate origin=null
                 receiver: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
               receiver: ERROR_CALL 'Unresolved reference: this@R|/Host.plusK|' type=kotlin.String
-              p: PROPERTY_REFERENCE 'public final plusK: kotlin.String [delegated,val]' field=null getter='public final fun <get-plusK> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty<*> origin=null
+              p: PROPERTY_REFERENCE 'public final plusK: kotlin.String [delegated,val]' field=null getter='public final fun <get-plusK> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty<*> origin=PROPERTY_REFERENCE_FOR_DELEGATE
                 $this: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
                 $receiver: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
     PROPERTY name:ok visibility:public modality:FINAL [val]

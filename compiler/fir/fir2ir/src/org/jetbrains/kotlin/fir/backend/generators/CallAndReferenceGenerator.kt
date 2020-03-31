@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.psi.KtPropertyDelegate
 
 internal class CallAndReferenceGenerator(
     private val components: Fir2IrComponents,
@@ -60,12 +62,17 @@ internal class CallAndReferenceGenerator(
                         referencedPropertyGetter != null -> null
                         else -> referencedProperty.backingField?.symbol
                     }
+                    val origin = when (callableReferenceAccess.source?.psi?.parent) {
+                        is KtPropertyDelegate -> IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE
+                        else -> null
+                    }
                     IrPropertyReferenceImpl(
                         startOffset, endOffset, type, symbol,
                         typeArgumentsCount = referencedPropertyGetter?.typeParameters?.size ?: 0,
                         backingFieldSymbol,
                         referencedPropertyGetter?.symbol,
-                        referencedProperty.setter?.symbol
+                        referencedProperty.setter?.symbol,
+                        origin
                     )
                 }
                 is IrConstructorSymbol -> {
