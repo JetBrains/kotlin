@@ -156,12 +156,13 @@ private class SignatureChangesPage(
     val maxWidthHorizontalMode = screenSize.width * 0.75
     val maxWidth = screenSize.width * 0.9
     val maxHeight = screenSize.height * 0.9
+    val minFontSize = 8
     while (true) {
       var presentation = SignatureChangePresentation(model, font, themeColorsScheme, verticalMode = false)
       if (presentation.requiredSize.width > maxWidthHorizontalMode) {
         presentation = SignatureChangePresentation(model, font, themeColorsScheme, verticalMode = true)
       }
-      if (presentation.requiredSize.width <= maxWidth && presentation.requiredSize.height <= maxHeight || font.size == 1) {
+      if (presentation.requiredSize.width <= maxWidth && presentation.requiredSize.height <= maxHeight || font.size <= minFontSize) {
         return presentation
       }
       font = Font(font.name, font.style, font.size - 1)
