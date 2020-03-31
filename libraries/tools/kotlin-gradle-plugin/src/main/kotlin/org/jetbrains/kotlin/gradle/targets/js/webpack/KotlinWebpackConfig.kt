@@ -111,9 +111,9 @@ data class KotlinWebpackConfig(
             appendSourceMaps()
             appendDevServer()
             appendReport()
+            appendProgressReporter()
             appendFromConfigDir()
             appendEvaluatedFileReport()
-            appendProgressReporter()
 
             if (export) {
                 //language=JavaScript 1.8
