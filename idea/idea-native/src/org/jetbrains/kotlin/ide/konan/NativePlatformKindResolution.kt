@@ -55,13 +55,21 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
         }
     }
 
-    override fun createPlatformSpecificPackageFragmentProvider(
+    override fun createKlibPackageFragmentProvider(
         moduleInfo: ModuleInfo,
         storageManager: StorageManager,
         languageVersionSettings: LanguageVersionSettings,
         moduleDescriptor: ModuleDescriptor
-    ): PackageFragmentProvider? =
-        createNativeKlibPackageFragmentProvider(moduleInfo, storageManager, languageVersionSettings, moduleDescriptor)
+    ): PackageFragmentProvider? {
+        return (moduleInfo as? NativeKlibLibraryInfo)
+            ?.resolvedKotlinLibrary
+            ?.createKlibPackageFragmentProvider(
+                storageManager = storageManager,
+                metadataModuleDescriptorFactory = metadataFactories.DefaultDeserializedDescriptorFactory,
+                languageVersionSettings = languageVersionSettings,
+                moduleDescriptor = moduleDescriptor
+            )
+    }
 
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean =
         virtualFile.isKlibLibraryRootForPlatform(NativePlatforms.defaultNativePlatform)
@@ -84,68 +92,52 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
     override fun createBuiltIns(moduleInfo: ModuleInfo, projectContext: ProjectContext, sdkDependency: SdkInfo?) =
         createKotlinNativeBuiltIns(moduleInfo, projectContext)
 
+    private fun createKotlinNativeBuiltIns(moduleInfo: ModuleInfo, projectContext: ProjectContext): KotlinBuiltIns {
+        val stdlibInfo = moduleInfo.findNativeStdlib() ?: return DefaultBuiltIns.Instance
+
+        val project = projectContext.project
+        val storageManager = projectContext.storageManager
+
+        val builtInsModule = metadataFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(
+            KotlinBuiltIns.BUILTINS_MODULE_NAME,
+            storageManager,
+            DeserializedKlibModuleOrigin(stdlibInfo.resolvedKotlinLibrary),
+            stdlibInfo.capabilities
+        )
+
+        val languageVersionSettings = IDELanguageSettingsProvider.getLanguageVersionSettings(
+            stdlibInfo,
+            project,
+            isReleaseCoroutines = false
+        )
+
+        val stdlibPackageFragmentProvider = createKlibPackageFragmentProvider(
+            stdlibInfo,
+            storageManager,
+            languageVersionSettings,
+            builtInsModule
+        ) ?: return DefaultBuiltIns.Instance
+
+        builtInsModule.initialize(
+            CompositePackageFragmentProvider(
+                listOf(
+                    stdlibPackageFragmentProvider,
+                    functionInterfacePackageFragmentProvider(storageManager, builtInsModule),
+                    (metadataFactories.DefaultDeserializedDescriptorFactory as KlibMetadataModuleDescriptorFactoryImpl)
+                        .createForwardDeclarationHackPackagePartProvider(storageManager, builtInsModule)
+                )
+            )
+        )
+
+        builtInsModule.setDependencies(listOf(builtInsModule))
+
+        return builtInsModule.builtIns
+    }
+
     object NativeBuiltInsCacheKey : BuiltInsCacheKey
 
     companion object {
         private val metadataFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
-
-        fun createNativeKlibPackageFragmentProvider(
-            moduleInfo: ModuleInfo,
-            storageManager: StorageManager,
-            languageVersionSettings: LanguageVersionSettings,
-            moduleDescriptor: ModuleDescriptor
-        ): PackageFragmentProvider? {
-            return (moduleInfo as? NativeKlibLibraryInfo)
-                ?.resolvedKotlinLibrary
-                ?.createKlibPackageFragmentProvider(
-                    storageManager = storageManager,
-                    metadataModuleDescriptorFactory = metadataFactories.DefaultDeserializedDescriptorFactory,
-                    languageVersionSettings = languageVersionSettings,
-                    moduleDescriptor = moduleDescriptor
-                )
-        }
-
-        private fun createKotlinNativeBuiltIns(moduleInfo: ModuleInfo, projectContext: ProjectContext): KotlinBuiltIns {
-            val stdlibInfo = moduleInfo.findNativeStdlib() ?: return DefaultBuiltIns.Instance
-
-            val project = projectContext.project
-            val storageManager = projectContext.storageManager
-
-            val builtInsModule = metadataFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(
-                KotlinBuiltIns.BUILTINS_MODULE_NAME,
-                storageManager,
-                DeserializedKlibModuleOrigin(stdlibInfo.resolvedKotlinLibrary),
-                stdlibInfo.capabilities
-            )
-
-            val languageVersionSettings = IDELanguageSettingsProvider.getLanguageVersionSettings(
-                stdlibInfo,
-                project,
-                isReleaseCoroutines = false
-            )
-
-            val stdlibPackageFragmentProvider = createNativeKlibPackageFragmentProvider(
-                stdlibInfo,
-                storageManager,
-                languageVersionSettings,
-                builtInsModule
-            ) ?: return DefaultBuiltIns.Instance
-
-            builtInsModule.initialize(
-                CompositePackageFragmentProvider(
-                    listOf(
-                        stdlibPackageFragmentProvider,
-                        functionInterfacePackageFragmentProvider(storageManager, builtInsModule),
-                        (metadataFactories.DefaultDeserializedDescriptorFactory as KlibMetadataModuleDescriptorFactoryImpl)
-                            .createForwardDeclarationHackPackagePartProvider(storageManager, builtInsModule)
-                    )
-                )
-            )
-
-            builtInsModule.setDependencies(listOf(builtInsModule))
-
-            return builtInsModule.builtIns
-        }
 
         private fun ModuleInfo.findNativeStdlib(): NativeKlibLibraryInfo? =
             dependencies().lazyClosure { it.dependencies() }

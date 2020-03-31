@@ -72,6 +72,22 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
         }
     }
 
+    override fun createKlibPackageFragmentProvider(
+        moduleInfo: ModuleInfo,
+        storageManager: StorageManager,
+        languageVersionSettings: LanguageVersionSettings,
+        moduleDescriptor: ModuleDescriptor
+    ): PackageFragmentProvider? {
+        return (moduleInfo as? CommonKlibLibraryInfo)
+            ?.resolvedKotlinLibrary
+            ?.createKlibPackageFragmentProvider(
+                storageManager = storageManager,
+                metadataModuleDescriptorFactory = metadataModuleDescriptorFactory,
+                languageVersionSettings = languageVersionSettings,
+                moduleDescriptor = moduleDescriptor
+            )
+    }
+
     override fun createResolverForModuleFactory(
         settings: PlatformAnalysisParameters,
         environment: TargetEnvironment,
@@ -94,22 +110,6 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
             metadataFactories.flexibleTypeDeserializer,
             metadataFactories.platformDependentTypeTransformer
         )
-
-        fun createCommonKlibPackageFragmentProvider(
-            moduleInfo: ModuleInfo,
-            storageManager: StorageManager,
-            languageVersionSettings: LanguageVersionSettings,
-            moduleDescriptor: ModuleDescriptor
-        ): PackageFragmentProvider? {
-            return (moduleInfo as? CommonKlibLibraryInfo)
-                ?.resolvedKotlinLibrary
-                ?.createKlibPackageFragmentProvider(
-                    storageManager = storageManager,
-                    metadataModuleDescriptorFactory = metadataModuleDescriptorFactory,
-                    languageVersionSettings = languageVersionSettings,
-                    moduleDescriptor = moduleDescriptor
-                )
-        }
     }
 }
 

@@ -78,6 +78,22 @@ class JsPlatformKindResolution : IdePlatformKindResolution {
         }
     }
 
+    override fun createKlibPackageFragmentProvider(
+        moduleInfo: ModuleInfo,
+        storageManager: StorageManager,
+        languageVersionSettings: LanguageVersionSettings,
+        moduleDescriptor: ModuleDescriptor
+    ): PackageFragmentProvider? {
+        return (moduleInfo as? JsKlibLibraryInfo)
+            ?.resolvedKotlinLibrary
+            ?.createKlibPackageFragmentProvider(
+                storageManager = storageManager,
+                metadataModuleDescriptorFactory = metadataModuleDescriptorFactory,
+                languageVersionSettings = languageVersionSettings,
+                moduleDescriptor = moduleDescriptor
+            )
+    }
+
     companion object {
         private val metadataFactories = KlibMetadataFactories({ DefaultBuiltIns.Instance }, DynamicTypeDeserializer)
 
@@ -87,22 +103,6 @@ class JsPlatformKindResolution : IdePlatformKindResolution {
             metadataFactories.flexibleTypeDeserializer,
             metadataFactories.platformDependentTypeTransformer
         )
-
-        fun createJsKlibPackageFragmentProvider(
-            moduleInfo: ModuleInfo,
-            storageManager: StorageManager,
-            languageVersionSettings: LanguageVersionSettings,
-            moduleDescriptor: ModuleDescriptor
-        ): PackageFragmentProvider? {
-            return (moduleInfo as? JsKlibLibraryInfo)
-                ?.resolvedKotlinLibrary
-                ?.createKlibPackageFragmentProvider(
-                    storageManager = storageManager,
-                    metadataModuleDescriptorFactory = metadataModuleDescriptorFactory,
-                    languageVersionSettings = languageVersionSettings,
-                    moduleDescriptor = moduleDescriptor
-                )
-        }
     }
 }
 

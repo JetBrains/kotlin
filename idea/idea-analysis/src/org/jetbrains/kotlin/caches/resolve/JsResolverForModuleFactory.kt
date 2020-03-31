@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.caches.resolve
 
 import org.jetbrains.kotlin.analyzer.*
-import org.jetbrains.kotlin.caches.resolve.JsPlatformKindResolution.Companion.createJsKlibPackageFragmentProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.get
@@ -17,6 +16,8 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
+import org.jetbrains.kotlin.platform.idePlatformKind
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -74,7 +75,7 @@ internal fun <M : ModuleInfo> createPackageFragmentProvider(
 ): List<PackageFragmentProvider> = when (moduleInfo) {
     is JsKlibLibraryInfo -> {
         listOfNotNull(
-            createJsKlibPackageFragmentProvider(
+            JsPlatforms.defaultJsPlatform.idePlatformKind.resolution.createKlibPackageFragmentProvider(
                 moduleInfo,
                 moduleContext.storageManager,
                 container.get<LanguageVersionSettings>(),
