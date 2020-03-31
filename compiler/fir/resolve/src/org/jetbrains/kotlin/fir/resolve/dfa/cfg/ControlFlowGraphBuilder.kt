@@ -54,6 +54,7 @@ class ControlFlowGraphBuilder {
 
     private val entersToPostponedAnonymousFunctions: MutableMap<FirFunctionSymbol<*>, PostponedLambdaEnterNode> = mutableMapOf()
     private val exitsFromPostponedAnonymousFunctions: MutableMap<FirFunctionSymbol<*>, PostponedLambdaExitNode> = mutableMapOf()
+    private val parentGraphForAnonymousFunctions: MutableMap<FirFunctionSymbol<*>, ControlFlowGraph> = mutableMapOf()
 
     private val exitsFromCompletedPostponedAnonymousFunctions: MutableList<PostponedLambdaExitNode> = mutableListOf()
 
@@ -178,7 +179,7 @@ class ControlFlowGraphBuilder {
             null
         }
         if (graph != null) {
-            val previousGraph = graphs.top()
+            val previousGraph = parentGraphForAnonymousFunctions.remove(function.symbol) ?: graphs.top()
             if (previousGraph.kind == ControlFlowGraph.Kind.Function) {
                 previousGraph.addSubGraph(graph)
             }
@@ -213,6 +214,7 @@ class ControlFlowGraphBuilder {
         val symbol = anonymousFunction.symbol
         entersToPostponedAnonymousFunctions[symbol] = enterNode
         exitsFromPostponedAnonymousFunctions[symbol] = exitNode
+        parentGraphForAnonymousFunctions[symbol] = graph
         CFGNode.addEdge(lastNodes.pop(), enterNode, kind = EdgeKind.Simple, propagateDeadness = true)
         CFGNode.addEdge(enterNode, exitNode, kind = EdgeKind.Dfg, propagateDeadness = true)
         lastNodes.push(exitNode)
