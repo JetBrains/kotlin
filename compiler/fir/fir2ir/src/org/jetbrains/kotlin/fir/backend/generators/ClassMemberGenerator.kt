@@ -145,12 +145,12 @@ internal class ClassMemberGenerator(
             ) {
                 irProperty.backingField = irProperty.createBackingField(
                     property, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, descriptor,
-                    Visibilities.PRIVATE, property.name, property.isVal, initializer, propertyType
+                    property.fieldVisibility, property.name, property.isVal, initializer, propertyType
                 )
             } else if (delegate != null) {
                 irProperty.backingField = irProperty.createBackingField(
                     property, IrDeclarationOrigin.PROPERTY_DELEGATE, descriptor,
-                    Visibilities.PRIVATE, Name.identifier("${property.name}\$delegate"), true, delegate
+                    property.fieldVisibility, Name.identifier("${property.name}\$delegate"), true, delegate
                 )
             }
         }
@@ -167,6 +167,13 @@ internal class ClassMemberGenerator(
         }
         return irProperty
     }
+
+    private val FirProperty.fieldVisibility: Visibility
+        get() = when {
+            isLateInit -> setter?.visibility ?: status.visibility
+            isConst -> status.visibility
+            else -> Visibilities.PRIVATE
+        }
 
     private fun IrProperty.createBackingField(
         property: FirProperty,
