@@ -200,15 +200,22 @@ open class KotlinUClass private constructor(
 
 open class KotlinConstructorUMethod(
     private val ktClass: KtClassOrObject?,
-    override val psi: KtLightMethod,
+    override val psi: PsiMethod,
+    kotlinOrigin: KtDeclaration?,
     givenParent: UElement?
-) : KotlinUMethod(psi, psi.kotlinOrigin, givenParent) {
+) : KotlinUMethod(psi, kotlinOrigin, givenParent) {
+
+    constructor(
+        ktClass: KtClassOrObject?,
+        psi: KtLightMethod,
+        givenParent: UElement?
+    ):this(ktClass, psi, psi.kotlinOrigin, givenParent)
 
     val isPrimary: Boolean
-        get() = psi.kotlinOrigin.let { it is KtPrimaryConstructor || it is KtClassOrObject }
+        get() = sourcePsi.let { it is KtPrimaryConstructor || it is KtClassOrObject }
 
     override val uastBody: UExpression? by lz {
-        val delegationCall: KtCallElement? = psi.kotlinOrigin.let {
+        val delegationCall: KtCallElement? = sourcePsi.let {
             when {
                 isPrimary -> ktClass?.superTypeListEntries?.firstIsInstanceOrNull<KtSuperTypeCallEntry>()
                 it is KtSecondaryConstructor -> it.getDelegationCall()
@@ -232,7 +239,7 @@ open class KotlinConstructorUMethod(
     override val uastAnchor: KotlinUIdentifier by lazy {
         KotlinUIdentifier(
             psi.nameIdentifier,
-            if (isPrimary) ktClass?.nameIdentifier else (psi.kotlinOrigin as? KtSecondaryConstructor)?.getConstructorKeyword(),
+            if (isPrimary) ktClass?.nameIdentifier else (sourcePsi as? KtSecondaryConstructor)?.getConstructorKeyword(),
             this
         )
     }
@@ -241,7 +248,7 @@ open class KotlinConstructorUMethod(
 
     open protected fun getBodyExpressions(): List<KtExpression> {
         if (isPrimary) return getInitializers()
-        val bodyExpression = (psi.kotlinOrigin as? KtFunction)?.bodyExpression ?: return emptyList()
+        val bodyExpression = (sourcePsi as? KtFunction)?.bodyExpression ?: return emptyList()
         if (bodyExpression is KtBlockExpression) return bodyExpression.statements
         return listOf(bodyExpression)
     }

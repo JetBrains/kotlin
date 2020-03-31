@@ -27,7 +27,9 @@ import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
 import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
+import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
@@ -45,6 +47,7 @@ import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -69,6 +72,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.expressions.KotlinLocalFunctionUVariable
+import org.jetbrains.uast.kotlin.psi.UastFakeLightMethod
+import org.jetbrains.uast.kotlin.psi.UastFakeLightPrimaryConstructor
 import java.lang.ref.WeakReference
 import java.text.StringCharacterIterator
 
@@ -97,16 +102,28 @@ internal fun resolveSource(context: KtElement, descriptor: DeclarationDescriptor
         && source is KtClassOrObject && source.primaryConstructor == null
         && source.secondaryConstructors.isEmpty()
     ) {
-        return source.toLightClass()?.constructors?.firstOrNull()
+        val lightClass = source.toLightClass() ?: return null
+        lightClass.constructors.firstOrNull()?.let { return it }
+        if (source.isLocal) {
+            return UastFakeLightPrimaryConstructor(source, lightClass)
+        }
+        return null
     }
 
     return when (source) {
-        is KtFunction -> LightClassUtil.getLightClassMethod(source)
+        is KtFunction ->
+            if (source.isLocal)
+                getContainingLightClass(source)?.let { UastFakeLightMethod(source, it) }
+            else
+                LightClassUtil.getLightClassMethod(source)
         is PsiMethod -> source
         null -> resolveDeserialized(context, descriptor) as? PsiMethod
         else -> null
     }
 }
+
+internal fun getContainingLightClass(original: KtDeclaration): KtLightClass? =
+    (original.containingClassOrObject?.toLightClass() ?: original.containingKtFile.findFacadeClass())
 
 internal fun resolveContainingDeserializedClass(context: KtElement, memberDescriptor: DeserializedCallableMemberDescriptor): PsiClass? {
     val containingDeclaration = memberDescriptor.containingDeclaration
