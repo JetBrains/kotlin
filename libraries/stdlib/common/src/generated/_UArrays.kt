@@ -5871,6 +5871,46 @@ public inline fun UShortArray.none(predicate: (UShort) -> Boolean): Boolean {
 }
 
 /**
+ * Performs the given [action] on each element and returns the array itself afterwards.
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.onEach(action: (UInt) -> Unit): UIntArray {
+    return apply { for (element in this) action(element) }
+}
+
+/**
+ * Performs the given [action] on each element and returns the array itself afterwards.
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.onEach(action: (ULong) -> Unit): ULongArray {
+    return apply { for (element in this) action(element) }
+}
+
+/**
+ * Performs the given [action] on each element and returns the array itself afterwards.
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.onEach(action: (UByte) -> Unit): UByteArray {
+    return apply { for (element in this) action(element) }
+}
+
+/**
+ * Performs the given [action] on each element and returns the array itself afterwards.
+ */
+@SinceKotlin("1.4")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.onEach(action: (UShort) -> Unit): UShortArray {
+    return apply { for (element in this) action(element) }
+}
+
+/**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  * 
  * @sample samples.collections.Collections.Aggregates.reduce

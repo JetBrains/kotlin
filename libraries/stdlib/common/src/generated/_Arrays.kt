@@ -13304,6 +13304,87 @@ public inline fun CharArray.none(predicate: (Char) -> Boolean): Boolean {
 }
 
 /**
+ * Performs the given [action] on each element and returns the array itself afterwards.
+ */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.onEach(action: (T) -> Unit): Array<out T> {
+    return apply { for (element in this) action(element) }
+}
+
+/**
+ * Performs the given [action] on each element and returns the array itself afterwards.
+ */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.onEach(action: (Byte) -> Unit): ByteArray {
+    return apply { for (element in this) action(element) }
+}
+
+/**
+ * Performs the given [action] on each element and returns the array itself afterwards.
+ */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.onEach(action: (Short) -> Unit): ShortArray {
+    return apply { for (element in this) action(element) }
+}
+
+/**
+ * Performs the given [action] on each element and returns the array itself afterwards.
+ */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun IntArray.onEach(action: (Int) -> Unit): IntArray {
+    return apply { for (element in this) action(element) }
+}
+
+/**
+ * Performs the given [action] on each element and returns the array itself afterwards.
+ */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun LongArray.onEach(action: (Long) -> Unit): LongArray {
+    return apply { for (element in this) action(element) }
+}
+
+/**
+ * Performs the given [action] on each element and returns the array itself afterwards.
+ */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.onEach(action: (Float) -> Unit): FloatArray {
+    return apply { for (element in this) action(element) }
+}
+
+/**
+ * Performs the given [action] on each element and returns the array itself afterwards.
+ */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.onEach(action: (Double) -> Unit): DoubleArray {
+    return apply { for (element in this) action(element) }
+}
+
+/**
+ * Performs the given [action] on each element and returns the array itself afterwards.
+ */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.onEach(action: (Boolean) -> Unit): BooleanArray {
+    return apply { for (element in this) action(element) }
+}
+
+/**
+ * Performs the given [action] on each element and returns the array itself afterwards.
+ */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun CharArray.onEach(action: (Char) -> Unit): CharArray {
+    return apply { for (element in this) action(element) }
+}
+
+/**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  * 
  * @sample samples.collections.Collections.Aggregates.reduce

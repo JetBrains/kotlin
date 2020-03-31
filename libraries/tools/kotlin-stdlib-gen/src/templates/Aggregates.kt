@@ -1567,13 +1567,21 @@ object Aggregates : TemplateGroupBase() {
     }
 
     val f_onEach = fn("onEach(action: (T) -> Unit)") {
-        include(Iterables, Maps, CharSequences, Sequences)
+        includeDefault()
+        include(Maps, CharSequences, ArraysOfUnsigned)
     } builder {
         since("1.1")
+        doc { "Performs the given [action] on each ${f.element} and returns the ${f.collection} itself afterwards." }
+
+        specialFor(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            since("1.4")
+            inlineOnly()
+            returns("SELF")
+            body { "return apply { for (element in this) action(element) }" }
+        }
 
         specialFor(Iterables, Maps, CharSequences) {
             inline()
-            doc { "Performs the given [action] on each ${f.element} and returns the ${f.collection} itself afterwards." }
             val collectionType = when (f) {
                 Maps -> "M"
                 CharSequences -> "S"
