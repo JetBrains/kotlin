@@ -124,7 +124,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(LINKER_ARGS, arguments.linkerArguments.toNonNullList() +
                         arguments.singleLinkerArguments.toNonNullList())
                 arguments.moduleName?.let{ put(MODULE_NAME, it) }
-                arguments.shortModuleName?.let { put(SHORT_MODULE_NAME, it) }
                 arguments.target?.let{ put(TARGET, it) }
 
                 put(INCLUDED_BINARY_FILES,
@@ -229,6 +228,10 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 libraryToAddToCache?.let { put(LIBRARY_TO_ADD_TO_CACHE, it) }
                 put(CACHE_DIRECTORIES, cacheDirectories)
                 put(CACHED_LIBRARIES, parseCachedLibraries(arguments, configuration))
+
+                parseShortModuleName(arguments, configuration, outputKind)?.let {
+                    put(SHORT_MODULE_NAME, it)
+                }
             }
         }
     }
@@ -368,6 +371,26 @@ private fun parseLibraryToAddToCache(
 
     return if (input != null && !outputKind.isCache) {
         configuration.report(ERROR, "$ADD_CACHE can't be used when not producing cache")
+        null
+    } else {
+        input
+    }
+}
+
+// TODO: Support short names for current module in ObjC export and lift this limitation.
+private fun parseShortModuleName(
+        arguments: K2NativeCompilerArguments,
+        configuration: CompilerConfiguration,
+        outputKind: CompilerOutputKind
+): String? {
+    val input = arguments.shortModuleName
+
+    return if (input != null && outputKind != CompilerOutputKind.LIBRARY) {
+        configuration.report(
+                STRONG_WARNING,
+                "$SHORT_MODULE_NAME_ARG is only supported when producing a Kotlin library, " +
+                    "but the compiler is producing ${outputKind.name.toLowerCase()}"
+        )
         null
     } else {
         input

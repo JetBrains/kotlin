@@ -200,7 +200,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     var includes: Array<String>? = null
 
     @Argument(
-        value = "-Xshort-module-name",
+        value = SHORT_MODULE_NAME_ARG,
         valueDescription = "<name>",
         description = "A short name used to denote this library in the IDE and in a generated Objective-C header"
     )
@@ -282,3 +282,4 @@ const val INCLUDE_ARG = "-Xinclude"
 const val CACHED_LIBRARY = "-Xcached-library"
 const val MAKE_CACHE = "-Xmake-cache"
 const val ADD_CACHE = "-Xadd-cache"
+const val SHORT_MODULE_NAME_ARG = "-Xshort-module-name"

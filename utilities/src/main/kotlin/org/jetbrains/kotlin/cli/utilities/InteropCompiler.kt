@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.cli.utilities
 
+import org.jetbrains.kotlin.cli.bc.SHORT_MODULE_NAME_ARG
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.native.interop.gen.jvm.InternalInteropOptions
@@ -69,7 +70,7 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String>? {
         (if (purgeUserLibs) arrayOf("-$PURGE_USER_LIBS") else emptyArray()) +
         (if (nopack) arrayOf("-$NOPACK") else emptyArray()) +
         moduleName?.let { arrayOf("-module-name", it) }.orEmpty() +
-        shortModuleName?.let { arrayOf("-Xshort-module-name=$it") }.orEmpty() +
+        shortModuleName?.let { arrayOf("$SHORT_MODULE_NAME_ARG=$it") }.orEmpty() +
         arguments.kotlincOption
 }
 
