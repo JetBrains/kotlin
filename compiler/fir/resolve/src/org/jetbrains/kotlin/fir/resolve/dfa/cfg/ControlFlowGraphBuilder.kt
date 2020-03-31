@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.isNothing
+import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import kotlin.random.Random
 
 class ControlFlowGraphBuilder {
@@ -920,5 +921,25 @@ class ControlFlowGraphBuilder {
     fun reset() {
         exitsOfAnonymousFunctions.clear()
         exitsFromCompletedPostponedAnonymousFunctions.clear()
+    }
+
+    fun dropSubgraphFromCall(call: FirFunctionCall) {
+        val graphs = mutableListOf<ControlFlowGraph>()
+        call.acceptChildren(object : FirDefaultVisitorVoid() {
+            override fun visitElement(element: FirElement) {
+                element.acceptChildren(this)
+            }
+
+            override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
+                anonymousFunction.controlFlowGraphReference.controlFlowGraph?.let {
+                    graphs += it
+                }
+            }
+        }, null)
+
+        val currentGraph = graph
+        for (graph in graphs) {
+            currentGraph.removeSubGraph(graph)
+        }
     }
 }
