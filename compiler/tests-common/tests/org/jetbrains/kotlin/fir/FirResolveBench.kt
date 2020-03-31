@@ -297,7 +297,7 @@ class FirResolveBench(val withProgress: Boolean) {
     fun throwFailure() {
         if (fails.any()) {
             val (transformerClass, failure, file) = fails.first()
-            throw AssertionError("Failures detected in ${transformerClass.simpleName}, file: $file", failure)
+            throw FirRuntimeException("Failures detected in ${transformerClass.simpleName}, file: $file", failure)
         }
     }
 
@@ -417,3 +417,5 @@ private fun RTableContext.printMeasureAsTable(measure: FirResolveBench.Measure, 
         cell(measure.gcCollections.toString())
     }
 }
+
+class FirRuntimeException(override val message: String, override val cause: Throwable) : RuntimeException(message, cause)
