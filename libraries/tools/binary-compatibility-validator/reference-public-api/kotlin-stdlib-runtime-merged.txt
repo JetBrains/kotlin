@@ -3045,6 +3045,9 @@ public final class kotlin/io/TextStreamsKt {
 	public static final fun useLines (Ljava/io/Reader;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
+public abstract interface annotation class kotlin/js/ExperimentalJsExport : java/lang/annotation/Annotation {
+}
+
 public final class kotlin/jvm/JvmClassMappingKt {
 	public static final fun getAnnotationClass (Ljava/lang/annotation/Annotation;)Lkotlin/reflect/KClass;
 	public static final fun getJavaClass (Ljava/lang/Object;)Ljava/lang/Class;

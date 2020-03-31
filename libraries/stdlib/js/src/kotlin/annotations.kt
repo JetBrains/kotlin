@@ -162,28 +162,15 @@ public annotation class JsNonModule
 public annotation class JsQualifier(val value: String)
 
 /**
- * Marks experimental JS export annotations.
- *
- * Note that behaviour of these annotations will likely be changed in the future.
- *
- * Usages of such annotations will be reported as warnings unless an explicit opt-in with
- * the [OptIn] annotation, e.g. `@OptIn(ExperimentalJsExport::class)`,
- * or with the `-Xopt-in=kotlin.js.ExperimentalJsExport` compiler option is given.
- */
-@Suppress("DEPRECATION")
-@Experimental(level = Experimental.Level.WARNING)
-@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
-@SinceKotlin("1.3")
-public annotation class ExperimentalJsExport
-
-/**
  * Exports top-level declaration.
  *
- * Used in future IR-based backend.
- * Has no effect in current JS backend.
+ * Compiler exports from the module those top-level declarations that are marked with this annotation.
+ * There is no effect if this annotation is applied to a non-top-level declaration.
+ *
+ * This annotation has effect only on top-level declarations and only in IR-based JS backend.
  */
 @ExperimentalJsExport
-@SinceKotlin("1.3")
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, PROPERTY, FUNCTION, FILE)
-public annotation class JsExport
+@SinceKotlin("1.3")
+public actual annotation class JsExport
