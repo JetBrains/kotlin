@@ -1,5 +1,7 @@
 package
 
+public fun </*0*/ R> fold(/*0*/ initial: R, /*1*/ operation: (R) -> kotlin.Unit): kotlin.Unit
+public fun foo(): kotlin.Unit
 public fun </*0*/ T> id1(/*0*/ x: T): T
 public fun </*0*/ R> id2(/*0*/ x: R): R
 public fun main(): kotlin.Unit
