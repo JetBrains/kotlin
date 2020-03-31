@@ -197,7 +197,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-delegatedVal> (): kotlin.Int declared in <root>'
           CALL 'public final fun getValue (thisRef: kotlin.Any?, kProp: kotlin.Any): kotlin.Int [operator] declared in <root>.Delegate' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:delegatedVal$delegate type:<root>.Delegate visibility:private [final,static]' type=<root>.Delegate origin=GET_PROPERTY
+            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:delegatedVal$delegate type:<root>.Delegate visibility:private [final,static]' type=<root>.Delegate origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
             kProp: PROPERTY_REFERENCE 'public final delegatedVal: kotlin.Int [delegated,val]' field=null getter='public final fun <get-delegatedVal> (): kotlin.Int declared in <root>' setter=null type=kotlin.reflect.KProperty<*> origin=null
   PROPERTY name:test_delegatedVal visibility:public modality:FINAL [val]
@@ -218,7 +218,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-delegatedVar> (): kotlin.Int declared in <root>'
           CALL 'public final fun getValue (thisRef: kotlin.Any?, kProp: kotlin.Any): kotlin.Int [operator] declared in <root>.Delegate' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:delegatedVar$delegate type:<root>.Delegate visibility:private [final,static]' type=<root>.Delegate origin=GET_PROPERTY
+            $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:delegatedVar$delegate type:<root>.Delegate visibility:private [final,static]' type=<root>.Delegate origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
             kProp: PROPERTY_REFERENCE 'public final delegatedVar: kotlin.Int [delegated,var]' field=null getter='public final fun <get-delegatedVar> (): kotlin.Int declared in <root>' setter='public final fun <set-delegatedVar> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KProperty<*> origin=null
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-delegatedVar> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:kotlin.Unit
@@ -226,7 +226,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
       BLOCK_BODY
         CALL 'public final fun setValue (thisRef: kotlin.Any?, kProp: kotlin.Any, value: kotlin.Int): kotlin.Unit [operator] declared in <root>.Delegate' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:delegatedVar$delegate type:<root>.Delegate visibility:private [final,static]' type=<root>.Delegate origin=GET_PROPERTY
+          $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:delegatedVar$delegate type:<root>.Delegate visibility:private [final,static]' type=<root>.Delegate origin=null
           thisRef: CONST Null type=kotlin.Nothing? value=null
           kProp: PROPERTY_REFERENCE 'public final delegatedVar: kotlin.Int [delegated,var]' field=null getter='public final fun <get-delegatedVar> (): kotlin.Int declared in <root>' setter='public final fun <set-delegatedVar> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.reflect.KProperty<*> origin=null
           value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-delegatedVar>' type=kotlin.Int origin=null

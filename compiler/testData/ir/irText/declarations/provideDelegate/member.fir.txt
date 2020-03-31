@@ -98,7 +98,7 @@ FILE fqName:<root> fileName:/member.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-testMember> (): kotlin.String declared in <root>.Host'
             CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.Any?): kotlin.String [operator] declared in <root>.Delegate' type=kotlin.String origin=null
-              $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:testMember$delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=GET_PROPERTY
+              $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:testMember$delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=null
               thisRef: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=null
               property: PROPERTY_REFERENCE 'public final testMember: kotlin.String [delegated,val]' field=null getter='public final fun <get-testMember> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty<*> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
