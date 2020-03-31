@@ -40,7 +40,7 @@ fun bar() {
         }
         true -> null as X
         else -> { x ->
-            x()
+            <!UNRESOLVED_REFERENCE!>x<!>()
             Unit
         }
     }

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.types.AbstractFlexibilityChecker.hasDifferentFlexibi
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker.hasPathByNotMarkedNullableNodes
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.model.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object NewCommonSuperTypeCalculator {
     // TODO: Bridge for old calls
@@ -332,7 +331,7 @@ object NewCommonSuperTypeCalculator {
 
             arguments.add(argument)
         }
-        return createSimpleType(constructor, arguments, nullable = false)
+        return createSimpleType(constructor, arguments, nullable = false, isExtensionFunction = types.all { it.isExtensionFunction() })
     }
 
     private fun TypeSystemCommonSuperTypesContext.uncaptureFromSubtyping(typeArgument: TypeArgumentMarker): TypeArgumentMarker {

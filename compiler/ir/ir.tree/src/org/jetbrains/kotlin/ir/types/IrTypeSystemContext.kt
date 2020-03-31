@@ -222,10 +222,12 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         return IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
     }
 
+    // TODO: implement taking into account `isExtensionFunction`
     override fun createSimpleType(
         constructor: TypeConstructorMarker,
         arguments: List<TypeArgumentMarker>,
-        nullable: Boolean
+        nullable: Boolean,
+        isExtensionFunction: Boolean
     ): SimpleTypeMarker = IrSimpleTypeImpl(constructor as IrClassifierSymbol, nullable, arguments.map { it as IrTypeArgument }, emptyList())
 
     private fun TypeVariance.convertVariance(): Variance {
@@ -242,6 +244,11 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun createStarProjection(typeParameter: TypeParameterMarker) = IrStarProjectionImpl
 
     override fun KotlinTypeMarker.canHaveUndefinedNullability() = this is IrSimpleType && classifier is IrTypeParameterSymbol
+
+    override fun SimpleTypeMarker.isExtensionFunction(): Boolean {
+        require(this is IrSimpleType)
+        return this.hasAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType)
+    }
 
     override fun SimpleTypeMarker.typeDepth(): Int {
         val maxInArguments = (this as IrSimpleType).arguments.asSequence().map {
