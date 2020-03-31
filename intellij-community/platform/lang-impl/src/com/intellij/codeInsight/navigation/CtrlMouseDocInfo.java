@@ -11,7 +11,7 @@ public final class CtrlMouseDocInfo {
   public final @Nullable String text;
   final @Nullable DocumentationProvider docProvider;
 
-  CtrlMouseDocInfo(@Nullable String text, @Nullable DocumentationProvider provider) {
+  public CtrlMouseDocInfo(@Nullable String text, @Nullable DocumentationProvider provider) {
     this.text = text;
     docProvider = provider;
   }

@@ -10,19 +10,21 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.usageView.UsageViewShortNameLocation;
 import com.intellij.usageView.UsageViewTypeLocation;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class SingleTargetElementInfo extends BaseCtrlMouseInfo {
+@ApiStatus.Internal
+public class SingleTargetElementInfo extends BaseCtrlMouseInfo {
 
   private final @NotNull PsiElement myTargetElement;
 
-  SingleTargetElementInfo(@NotNull PsiElement elementAtPointer, @NotNull PsiElement targetElement) {
+  public SingleTargetElementInfo(@NotNull PsiElement elementAtPointer, @NotNull PsiElement targetElement) {
     super(elementAtPointer);
     myTargetElement = targetElement;
   }
 
-  SingleTargetElementInfo(@NotNull PsiReference reference, @NotNull PsiElement targetElement) {
+  public SingleTargetElementInfo(@NotNull PsiReference reference, @NotNull PsiElement targetElement) {
     super(reference.getElement(), ReferenceRange.getAbsoluteRanges(reference));
     myTargetElement = targetElement;
   }
