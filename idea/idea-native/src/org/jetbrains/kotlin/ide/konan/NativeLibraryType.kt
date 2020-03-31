@@ -25,7 +25,7 @@ object NativeLibraryType : LibraryType<DummyLibraryProperties>(NativeLibraryKind
     // However this does not work for libraries that are to be just created during project build, e.g. C-interop Kotlin/Native KLIBs.
     // The code below helps to perform postponed detection of Kotlin/Native libraries.
     override fun detect(classesRoots: List<VirtualFile>): DummyLibraryProperties? =
-        if (classesRoots.firstOrNull()?.isKlibLibraryRootForPlatform(NativePlatforms.defaultNativePlatform) == true)
+        if (classesRoots.firstOrNull()?.isKlibLibraryRootForPlatform(NativePlatforms.unspecifiedNativePlatform) == true)
             DummyLibraryProperties.INSTANCE!!
         else null
 
