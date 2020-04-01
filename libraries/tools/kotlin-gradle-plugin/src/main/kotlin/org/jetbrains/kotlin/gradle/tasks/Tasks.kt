@@ -442,17 +442,9 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     private fun disableMultiModuleIC(): Boolean {
         if (!isIncrementalCompilationEnabled() || javaOutputDir == null) return false
 
-        fun forEachTask(fn: (Task) -> Unit) {
-            if (isGradleVersionAtLeast(4, 10)) {
-                project.tasks.configureEach(fn)
-            } else {
-                project.tasks.forEach(fn)
-            }
-        }
-
         var illegalTaskOrNull: AbstractCompile? = null
 
-        forEachTask {
+        project.tasks.configureEach {
             if (it is AbstractCompile &&
                 it !is JavaCompile &&
                 it !is AbstractKotlinCompile<*> &&

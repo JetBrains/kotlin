@@ -11,7 +11,6 @@ import com.android.build.gradle.api.BaseVariant
 import com.android.builder.model.SourceProvider
 import org.gradle.api.*
 import org.gradle.api.artifacts.ExternalDependency
-import org.gradle.api.artifacts.MutableVersionConstraint
 import org.gradle.api.artifacts.maven.Conf2ScopeMappingContainer
 import org.gradle.api.artifacts.maven.MavenResolver
 import org.gradle.api.attributes.Usage
@@ -224,7 +223,7 @@ internal class Kotlin2JvmSourceSetProcessor(
                 .flatMap { it.getSubpluginKotlinTasks(project, kotlinTaskInstance) }
                 .forEach { plugin -> kotlinCompilation.allKotlinSourceSets.forEach { sourceSet -> plugin.source(sourceSet.kotlin) } }
 
-            javaTask?.let { configureJavaTask(kotlinTaskInstance, it, logger) }
+            javaTask?.let { configureJavaTask(kotlinTaskInstance, it) }
 
             if (project.pluginManager.hasPlugin("java-library") && sourceSetName == SourceSet.MAIN_SOURCE_SET_NAME) {
                 registerKotlinOutputForJavaLibrary(kotlinTaskInstance.destinationDir, kotlinTaskInstance)
@@ -531,7 +530,7 @@ internal abstract class AbstractKotlinPlugin(
                 project.registerTask<InspectClassesForMultiModuleIC>("inspectClassesForKotlinIC") {
                     it.sourceSetName = SourceSet.MAIN_SOURCE_SET_NAME
                     it.archivePath.set(project.provider { jarTask.archivePathCompatible.canonicalPath })
-                    it.archiveName.set(project.provider { jarTask.archiveNameCompatible })
+                    it.archiveName.set(project.provider { jarTask.archiveFileName.get() })
                     it.dependsOn(classesTask)
                 }
             jarTask.dependsOn(inspectTask)
@@ -640,21 +639,11 @@ internal abstract class AbstractKotlinPlugin(
 
 internal fun configureDefaultVersionsResolutionStrategy(project: Project, kotlinPluginVersion: String) {
     project.configurations.all { configuration ->
-        fun MutableVersionConstraint.chooseVersion(version: String) {
-            if (isGradleVersionAtLeast(5, 0)) {
-                // In Gradle 5.0, the semantics of 'prefer' has changed to be much less imperative, and now it's 'require' that we need:
-                val requireMethod = javaClass.getMethod("require", String::class.java)
-                requireMethod(this, version)
-            } else {
-                prefer(version)
-            }
-        }
-
         // Use the API introduced in Gradle 4.4 to modify the dependencies directly before they are resolved:
         configuration.withDependencies { dependencySet ->
             dependencySet.filterIsInstance<ExternalDependency>()
                 .filter { it.group == "org.jetbrains.kotlin" && it.version.isNullOrEmpty() }
-                .forEach { it.version { constraint -> constraint.chooseVersion(kotlinPluginVersion) } }
+                .forEach { it.version { constraint -> constraint.require(kotlinPluginVersion) } }
         }
     }
 }
@@ -1090,11 +1079,11 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
     }
 }
 
-internal fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractCompile, logger: Logger) {
+internal fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractCompile) {
     kotlinTask.javaOutputDir = javaTask.destinationDir
 
     // Make Gradle check if the javaTask is up-to-date based on the Kotlin classes
-    javaTask.inputsCompatible.run {
+    javaTask.inputs.run {
         dir(kotlinTask.destinationDir)
             .withNormalizer(CompileClasspathNormalizer::class.java)
             .withPropertyName("${kotlinTask.name}OutputClasses")
@@ -1150,7 +1139,7 @@ internal fun Task.registerSubpluginOptionsAsInputs(subpluginId: String, subplugi
                 }.run { /* exhaustive when */ }
 
                 else -> {
-                    inputsCompatible.propertyCompatible("$subpluginId." + option.key + indexSuffix, Callable { option.value })
+                    inputs.property("$subpluginId." + option.key + indexSuffix, Callable { option.value })
                 }
             }
         }

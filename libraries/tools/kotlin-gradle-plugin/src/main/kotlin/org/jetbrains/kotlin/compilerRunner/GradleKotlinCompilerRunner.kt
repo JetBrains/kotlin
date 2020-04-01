@@ -242,7 +242,7 @@ internal open class GradleCompilerRunner(protected val task: Task) {
                 ?: return null
             val sourceSet = javaConvention.sourceSets.findByName(sourceSetName) ?: return null
             val jarTask = project.tasks.findByName(sourceSet.jarTaskName) as? Jar
-            return jarTask?.archivePath
+            return jarTask?.archiveFile?.get()?.asFile
         }
 
         @Synchronized

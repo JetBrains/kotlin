@@ -46,7 +46,7 @@ open class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions>(
     internal val defaultArtifactClassesListFile: File
         get() {
             val jarTask = project.tasks.getByName(artifactsTaskName) as Jar
-            return File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), "${sanitizeFileName(jarTask.archiveName)}-classes.txt")
+            return File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), "${sanitizeFileName(jarTask.archiveFileName.get())}-classes.txt")
         }
 }
 

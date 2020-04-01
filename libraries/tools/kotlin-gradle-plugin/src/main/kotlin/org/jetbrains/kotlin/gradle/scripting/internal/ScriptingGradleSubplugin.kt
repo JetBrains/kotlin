@@ -22,14 +22,10 @@ import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
 import java.io.File
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
-
-private const val MIN_SUPPORTED_GRADLE_MAJOR_VERSION = 5
-private const val MIN_SUPPORTED_GRADLE_MINOR_VERSION = 0
 
 private const val SCRIPTING_LOG_PREFIX = "kotlin scripting plugin:"
 
@@ -70,10 +66,7 @@ class ScriptingGradleSubplugin : Plugin<Project> {
                                 discoveryClasspathConfiguration.allDependencies.isEmpty() -> {
                                     // skip further checks - user did not configured any discovery sources
                                 }
-                                !isGradleVersionAtLeast(MIN_SUPPORTED_GRADLE_MAJOR_VERSION, MIN_SUPPORTED_GRADLE_MINOR_VERSION) ->
-                                    project.logger.warn("$SCRIPTING_LOG_PREFIX incompatible Gradle version. Please use the plugin with Gradle version $MIN_SUPPORTED_GRADLE_MAJOR_VERSION.$MIN_SUPPORTED_GRADLE_MINOR_VERSION or newer.")
-                                else ->
-                                    configureScriptsExtensions(project, javaPluginConvention, task.sourceSetName)
+                                else -> configureScriptsExtensions(project, javaPluginConvention, task.sourceSetName)
                             }
                         } catch (e: IllegalStateException) {
                             project.logger.warn("$SCRIPTING_LOG_PREFIX applied in the non-supported environment (error received: ${e.message})")
@@ -146,16 +139,14 @@ private fun configureDiscoveryTransformation(
     project.configurations.maybeCreate(discoveryResultsConfigurationName).apply {
         isCanBeConsumed = false
     }
-    if (isGradleVersionAtLeast(MIN_SUPPORTED_GRADLE_MAJOR_VERSION, MIN_SUPPORTED_GRADLE_MINOR_VERSION)) {
-        project.dependencies.apply {
-            add(
-                discoveryResultsConfigurationName,
-                project.withRegisteredDiscoverScriptExtensionsTransform {
-                    discoveryConfiguration.discoverScriptExtensionsFiles()
-                }
-            )
-        }
-    } // otherwise the warning should already be reported in the ScriptingGradleSubplugin.apply
+    project.dependencies.apply {
+        add(
+            discoveryResultsConfigurationName,
+            project.withRegisteredDiscoverScriptExtensionsTransform {
+                discoveryConfiguration.discoverScriptExtensionsFiles()
+            }
+        )
+    }
 }
 
 internal class DiscoverScriptExtensionsTransform : ArtifactTransform() {

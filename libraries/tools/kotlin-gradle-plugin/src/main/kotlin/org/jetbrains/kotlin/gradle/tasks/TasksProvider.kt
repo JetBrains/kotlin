@@ -68,7 +68,7 @@ internal inline fun <reified T : Task> Project.locateTask(name: String): TaskPro
  * with [name], type [T] and initialization script [body]
  */
 internal inline fun <reified T : Task> Project.locateOrRegisterTask(name: String, noinline body: (T) -> (Unit)): TaskProvider<T> {
-    return project.locateTask(name) ?: registerTask(project, name, T::class.java, body)
+    return project.locateTask(name) ?: project.registerTask(name, T::class.java, body = body)
 }
 
 internal open class KotlinTasksProvider(val targetName: String) {
@@ -80,7 +80,7 @@ internal open class KotlinTasksProvider(val targetName: String) {
     ): TaskProvider<out KotlinCompile> {
         val properties = PropertiesProvider(project)
         val taskClass = taskOrWorkersTask<KotlinCompile, KotlinCompileWithWorkers>(properties)
-        val result = registerTask(project, name, taskClass) {
+        val result = project.registerTask(name, taskClass) {
             configureAction(it)
         }
         configure(result, project, properties, compilation)
