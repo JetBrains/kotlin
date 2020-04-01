@@ -517,6 +517,7 @@ fun runTest() {
     }
 
     static def excludeList = [
+            "build/external/compiler/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" // KT-36880
     ]
 
     boolean isEnabledForNativeBackend(String fileName) {
