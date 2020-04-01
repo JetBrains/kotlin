@@ -396,6 +396,73 @@ object Mapping : TemplateGroupBase() {
         }
     }
 
+    val f_flatMapIndexed = fn("flatMapIndexed(transform: (index: Int, T) -> Iterable<R>)") {
+        includeDefault()
+        include(Maps, CharSequences, ArraysOfUnsigned)
+    } builder {
+        inlineOnly()
+
+        doc {
+            """
+            Returns a single ${f.mapResult} of all elements yielded from results of [transform] function being invoked on each ${f.element}  
+            and its index in the original ${f.collection}.
+            """
+        }
+        sample("samples.collections.Collections.Transformations.flatMap")
+        typeParam("R")
+        returns("List<R>")
+        body {
+            "return flatMapIndexedTo(ArrayList<R>(), transform)"
+        }
+        specialFor(Sequences) {
+            inline(Inline.No)
+            signature("flatMapIndexed(transform: (index: Int, T) -> Sequence<R>)")
+            returns("Sequence<R>")
+            body {
+                """
+                return sequence {
+                    var index = 0
+                    for (element in this@flatMapIndexed) {
+                        val result = transform(checkIndexOverflow(index++), element)
+                        for (r in result) yield(r)
+                    }
+                }
+                """
+            }
+        }
+    }
+
+    val f_flatMapIndexedTo = fn("flatMapIndexedTo(destination: C, transform: (index: Int, T) -> Iterable<R>)") {
+        includeDefault()
+        include(Maps, CharSequences, ArraysOfUnsigned)
+    } builder {
+        inlineOnly()
+
+        doc {
+            """
+            Appends all elements yielded from results of [transform] function being invoked on each ${f.element} 
+            and its index in the original ${f.collection}, to the given [destination].
+            """
+        }
+        specialFor(Sequences) {
+            signature("flatMapIndexedTo(destination: C, transform: (index: Int, T) -> Sequence<R>)")
+        }
+        typeParam("R")
+        typeParam("C : MutableCollection<in R>")
+        returns("C")
+        body {
+            fun checkOverflow(value: String) = if (f == Sequences || f == Iterables) "checkIndexOverflow($value)" else value
+            """
+            var index = 0
+            for (element in this) {
+                val list = transform(${checkOverflow("index++")}, element)
+                destination.addAll(list)
+            }
+            return destination
+            """
+        }
+    }
+
     val f_groupBy_key = fn("groupBy(keySelector: (T) -> K)") {
         includeDefault()
         include(CharSequences, ArraysOfUnsigned)
