@@ -19,7 +19,7 @@ UTypeReferenceExpression (name = T) -> USimpleNameReferenceExpression (identifie
     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))(resolves to PsiMethod:listOf) -> USimpleNameReferenceExpression (identifier = at) -> LightVariableBuilder:at: at
     UTypeReferenceExpression (name = java.util.List<? extends java.lang.String>) -> USimpleNameReferenceExpression (identifier = List) -> PsiClass:List: List
     UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String
-    ULocalVariable (name = tsl) -> UQualifiedReferenceExpression -> null: null
+    ULocalVariable (name = tsl) -> UQualifiedReferenceExpression -> PsiMethod:map: map
     UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = tl) -> LightVariableBuilder:tl: tl
     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))(resolves to PsiMethod:map) -> USimpleNameReferenceExpression (identifier = map) -> PsiMethod:map: map
         UReturnExpression -> UQualifiedReferenceExpression -> null: null

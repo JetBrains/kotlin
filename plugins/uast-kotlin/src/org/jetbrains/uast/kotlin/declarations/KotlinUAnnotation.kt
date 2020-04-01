@@ -63,7 +63,9 @@ abstract class KotlinUAnnotationBase<T : KtCallElement>(
 
     protected abstract fun computeClassDescriptor(): ClassDescriptor?
 
-    override fun resolve(): PsiClass? = computeClassDescriptor()?.toSource()?.getMaybeLightElement() as? PsiClass
+    override fun resolve(): PsiClass? = computeClassDescriptor()?.let {
+        sourcePsi.calleeExpression?.let { ktExpression -> resolveToDeclaration(ktExpression, it) }
+    } as? PsiClass
 
     override fun findAttributeValue(name: String?): UExpression? =
         findDeclaredAttributeValue(name) ?: findAttributeDefaultValue(name ?: "value")

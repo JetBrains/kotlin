@@ -18,8 +18,7 @@ import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UMultiResolvable
 import org.jetbrains.uast.UResolvable
 import org.jetbrains.uast.kotlin.KotlinUastResolveProviderService
-import org.jetbrains.uast.kotlin.getMaybeLightElement
-import org.jetbrains.uast.kotlin.toSource
+import org.jetbrains.uast.kotlin.resolveToDeclaration
 
 
 internal fun getReferenceVariants(ktElement: KtElement, nameHint: String): Sequence<DeclarationDescriptor> =
@@ -31,7 +30,7 @@ internal fun UElement.getResolveResultVariants(ktExpression: KtExpression?): Ite
     val referenceVariants = getReferenceVariants(ktExpression, ktExpression.name ?: ktExpression.text)
 
     fun asCandidateInfo(descriptor: DeclarationDescriptor): CandidateInfo? =
-        descriptor.toSource()?.getMaybeLightElement()?.let { CandidateInfo(it, PsiSubstitutor.EMPTY) }
+        resolveToDeclaration(ktExpression, descriptor)?.let { CandidateInfo(it, PsiSubstitutor.EMPTY) }
 
     return referenceVariants.mapNotNull(::asCandidateInfo).asIterable()
 }
