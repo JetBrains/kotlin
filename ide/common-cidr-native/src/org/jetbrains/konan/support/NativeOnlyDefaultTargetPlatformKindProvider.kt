@@ -11,5 +11,5 @@ import org.jetbrains.kotlin.platform.konan.NativePlatforms
 
 class NativeOnlyDefaultTargetPlatformKindProvider : DefaultIdeTargetPlatformKindProvider {
     override val defaultPlatform: TargetPlatform
-        get() = NativePlatforms.defaultNativePlatform
+        get() = NativePlatforms.unspecifiedNativePlatform
 }
