@@ -28,7 +28,7 @@ class CompletionLoggingPrefixLengthTest: CompletionLoggingTestBase() {
     myFixture.type('.')
     myFixture.completeBasic()
 
-    val prefixLength = lookup.prefixLength()
+    val prefixLength = lookup.prefix().length
 
     myFixture.type("ru\n")
     assertThat(prefixLength).isEqualTo(0)
@@ -38,7 +38,7 @@ class CompletionLoggingPrefixLengthTest: CompletionLoggingTestBase() {
     myFixture.type(".ru")
     myFixture.completeBasic()
 
-    val prefixLength = lookup.prefixLength()
+    val prefixLength = lookup.prefix().length
 
     assertThat(prefixLength).isEqualTo(2)
   }
@@ -49,7 +49,7 @@ class CompletionLoggingPrefixLengthTest: CompletionLoggingTestBase() {
     myFixture.type("Run")
     myFixture.completeBasic()
 
-    val prefixLength = lookup.prefixLength()
+    val prefixLength = lookup.prefix().length
 
     myFixture.type('\n')
 
@@ -62,7 +62,7 @@ class CompletionLoggingPrefixLengthTest: CompletionLoggingTestBase() {
     myFixture.type('R')
     myFixture.completeBasic()
 
-    val prefixLength = lookup.prefixLength()
+    val prefixLength = lookup.prefix().length
 
     myFixture.type("un\n")
 

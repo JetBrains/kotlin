@@ -10,8 +10,8 @@ import com.intellij.util.text.NameUtilCore
 import kotlin.math.max
 
 internal object ContextSimilarityUtil {
-  internal val LINE_SIMILARITY_SCORER_KEY: Key<ContextSimilarityScoringFunction> = Key.create("LINE_SIMILARITY_SCORER")
-  internal val PARENT_SIMILARITY_SCORER_KEY: Key<ContextSimilarityScoringFunction> = Key.create("PARENT_SIMILARITY_SCORER")
+  val LINE_SIMILARITY_SCORER_KEY: Key<ContextSimilarityScoringFunction> = Key.create("LINE_SIMILARITY_SCORER")
+  val PARENT_SIMILARITY_SCORER_KEY: Key<ContextSimilarityScoringFunction> = Key.create("PARENT_SIMILARITY_SCORER")
 
   fun createLineSimilarityScoringFunction(line: String): ContextSimilarityScoringFunction {
     return ContextSimilarityScoringFunction(

@@ -7,6 +7,7 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.lookup.impl.LookupImpl
+import com.intellij.completion.ml.common.PrefixMatchingUtil
 import com.intellij.completion.settings.CompletionMLRankingSettings
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Pair
@@ -74,7 +75,7 @@ class MLSorter : CompletionFinalSorter() {
     if (!lookupStorage.shouldComputeFeatures()) return items
     val startedTimestamp = System.currentTimeMillis()
     val queryLength = lookup.queryLength()
-    val prefixLength = lookup.prefixLength()
+    val prefix = lookup.prefix()
 
     val element2score = mutableMapOf<LookupElement, Double?>()
     val elements = items.toList()
@@ -84,7 +85,7 @@ class MLSorter : CompletionFinalSorter() {
     tryFillFromCache(element2score, elements, queryLength)
     val itemsForScoring = if (element2score.size == elements.size) emptyList() else elements
     calculateScores(element2score, itemsForScoring, positionsBefore,
-                    queryLength, prefixLength, lookup, lookupStorage, parameters)
+                    queryLength, prefix, lookup, lookupStorage, parameters)
     val finalRanking = sortByMlScores(elements, element2score, positionsBefore, lookupStorage)
 
     lookupStorage.performanceTracker.sortingPerformed(itemsForScoring.size, System.currentTimeMillis() - startedTimestamp)
@@ -106,7 +107,7 @@ class MLSorter : CompletionFinalSorter() {
                               items: List<LookupElement>,
                               positionsBefore: Map<LookupElement, Int>,
                               queryLength: Int,
-                              prefixLength: Int,
+                              prefix: String,
                               lookup: LookupImpl,
                               lookupStorage: MutableLookupStorage,
                               parameters: CompletionParameters) {
@@ -120,11 +121,13 @@ class MLSorter : CompletionFinalSorter() {
     val features = RankingFeatures(lookupStorage.userFactors, contextFactors, commonSessionFactors)
     val relevanceObjects = lookup.getRelevanceObjects(items, false)
     val tracker = ModelTimeTracker()
+    val prefixMatchingScorer = PrefixMatchingUtil.createPrefixMatchingScoringFunction(prefix)
     for (element in items) {
       val position = positionsBefore.getValue(element)
       val (relevance, additional) = RelevanceUtil.asRelevanceMaps(relevanceObjects.getOrDefault(element, emptyList()))
       SessionFactorsUtils.saveElementFactorsTo(additional, lookupStorage, element)
-      calculateAdditionalFeaturesTo(additional, element, queryLength, prefixLength, position, items.size, parameters)
+      calculateAdditionalFeaturesTo(additional, element, queryLength, prefix.length, position, items.size, parameters)
+      PrefixMatchingUtil.calculateFeatures(element, prefixMatchingScorer, additional)
       val score = tracker.measure {
         calculateElementScore(rankingModel, element, position, features.withElementFeatures(relevance, additional), queryLength)
       }

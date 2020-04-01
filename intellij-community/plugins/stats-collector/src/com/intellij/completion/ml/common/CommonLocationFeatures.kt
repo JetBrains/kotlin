@@ -4,7 +4,6 @@ package com.intellij.completion.ml.common
 import com.intellij.codeInsight.completion.ml.CompletionEnvironment
 import com.intellij.codeInsight.completion.ml.ContextFeatureProvider
 import com.intellij.codeInsight.completion.ml.MLFeatureValue
-import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.completion.ngram.NGram
 import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.project.DumbService
@@ -13,7 +12,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.stats.completion.prefixLength
+import com.intellij.stats.completion.prefix
 
 class CommonLocationFeatures : ContextFeatureProvider {
   override fun getName(): String = "common"
@@ -24,7 +23,7 @@ class CommonLocationFeatures : ContextFeatureProvider {
     val logicalPosition = editor.offsetToLogicalPosition(caretOffset)
     val lineStartOffset = editor.document.getLineStartOffset(logicalPosition.line)
     val position = environment.parameters.position
-    val prefixLength = lookup.prefixLength()
+    val prefixLength = lookup.prefix().length
     val linePrefix = editor.document.getText(TextRange(lineStartOffset, caretOffset))
 
     putNGramScorers(environment)

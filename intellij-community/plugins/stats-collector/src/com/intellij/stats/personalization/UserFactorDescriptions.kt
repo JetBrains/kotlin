@@ -38,6 +38,8 @@ object UserFactorDescriptions {
       Descriptor.register("timeBetweenTyping", ::TimeBetweenTypingUpdater, ::TimeBetweenTypingReader)
     val MNEMONICS_USAGE: UserFactorDescription<MnemonicsUsageUpdater, MnemonicsUsageReader> =
       Descriptor.register("mnemonicsUsage", ::MnemonicsUsageUpdater, ::MnemonicsUsageReader)
+    val PREFIX_MATCHING_TYPE: UserFactorDescription<PrefixMatchingTypeUpdater, PrefixMatchingTypeReader> =
+      Descriptor.register("prefixMatchingType", ::PrefixMatchingTypeUpdater, ::PrefixMatchingTypeReader)
 
     fun isKnownFactor(id: String): Boolean = id in IDS
 

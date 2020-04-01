@@ -59,6 +59,9 @@ class UserFactorsManagerImpl : UserFactorsManager {
         register(AverageTimeBetweenTyping())
 
         register(MnemonicsRatio())
+
+        for (type in PrefixMatchingType.values())
+            register(PrefixMatchingTypeRatio(type))
     }
 
     override fun getAllFactors(): List<UserFactor> = userFactors.values.toList()

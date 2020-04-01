@@ -31,9 +31,9 @@ fun LookupImpl.queryLength(): Int {
 }
 
 /**
- * @return a length of prefix in the current completion session
+ * @return a prefix in the current completion session
  */
-fun Lookup.prefixLength(): Int {
+fun Lookup.prefix(): String {
     val text = editor.document.text
     val offset = editor.caretModel.offset
     var startOffset = offset
@@ -41,8 +41,7 @@ fun Lookup.prefixLength(): Int {
         if (!text[i].isJavaIdentifierPart()) break
         startOffset = i
     }
-    val prefix = text.substring(startOffset, offset)
-    return prefix.length
+    return text.substring(startOffset, offset)
 }
 
 fun LookupImpl.language(): Language? {

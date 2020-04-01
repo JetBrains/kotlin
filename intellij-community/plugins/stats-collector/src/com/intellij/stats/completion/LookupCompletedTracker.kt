@@ -6,6 +6,8 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.stats.personalization.UserFactorDescriptions
 import com.intellij.stats.personalization.UserFactorStorage
+import com.intellij.stats.personalization.impl.PrefixMatchingType
+import com.intellij.stats.storage.factors.MutableLookupStorage
 
 /**
  * @author Vitaliy.Bibaev
@@ -46,6 +48,14 @@ class LookupCompletedTracker : LookupFinishListener() {
             val isMnemonicsUsed = !element.lookupString.startsWith(pattern)
             UserFactorStorage.applyOnBoth(lookup.project, UserFactorDescriptions.MNEMONICS_USAGE) { updater ->
                 updater.fireCompletionFinished(isMnemonicsUsed)
+            }
+
+            val storage = MutableLookupStorage.get(lookup)?.getItemStorage(element.idString())
+            val type = storage?.getLastUsedFactors()?.get("prefix_matching_type") as? PrefixMatchingType
+            if (type != null) {
+                UserFactorStorage.applyOnBoth(lookup.project, UserFactorDescriptions.PREFIX_MATCHING_TYPE) { updater ->
+                    updater.fireCompletionPerformed(type)
+                }
             }
         }
     }
