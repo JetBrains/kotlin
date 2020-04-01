@@ -8,16 +8,12 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.attributes.Usage.JAVA_API
-import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
+import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
-import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import javax.inject.Inject
 
 internal const val COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME = "commonMainMetadataElements"
@@ -32,7 +28,7 @@ open class KotlinMetadataTarget @Inject constructor(project: Project) :
             val usageContexts = mutableSetOf<DefaultKotlinUsageContext>()
 
             // This usage value is only needed for Maven scope mapping. Don't replace it with a custom Kotlin Usage value
-            val javaApiUsage = project.usageByName(if (isGradleVersionAtLeast(5, 3)) "java-api-jars" else JAVA_API)
+            val javaApiUsage = project.usageByName(Usage.JAVA_API_JARS)
 
             usageContexts += run {
                 val allMetadataJar = project.tasks.getByName(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)

@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
-import org.jetbrains.kotlin.gradle.utils.archivePathCompatible
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import java.io.File
-import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.*
 import java.util.*
 import java.util.concurrent.Callable

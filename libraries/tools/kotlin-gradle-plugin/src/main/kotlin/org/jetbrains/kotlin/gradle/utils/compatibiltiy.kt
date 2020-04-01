@@ -16,40 +16,10 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
-import org.gradle.api.Action
 import org.gradle.api.GradleException
-import org.gradle.api.Task
-import org.gradle.api.artifacts.repositories.IvyArtifactRepository
-import org.gradle.api.artifacts.repositories.IvyPatternRepositoryLayout
-import org.gradle.api.tasks.TaskInputs
-import org.gradle.api.tasks.TaskOutputs
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.util.GradleVersion
 import java.io.File
-
-internal val Task.inputsCompatible: TaskInputs get() = inputs
-
-internal val Task.outputsCompatible: TaskOutputs get() = outputs
-
-private val propertyMethod by lazy {
-    TaskInputs::class.java.methods.first {
-        it.name == "property" && it.parameterTypes.contentEquals(arrayOf(String::class.java, Any::class.java))
-    }
-}
-
-internal fun TaskInputs.propertyCompatible(name: String, value: Any) {
-    propertyMethod(this, name, value)
-}
-
-private val inputsDirMethod by lazy {
-    TaskInputs::class.java.methods.first {
-        it.name == "dir" && it.parameterTypes.contentEquals(arrayOf(Any::class.java))
-    }
-}
-
-internal fun TaskInputs.dirCompatible(dirPath: Any) {
-    inputsDirMethod(this, dirPath)
-}
 
 internal fun checkGradleCompatibility(minSupportedVersion: GradleVersion = GradleVersion.version("5.4")) {
     val currentVersion = GradleVersion.current()
@@ -61,49 +31,5 @@ internal fun checkGradleCompatibility(minSupportedVersion: GradleVersion = Gradl
     }
 }
 
-internal fun AbstractArchiveTask.setArchiveAppendixCompatible(appendixProvider: () -> String) {
-    if (isGradleVersionAtLeast(5, 2)) {
-        archiveAppendix.set(project.provider { appendixProvider() })
-    } else {
-        @Suppress("DEPRECATION")
-        appendix = appendixProvider()
-    }
-}
-
 internal val AbstractArchiveTask.archivePathCompatible: File
-    get() =
-        if (isGradleVersionAtLeast(5, 1)) {
-            archiveFile.get().asFile
-        } else {
-            @Suppress("DEPRECATION")
-            archivePath
-        }
-
-internal val AbstractArchiveTask.archiveNameCompatible: String
-    get() =
-        if (isGradleVersionAtLeast(5, 1)) {
-            archiveFileName.get()
-        } else {
-            @Suppress("DEPRECATION")
-            archiveName
-        }
-
-internal fun AbstractArchiveTask.setArchiveClassifierCompatible(classifierProvider: () -> String) {
-    if (isGradleVersionAtLeast(5, 2)) {
-        archiveClassifier.set(project.provider { classifierProvider() })
-    } else {
-        @Suppress("DEPRECATION")
-        classifier = classifierProvider()
-    }
-}
-
-internal fun IvyArtifactRepository.patternLayoutCompatible(config: IvyPatternRepositoryLayout.() -> Unit) {
-    if (isGradleVersionAtLeast(5, 0)) {
-        patternLayout(config)
-    } else {
-        // The "layout" method is planned to be removed in Gradle 6.0. Access it using reflection.
-        javaClass
-            .getMethod("layout", String::class.java, Action::class.java)
-            .invoke(this, "pattern", Action<IvyPatternRepositoryLayout> { it.config() })
-    }
-}
+    get() = archiveFile.get().asFile

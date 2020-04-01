@@ -180,9 +180,7 @@ class KotlinMultiplatformPlugin(
 
     private fun configurePublishingWithMavenPublish(project: Project) = project.pluginManager.withPlugin("maven-publish") { _ ->
 
-        if (isGradleVersionAtLeast(5, 3) &&
-            project.multiplatformExtension.run { isGradleMetadataExperimental && !isGradleMetadataAvailable }
-        ) {
+        if (project.multiplatformExtension.run { isGradleMetadataExperimental && !isGradleMetadataAvailable }) {
             SingleWarningPerBuild.show(project, GRADLE_NO_METADATA_WARNING)
         }
 
@@ -376,8 +374,8 @@ internal fun sourcesJarTask(
     (project.tasks.findByName(taskName) as? Jar)?.let { return it }
 
     val result = project.tasks.create(taskName, Jar::class.java) { sourcesJar ->
-        sourcesJar.setArchiveAppendixCompatible { artifactNameAppendix }
-        sourcesJar.setArchiveClassifierCompatible { "sources" }
+        sourcesJar.archiveAppendix.set(artifactNameAppendix)
+        sourcesJar.archiveClassifier.set("sources")
     }
 
     project.whenEvaluated {

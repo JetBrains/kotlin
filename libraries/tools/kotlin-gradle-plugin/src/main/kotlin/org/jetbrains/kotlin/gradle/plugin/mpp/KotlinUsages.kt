@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 
 object KotlinUsages {
     const val KOTLIN_API = "kotlin-api"
@@ -41,8 +40,7 @@ object KotlinUsages {
 
     internal fun producerApiUsage(target: KotlinTarget) = target.project.usageByName(
         when (target.platformType) {
-            in jvmPlatformTypes ->
-                if (isGradleVersionAtLeast(5, 3)) "java-api-jars" else JAVA_API
+            in jvmPlatformTypes -> JAVA_API_JARS
             else -> KOTLIN_API
         }
     )

@@ -2398,11 +2398,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             gradleSettingsScript().modify { it.replace("enableFeaturePreview(", "//") }
             build {
-                if (testGradleVersionAtLeast("5.3-rc-2")) {
-                    assertContains(GRADLE_NO_METADATA_WARNING)
-                } else {
-                    assertNotContains(GRADLE_NO_METADATA_WARNING)
-                }
+                assertContains(GRADLE_NO_METADATA_WARNING)
             }
         }
     }

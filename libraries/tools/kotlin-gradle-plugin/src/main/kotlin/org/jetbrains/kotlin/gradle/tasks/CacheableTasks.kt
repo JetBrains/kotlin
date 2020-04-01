@@ -17,14 +17,12 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Task
-import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.utils.outputsCompatible
 
 internal fun isBuildCacheEnabledForKotlin(): Boolean =
     System.getProperty(KOTLIN_CACHING_ENABLED_PROPERTY)?.toBoolean() ?: true
 
 internal fun <T : Task> T.cacheOnlyIfEnabledForKotlin() {
-    outputsCompatible.cacheIf { isBuildCacheEnabledForKotlin() }
+    outputs.cacheIf { isBuildCacheEnabledForKotlin() }
 }
 
 private const val KOTLIN_CACHING_ENABLED_PROPERTY = "kotlin.caching.enabled"
