@@ -139,6 +139,47 @@ class AnnotationProcessorConfigImportingTest: GradleImportingTestCase() {
   }
 
   @Test
+  @TargetVersions("4.6+")
+  fun `test annotation processor config imported correctly for multimodule project`() {
+
+    createProjectSubFile("settings.gradle", "include 'projectA', 'projectB'")
+
+    importProject(
+      GradleBuildScriptBuilderEx()
+        .addPostfix(
+          """
+            allprojects {
+              apply plugin: 'java'
+              
+              repositories {
+                maven {
+                  url 'https://repo.labs.intellij.net/repo1'
+                }
+              }
+              
+              dependencies {
+                compileOnly 'org.projectlombok:lombok:1.18.8'
+                annotationProcessor 'org.projectlombok:lombok:1.18.8'
+              }
+      }
+    """.trimIndent()).generate());
+
+    val config = CompilerConfiguration.getInstance(myProject) as CompilerConfigurationImpl
+    val moduleProcessorProfiles = config.moduleProcessorProfiles
+
+    then(moduleProcessorProfiles)
+      .describedAs("An annotation processor profile should be created for Gradle module")
+      .hasSize(1)
+
+    with (moduleProcessorProfiles[0]) {
+      then(isEnabled).isTrue()
+      then(isObtainProcessorsFromClasspath).isFalse()
+      then(processorPath).contains("lombok")
+      then(moduleNames).contains("project.main", "project.projectA.main", "project.projectB.main")
+    }
+  }
+
+  @Test
   @TargetVersions("5.2+")
   fun `test annotation processor output folders imported properly`() {
 

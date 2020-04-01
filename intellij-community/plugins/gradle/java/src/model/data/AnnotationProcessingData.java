@@ -50,6 +50,26 @@ public class AnnotationProcessingData {
     return path;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    AnnotationProcessingData data = (AnnotationProcessingData)o;
+
+    if (!path.equals(data.path)) return false;
+    if (!arguments.equals(data.arguments)) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = path.hashCode();
+    result = 31 * result + arguments.hashCode();
+    return result;
+  }
+
   public static class AnnotationProcessorOutput {
     private final String outputPath;
     private final boolean testSources;
