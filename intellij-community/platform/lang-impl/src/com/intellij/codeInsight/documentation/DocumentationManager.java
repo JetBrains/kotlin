@@ -371,7 +371,9 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     Project project = getProject(file);
     PsiDocumentManager.getInstance(project).commitAllDocuments();
 
-    PsiElement list = ParameterInfoController.findArgumentList(file, editor.getCaretModel().getOffset(), -1);
+    PsiElement list = file != null && file.isValid() // commit could invalidate the file
+                      ? ParameterInfoController.findArgumentList(file, editor.getCaretModel().getOffset(), -1)
+                      : null;
     PsiElement expressionList = null;
     if (list != null) {
       LookupEx lookup = LookupManager.getInstance(myProject).getActiveLookup();
