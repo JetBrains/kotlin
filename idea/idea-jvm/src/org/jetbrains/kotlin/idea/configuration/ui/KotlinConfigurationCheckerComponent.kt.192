@@ -81,14 +81,13 @@ class KotlinConfigurationCheckerComponent(val project: Project) : ProjectCompone
     companion object {
         const val CONFIGURE_NOTIFICATION_GROUP_ID = "Configure Kotlin in Project"
 
+        fun getInstance(project: Project): KotlinConfigurationCheckerComponent =
+            project.getComponent(KotlinConfigurationCheckerComponent::class.java)
+                ?: error("Can't find ${KotlinConfigurationCheckerComponent::class} component")
+
         fun getInstanceIfNotDisposed(project: Project): KotlinConfigurationCheckerComponent? {
             return runReadAction {
-                if (!project.isDisposed) {
-                    project.getComponent(KotlinConfigurationCheckerComponent::class.java)
-                        ?: error("Can't find ${KotlinConfigurationCheckerComponent::class} component")
-                } else {
-                    null
-                }
+                if (!project.isDisposed) getInstance(project) else null
             }
         }
     }

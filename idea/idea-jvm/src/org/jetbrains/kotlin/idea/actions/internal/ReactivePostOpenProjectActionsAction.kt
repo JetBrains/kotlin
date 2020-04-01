@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.idea.actions.internal
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerService
+import org.jetbrains.kotlin.idea.util.ProgressIndicatorUtils.runUnderDisposeAwareIndicator
 
 class ReactivePostOpenProjectActionsAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
-        val configurationChecker = KotlinConfigurationCheckerService.getInstanceIfNotDisposed(project) ?: return
-        configurationChecker.performProjectPostOpenActions()
+        runUnderDisposeAwareIndicator(project) {
+            KotlinConfigurationCheckerService.getInstance(project).performProjectPostOpenActions()
+        }
     }
 }

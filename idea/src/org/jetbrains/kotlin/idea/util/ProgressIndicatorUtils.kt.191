@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.idea.util
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.util.BackgroundTaskUtil
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
@@ -36,6 +38,11 @@ object ProgressIndicatorUtils {
         return ProgressManager.getInstance().runProcessWithProgressSynchronously(process, progressTitle, true, project)
     }
 
+    fun <T> runUnderDisposeAwareIndicator(
+        parent: Disposable,
+        computable: () -> T
+    ): T = BackgroundTaskUtil.runUnderDisposeAwareIndicator(parent, Computable { computable() })
+
     @JvmStatic
     fun <T> awaitWithCheckCanceled(future: Future<T>): T {
         while (true) {
@@ -50,5 +57,4 @@ object ProgressIndicatorUtils {
             }
         }
     }
-
 }
