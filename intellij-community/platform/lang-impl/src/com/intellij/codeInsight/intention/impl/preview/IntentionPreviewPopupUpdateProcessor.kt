@@ -3,10 +3,11 @@ package com.intellij.codeInsight.intention.impl.preview
 
 import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.codeInsight.intention.impl.IntentionHintComponent
 import com.intellij.codeInsight.intention.impl.preview.IntentionPreviewComponent.Companion.LOADING_PREVIEW
 import com.intellij.codeInsight.intention.impl.preview.IntentionPreviewComponent.Companion.NO_PREVIEW
 import com.intellij.openapi.actionSystem.CommonShortcuts.ESCAPE
+import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.actionSystem.ShortcutSet
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.editor.Editor
@@ -97,8 +98,7 @@ internal class IntentionPreviewPopupUpdateProcessor(private val project: Project
     editorsToRelease.clear()
     component.removeAll()
     show = false
-    updateAdvertiserText.invoke(
-      CodeInsightBundle.message("intention.preview.adv.show.text", IntentionHintComponent.INTENTION_PREVIEW_SHORTCUT_TEXT))
+    updateAdvertiserText.invoke(CodeInsightBundle.message("intention.preview.adv.show.text", getShortcutText()))
     return true
   }
 
@@ -142,6 +142,9 @@ internal class IntentionPreviewPopupUpdateProcessor(private val project: Project
   companion object {
     private val ESCAPE_SHORTCUT_TEXT = KeymapUtil.getPreferredShortcutText(ESCAPE.shortcuts)
     private const val MAX_HEIGHT = 300
+
+    fun getShortcutText(): String = KeymapUtil.getPreferredShortcutText(getShortcutSet().shortcuts)
+    fun getShortcutSet(): ShortcutSet = KeymapUtil.getActiveKeymapShortcuts(IdeActions.ACTION_QUICK_IMPLEMENTATIONS)
   }
 
   internal class IntentionPreviewPopupKey
