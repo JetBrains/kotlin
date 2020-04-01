@@ -24,9 +24,13 @@ public class SearchEverywhereUsageTriggerCollector {
   public static final String MORE_ITEM_SELECTED = "moreItemChosen";
   public static final String COMMAND_USED = "commandUsed";
   public static final String COMMAND_COMPLETED = "commandCompleted";
+  public static final String SESSION_FINISHED = "sessionFinished";
 
   public static final String CONTRIBUTOR_ID_FIELD = "contributorID";
   public static final String CURRENT_TAB_FIELD = "currentTabId";
+  public static final String SELECTED_ITEM_NUMBER = "selectedItemNumber";
+  public static final String TYPED_SYMBOL_KEYS = "typedSymbolKeys";
+  public static final String TYPED_NAVIGATION_KEYS = "typedNavigationKeys";
 
   public static void trigger(@NotNull Project project, @NotNull String feature) {
     trigger(project, feature, new FeatureUsageData());
@@ -46,17 +50,14 @@ public class SearchEverywhereUsageTriggerCollector {
     return res;
   }
 
-  public static FeatureUsageData createData(@Nullable String contributorID, @Nullable String currentTab) {
-    FeatureUsageData res = new FeatureUsageData();
+  public static FeatureUsageData createData(@Nullable String contributorID, @Nullable String currentTab, int itemNumber) {
+    FeatureUsageData res = createData(contributorID);
 
-    if (contributorID == null && currentTab == null) {
-      return res;
-    }
-
-    res.addData(CONTRIBUTOR_ID_FIELD, contributorID);
     if (currentTab != null) {
       res.addData(CURRENT_TAB_FIELD, currentTab);
     }
+
+    res.addData(SELECTED_ITEM_NUMBER, itemNumber);
 
     return res;
   }
