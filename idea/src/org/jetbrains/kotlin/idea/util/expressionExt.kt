@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 
-fun KtCallExpression.replaceOrCreateTypeArgumentList(newTypeArgumentList: KtTypeArgumentList) {
+fun KtCallElement.replaceOrCreateTypeArgumentList(newTypeArgumentList: KtTypeArgumentList) {
     if (typeArgumentList != null) typeArgumentList?.replace(newTypeArgumentList)
     else addAfter(
         newTypeArgumentList,

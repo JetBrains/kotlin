@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.util.replaceOrCreateTypeArgumentList
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 
 class ClassUsageReplacementStrategy(
     typeReplacement: KtUserType?,
@@ -65,7 +65,7 @@ class ClassUsageReplacementStrategy(
                 }
             }
 
-            is KtCallExpression -> {
+            is KtCallElement -> {
                 if (usage != parent.calleeExpression) return null
                 when {
                     constructorReplacementStrategy == null && typeReplacement != null -> return {
@@ -90,7 +90,7 @@ class ClassUsageReplacementStrategy(
         }
     }
 
-    private fun replaceConstructorCallWithOtherTypeConstruction(callExpression: KtCallExpression): KtElement {
+    private fun replaceConstructorCallWithOtherTypeConstruction(callExpression: KtCallElement): KtElement {
         val referenceExpression = typeReplacement?.referenceExpression ?: error("Couldn't find referenceExpression")
         val classFromReplacement = KotlinClassShortNameIndex
             .getInstance()[referenceExpression.text, callExpression.project, callExpression.resolveScope]
@@ -115,7 +115,7 @@ class ClassUsageReplacementStrategy(
 
         callExpression.calleeExpression?.replace(referenceExpression)
 
-        val expressionToReplace = callExpression.getQualifiedExpressionForSelectorOrThis()
+        val expressionToReplace = callExpression.getQualifiedExpressionForSelector() ?: callExpression
         val newExpression = if (typeReplacementQualifierAsExpression != null)
             factory.createExpressionByPattern("$0.$1", typeReplacementQualifierAsExpression, callExpression)
         else

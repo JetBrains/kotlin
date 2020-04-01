@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.*
 
 class CodeInliner<TCallElement : KtElement>(
     private val nameExpression: KtSimpleNameExpression,
@@ -135,9 +134,14 @@ class CodeInliner<TCallElement : KtElement>(
         val replacementPerformer = when (elementToBeReplaced) {
             is KtExpression -> ExpressionReplacementPerformer(codeToInline, elementToBeReplaced)
             is KtAnnotationEntry -> AnnotationEntryReplacementPerformer(codeToInline, elementToBeReplaced)
-            else -> error("Unsupported element")
+            is KtSuperTypeCallEntry -> SuperTypeCallEntryReplacementPerformer(codeToInline, elementToBeReplaced)
+            else -> {
+                assert(!canBeReplaced(elementToBeReplaced))
+                error("Unsupported element")
+            }
         }
 
+        assert(canBeReplaced(elementToBeReplaced))
         return replacementPerformer.doIt(postProcessing = { range ->
             val newRange = postProcessInsertedCode(range, lexicalScope)
             if (!newRange.isEmpty) {
@@ -207,7 +211,7 @@ class CodeInliner<TCallElement : KtElement>(
         val typeParameters = resolvedCall.resultingDescriptor.original.typeParameters
 
         val callElement = resolvedCall.call.callElement
-        val callExpression = callElement as? KtCallExpression
+        val callExpression = callElement as? KtCallElement
         val explicitTypeArgs = callExpression?.typeArgumentList?.arguments
         if (explicitTypeArgs != null && explicitTypeArgs.size != typeParameters.size) return
 
@@ -498,7 +502,7 @@ class CodeInliner<TCallElement : KtElement>(
         // we drop only those arguments that added to the code from some parameter's default
         fun canDropArgument(argument: ValueArgument) = (argument as KtValueArgument)[DEFAULT_PARAMETER_VALUE_KEY]
 
-        result.forEachDescendantOfType<KtCallExpression> { callExpression ->
+        result.forEachDescendantOfType<KtCallElement> { callExpression ->
             val resolvedCall = callExpression.getResolvedCall(newBindingContext) ?: return@forEachDescendantOfType
 
             argumentsToDrop.addAll(OptionalParametersHelper.detectArgumentsToDropForDefaults(resolvedCall, project, ::canDropArgument))
@@ -509,7 +513,7 @@ class CodeInliner<TCallElement : KtElement>(
             val argumentList = argument.parent as KtValueArgumentList
             argumentList.removeArgument(argument)
             if (argumentList.arguments.isEmpty()) {
-                val callExpression = argumentList.parent as KtCallExpression
+                val callExpression = argumentList.parent as KtCallElement
                 if (callExpression.lambdaArguments.isNotEmpty()) {
                     argumentList.delete()
                 }
@@ -547,9 +551,9 @@ class CodeInliner<TCallElement : KtElement>(
             if (argument.getSpreadElement() != null && !argument.isNamed()) {
                 val argumentExpression = argument.getArgumentExpression() ?: return@forEachDescendantOfType
                 val resolvedCall = argumentExpression.resolveToCall() ?: return@forEachDescendantOfType
-                val callExpression = resolvedCall.call.callElement as? KtCallExpression ?: return@forEachDescendantOfType
+                val callExpression = resolvedCall.call.callElement as? KtCallElement ?: return@forEachDescendantOfType
                 if (CompileTimeConstantUtils.isArrayFunctionCall(resolvedCall)) {
-                    argumentsToExpand.add(argument to callExpression.valueArguments)
+                    argumentsToExpand.add(argument to callExpression.valueArgumentList?.arguments.orEmpty())
                 }
             }
         }
@@ -619,5 +623,10 @@ class CodeInliner<TCallElement : KtElement>(
         // these keys are used on KtValueArgument
         private val MAKE_ARGUMENT_NAMED_KEY = Key<Unit>("MAKE_ARGUMENT_NAMED")
         private val DEFAULT_PARAMETER_VALUE_KEY = Key<Unit>("DEFAULT_PARAMETER_VALUE")
+
+        fun canBeReplaced(element: KtElement): Boolean = when (element) {
+            is KtExpression, is KtAnnotationEntry, is KtSuperTypeCallEntry -> true
+            else -> false
+        }
     }
 }

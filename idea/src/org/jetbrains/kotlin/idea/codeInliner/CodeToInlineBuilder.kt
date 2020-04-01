@@ -137,8 +137,8 @@ class CodeToInlineBuilder(
         bindingContext: BindingContext,
         analyze: () -> BindingContext
     ): BindingContext {
-        val typeArgsToAdd = ArrayList<Pair<KtCallExpression, KtTypeArgumentList>>()
-        codeToInline.forEachDescendantOfType<KtCallExpression> {
+        val typeArgsToAdd = ArrayList<Pair<KtCallElement, KtTypeArgumentList>>()
+        codeToInline.forEachDescendantOfType<KtCallElement> {
             if (InsertExplicitTypeArgumentsIntention.isApplicableTo(it, bindingContext)) {
                 typeArgsToAdd.add(it to InsertExplicitTypeArgumentsIntention.createTypeArguments(it, bindingContext)!!)
             }

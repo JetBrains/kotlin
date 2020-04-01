@@ -88,7 +88,7 @@ internal class SuperTypeCallEntryReplacementPerformer(
     elementToBeReplaced: KtSuperTypeCallEntry
 ) : AbstractSimpleReplacementPerformer<KtSuperTypeCallEntry>(codeToInline, elementToBeReplaced) {
     override fun createDummyElement(mainExpression: KtExpression): KtSuperTypeCallEntry {
-        val text = if (mainExpression is KtCallExpression && mainExpression.lambdaArguments.isNotEmpty()) {
+        val text = if (mainExpression is KtCallElement && mainExpression.lambdaArguments.isNotEmpty()) {
             callWithoutLambdaArguments(mainExpression)
         } else {
             mainExpression.text
@@ -98,8 +98,8 @@ internal class SuperTypeCallEntryReplacementPerformer(
     }
 }
 
-private fun callWithoutLambdaArguments(callExpression: KtCallExpression): String {
-    val copy = callExpression.copy() as KtCallExpression
+private fun callWithoutLambdaArguments(callExpression: KtCallElement): String {
+    val copy = callExpression.copy() as KtCallElement
     val lambdaArgument = copy.lambdaArguments.first()
 
     val argumentExpression = lambdaArgument.getArgumentExpression() ?: return callExpression.text
