@@ -3,12 +3,15 @@ package com.intellij.codeInsight.editorActions;
 
 import com.intellij.openapi.extensions.AbstractExtensionPointBean;
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.extensions.RequiredElement;
 import com.intellij.openapi.util.LazyInstance;
 import com.intellij.util.KeyedLazyInstance;
 import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * Registers {@link QuoteHandler} for given file type.
+ *
  * @author yole
  */
 public class QuoteHandlerEP extends AbstractExtensionPointBean implements KeyedLazyInstance<QuoteHandler> {
@@ -16,8 +19,11 @@ public class QuoteHandlerEP extends AbstractExtensionPointBean implements KeyedL
 
   // these must be public for scrambling compatibility
   @Attribute("fileType")
+  @RequiredElement
   public String fileType;
+
   @Attribute("className")
+  @RequiredElement
   public String className;
 
   private final LazyInstance<QuoteHandler> myHandler = new LazyInstance<QuoteHandler>() {
