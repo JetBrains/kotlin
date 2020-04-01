@@ -53,7 +53,7 @@ class DaemonTooltipAction(private val myFixText: String, private val myActualOff
     editor.caretModel.moveToOffset(myActualOffset)
     val project = editor.project ?: return
 
-    TooltipActionsLogger.logShowAll(project)
+    TooltipActionsLogger.showAllEvent.log(project)
     val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.document) ?: return
     ShowIntentionActionsHandler().invoke(project, editor, psiFile)
   }
