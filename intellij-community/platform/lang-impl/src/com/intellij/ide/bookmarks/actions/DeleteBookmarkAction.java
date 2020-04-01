@@ -38,7 +38,7 @@ class DeleteBookmarkAction extends DumbAwareAction {
     setEnabledInModalContext(true);
     myProject = project;
     myList = list;
-    registerCustomShortcutSet(CustomShortcutSet.fromString("DELETE", "BACK_SPACE"), list);
+    registerCustomShortcutSet(CustomShortcutSet.fromString("DELETE"), list);
   }
 
   @Override
