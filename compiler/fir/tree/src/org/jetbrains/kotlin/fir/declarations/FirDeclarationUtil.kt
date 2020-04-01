@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.builder.AbstractFirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
@@ -36,6 +37,8 @@ inline val FirRegularClass.isData get() = status.isData
 inline val FirRegularClass.isInline get() = status.isInline
 inline val FirMemberDeclaration.modality get() = status.modality
 inline val FirMemberDeclaration.visibility get() = status.visibility
+inline val FirMemberDeclaration.allowsToHaveFakeOverride: Boolean
+    get() = !Visibilities.isPrivate(visibility) && this != Visibilities.INVISIBLE_FAKE
 inline val FirMemberDeclaration.effectiveVisibility get() = status.effectiveVisibility
 inline val FirMemberDeclaration.isActual get() = status.isActual
 inline val FirMemberDeclaration.isExpect get() = status.isExpect
@@ -55,6 +58,8 @@ inline val FirMemberDeclaration.isFromEnumClass: Boolean get() = status.isFromEn
 
 inline val FirPropertyAccessor.modality get() = status.modality
 inline val FirPropertyAccessor.visibility get() = status.visibility
+inline val FirPropertyAccessor.allowsToHaveFakeOverride: Boolean
+    get() = !Visibilities.isPrivate(visibility) && this != Visibilities.INVISIBLE_FAKE
 
 fun AbstractFirRegularClassBuilder.addDeclaration(declaration: FirDeclaration) {
     declarations += declaration
@@ -66,7 +71,6 @@ fun AbstractFirRegularClassBuilder.addDeclaration(declaration: FirDeclaration) {
 fun AbstractFirRegularClassBuilder.addDeclarations(declarations: Collection<FirDeclaration>) {
     declarations.forEach(this::addDeclaration)
 }
-
 
 val FirTypeAlias.expandedConeType: ConeClassLikeType? get() = expandedTypeRef.coneTypeSafe()
 
