@@ -17,49 +17,32 @@ open class CandidateCollector(
     var currentApplicability = CandidateApplicability.HIDDEN
         private set
 
-    private var currentGroup = TowerGroup.Start
+    private var bestGroup = TowerGroup.Last
 
     fun newDataSet() {
         groupNumbers.clear()
         candidates.clear()
         currentApplicability = CandidateApplicability.HIDDEN
+        bestGroup = TowerGroup.Last
     }
 
     open fun consumeCandidate(group: TowerGroup, candidate: Candidate): CandidateApplicability {
         val applicability = resolutionStageRunner.processCandidate(candidate)
 
-        if (applicability > currentApplicability) {
-            groupNumbers.clear()
+        if (applicability > currentApplicability || (applicability == currentApplicability && group < bestGroup)) {
             candidates.clear()
             currentApplicability = applicability
-            currentGroup = group
+            bestGroup = group
         }
 
-        if (applicability == currentApplicability) {
+        if (applicability == currentApplicability && group == bestGroup) {
             candidates.add(candidate)
-            groupNumbers.add(group)
         }
 
         return applicability
     }
 
-    fun bestCandidates(): List<Candidate> {
-        if (groupNumbers.isEmpty()) return emptyList()
-        if (groupNumbers.size == 1) return candidates
-        val result = mutableListOf<Candidate>()
-        var bestGroup = groupNumbers.first()
-        for ((index, candidate) in candidates.withIndex()) {
-            val group = groupNumbers[index]
-            if (bestGroup > group) {
-                bestGroup = group
-                result.clear()
-            }
-            if (bestGroup == group) {
-                result.add(candidate)
-            }
-        }
-        return result
-    }
+    fun bestCandidates() = candidates
 
     fun isSuccess(): Boolean {
         return currentApplicability >= CandidateApplicability.SYNTHETIC_RESOLVED
