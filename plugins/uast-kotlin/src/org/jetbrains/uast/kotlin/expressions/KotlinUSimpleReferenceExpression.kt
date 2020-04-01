@@ -187,10 +187,7 @@ open class KotlinUSimpleReferenceExpression(
         override val kind: UastCallKind
             get() = UastCallKind.METHOD_CALL
 
-        override fun resolve(): PsiMethod? {
-            val source = accessorDescriptor.toSource()
-            return resolveSource(sourcePsi, accessorDescriptor, source)
-        }
+        override fun resolve(): PsiMethod? = resolveToPsiMethod(sourcePsi, accessorDescriptor)
     }
 
     private fun KtExpression.readWriteAccess(): ReferenceAccess {

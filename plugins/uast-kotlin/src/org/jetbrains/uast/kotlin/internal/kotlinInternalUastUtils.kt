@@ -96,7 +96,14 @@ internal fun DeclarationDescriptor.toSource(): PsiElement? {
     }
 }
 
-internal fun resolveSource(context: KtElement, descriptor: DeclarationDescriptor, source: PsiElement?): PsiMethod? {
+internal fun resolveToPsiMethod(context: KtElement): PsiMethod? =
+    context.getResolvedCall(context.analyze())?.resultingDescriptor?.let { resolveToPsiMethod(context, it) }
+
+internal fun resolveToPsiMethod(
+    context: KtElement,
+    descriptor: DeclarationDescriptor,
+    source: PsiElement? = descriptor.toSource()
+): PsiMethod? {
 
     if (descriptor is ConstructorDescriptor && descriptor.isPrimary
         && source is KtClassOrObject && source.primaryConstructor == null

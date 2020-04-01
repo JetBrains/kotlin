@@ -179,7 +179,7 @@ class KotlinUFunctionCallExpression(
         return variants.flatMap {
             when (val source = it.toSource()) {
                 is KtClass -> source.toLightClass()?.constructors?.asSequence().orEmpty()
-                else -> resolveSource(sourcePsi, it, source)?.let { sequenceOf(it) }.orEmpty()
+                else -> resolveToPsiMethod(sourcePsi, it, source)?.let { sequenceOf(it) }.orEmpty()
             }
         }.map { TypedResolveResult(it) }.asIterable()
     })
@@ -189,8 +189,7 @@ class KotlinUFunctionCallExpression(
 
     override fun resolve(): PsiMethod? {
         val descriptor = resolvedCall?.resultingDescriptor ?: return null
-        val source = descriptor.toSource()
-        return resolveSource(sourcePsi, descriptor, source)
+        return resolveToPsiMethod(sourcePsi, descriptor)
     }
 
     override fun accept(visitor: UastVisitor) {
