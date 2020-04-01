@@ -35,7 +35,7 @@ internal class CandidateFactoriesAndCollectors(
 
 typealias EnqueueTasksForInvokeReceiverCandidates = () -> Unit
 
-internal class LevelHandler {
+internal class TowerLevelHandler {
 
     // Try to avoid adding additional state here
     private var processResult = ProcessorAction.NONE

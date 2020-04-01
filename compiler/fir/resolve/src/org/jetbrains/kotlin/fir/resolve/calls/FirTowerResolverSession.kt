@@ -90,9 +90,7 @@ class FirTowerResolverSession internal constructor(
     ): ProcessorAction {
         manager.requestGroup(group)
 
-        val levelHandler =
-            LevelHandler(
-            )
+        val levelHandler = TowerLevelHandler()
 
         return levelHandler.handleLevel(
             callInfo, explicitReceiverKind, group,
