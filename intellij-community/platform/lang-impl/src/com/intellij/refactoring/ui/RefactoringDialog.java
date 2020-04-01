@@ -156,7 +156,7 @@ public abstract class RefactoringDialog extends DialogWrapper {
   }
 
   @Override
-  protected void setHelpTooltip(JButton helpButton) {
+  protected void setHelpTooltip(@NotNull JButton helpButton) {
     if (Registry.is("ide.helptooltip.enabled")) {
       new HelpTooltip().setDescription(ActionsBundle.actionDescription("HelpTopics")).installOn(helpButton);
     }
