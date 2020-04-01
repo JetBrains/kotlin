@@ -56,6 +56,10 @@ gradlePlugin {
     }
 }
 
+kotlinDslPluginOptions {
+    experimentalWarning.set(false)
+}
+
 fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {
     val v = it.toString()
     if (v.isBlank()) true
