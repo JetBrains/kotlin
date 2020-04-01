@@ -132,8 +132,8 @@ final class PassExecutorService implements Disposable {
         if (pass instanceof EditorBoundHighlightingPass) {
           EditorBoundHighlightingPass editorPass = (EditorBoundHighlightingPass)pass;
           int id = nextAvailablePassId.incrementAndGet();
-          checkUniquePassId(id, editorPass, thisEditorId2Pass);
           editorPass.setId(id); // have to make ids unique for this document
+          checkUniquePassId(id, editorPass, thisEditorId2Pass);
           editorBoundPasses.putValue(fileEditor, editorPass);
         }
         else {
