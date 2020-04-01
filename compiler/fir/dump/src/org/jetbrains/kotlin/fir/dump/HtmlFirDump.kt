@@ -784,9 +784,21 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 +value.toString()
                 keyword("L")
             }
+            FirConstKind.UnsignedByte -> {
+                +(value as Long).toUByte().toString()
+                keyword("uB")
+            }
+            FirConstKind.UnsignedShort -> {
+                +(value as Long).toUShort().toString()
+                keyword("uS")
+            }
+            FirConstKind.UnsignedInt -> {
+                +(value as Long).toUInt().toString()
+                keyword("uI")
+            }
             FirConstKind.UnsignedLong -> {
-                +value.toString()
-                keyword("UL")
+                +(value as Long).toULong().toString()
+                keyword("uL")
             }
             FirConstKind.Float -> {
                 +value.toString()
@@ -795,6 +807,16 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             FirConstKind.Double -> {
                 +value.toString()
                 keyword("D")
+            }
+            FirConstKind.IntegerLiteral -> {
+                +"IL<"
+                +value.toString()
+                +">"
+            }
+            FirConstKind.UnsignedIntegerLiteral -> {
+                +"UIL<"
+                +value.toString()
+                +">"
             }
         }
 
