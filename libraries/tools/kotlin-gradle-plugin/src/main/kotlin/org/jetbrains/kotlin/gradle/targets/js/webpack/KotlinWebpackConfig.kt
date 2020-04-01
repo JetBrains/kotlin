@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
 import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssExtractPolicy.*
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackAssetExtractPolicy.*
 import java.io.File
 import java.io.Serializable
 import java.io.StringWriter
@@ -53,6 +53,17 @@ data class KotlinWebpackConfig(
 
             if (devServer != null) {
                 it.add(versions.webpackDevServer)
+            }
+
+            if (cssSettings == null || !cssSettings.enabled) return@also
+
+            it.add(versions.cssLoader)
+            if (cssSettings.extractPolicy in listOf(NONE, DEPENDS_ON_MODE)) {
+                it.add(versions.styleLoader)
+            }
+
+            if (cssSettings.extractPolicy in listOf(ALWAYS, DEPENDS_ON_MODE)) {
+                it.add(versions.miniCssExtractPlugin)
             }
         }
 
@@ -115,6 +126,7 @@ data class KotlinWebpackConfig(
             appendDevServer()
             appendReport()
             appendProgressReporter()
+            appendCssSettings()
             appendFromConfigDir()
             appendEvaluatedFileReport()
 
@@ -140,6 +152,7 @@ data class KotlinWebpackConfig(
                     const evaluatedConfig = util.inspect(config, {showHidden: false, depth: null, compact: false});
                     fs.writeFile($filePath, evaluatedConfig, function (err) {});
                 })(config);
+                
             """.trimIndent()
         )
     }
@@ -248,65 +261,65 @@ data class KotlinWebpackConfig(
             """.trimIndent()
         )
 
-        //language=ES6
         appendln(
             """
-            const use = [
-                {
-                    loader: 'css-loader',
-                    options: {},
-                }
-            ]
-            """.trimIndent()
+        |    const use = [
+        |        {
+        |            loader: 'css-loader',
+        |            options: {},
+        |        }
+        |    ]
+            """.trimMargin()
         )
 
-        //language=ES6
-        val extractedCss = """
-                const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-                use.unshift({
-                    loader: MiniCssExtractPlugin.loader,
-                    options: {}
-                })
-                plugins.push(new MiniCssExtractPlugin())
-            """.trimIndent()
+        val extractedCss =
+            """
+            |    const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+            |    use.unshift({
+            |        loader: MiniCssExtractPlugin.loader,
+            |        options: {}
+            |    })
+            |    config.plugins.push(new MiniCssExtractPlugin())
+            """
 
-        //language=ES6
-        val nonExtractedCss = """
-                use.unshift({
-                    loader: 'style-loader',
-                    options: {}
-                })
-            """.trimIndent()
+        val nonExtractedCss =
+            """
+            |    use.unshift({
+            |        loader: 'style-loader',
+            |        options: {}
+            |    })
+            |    
+            """
 
         val extractedSettings = when (cssSettings.extractPolicy) {
             ALWAYS -> extractedCss
-            //language=ES6
-            DEPENDS_ON_MODE -> """
-                if (config.mode === 'production') {
-                    $extractedCss
-                } else {
-                    $nonExtractedCss
-                }
-            """.trimIndent()
+            DEPENDS_ON_MODE ->
+                """
+            |    if (config.mode === 'production') {
+            |        $extractedCss
+            |    } else {
+            |        $nonExtractedCss
+            |    }
+            """.trimMargin()
             NONE -> nonExtractedCss
         }
 
         appendln(extractedSettings)
 
-        //language=ES6
         appendln(
             """
-                config.module.rules.push({
-                    test: /\.css${'$'}/,
-                    use: use
-                })
+            |    config.module.rules.push({
+            |        test: /\.css${'$'}/,
+            |        use: use
+            |    })
 
-            """.trimIndent()
+            """.trimMargin()
         )
 
         appendln(
             """
             })(config);
+            
             """.trimIndent()
         )
     }
@@ -345,6 +358,7 @@ data class KotlinWebpackConfig(
             
                     config.plugins.push(new webpack.ProgressPlugin(handler))
                 })(config);
+                
             """.trimIndent()
         )
     }
