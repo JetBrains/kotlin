@@ -16,37 +16,60 @@
 
 package org.jetbrains.kotlin.descriptors.impl
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
-import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
+import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 class LazyPackageViewDescriptorImpl(
-        override val module: ModuleDescriptorImpl,
-        override val fqName: FqName,
-        storageManager: StorageManager
+    override val module: ModuleDescriptorImpl,
+    override val fqName: FqName,
+    storageManager: StorageManager,
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, fqName.shortNameOrSpecial()), PackageViewDescriptor {
 
     override val fragments: List<PackageFragmentDescriptor> by storageManager.createLazyValue {
         module.packageFragmentProvider.getPackageFragments(fqName)
     }
 
-    override val memberScope: MemberScope = LazyScopeAdapter(storageManager.createLazyValue {
-        if (fragments.isEmpty()) {
-            MemberScope.Empty
-        }
-        else {
-            // Packages from SubpackagesScope are got via getContributedDescriptors(DescriptorKindFilter.PACKAGES, MemberScope.ALL_NAME_FILTER)
-            val scopes = fragments.map { it.getMemberScope() } + SubpackagesScope(module, fqName)
-            ChainedMemberScope("package view scope for $fqName in ${module.name}", scopes)
-        }
-    })
+    private val secondaryFragments: List<PackageFragmentDescriptor> by storageManager.createLazyValue {
+        module.packageFragmentProvider.getSecondaryPackageFragments(fqName)
+    }
+
+    override val memberScope: MemberScope = LazyScopeAdapter(
+        storageManager.createLazyValue {
+            if (fragments.isEmpty() && secondaryFragments.isEmpty()) {
+                MemberScope.Empty
+            } else {
+                // Packages from SubpackagesScope are got via getContributedDescriptors(DescriptorKindFilter.PACKAGES, MemberScope.ALL_NAME_FILTER)
+                val primaryScope = ChainedMemberScope(
+                    "package view scope for $fqName in ${module.name}",
+                    fragments.map { it.getMemberScope() } + SubpackagesScope(module, fqName),
+                )
+
+                val secondaryScope = if (secondaryFragments.isNotEmpty()) {
+                    ChainedMemberScope(
+                        "secondary package view scope for $fqName in ${module.name}",
+                        // Note that there's no harm in not distinguishing primary/secondary subpackages,
+                        // as it will be queried only when primary scope haven't returned anything.
+                        // Obviously, we'll query primary subpackages twice, but that shouldn't be expensive
+                        // because of caching inside scopes
+                        // If that will be ever proven to be expensive, we can always introduce more
+                        // fine-grained 'SecondarySubpackagesScope'
+                        secondaryFragments.map { it.getMemberScope() } + SubpackagesScope(module, fqName)
+                    )
+                } else {
+                    null
+                }
+
+                MemberScopeWithSecondaryScope(primaryScope, secondaryScope)
+            }
+        },
+    )
 
     override fun getContainingDeclaration(): PackageViewDescriptor? {
         return if (fqName.isRoot) null else module.getPackage(fqName.parent())
@@ -64,4 +87,6 @@ class LazyPackageViewDescriptorImpl(
     }
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R = visitor.visitPackageViewDescriptor(this, data)
+
+    override fun isEmpty(): Boolean = fragments.isEmpty() && secondaryFragments.isEmpty()
 }

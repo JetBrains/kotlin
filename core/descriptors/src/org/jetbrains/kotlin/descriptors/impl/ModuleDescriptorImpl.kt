@@ -17,14 +17,12 @@
 package org.jetbrains.kotlin.descriptors.impl
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.InvalidModuleException
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.resolve.scopes.isSecondaryModule
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.REFINER_CAPABILITY
 import org.jetbrains.kotlin.types.checker.Ref
@@ -99,9 +97,13 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
                 "Dependency module ${dependency.id} was not initialized by the time contents of dependent module ${this.id} were queried"
             }
         }
-        CompositePackageFragmentProvider(dependenciesDescriptors.map {
-            it.packageFragmentProviderForModuleContent!!
-        })
+
+        val (secondaryDependenciesDescriptors, primaryDependenciesDescriptors) = dependenciesDescriptors
+            .partition { it.isSecondaryModule && it !== this }
+        val primaryProviders = primaryDependenciesDescriptors.map { it.packageFragmentProviderForModuleContent!! }
+        val secondaryProviders = secondaryDependenciesDescriptors.map { it.packageFragmentProviderForModuleContent!! }
+
+        CompositePackageFragmentProvider(primaryProviders, secondaryProviders)
     }
 
     private val isInitialized: Boolean
@@ -144,7 +146,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         this.packageFragmentProviderForModuleContent = providerForModuleContent
     }
 
-    val packageFragmentProvider: PackageFragmentProvider
+    val packageFragmentProvider: PackageFragmentProviderWithSecondaryFragments
         get() {
             assertValid()
             return packageFragmentProviderForWholeModuleWithDependencies

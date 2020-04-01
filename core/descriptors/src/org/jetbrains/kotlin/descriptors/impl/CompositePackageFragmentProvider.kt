@@ -18,26 +18,41 @@ package org.jetbrains.kotlin.descriptors.impl
 
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.PackageFragmentProviderWithSecondaryFragments
 import org.jetbrains.kotlin.name.FqName
 import java.util.*
 import org.jetbrains.kotlin.name.Name
 
-class CompositePackageFragmentProvider(// can be modified from outside
-        private val providers: List<PackageFragmentProvider>) : PackageFragmentProvider {
+class CompositePackageFragmentProvider(
+    private val providers: List<PackageFragmentProvider>,
+    private val secondaryProviders: List<PackageFragmentProvider> = emptyList(),
+) : PackageFragmentProviderWithSecondaryFragments {
 
-    override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
-        val result = ArrayList<PackageFragmentDescriptor>()
-        for (provider in providers) {
-            result.addAll(provider.getPackageFragments(fqName))
-        }
-        return result.toList()
-    }
+    override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> =
+        providers.collectPackageFragmentDescriptors(fqName)
 
-    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
+    override fun getSecondaryPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> =
+        secondaryProviders.collectPackageFragmentDescriptors(fqName)
+
+    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> =
+        providers.collectSubPackagesOf(fqName, nameFilter)
+
+    override fun getSecondarySubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> =
+        secondaryProviders.collectSubPackagesOf(fqName, nameFilter)
+
+    private fun Collection<PackageFragmentProvider>.collectSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
         val result = HashSet<FqName>()
-        for (provider in providers) {
+        for (provider in this) {
             result.addAll(provider.getSubPackagesOf(fqName, nameFilter))
         }
         return result
+    }
+
+    private fun Collection<PackageFragmentProvider>.collectPackageFragmentDescriptors(fqName: FqName): List<PackageFragmentDescriptor> {
+        val result = ArrayList<PackageFragmentDescriptor>()
+        for (provider in this) {
+            result.addAll(provider.getPackageFragments(fqName))
+        }
+        return result.toList()
     }
 }
