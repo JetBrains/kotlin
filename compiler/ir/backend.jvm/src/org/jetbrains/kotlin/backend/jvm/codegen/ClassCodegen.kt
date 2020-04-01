@@ -148,7 +148,7 @@ abstract class ClassCodegen protected constructor(
         if (writeSourceMap) {
             visitor.visitSMAP(smap, !context.state.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
         } else {
-            visitor.visitSource(smap.sourceInfo.source, null)
+            visitor.visitSource(smap.sourceInfo!!.source, null)
         }
 
         visitor.done()
@@ -269,7 +269,7 @@ abstract class ClassCodegen protected constructor(
 
     protected abstract fun bindMethodMetadata(method: IrFunction, signature: Method)
 
-    private fun generateMethod(method: IrFunction, classSMAP: DefaultSourceMapper) {
+    private fun generateMethod(method: IrFunction, classSMAP: SourceMapper) {
         if (method.isFakeOverride) {
             jvmSignatureClashDetector.trackFakeOverrideMethod(method)
             return
@@ -281,7 +281,7 @@ abstract class ClassCodegen protected constructor(
             method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
         )
         val mv = with(node) { visitor.newMethod(method.OtherOrigin, access, name, desc, signature, exceptions.toTypedArray()) }
-        val smapCopier = NestedSourceMapper(classSMAP, smap, sameFile = true)
+        val smapCopier = SourceMapCopier(classSMAP, smap, keepCallSites = true)
         val smapCopyingVisitor = object : MethodVisitor(Opcodes.API_VERSION, mv) {
             override fun visitLineNumber(line: Int, start: Label) =
                 super.visitLineNumber(smapCopier.mapLineNumber(line), start)
