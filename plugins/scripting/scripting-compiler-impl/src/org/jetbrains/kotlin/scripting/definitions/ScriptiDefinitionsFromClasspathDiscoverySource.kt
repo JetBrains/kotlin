@@ -341,7 +341,7 @@ private fun loadScriptDefinition(
                 ScriptDefinition.FromLegacyTemplate(hostConfiguration, cls.kotlin)
             }
         messageReporter(
-            ScriptDiagnostic.Severity.INFO,
+            ScriptDiagnostic.Severity.DEBUG,
             "Added script definition $template to configuration: name = ${def.name}"
         )
         return def

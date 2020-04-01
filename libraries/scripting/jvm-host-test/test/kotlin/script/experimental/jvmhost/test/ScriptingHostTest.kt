@@ -8,7 +8,7 @@ package kotlin.script.experimental.jvmhost.test
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.CompiledScriptClassLoader
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemory
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemoryImpl
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -348,7 +348,7 @@ class ScriptingHostTest : TestCase() {
         assertTrue(compiledScript is ResultWithDiagnostics.Success)
 
         val jvmCompiledScript = compiledScript.valueOrNull()!! as KJvmCompiledScript
-        val jvmCompiledModule = jvmCompiledScript.compiledModule as KJvmCompiledModuleInMemory
+        val jvmCompiledModule = jvmCompiledScript.compiledModule as KJvmCompiledModuleInMemoryImpl
         val bytes = jvmCompiledModule.compilerOutputFiles["SavedScript.class"]!!
 
         var classFileVersion: Int? = null

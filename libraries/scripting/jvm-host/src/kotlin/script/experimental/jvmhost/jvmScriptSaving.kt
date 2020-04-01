@@ -5,7 +5,6 @@
 
 package kotlin.script.experimental.jvmhost
 
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemory
 import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
 import java.io.FileOutputStream
@@ -14,11 +13,9 @@ import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
-import kotlin.script.experimental.jvm.impl.copyWithoutModule
-import kotlin.script.experimental.jvm.impl.scriptMetadataPath
-import kotlin.script.experimental.jvm.impl.toBytes
+import kotlin.script.experimental.jvm.impl.*
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrNull
 
 // TODO: generate execution code (main)
 
@@ -57,11 +54,11 @@ fun KJvmCompiledScript<*>.saveToJar(outputJar: File) {
         ?.filterIsInstance<JvmDependency>()
         ?.flatMap { it.classpath }
         .orEmpty()
-    val dependenciesForMain = scriptCompilationClasspathFromContext(
+    val dependenciesForMain = scriptCompilationClasspathFromContextOrNull(
         KotlinPaths.Jar.ScriptingLib.baseName, KotlinPaths.Jar.ScriptingJvmLib.baseName,
         classLoader = this::class.java.classLoader,
         wholeClasspath = false
-    )
+    ) ?: emptyList()
     val dependencies = (dependenciesFromScript + dependenciesForMain).distinct()
     FileOutputStream(outputJar).use { fileStream ->
         val manifest = Manifest()

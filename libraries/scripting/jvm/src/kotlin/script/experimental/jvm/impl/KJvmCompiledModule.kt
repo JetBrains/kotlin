@@ -15,6 +15,10 @@ interface KJvmCompiledModule {
     fun createClassLoader(baseClassLoader: ClassLoader?): ClassLoader
 }
 
+interface KJvmCompiledModuleInMemory : KJvmCompiledModule {
+    val compilerOutputFiles: Map<String, ByteArray>
+}
+
 class KJvmCompiledModuleFromClassPath(val classpath: Collection<File>) : KJvmCompiledModule {
 
     override fun createClassLoader(baseClassLoader: ClassLoader?): ClassLoader =

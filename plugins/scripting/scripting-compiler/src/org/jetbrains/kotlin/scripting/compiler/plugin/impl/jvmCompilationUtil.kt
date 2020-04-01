@@ -28,7 +28,7 @@ import kotlin.script.experimental.host.getMergedScriptText
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 
 internal fun makeCompiledModule(generationState: GenerationState) =
-    KJvmCompiledModuleInMemory(
+    KJvmCompiledModuleInMemoryImpl(
         generationState.factory.asList()
             .associateTo(sortedMapOf<String, ByteArray>()) { it.relativePath to it.asByteArray() }
     )

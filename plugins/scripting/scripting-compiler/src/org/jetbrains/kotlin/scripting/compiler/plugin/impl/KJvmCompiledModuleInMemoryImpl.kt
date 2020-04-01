@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import java.io.Serializable
-import kotlin.script.experimental.jvm.impl.KJvmCompiledModule
+import kotlin.script.experimental.jvm.impl.KJvmCompiledModuleInMemory
 
-class KJvmCompiledModuleInMemory(val compilerOutputFiles: Map<String, ByteArray>) : KJvmCompiledModule,
+class KJvmCompiledModuleInMemoryImpl(override val compilerOutputFiles: Map<String, ByteArray>) : KJvmCompiledModuleInMemory,
     Serializable {
 
     override fun createClassLoader(baseClassLoader: ClassLoader?): ClassLoader =
