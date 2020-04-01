@@ -40,10 +40,7 @@ import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.framework.effectiveKind
 import org.jetbrains.kotlin.idea.framework.platform
-import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.idea.project.findAnalyzerServices
-import org.jetbrains.kotlin.idea.project.getStableName
-import org.jetbrains.kotlin.idea.project.isHMPPEnabled
+import org.jetbrains.kotlin.idea.project.*
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.rootManager
@@ -59,6 +56,7 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
+import org.jetbrains.kotlin.resolve.scopes.SECONDARY_MODULE_CAPABILITY
 import org.jetbrains.kotlin.types.typeUtil.closure
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
@@ -205,6 +203,12 @@ sealed class ModuleSourceInfoWithExpectedBy(private val forProduction: Boolean) 
     override fun dependencies(): List<IdeaModuleInfo> = module.cacheByClassInvalidatingOnRootModifications(this::class.java) {
         ideaModelDependencies(module, forProduction, platform)
     }
+
+    override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
+        get() = if (module.isSecondary)
+            super.capabilities + mapOf(SECONDARY_MODULE_CAPABILITY to true)
+        else
+            super.capabilities
 }
 
 data class ModuleProductionSourceInfo internal constructor(
