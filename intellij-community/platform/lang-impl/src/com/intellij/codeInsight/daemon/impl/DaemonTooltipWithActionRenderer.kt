@@ -341,7 +341,7 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
     }
 
     override fun setSelected(e: AnActionEvent, state: Boolean) {
-      TooltipActionsLogger.logShowDescription(e.project, "gear", e.inputEvent, e.place)
+      TooltipActionsLogger.logShowDescription(e.project, TooltipActionsLogger.Source.Gear, e.inputEvent, e.place)
       reloader.reload(state)
     }
 
