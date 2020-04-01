@@ -8,7 +8,7 @@ import com.intellij.find.usages.SymbolUsageHandlerFactory
 import com.intellij.find.usages.UsageHandler
 import com.intellij.find.usages.UsageOptions
 import com.intellij.model.Symbol
-import com.intellij.model.presentation.SymbolPresentationService
+import com.intellij.model.presentation.SymbolPresentationService.getLongDescription
 import com.intellij.model.search.SearchService
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.Logger
@@ -25,8 +25,6 @@ import com.intellij.usages.UsageViewManager
 import com.intellij.usages.UsageViewPresentation
 import com.intellij.util.Query
 import org.jetbrains.annotations.ApiStatus
-import org.jetbrains.annotations.Nls
-import org.jetbrains.annotations.Nls.Capitalization.Sentence
 
 internal val LOG: Logger = Logger.getInstance("#com.intellij.find.actions")
 
@@ -42,10 +40,6 @@ internal fun Symbol.createUsageHandler(project: Project): UsageHandler<*> {
     }
   }
   return DefaultSymbolUsageHandler(project, this)
-}
-
-internal fun Symbol.presentableText(): @Nls(capitalization = Sentence) String {
-  return SymbolPresentationService.getInstance().getSymbolPresentation(this).longDescription
 }
 
 fun findUsages(showDialog: Boolean, project: Project, selectedScope: SearchScope, symbol: Symbol) {
@@ -68,7 +62,7 @@ private fun <O> findUsages(showDialog: Boolean,
                            allOptions: AllSearchOptions<O>) {
   if (showDialog) {
     val canReuseTab = canReuseTab(project)
-    val dialog = UsageOptionsDialog(project, symbol.presentableText(), handler, allOptions, canReuseTab)
+    val dialog = UsageOptionsDialog(project, getLongDescription(symbol), handler, allOptions, canReuseTab)
     if (!dialog.showAndGet()) {
       // cancelled
       return

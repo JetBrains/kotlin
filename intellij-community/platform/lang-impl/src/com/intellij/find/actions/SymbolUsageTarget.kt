@@ -7,6 +7,7 @@ import com.intellij.find.usages.UsageHandler
 import com.intellij.model.Pointer
 import com.intellij.model.Symbol
 import com.intellij.model.presentation.SymbolPresentationService
+import com.intellij.model.presentation.SymbolPresentationService.getLongDescription
 import com.intellij.model.psi.PsiSymbolService
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.NavigationItem
@@ -100,7 +101,7 @@ internal class SymbolUsageTarget<O>(
   override fun showSettings() {
     val symbol = myPointer.dereference() ?: return
     @Suppress("UNCHECKED_CAST") val usageHandler = symbol.createUsageHandler(project) as UsageHandler<O>
-    val dialog = UsageOptionsDialog(project, symbol.presentableText(), usageHandler, allOptions, true)
+    val dialog = UsageOptionsDialog(project, getLongDescription(symbol), usageHandler, allOptions, true)
     if (!dialog.showAndGet()) {
       return
     }

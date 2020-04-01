@@ -6,6 +6,7 @@ import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.find.usages.UsageHandler
 import com.intellij.find.usages.UsageOptions.createOptions
 import com.intellij.model.Symbol
+import com.intellij.model.presentation.SymbolPresentationService.getLongDescription
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
@@ -31,7 +32,7 @@ internal data class ShowTargetUsagesActionHandler<O>(
   override fun isValid(): Boolean = true
 
   override fun showDialogAndShowUsages(newEditor: Editor?) {
-    val dialog = UsageOptionsDialog(project, symbol.presentableText(), usageHandler, allOptions, false)
+    val dialog = UsageOptionsDialog(project, getLongDescription(symbol), usageHandler, allOptions, false)
     if (!dialog.showAndGet()) {
       // cancelled
       return
