@@ -198,6 +198,11 @@ public class IntentionActionWithTextCaching implements Comparable<IntentionActio
       return myAction;
     }
 
+    @Override
+    public @Nullable IntentionAction tryTransferActionToPreviewFile(@NotNull PsiFile target) {
+      return myAction.tryTransferActionToPreviewFile(target);
+    }
+
     @Nullable
     @Override
     public PsiElement getElementToMakeWritable(@NotNull PsiFile currentFile) {

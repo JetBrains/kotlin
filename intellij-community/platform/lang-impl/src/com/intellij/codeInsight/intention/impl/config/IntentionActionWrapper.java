@@ -68,6 +68,11 @@ public final class IntentionActionWrapper implements IntentionAction, ShortcutPr
     return getDelegate().startInWriteAction();
   }
 
+  @Override
+  public @Nullable IntentionAction tryTransferActionToPreviewFile(@NotNull PsiFile target) {
+    return getDelegate().tryTransferActionToPreviewFile(target);
+  }
+
   @Nullable
   @Override
   public PsiElement getElementToMakeWritable(@NotNull PsiFile file) {

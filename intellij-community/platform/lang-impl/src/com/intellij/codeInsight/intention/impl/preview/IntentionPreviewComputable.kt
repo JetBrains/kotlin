@@ -74,6 +74,8 @@ internal class IntentionPreviewComputable(private val project: Project,
                                   editorCopy: Editor,
                                   psiFileCopy: PsiFile,
                                   originalAction: IntentionAction): IntentionAction? {
+      val transferred = originalAction.tryTransferActionToPreviewFile(psiFileCopy)
+      if (transferred != null) return transferred
       val actionsToShow = ShowIntentionsPass.getActionsToShow(editorCopy, psiFileCopy, false)
       val cachedIntentions = CachedIntentions.createAndUpdateActions(project, psiFileCopy, editorCopy, actionsToShow)
 
