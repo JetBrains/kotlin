@@ -1,0 +1,6 @@
+MODULE main { platform=[JVM, JS, Native] }
+MODULE primaryDependency { platform=[JVM, JS, Native] }
+MODULE secondaryDependency { platform=[JVM]; isSecondary=true }
+
+main -> primaryDependency { kind=DEPENDENCY }
+main -> secondaryDependency { kind=DEPENDENCY }

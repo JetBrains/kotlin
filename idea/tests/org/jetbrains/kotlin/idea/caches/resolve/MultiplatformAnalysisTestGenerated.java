@@ -183,6 +183,11 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
         runTest("idea/testData/multiplatform/recursiveTypes/");
     }
 
+    @TestMetadata("secondaryModulesResolve")
+    public void testSecondaryModulesResolve() throws Exception {
+        runTest("idea/testData/multiplatform/secondaryModulesResolve/");
+    }
+
     @TestMetadata("simple")
     public void testSimple() throws Exception {
         runTest("idea/testData/multiplatform/simple/");
