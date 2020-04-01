@@ -96,9 +96,9 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
   @NonNls private static final String FILE_TAG = "file";
   @NonNls private static final String URL_ATT = "url";
   private final PassExecutorService myPassExecutorService;
-  // Timestamp of myUpdateRunnable which it's needed to start.
+  // Timestamp of myUpdateRunnable which it's needed to start (in System.nanoTime() sense)
   // May be later than the actual ScheduledFuture sitting in the myAlarm queue.
-  // When it's so happen that future is started sooner than myScheduledUpdateStart, it will re-schedule itself for later.
+  // When it's so happens that future is started sooner than myScheduledUpdateStart, it will re-schedule itself for later.
   private long myScheduledUpdateTimestamp; // guarded by this
 
   public DaemonCodeAnalyzerImpl(@NotNull Project project) {
@@ -598,7 +598,7 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
 
     // reset myScheduledUpdateStart always, but re-schedule myUpdateRunnable only rarely because of thread scheduling overhead
     if (restart) {
-      myScheduledUpdateTimestamp = System.currentTimeMillis() + mySettings.getAutoReparseDelay();
+      myScheduledUpdateTimestamp = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(mySettings.getAutoReparseDelay());
     }
     // optimisation: this check is to avoid too many re-schedules in case of thousands of event spikes
     boolean isDone = myUpdateRunnableFuture.isDone();
@@ -609,8 +609,8 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
     return canceled;
   }
 
-  private void scheduleUpdateRunnable(long delayMillis) {
-    myUpdateRunnableFuture = myAlarm.schedule(myUpdateRunnable, delayMillis, TimeUnit.MILLISECONDS);
+  private void scheduleUpdateRunnable(long delayNanos) {
+    myUpdateRunnableFuture = myAlarm.schedule(myUpdateRunnable, delayNanos, TimeUnit.NANOSECONDS);
   }
 
   // return true if the progress really was canceled
@@ -814,7 +814,7 @@ public final class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implement
       }
 
       synchronized (dca) {
-        long actualDelay = dca.myScheduledUpdateTimestamp - System.currentTimeMillis();
+        long actualDelay = dca.myScheduledUpdateTimestamp - System.nanoTime();
         if (actualDelay > 0) {
            // started too soon (there must've been some typings after we'd scheduled this; need to re-schedule)
           dca.scheduleUpdateRunnable(actualDelay);
