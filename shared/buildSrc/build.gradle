@@ -15,23 +15,14 @@
  */
 buildscript {
     ext.rootBuildDirectory = "$rootDir/../.."
-    apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
-    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
-
 }
 
-
-apply plugin: 'kotlin'
+apply plugin: 'java'
 
 repositories {
-    maven {
-        url buildKotlinCompilerRepo
-    }
     mavenCentral()
 }
 
 dependencies {
     compile gradleApi()
-    compile localGroovy()
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 }
