@@ -216,10 +216,16 @@ class FirTowerResolverSession internal constructor(
 
         for ((index, topLevelScope) in topLevelScopes.withIndex()) {
             if (explicitReceiverValue != null) {
-                processHideMembersLevel(explicitReceiverValue, topLevelScope, info, index, depth = null)
+                processHideMembersLevel(
+                    explicitReceiverValue, topLevelScope, info, index, depth = null,
+                    ExplicitReceiverKind.EXTENSION_RECEIVER
+                )
             } else {
                 for ((implicitReceiverValue, depth) in implicitReceiversUsableAsValues) {
-                    processHideMembersLevel(implicitReceiverValue, topLevelScope, info, index, depth)
+                    processHideMembersLevel(
+                        implicitReceiverValue, topLevelScope, info, index, depth,
+                        ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+                    )
                 }
             }
         }
@@ -230,12 +236,15 @@ class FirTowerResolverSession internal constructor(
         topLevelScope: FirScope,
         info: CallInfo,
         index: Int,
-        depth: Int?
+        depth: Int?,
+        explicitReceiverKind: ExplicitReceiverKind
     ) = processLevel(
         topLevelScope.toScopeTowerLevel(
             extensionReceiver = receiverValue, extensionsOnly = true
         ),
-        info, TowerGroup.TopPrioritized(index).let { if (depth != null) it.Implicit(depth) else it }
+        info,
+        TowerGroup.TopPrioritized(index).let { if (depth != null) it.Implicit(depth) else it },
+        explicitReceiverKind,
     )
 
     private suspend fun processLocalScopesWithNoReceiver(
