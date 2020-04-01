@@ -5,7 +5,7 @@ public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Cr
         LABEL (L0)
           ALOAD (1)
           LDC (in)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkParameterIsNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           NEW
           DUP
           ALOAD (1)
@@ -44,7 +44,7 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
         LABEL (L0)
           ALOAD (1)
           LDC (parcel)
-          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkParameterIsNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (1)
           ALOAD (0)
           GETFIELD (kp, Landroid/accounts/Account;)

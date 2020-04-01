@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // CURIOUS_ABOUT writeToParcel, createFromParcel
 // WITH_RUNTIME
 
