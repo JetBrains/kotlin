@@ -72,6 +72,8 @@ open class ProjectStructureParser(private val projectRoot: File) {
 
         val testRoot = attributes["testRoot"]
         if (testRoot != null) builder.testRoot = File(projectRoot, testRoot)
+
+        builder.isSecondary = attributes["isSecondary"]?.toBoolean() ?: false
     }
 
     private fun Reader.parseDependenciesDefinition(fromName: String) {

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.checkers.utils.clearFileFromDiagnosticMarkup
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
+import org.jetbrains.kotlin.idea.project.markAsSecondary
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.stubs.createMultiplatformFacetM1
 import org.jetbrains.kotlin.idea.stubs.createMultiplatformFacetM3
@@ -67,7 +68,7 @@ fun AbstractMultiModuleTest.setupMppProjectFromDependenciesFile(dependencies: Fi
 
 fun AbstractMultiModuleTest.doSetup(projectModel: ProjectResolveModel) {
     val resolveModulesToIdeaModules = projectModel.modules.map { resolveModule ->
-        val ideaModule = createModule(resolveModule.name)
+        val ideaModule = createModule(resolveModule.name, resolveModule.isSecondary)
 
         addRoot(
             ideaModule,
@@ -174,7 +175,7 @@ private fun AbstractMultiModuleTest.createModuleWithRoots(
     moduleId: ModuleId,
     infos: List<RootInfo>
 ): Module {
-    val module = createModule(moduleId.ideaModuleName())
+    val module = createModule(moduleId.ideaModuleName(), isSecondary = false)
     for ((_, isTestRoot, moduleRoot) in infos) {
         addRoot(module, moduleRoot, isTestRoot)
 
@@ -195,9 +196,11 @@ private fun setupJsTestOutput(module: Module) {
     }
 }
 
-private fun AbstractMultiModuleTest.createModule(name: String): Module {
+private fun AbstractMultiModuleTest.createModule(name: String, isSecondary: Boolean): Module {
     val moduleDir = createTempDir("")
+
     val module = createModule("$moduleDir/$name", StdModuleTypes.JAVA)
+    if (isSecondary) module.markAsSecondary()
     val root = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(moduleDir)
     checkNotNull(root)
     module.project.executeWriteCommand("refresh") {

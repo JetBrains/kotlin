@@ -22,7 +22,6 @@ open class ProjectResolveModel(val modules: List<ResolveModule>) {
 
         open fun build(): ProjectResolveModel = ProjectResolveModel(modules.map { it.build() })
     }
-
 }
 
 open class ResolveModule(
@@ -30,7 +29,8 @@ open class ResolveModule(
     val root: File,
     val platform: TargetPlatform,
     val dependencies: List<ResolveDependency>,
-    val testRoot: File? = null
+    val testRoot: File? = null,
+    val isSecondary: Boolean = false
 ) {
     final override fun toString(): String {
         return buildString { renderDescription(Printer(this)) }
@@ -43,6 +43,7 @@ open class ResolveModule(
         printer.println("root=${root.absolutePath}")
         if (testRoot != null) printer.println("testRoot=${testRoot.absolutePath}")
         printer.println("dependencies=${dependencies.joinToString { it.to.name }}")
+        printer.println("isSecondary=$isSecondary")
     }
 
     override fun equals(other: Any?): Boolean {
@@ -69,6 +70,7 @@ open class ResolveModule(
         var platform: TargetPlatform? = null
         val dependencies: MutableList<ResolveDependency.Builder> = mutableListOf()
         var testRoot: File? = null
+        var isSecondary: Boolean = false
 
         open fun build(): ResolveModule {
             if (state == State.BUILT) return cachedResult!!
@@ -77,7 +79,7 @@ open class ResolveModule(
             state = State.BUILDING
 
             val builtDependencies = dependencies.map { it.build() }
-            cachedResult = ResolveModule(name!!, root!!, platform!!, builtDependencies, testRoot)
+            cachedResult = ResolveModule(name!!, root!!, platform!!, builtDependencies, testRoot, isSecondary)
             state = State.BUILT
 
             return cachedResult!!
