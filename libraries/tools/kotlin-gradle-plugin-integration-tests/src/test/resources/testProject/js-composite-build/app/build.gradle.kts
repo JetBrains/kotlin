@@ -10,7 +10,11 @@ repositories {
 
 kotlin.js {
     binaries.executable()
-    nodejs()
+    browser()
+}
+
+tasks.named("browserTest").configure {
+    enabled = false
 }
 
 rootProject.tasks

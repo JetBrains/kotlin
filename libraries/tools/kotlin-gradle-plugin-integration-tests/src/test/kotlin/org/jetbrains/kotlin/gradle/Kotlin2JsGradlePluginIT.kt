@@ -581,7 +581,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
                 .let { it!!.version }
 
         with(appProject) {
-            build("build") {
+            build("build", "browserDevelopmentWebpack") {
                 assertSuccessful()
                 val appAsyncVersion = asyncVersion("build/js/node_modules/app", "async")
                 assertEquals("3.2.0", appAsyncVersion)

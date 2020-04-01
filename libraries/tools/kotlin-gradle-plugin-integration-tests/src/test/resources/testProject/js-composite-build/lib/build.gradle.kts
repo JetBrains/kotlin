@@ -10,7 +10,11 @@ repositories {
     mavenLocal()
 }
 
-kotlin.target.nodejs()
+kotlin.target.browser()
+
+tasks.named("browserTest").configure {
+    enabled = false
+}
 
 rootProject.tasks
     .withType(org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask::class.java)
