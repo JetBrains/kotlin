@@ -115,16 +115,18 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
   @NotNull
   private static Pair<PsiElement[], PsiElement> doSelectCandidate(@NotNull Project project, @NotNull Editor editor, int offset) {
     PsiElement[] elements = findAllTargetElements(project, editor, offset);
-    PsiElement usage = null;
-    if (elements.length != 1) {
-      if (elements.length == 0 && suggestCandidates(TargetElementUtil.findReference(editor, offset)).isEmpty()) {
-        usage = findElementToShowUsagesOf(editor, offset);
-      }
+    if (elements.length == 0) {
+      PsiElement usage = suggestCandidates(TargetElementUtil.findReference(editor, offset)).isEmpty()
+                         ? findElementToShowUsagesOf(editor, offset)
+                         : null;
       return new Pair<>(elements, usage);
     }
-
-    usage = findElementToShowUsagesOf(editor, offset);
-    return new Pair<>(elements, usage);
+    else if (elements.length == 1) {
+      return new Pair<>(elements, findElementToShowUsagesOf(editor, offset));
+    }
+    else {
+      return new Pair<>(elements, null);
+    }
   }
 
   public static void startFindUsages(@NotNull Editor editor, @NotNull Project project, @NotNull PsiElement element) {
