@@ -360,7 +360,8 @@ class DocRenderer implements EditorCustomElementRenderer {
       ourCachedStyleSheet = StartupUiUtil.createStyleSheet(
         "body {overflow-wrap: anywhere}" + // supported by JetBrains Runtime
         "code {font-family:\"" + escapedFontName + "\"}" +
-        "pre {font-family:\"" + escapedFontName + "\"}" +
+        "pre {font-family:\"" + escapedFontName + "\";" +
+             "white-space: pre-wrap}" + // supported by JetBrains Runtime
         "h1, h2, h3, h4, h5, h6 { margin-top: 0; padding-top: 1px; }" +
         "a { color: #" + linkColorHex + "; text-decoration: none;}" +
         "p { padding: 1px 0 2px 0; }" +
