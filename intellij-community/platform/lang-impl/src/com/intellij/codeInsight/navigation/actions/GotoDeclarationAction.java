@@ -118,12 +118,12 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
     PsiElement usage = null;
     if (elements.length != 1) {
       if (elements.length == 0 && suggestCandidates(TargetElementUtil.findReference(editor, offset)).isEmpty()) {
-        usage = findElementToShowUsagesOf(editor, editor.getCaretModel().getOffset());
+        usage = findElementToShowUsagesOf(editor, offset);
       }
       return new Pair<>(elements, usage);
     }
 
-    usage = findElementToShowUsagesOf(editor, editor.getCaretModel().getOffset());
+    usage = findElementToShowUsagesOf(editor, offset);
     return new Pair<>(elements, usage);
   }
 
