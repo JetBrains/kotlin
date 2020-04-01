@@ -90,6 +90,8 @@ public interface Errors {
 
     DiagnosticFactory1<KtReferenceExpression, KtReferenceExpression> UNRESOLVED_REFERENCE =
             DiagnosticFactory1.create(ERROR, FOR_UNRESOLVED_REFERENCE);
+    DiagnosticFactory2<KtReferenceExpression, DeclarationDescriptor, String> SECONDARY_DECLARATION_USAGE =
+            DiagnosticFactory2.create(ERROR, FOR_UNRESOLVED_REFERENCE);
 
     DiagnosticFactory2<PsiElement, DeclarationDescriptor, String> DEPRECATION = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory2<PsiElement, DeclarationDescriptor, String> DEPRECATION_ERROR = DiagnosticFactory2.create(ERROR);
