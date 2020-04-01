@@ -26,7 +26,7 @@ abstract class YarnBasics : NpmApi {
         project: Project,
         dir: File,
         description: String,
-        vararg args: String
+        args: List<String>
     ) {
         val nodeJs = NodeJsRootPlugin.apply(project)
         val yarnPlugin = YarnPlugin.apply(project)
