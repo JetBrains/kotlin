@@ -145,7 +145,8 @@ public class AutoHardWrapHandler {
 
     // Is assumed to be max possible number of characters inserted on the visual line with caret.
     int maxPreferredOffset = editor.logicalPositionToOffset(
-      new LogicalPosition(caretModel.getLogicalPosition().line, margin - FormatConstants.getReservedLineWrapWidthInColumns(editor))
+      new LogicalPosition(caretModel.getLogicalPosition().line,
+                          Math.max(0, margin - FormatConstants.getReservedLineWrapWidthInColumns(editor)))
     );
 
     int wrapOffset = strategy.calculateWrapPosition(document, project, startOffset, endOffset, maxPreferredOffset, true, false);
