@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.calls.tower.WrongResolutionToClassifier
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
+import org.jetbrains.kotlin.resolve.sam.getAbstractMembers
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class ConvertToAnonymousObjectFix(element: KtNameReferenceExpression) : KotlinQuickFixAction<KtNameReferenceExpression>(element) {
@@ -52,6 +53,10 @@ class ConvertToAnonymousObjectFix(element: KtNameReferenceExpression) : KotlinQu
 
         private fun getFunctionDescriptor(
             d: DiagnosticWithParameters3<KtReferenceExpression, ClassifierDescriptor, WrongResolutionToClassifier, String>
-        ) = (d.a as? LazyClassDescriptor)?.declaredCallableMembers?.singleOrNull() as? SimpleFunctionDescriptor
+        ): SimpleFunctionDescriptor? {
+            val classDescriptor = d.a as? ClassDescriptor ?: return null
+            val singleAbstractFunction = getAbstractMembers(classDescriptor).singleOrNull() as? SimpleFunctionDescriptor ?: return null
+            return if (singleAbstractFunction.typeParameters.isEmpty()) singleAbstractFunction else null
+        }
     }
 }

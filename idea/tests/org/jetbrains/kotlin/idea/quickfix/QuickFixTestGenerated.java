@@ -2911,6 +2911,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/convertToAnonymousObject"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("hasConcreateMember.kt")
+        public void testHasConcreateMember() throws Exception {
+            runTest("idea/testData/quickfix/convertToAnonymousObject/hasConcreateMember.kt");
+        }
+
+        @TestMetadata("hasConcreateMember2.kt")
+        public void testHasConcreateMember2() throws Exception {
+            runTest("idea/testData/quickfix/convertToAnonymousObject/hasConcreateMember2.kt");
+        }
+
+        @TestMetadata("hasTypeParameter.kt")
+        public void testHasTypeParameter() throws Exception {
+            runTest("idea/testData/quickfix/convertToAnonymousObject/hasTypeParameter.kt");
+        }
+
         @TestMetadata("labeledReturn.kt")
         public void testLabeledReturn() throws Exception {
             runTest("idea/testData/quickfix/convertToAnonymousObject/labeledReturn.kt");
