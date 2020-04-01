@@ -7,20 +7,20 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.model.AnnotationProcessingConfig;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class AnnotationProcessingConfigImpl implements AnnotationProcessingConfig, Serializable {
-  private final Set<String> myPaths;
+  private final List<String> myPaths;
   private final List<String> myArgs;
   private final String myProcessorOutput;
   private final boolean isTestSources;
 
-  public AnnotationProcessingConfigImpl(Set<String> files, List<String> args, String output, boolean sources) {
+  public AnnotationProcessingConfigImpl(List<String> files, List<String> args, String output, boolean sources) {
     myProcessorOutput = output;
     isTestSources = sources;
-    myPaths = files;
+    myPaths = new ArrayList<String>(files);
     myArgs = args;
   }
 

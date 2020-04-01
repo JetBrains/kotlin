@@ -19,7 +19,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.jetbrains.plugins.gradle.tooling.serialization.ToolingStreamApiUtils.*;
 
@@ -144,7 +143,7 @@ public class AnnotationProcessingModelSerializationService implements Serializat
           @Override
           public AnnotationProcessingConfigImpl create() {
             List<String> args = readStringList(reader);
-            Set<String> files = readStringSet(reader);
+            List<String> files = readStringList(reader);
             String output = readString(reader, "output");
             boolean isTest = readBoolean(reader,"isTestSources");
             return new AnnotationProcessingConfigImpl(files, args, output, isTest);

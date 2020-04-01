@@ -77,7 +77,7 @@ public class AnnotationProcessingModelBuilder extends AbstractModelBuilderServic
 
             File generatedSourcesDirectory = isAtLeastGradle4_3 ? options.getAnnotationProcessorGeneratedSourcesDirectory() : null;
             String output = generatedSourcesDirectory != null ? generatedSourcesDirectory.getAbsolutePath() : null;
-            sourceSetConfigs.put(sourceSet.getName(), new AnnotationProcessingConfigImpl(paths, annotationProcessorArgs, output, isTestSourceSet(sourceSet, ideaModule)));
+            sourceSetConfigs.put(sourceSet.getName(), new AnnotationProcessingConfigImpl(new ArrayList<String>(paths), annotationProcessorArgs, output, isTestSourceSet(sourceSet, ideaModule)));
           }
         }
       }
