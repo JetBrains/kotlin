@@ -31,7 +31,6 @@
               </grid>
             </constraints>
             <properties>
-              <focusable value="true"/>
               <text value="" noi18n="true"/>
             </properties>
           </component>
