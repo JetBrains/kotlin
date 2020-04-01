@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
@@ -215,6 +216,16 @@ internal class KotlinCompilationNpmResolver(
             dependency: ResolvedDependency,
             componentIdentifier: ProjectComponentIdentifier
         ) {
+            check(target is KotlinJsIrTarget) {
+                """
+                Composite builds for Kotlin/JS are supported only for IR compiler.
+                Use kotlin.js.compiler=ir in gradle.properties or
+                js(IR) {
+                ...
+                }
+                """.trimIndent()
+            }
+
             (componentIdentifier as DefaultProjectComponentIdentifier).let { identifier ->
                 val includedBuild = project.gradle.includedBuild(identifier.identityPath.topRealPath().name!!)
                 internalCompositeDependencies.add(CompositeDependency(dependency, includedBuild))
