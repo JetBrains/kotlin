@@ -44,6 +44,9 @@ open class CandidateCollector(
 
     fun bestCandidates() = candidates
 
+    fun shouldStopAtTheLevel(group: TowerGroup) =
+        isSuccess() && bestGroup < group
+
     fun isSuccess(): Boolean {
         return currentApplicability >= CandidateApplicability.SYNTHETIC_RESOLVED
     }

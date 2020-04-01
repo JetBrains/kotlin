@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import java.util.*
 import kotlin.coroutines.*
 
-class TowerResolveManager private constructor(private val isSuccess: () -> Boolean) {
+class TowerResolveManager private constructor(private val shouldStopAtTheLevel: (TowerGroup) -> Boolean) {
 
-    constructor(collector: CandidateCollector) : this({ collector.isSuccess() })
+    constructor(collector: CandidateCollector) : this(collector::shouldStopAtTheLevel)
 
     private val queue = PriorityQueue<SuspendedResolverTask>()
 
@@ -21,6 +21,9 @@ class TowerResolveManager private constructor(private val isSuccess: () -> Boole
     private suspend fun suspendResolverTask(group: TowerGroup) = suspendCoroutine<Unit> { queue += SuspendedResolverTask(it, group) }
 
     suspend fun requestGroup(requested: TowerGroup) {
+        if (shouldStopAtTheLevel(requested)) {
+            stopResolverTask()
+        }
         val peeked = queue.peek()
 
         // Task ordering should be FIFO
@@ -31,10 +34,6 @@ class TowerResolveManager private constructor(private val isSuccess: () -> Boole
     }
 
     private suspend fun stopResolverTask(): Nothing = suspendCoroutine { }
-
-    suspend fun stopIfSuccess() {
-        if (isSuccess()) stopResolverTask()
-    }
 
     private data class SuspendedResolverTask(
         val continuation: Continuation<Unit>,
@@ -62,8 +61,11 @@ class TowerResolveManager private constructor(private val isSuccess: () -> Boole
 
     fun runTasks() {
         while (queue.isNotEmpty()) {
-            queue.poll().continuation.resume(Unit)
-            if (isSuccess()) return
+            val current = queue.poll()
+            if (shouldStopAtTheLevel(current.group)) {
+                return
+            }
+            current.continuation.resume(Unit)
         }
     }
 }

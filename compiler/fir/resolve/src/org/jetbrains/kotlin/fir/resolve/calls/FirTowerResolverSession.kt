@@ -101,8 +101,6 @@ class FirTowerResolverSession internal constructor(
             enqueueResolverTasksForInvokeReceiverCandidates(
                 invokeResolveMode, callInfo
             )
-        }.also {
-            manager.stopIfSuccess()
         }
     }
 
@@ -521,7 +519,11 @@ class FirTowerResolverSession internal constructor(
         group: TowerGroup,
         explicitReceiverKind: ExplicitReceiverKind,
         candidateFactory: CandidateFactory
-    ) = processLevel(towerLevel, callInfo, group, explicitReceiverKind, InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER, candidateFactory)
+    ) = processLevel(
+        towerLevel, callInfo,
+        group.InvokeResolvePriority(InvokeResolvePriority.COMMON_INVOKE),
+        explicitReceiverKind, InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER, candidateFactory
+    )
 
     // Here we already know extension receiver for invoke, and it's stated in info as first argument
     private suspend fun runResolverForBuiltinInvokeExtensionWithExplicitArgument(
@@ -531,7 +533,7 @@ class FirTowerResolverSession internal constructor(
     ) {
         processLevel(
             invokeReceiverValue.toMemberScopeTowerLevel(),
-            info, TowerGroup.Member,
+            info, TowerGroup.Member.InvokeResolvePriority(InvokeResolvePriority.INVOKE_EXTENSION),
             ExplicitReceiverKind.DISPATCH_RECEIVER,
             InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER,
             invokeOnGivenReceiverCandidateFactory
@@ -545,13 +547,13 @@ class FirTowerResolverSession internal constructor(
         invokeOnGivenReceiverCandidateFactory: CandidateFactory
     ) {
         for ((implicitReceiverValue, depth) in implicitReceiversUsableAsValues) {
-            val parentGroup = TowerGroup.Implicit(depth)
+            val towerGroup = TowerGroup.Implicit(depth).InvokeExtension.InvokeResolvePriority(InvokeResolvePriority.INVOKE_EXTENSION)
             processLevel(
                 invokeReceiverValue.toMemberScopeTowerLevel(
                     extensionReceiver = implicitReceiverValue,
                     implicitExtensionInvokeMode = true
                 ),
-                info, parentGroup.InvokeExtension,
+                info, towerGroup,
                 ExplicitReceiverKind.DISPATCH_RECEIVER,
                 InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER,
                 invokeOnGivenReceiverCandidateFactory
@@ -587,7 +589,10 @@ class FirTowerResolverSession internal constructor(
                 )
 
             val invokeFunctionInfo =
-                info.copy(explicitReceiver = invokeReceiverExpression, name = OperatorNameConventions.INVOKE).let {
+                info.copy(
+                    explicitReceiver = invokeReceiverExpression, name = OperatorNameConventions.INVOKE,
+                    candidateForCommonInvokeReceiver = invokeReceiverCandidate.takeUnless { invokeBuiltinExtensionMode }
+                ).let {
                     when {
                         invokeBuiltinExtensionMode -> it.withReceiverAsArgument(info.explicitReceiver!!)
                         else -> it

@@ -43,7 +43,11 @@ sealed class TowerGroupKind(private val index: Int) : Comparable<TowerGroupKind>
 }
 
 @Suppress("FunctionName", "unused", "PropertyName")
-class TowerGroup private constructor(private val kinds: Array<TowerGroupKind>) : Comparable<TowerGroup> {
+class TowerGroup
+private constructor(
+    private val kinds: Array<TowerGroupKind>,
+    private val invokeResolvePriority: InvokeResolvePriority = InvokeResolvePriority.NONE
+) : Comparable<TowerGroup> {
     companion object {
         private fun kindOf(kind: TowerGroupKind): TowerGroup = TowerGroup(arrayOf(kind))
 
@@ -84,6 +88,14 @@ class TowerGroup private constructor(private val kinds: Array<TowerGroupKind>) :
 
     fun Static(depth: Int) = kindOf(TowerGroupKind.Static(depth))
 
+    // Treating `a.foo()` common calls as more prioritized than `a.foo.invoke()`
+    // It's not the same as TowerGroupKind because it's not about tower levels, but rather a different dimension semantically.
+    // It could be implemented via another TowerGroupKind, but it's not clear what priority should be assigned to the new TowerGroupKind
+    fun InvokeResolvePriority(invokeResolvePriority: InvokeResolvePriority): TowerGroup {
+        if (invokeResolvePriority == InvokeResolvePriority.NONE) return this
+        return TowerGroup(kinds, invokeResolvePriority)
+    }
+
     override fun compareTo(other: TowerGroup): Int {
         var index = 0
         while (index < kinds.size) {
@@ -95,6 +107,29 @@ class TowerGroup private constructor(private val kinds: Array<TowerGroupKind>) :
             index++
         }
         if (index < other.kinds.size) return -1
-        return 0
+
+        return invokeResolvePriority.compareTo(other.invokeResolvePriority)
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as TowerGroup
+
+        if (!kinds.contentEquals(other.kinds)) return false
+        if (invokeResolvePriority != other.invokeResolvePriority) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = kinds.contentHashCode()
+        result = 31 * result + invokeResolvePriority.hashCode()
+        return result
+    }
+}
+
+enum class InvokeResolvePriority {
+    NONE, COMMON_INVOKE, INVOKE_EXTENSION;
 }

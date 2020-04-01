@@ -354,6 +354,7 @@ class FirCallResolver(
             session,
             file,
             transformer.components.implicitReceiverStack,
+            candidateForCommonInvokeReceiver = null,
             // Additional things for callable reference resolve
             expectedType,
             outerConstraintSystemBuilder,

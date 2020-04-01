@@ -43,6 +43,8 @@ data class CallInfo(
     val containingFile: FirFile,
     val implicitReceiverStack: ImplicitReceiverStack,
 
+    val candidateForCommonInvokeReceiver: Candidate? = null,
+
     // Four properties for callable references only
     val expectedType: ConeKotlinType? = null,
     val outerCSBuilder: ConstraintSystemBuilder? = null,
