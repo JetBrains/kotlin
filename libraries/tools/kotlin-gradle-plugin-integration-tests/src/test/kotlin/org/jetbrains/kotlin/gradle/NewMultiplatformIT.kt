@@ -452,7 +452,7 @@ class NewMultiplatformIT : BaseGradleIT() {
         }
 
     @Test
-    fun testResourceProcessing() = with(Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
+    fun testResourceProcessing() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
         val targetsWithResources = listOf("jvm6", "nodeJs", "wasm32", nativeHostTargetName)
         val processResourcesTasks =
             targetsWithResources.map { ":${it}ProcessResources" }

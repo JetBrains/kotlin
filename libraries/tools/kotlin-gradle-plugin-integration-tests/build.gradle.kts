@@ -52,7 +52,7 @@ val shortenTempRootName = System.getProperty("os.name")!!.contains("Windows")
 projectTest("test", shortenTempRootName = shortenTempRootName) {}
 
 projectTest("testAdvanceGradleVersion", shortenTempRootName = shortenTempRootName) {
-    val gradleVersionForTests = "5.3-rc-2"
+    val gradleVersionForTests = "6.3"
     systemProperty("kotlin.gradle.version.for.tests", gradleVersionForTests)
 }
 

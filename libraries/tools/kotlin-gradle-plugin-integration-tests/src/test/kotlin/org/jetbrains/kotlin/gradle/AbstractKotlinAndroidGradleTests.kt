@@ -12,9 +12,6 @@ import kotlin.test.assertTrue
 open class KotlinAndroid33GradleIT : KotlinAndroid32GradleIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_3_2
-
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("5.0")
 }
 
 open class KotlinAndroid36GradleIT : KotlinAndroid33GradleIT() {
@@ -410,46 +407,6 @@ open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
     }
 }
 
-class KotlinAndroid30GradleIT : KotlinAndroid3GradleIT() {
-    override val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v3_0_0
-
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.Until("4.10.2")
-
-    @Test
-    fun testOmittedStdlibVersion() = Project("AndroidProject").run {
-        setupWorkingDir()
-
-        gradleBuildScript("Lib").modify {
-            it.checkedReplace("kotlin-stdlib:\$kotlin_version", "kotlin-stdlib") + "\n" + """
-            apply plugin: 'maven'
-            group 'com.example'
-            version '1.0'
-            android {
-                defaultPublishConfig 'flavor1Debug'
-            }
-            uploadArchives {
-                repositories {
-                    mavenDeployer {
-                        repository(url: "file://${'$'}buildDir/repo")
-                    }
-                }
-            }
-            """.trimIndent()
-        }
-
-        build(":Lib:assembleFlavor1Debug", ":Lib:uploadArchives") {
-            assertSuccessful()
-            assertTasksExecuted(":Lib:compileFlavor1DebugKotlin", ":Lib:uploadArchives")
-            val pomLines = File(projectDir, "Lib/build/repo/com/example/Lib/1.0/Lib-1.0.pom").readLines()
-            val stdlibVersionLineNumber = pomLines.indexOfFirst { "<artifactId>kotlin-stdlib</artifactId>" in it } + 1
-            val versionLine = pomLines[stdlibVersionLineNumber]
-            assertTrue { "<version>${defaultBuildOptions().kotlinVersion}</version>" in versionLine }
-        }
-    }
-}
-
 abstract class KotlinAndroid3GradleIT : AbstractKotlinAndroidGradleTests() {
     @Test
     fun testApplyWithFeaturePlugin() {
@@ -723,29 +680,6 @@ fun getSomething() = 10
     fun testAndroidExtensionsSpecificFeatures() {
         val project = Project("AndroidExtensionsSpecificFeatures")
         val options = defaultBuildOptions().copy(incremental = false)
-
-        if (this is KotlinAndroid30GradleIT) {
-            project.setupWorkingDir()
-            project.gradleBuildScript("app").modify {
-                """
-                def projectEvaluated = false
-
-                configurations.all { configuration ->
-                    incoming.beforeResolve {
-                        if (!projectEvaluated) {
-                            throw new RuntimeException("${'$'}configuration resolved during project configuration phase.")
-                        }
-                    }
-                }
-
-                $it
-
-                afterEvaluate {
-                    projectEvaluated = true
-                }
-                """.trimIndent()
-            }
-        }
 
         project.build("assemble", options = options) {
             assertFailed()

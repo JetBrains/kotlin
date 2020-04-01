@@ -279,7 +279,7 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
     // Starting with Gradle 5.0, plain Maven dependencies are represented as two variants, and resolving them to the API one leads
     // to transitive dependencies left out of the resolution results. We need to ensure that our attributes schema does not lead to the API
         // variants chosen over the runtime ones when resolving a configuration with no required Usage:
-        with(Project("simpleProject", GradleVersionRequired.AtLeast("5.0-milestone-1"))) {
+        with(Project("simpleProject")) {
             setupWorkingDir()
             gradleBuildScript().appendText("\ndependencies { compile 'org.jetbrains.kotlin:kotlin-compiler-embeddable' }")
 

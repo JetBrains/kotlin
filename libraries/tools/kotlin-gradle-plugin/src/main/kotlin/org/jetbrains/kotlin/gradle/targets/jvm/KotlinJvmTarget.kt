@@ -113,7 +113,7 @@ open class KotlinJvmTarget @Inject constructor(
         val targetJar = project.tasks.getByName(artifactsTaskName) as Jar
         val javaJar = project.tasks.getByName(javaPluginConvention.sourceSets.getByName("main").jarTaskName) as Jar
         (javaJar.source as? ConfigurableFileCollection)?.setFrom(targetJar.source)
-        javaJar.conventionMapping("archiveName") { targetJar.archiveName }
+        javaJar.conventionMapping("archiveName") { targetJar.archiveFileName.get() }
         javaJar.dependsOn(targetJar)
         javaJar.enabled = false
 
