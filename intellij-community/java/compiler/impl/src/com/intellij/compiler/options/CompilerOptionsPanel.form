@@ -75,6 +75,7 @@
           <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <labelFor value="a28b8"/>
           <text resource-bundle="messages/JavaCompilerBundle" key="settings.build.process.heap.size"/>
         </properties>
       </component>
@@ -89,6 +90,7 @@
           <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <labelFor value="b5547"/>
           <text resource-bundle="messages/JavaCompilerBundle" key="settings.user.local.build.process.vm.options"/>
         </properties>
       </component>
@@ -153,6 +155,7 @@
           <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <labelFor value="7261c"/>
           <text resource-bundle="messages/JavaCompilerBundle" key="settings.shared.build.process.vm.options"/>
         </properties>
       </component>
