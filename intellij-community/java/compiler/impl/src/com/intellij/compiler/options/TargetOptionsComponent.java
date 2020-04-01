@@ -77,7 +77,9 @@ public class TargetOptionsComponent extends JPanel {
 
     new TableSpeedSearch(myTable);
 
-    add(new JLabel(JavaCompilerBundle.message("settings.project.bytecode.version")), constraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NONE));
+    JLabel label = new JLabel(JavaCompilerBundle.message("settings.project.bytecode.version"));
+    label.setLabelFor(myCbProjectTargetLevel);
+    add(label, constraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NONE));
     add(myCbProjectTargetLevel, constraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NONE));
     add(new JLabel(JavaCompilerBundle.message("settings.per.module.bytecode.version")), constraints(0, 1, 2, 1, 1.0, 0.0, GridBagConstraints.NONE));
     JPanel tableComp = ToolbarDecorator.createDecorator(myTable)

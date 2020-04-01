@@ -29,6 +29,7 @@
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="1" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <labelFor value="63d6b"/>
           <text resource-bundle="messages/CodeInsightBundle" key="postfix.completion.expand"/>
         </properties>
       </component>

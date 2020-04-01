@@ -38,12 +38,14 @@ public class TemplateExpandShortcutPanel extends JPanel {
     gbConstraints.weighty = 0;
     gbConstraints.weightx = 0;
     gbConstraints.gridy = 0;
-    add(new JLabel(label), gbConstraints);
+    JLabel jLabel = new JLabel(label);
+    add(jLabel, gbConstraints);
 
     gbConstraints.gridx = 1;
     gbConstraints.insets = JBUI.insetsLeft(4);
     myExpandByCombo = new ComboBox<>();
     add(myExpandByCombo, gbConstraints);
+    jLabel.setLabelFor(myExpandByCombo);
 
     myOpenKeymapLabel = new HyperlinkLabel(CodeInsightBundle.message("link.change.context"));
     gbConstraints.gridx = 2;

@@ -141,12 +141,14 @@ public class ProcessorProfilePanel extends JPanel {
         new GridBagConstraints(2, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, JBUI.insets(15, 5, 0, 0), 0, 0));
 
     myProductionLabel = new JLabel(JavaCompilerBundle.message("settings.production.sources.directory"));
+    myProductionLabel.setLabelFor(myGeneratedProductionDirField);
     add(myProductionLabel,
         new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, JBUI.insets(10, 5, 0, 0), 0, 0));
     add(myGeneratedProductionDirField,
         new GridBagConstraints(1, GridBagConstraints.RELATIVE, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, JBUI.insets(10, 5, 0, 0), 0, 0));
 
     myTestLabel = new JLabel(JavaCompilerBundle.message("settings.test.sources.directory"));
+    myTestLabel.setLabelFor(myGeneratedTestsDirField);
     add(myTestLabel,
         new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, JBUI.insets(10, 5, 0, 0), 0, 0));
     add(myGeneratedTestsDirField,

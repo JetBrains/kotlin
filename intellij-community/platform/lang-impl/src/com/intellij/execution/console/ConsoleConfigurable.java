@@ -73,7 +73,9 @@ public class ConsoleConfigurable implements SearchableConfigurable, Configurable
       gridBag.anchor(GridBagConstraints.WEST).setDefaultAnchor(GridBagConstraints.WEST);
       northPanel.add(myCbUseSoftWrapsAtConsole, gridBag.nextLine().next());
       northPanel.add(Box.createHorizontalGlue(), gridBag.next().coverLine());
-      northPanel.add(new JLabel(ApplicationBundle.message("editbox.console.history.limit")), gridBag.nextLine().next());
+      JLabel label = new JLabel(ApplicationBundle.message("editbox.console.history.limit"));
+      label.setLabelFor(myCommandsHistoryLimitField);
+      northPanel.add(label, gridBag.nextLine().next());
       northPanel.add(myCommandsHistoryLimitField, gridBag.next());
       if (ConsoleBuffer.useCycleBuffer()) {
         northPanel.add(myCbOverrideConsoleCycleBufferSize, gridBag.nextLine().next());
