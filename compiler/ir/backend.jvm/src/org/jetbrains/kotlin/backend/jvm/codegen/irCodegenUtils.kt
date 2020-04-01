@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper
+import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
@@ -80,14 +80,14 @@ val IrDeclaration.fileParent: IrFile
 internal val DeclarationDescriptorWithSource.psiElement: PsiElement?
     get() = (source as? PsiSourceElement)?.psi
 
-fun JvmBackendContext.getSourceMapper(declaration: IrClass): DefaultSourceMapper {
+fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
     val sourceManager = this.psiSourceManager
     val fileEntry = sourceManager.getFileEntry(declaration.fileParent)
     // NOTE: apparently inliner requires the source range to cover the
     //       whole file the class is declared in rather than the class only.
     // TODO: revise
     val endLineNumber = fileEntry?.getSourceRangeInfo(0, fileEntry.maxOffset)?.endLineNumber ?: 0
-    return DefaultSourceMapper(
+    return SourceMapper(
         SourceInfo.createInfoForIr(
             endLineNumber + 1,
             typeMapper.mapClass(declaration).internalName,

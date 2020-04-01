@@ -233,7 +233,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         val inliner = MethodInliner(
             node, parameters, info, FieldRemapper(null, null, parameters), isSameModule,
             "Method inlining " + sourceCompiler.callElementText,
-            NestedSourceMapper(defaultSourceMapper, nodeAndSmap.classSMAP), info.callSiteInfo,
+            SourceMapCopier(defaultSourceMapper, nodeAndSmap.classSMAP), info.callSiteInfo,
             if (functionDescriptor.isInlineOnly()) InlineOnlySmapSkipper(codegen) else null,
             !isInlinedToInlineFunInKotlinRuntime()
         ) //with captured

@@ -42,8 +42,7 @@ class AnonymousObjectTransformer(
     private val fieldNames = hashMapOf<String, MutableList<String>>()
 
     private var constructor: MethodNode? = null
-    private var sourceInfo: String? = null
-    private var debugInfo: String? = null
+    private lateinit var sourceMap: SMAP
     private lateinit var sourceMapper: SourceMapper
     private val languageVersionSettings = inliningContext.state.languageVersionSettings
 
@@ -56,6 +55,8 @@ class AnonymousObjectTransformer(
         val methodsToTransform = ArrayList<MethodNode>()
         val metadataReader = ReadKotlinClassHeaderAnnotationVisitor()
         lateinit var superClassName: String
+        var sourceInfo: String? = null
+        var debugInfo: String? = null
 
         createClassReader().accept(object : ClassVisitor(Opcodes.API_VERSION, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
@@ -113,22 +114,13 @@ class AnonymousObjectTransformer(
             override fun visitEnd() {}
         }, ClassReader.SKIP_FRAMES)
 
-        if (!inliningContext.isInliningLambda) {
-            sourceMapper = if (debugInfo != null && !debugInfo!!.isEmpty()) {
-                SourceMapper.createFromSmap(SMAPParser.parse(debugInfo!!))
-            } else {
-                //seems we can't do any clever mapping cause we don't know any about original class name
-                IdenticalSourceMapper
-            }
-            if (sourceInfo != null && !GENERATE_SMAP) {
-                classBuilder.visitSource(sourceInfo!!, debugInfo)
-            }
-        } else {
-            if (sourceInfo != null) {
-                classBuilder.visitSource(sourceInfo!!, debugInfo)
-            }
-            sourceMapper = IdenticalSourceMapper
-        }
+        // When regenerating objects in lambdas, we have to pass the SMAP straight through and keep
+        // the original line numbers because SMAPParser does not parse call site markers.
+        val debugInfoToParse = if (inliningContext.isInliningLambda) null else debugInfo
+        sourceMap = SMAPParser.parseOrCreateDefault(debugInfoToParse, sourceInfo, oldObjectType.internalName, 1, 65535)
+        // TODO source info should be for the file into which the function is being inlined, else we cannot
+        //      generate correct call site markers for lambdas inlined into the object
+        sourceMapper = SourceMapper(sourceMap.sourceInfo.takeIf { debugInfoToParse?.isEmpty() == false })
 
         val allCapturedParamBuilder = ParametersBuilder.newBuilder()
         val constructorParamBuilder = ParametersBuilder.newBuilder()
@@ -183,7 +175,11 @@ class AnonymousObjectTransformer(
             }
         }
 
-        classBuilder.visitSMAP(sourceMapper, !state.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
+        if (GENERATE_SMAP && !inliningContext.isInliningLambda) {
+            classBuilder.visitSMAP(sourceMapper, !state.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
+        } else if (sourceInfo != null) {
+            classBuilder.visitSource(sourceInfo!!, debugInfo)
+        }
 
         val visitor = classBuilder.visitor
         innerClassNodes.forEach { node ->
@@ -296,7 +292,7 @@ class AnonymousObjectTransformer(
             remapper,
             isSameModule,
             "Transformer for " + transformationInfo.oldClassName,
-            sourceMapper,
+            SourceMapCopier(sourceMapper, sourceMap, keepCallSites = inliningContext.isInliningLambda),
             InlineCallSiteInfo(
                 transformationInfo.oldClassName,
                 sourceNode.name,

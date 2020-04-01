@@ -23,18 +23,12 @@ object SMAPParser {
         if (mappingInfo != null && mappingInfo.isNotEmpty()) {
             return parse(mappingInfo)
         }
-
-        val mapping =
-            if (source == null || source.isEmpty() || methodStartLine > methodEndLine)
-                FileMapping.SKIP
-            else
-                FileMapping(source, path).apply {
-                    if (methodStartLine <= methodEndLine) {
-                        //one to one
-                        mapNewInterval(methodStartLine, methodStartLine, methodEndLine - methodStartLine + 1)
-                    }
-                }
-
+        if (source == null || source.isEmpty() || methodStartLine > methodEndLine) {
+            return SMAP(listOf(FileMapping.SKIP))
+        }
+        val mapping = FileMapping(source, path).apply {
+            mapNewInterval(methodStartLine, methodStartLine, methodEndLine - methodStartLine + 1)
+        }
         return SMAP(listOf(mapping))
     }
 

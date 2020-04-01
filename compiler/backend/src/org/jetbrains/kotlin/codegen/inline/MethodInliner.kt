@@ -54,7 +54,7 @@ class MethodInliner(
     private val nodeRemapper: FieldRemapper,
     private val isSameModule: Boolean,
     private val errorPrefix: String,
-    private val sourceMapper: SourceMapper,
+    private val sourceMapper: SourceMapCopier,
     private val inlineCallSiteInfo: InlineCallSiteInfo,
     private val inlineOnlySmapSkipper: InlineOnlySmapSkipper?, //non null only for root
     private val shouldPreprocessApiVersionCalls: Boolean = false
@@ -288,20 +288,17 @@ class MethodInliner(
                     )
 
                     setLambdaInlining(true)
-                    val lambdaSMAP = info.node.classSMAP
 
-                    val childSourceMapper =
-                        if (inliningContext.classRegeneration && !inliningContext.isInliningLambda)
-                            NestedSourceMapper(sourceMapper, lambdaSMAP)
-                        else
-                            NestedSourceMapper(sourceMapper.parent!!, lambdaSMAP, sameFile = info !is DefaultLambda)
-
+                    // TODO we cannot keep call site markers when inlining lambdas into objects because AnonymousObjectTransformer
+                    //      uses the original's source info, thus KotlinDebug would point to the file with the inline function
+                    //      instead of the one with the call.
+                    val sameFile = info !is DefaultLambda && (!inliningContext.classRegeneration || inliningContext.isInliningLambda)
                     val inliner = MethodInliner(
                         info.node.node, lambdaParameters, inliningContext.subInlineLambda(info),
                         newCapturedRemapper,
                         if (info is DefaultLambda) isSameModule else true /*cause all nested objects in same module as lambda*/,
                         "Lambda inlining " + info.lambdaClassType.internalName,
-                        childSourceMapper, inlineCallSiteInfo, null
+                        SourceMapCopier(sourceMapper.parent, info.node.classSMAP, sameFile), inlineCallSiteInfo, null
                     )
 
                     val varRemapper = LocalVarRemapper(lambdaParameters, valueParamShift)
