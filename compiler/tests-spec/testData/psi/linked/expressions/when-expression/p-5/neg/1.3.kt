@@ -2,7 +2,7 @@
  * KOTLIN PSI SPEC TEST (NEGATIVE)
  *
  * SPEC VERSION: 0.1-313
- * PLACE: expressions, when-expression -> paragraph 5 -> sentence 1
+ * MAIN LINK: expressions, when-expression -> paragraph 5 -> sentence 1
  * NUMBER: 3
  * DESCRIPTION: 'When' with bound value and with invalid list of the conditions in 'when entry'.
  */

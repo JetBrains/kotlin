@@ -4,7 +4,7 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-218
- * PLACE: expressions, equality-expressions, value-equality-expressions -> paragraph 2 -> sentence 2
+ * MAIN LINK: expressions, equality-expressions, value-equality-expressions -> paragraph 2 -> sentence 2
  * NUMBER: 2
  * DESCRIPTION: check value-equality-expression
  */

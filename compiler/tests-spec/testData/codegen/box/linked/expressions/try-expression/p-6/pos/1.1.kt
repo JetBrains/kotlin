@@ -4,7 +4,7 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-218
- * PLACE: expressions, try-expression -> paragraph 6 -> sentence 1
+ * MAIN LINK: expressions, try-expression -> paragraph 6 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION:The value of the try-expression is the same as the value of the last expression of the try or catch block
  */

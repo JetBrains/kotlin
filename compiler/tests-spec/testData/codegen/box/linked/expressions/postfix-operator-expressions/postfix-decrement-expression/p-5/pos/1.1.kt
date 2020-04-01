@@ -4,7 +4,7 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-213
- * PLACE: expressions, postfix-operator-expressions, postfix-decrement-expression -> paragraph 5 -> sentence 1
+ * MAIN LINK: expressions, postfix-operator-expressions, postfix-decrement-expression -> paragraph 5 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: check the result of dec() is assigned to A, the return type of dec must be a subtype of A.
  */

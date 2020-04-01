@@ -2,7 +2,7 @@
  * KOTLIN PSI SPEC TEST (NEGATIVE)
  *
  * SPEC VERSION: 0.1-100
- * PLACE: expressions, constant-literals, real-literals -> paragraph 1 -> sentence 2
+ * MAIN LINK: expressions, constant-literals, real-literals -> paragraph 1 -> sentence 2
  * NUMBER: 1
  * DESCRIPTION: Not allowed hexadecimal real literals.
  */

@@ -3,7 +3,7 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-100
- * PLACE: expressions, constant-literals, boolean-literals -> paragraph 1 -> sentence 3
+ * MAIN LINK: expressions, constant-literals, boolean-literals -> paragraph 1 -> sentence 3
  * NUMBER: 1
  * DESCRIPTION: Checking of type for Boolean values
  * HELPERS: checkType

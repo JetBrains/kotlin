@@ -7,8 +7,8 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-296
- * PLACE: expressions, type-checking-and-containment-checking-expressions, type-checking-expression -> paragraph 4 -> sentence 1
- * RELEVANT PLACES: expressions, type-checking-and-containment-checking-expressions, type-checking-expression -> paragraph 4 -> sentence 1
+ * MAIN LINK: expressions, type-checking-and-containment-checking-expressions, type-checking-expression -> paragraph 4 -> sentence 1
+ * PRIMARY LINKS: expressions, type-checking-and-containment-checking-expressions, type-checking-expression -> paragraph 4 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: Type-checking expression always has type kotlin.Boolean.
  * HELPERS: checkType

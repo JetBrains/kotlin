@@ -5,7 +5,7 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
  * SPEC VERSION: 0.1-100
- * PLACE: expressions, when-expression, exhaustive-when-expressions -> paragraph 2 -> sentence 1
+ * MAIN LINK: expressions, when-expression, exhaustive-when-expressions -> paragraph 2 -> sentence 1
  * NUMBER: 2
  * DESCRIPTION: Non-exhaustive when, with bound value, without else branch.
  */

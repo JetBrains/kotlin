@@ -4,8 +4,8 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-218
- * PLACE: expressions, comparison-expressions -> paragraph 1 -> sentence 2
- * RELEVANT PLACES: expressions, comparison-expressions -> paragraph 1 -> sentence 1
+ * MAIN LINK: expressions, comparison-expressions -> paragraph 1 -> sentence 2
+ * PRIMARY LINKS: expressions, comparison-expressions -> paragraph 1 -> sentence 1
  * expressions, comparison-expressions -> paragraph 2 -> sentence 2
  * expressions, comparison-expressions -> paragraph 3 -> sentence 1
  * expressions, comparison-expressions -> paragraph 4 -> sentence 1

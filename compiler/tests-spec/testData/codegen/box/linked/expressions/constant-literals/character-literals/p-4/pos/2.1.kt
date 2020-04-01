@@ -4,7 +4,7 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-218
- * PLACE: expressions, constant-literals, character-literals -> paragraph 4 -> sentence 2
+ * MAIN LINK: expressions, constant-literals, character-literals -> paragraph 4 -> sentence 2
  * NUMBER: 1
  * DESCRIPTION: character literal codepoint is equal to the unicode symbol codes
  */

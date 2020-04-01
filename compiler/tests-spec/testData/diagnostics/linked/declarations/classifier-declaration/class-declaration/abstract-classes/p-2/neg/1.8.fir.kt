@@ -7,8 +7,8 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
  * SPEC VERSION: 0.1-213
- * PLACE: declarations, classifier-declaration, class-declaration, abstract-classes -> paragraph 2 -> sentence 1
- * RELEVANT PLACES: inheritance, overriding -> paragraph 7 -> sentence 1
+ * MAIN LINK: declarations, classifier-declaration, class-declaration, abstract-classes -> paragraph 2 -> sentence 1
+ * PRIMARY LINKS: inheritance, overriding -> paragraph 7 -> sentence 1
  * NUMBER: 8
  * DESCRIPTION: Abstract classes may contain one or more abstract members, which should be implemented in a subtype of this abstract class
  * ISSUES: KT-27825

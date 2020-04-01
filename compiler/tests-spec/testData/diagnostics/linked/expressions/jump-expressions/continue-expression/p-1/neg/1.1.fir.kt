@@ -6,7 +6,7 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
  * SPEC VERSION: 0.1-222
- * PLACE: expressions, jump-expressions, continue-expression -> paragraph 1 -> sentence 1
+ * MAIN LINK: expressions, jump-expressions, continue-expression -> paragraph 1 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: A continue expression is a jump expression allowed only within loop bodies.
  */

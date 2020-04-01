@@ -4,7 +4,7 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-218
- * PLACE: expressions, try-expression -> paragraph 2 -> sentence 3
+ * MAIN LINK: expressions, try-expression -> paragraph 2 -> sentence 3
  * NUMBER: 1
  * DESCRIPTION: If there are several catch blocks which match the exception type, the first one is picked.
  */

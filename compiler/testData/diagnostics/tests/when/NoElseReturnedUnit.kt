@@ -1,8 +1,10 @@
 /*
- * RELEVANT SPEC SENTENCES (spec version: 0.1-152, test type: neg):
- *  - expressions, when-expression -> paragraph 5 -> sentence 1
- *  - expressions, when-expression -> paragraph 9 -> sentence 2
- *  - expressions, when-expression, exhaustive-when-expressions -> paragraph 1 -> sentence 1
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-152
+ * PRIMARY LINKS: expressions, when-expression -> paragraph 5 -> sentence 1
+ * expressions, when-expression -> paragraph 9 -> sentence 2
+ * expressions, when-expression, exhaustive-when-expressions -> paragraph 1 -> sentence 1
  */
 
 

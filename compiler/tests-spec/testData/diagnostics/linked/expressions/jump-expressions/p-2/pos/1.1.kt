@@ -7,7 +7,7 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-213
- * PLACE: expressions, jump-expressions -> paragraph 2 -> sentence 1
+ * MAIN LINK: expressions, jump-expressions -> paragraph 2 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: check he type of jump expressions is the kotlin.Nothing
  */

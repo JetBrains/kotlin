@@ -6,8 +6,8 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-218
- * PLACE:expressions, try-expression -> paragraph 1 -> sentence 1
- * RELEVANT PLACES: expressions, try-expression -> paragraph 1 -> sentence 2
+ * MAIN LINK:expressions, try-expression -> paragraph 1 -> sentence 1
+ * PRIMARY LINKS: expressions, try-expression -> paragraph 1 -> sentence 2
  * expressions, try-expression -> paragraph 1 -> sentence 5
  * NUMBER: 1
  * DESCRIPTION: try-expression has to start with a try body

@@ -2,7 +2,7 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
  * SPEC VERSION: 0.1-100
- * PLACE: expressions, constant-literals, real-literals -> paragraph 4 -> sentence 2
+ * MAIN LINK: expressions, constant-literals, real-literals -> paragraph 4 -> sentence 2
  * NUMBER: 1
  * DESCRIPTION: Real literals with underscores before an exponent mark.
  */

@@ -6,7 +6,7 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-296
- * PLACE: expressions, not-null-assertion-expression -> paragraph 3 -> sentence 1
+ * MAIN LINK: expressions, not-null-assertion-expression -> paragraph 3 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: The type of non-null assertion e!! expression is the non-nullable variant of the type of e.
  * HELPERS: checkType

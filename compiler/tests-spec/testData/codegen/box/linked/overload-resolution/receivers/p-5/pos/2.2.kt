@@ -4,7 +4,7 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-268
- * PLACE: overload-resolution, receivers -> paragraph 5 -> sentence 2
+ * MAIN LINK: overload-resolution, receivers -> paragraph 5 -> sentence 2
  * NUMBER: 2
  * DESCRIPTION: implicit this receiver has higher priority than any companion object receiver
  */

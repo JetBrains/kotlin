@@ -7,8 +7,8 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-218
- * PLACE: expressions, equality-expressions, value-equality-expressions -> paragraph 3 -> sentence 1
- * RELEVANT PLACES: expressions, equality-expressions, value-equality-expressions -> paragraph 1 -> sentence 1
+ * MAIN LINK: expressions, equality-expressions, value-equality-expressions -> paragraph 3 -> sentence 1
+ * PRIMARY LINKS: expressions, equality-expressions, value-equality-expressions -> paragraph 1 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: Value equality expressions always have type kotlin.Boolean as does the equals method in kotlin.Any
  * HELPERS: checkType

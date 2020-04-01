@@ -4,7 +4,7 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-100
- * PLACE: expressions, constant-literals, the-types-for-integer-literals -> paragraph 1 -> sentence 2
+ * MAIN LINK: expressions, constant-literals, the-types-for-integer-literals -> paragraph 1 -> sentence 2
  * NUMBER: 2
  * DESCRIPTION: Type checking of decimal integer literals.
  * HELPERS: checkType

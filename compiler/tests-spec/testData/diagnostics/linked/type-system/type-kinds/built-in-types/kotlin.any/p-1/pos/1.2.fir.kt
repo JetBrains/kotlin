@@ -6,8 +6,8 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-296
- * PLACE: type-system, type-kinds, built-in-types, kotlin.any -> paragraph 1 -> sentence 1
- * RELEVANT PLACES: type-system, introduction-1 -> paragraph 7 -> sentence 1
+ * MAIN LINK: type-system, type-kinds, built-in-types, kotlin.any -> paragraph 1 -> sentence 1
+ * PRIMARY LINKS: type-system, introduction-1 -> paragraph 7 -> sentence 1
  * NUMBER: 2
  * DESCRIPTION: The use of Boolean literals as the identifier (with backtick) in the class.
  * HELPERS: checkType, functions

@@ -4,7 +4,7 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-218
- * PLACE: expressions, equality-expressions, reference-equality-expressions -> paragraph 3 -> sentence 2
+ * MAIN LINK: expressions, equality-expressions, reference-equality-expressions -> paragraph 3 -> sentence 2
  * NUMBER: 2
  * DESCRIPTION: Any instance of the null reference null is equal by reference to any other instance of the null reference;
  */

@@ -7,7 +7,7 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-312
- * PLACE: overload-resolution, building-the-overload-candidate-set-ocs, call-with-specified-type-parameters -> paragraph 2 -> sentence 1
+ * MAIN LINK: overload-resolution, building-the-overload-candidate-set-ocs, call-with-specified-type-parameters -> paragraph 2 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION:  filtering is done before selection of the overload candidate set is perfomed
  */

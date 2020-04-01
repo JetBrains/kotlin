@@ -6,8 +6,8 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
  * SPEC VERSION: 0.1-218
- * PLACE: expressions, comparison-expressions -> paragraph 4 -> sentence 1
- * RELEVANT PLACES: overloadable-operators -> paragraph 4 -> sentence 1
+ * MAIN LINK: expressions, comparison-expressions -> paragraph 4 -> sentence 1
+ * PRIMARY LINKS: overloadable-operators -> paragraph 4 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: The compareTo operator function must have return type kotlin.Int
  */

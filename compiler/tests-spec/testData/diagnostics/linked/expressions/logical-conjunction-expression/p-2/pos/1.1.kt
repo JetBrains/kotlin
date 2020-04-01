@@ -6,8 +6,8 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-313
- * PLACE: expressions, logical-conjunction-expression -> paragraph 2 -> sentence 1
- * RELEVANT PLACES: expressions, logical-conjunction-expression -> paragraph 2 -> sentence 2
+ * MAIN LINK: expressions, logical-conjunction-expression -> paragraph 2 -> sentence 1
+ * PRIMARY LINKS: expressions, logical-conjunction-expression -> paragraph 2 -> sentence 2
  * NUMBER: 1
  * DESCRIPTION: Both operands of a logical conjunction expression must have a type which is a subtype of kotlin.Boolean
  * HELPERS: checkType
