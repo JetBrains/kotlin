@@ -335,7 +335,7 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
       return forwardIndexAccessor.convertToInputDataMap(serializedInputData);
     }
     // in future we will get rid of forward index for SingleEntryFileBasedIndexExtension
-    if (myExtension instanceof SingleEntryFileBasedIndexExtension) {
+    if (mySingleEntryIndex) {
       Key key = (Key)(Object)fileId;
       final Map<Key, Value>[] result = new Map[]{Collections.emptyMap()};
       ValueContainer<Value> container = getData(key);
