@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerGroup
 
 open class CandidateCollector(
     val components: BodyResolveComponents,

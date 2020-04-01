@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.calls
+package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 sealed class TowerGroupKind(private val index: Int) : Comparable<TowerGroupKind> {
     abstract class WithDepth(index: Int, val depth: Int) : TowerGroupKind(index)
