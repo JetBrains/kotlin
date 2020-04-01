@@ -27,7 +27,7 @@ class NpmVersions {
     val sourceMapSupport = NpmPackageVersion("source-map-support", "0.5.16")
 
     val cssLoader = NpmPackageVersion("css-loader", "3.4.2")
-    val styleLoader = NpmPackageVersion("css-loader", "1.1.3")
+    val styleLoader = NpmPackageVersion("style-loader", "1.1.3")
     val miniCssExtractPlugin = NpmPackageVersion("mini-css-extract-plugin", "0.9.0")
 
     val mocha = NpmPackageVersion("mocha", "7.1.1")

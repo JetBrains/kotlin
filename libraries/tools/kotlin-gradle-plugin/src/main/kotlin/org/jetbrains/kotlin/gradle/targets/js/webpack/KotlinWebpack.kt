@@ -149,6 +149,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
             outputFileName = outputFileName,
             configDirectory = configDirectory,
             bundleAnalyzerReportDir = if (report) reportDir else null,
+            cssSettings = cssSettings,
             devServer = devServer,
             devtool = devtool,
             sourceMaps = sourceMaps,

@@ -5,12 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
-import org.gradle.api.tasks.Input
-
-data class KotlinWebpackCssSettings(
-    @Input
-    var enabled: Boolean = true,
-
-    @Input
-    var extractPolicy: KotlinWebpackAssetExtractPolicy = KotlinWebpackAssetExtractPolicy.DEPENDS_ON_MODE
-)
+enum class KotlinWebpackAssetExtractPolicy {
+    ALWAYS,
+    DEPENDS_ON_MODE,
+    NONE
+}
