@@ -276,10 +276,6 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     return true;
   }
 
-  public void clear() {
-    myArranger.clear();
-  }
-
   private void addDummyItems(int count) {
     EmptyLookupItem dummy = new EmptyLookupItem("loading...", true);
     for (int i = count; i > 0; i--) {
