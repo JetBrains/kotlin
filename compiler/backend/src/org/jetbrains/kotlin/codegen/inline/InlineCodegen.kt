@@ -72,7 +72,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     var activeLambda: LambdaInfo? = null
         protected set
 
-    private val defaultSourceMapper = sourceCompiler.lazySourceMapper
+    private val sourceMapper = sourceCompiler.lazySourceMapper
 
     protected var delayedHiddenWriting: Function0<Unit>? = null
 
@@ -208,7 +208,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     protected fun inlineCall(nodeAndSmap: SMAPAndMethodNode, inlineDefaultLambda: Boolean, isCallOfFunctionInCorrespondingDefaultDispatch: Boolean): InlineResult {
         assert(delayedHiddenWriting == null) { "'putHiddenParamsIntoLocals' should be called after 'processAndPutHiddenParameters(true)'" }
-        if (!isCallOfFunctionInCorrespondingDefaultDispatch) defaultSourceMapper.callSiteMarker = codegen.lastLineNumber
         val node = nodeAndSmap.node
         if (inlineDefaultLambda) {
             for (lambda in extractDefaultLambdas(node)) {
@@ -230,11 +229,13 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             sourceCompiler, sourceCompiler.inlineCallSiteInfo, reifiedTypeInliner, typeParameterMappings
         )
 
+        val sourceInfo = sourceMapper.sourceInfo!!
+        val callSite = SourcePosition(codegen.lastLineNumber, sourceInfo.source, sourceInfo.pathOrCleanFQN)
         val inliner = MethodInliner(
             node, parameters, info, FieldRemapper(null, null, parameters), isSameModule,
             "Method inlining " + sourceCompiler.callElementText,
-            SourceMapCopier(defaultSourceMapper, nodeAndSmap.classSMAP), info.callSiteInfo,
-            if (functionDescriptor.isInlineOnly()) InlineOnlySmapSkipper(codegen) else null,
+            SourceMapCopier(sourceMapper, nodeAndSmap.classSMAP, callSite.takeIf { !isCallOfFunctionInCorrespondingDefaultDispatch }),
+            info.callSiteInfo, if (functionDescriptor.isInlineOnly()) InlineOnlySmapSkipper(codegen) else null,
             !isInlinedToInlineFunInKotlinRuntime()
         ) //with captured
 
@@ -269,9 +270,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         if (shouldSpillStack) {
             addInlineMarker(codegen.v, false)
         }
-
-        if (!isCallOfFunctionInCorrespondingDefaultDispatch) defaultSourceMapper.callSiteMarker = null
-
         return result
     }
 

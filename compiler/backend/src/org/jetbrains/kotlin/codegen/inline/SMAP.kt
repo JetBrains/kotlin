@@ -58,7 +58,7 @@ object SMAPBuilder {
         lineMappings.joinToString("") { it.toSMAP(id, mapToFirstLine) }
 }
 
-class SourceMapCopier(val parent: SourceMapper, private val smap: SMAP, private val keepCallSites: Boolean = false) {
+class SourceMapCopier(val parent: SourceMapper, private val smap: SMAP, val callSite: SourcePosition? = null) {
     private val visitedLines = TIntIntHashMap()
     private var lastVisitedRange: RangeMapping? = null
 
@@ -79,10 +79,7 @@ class SourceMapCopier(val parent: SourceMapper, private val smap: SMAP, private 
         if (inlineSource.line < 0) {
             return -1
         }
-        val inlineCallSite = if (keepCallSites) range.callSite else parent.callSiteMarker?.let {
-            SourcePosition(it, parent.sourceInfo!!.source, parent.sourceInfo.pathOrCleanFQN)
-        }
-        val newLineNumber = parent.mapLineNumber(inlineSource, inlineCallSite)
+        val newLineNumber = parent.mapLineNumber(inlineSource, callSite ?: range.callSite)
         visitedLines.put(lineNumber, newLineNumber)
         lastVisitedRange = range
         return newLineNumber
@@ -95,14 +92,12 @@ class SourceMapper(val sourceInfo: SourceInfo?) {
     private var maxUsedValue: Int = sourceInfo?.linesInFile ?: 0
     private var fileMappings: LinkedHashMap<Pair<String, String>, FileMapping> = linkedMapOf()
 
-    var callSiteMarker: Int? = null
-
     val resultMappings: List<FileMapping>
         get() = fileMappings.values.toList()
 
     init {
         sourceInfo?.let {
-            // Explicitly map the file to itself -- we'll probably need a lot of lines from it, so this will produce less ranges.
+            // Explicitly map the file to itself -- we'll probably need a lot of lines from it, so this will produce fewer ranges.
             getOrRegisterNewSource(it.source, it.pathOrCleanFQN).mapNewInterval(1, 1, it.linesInFile)
         }
     }

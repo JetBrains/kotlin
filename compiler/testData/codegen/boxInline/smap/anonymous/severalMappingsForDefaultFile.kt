@@ -74,3 +74,11 @@ _2Kt
 15#2:22
 7#3:21
 *E
+*S KotlinDebug
+*F
++ 1 1.kt
+test/_1Kt$annotatedWith2$1
+*L
+6#1:19
+6#1:22
+*E

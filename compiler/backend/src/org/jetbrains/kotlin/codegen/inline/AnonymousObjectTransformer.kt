@@ -290,7 +290,7 @@ class AnonymousObjectTransformer(
             remapper,
             isSameModule,
             "Transformer for " + transformationInfo.oldClassName,
-            SourceMapCopier(sourceMapper, sourceMap, keepCallSites = inliningContext.isInliningLambda),
+            SourceMapCopier(sourceMapper, sourceMap),
             InlineCallSiteInfo(
                 transformationInfo.oldClassName,
                 sourceNode.name,

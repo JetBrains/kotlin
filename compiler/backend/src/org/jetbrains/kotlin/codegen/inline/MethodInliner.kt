@@ -289,16 +289,13 @@ class MethodInliner(
 
                     setLambdaInlining(true)
 
-                    // TODO we cannot keep call site markers when inlining lambdas into objects because AnonymousObjectTransformer
-                    //      uses the original's source info, thus KotlinDebug would point to the file with the inline function
-                    //      instead of the one with the call.
-                    val sameFile = info !is DefaultLambda && (!inliningContext.classRegeneration || inliningContext.isInliningLambda)
+                    val callSite = sourceMapper.callSite.takeIf { info is DefaultLambda }
                     val inliner = MethodInliner(
                         info.node.node, lambdaParameters, inliningContext.subInlineLambda(info),
                         newCapturedRemapper,
                         if (info is DefaultLambda) isSameModule else true /*cause all nested objects in same module as lambda*/,
                         "Lambda inlining " + info.lambdaClassType.internalName,
-                        SourceMapCopier(sourceMapper.parent, info.node.classSMAP, sameFile), inlineCallSiteInfo, null
+                        SourceMapCopier(sourceMapper.parent, info.node.classSMAP, callSite), inlineCallSiteInfo, null
                     )
 
                     val varRemapper = LocalVarRemapper(lambdaParameters, valueParamShift)
