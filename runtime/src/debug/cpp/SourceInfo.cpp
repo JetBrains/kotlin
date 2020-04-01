@@ -17,7 +17,7 @@
 #include "SourceInfo.h"
 
 #ifdef KONAN_CORE_SYMBOLICATION
-
+#include <KAssert.h>
 #include <dlfcn.h>
 #include <limits.h>
 #include <stdint.h>
@@ -64,9 +64,15 @@ uint32_t (*CSSourceInfoGetLineNumber)(CSSourceInfoRef info);
 
 uint32_t (*CSSourceInfoGetColumn)(CSSourceInfoRef info);
 
-
 bool (*CSIsNull)(CSTypeRef);
+CSSymbolRef (*CSSourceInfoGetSymbol)(CSSourceInfoRef info);
 
+typedef int (^CSSourceInfoIterator)(CSSourceInfoRef);
+int (*CSSymbolForeachSourceInfo)(CSSymbolRef, CSSourceInfoIterator);
+
+CSRange (*CSSourceInfoGetRange)(CSSourceInfoRef);
+
+CSSymbolRef (*CSSymbolOwnerGetSymbolWithAddress)(CSSymbolOwnerRef, unsigned long long);
 CSSymbolicatorRef symbolicator;
 
 bool TryInitializeCoreSymbolication() {
@@ -82,7 +88,10 @@ bool TryInitializeCoreSymbolication() {
   KONAN_CS_LOOKUP(CSSourceInfoGetLineNumber)
   KONAN_CS_LOOKUP(CSSourceInfoGetColumn)
   KONAN_CS_LOOKUP(CSIsNull)
-
+  KONAN_CS_LOOKUP(CSSourceInfoGetSymbol)
+  KONAN_CS_LOOKUP(CSSymbolForeachSourceInfo)
+  KONAN_CS_LOOKUP(CSSymbolOwnerGetSymbolWithAddress)
+  KONAN_CS_LOOKUP(CSSourceInfoGetRange)
 #undef KONAN_CS_LOOKUP
 
   symbolicator = CSSymbolicatorCreateWithPid(getpid());
@@ -92,7 +101,7 @@ bool TryInitializeCoreSymbolication() {
 } // namespace
 
 extern "C" struct SourceInfo Kotlin_getSourceInfo(void* addr) {
-  SourceInfo result = { .fileName = nullptr, .lineNumber = -1, .column = -1 };
+  __block SourceInfo result = { .fileName = nullptr, .lineNumber = -1, .column = -1 };
 
   static bool csIsAvailable = TryInitializeCoreSymbolication();
 
@@ -100,20 +109,29 @@ extern "C" struct SourceInfo Kotlin_getSourceInfo(void* addr) {
     unsigned long long address = static_cast<unsigned long long>((uintptr_t)addr);
 
     CSSymbolOwnerRef symbolOwner = CSSymbolicatorGetSymbolOwnerWithAddressAtTime(symbolicator, address, kCSNow);
-    CSSourceInfoRef sourceInfo = CSSymbolOwnerGetSourceInfoWithAddress(symbolOwner, address);
-    if (!CSIsNull(sourceInfo)) {
-      const char* fileName = CSSourceInfoGetPath(sourceInfo);
-      if (fileName != nullptr) {
-        result.fileName = fileName;
-        uint32_t lineNumber = CSSourceInfoGetLineNumber(sourceInfo);
-        if (lineNumber != 0) {
-          result.lineNumber = lineNumber;
-          result.column = CSSourceInfoGetColumn(sourceInfo);
-        }
-      }
-    }
-  }
+    if (CSIsNull(symbolOwner))
+      return result;
+    CSSymbolRef symbol = CSSymbolOwnerGetSymbolWithAddress(symbolOwner, address);
+    if (CSIsNull(symbol))
+      return result;
 
+    CSSymbolForeachSourceInfo(symbol,
+      ^(CSSourceInfoRef ref) {
+          uint32_t lineNumber = CSSourceInfoGetLineNumber(ref);
+          CSRange range = CSSourceInfoGetRange(ref);
+          if (lineNumber != 0
+              && address >= range.location
+              && address < range.location + range.length) {
+            const char* fileName = CSSourceInfoGetPath(ref);
+            if (fileName != nullptr) {
+              result.fileName = fileName;
+              result.lineNumber = lineNumber;
+              result.column = CSSourceInfoGetColumn(ref);
+            }
+       }
+       return 0;
+   });
+  }
   return result;
 }
 
