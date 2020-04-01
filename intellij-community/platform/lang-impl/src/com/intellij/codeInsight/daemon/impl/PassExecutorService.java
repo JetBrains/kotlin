@@ -46,9 +46,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author cdr
- */
 final class PassExecutorService implements Disposable {
   private static final Logger LOG = Logger.getInstance(PassExecutorService.class);
   private static final boolean CHECK_CONSISTENCY = ApplicationManager.getApplication().isUnitTestMode();
@@ -56,14 +53,11 @@ final class PassExecutorService implements Disposable {
   private final Map<ScheduledPass, Job<Void>> mySubmittedPasses = new ConcurrentHashMap<>();
   private final Project myProject;
   private volatile boolean isDisposed;
-  private final AtomicInteger nextAvailablePassId = new AtomicInteger(Pass.LAST_PASS); // used to assign random id to a pass if not set
+  private final AtomicInteger nextAvailablePassId; // used to assign random id to a pass if not set
 
   PassExecutorService(@NotNull Project project) {
     myProject = project;
-  }
-
-  void resetNextPassId() {
-    nextAvailablePassId.set(((TextEditorHighlightingPassRegistrarImpl)TextEditorHighlightingPassRegistrar.getInstance(myProject)).getNextAvailableId() + 1);
+    nextAvailablePassId = ((TextEditorHighlightingPassRegistrarImpl)TextEditorHighlightingPassRegistrar.getInstance(myProject)).getNextAvailableId();
   }
 
   @Override
