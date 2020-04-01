@@ -43,9 +43,16 @@ public class SharedIndicesData {
     ourFileSharedIndicesEnabled && SystemProperties.getBooleanProperty("idea.shared.input.index.checked", false);
 
   private static final Logger LOG = Logger.getInstance(MapReduceIndex.class);
+  private static final int CONTENTLESS = 1;
+  private static final int CONTENTFUL = 2;
 
   static {
     if (ourFileSharedIndicesEnabled) {
+      for (FileBasedIndexExtension<?, ?> ex : FileBasedIndexExtension.EXTENSION_POINT_NAME.getExtensionList()) {
+        boolean dependsOnFileContent = ex.dependsOnFileContent();
+        ourRegisteredIndices.put(ex.getName().getUniqueId(), dependsOnFileContent ? CONTENTFUL : CONTENTLESS);
+      }
+
       try {
         ourSharedFileInputs = IndexedStateMap.createMap(new File(PathManager.getIndexRoot(), "file_inputs.data"));
         ourSharedFileContentIndependentInputs =
@@ -113,16 +120,6 @@ public class SharedIndicesData {
     static IndexedStateMap createMap(final File indexFile) throws IOException {
       return IOUtil.openCleanOrResetBroken(
         () -> new IndexedStateMap(indexFile), indexFile);
-    }
-  }
-
-  private static final int CONTENTLESS = 1;
-  private static final int CONTENTFUL = 2;
-
-  static <Key, Value, Input> void registerIndex(@NotNull ID<Key, Value> indexId, @NotNull IndexExtension<Key, Value, Input> extension) {
-    if (extension instanceof FileBasedIndexExtension) {
-      boolean dependsOnFileContent = ((FileBasedIndexExtension<?, ?>)extension).dependsOnFileContent();
-      ourRegisteredIndices.put(indexId.getUniqueId(), dependsOnFileContent ? CONTENTFUL : CONTENTLESS);
     }
   }
 

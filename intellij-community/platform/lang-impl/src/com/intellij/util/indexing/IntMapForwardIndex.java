@@ -5,27 +5,30 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS;
 import com.intellij.util.indexing.impl.forward.IntForwardIndex;
-import com.intellij.util.io.*;
+import com.intellij.util.io.EnumeratorIntegerDescriptor;
+import com.intellij.util.io.IOUtil;
+import com.intellij.util.io.PersistentHashMap;
+import com.intellij.util.io.PersistentHashMapValueStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 
-public class SharedIntMapForwardIndex implements IntForwardIndex {
-  private static final Logger LOG = Logger.getInstance(SharedIntMapForwardIndex.class);
+public class IntMapForwardIndex implements IntForwardIndex {
+  private static final Logger LOG = Logger.getInstance(IntMapForwardIndex.class);
   private final ID<?, ?> myIndexId;
-  private final File myVerificationIndexStorageFile;
-  private final boolean myVerificationIndexHasChunks;
+  private final File myDedicatedIndexStorageFile;
+  private final boolean myDedicatedIndexHasChunks;
 
   private volatile PersistentHashMap<Integer, Integer> myPersistentMap;
 
-  public SharedIntMapForwardIndex(@NotNull IndexExtension<?, ?, ?> extension,
-                                  @Nullable File verificationIndexStorageFile,
-                                  boolean verificationIndexHasChunks) throws IOException {
+  public IntMapForwardIndex(@NotNull IndexExtension<?, ?, ?> extension,
+                            @Nullable File verificationIndexStorageFile,
+                            boolean dedicatedIndexHasChunks) throws IOException {
     myIndexId = (ID<?, ?>)extension.getName();
-    myVerificationIndexStorageFile = verificationIndexStorageFile;
-    myVerificationIndexHasChunks = verificationIndexHasChunks;
+    myDedicatedIndexStorageFile = verificationIndexStorageFile;
+    myDedicatedIndexHasChunks = dedicatedIndexHasChunks;
     if (verificationIndexStorageFile != null && (!SharedIndicesData.ourFileSharedIndicesEnabled || SharedIndicesData.DO_CHECKS)) {
       createMap();
     }
@@ -34,8 +37,8 @@ public class SharedIntMapForwardIndex implements IntForwardIndex {
   private void createMap() throws IOException {
     Boolean old = PersistentHashMapValueStorage.CreationTimeOptions.HAS_NO_CHUNKS.get();
     try {
-      PersistentHashMapValueStorage.CreationTimeOptions.HAS_NO_CHUNKS.set(!myVerificationIndexHasChunks);
-      myPersistentMap = new PersistentHashMap<Integer, Integer>(myVerificationIndexStorageFile.toPath(), EnumeratorIntegerDescriptor.INSTANCE, EnumeratorIntegerDescriptor.INSTANCE) {
+      PersistentHashMapValueStorage.CreationTimeOptions.HAS_NO_CHUNKS.set(!myDedicatedIndexHasChunks);
+      myPersistentMap = new PersistentHashMap<Integer, Integer>(myDedicatedIndexStorageFile.toPath(), EnumeratorIntegerDescriptor.INSTANCE, EnumeratorIntegerDescriptor.INSTANCE) {
         @Override
         protected boolean wantNonNegativeIntegralValues() {
           return true;
@@ -43,7 +46,7 @@ public class SharedIntMapForwardIndex implements IntForwardIndex {
       };
     }
     catch (IOException e) {
-      IOUtil.deleteAllFilesStartingWith(myVerificationIndexStorageFile);
+      IOUtil.deleteAllFilesStartingWith(myDedicatedIndexStorageFile);
       throw e;
     }
     finally {

@@ -74,7 +74,7 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
                                 @Nullable SnapshotInputMappings<Key, Value> snapshotInputMappings) throws IOException {
     this(extension,
          storage,
-         snapshotInputMappings != null ? new SharedIntMapForwardIndex(extension, snapshotInputMappings.getInputIndexStorageFile(), true)
+         snapshotInputMappings != null ? new IntMapForwardIndex(extension, snapshotInputMappings.getInputIndexStorageFile(), true)
                                        : getForwardIndexMap(extension),
          snapshotInputMappings != null ? snapshotInputMappings.getForwardIndexAccessor() : getForwardIndexAccessor(extension),
          snapshotInputMappings, null);
@@ -87,9 +87,6 @@ public class VfsAwareMapReduceIndex<Key, Value> extends MapReduceIndex<Key, Valu
                                 @Nullable SnapshotInputMappings<Key, Value> snapshotInputMappings,
                                 @Nullable ReadWriteLock lock) {
     super(extension, storage, forwardIndexMap, forwardIndexAccessor, lock);
-    if (myIndexId instanceof ID) {
-      SharedIndicesData.registerIndex((ID<Key, Value>)myIndexId, extension);
-    }
     if (storage instanceof MemoryIndexStorage && snapshotInputMappings != null) {
       VfsAwareIndexStorage<Key, Value> backendStorage = ((MemoryIndexStorage<Key, Value>)storage).getBackendStorage();
       if (backendStorage instanceof SnapshotSingleValueIndexStorage) {
