@@ -47,14 +47,12 @@ class IdeaJpsWizardService(
         path: Path,
         modulesIrs: List<ModuleIR>,
         buildSystem: BuildSystemType
-    ): TaskResult<Unit> {
+    ): TaskResult<Unit> = runWriteAction {
         ideWizard.jpsData.jdk?.let { jdk -> NewProjectUtil.applyJdkToProject(project, jdk) }
         KotlinSdkType.setUpIfNeeded()
         modulesBuilder.addModuleConfigurationUpdater(JpsModuleConfigurationUpdater(ideWizard.jpsData))
 
-        return runWriteAction {
-            ProjectImporter(project, modulesModel, path, modulesIrs).import()
-        }
+        ProjectImporter(project, modulesModel, path, modulesIrs).import()
     }
 }
 
@@ -170,13 +168,13 @@ private class ProjectImporter(
 
     private fun downloadLibraryAndGetItsClasses(libraryProperties: RepositoryLibraryProperties) =
         JarRepositoryManager.loadDependenciesModal(
-                project,
-                libraryProperties,
-                false,
-                false,
-                librariesPath.toString(),
-                null
-            ).asSequence()
+            project,
+            libraryProperties,
+            false,
+            false,
+            librariesPath.toString(),
+            null
+        ).asSequence()
             .filter { it.type == OrderRootType.CLASSES }
             .map { PathUtil.getLocalPath(it.file) }
             .toList()
