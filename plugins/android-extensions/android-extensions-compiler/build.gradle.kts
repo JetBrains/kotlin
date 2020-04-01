@@ -10,7 +10,7 @@ val robolectricClasspath by configurations.creating
 val androidExtensionsRuntimeForTests by configurations.creating
 
 dependencies {
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
 
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:plugin-api"))
@@ -64,7 +64,7 @@ projectTest {
     useAndroidJar()
     doFirst {
         systemProperty("androidExtensionsRuntime.classpath", androidExtensionsRuntimeForTests.asPath)
-        val androidPluginPath = File(intellijRootDir(), "plugins/android").canonicalPath
+        val androidPluginPath = File(intellijRootDir(), "plugins/android/lib").canonicalPath
         systemProperty("ideaSdk.androidPlugin.path", androidPluginPath)
         systemProperty("robolectric.classpath", robolectricClasspath.asPath)
     }

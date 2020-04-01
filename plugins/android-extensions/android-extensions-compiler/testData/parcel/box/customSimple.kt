@@ -1,3 +1,6 @@
+// IGNORE_BACKEND: JVM
+// See KT-38105
+// Throws IllegalAccessError, since the code tries to access the private companion field directly from the generated User$Creator class.
 // WITH_RUNTIME
 
 @file:JvmName("TestKt")

@@ -25,7 +25,7 @@ final class User$Companion : java/lang/Object, kotlinx/android/parcel/Parceler {
           ARETURN
     }
 
-    public void write(User this@write, android.os.Parcel parcel, int flags)
+    public void write(User $this$write, android.os.Parcel parcel, int flags)
 
     public void write(java.lang.Object p0, android.os.Parcel p1, int p2)
 }
@@ -48,7 +48,7 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
 public final class User : java/lang/Object, android/os/Parcelable {
     public final static android.os.Parcelable$Creator CREATOR
 
-    public final static User$Companion Companion
+    private final static User$Companion Companion
 
     private final int age
 

@@ -722,11 +722,14 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
                 javaClasspath.add(ForTestCompileRuntime.androidAnnotationsForTests().getPath());
             }
             javaClasspath.addAll(CollectionsKt.map(getExtraDependenciesFromKotlinCompileClasspath(), File::getPath));
+            updateJavaClasspath(javaClasspath);
 
             javaClassesOutputDirectory = getJavaClassesOutputDirectory();
             compileJava(findJavaSourcesInDirectory(javaSourceDir), javaClasspath, javacOptions, javaClassesOutputDirectory);
         }
     }
+
+    protected void updateJavaClasspath(@NotNull List<String> javaClasspath) {}
 
     @NotNull
     protected static List<String> extractJavacOptions(@NotNull List<TestFile> files) {
