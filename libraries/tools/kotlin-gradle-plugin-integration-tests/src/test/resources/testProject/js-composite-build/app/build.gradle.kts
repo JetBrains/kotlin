@@ -10,11 +10,7 @@ repositories {
 
 kotlin.js {
     binaries.executable()
-    browser()
-}
-
-tasks.named("browserTest").configure {
-    enabled = false
+    nodejs()
 }
 
 rootProject.tasks
@@ -35,4 +31,5 @@ dependencies {
     implementation(kotlin("stdlib-js"))
     implementation("com.example:lib2")
     implementation(npm("async", "3.2.0"))
+    testImplementation(kotlin("test-js"))
 }

@@ -1,5 +1,5 @@
 object Singleton {
-    fun test(): String {
-        return "42"
+    fun test(): Long {
+        return 42L
     }
 }
