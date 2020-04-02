@@ -221,10 +221,13 @@ open class DeepCopyIrTreeWithSymbols(
             isExternal = declaration.isExternal
         ).apply {
             transformAnnotations(declaration)
-            this.backingField = declaration.backingField?.transform()
-            this.getter = declaration.getter?.transform()
-            this.setter = declaration.setter?.transform()
-            this.backingField?.let {
+            this.backingField = declaration.backingField?.transform()?.also {
+                it.correspondingPropertySymbol = symbol
+            }
+            this.getter = declaration.getter?.transform()?.also {
+                it.correspondingPropertySymbol = symbol
+            }
+            this.setter = declaration.setter?.transform()?.also {
                 it.correspondingPropertySymbol = symbol
             }
         }
