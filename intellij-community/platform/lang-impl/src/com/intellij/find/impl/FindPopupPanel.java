@@ -143,6 +143,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
   private JPanel myScopeDetailsPanel;
 
   private JBTable myResultsPreviewTable;
+  private DefaultTableModel myResultsPreviewTableModel;
   private SimpleColoredComponent myUsagePreviewTitle;
   private UsagePreviewPanel myUsagePreviewPanel;
   private DialogWrapper myDialog;
@@ -634,7 +635,8 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
     myScopeSelectionToolbar.setMinimumButtonSize(ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE);
     mySelectedScope = scopeComponents[0].first;
 
-    myResultsPreviewTable = new JBTable(createTableModel()) {
+    myResultsPreviewTableModel = createTableModel();
+    myResultsPreviewTable = new JBTable(myResultsPreviewTableModel) {
       @Override
       public Dimension getPreferredScrollableViewportSize() {
         return new Dimension(getWidth(), 1 + getRowHeight() * 4);
@@ -709,7 +711,13 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
       final List<UsageInfo> selection = new SmartList<>();
       VirtualFile file = null;
       for (int row : selectedRows) {
-        UsageInfo2UsageAdapter adapter = (UsageInfo2UsageAdapter)myResultsPreviewTable.getModel().getValueAt(row, 0);
+        Object value = myResultsPreviewTable.getModel().getValueAt(row, 0);
+        UsageInfo usageInfo = FindInProjectExecutor.Companion.getInstance().getUsageInfo(value);
+        if (usageInfo != null) {
+          selection.add(usageInfo);
+          continue;
+        }
+        UsageInfo2UsageAdapter adapter = (UsageInfo2UsageAdapter) value;
         file = adapter.getFile();
         if (adapter.isValid()) {
           selection.addAll(Arrays.asList(adapter.getMergedInfos()));
@@ -845,6 +853,9 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
   }
 
   private DefaultTableModel createTableModel() {
+    DefaultTableModel customModel = FindInProjectExecutor.Companion.getInstance().createTableModel();
+    if (customModel != null) return customModel;
+
     final DefaultTableModel model = new DefaultTableModel() {
       private String firstResultPath;
 
@@ -1177,9 +1188,12 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
     if (myHelper.myPreviousModel != null && myHelper.myPreviousModel.getStringToFind().length() < myHelper.getModel().getStringToFind().length()) {
       final DefaultTableModel previousModel = (DefaultTableModel)myResultsPreviewTable.getModel();
       for (int i = 0, len = previousModel.getRowCount(); i < len; ++i) {
-        final UsageInfo2UsageAdapter usage = (UsageInfo2UsageAdapter)previousModel.getValueAt(i, 0);
-        final VirtualFile file = usage.getFile();
-        if (file != null) filesToScanInitially.add(file);
+        final Object value = previousModel.getValueAt(i, 0);
+        if (value instanceof UsageInfo2UsageAdapter) {
+          final UsageInfo2UsageAdapter usage = (UsageInfo2UsageAdapter)value;
+          final VirtualFile file = usage.getFile();
+          if (file != null) filesToScanInitially.add(file);
+        }
       }
     }
 
@@ -1198,11 +1212,20 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
 
     GlobalSearchScope scope = GlobalSearchScopeUtil.toGlobalSearchScope(
       FindInProjectUtil.getScopeFromModel(myProject, myHelper.myPreviousModel), myProject);
-    myResultsPreviewTable.getColumnModel().getColumn(0).setCellRenderer(new UsageTableCellRenderer(scope));
+    TableCellRenderer renderer = FindInProjectExecutor.Companion.getInstance().createTableCellRenderer();
+    if (renderer == null) renderer = new UsageTableCellRenderer(scope);
+    myResultsPreviewTable.getColumnModel().getColumn(0).setCellRenderer(renderer);
 
     final AtomicInteger resultsCount = new AtomicInteger();
     final AtomicInteger resultsFilesCount = new AtomicInteger();
     FindInProjectUtil.setupViewPresentation(myUsageViewPresentation, findModel);
+
+    if (FindInProjectExecutor.Companion.getInstance().startSearch(myResultsPreviewSearchProgress, myResultsPreviewTableModel, findModel, myProject)) {
+      ApplicationManager.getApplication().invokeLater(() -> {
+        myCodePreviewComponent.setVisible(true);
+      });
+      return;
+    }
 
     ProgressIndicatorUtils.scheduleWithWriteActionPriority(myResultsPreviewSearchProgress, new ReadTask() {
       @Override
