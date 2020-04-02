@@ -217,7 +217,7 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
     override fun buildMultiPlatformPart(): String {
         //language=Gradle
         return """
-            def ktor_version = '1.1.3'
+            def ktor_version = '1.3.2'
             def logback_version = '1.2.3'
 
             kotlin {
