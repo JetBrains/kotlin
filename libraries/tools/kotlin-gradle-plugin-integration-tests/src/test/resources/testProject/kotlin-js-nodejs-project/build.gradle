@@ -1,9 +1,9 @@
 plugins {
-    kotlin("js").version("<pluginMarkerVersion>")
+    id("org.jetbrains.kotlin.js") version "<pluginMarkerVersion>"
 }
 
 dependencies {
-    implementation(kotlin("stdlib-js"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
 }
 
 repositories {
