@@ -91,7 +91,8 @@ class DocRenderer implements EditorCustomElementRenderer {
     Editor editor = inlay.getEditor();
     int width = Math.max(0, calcInlayWidth(editor) - calcInlayStartX() + editor.getInsets().left - scale(LEFT_INSET) - scale(RIGHT_INSET));
     JComponent component = getRendererComponent(inlay, width, -1);
-    return component.getPreferredSize().height + scale(TOP_BOTTOM_INSETS) * 2 + scale(getTopMargin()) + scale(getBottomMargin());
+    return Math.max(editor.getLineHeight(),
+                    component.getPreferredSize().height + scale(TOP_BOTTOM_INSETS) * 2 + scale(getTopMargin()) + scale(getBottomMargin()));
   }
 
   @Override
