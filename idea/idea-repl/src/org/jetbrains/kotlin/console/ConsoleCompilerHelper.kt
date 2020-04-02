@@ -41,12 +41,14 @@ class ConsoleCompilerHelper(
     }
 
     fun compileModule() {
-        if (ExecutionManager.getInstance(project).contentManager.removeRunContent(executor, contentDescriptor)) {
-            ProjectTaskManager.getInstance(project).build(module).onSuccess { executionResult ->
-                if (!module.isDisposed) {
-                    KotlinConsoleKeeper.getInstance(project).run(module, previousCompilationFailed = executionResult.hasErrors())
+        if (ExecutionManager.getInstance(project).getContentManager().removeRunContent(executor, contentDescriptor)) {
+            ProjectTaskManager.getInstance(project).build(arrayOf(module), object : ProjectTaskNotification {
+                override fun finished(context: ProjectTaskContext, executionResult: ProjectTaskResult) {
+                    if (!module.isDisposed) {
+                        KotlinConsoleKeeper.getInstance(project).run(module, previousCompilationFailed = executionResult.errors > 0)
+                    }
                 }
-            }
+            })
         }
     }
 }

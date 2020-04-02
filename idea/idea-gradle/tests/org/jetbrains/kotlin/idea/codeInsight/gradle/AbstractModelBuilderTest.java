@@ -147,8 +147,8 @@ public abstract class AbstractModelBuilderTest {
     }
 
     @NotNull
-    private static Set<Class> getToolingExtensionClasses() {
-        Set<Class> classes = ContainerUtil.<Class>set(
+    private static Set<Class<?>> getToolingExtensionClasses() {
+        Set<Class<?>> classes = ContainerUtil.set(
                 ExternalProject.class,
                 // gradle-tooling-extension-api jar
                 ProjectImportAction.class,
@@ -163,7 +163,7 @@ public abstract class AbstractModelBuilderTest {
     }
 
     @NotNull
-    private static Set<Class> doGetToolingExtensionClasses() {
+    private static Set<Class<?>> doGetToolingExtensionClasses() {
         return Collections.emptySet();
     }
 
@@ -174,7 +174,7 @@ public abstract class AbstractModelBuilderTest {
         }
     }
 
-    protected abstract Set<Class> getModels();
+    protected abstract Set<Class<?>> getModels();
 
 
     private static void ensureTempDirCreated() throws IOException {
