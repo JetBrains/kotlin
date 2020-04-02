@@ -48,10 +48,10 @@ public class AsyncProjectViewSupport {
   private final StructureTreeModel myStructureTreeModel;
   private final AsyncTreeModel myAsyncTreeModel;
 
-  public AsyncProjectViewSupport(@NotNull Disposable parent,
-                                 @NotNull Project project,
-                                 @NotNull AbstractTreeStructure structure,
-                                 @NotNull Comparator<NodeDescriptor<?>> comparator) {
+  AsyncProjectViewSupport(@NotNull Disposable parent,
+                          @NotNull Project project,
+                          @NotNull AbstractTreeStructure structure,
+                          @NotNull Comparator<NodeDescriptor<?>> comparator) {
     myStructureTreeModel = new StructureTreeModel<>(structure, comparator, parent);
     myAsyncTreeModel = new AsyncTreeModel(myStructureTreeModel, parent);
     myAsyncTreeModel.setRootImmediately(myStructureTreeModel.getRootImmediately());

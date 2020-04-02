@@ -114,11 +114,11 @@ public class GroupByTypeComparator implements Comparator<NodeDescriptor<?>> {
     return myForceSortByType;
   }
 
-  private boolean isAbbreviateQualifiedNames() {
+  protected boolean isAbbreviateQualifiedNames() {
     return myProjectView != null && myProjectView.isAbbreviatePackageNames(myPaneId);
   }
 
-  private boolean isFoldersAlwaysOnTop() {
+  protected boolean isFoldersAlwaysOnTop() {
     return myProjectView == null || myProjectView.isFoldersAlwaysOnTop(myPaneId);
   }
 

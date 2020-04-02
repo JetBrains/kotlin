@@ -8,6 +8,7 @@ import com.intellij.ide.projectView.BaseProjectTreeBuilder;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.ui.customization.CustomizationUtil;
 import com.intellij.ide.util.treeView.*;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.IdeActions;
@@ -32,6 +33,7 @@ import com.intellij.util.ui.accessibility.ScreenReader;
 import com.intellij.util.ui.tree.TreeUtil;
 import com.intellij.util.ui.update.Activatable;
 import com.intellij.util.ui.update.UiNotifyConnector;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -306,5 +308,11 @@ public abstract class AbstractProjectViewPSIPane extends AbstractProjectViewPane
   @Override
   AsyncProjectViewSupport getAsyncSupport() {
     return myAsyncSupport;
+  }
+
+  @ApiStatus.Internal
+  @NotNull
+  public AsyncProjectViewSupport createAsyncSupport(@NotNull Disposable parent, @NotNull Comparator<NodeDescriptor<?>> comparator) {
+    return new AsyncProjectViewSupport(parent, myProject, createStructure(), comparator);
   }
 }
