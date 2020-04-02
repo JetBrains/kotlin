@@ -11,7 +11,6 @@ import java.net.URLClassLoader
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.*
-import kotlin.script.experimental.jvm.actualClassLoader
 
 internal class KJvmCompiledScriptData(
     var sourceLocationId: String?,
@@ -120,25 +119,6 @@ fun KJvmCompiledScript.getOrCreateActualClassloader(evaluationConfiguration: Scr
             if (evaluationConfiguration[ScriptEvaluationConfiguration.jvm.loadDependencies] == false) baseClassLoader
             else makeClassLoaderFromDependencies(baseClassLoader)
         return module.createClassLoader(classLoaderWithDeps)
-    }
-
-fun getConfigurationWithClassloader(
-    script: CompiledScript, baseConfiguration: ScriptEvaluationConfiguration
-): ScriptEvaluationConfiguration =
-    if (baseConfiguration.containsKey(ScriptEvaluationConfiguration.jvm.actualClassLoader))
-        baseConfiguration
-    else {
-        val jvmScript = (script as? KJvmCompiledScript)
-            ?: throw IllegalArgumentException("Unexpected compiled script type: $script")
-
-        val classloader = jvmScript.getOrCreateActualClassloader(baseConfiguration)
-
-        ScriptEvaluationConfiguration(baseConfiguration) {
-            ScriptEvaluationConfiguration.jvm.actualClassLoader(classloader)
-            if (baseConfiguration[ScriptEvaluationConfiguration.scriptsInstancesSharing] == true) {
-                ScriptEvaluationConfiguration.jvm.scriptsInstancesSharingMap(mutableMapOf())
-            }
-        }
     }
 
 private fun CompiledScript.makeClassLoaderFromDependencies(baseClassLoader: ClassLoader?): ClassLoader? {

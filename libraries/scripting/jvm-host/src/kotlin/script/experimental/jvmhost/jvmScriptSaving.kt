@@ -14,7 +14,6 @@ import java.util.jar.Manifest
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.impl.*
-import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrNull
 
 // TODO: generate execution code (main)
