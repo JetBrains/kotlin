@@ -292,7 +292,7 @@ public class DocRenderItem {
         return false;
       }
       int inlayOffset = calcInlayOffset();
-      inlay = editor.getInlayModel().addBlockElement(inlayOffset, true, true, BlockInlayPriority.DOC_RENDER, new DocRenderer(this));
+      inlay = editor.getInlayModel().addBlockElement(inlayOffset, false, true, BlockInlayPriority.DOC_RENDER, new DocRenderer(this));
       if (inlay != null) {
         int foldStartOffset = calcFoldStartOffset();
         int foldEndOffset = calcFoldEndOffset();
