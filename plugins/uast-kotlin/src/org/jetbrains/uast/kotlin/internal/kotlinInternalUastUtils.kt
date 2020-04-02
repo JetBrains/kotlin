@@ -353,10 +353,21 @@ internal fun resolveToDeclaration(sourcePsi: KtExpression, declarationDescriptor
     }
 
     resolveToPsiClass({ sourcePsi.toUElement() }, declarationDescriptor, sourcePsi)?.let { return it }
+
     if (declarationDescriptor is DeclarationDescriptorWithSource) {
         declarationDescriptor.source.getPsi()?.let { it.getMaybeLightElement() ?: it }?.let { return it }
     }
-    return resolveDeserialized(sourcePsi, declarationDescriptor, sourcePsi.readWriteAccess())
+
+    resolveDeserialized(sourcePsi, declarationDescriptor, sourcePsi.readWriteAccess())?.let { return it }
+
+    if (declarationDescriptor is ValueParameterDescriptor) {
+        val parentDeclaration = resolveToDeclaration(sourcePsi, declarationDescriptor.containingDeclaration)
+        if (parentDeclaration is PsiClass && parentDeclaration.isAnnotationType) {
+            parentDeclaration.findMethodsByName(declarationDescriptor.name.asString(), false).firstOrNull()?.let { return it }
+        }
+    }
+
+    return null
 }
 
 private fun resolveContainingDeserializedClass(context: KtElement, memberDescriptor: DeserializedCallableMemberDescriptor): PsiClass? {
