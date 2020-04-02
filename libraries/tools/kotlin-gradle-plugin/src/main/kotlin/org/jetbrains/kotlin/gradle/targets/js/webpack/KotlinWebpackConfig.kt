@@ -27,7 +27,7 @@ data class KotlinWebpackConfig(
     val bundleAnalyzerReportDir: File? = null,
     val reportEvaluatedConfigFile: File? = null,
     val devServer: DevServer? = null,
-    val cssSettings: KotlinWebpackCssSettings? = null,
+    val cssSettings: KotlinWebpackCssSettings = KotlinWebpackCssSettings(),
     val devtool: String? = WebpackDevtool.EVAL_SOURCE_MAP,
     val showProgress: Boolean = false,
     val sourceMaps: Boolean = false,
@@ -54,7 +54,7 @@ data class KotlinWebpackConfig(
                 it.add(versions.webpackDevServer)
             }
 
-            if (cssSettings == null || !cssSettings.enabled) return@also
+            if (!cssSettings.enabled) return@also
 
             it.add(versions.cssLoader)
             if (cssSettings.inline) {
@@ -248,7 +248,7 @@ data class KotlinWebpackConfig(
     }
 
     private fun Appendable.appendCssSettings() {
-        if (cssSettings == null || !cssSettings.enabled)
+        if (!cssSettings.enabled)
             return
 
         appendln(

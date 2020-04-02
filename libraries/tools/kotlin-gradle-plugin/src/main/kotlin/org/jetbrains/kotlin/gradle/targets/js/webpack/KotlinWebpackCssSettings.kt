@@ -12,5 +12,5 @@ data class KotlinWebpackCssSettings(
     var enabled: Boolean = true,
 
     @Input
-    var inline: Boolean = false
+    var inline: Boolean = true
 )
