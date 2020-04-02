@@ -173,7 +173,7 @@ class DocRenderer implements EditorCustomElementRenderer {
   private int calcInlayStartX() {
     Document document = myItem.editor.getDocument();
     int lineStartOffset = document.getLineStartOffset(document.getLineNumber(myItem.highlighter.getEndOffset()) + 1);
-    int contentStartOffset = CharArrayUtil.shiftForward(document.getImmutableCharSequence(), lineStartOffset, " \t");
+    int contentStartOffset = CharArrayUtil.shiftForward(document.getImmutableCharSequence(), lineStartOffset, " \t\n");
     return myItem.editor.offsetToXY(contentStartOffset, false, true).x;
   }
 
