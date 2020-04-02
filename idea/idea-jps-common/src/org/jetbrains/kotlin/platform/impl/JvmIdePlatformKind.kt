@@ -16,9 +16,10 @@ import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.jvm.isJvm
 
 object JvmIdePlatformKind : IdePlatformKind<JvmIdePlatformKind>() {
-    override fun supportsTargetPlatform(platform: TargetPlatform): Boolean = platforms.contains(platform)
+    override fun supportsTargetPlatform(platform: TargetPlatform): Boolean = platform.isJvm()
 
     override fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform? {
         if (arguments !is K2JVMCompilerArguments) return null
