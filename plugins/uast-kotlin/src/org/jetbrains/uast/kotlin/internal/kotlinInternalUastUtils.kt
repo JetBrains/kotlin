@@ -89,7 +89,7 @@ internal val KOTLIN_CACHED_UELEMENT_KEY = Key.create<WeakReference<UElement>>("c
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun String?.orAnonymous(kind: String = ""): String = this ?: "<anonymous" + (if (kind.isNotBlank()) " $kind" else "") + ">"
 
-internal fun DeclarationDescriptor.toSource(): PsiElement? {
+private fun DeclarationDescriptor.toSource(): PsiElement? {
     return try {
         DescriptorToSourceUtils.getEffectiveReferencedDescriptors(this)
             .asSequence()

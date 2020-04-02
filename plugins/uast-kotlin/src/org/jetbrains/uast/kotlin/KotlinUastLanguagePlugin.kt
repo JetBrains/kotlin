@@ -530,7 +530,7 @@ internal object KotlinConverter {
                 is UastKotlinPsiParameterBase<*> -> el<UParameter> {
                     original.ktOrigin.safeAs<KtTypeReference>()?.let { convertReceiverParameter(it) }
                 }
-                is UastKotlinPsiVariable -> el<UVariable>(buildKt(original.ktElement, ::KotlinUVariable))
+                is UastKotlinPsiVariable -> el<ULocalVariable>(buildKt(original.ktElement, ::KotlinULocalVariable))
 
                 is KtEnumEntry -> el<UEnumConstant> {
                     convertEnumEntry(original, givenParent)
