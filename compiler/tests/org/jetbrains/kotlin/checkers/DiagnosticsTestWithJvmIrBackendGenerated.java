@@ -39,11 +39,6 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/inlineCycle.kt");
     }
 
-    @TestMetadata("suspendInlineCycle.kt")
-    public void testSuspendInlineCycle() throws Exception {
-        runTest("compiler/testData/diagnostics/testsWithJvmBackend/suspendInlineCycle.kt");
-    }
-
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

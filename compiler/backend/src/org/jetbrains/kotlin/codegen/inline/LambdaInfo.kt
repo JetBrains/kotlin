@@ -222,6 +222,7 @@ internal fun Type.boxReceiverForBoundReference(kotlinType: KotlinType, typeMappe
 abstract class ExpressionLambda(isCrossInline: Boolean) : LambdaInfo(isCrossInline) {
     override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner<*>) {
         node = sourceCompiler.generateLambdaBody(this)
+        node.node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
     }
 
     abstract fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor

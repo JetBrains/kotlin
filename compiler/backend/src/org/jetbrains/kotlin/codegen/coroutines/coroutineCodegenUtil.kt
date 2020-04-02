@@ -219,15 +219,18 @@ private fun NewResolvedCallImpl<VariableDescriptor>.asDummyOldResolvedCall(bindi
     )
 }
 
-fun ResolvedCall<*>.isSuspendNoInlineCall(codegen: ExpressionCodegen, languageVersionSettings: LanguageVersionSettings): Boolean {
+enum class SuspensionPointKind { NEVER, NOT_INLINE, ALWAYS }
+
+fun ResolvedCall<*>.isSuspensionPoint(codegen: ExpressionCodegen, languageVersionSettings: LanguageVersionSettings): SuspensionPointKind {
+    val functionDescriptor = resultingDescriptor as? FunctionDescriptor ?: return SuspensionPointKind.NEVER
+    if (!functionDescriptor.unwrapInitialDescriptorForSuspendFunction().isSuspend) return SuspensionPointKind.NEVER
+    if (functionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm(languageVersionSettings)) return SuspensionPointKind.ALWAYS
+    if (functionDescriptor.isInline) return SuspensionPointKind.NEVER
+
     val isInlineLambda = this.safeAs<VariableAsFunctionResolvedCall>()
         ?.variableCall?.resultingDescriptor?.safeAs<ValueParameterDescriptor>()
         ?.let { it.isCrossinline || (!it.isNoinline && codegen.context.functionDescriptor.isInline) } == true
-
-    val functionDescriptor = resultingDescriptor as? FunctionDescriptor ?: return false
-    if (!functionDescriptor.unwrapInitialDescriptorForSuspendFunction().isSuspend) return false
-    if (functionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm(languageVersionSettings)) return true
-    return !(functionDescriptor.isInline || isInlineLambda)
+    return if (isInlineLambda) SuspensionPointKind.NOT_INLINE else SuspensionPointKind.ALWAYS
 }
 
 fun CallableDescriptor.isSuspendFunctionNotSuspensionView(): Boolean {

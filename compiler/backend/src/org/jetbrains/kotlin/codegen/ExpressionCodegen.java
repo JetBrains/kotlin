@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenForLambda;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.coroutines.ResolvedCallWithRealDescriptor;
+import org.jetbrains.kotlin.codegen.coroutines.SuspensionPointKind;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.intrinsics.*;
@@ -2592,11 +2593,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return;
         }
 
-        boolean isSuspendNoInlineCall =
-                CoroutineCodegenUtilKt.isSuspendNoInlineCall(resolvedCall, this, state.getLanguageVersionSettings());
+        SuspensionPointKind suspensionPointKind =
+                CoroutineCodegenUtilKt.isSuspensionPoint(resolvedCall, this, state.getLanguageVersionSettings());
+        boolean maybeSuspensionPoint = suspensionPointKind != SuspensionPointKind.NEVER;
         boolean isConstructor = resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor;
         if (!(callableMethod instanceof IntrinsicWithSpecialReceiver)) {
-            putReceiverAndInlineMarkerIfNeeded(callableMethod, resolvedCall, receiver, isSuspendNoInlineCall, isConstructor);
+            putReceiverAndInlineMarkerIfNeeded(callableMethod, resolvedCall, receiver, maybeSuspensionPoint, isConstructor);
         }
 
         callGenerator.processAndPutHiddenParameters(false);
@@ -2630,16 +2632,16 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
         }
 
-        if (isSuspendNoInlineCall) {
-            addSuspendMarker(v, true);
+        if (maybeSuspensionPoint) {
+            addSuspendMarker(v, suspensionPointKind, true);
         }
 
         callGenerator.genCall(callableMethod, resolvedCall, defaultMaskWasGenerated, this);
 
-        if (isSuspendNoInlineCall) {
+        if (maybeSuspensionPoint) {
             addReturnsUnitMarkerIfNecessary(v, resolvedCall);
 
-            addSuspendMarker(v, false);
+            addSuspendMarker(v, suspensionPointKind, false);
             addInlineMarker(v, false);
         }
 

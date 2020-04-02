@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.coroutines.SuspendFunctionGenerationStrategy;
-import org.jetbrains.kotlin.codegen.coroutines.SuspendInlineFunctionGenerationStrategy;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.state.TypeMapperUtilsKt;
@@ -127,17 +126,8 @@ public class FunctionCodegen {
             if (functionDescriptor.isSuspend()) {
                 if (isEffectivelyInlineOnly(functionDescriptor)) {
                     strategy = new FunctionGenerationStrategy.FunctionDefault(state, function);
-                } else if (!functionDescriptor.isInline()) {
-                    strategy = new SuspendFunctionGenerationStrategy(
-                            state,
-                            CoroutineCodegenUtilKt.<FunctionDescriptor>unwrapInitialDescriptorForSuspendFunction(functionDescriptor),
-                            function,
-                            v.getThisName(),
-                            state.getConstructorCallNormalizationMode(),
-                            this
-                    );
                 } else {
-                    strategy = new SuspendInlineFunctionGenerationStrategy(
+                    strategy = new SuspendFunctionGenerationStrategy(
                             state,
                             CoroutineCodegenUtilKt.<FunctionDescriptor>unwrapInitialDescriptorForSuspendFunction(functionDescriptor),
                             function,
