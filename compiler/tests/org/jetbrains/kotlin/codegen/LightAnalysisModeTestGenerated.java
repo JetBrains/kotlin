@@ -17634,6 +17634,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/multifileClasses/optimized/callableRefToPrivateConstVal.kt");
             }
 
+            @TestMetadata("callableReferencesToSameFunctionsFromDifferentPackages.kt")
+            public void testCallableReferencesToSameFunctionsFromDifferentPackages() throws Exception {
+                runTest("compiler/testData/codegen/box/multifileClasses/optimized/callableReferencesToSameFunctionsFromDifferentPackages.kt");
+            }
+
+            @TestMetadata("callableReferencesToSamePropertiesFromDifferentPackages.kt")
+            public void testCallableReferencesToSamePropertiesFromDifferentPackages() throws Exception {
+                runTest("compiler/testData/codegen/box/multifileClasses/optimized/callableReferencesToSamePropertiesFromDifferentPackages.kt");
+            }
+
             @TestMetadata("calls.kt")
             public void testCalls() throws Exception {
                 runTest("compiler/testData/codegen/box/multifileClasses/optimized/calls.kt");
