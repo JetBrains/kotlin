@@ -39,6 +39,7 @@ class MultipleScriptDefinitionsChecker(private val project: Project) : EditorNot
 
         if (!ktFile.isScript()) return null
         if (KotlinScriptingSettings.getInstance(ktFile.project).suppressDefinitionsCheck) return null
+        if (!ScriptDefinitionsManager.getInstance(ktFile.project).isReady()) return null
 
         val allApplicableDefinitions = ScriptDefinitionsManager.getInstance(project)
             .getAllDefinitions()
