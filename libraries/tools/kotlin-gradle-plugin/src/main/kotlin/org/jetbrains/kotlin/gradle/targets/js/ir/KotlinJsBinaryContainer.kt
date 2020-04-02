@@ -35,10 +35,7 @@ constructor(
         get() = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
     // For Groovy DSL
-    fun executable() {
-        executable(defaultCompilation)
-    }
-
+    @JvmOverloads
     fun executable(
         compilation: KotlinJsCompilation = defaultCompilation
     ) {
