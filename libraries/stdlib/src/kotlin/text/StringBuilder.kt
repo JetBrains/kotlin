@@ -428,3 +428,39 @@ public fun StringBuilder.append(vararg value: Any?): StringBuilder {
         append(item)
     return this
 }
+
+/** Appends a line feed character (`\n`) to this StringBuilder. */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun StringBuilder.appendLine(): StringBuilder = append('\n')
+
+/** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun StringBuilder.appendLine(value: CharSequence?): StringBuilder = append(value).appendLine()
+
+/** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun StringBuilder.appendLine(value: String?): StringBuilder = append(value).appendLine()
+
+/** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun StringBuilder.appendLine(value: Any?): StringBuilder = append(value).appendLine()
+
+/** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
+@OptIn(ExperimentalStdlibApi::class)
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun StringBuilder.appendLine(value: CharArray): StringBuilder = append(value).appendLine()
+
+/** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun StringBuilder.appendLine(value: Char): StringBuilder = append(value).appendLine()
+
+/** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
+@SinceKotlin("1.4")
+@kotlin.internal.InlineOnly
+public inline fun StringBuilder.appendLine(value: Boolean): StringBuilder = append(value).appendLine()

@@ -484,4 +484,36 @@ class StringBuilderTest {
             assertFails { sb.toCharArray(chars, 0, 0, sb.length + 1) }
         }
     }
+
+    @Test
+    fun appendLine() {
+        val stringBuilder = StringBuilder()
+        stringBuilder.appendLine('c')
+        stringBuilder.appendLine("string")
+        stringBuilder.appendLine(true)
+        stringBuilder.appendLine(charArrayOf('a', 'r', 'r', 'a', 'y'))
+        stringBuilder.appendLine()
+        stringBuilder.appendLine("char sequence" as CharSequence)
+        stringBuilder.appendLine(null as Any?)
+        stringBuilder.appendLine("nonnull" as Any?)
+        stringBuilder.appendLine(null as String?)
+        stringBuilder.appendLine(null as CharSequence?)
+
+        val expected =
+            """
+            c
+            string
+            true
+            array
+            
+            char sequence
+            null
+            nonnull
+            null
+            null
+            
+            """.trimIndent()
+
+        assertEquals(expected, stringBuilder.toString())
+    }
 }
