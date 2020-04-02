@@ -32,6 +32,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocCommentBase;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ObjectUtils;
@@ -174,12 +175,27 @@ public class DocRenderItem {
     Document document = editor.getDocument();
     if (offset < 0 || offset > document.getTextLength()) return null;
     int line = document.getLineNumber(offset);
-    return items.stream().filter(i -> {
+    DocRenderItem itemOnAdjacentLine = items.stream().filter(i -> {
       if (!i.isValid()) return false;
       int startLine = document.getLineNumber(i.highlighter.getStartOffset());
       int endLine = document.getLineNumber(i.highlighter.getEndOffset());
       return line >= startLine - 1 && line <= endLine + 1;
     }).min(Comparator.comparingInt(i -> i.highlighter.getStartOffset())).orElse(null);
+    if (itemOnAdjacentLine != null) return itemOnAdjacentLine;
+
+    Project project = editor.getProject();
+    if (project == null) return null;
+    PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
+    return items.stream().filter(item -> {
+      if (!item.isValid()) return false;
+      PsiDocCommentBase comment = item.getComment();
+      if (comment == null) return false;
+      PsiElement owner = comment.getOwner();
+      if (owner == null) return false;
+      TextRange ownerTextRange = owner.getTextRange();
+      if (ownerTextRange == null) return false;
+      return ownerTextRange.containsOffset(offset);
+    }).findFirst().orElse(null);
   }
 
   private static void resetToDefaultState(@NotNull Editor editor) {
