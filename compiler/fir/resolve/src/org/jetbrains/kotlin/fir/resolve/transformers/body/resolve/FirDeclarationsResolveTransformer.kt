@@ -281,8 +281,12 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             return regularClass.runAllPhasesForLocalClass(transformer, components, data).compose()
         }
 
+        val notAnalyzed = regularClass.resolvePhase < transformerPhase
+
         return withTypeParametersOf(regularClass) {
-            dataFlowAnalyzer.enterClass()
+            if (notAnalyzed) {
+                dataFlowAnalyzer.enterClass()
+            }
             val oldConstructorScope = primaryConstructorParametersScope
             val oldContainingClass = containingClass
             primaryConstructorParametersScope = null
@@ -299,11 +303,13 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                 }
                 transformDeclarationContent(regularClass, data).single as FirRegularClass
             }
-            if (!implicitTypeOnly) {
-                val controlFlowGraph = dataFlowAnalyzer.exitRegularClass(result)
-                result.transformControlFlowGraphReference(ControlFlowGraphReferenceTransformer, controlFlowGraph)
-            } else {
-                dataFlowAnalyzer.exitClass()
+            if (notAnalyzed) {
+                if (!implicitTypeOnly) {
+                    val controlFlowGraph = dataFlowAnalyzer.exitRegularClass(result)
+                    result.transformControlFlowGraphReference(ControlFlowGraphReferenceTransformer, controlFlowGraph)
+                } else {
+                    dataFlowAnalyzer.exitClass()
+                }
             }
             containingClass = oldContainingClass
             primaryConstructorParametersScope = oldConstructorScope
