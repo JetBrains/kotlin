@@ -57,6 +57,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.intellij.lang.annotations.JdkConstants;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -74,8 +75,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import static com.intellij.openapi.actionSystem.IdeActions.*;
+import static com.intellij.openapi.actionSystem.IdeActions.ACTION_GOTO_DECLARATION;
 
+@ApiStatus.Internal
 public final class CtrlMouseHandler {
   static final Logger LOG = Logger.getInstance(CtrlMouseHandler.class);
 
@@ -86,19 +88,6 @@ public final class CtrlMouseHandler {
   private TooltipProvider myTooltipProvider;
   @Nullable private Point myPrevMouseLocation;
   private LightweightHint myHint;
-
-  public enum BrowseMode {
-    None(null),
-    Declaration(ACTION_GOTO_DECLARATION),
-    TypeDeclaration(ACTION_GOTO_TYPE_DECLARATION),
-    Implementation(ACTION_GOTO_IMPLEMENTATION);
-
-    final @Nullable String actionId;
-
-    BrowseMode(@Nullable String actionId) {
-      this.actionId = actionId;
-    }
-  }
 
   private final KeyListener myEditorKeyListener = new KeyAdapter() {
     @Override
@@ -251,23 +240,6 @@ public final class CtrlMouseHandler {
     return action instanceof CtrlMouseAction ? (CtrlMouseAction)action : null;
   }
 
-  @Nullable
-  @TestOnly
-  public static String getInfo(PsiElement element, PsiElement atPointer) {
-    return SingleTargetElementInfo.generateInfo(element, atPointer, true).text;
-  }
-
-  @Nullable
-  @TestOnly
-  public static String getInfo(@NotNull Editor editor, BrowseMode browseMode) {
-    Project project = editor.getProject();
-    if (project == null) return null;
-    PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-    if (file == null) return null;
-    CtrlMouseInfo info = getInfoAt(project, editor, file, editor.getCaretModel().getOffset(), browseMode);
-    return info == null ? null : info.getDocInfo().text;
-  }
-
   private static boolean areSimilar(@NotNull CtrlMouseInfo info1, @NotNull CtrlMouseInfo info2) {
     return info1.getElementAtPointer().equals(info2.getElementAtPointer())
            && info1.getRanges().equals(info2.getRanges());
@@ -288,22 +260,6 @@ public final class CtrlMouseHandler {
   private static void showDumbModeNotification(@NotNull Project project) {
     DumbService.getInstance(project).showDumbModeNotification(
       CodeInsightBundle.message("notification.element.information.is.not.available.during.index.update"));
-  }
-
-  public static @Nullable CtrlMouseInfo getInfoAt(@NotNull Project project,
-                                                  @NotNull final Editor editor,
-                                                  @NotNull PsiFile file,
-                                                  int offset,
-                                                  @NotNull BrowseMode browseMode) {
-    String actionId = browseMode.actionId;
-    if (actionId == null) {
-      return null;
-    }
-    CtrlMouseAction action = getCtrlMouseAction(actionId);
-    if (action == null) {
-      return null;
-    }
-    return action.getCtrlMouseInfo(editor, file, offset);
   }
 
   private void disposeHighlighter() {
@@ -685,5 +641,32 @@ public final class CtrlMouseHandler {
         }
       });
     }
+  }
+
+  @TestOnly
+  public static @Nullable String getInfo(PsiElement element, PsiElement atPointer) {
+    return SingleTargetElementInfo.generateInfo(element, atPointer, true).text;
+  }
+
+  @TestOnly
+  public static @Nullable String getGoToDeclarationOrUsagesText(@NotNull Editor editor) {
+    Project project = editor.getProject();
+    if (project == null) return null;
+    PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
+    if (file == null) return null;
+    CtrlMouseInfo ctrlMouseInfo = getCtrlMouseInfo(ACTION_GOTO_DECLARATION, editor, file, editor.getCaretModel().getOffset());
+    return ctrlMouseInfo == null ? null : ctrlMouseInfo.getDocInfo().text;
+  }
+
+  @ApiStatus.Internal
+  public static @Nullable CtrlMouseInfo getCtrlMouseInfo(@NotNull String actionId,
+                                                         @NotNull Editor editor,
+                                                         @NotNull PsiFile file,
+                                                         int offset) {
+    CtrlMouseAction action = getCtrlMouseAction(actionId);
+    if (action == null) {
+      return null;
+    }
+    return action.getCtrlMouseInfo(editor, file, offset);
   }
 }
