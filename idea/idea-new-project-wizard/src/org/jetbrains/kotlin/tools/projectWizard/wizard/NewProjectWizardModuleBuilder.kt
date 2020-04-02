@@ -2,6 +2,8 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard
 
 import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.actions.NewProjectAction
+import com.intellij.ide.impl.NewProjectUtil
+import com.intellij.ide.projectWizard.NewProjectWizard
 import com.intellij.ide.util.projectWizard.*
 import com.intellij.ide.wizard.AbstractWizard
 import com.intellij.openapi.Disposable
@@ -22,21 +24,24 @@ import org.jetbrains.kotlin.idea.projectWizard.ProjectCreationStats
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.tools.projectWizard.core.*
+import org.jetbrains.kotlin.tools.projectWizard.core.buildList
+import org.jetbrains.kotlin.tools.projectWizard.core.div
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
+import org.jetbrains.kotlin.tools.projectWizard.core.isSuccess
+import org.jetbrains.kotlin.tools.projectWizard.core.onFailure
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.Plugins
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
+import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.ProjectTemplate
 import org.jetbrains.kotlin.tools.projectWizard.wizard.service.IdeaJpsWizardService
 import org.jetbrains.kotlin.tools.projectWizard.wizard.service.IdeaServices
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.asHtml
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep.FirstWizardStepComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.runWithProgressBar
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.SecondStepWizardComponent
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 import javax.swing.JButton
 import javax.swing.JComponent
@@ -143,8 +148,15 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
         }
     }
 
+    internal fun selectProjectTemplate(template: ProjectTemplate) {
+        wizard.buildSystemType = BuildSystemType.GradleKotlinDsl
+        wizard.projectTemplate = template
+    }
+
+    private val firstStep = ModuleNewWizardFirstStep(wizard)
+
     override fun getCustomOptionsStep(context: WizardContext?, parentDisposable: Disposable?) =
-        ModuleNewWizardFirstStep(wizard)
+        firstStep
 }
 
 abstract class WizardStep(protected val wizard: IdeWizard, private val phase: GenerationPhase) : ModuleWizardStep() {

@@ -50,7 +50,7 @@ class IdeWizard(
     var artifactId by setting(StructurePlugin::artifactId.reference)
     var buildSystemType by setting(BuildSystemPlugin::type.reference)
 
-    val projectTemplate by setting(ProjectTemplatesPlugin::template.reference)
+    var projectTemplate by setting(ProjectTemplatesPlugin::template.reference)
 
     private fun <V : Any, T : SettingType<V>> setting(reference: SettingReference<V, T>) =
         object : ReadWriteProperty<Any?, V?> {

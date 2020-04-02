@@ -150,5 +150,6 @@
         <fileEditorProvider implementation="org.jetbrains.kotlin.idea.scratch.ui.KtScratchFileEditorProvider"/>
 
         <moduleBuilder builderClass="org.jetbrains.kotlin.tools.projectWizard.wizard.NewProjectWizardModuleBuilder"/>
+        <jbProtocolCommand implementation="org.jetbrains.kotlin.tools.projectWizard.wizard.OpenNewProjectWizardProtocolCommand"/>
     </extensions>
 </idea-plugin>
