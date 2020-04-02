@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author yole
  */
-public final class PsiAwareFileEditorManagerImpl extends FileEditorManagerImpl {
+public class PsiAwareFileEditorManagerImpl extends FileEditorManagerImpl {
   private final WolfTheProblemSolver myProblemSolver;
 
   /**
