@@ -31,4 +31,6 @@ internal class KotlinNativeKlibCommonizerToolRunner(project: Project) : KotlinTo
     override val defaultMaxHeapSize: String get() = "4G"
 
     override val mustRunViaExec get() = true // because it's not enough the standard Gradle wrapper's heap size
+
+    override val systemPropertiesBlacklist: Set<String> = setOf("java.endorsed.dirs")
 }

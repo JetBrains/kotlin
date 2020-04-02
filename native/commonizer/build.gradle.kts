@@ -35,9 +35,19 @@ dependencies {
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
-val runCommonizer by tasks.registering(NoDebugJavaExec::class) {
-    classpath(sourceSets.main.get().runtimeClasspath)
+val runCommonizer by tasks.registering(JavaExec::class) {
+    classpath(sourceSets.main.get().runtimeClasspath + sourceSets.test.get().runtimeClasspath)
     main = "org.jetbrains.kotlin.descriptors.commonizer.cli.CommonizerCLI"
+
+    args = listOf(
+        "native-dist-commonize",
+        "-distribution-path",
+        "/Users/jetbrains/work/sources/kotlin-native/dist",
+        "-output-path",
+        "./ttt",
+        "-targets",
+        "ios_arm64,ios_x64"
+    )
 }
 
 sourceSets {
