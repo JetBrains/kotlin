@@ -17,10 +17,12 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.types.asSimpleType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.math.absoluteValue
 
@@ -73,12 +75,19 @@ internal class DownToHandler(private val context: CommonBackendContext, private 
 internal class UntilHandler(private val context: CommonBackendContext, private val progressionElementTypes: Collection<IrType>) :
     ProgressionHandler {
 
+    private val symbols = context.ir.symbols
+    private val uByteType = symbols.uByte?.defaultType
+    private val uShortType = symbols.uShort?.defaultType
+    private val uIntType = symbols.uInt?.defaultType
+    private val uLongType = symbols.uLong?.defaultType
+
     override val matcher = SimpleCalleeMatcher {
         singleArgumentExtension(FqName("kotlin.ranges.until"), progressionElementTypes)
         parameterCount { it == 1 }
         parameter(0) { it.type in progressionElementTypes }
     }
 
+    @ExperimentalUnsignedTypes
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // `A until B` is essentially the same as `A .. (B-1)`. However, B could be MIN_VALUE and hence `(B-1)` could underflow.
@@ -121,10 +130,7 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
             val untilArg = expression.getValueArgument(0)!!
 
             // Ensure that the argument conforms to the progression type before we decrement.
-            val untilArgCasted = untilArg.castIfNecessary(
-                data.elementType(context.irBuiltIns),
-                data.elementCastFunctionName
-            )
+            val untilArgCasted = data.castElementIfNecessary(untilArg, this@UntilHandler.context)
 
             // To reduce local variable usage, we create and use temporary variables only if necessary.
             var receiverValueVar: IrVariable? = null
@@ -147,6 +153,24 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
                     ProgressionType.INT_PROGRESSION -> Pair(Int.MIN_VALUE.toLong(), irInt(Int.MIN_VALUE))
                     ProgressionType.CHAR_PROGRESSION -> Pair(Char.MIN_VALUE.toLong(), irChar(Char.MIN_VALUE))
                     ProgressionType.LONG_PROGRESSION -> Pair(Long.MIN_VALUE, irLong(Long.MIN_VALUE))
+                    ProgressionType.UINT_PROGRESSION -> Pair(
+                        UInt.MIN_VALUE.toLong(),
+                        IrConstImpl.int(
+                            startOffset,
+                            endOffset,
+                            symbols.uInt!!.defaultType,
+                            UInt.MIN_VALUE.toInt()
+                        )
+                    )
+                    ProgressionType.ULONG_PROGRESSION -> Pair(
+                        ULong.MIN_VALUE.toLong(),
+                        IrConstImpl.long(
+                            startOffset,
+                            endOffset,
+                            symbols.uLong!!.defaultType,
+                            ULong.MIN_VALUE.toLong()
+                        )
+                    )
                 }
             val additionalNotEmptyCondition = untilArg.constLongValue.let {
                 when {
@@ -197,11 +221,14 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
         //   infix fun Long.until(to: Short): LongRange
         //   infix fun Long.until(to: Int): LongRange
         //   infix fun Long.until(to: Long): LongRange
+        //   infix fun UByte.until(to: UByte): UIntRange
+        //   infix fun UShort.until(to: UShort): UIntRange
+        //   infix fun UInt.until(to: UInt): UIntRange
+        //   infix fun ULong.until(to: ULong): ULongRange
         //
         // The combinations where the range element type is strictly larger than the argument type do NOT need the additional condition.
         // In such combinations, there is no possibility of underflow when the argument (casted to the range element type) is decremented.
         // For unexpected combinations that currently don't exist (e.g., Int until Char), we assume the check is needed to be safe.
-        // TODO: Include unsigned types
         return with(context.irBuiltIns) {
             when (receiverType) {
                 charType -> true
@@ -213,7 +240,11 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
                     byteType, shortType, intType -> false
                     else -> true
                 }
-                else -> true
+                uByteType -> false
+                uShortType -> false
+                uIntType -> true
+                uLongType -> true
+                else -> true  // Default in case a new `until` overload is added to stdlib and this function was not updated.
             }
         }
     }
@@ -258,7 +289,7 @@ internal class StepHandler(
             // We insert this check in the lowered form only if necessary.
             val stepType = data.stepType(context.irBuiltIns)
             val stepGreaterFun = context.irBuiltIns.greaterFunByOperandType[data.stepClassifier(context.irBuiltIns)]!!
-            val zeroStep = if (data == ProgressionType.LONG_PROGRESSION) irLong(0) else irInt(0)
+            val zeroStep = if (data.isLong) irLong(0) else irInt(0)
             val throwIllegalStepExceptionCall = {
                 irCall(context.irBuiltIns.illegalArgumentExceptionSymbol).apply {
                     val exceptionMessage = irConcat()
@@ -458,29 +489,29 @@ internal class StepHandler(
             return last
         }
 
-        // Call `getProgressionLastElement(first, last, step)`
-        val stepTypeClassifier = progressionType.stepClassifier(context.irBuiltIns)
-        val getProgressionLastElementFun = symbols.getProgressionLastElementByReturnType[stepTypeClassifier]
-            ?: throw IllegalArgumentException("No `getProgressionLastElement` for step type $stepTypeClassifier")
+        // Call `getProgressionLastElement(first, last, step)`. The following overloads are present in the stdlib:
+        //   - getProgressionLastElement(Int, Int, Int): Int          // Used by IntProgression and CharProgression (uses Int step)
+        //   - getProgressionLastElement(Long, Long, Long): Long      // Used by LongProgression
+        //   - getProgressionLastElement(UInt, UInt, Int): UInt       // Used by UIntProgression (uses Int step)
+        //   - getProgressionLastElement(ULong, ULong, Long): ULong   // Used by ULongProgression (uses Long step)
+        //
+        // We make sure to retrieve the correct symbol and use the correct argument types.
+        val returnTypeClassifier = if (progressionType.isUnsigned) {
+            progressionType.elementClassifier(symbols)
+        } else {
+            progressionType.stepClassifier(context.irBuiltIns)
+        }
+        val getProgressionLastElementFun = symbols.getProgressionLastElementByReturnType[returnTypeClassifier]
+            ?: throw IllegalArgumentException("No `getProgressionLastElement` for return type ${returnTypeClassifier.defaultType}")
         return irCall(getProgressionLastElementFun).apply {
-            putValueArgument(
-                0, first.deepCopyWithSymbols().castIfNecessary(
-                    progressionType.stepType(context.irBuiltIns),
-                    progressionType.stepCastFunctionName
-                )
-            )
-            putValueArgument(
-                1, last.deepCopyWithSymbols().castIfNecessary(
-                    progressionType.stepType(context.irBuiltIns),
-                    progressionType.stepCastFunctionName
-                )
-            )
-            putValueArgument(
-                2, step.deepCopyWithSymbols().castIfNecessary(
-                    progressionType.stepType(context.irBuiltIns),
-                    progressionType.stepCastFunctionName
-                )
-            )
+            if (progressionType.isUnsigned) {
+                putValueArgument(0, progressionType.castElementIfNecessary(first.deepCopyWithSymbols(), this@StepHandler.context))
+                putValueArgument(1, progressionType.castElementIfNecessary(last.deepCopyWithSymbols(), this@StepHandler.context))
+            } else {
+                putValueArgument(0, progressionType.castStepIfNecessary(first.deepCopyWithSymbols(), this@StepHandler.context))
+                putValueArgument(1, progressionType.castStepIfNecessary(last.deepCopyWithSymbols(), this@StepHandler.context))
+            }
+            putValueArgument(2, progressionType.castStepIfNecessary(step.deepCopyWithSymbols(), this@StepHandler.context))
         }
     }
 }

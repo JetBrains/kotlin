@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -238,7 +237,7 @@ private class RangeLoopTransformer(
                 mainLoopVariable.endOffset,
                 context.irBuiltIns.unitType,
                 IrStatementOrigin.FOR_LOOP_NEXT,
-                loopHeader.initializeIteration(mainLoopVariable, loopVariableComponents, symbols, this)
+                loopHeader.initializeIteration(mainLoopVariable, loopVariableComponents, this)
             )
         }
 

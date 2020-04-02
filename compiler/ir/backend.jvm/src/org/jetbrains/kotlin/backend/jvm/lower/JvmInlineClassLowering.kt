@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
+import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -42,7 +43,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 val jvmInlineClassPhase = makeIrFilePhase(
     ::JvmInlineClassLowering,
     name = "Inline Classes",
-    description = "Lower inline classes"
+    description = "Lower inline classes",
+    // forLoopsPhase may produce UInt and ULong which are inline classes.
+    prerequisite = setOf(forLoopsPhase)
 )
 
 /**

@@ -14,23 +14,10 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
-
-internal fun IrExpression.castIfNecessary(targetType: IrType, numberCastFunctionName: Name): IrExpression {
-    // This expression's type could be Nothing from an exception throw.
-    return if (type == targetType || type.isNothing()) {
-        this
-    } else {
-        val castFun = type.getClass()!!.functions.single { it.name == numberCastFunctionName && it.valueParameters.isEmpty() }
-        IrCallImpl(startOffset, endOffset, castFun.returnType, castFun.symbol)
-            .apply { dispatchReceiver = this@castIfNecessary }
-    }
-}
 
 /** Return the negated value if the expression is const, otherwise call unaryMinus(). */
 internal fun IrExpression.negate(): IrExpression {

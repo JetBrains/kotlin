@@ -299,6 +299,7 @@ private val jvmFilePhases =
         anonymousObjectSuperConstructorPhase then
         tailrecPhase then
 
+        forLoopsPhase then
         jvmInlineClassPhase then
 
         sharedVariablesPhase then
@@ -318,7 +319,6 @@ private val jvmFilePhases =
 
         jvmDefaultConstructorPhase then
 
-        forLoopsPhase then
         flattenStringConcatenationPhase then
         foldConstantLoweringPhase then
         computeStringTrimPhase then

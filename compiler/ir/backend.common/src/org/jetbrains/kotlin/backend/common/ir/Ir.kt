@@ -64,9 +64,13 @@ open class BuiltinSymbolsBase(protected val irBuiltIns: IrBuiltIns, protected va
         )
 
     private fun getClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol =
-        symbolTable.referenceClass(
-            builtInsPackage(*packageNameSegments).getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
-        )
+        getClassOrNull(name, *packageNameSegments) ?: error("Class '$name' not found in package '${packageNameSegments.joinToString(".")}'")
+
+    private fun getClassOrNull(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol? =
+        (builtInsPackage(*packageNameSegments).getContributedClassifier(
+            name,
+            NoLookupLocation.FROM_BACKEND
+        ) as? ClassDescriptor)?.let { symbolTable.referenceClass(it) }
 
     /**
      * Use this table to reference external dependencies.
@@ -89,11 +93,22 @@ open class BuiltinSymbolsBase(protected val irBuiltIns: IrBuiltIns, protected va
         .map { symbolTable.referenceFunction(it) }
 
     private fun progression(name: String) = getClass(Name.identifier(name), "kotlin", "ranges")
+    private fun progressionOrNull(name: String) = getClassOrNull(Name.identifier(name), "kotlin", "ranges")
+
+    // The "...OrNull" variants are used for unsigned (and progressions) because the minimal stdlib used in tests do not include those
+    // those classes. It was not feasible to add them to the JS reduced runtime because all its transitive dependencies also need to be
+    // added, which would include a lot of the full stdlib.
+    open val uByte = getClassOrNull(Name.identifier("UByte"), "kotlin")
+    open val uShort = getClassOrNull(Name.identifier("UShort"), "kotlin")
+    open val uInt = getClassOrNull(Name.identifier("UInt"), "kotlin")
+    open val uLong = getClassOrNull(Name.identifier("ULong"), "kotlin")
+    val uIntProgression = progressionOrNull("UIntProgression")
+    val uLongProgression = progressionOrNull("ULongProgression")
 
     val charProgression = progression("CharProgression")
     val intProgression = progression("IntProgression")
     val longProgression = progression("LongProgression")
-    val progressionClasses = listOf(charProgression, intProgression, longProgression)
+    val progressionClasses = listOfNotNull(charProgression, intProgression, longProgression, uIntProgression, uLongProgression)
     val progressionClassesTypes = progressionClasses.map { it.descriptor.defaultType }.toSet()
 
     val getProgressionLastElementByReturnType = builtInsPackage("kotlin", "internal")
@@ -104,6 +119,18 @@ open class BuiltinSymbolsBase(protected val irBuiltIns: IrBuiltIns, protected va
             val f = symbolTable.referenceSimpleFunction(d)
             c to f
         }.toMap()
+
+    val toUIntByExtensionReceiver = builtInsPackage("kotlin").getContributedFunctions(
+        Name.identifier("toUInt"),
+        NoLookupLocation.FROM_BACKEND
+    ).filter { it.containingDeclaration !is BuiltInsPackageFragment && it.extensionReceiverParameter != null }
+        .map { Pair(it.extensionReceiverParameter!!.type, symbolTable.referenceSimpleFunction(it)) }.toMap()
+
+    val toULongByExtensionReceiver = builtInsPackage("kotlin").getContributedFunctions(
+        Name.identifier("toULong"),
+        NoLookupLocation.FROM_BACKEND
+    ).filter { it.containingDeclaration !is BuiltInsPackageFragment && it.extensionReceiverParameter != null }
+        .map { Pair(it.extensionReceiverParameter!!.type, symbolTable.referenceSimpleFunction(it)) }.toMap()
 
     val any = symbolTable.referenceClass(builtIns.any)
     val unit = symbolTable.referenceClass(builtIns.unit)
