@@ -105,7 +105,7 @@ abstract class AbstractLoweringTests : AbstractCodegenTest() {
 
         return compose {
             val values = valuesFactory()
-            val arguments = values.map { it.value as Any }.toTypedArray()
+            val arguments = values.map { it.value }.toTypedArray()
             testMethod.invoke(instanceOfClass, *arguments, it)
         }
     }

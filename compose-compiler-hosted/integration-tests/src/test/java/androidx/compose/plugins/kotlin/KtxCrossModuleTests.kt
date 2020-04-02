@@ -42,7 +42,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     @Test
     fun testCrossinlineEmittable(): Unit = ensureSetup {
         compile(
-            "TestG", mapOf(
+            mapOf(
                 "library module" to mapOf(
                     "x/A.kt" to """
                     package x
@@ -76,7 +76,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     @Test
     fun testConstCrossModule(): Unit = ensureSetup {
         compile(
-            "TestG", mapOf(
+            mapOf(
                 "library module" to mapOf(
                     "x/A.kt" to """
                     package x
@@ -105,7 +105,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     @Test
     fun testNonCrossinlineComposable(): Unit = ensureSetup {
         compile(
-            "TestG", mapOf(
+            mapOf(
                 "library module" to mapOf(
                     "x/A.kt" to """
                     package x
@@ -138,7 +138,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     @Test
     fun testNonCrossinlineComposableNoGenerics(): Unit = ensureSetup {
         compile(
-            "TestG", mapOf(
+            mapOf(
                 "library module" to mapOf(
                     "x/A.kt" to """
                     package x
@@ -174,7 +174,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     @Test
     fun testRemappedTypes(): Unit = ensureSetup {
         compile(
-            "TestG", mapOf(
+            mapOf(
                 "library module" to mapOf(
                     "x/A.kt" to """
                     package x
@@ -210,7 +210,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     @Test
     fun testInlineIssue(): Unit = ensureSetup {
         compile(
-            "TestG", mapOf(
+            mapOf(
                 "library module" to mapOf(
                     "x/C.kt" to """
                     fun ghi() {
@@ -239,7 +239,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     @Test
     fun testInlineComposableProperty(): Unit = ensureSetup {
         compile(
-            "TestG", mapOf(
+            mapOf(
                 "library module" to mapOf(
                     "x/A.kt" to """
                     package x
@@ -272,7 +272,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     @Test
     fun testNestedInlineIssue(): Unit = ensureSetup {
         compile(
-            "TestG", mapOf(
+            mapOf(
                 "library module" to mapOf(
                     "x/C.kt" to """
                     fun ghi() {
@@ -309,7 +309,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     @Test
     fun testComposerIntrinsicInline(): Unit = ensureSetup {
         compile(
-            "TestG", mapOf(
+            mapOf(
                 "library module" to mapOf(
                     "x/C.kt" to """
                     import androidx.compose.Composable
@@ -350,7 +350,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     @Test
     fun testComposableOrderIssue(): Unit = ensureSetup {
         compile(
-            "TestG", mapOf(
+            mapOf(
                 "library module" to mapOf(
                     "C.kt" to """
                     import androidx.compose.*
@@ -389,7 +389,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     @Test
     fun testSimpleXModuleCall(): Unit = ensureSetup {
         compile(
-            "TestG", mapOf(
+            mapOf(
                 "library module" to mapOf(
                     "a/A.kt" to """
                     package a
@@ -420,7 +420,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     @Test
     fun testJvmFieldIssue(): Unit = ensureSetup {
         compile(
-            "TestG", mapOf(
+            mapOf(
                 "library module" to mapOf(
                     "x/C.kt" to """
                     fun Test2() {
@@ -449,7 +449,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     @Test
     fun testInstanceXModuleCall(): Unit = ensureSetup {
         compile(
-            "TestH", mapOf(
+            mapOf(
                 "library module" to mapOf(
                     "a/Foo.kt" to """
                     package a
@@ -480,7 +480,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     @Test
     fun testXModuleProperty(): Unit = ensureSetup {
         compile(
-            "TestI", mapOf(
+            mapOf(
                 "library module" to mapOf(
                     "a/Foo.kt" to """
                     package a
@@ -508,7 +508,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     @Test
     fun testXModuleInterface(): Unit = ensureSetup {
         compile(
-            "TestJ", mapOf(
+            mapOf(
                 "library module" to mapOf(
                     "a/Foo.kt" to """
                     package a
@@ -542,7 +542,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     @Test
     fun testXModuleCtorComposableParam(): Unit = ensureSetup {
         compile(
-            "TestJ", mapOf(
+            mapOf(
                 "library module" to mapOf(
                     "a/Foo.kt" to """
                     package a
@@ -772,7 +772,6 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     fun compile(
-        mainClassName: String,
         modules: Map<String, Map<String, String>>,
         dumpClasses: Boolean = false,
         validate: ((String) -> Unit)? = null
@@ -816,7 +815,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
         modules: Map<String, Map<String, String>>,
         dumpClasses: Boolean = false
     ): RobolectricComposeTester {
-        val allClasses = compile(mainClassName, modules, dumpClasses)
+        val allClasses = compile(modules, dumpClasses)
         val loader = URLClassLoader(emptyArray(), this.javaClass.classLoader)
         val instanceClass = run {
             var instanceClass: Class<*>? = null
