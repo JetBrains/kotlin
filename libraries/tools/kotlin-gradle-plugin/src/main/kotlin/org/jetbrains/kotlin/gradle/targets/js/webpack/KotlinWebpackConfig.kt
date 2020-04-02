@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
 import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackAssetExtractPolicy.*
 import java.io.File
 import java.io.Serializable
 import java.io.StringWriter
@@ -58,11 +57,9 @@ data class KotlinWebpackConfig(
             if (cssSettings == null || !cssSettings.enabled) return@also
 
             it.add(versions.cssLoader)
-            if (cssSettings.extractPolicy in listOf(NONE, DEPENDS_ON_MODE)) {
+            if (cssSettings.inline) {
                 it.add(versions.styleLoader)
-            }
-
-            if (cssSettings.extractPolicy in listOf(ALWAYS, DEPENDS_ON_MODE)) {
+            } else {
                 it.add(versions.miniCssExtractPlugin)
             }
         }
@@ -280,31 +277,22 @@ data class KotlinWebpackConfig(
             |        options: {}
             |    })
             |    config.plugins.push(new MiniCssExtractPlugin())
-            """
+            """.trimMargin()
 
-        val nonExtractedCss =
+        val inlinedCss =
             """
             |    use.unshift({
             |        loader: 'style-loader',
             |        options: {}
             |    })
             |    
-            """
-
-        val extractedSettings = when (cssSettings.extractPolicy) {
-            ALWAYS -> extractedCss
-            DEPENDS_ON_MODE ->
-                """
-            |    if (config.mode === 'production') {
-            |        $extractedCss
-            |    } else {
-            |        $nonExtractedCss
-            |    }
             """.trimMargin()
-            NONE -> nonExtractedCss
-        }
 
-        appendln(extractedSettings)
+        if (cssSettings.inline) {
+            appendln(inlinedCss)
+        } else {
+            appendln(extractedCss)
+        }
 
         appendln(
             """

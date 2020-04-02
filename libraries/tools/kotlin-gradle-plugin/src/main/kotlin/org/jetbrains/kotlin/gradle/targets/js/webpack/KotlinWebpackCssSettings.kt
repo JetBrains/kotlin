@@ -12,5 +12,5 @@ data class KotlinWebpackCssSettings(
     var enabled: Boolean = true,
 
     @Input
-    var extractPolicy: KotlinWebpackAssetExtractPolicy = KotlinWebpackAssetExtractPolicy.DEPENDS_ON_MODE
+    var inline: Boolean = false
 )
