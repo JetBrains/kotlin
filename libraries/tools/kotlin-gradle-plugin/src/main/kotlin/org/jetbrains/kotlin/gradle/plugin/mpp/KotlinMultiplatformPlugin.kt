@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.dsl.configureOrCreate
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.checkSourceSetVisibilityRequirements
@@ -97,6 +98,7 @@ class KotlinMultiplatformPlugin(
 
         // propagate compiler plugin options to the source set language settings
         setupAdditionalCompilerArguments(project)
+        project.setupGeneralKotlinExtensionParameters()
 
         project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
     }
@@ -133,22 +135,6 @@ class KotlinMultiplatformPlugin(
                 compilerPluginOptionsTask = lazy {
                     val associatedCompilation = primaryCompilationsBySourceSet[sourceSet] ?: metadataCompilation
                     project.tasks.getByName(associatedCompilation.compileKotlinTaskName) as AbstractCompile
-                }
-
-                // Also set ad-hoc free compiler args from the internal project property
-                freeCompilerArgsProvider = project.provider {
-                    val propertyValue = with(project.extensions.extraProperties) {
-                        val sourceSetFreeCompilerArgsPropertyName = sourceSetFreeCompilerArgsPropertyName(sourceSet.name)
-                        if (has(sourceSetFreeCompilerArgsPropertyName)) {
-                            get(sourceSetFreeCompilerArgsPropertyName)
-                        } else null
-                    }
-                    mutableListOf<String>().apply {
-                        when (propertyValue) {
-                            is String -> add(propertyValue)
-                            is Iterable<*> -> addAll(propertyValue.map { it.toString() })
-                        }
-                    }
                 }
             }
         }
@@ -314,7 +300,7 @@ class KotlinMultiplatformPlugin(
     companion object {
         const val METADATA_TARGET_NAME = "metadata"
 
-        private fun sourceSetFreeCompilerArgsPropertyName(sourceSetName: String) =
+        internal fun sourceSetFreeCompilerArgsPropertyName(sourceSetName: String) =
             "kotlin.mpp.freeCompilerArgsForSourceSet.$sourceSetName"
 
         internal const val GRADLE_NO_METADATA_WARNING = "This build consumes Gradle module metadata but does not produce " +
@@ -403,4 +389,44 @@ internal fun sourcesJarTask(
     }
 
     return result
+}
+
+internal fun Project.setupGeneralKotlinExtensionParameters() {
+    val sourceSetsInMainCompilation by lazy {
+        CompilationSourceSetUtil.compilationsBySourceSets(project).filterValues { compilations ->
+            compilations.any {
+                // kotlin main compilation
+                it.name == KotlinCompilation.MAIN_COMPILATION_NAME
+                        // android compilation which is NOT in tested variant
+                        || (it as? KotlinJvmAndroidCompilation)?.let { getTestedVariantData(it.androidVariant) == null } == true
+            }
+        }.keys
+    }
+
+    kotlinExtension.sourceSets.all { sourceSet ->
+        (sourceSet.languageSettings as? DefaultLanguageSettingsBuilder)?.run {
+
+            // Set ad-hoc free compiler args from the internal project property
+            freeCompilerArgsProvider = project.provider {
+                val propertyValue = with(project.extensions.extraProperties) {
+                    val sourceSetFreeCompilerArgsPropertyName = sourceSetFreeCompilerArgsPropertyName(sourceSet.name)
+                    if (has(sourceSetFreeCompilerArgsPropertyName)) {
+                        get(sourceSetFreeCompilerArgsPropertyName)
+                    } else null
+                }
+
+                mutableListOf<String>().apply {
+                    when (propertyValue) {
+                        is String -> add(propertyValue)
+                        is Iterable<*> -> addAll(propertyValue.map { it.toString() })
+                    }
+
+                    val explicitApiState = project.kotlinExtension.explicitApi?.toCompilerArg()
+                    // do not look into lazy set if explicitApiMode was not enabled
+                    if (explicitApiState != null && sourceSet in sourceSetsInMainCompilation)
+                        add(explicitApiState)
+                }
+            }
+        }
+    }
 }

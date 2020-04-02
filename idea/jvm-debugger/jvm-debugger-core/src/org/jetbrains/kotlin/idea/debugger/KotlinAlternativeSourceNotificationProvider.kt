@@ -106,7 +106,7 @@ class KotlinAlternativeSourceNotificationProvider(private val myProject: Project
         }
 
         init {
-            setText("Alternative source available for file ${file.name}")
+            setText(KotlinDebuggerCoreBundle.message("alternative.sources.notification.title", file.name))
 
             val items = alternatives.map { ComboBoxFileElement(it) }
             myLinksPanel.add(
@@ -139,7 +139,7 @@ class KotlinAlternativeSourceNotificationProvider(private val myProject: Project
                     }
                 })
 
-            createActionLabel("Disable") {
+            createActionLabel(KotlinDebuggerCoreBundle.message("alternative.sources.notification.disable")) {
                 DebuggerSettings.getInstance().SHOW_ALTERNATIVE_SOURCE = false
                 FILE_PROCESSED_KEY.set(file, null)
                 val fileEditorManager = FileEditorManager.getInstance(project)

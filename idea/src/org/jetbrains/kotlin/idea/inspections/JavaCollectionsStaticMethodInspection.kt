@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.callExpression
@@ -32,7 +33,7 @@ class JavaCollectionsStaticMethodInspection : AbstractKotlinInspection() {
             val (methodName, firstArg) = getTargetMethodOnMutableList(expression) ?: return
             holder.registerProblem(
                 expression,
-                "Java Collections static method call should be replaced with Kotlin stdlib",
+                KotlinBundle.message("java.collections.static.method.call.should.be.replaced.with.kotlin.stdlib"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 ReplaceWithStdLibFix(methodName, firstArg.text)
             )
@@ -101,7 +102,7 @@ private fun KotlinType.isListOrSubtype(): Boolean {
 }
 
 private class ReplaceWithStdLibFix(private val methodName: String, private val receiver: String) : LocalQuickFix {
-    override fun getName() = "Replace with $receiver.$methodName"
+    override fun getName() = KotlinBundle.message("replace.with.std.lib.fix.text", receiver, methodName)
 
     override fun getFamilyName() = name
 

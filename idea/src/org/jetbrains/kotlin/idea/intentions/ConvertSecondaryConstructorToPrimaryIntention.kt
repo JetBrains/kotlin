@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.util.CommentSaver
@@ -31,7 +32,7 @@ class ConvertSecondaryConstructorToPrimaryInspection : IntentionBasedInspection<
 
 class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntention<KtSecondaryConstructor>(
     KtSecondaryConstructor::class.java,
-    "Convert to primary constructor"
+    KotlinBundle.message("convert.to.primary.constructor")
 ) {
     private tailrec fun ConstructorDescriptor.isReachableByDelegationFrom(
         constructor: ConstructorDescriptor, context: BindingContext, visited: Set<ConstructorDescriptor> = emptySet()

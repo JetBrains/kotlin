@@ -4,15 +4,29 @@ import org.jetbrains.kotlin.tools.projectWizard.GeneratedIdentificator
 import org.jetbrains.kotlin.tools.projectWizard.Identificator
 import org.jetbrains.kotlin.tools.projectWizard.IdentificatorOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
+
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildFileIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 
 inline class ModulePath(val parts: List<String>) {
+    constructor(path: String) : this(path.trim().split('.'))
+
     fun asString(separator: String = ".") = parts.joinToString(separator)
     override fun toString(): String = asString()
+
+    companion object {
+        val parser = valueParser { value, path ->
+            val (stringPath) = value.parseAs<String>(path)
+            ModulePath(stringPath)
+        }
+    }
+}
+
+fun ModulePath.considerSingleRootModuleMode(isSingleRootMode: Boolean) = when {
+    isSingleRootMode && parts.size > 1 -> ModulePath(parts.subList(1, parts.size))
+    else -> this
 }
 
 
@@ -31,7 +45,7 @@ data class PathBasedSourcesetDependency(val path: ModulePath) : SourcesetDepende
 // A `main` or `test` sourceset for single or multiplatform projects
 class Sourceset(
     val sourcesetType: SourcesetType,
-    var dependencies: List<SourcesetDependency>,
+    var dependencies: List<SourcesetDependency> = emptyList(),
     var parent: Module? = null,
     override val identificator: Identificator = GeneratedIdentificator(sourcesetType.name)
 ) : DisplayableSettingItem, IdentificatorOwner {
@@ -55,7 +69,7 @@ class Sourceset(
 }
 
 @Suppress("EnumEntryName")
-enum class SourcesetType: DisplayableSettingItem {
+enum class SourcesetType : DisplayableSettingItem {
     main, test;
 
     override val text: String
@@ -67,15 +81,15 @@ enum class SourcesetType: DisplayableSettingItem {
 }
 
 
-fun WritingContext.updateBuildFiles(action: (BuildFileIR) -> TaskResult<BuildFileIR>): TaskResult<Unit> =
+fun Writer.updateBuildFiles(action: (BuildFileIR) -> TaskResult<BuildFileIR>): TaskResult<Unit> =
     BuildSystemPlugin::buildFiles.update { buildFiles ->
         buildFiles.mapSequence(action)
     }
 
-fun WritingContext.updateModules(action: (ModuleIR) -> TaskResult<ModuleIR>): TaskResult<Unit> =
+fun Writer.updateModules(action: (ModuleIR) -> TaskResult<ModuleIR>): TaskResult<Unit> =
     updateBuildFiles { buildFile ->
         buildFile.withModulesUpdated { action(it) }
     }
 
-fun WritingContext.forEachModule(action: (ModuleIR) -> TaskResult<Unit>): TaskResult<Unit> =
+fun Writer.forEachModule(action: (ModuleIR) -> TaskResult<Unit>): TaskResult<Unit> =
     updateModules { moduleIR -> action(moduleIR).map { moduleIR } }

@@ -14,6 +14,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtLambdaExpression
@@ -49,7 +50,7 @@ class UnusedLambdaExpressionBodyInspection : AbstractKotlinInspection() {
 
             holder.registerProblem(
                 expression,
-                "Unused return value of a function with lambda expression body",
+                KotlinBundle.message("unused.return.value.of.a.function.with.lambda.expression.body"),
                 RemoveEqTokenFromFunctionDeclarationFix(function)
             )
         })
@@ -58,7 +59,7 @@ class UnusedLambdaExpressionBodyInspection : AbstractKotlinInspection() {
     private fun CallableDescriptor.returnsFunction() = returnType?.isFunctionType ?: false
 
     class RemoveEqTokenFromFunctionDeclarationFix(function: KtFunction) : LocalQuickFixOnPsiElement(function) {
-        override fun getText(): String = "Remove '=' token from function declaration"
+        override fun getText(): String = KotlinBundle.message("remove.token.from.function.declaration")
 
         override fun getFamilyName(): String = name
 

@@ -3,10 +3,10 @@
 open class Base(protected val i: Int)
 
 class Impl(i: Int) : Base(i) {
-    private val i: Int
+    private val i1: Int
         get() = 2 + 3 + i
 
     fun foo(): Int {
-        return i
+        return i1
     }
 }

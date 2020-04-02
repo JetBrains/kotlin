@@ -1,43 +1,43 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard
 
-import com.intellij.ide.projectWizard.ProjectSettingsStep
+import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.util.projectWizard.*
+import com.intellij.ide.wizard.AbstractWizard
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.module.ModifiableModuleModel
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleType
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.SystemProperties
 import org.jetbrains.kotlin.idea.configuration.ExperimentalFeatures
-import org.jetbrains.kotlin.idea.framework.KotlinModuleSettingStep
 import org.jetbrains.kotlin.idea.framework.KotlinTemplatesFactory
 import org.jetbrains.kotlin.idea.projectWizard.ProjectCreationStats
 import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.tools.projectWizard.core.Failure
-import org.jetbrains.kotlin.tools.projectWizard.core.Success
+import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.StringValidators
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
-import org.jetbrains.kotlin.tools.projectWizard.core.isSuccess
-import org.jetbrains.kotlin.tools.projectWizard.core.onFailure
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.Plugins
+import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.projectTemplates.ProjectTemplatesPlugin
+import org.jetbrains.kotlin.tools.projectWizard.wizard.service.IdeaJpsWizardService
 import org.jetbrains.kotlin.tools.projectWizard.wizard.service.IdeaServices
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.PomWizardStepComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.asHtml
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep.FirstWizardStepComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.runWithProgressBar
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.SecondStepWizardComponent
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.nio.file.Paths
+import java.io.File
+import javax.swing.JButton
 import javax.swing.JComponent
 import com.intellij.openapi.module.Module as IdeaModule
 
@@ -58,7 +58,6 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
 
     companion object {
         const val MODULE_BUILDER_ID = "kotlin.newProjectWizard.builder"
-        private const val DEFAULT_GROUP_ID = "me.user"
         private val projectNameValidator = StringValidators.shouldBeValidIdentifier("Project name", setOf('-', '_'))
         private const val INVALID_PROJECT_NAME_MESSAGE = "Invalid project name"
     }
@@ -66,7 +65,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
     override fun isAvailable(): Boolean = ExperimentalFeatures.NewWizard.isEnabled
 
     private var wizardContext: WizardContext? = null
-    private var pomValuesAreSet: Boolean = false
+    private var finishButtonClicked: Boolean = false
 
     override fun getModuleType(): ModuleType<*> = NewProjectWizardModuleType()
     override fun getParentGroup(): String = KotlinTemplatesFactory.KOTLIN_PARENT_GROUP_NAME
@@ -76,8 +75,11 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
         modulesProvider: ModulesProvider
     ): Array<ModuleWizardStep> {
         this.wizardContext = wizardContext
-        return arrayOf(ModuleNewWizardSecondStep(wizard, uiEditorUsagesStats))
+        return arrayOf(ModuleNewWizardSecondStep(wizard, uiEditorUsagesStats, wizardContext))
     }
+
+    override fun createProject(name: String?, path: String?) =
+        ProjectManager.getInstance().createProject(wizard.projectName, wizard.projectPath.toString())
 
     override fun commit(
         project: Project,
@@ -86,8 +88,11 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
     ): List<IdeaModule>? {
         val modulesModel = model ?: ModuleManager.getInstance(project).modifiableModel
         val success = wizard.apply(
-            services = IdeaServices.createScopeDependent(project, modulesModel) +
-                    IdeaServices.PROJECT_INDEPENDENT,
+            services = buildList {
+                +IdeaServices.createScopeDependent(project)
+                +IdeaServices.PROJECT_INDEPENDENT
+                +IdeaJpsWizardService(project, modulesModel, this@NewProjectWizardModuleBuilder, wizard)
+            },
             phases = GenerationPhase.startingFrom(GenerationPhase.FIRST_STEP)
         ).onFailure { errors ->
             val errorMessages = errors.joinToString(separator = "\n") { it.message }
@@ -112,24 +117,21 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
         }
     }
 
-    override fun modifySettingsStep(settingsStep: SettingsStep): ModuleWizardStep {
-        updateProjectNameAndPomDate(settingsStep)
+    private fun clickFinishButton() {
+        if (finishButtonClicked) return
+        finishButtonClicked = true
+        wizardContext?.getNextButton()?.doClick()
+    }
 
-        return when (wizard.buildSystemType) {
-            BuildSystemType.Jps -> {
-                KotlinModuleSettingStep(
-                    JvmPlatforms.defaultJvmPlatform,
-                    this,
-                    settingsStep,
-                    wizardContext
-                )
-            }
-            else -> PomWizardStep(settingsStep, wizard)
-        }
+    override fun modifySettingsStep(settingsStep: SettingsStep): ModuleWizardStep? {
+        clickFinishButton()
+        return null
     }
 
     override fun validateModuleName(moduleName: String): Boolean {
-        when (val validationResult = projectNameValidator.validate(wizard.valuesReadingContext, moduleName)) {
+        when (val validationResult = wizard.context.read {
+            projectNameValidator.validate(this, moduleName)
+        }) {
             ValidationResult.OK -> return true
             is ValidationResult.ValidationError -> {
                 val message = validationResult.messages.firstOrNull() ?: INVALID_PROJECT_NAME_MESSAGE
@@ -138,21 +140,58 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
         }
     }
 
-    private fun updateProjectNameAndPomDate(settingsStep: SettingsStep) {
-        if (pomValuesAreSet) return
-        val suggestedProjectName = with(wizard.valuesReadingContext) {
-            ProjectTemplatesPlugin::template.settingValue.suggestedProjectName.decapitalize()
-        }
-        settingsStep.moduleNameLocationSettings?.apply {
-            val projectParentDirectory = moduleContentRoot.let { Paths.get(it).parent.toString() }
-            moduleName = ProjectWizardUtil.findNonExistingFileName(projectParentDirectory, suggestedProjectName, "")
+    override fun getCustomOptionsStep(context: WizardContext?, parentDisposable: Disposable?) =
+        ModuleNewWizardFirstStep(wizard)
+}
+
+abstract class WizardStep(protected val wizard: IdeWizard, private val phase: GenerationPhase) : ModuleWizardStep() {
+    override fun updateDataModel() = Unit // model is updated on every UI action
+    override fun validate(): Boolean =
+        when (val result = wizard.context.read { with(wizard) { validate(setOf(phase)) } }) {
+            ValidationResult.OK -> true
+            is ValidationResult.ValidationError -> {
+                handleErrors(result)
+                false
+            }
         }
 
-        settingsStep.safeAs<ProjectSettingsStep>()?.bindModuleSettings()
+    protected open fun handleErrors(error: ValidationResult.ValidationError) {
+        throw ConfigurationException(error.asHtml(), "Validation Error")
+    }
+}
 
-        wizard.artifactId = suggestedProjectName
-        wizard.groupId = suggestGroupId()
-        pomValuesAreSet = true
+class ModuleNewWizardFirstStep(wizard: IdeWizard) : WizardStep(wizard, GenerationPhase.FIRST_STEP) {
+    private val component = FirstWizardStepComponent(wizard)
+    override fun getComponent(): JComponent = component.component
+
+    init {
+        runPreparePhase()
+        initDefaultValues()
+        component.onInit()
+    }
+
+    private fun runPreparePhase() = runWithProgressBar(title = "") {
+        wizard.apply(emptyList(), setOf(GenerationPhase.PREPARE)) { task ->
+            ProgressManager.getInstance().progressIndicator.text = task.title ?: ""
+        }
+    }
+
+    override fun handleErrors(error: ValidationResult.ValidationError) {
+        component.navigateTo(error)
+    }
+
+    private fun initDefaultValues() {
+        val suggestedProjectParentLocation = suggestProjectLocation()
+        val suggestedProjectName = ProjectWizardUtil.findNonExistingFileName(suggestedProjectParentLocation, "untitled", "")
+        wizard.context.writeSettings {
+            StructurePlugin::name.reference.setValue(suggestedProjectName)
+            StructurePlugin::projectPath.reference.setValue(suggestedProjectParentLocation / suggestedProjectName)
+            StructurePlugin::artifactId.reference.setValue(suggestedProjectName)
+
+            if (StructurePlugin::groupId.reference.notRequiredSettingValue == null) {
+                StructurePlugin::groupId.reference.setValue(suggestGroupId())
+            }
+        }
     }
 
     private fun suggestGroupId(): String {
@@ -162,66 +201,26 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
         return "me.$usernameAsGroupId"
     }
 
-    override fun getCustomOptionsStep(context: WizardContext?, parentDisposable: Disposable?) =
-        ModuleNewWizardFirstStep(wizard)
-
-    override fun setName(name: String) {
-        wizard.projectName = name
-    }
-
-    override fun setModuleFilePath(path: String) = Unit
-
-    override fun setContentEntryPath(moduleRootPath: String) {
-        wizard.projectPath = Paths.get(moduleRootPath)
-    }
-}
-
-abstract class WizardStep(protected val wizard: IdeWizard, private val phase: GenerationPhase) : ModuleWizardStep() {
-    override fun updateDataModel() = Unit // model is updated on every UI action
-    override fun validate(): Boolean =
-        when (val result = with(wizard.valuesReadingContext) { with(wizard) { validate(setOf(phase)) } }) {
-            is Success<*> -> true
-            is Failure -> {
-                throw ConfigurationException(result.asHtml(), "Validation Error")
-            }
+    // copied from com.intellij.ide.util.projectWizard.WizardContext.getProjectFileDirectory
+    private fun suggestProjectLocation(): String {
+        val lastProjectLocation = RecentProjectsManager.getInstance().lastProjectCreationLocation
+        if (lastProjectLocation != null) {
+            return lastProjectLocation.replace('/', File.separatorChar)
         }
-}
-
-private class PomWizardStep(
-    originalSettingStep: SettingsStep,
-    wizard: IdeWizard
-) : WizardStep(wizard, GenerationPhase.PROJECT_GENERATION) {
-    private val pomWizardStepComponent = PomWizardStepComponent(wizard.ideContext)
-
-    init {
-        originalSettingStep.addSettingsComponent(component)
-        pomWizardStepComponent.onInit()
-
+        val userHome = SystemProperties.getUserHome()
+        val productName = ApplicationNamesInfo.getInstance().lowercaseProductName
+        return userHome.replace('/', File.separatorChar) + File.separator + productName.replace(" ", "") + "Projects"
     }
 
-    override fun getComponent(): JComponent = pomWizardStepComponent.component
-}
-
-
-class ModuleNewWizardFirstStep(wizard: IdeWizard) : WizardStep(wizard, GenerationPhase.FIRST_STEP) {
-    private val component = FirstWizardStepComponent(wizard)
-    override fun getComponent(): JComponent = component.component
-
-    init {
-        runPreparePhase()
-        component.onInit()
-    }
-
-    private fun runPreparePhase() = runWithProgressBar(title = "") {
-        wizard.apply(emptyList(), setOf(GenerationPhase.PREPARE)) { task ->
-            ProgressManager.getInstance().progressIndicator.text = task.title ?: ""
-        }
+    companion object {
+        private const val DEFAULT_GROUP_ID = "me.user"
     }
 }
 
 class ModuleNewWizardSecondStep(
     wizard: IdeWizard,
-    uiEditorUsagesStats: UiEditorUsageStats
+    uiEditorUsagesStats: UiEditorUsageStats,
+    private val wizardContext: WizardContext
 ) : WizardStep(wizard, GenerationPhase.SECOND_STEP) {
     private val component = SecondStepWizardComponent(wizard, uiEditorUsagesStats)
     override fun getComponent(): JComponent = component.component
@@ -229,4 +228,21 @@ class ModuleNewWizardSecondStep(
     override fun _init() {
         component.onInit()
     }
+
+    override fun getPreferredFocusedComponent(): JComponent? {
+        wizardContext.getNextButton()?.text = "Finish"
+        return super.getPreferredFocusedComponent()
+    }
+
+    override fun handleErrors(error: ValidationResult.ValidationError) {
+        component.navigateTo(error)
+    }
+}
+
+private fun WizardContext.getNextButton() = try {
+    AbstractWizard::class.java.getDeclaredMethod("getNextButton")
+        .also { it.isAccessible = true }
+        .invoke(wizard) as? JButton
+} catch (_: Throwable) {
+    null
 }

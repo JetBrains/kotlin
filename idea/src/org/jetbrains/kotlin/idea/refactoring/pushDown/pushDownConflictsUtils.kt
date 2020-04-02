@@ -13,6 +13,7 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.refactoring.pullUp.renderForConflicts
 import org.jetbrains.kotlin.idea.references.KtReference
@@ -68,7 +69,10 @@ private fun checkConflicts(
     if (targetClass !is KtClassOrObject) {
         conflicts.putValue(
             targetClass,
-            "Non-Kotlin ${RefactoringUIUtil.getDescription(targetClass, false)} won't be affected by the refactoring"
+            KotlinBundle.message(
+                "text.non.kotlin.0.will.not.be.affected.by.refactoring",
+                RefactoringUIUtil.getDescription(targetClass, false)
+            )
         )
         return
     }
@@ -78,9 +82,11 @@ private fun checkConflicts(
         ?: TypeSubstitutor.EMPTY
 
     if (!context.sourceClass.isInterface() && targetClass is KtClass && targetClass.isInterface()) {
-        val message = "${targetClassDescriptor.renderForConflicts()} " +
-                "inherits from ${context.sourceClassDescriptor.renderForConflicts()}.\n" +
-                "It won't be affected by the refactoring"
+        val message = KotlinBundle.message(
+            "text.0.inherits.from.1.it.will.not.be.affected.by.refactoring",
+            targetClassDescriptor.renderForConflicts(),
+            context.sourceClassDescriptor.renderForConflicts()
+        )
         conflicts.putValue(targetClass, message.capitalize())
     }
 
@@ -109,14 +115,20 @@ private fun checkMemberClashing(
             val clashingDeclaration = clashingDescriptor?.source?.getPsi() as? KtNamedDeclaration
             if (clashingDescriptor != null && clashingDeclaration != null) {
                 if (memberDescriptor.modality != Modality.ABSTRACT && member !in membersToKeepAbstract) {
-                    val message =
-                        "${targetClassDescriptor.renderForConflicts()} already contains ${clashingDescriptor.renderForConflicts()}"
+                    val message = KotlinBundle.message(
+                        "text.0.already.contains.1",
+                        targetClassDescriptor.renderForConflicts(),
+                        clashingDescriptor.renderForConflicts()
+                    )
                     conflicts.putValue(clashingDeclaration, CommonRefactoringUtil.capitalize(message))
                 }
                 if (!clashingDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
-                    val message = "${clashingDescriptor.renderForConflicts()} in ${targetClassDescriptor.renderForConflicts()} " +
-                            "will override corresponding member of ${context.sourceClassDescriptor.renderForConflicts()} " +
-                            "after refactoring"
+                    val message = KotlinBundle.message(
+                        "text.0.in.1.will.override.corresponding.member.of.2.after.refactoring",
+                        clashingDescriptor.renderForConflicts(),
+                        targetClassDescriptor.renderForConflicts(),
+                        context.sourceClassDescriptor.renderForConflicts()
+                    )
                     conflicts.putValue(clashingDeclaration, CommonRefactoringUtil.capitalize(message))
                 }
             }
@@ -128,8 +140,11 @@ private fun checkMemberClashing(
                 .filterIsInstance<KtClassOrObject>()
                 .firstOrNull() { it.name == member.name }
                 ?.let {
-                    val message = "${targetClassDescriptor.renderForConflicts()} " +
-                            "already contains nested class named ${CommonRefactoringUtil.htmlEmphasize(member.name ?: "")}"
+                    val message = KotlinBundle.message(
+                        "text.0.already.contains.nested.class.1",
+                        targetClassDescriptor.renderForConflicts(),
+                        CommonRefactoringUtil.htmlEmphasize(member.name ?: "")
+                    )
                     conflicts.putValue(it, message.capitalize())
                 }
         }
@@ -156,7 +171,7 @@ private fun checkSuperCalls(
                     if (memberInSource !in membersToPush) {
                         conflicts.putValue(
                             qualifiedExpression,
-                            "Pushed member won't be available in '${qualifiedExpression.text}'"
+                            KotlinBundle.message("text.pushed.member.will.not.be.available.in.0", qualifiedExpression.text)
                         )
                     }
                 }
@@ -179,7 +194,7 @@ internal fun checkExternalUsages(
         if (dispatchReceiver == null || dispatchReceiver is Qualifier) continue
         val receiverClassDescriptor = dispatchReceiver.type.constructor.declarationDescriptor as? ClassDescriptor ?: continue
         if (!DescriptorUtils.isSubclass(receiverClassDescriptor, targetClassDescriptor)) {
-            conflicts.putValue(callElement, "Pushed member won't be available in '${callElement.text}'")
+            conflicts.putValue(callElement, KotlinBundle.message("text.pushed.member.will.not.be.available.in.0", callElement.text))
         }
     }
 }
@@ -195,9 +210,12 @@ private fun checkVisibility(
         if (targetDescriptor is DeclarationDescriptorWithVisibility
             && !Visibilities.isVisibleIgnoringReceiver(targetDescriptor, targetClassDescriptor)
         ) {
-            val message = "${context.memberDescriptors.getValue(member).renderForConflicts()} " +
-                    "uses ${targetDescriptor.renderForConflicts()}, " +
-                    "which is not accessible from the ${targetClassDescriptor.renderForConflicts()}"
+            val message = KotlinBundle.message(
+                "text.0.uses.1.which.is.not.accessible.from.2",
+                context.memberDescriptors.getValue(member).renderForConflicts(),
+                targetDescriptor.renderForConflicts(),
+                targetClassDescriptor.renderForConflicts()
+            )
             conflicts.putValue(target, message.capitalize())
         }
     }

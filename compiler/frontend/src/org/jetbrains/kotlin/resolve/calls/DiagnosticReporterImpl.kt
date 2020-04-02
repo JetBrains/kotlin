@@ -47,7 +47,7 @@ object CallDiagnosticToDiagnostic {
         }
     }
 
-    private inline fun <reified E : PsiElement, A, C : KotlinCallDiagnostic> put(
+    private inline fun <reified E : PsiElement, A : Any, C : KotlinCallDiagnostic> put(
         factory1: DiagnosticFactory1<E, A>,
         klass: Class<C>,
         crossinline getA: C.() -> A
@@ -57,7 +57,7 @@ object CallDiagnosticToDiagnostic {
         }
     }
 
-    private inline fun <reified E : PsiElement, A, B, C : KotlinCallDiagnostic> put(
+    private inline fun <reified E : PsiElement, A : Any, B : Any, C : KotlinCallDiagnostic> put(
         factory2: DiagnosticFactory2<E, A, B>, klass: Class<C>, crossinline getA: C.() -> A, crossinline getB: C.() -> B
     ) {
         checkPut<E, C>(klass) {

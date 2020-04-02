@@ -94,8 +94,7 @@ class JKTypeFactory(val symbolProvider: JKSymbolProvider) {
             }
         }
         is PsiArrayType -> JKJavaArrayType(fromPsiType(type.componentType))
-        is PsiPrimitiveType -> JKJavaPrimitiveType.KEYWORD_TO_INSTANCE[type.presentableText]
-            ?: error("Invalid primitive type ${type.presentableText}")
+        is PsiPrimitiveType -> JKJavaPrimitiveType.fromPsi(type)
         is PsiDisjunctionType ->
             JKJavaDisjunctionType(type.disjunctions.map { fromPsiType(it) })
         is PsiWildcardType ->

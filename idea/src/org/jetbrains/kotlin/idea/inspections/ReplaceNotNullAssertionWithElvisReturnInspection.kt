@@ -13,6 +13,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.getParentLambdaLabelName
@@ -57,7 +58,7 @@ class ReplaceNotNullAssertionWithElvisReturnInspection : AbstractKotlinInspectio
 
         holder.registerProblem(
             postfix.operationReference,
-            "Replace '!!' with '?: return'",
+            KotlinBundle.message("replace.with.return"),
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
             ReplaceWithElvisReturnFix(isNullable, returnLabelName)
         )
@@ -71,7 +72,7 @@ class ReplaceNotNullAssertionWithElvisReturnInspection : AbstractKotlinInspectio
         private val returnNull: Boolean,
         private val returnLabelName: String?
     ) : LocalQuickFix, LowPriorityAction {
-        override fun getName() = "Replace with '?: return${if (returnNull) " null" else ""}'"
+        override fun getName() = KotlinBundle.message("replace.with.elvis.return.fix.text", if (returnNull) " null" else "")
         override fun getFamilyName() = name
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val postfix = descriptor.psiElement.parent as? KtPostfixExpression ?: return

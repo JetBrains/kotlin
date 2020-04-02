@@ -41,6 +41,6 @@ FILE fqName:<root> fileName:/safeAssignment.kt
   FUN name:test visibility:public modality:FINAL <> (nc:<root>.C?) returnType:kotlin.Unit
     VALUE_PARAMETER name:nc index:0 type:<root>.C?
     BLOCK_BODY
-      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
-        receiver: GET_VAR 'nc: <root>.C? declared in <root>.test' type=<root>.C? origin=null
-        value: CONST Int type=kotlin.Int value=42
+      CALL 'public final fun <set-x> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=EQ
+        $this: GET_VAR 'nc: <root>.C? declared in <root>.test' type=<root>.C? origin=null
+        <set-?>: CONST Int type=kotlin.Int value=42

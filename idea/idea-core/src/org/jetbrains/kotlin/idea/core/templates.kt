@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,11 +13,11 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.name.FqName
 import java.util.*
 
-private val FUNCTION_BODY_TEMPLATE = "New Kotlin Function Body.kt"
-private val PROPERTY_INITIALIZER_TEMPLATE = "New Kotlin Property Initializer.kt"
-private val SECONDARY_CONSTRUCTOR_BODY_TEMPLATE = "New Kotlin Secondary Constructor Body.kt"
-private val ATTRIBUTE_FUNCTION_NAME = "FUNCTION_NAME"
-private val ATTRIBUTE_PROPERTY_NAME = "PROPERTY_NAME"
+private const val FUNCTION_BODY_TEMPLATE = "New Kotlin Function Body.kt"
+private const val PROPERTY_INITIALIZER_TEMPLATE = "New Kotlin Property Initializer.kt"
+private const val SECONDARY_CONSTRUCTOR_BODY_TEMPLATE = "New Kotlin Secondary Constructor Body.kt"
+private const val ATTRIBUTE_FUNCTION_NAME = "FUNCTION_NAME"
+private const val ATTRIBUTE_PROPERTY_NAME = "PROPERTY_NAME"
 
 enum class TemplateKind(val templateFileName: String) {
     FUNCTION(FUNCTION_BODY_TEMPLATE),

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.util.application.getServiceSafe
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtElement
@@ -45,8 +46,7 @@ class CompletionBindingContextProvider(project: Project) {
     internal var TEST_LOG: StringBuilder? = null
 
     companion object {
-        fun getInstance(project: Project): CompletionBindingContextProvider =
-            project.getComponent(CompletionBindingContextProvider::class.java)
+        fun getInstance(project: Project): CompletionBindingContextProvider = project.getServiceSafe()
 
         var ENABLED = true
     }

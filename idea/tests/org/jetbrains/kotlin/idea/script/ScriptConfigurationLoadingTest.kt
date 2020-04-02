@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.idea.script
 
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class ScriptConfigurationLoadingTest : AbstractScriptConfigurationLoadingTest() {
     fun testSimple() {
         assertAndLoadInitialConfiguration()

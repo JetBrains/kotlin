@@ -15,6 +15,7 @@ import com.intellij.util.xml.highlighting.DomElementsInspection
 import org.jetbrains.idea.maven.dom.model.MavenDomDependency
 import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel
 import org.jetbrains.idea.maven.project.MavenProjectsManager
+import org.jetbrains.kotlin.idea.maven.KotlinMavenBundle
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinJavaMavenConfigurator
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 
@@ -41,14 +42,14 @@ class KotlinTestJUnitInspection : DomElementsInspection<MavenDomProjectModel>(Ma
             holder.createProblem(
                 it.artifactId,
                 HighlightSeverity.WEAK_WARNING,
-                "kotlin-test-junit is better with junit",
+                KotlinMavenBundle.message("fix.kotlin.test.junit.is.recommended"),
                 ReplaceToKotlinTest(it)
             )
         }
     }
 
     private class ReplaceToKotlinTest(val dependency: MavenDomDependency) : LocalQuickFix {
-        override fun getName() = "Replace with kotlin-test-junit"
+        override fun getName() = KotlinMavenBundle.message("fix.replace.to.kotlin.test.name")
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {

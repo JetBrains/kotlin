@@ -42,7 +42,7 @@ class InlineCodegenForDefaultBody(
         val nodeAndSmap = InlineCodegen.createInlineMethodNode(
             function, methodOwner, jvmSignature, callDefault, null, codegen.typeSystem, state, sourceCompilerForInline
         )
-        val childSourceMapper = InlineCodegen.createNestedSourceMapper(nodeAndSmap, sourceMapper)
+        val childSourceMapper = NestedSourceMapper(sourceMapper, nodeAndSmap.classSMAP, sameFile = true)
 
         val node = nodeAndSmap.node
         val transformedMethod = MethodNode(

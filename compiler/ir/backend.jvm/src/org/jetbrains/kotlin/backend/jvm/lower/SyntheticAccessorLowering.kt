@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.codegen.syntheticAccessorToSuperSuffix
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -544,20 +543,6 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
                 this == JavaVisibilities.PROTECTED_AND_PACKAGE ||
                 this == JavaVisibilities.PROTECTED_STATIC_VISIBILITY
 
-    private fun IrDeclaration.getAccessContext(allowSamePackage: Boolean): IrDeclarationContainer? = when {
-        this is IrDeclarationContainer -> this
-        // For inline lambdas, we can navigate to the only call site directly. Crossinline lambdas might be inlined
-        // into other classes in the same package, so private/super require accessors anyway.
-        this in inlineLambdaToCallSite ->
-            inlineLambdaToCallSite[this]!!.takeIf { allowSamePackage || !it.crossinline }?.scope?.getAccessContext(allowSamePackage)
-        // Accesses from inline functions can actually be anywhere; even private inline functions can be
-        // inlined into a different class, e.g. a callable reference. For protected inline functions
-        // calling methods on `super` we also need an accessor to satisfy INVOKESPECIAL constraints.
-        // TODO scan nested classes for calls to private inline functions?
-        this is IrFunction && isInline -> null
-        else -> (parent as? IrDeclaration)?.getAccessContext(allowSamePackage)
-    }
-
     private fun IrSymbol.isAccessible(withSuper: Boolean, thisObjReference: IrClassSymbol?): Boolean {
         /// We assume that IR code that reaches us has been checked for correctness at the frontend.
         /// This function needs to single out those cases where Java accessibility rules differ from Kotlin's.
@@ -582,18 +567,35 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         }
 
         // If local variables are accessible by Kotlin rules, they also are by Java rules.
-        val symbolDeclarationContainer = (declaration.parent as? IrDeclarationContainer) as? IrElement ?: return true
-        val contextDeclarationContainer =
-            (currentScope!!.irElement as IrDeclaration).getAccessContext(declaration.visibility.isProtected && !withSuper) ?: return false
+        val ownerClass = declaration.parent as? IrClass ?: return true
 
-        val samePackage = declaration.getPackageFragment()?.fqName == contextDeclarationContainer.getPackageFragment()?.fqName
-        val fromSubclassOfReceiversClass = contextDeclarationContainer is IrClass && symbolDeclarationContainer is IrClass &&
-                ((thisObjReference == null || contextDeclarationContainer.symbol.isSubtypeOfClass(thisObjReference)) &&
-                        (contextDeclarationContainer.isSubclassOf(symbolDeclarationContainer)))
+        var context = currentScope!!.irElement as IrDeclaration
+        var throughCrossinlineLambda = false
+        while (context !is IrClass) {
+            val callSite = inlineLambdaToCallSite[context]
+            if (callSite != null) {
+                // For inline lambdas, we can navigate to the only call site directly. Crossinline lambdas might be inlined
+                // into other classes in the same package, so private/super require accessors anyway.
+                throughCrossinlineLambda = throughCrossinlineLambda || callSite.crossinline
+                context = callSite.scope
+            } else if (context is IrFunction && context.isInline) {
+                // Accesses from inline functions can actually be anywhere; even private inline functions can be
+                // inlined into a different class, e.g. a callable reference. For protected inline functions
+                // calling methods on `super` we also need an accessor to satisfy INVOKESPECIAL constraints.
+                // TODO scan nested classes for calls to private inline functions?
+                return false
+            } else {
+                context = context.parent as? IrDeclaration ?: return false
+            }
+        }
+
+        val samePackage = ownerClass.getPackageFragment()?.fqName == context.getPackageFragment()?.fqName
+        val fromSubclassOfReceiversClass = !throughCrossinlineLambda &&
+                context.isSubclassOf(ownerClass) && (thisObjReference == null || context.symbol.isSubtypeOfClass(thisObjReference))
         return when {
             // private suspend functions are generated as synthetic package private
             declaration is IrFunction && declaration.isSuspend && declaration.visibility.isPrivate && samePackage -> true
-            declaration.visibility.isPrivate && symbolDeclarationContainer != contextDeclarationContainer -> false
+            declaration.visibility.isPrivate && (throughCrossinlineLambda || ownerClass != context) -> false
             declaration.visibility.isProtected && !samePackage && !fromSubclassOfReceiversClass -> false
             withSuper && !fromSubclassOfReceiversClass -> false
             else -> true

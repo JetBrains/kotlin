@@ -28,6 +28,6 @@ class B: A() {
         devNull(A.internal_val)
         devNull(A.public_val)
         devNull(A.<!INAPPLICABLE_CANDIDATE!>private_val<!>)
-        devNull(A.<!INAPPLICABLE_CANDIDATE!>protected_val<!>)
+        devNull(A.protected_val)
     }
 }

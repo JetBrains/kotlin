@@ -39,10 +39,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.constructedClass
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -64,6 +61,9 @@ interface VisibilityPolicy {
         declaration.visibility
 
     fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): Visibility =
+        Visibilities.PRIVATE
+
+    fun forCapturedField(value: IrValueSymbol): Visibility =
         Visibilities.PRIVATE
 
     companion object {
@@ -110,7 +110,11 @@ class LocalDeclarationsLowering(
         IrStatementOriginImpl("INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE")
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        LocalDeclarationsTransformer(irBody, container).lowerLocalDeclarations()
+        LocalDeclarationsTransformer(irBody, container, null).lowerLocalDeclarations()
+    }
+
+    fun lower(irElement: IrElement, container: IrDeclaration, classesToLower: Set<IrClass>) {
+        LocalDeclarationsTransformer(irElement, container, classesToLower).lowerLocalDeclarations()
     }
 
     private class ScopeWithCounter(scope: Scope, irElement: IrElement) : ScopeWithIr(scope, irElement) {
@@ -219,7 +223,9 @@ class LocalDeclarationsLowering(
             abbreviation.annotations
         )
 
-    private inner class LocalDeclarationsTransformer(val irBody: IrBody, val container: IrDeclaration) {
+    private inner class LocalDeclarationsTransformer(
+        val irElement: IrElement, val container: IrDeclaration, val classesToLower: Set<IrClass>?
+    ) {
         val localFunctions: MutableMap<IrFunction, LocalFunctionContext> = LinkedHashMap()
         val localClasses: MutableMap<IrClass, LocalClassContext> = LinkedHashMap()
         val localClassConstructors: MutableMap<IrConstructor, LocalClassConstructorContext> = LinkedHashMap()
@@ -500,7 +506,7 @@ class LocalDeclarationsLowering(
                 rewriteClassMembers(it.declaration, it)
             }
 
-            rewriteFunctionBody(container, null)
+            rewriteFunctionBody(irElement, null)
         }
 
         private fun createNewCall(oldCall: IrCall, newCallee: IrFunction) =
@@ -658,7 +664,7 @@ class LocalDeclarationsLowering(
                     localFunctionContext.remapType(p.type),
                     null,
                     isCrossinline = (capturedValue as? IrValueParameterSymbol)?.owner?.isCrossinline == true,
-                    isNoinline = false
+                    isNoinline = (capturedValue as? IrValueParameterSymbol)?.owner?.isNoinline == true
                 ).also {
                     parameterDescriptor.bind(it)
                     it.parent = newDeclaration
@@ -778,7 +784,7 @@ class LocalDeclarationsLowering(
                     classDeclaration.startOffset,
                     classDeclaration.endOffset,
                     suggestNameForCapturedValue(owner, generatedNames),
-                    Visibilities.PRIVATE,
+                    visibilityPolicy.forCapturedField(capturedValue),
                     classDeclaration,
                     owner.type,
                     owner is IrValueParameter && owner.isCrossinline
@@ -814,7 +820,7 @@ class LocalDeclarationsLowering(
 
         private fun collectClosureForLocalDeclarations() {
             //TODO: maybe use for granular declarations
-            val annotator = ClosureAnnotator(irBody, container)
+            val annotator = ClosureAnnotator(irElement, container)
 
             localFunctions.forEach { (declaration, context) ->
                 context.closure = annotator.getFunctionClosure(declaration)
@@ -837,7 +843,7 @@ class LocalDeclarationsLowering(
                 currentParent as? IrClass
             }?.scopeWithCounter
 
-            irBody.acceptVoid(object : IrElementVisitorVoidWithContext() {
+            irElement.acceptVoid(object : IrElementVisitorVoidWithContext() {
 
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
@@ -845,6 +851,15 @@ class LocalDeclarationsLowering(
 
                 override fun createScope(declaration: IrSymbolOwner): ScopeWithIr {
                     return ScopeWithCounter(Scope(declaration.symbol), declaration) // Don't cache local declarations
+                }
+
+                override fun visitFunctionExpression(expression: IrFunctionExpression) {
+                    // TODO: For now IrFunctionExpression can only be encountered here if this was called from the inliner,
+                    // then all IrFunctionExpression will be replaced by IrFunctionReferenceExpression.
+                    // Don't forget to fix this when that replacement has been dropped.
+                    // Also, a note: even if a lambda is not an inline one, there still cannot be a reference to it
+                    // from an outside declaration, so it is safe to skip them here and correctly handle later, after the above conversion.
+                    expression.function.acceptChildrenVoid(this)
                 }
 
                 override fun visitSimpleFunction(declaration: IrSimpleFunction) {
@@ -875,6 +890,7 @@ class LocalDeclarationsLowering(
                 }
 
                 override fun visitClassNew(declaration: IrClass) {
+                    if (classesToLower?.contains(declaration) == false) return
                     super.visitClassNew(declaration)
 
                     if (!declaration.isLocalNotInner()) return

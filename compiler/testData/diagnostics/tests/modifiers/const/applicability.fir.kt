@@ -15,9 +15,9 @@ object A {
 class B(const val constructor: Int = 5)
 
 abstract class C {
-    open const val x: Int = 6
+    <!INCOMPATIBLE_MODIFIERS!>open<!> <!INCOMPATIBLE_MODIFIERS!>const<!> val x: Int = 6
 
-    abstract const val y: Int = 7
+    <!INCOMPATIBLE_MODIFIERS!>abstract<!> <!INCOMPATIBLE_MODIFIERS!>const<!> val y: Int = 7
 
     companion object {
         const val inCompaionObject = 8
@@ -25,7 +25,7 @@ abstract class C {
 }
 
 object D : C() {
-    override const val x: Int = 9
+    <!INCOMPATIBLE_MODIFIERS!>override<!> <!INCOMPATIBLE_MODIFIERS!>const<!> val x: Int = 9
 
     const val inObject = 10
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -18,9 +19,9 @@ import org.jetbrains.kotlin.util.OperatorChecks
 class AddOperatorModifierInspection : AbstractApplicabilityBasedInspection<KtNamedFunction>(KtNamedFunction::class.java) {
     override fun inspectionHighlightRangeInElement(element: KtNamedFunction) = element.nameIdentifierTextRangeInThis()
 
-    override fun inspectionText(element: KtNamedFunction) = "Function should have 'operator' modifier"
+    override fun inspectionText(element: KtNamedFunction) = KotlinBundle.message("function.should.have.operator.modifier")
 
-    override val defaultFixText = "Add 'operator' modifier"
+    override val defaultFixText get() = KotlinBundle.message("add.operator.modifier")
 
     override fun isApplicable(element: KtNamedFunction): Boolean {
         if (element.nameIdentifier == null || element.hasModifier(KtTokens.OPERATOR_KEYWORD)) return false

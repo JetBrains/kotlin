@@ -1,5 +1,5 @@
 //file
-// !openByDefault: true
+// !OPEN_BY_DEFAULT: true
 
 class A {
     void foo1() { }

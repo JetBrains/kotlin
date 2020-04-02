@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
@@ -198,7 +199,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             val isCommonModule = modules[module]!!.platform.isCommon()
             val implementingModules =
                 if (!isCommonModule) emptyList()
-                else modules.entries.filter { (testModule) -> module in testModule?.getDependencies().orEmpty() }
+                else modules.entries.filter { (testModule) -> module in testModule?.dependencies.orEmpty() }
             val implementingModulesBindings = implementingModules.mapNotNull { (testModule, moduleDescriptor) ->
                 val platform = moduleDescriptor.platform
                 if (platform != null && !platform.isCommon()) platform to moduleBindings[testModule]!!
@@ -447,6 +448,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         if (platform.isCommon()) {
             return CommonResolverForModuleFactory.analyzeFiles(
                 files, moduleDescriptor.name, true, languageVersionSettings,
+                CommonPlatforms.defaultCommonPlatform,
                 mapOf(
                     MODULE_FILES to files
                 )
@@ -655,7 +657,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             val module = modules[testModule]!!
             val dependencies = ArrayList<ModuleDescriptorImpl>()
             dependencies.add(module)
-            for (dependency in testModule.getDependencies()) {
+            for (dependency in testModule.dependencies) {
                 dependencies.add(modules[dependency]!!)
             }
 

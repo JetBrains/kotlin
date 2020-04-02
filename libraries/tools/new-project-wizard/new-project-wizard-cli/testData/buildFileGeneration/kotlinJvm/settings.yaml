@@ -6,7 +6,3 @@ kotlin:
         name: JVM Module
         testFramework: JUNIT4
       name: nya
-      kind: singleplatformJvm
-      sourcesets:
-        - type: main
-

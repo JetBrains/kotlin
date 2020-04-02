@@ -83,6 +83,11 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
         callBoxMethodAndCheckResult(createGeneratedClassLoader(), className);
     }
 
+    @Override
+    protected boolean parseDirectivesPerFiles() {
+        return true;
+    }
+
     @NotNull
     private URLClassLoader createGeneratedClassLoader() throws Exception {
         return new URLClassLoader(

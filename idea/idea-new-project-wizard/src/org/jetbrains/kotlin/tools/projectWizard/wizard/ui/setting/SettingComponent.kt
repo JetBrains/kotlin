@@ -1,17 +1,16 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting
 
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.Setting
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingType
-import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.Displayable
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.DynamicComponent
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.Setting
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.TitledComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.FocusableComponent
 
 abstract class SettingComponent<V : Any, T : SettingType<V>>(
     val reference: SettingReference<V, T>,
-    ideContext: IdeContext
-) : DynamicComponent(ideContext), Displayable, FocusableComponent {
+    context: Context
+) : TitledComponent(context), FocusableComponent {
     var value: V?
         get() = reference.value
         set(value) {
@@ -22,6 +21,7 @@ abstract class SettingComponent<V : Any, T : SettingType<V>>(
         get() = read { reference.setting }
 
     abstract val validationIndicator: ValidationIndicator?
+    override val title: String? get() = setting.title
 
     override fun onInit() {
         super.onInit()

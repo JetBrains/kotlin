@@ -55,6 +55,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.java.debugger.breakpoints.properties.JavaMethodBreakpointProperties;
 import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.asJava.classes.KtLightClass;
+import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerCoreBundle;
 import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtDeclaration;
@@ -107,7 +108,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
 
         Project project = myProject;
 
-        Task.Backgroundable task = new Task.Backgroundable(myProject, "Initialize function breakpoint") {
+        Task.Backgroundable task = new Task.Backgroundable(myProject, KotlinDebuggerCoreBundle.message("function.breakpoint.initialize")) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 SourcePosition sourcePosition = KotlinFunctionBreakpoint.this.getSourcePosition();
@@ -181,7 +182,10 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
         ApplicationManager.getApplication().invokeAndWait(
                 () -> {
                     ProgressWindow progress =
-                            new ProgressWindow(true, false, debugProcess.getProject(), "Cancel emulation");
+                            new ProgressWindow(
+                                    true, false, debugProcess.getProject(),
+                                    KotlinDebuggerCoreBundle.message("function.breakpoint.cancel.emulation")
+                            );
                     progress.setDelayInMillis(2000);
                     indicatorRef.set(progress);
                 });

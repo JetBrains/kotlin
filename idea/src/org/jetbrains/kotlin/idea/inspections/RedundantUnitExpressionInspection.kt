@@ -9,6 +9,7 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.previousStatement
@@ -31,7 +32,7 @@ class RedundantUnitExpressionInspection : AbstractKotlinInspection(), CleanupLoc
             if (expression.isRedundantUnit()) {
                 holder.registerProblem(
                     expression,
-                    "Redundant 'Unit'",
+                    KotlinBundle.message("redundant.unit"),
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                     RemoveRedundantUnitFix()
                 )
@@ -84,7 +85,7 @@ private fun KtReturnExpression.expectedReturnType(): KotlinType? {
 }
 
 private class RemoveRedundantUnitFix : LocalQuickFix {
-    override fun getName() = "Remove redundant 'Unit'"
+    override fun getName() = KotlinBundle.message("remove.redundant.unit.fix.text")
 
     override fun getFamilyName() = name
 

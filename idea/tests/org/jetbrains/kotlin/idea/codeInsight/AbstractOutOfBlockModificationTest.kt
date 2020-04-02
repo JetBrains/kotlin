@@ -16,6 +16,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.trackers.outOfBlockModificationCount
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
@@ -28,6 +29,9 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 abstract class AbstractOutOfBlockModificationTest : KotlinLightCodeInsightFixtureTestCase() {
     protected fun doTest(unused: String?) {
         val ktFile = myFixture.configureByFile(fileName()) as KtFile
+        if (ktFile.isScript()) {
+            ScriptConfigurationManager.updateScriptDependenciesSynchronously(ktFile)
+        }
         val expectedOutOfBlock = expectedOutOfBlockResult
         val isSkipCheckDefined = InTextDirectivesUtils.isDirectiveDefined(
             ktFile.text,

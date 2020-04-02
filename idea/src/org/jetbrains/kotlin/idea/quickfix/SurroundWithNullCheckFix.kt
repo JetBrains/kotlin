@@ -22,6 +22,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableSimpleExpression
 import org.jetbrains.kotlin.psi.*
@@ -41,7 +42,7 @@ class SurroundWithNullCheckFix(
 
     override fun getFamilyName() = text
 
-    override fun getText() = "Surround with null check"
+    override fun getText() = KotlinBundle.message("surround.with.null.check")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

@@ -21,6 +21,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.getArguments
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -30,14 +31,14 @@ class ReplaceRangeToWithUntilInspection : AbstractPrimitiveRangeToInspection() {
         if (!isApplicable(expression)) return
         holder.registerProblem(
             expression,
-            "'rangeTo' or the '..' call should be replaced with 'until'",
+            KotlinBundle.message("rangeto.or.the.call.should.be.replaced.with.until"),
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
             ReplaceWithUntilQuickFix()
         )
     }
 
     class ReplaceWithUntilQuickFix : LocalQuickFix {
-        override fun getName() = "Replace with until"
+        override fun getName() = KotlinBundle.message("replace.with.until.quick.fix.text")
 
         override fun getFamilyName() = name
 

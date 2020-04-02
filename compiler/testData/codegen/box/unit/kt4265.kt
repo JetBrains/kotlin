@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun <T : Any, R> T.let(f: (T) -> R): R = f(this)
 
 fun box(): String {

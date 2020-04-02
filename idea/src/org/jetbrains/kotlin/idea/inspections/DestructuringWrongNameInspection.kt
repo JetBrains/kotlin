@@ -9,6 +9,7 @@ import com.intellij.codeInsight.daemon.impl.quickfix.RenameElementFix
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.destructuringDeclarationVisitor
 
@@ -34,7 +35,7 @@ class DestructuringWrongNameInspection : AbstractKotlinInspection() {
                             val fix = primaryParameterNames.getOrNull(entryIndex)?.let { RenameElementFix(entry, it) }
                             holder.registerProblem(
                                 entry,
-                                "Variable name '$variableName' matches the name of a different component",
+                                KotlinBundle.message("variable.name.0.matches.the.name.of.a.different.component", variableName),
                                 *listOfNotNull(fix).toTypedArray()
                             )
                             break

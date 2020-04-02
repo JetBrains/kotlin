@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.project.forcedModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfoByVirtualFile
 import org.jetbrains.kotlin.idea.caches.project.implementedModules
@@ -399,7 +400,11 @@ class MoveConflictChecker(
             val newDescriptorToCheck = referencedDescriptor.asPredicted(targetContainer, actualVisibility) ?: continue
 
             if (originalDescriptorToCheck.isVisibleIn(referencingDescriptor) && !newDescriptorToCheck.isVisibleIn(referencingDescriptor)) {
-                val message = "${render(container)} uses ${render(referencedElement)} which will be inaccessible after move"
+                val message = KotlinBundle.message(
+                    "text.0.uses.1.which.will.be.inaccessible.after.move",
+                    render(container),
+                    render(referencedElement)
+                )
                 conflicts.putValue(element, message.capitalize())
             }
         }
@@ -473,7 +478,11 @@ class MoveConflictChecker(
                         }
 
                         if (!isVisible) {
-                            val message = "${render(declaration)} uses ${render(target)} which will be inaccessible after move"
+                            val message = KotlinBundle.message(
+                                "text.0.uses.1.which.will.be.inaccessible.after.move",
+                                render(declaration),
+                                render(target)
+                            )
                             conflicts.putValue(refExpr, message.capitalize())
                         }
                     }
@@ -502,7 +511,11 @@ class MoveConflictChecker(
                 val usageModule = ModuleUtilCore.findModuleForPsiElement(element) ?: continue
                 if (usageModule != targetModule && targetModule !in usageModule.implementedModules && !isToBeMoved(element)) {
                     val container = element.getUsageContext()
-                    val message = "${render(container)} uses internal ${render(memberToCheck)} which will be inaccessible after move"
+                    val message = KotlinBundle.message(
+                        "text.0.uses.internal.1.which.will.be.inaccessible.after.move",
+                        render(container),
+                        render(memberToCheck)
+                    )
                     conflicts.putValue(element, message.capitalize())
                 }
             }
@@ -537,10 +550,14 @@ class MoveConflictChecker(
             if (isToBeMoved(rootClass) && subclasses.all { isToBeMoved(it) }) continue
 
             val message = if (elementToMove == rootClass) {
-                "Sealed class '${rootClass.name}' must be moved with all its subclasses"
+                KotlinBundle.message("text.sealed.class.0.must.be.moved.with.all.its.subclasses", rootClass.name.toString())
             } else {
                 val type = ElementDescriptionUtil.getElementDescription(elementToMove, UsageViewTypeLocation.INSTANCE).capitalize()
-                "$type '${rootClass.name}' must be moved with sealed parent class and all its subclasses"
+                KotlinBundle.message(
+                    "text.0.1.must.be.moved.with.sealed.parent.class.and.all.its.subclasses",
+                    type,
+                    rootClass.name.toString()
+                )
             }
             conflicts.putValue(elementToMove, message)
         }
@@ -624,11 +641,12 @@ class MoveConflictChecker(
 
                     moveTarget.getContainerDescriptor()?.let { baseDescriptor ->
                         walkDeclarations(baseDescriptor, declarationDescriptor) { conflictingDeclaration, conflictingScope ->
-                            val message =
-                                "Following declarations would clash: to move ${render(declarationDescriptor)} " +
-                                        "and destination ${render(conflictingDeclaration)} declared in scope " +
-                                        render(conflictingScope)
-
+                            val message = KotlinBundle.message(
+                                "text.declarations.clash.move.0.destination.1.declared.in.scope.2",
+                                render(declarationDescriptor),
+                                render(conflictingDeclaration),
+                                render(conflictingScope)
+                            )
                             conflicts.putValue(declaration, message)
                         }
                     }

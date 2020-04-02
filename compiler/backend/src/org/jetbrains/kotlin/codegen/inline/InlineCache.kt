@@ -27,7 +27,7 @@ class InlineCache {
     val methodNodeById: SLRUMap<MethodId, SMAPAndMethodNode> = SLRUMap(60, 50)
 }
 
-inline fun <K, V> SLRUMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
+inline fun <K, V : Any> SLRUMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
     val value = get(key)
     return if (value == null) {
         val answer = defaultValue()

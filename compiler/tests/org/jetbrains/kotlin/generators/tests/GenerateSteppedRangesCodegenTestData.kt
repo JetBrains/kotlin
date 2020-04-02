@@ -147,6 +147,12 @@ object GenerateSteppedRangesCodegenTestData {
         subdir: String? = null
     ) = listOf(true, false).forEach { generateTestsForFunction(fileName, typeToBuilderMap, function, extraCode, subdir, asLiteral = it) }
 
+    private val ignoredFrondendIRFiles = setOf(
+        "maxValueToMinValueStepMaxValue.kt", "maxValueToOneStepMaxValue.kt", "maxValueToZeroStepMaxValue.kt",
+        "minValueToMaxValueStepMaxValue.kt", "oneToMaxValueStepMaxValue.kt", "zeroToMaxValueStepMaxValue.kt",
+        "emptyProgressionToMinValue.kt"
+    )
+
     private fun generateTestsForFunction(
         fileName: String,
         typeToBuilderMap: Map<Type, TestBuilder>,
@@ -164,7 +170,7 @@ object GenerateSteppedRangesCodegenTestData {
         fullSubdir.mkdirs()
         PrintWriter(File(fullSubdir, fileName)).use {
             with(it) {
-                if (fullSubdirPath.contains("expression") || (fileName != "stepOne.kt" && fileName != "stepOneThenStepOne.kt")) {
+                if (fileName in ignoredFrondendIRFiles) {
                     println("// IGNORE_BACKEND_FIR: JVM_IR")
                 }
                 println("// $PREAMBLE_MESSAGE")

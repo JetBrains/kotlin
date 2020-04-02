@@ -24,12 +24,12 @@ import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.load.kotlin.internalName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
@@ -125,7 +125,14 @@ class DebuggerFieldSyntheticScope(val javaSyntheticPropertiesScope: JavaSyntheti
             val sourceElement = propertyDescriptor.source
 
             val isVar = propertyDescriptor.isVar
-            consumer[name] = createSyntheticPropertyDescriptor(clazz, type, name, isVar, "Backing field", sourceElement) { state ->
+            consumer[name] = createSyntheticPropertyDescriptor(
+                clazz,
+                type,
+                name,
+                isVar,
+                KotlinDebuggerEvaluationBundle.message("backing.field"),
+                sourceElement
+            ) { state ->
                 state.typeMapper.mapType(clazz.defaultType)
             }
         }
@@ -149,7 +156,14 @@ class DebuggerFieldSyntheticScope(val javaSyntheticPropertiesScope: JavaSyntheti
             val sourceElement = javaSourceElementFactory.source(field)
 
             val isVar = !field.isFinal
-            consumer[fieldName] = createSyntheticPropertyDescriptor(clazz, type, fieldName, isVar, "Java field", sourceElement) {
+            consumer[fieldName] = createSyntheticPropertyDescriptor(
+                clazz,
+                type,
+                fieldName,
+                isVar,
+                KotlinDebuggerEvaluationBundle.message("java.field"),
+                sourceElement
+            ) {
                 Type.getObjectType(ownerClassName)
             }
         }

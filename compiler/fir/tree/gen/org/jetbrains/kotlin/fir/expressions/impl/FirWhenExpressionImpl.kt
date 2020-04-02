@@ -58,6 +58,7 @@ internal class FirWhenExpressionImpl(
     override fun <D> transformSubject(transformer: FirTransformer<D>, data: D): FirWhenExpressionImpl {
         if (subjectVariable != null) {
             subjectVariable = subjectVariable?.transformSingle(transformer, data)
+            subject = subjectVariable?.initializer
         } else {
             subject = subject?.transformSingle(transformer, data)
         }

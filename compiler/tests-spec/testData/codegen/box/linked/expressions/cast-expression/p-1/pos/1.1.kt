@@ -3,7 +3,7 @@
 /*
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-213
+ * SPEC VERSION: 0.1-313
  * PLACE: expressions, cast-expression -> paragraph 1 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: check of the cast operators as or as?

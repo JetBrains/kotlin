@@ -25,7 +25,7 @@ abstract class AbstractFirOldFrontendDiagnosticsTest : AbstractFirDiagnosticsTes
     }
 
     override fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFilesPerSession: Map<FirSession, List<FirFile>>) {
-        if (testFiles.any { it.directives.containsKey("FIR_IGNORE") }) return
+        if (testFiles.any { "FIR_IGNORE" in it.directives }) return
         val failure: AssertionError? = try {
             for ((_, firFiles) in firFilesPerSession) {
                 doFirResolveTestBench(firFiles, FirTotalResolveTransformer().transformers, gc = false)
@@ -45,7 +45,7 @@ abstract class AbstractFirOldFrontendDiagnosticsTest : AbstractFirDiagnosticsTes
                 compareAndMergeFirFileAndOldFrontendFile(oldFrontendTestDataFile, testDataFile)
             }
 
-            val needDump = testFiles.any { it.directives.containsKey("FIR_DUMP") }
+            val needDump = testFiles.any { "FIR_DUMP" in it.directives }
             if (needDump) {
                 checkFir(testDataFile, allFirFiles)
             }

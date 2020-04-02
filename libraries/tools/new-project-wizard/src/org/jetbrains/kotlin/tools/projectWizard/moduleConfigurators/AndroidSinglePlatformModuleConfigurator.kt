@@ -1,14 +1,16 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
+
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.javaPackage
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
@@ -17,16 +19,21 @@ import java.nio.file.Path
 object AndroidSinglePlatformModuleConfigurator :
     SinglePlatformModuleConfigurator,
     AndroidModuleConfigurator {
+    override val moduleKind: ModuleKind get() = ModuleKind.singleplatformAndroid
+    @NonNls
     override val id = "android"
+    @NonNls
     override val suggestedModuleName = "android"
-    override val text = "Android"
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.android")
+
+    override val requiresRootBuildFile: Boolean = true
 
     override fun createBuildFileIRs(
-        readingContext: ReadingContext,
-        configurationData: ModuleConfigurationData,
+        reader: Reader,
+        configurationData: ModulesToIrConversionData,
         module: Module
     ) = buildList<BuildSystemIR> {
-        +super<AndroidModuleConfigurator>.createBuildFileIRs(readingContext, configurationData, module)
+        +super<AndroidModuleConfigurator>.createBuildFileIRs(reader, configurationData, module)
 
         // it is explicitly here instead of by `createKotlinPluginIR` as it should be after `com.android.application`
         +KotlinBuildSystemPluginIR(
@@ -42,11 +49,11 @@ object AndroidSinglePlatformModuleConfigurator :
     }
 
     override fun createModuleIRs(
-        readingContext: ReadingContext,
-        configurationData: ModuleConfigurationData,
+        reader: Reader,
+        configurationData: ModulesToIrConversionData,
         module: Module
     ) = buildList<BuildSystemIR> {
-        +super<AndroidModuleConfigurator>.createModuleIRs(readingContext, configurationData, module)
+        +super<AndroidModuleConfigurator>.createModuleIRs(reader, configurationData, module)
 
         +ArtifactBasedLibraryDependencyIR(
             MavenArtifact(DefaultRepository.GOOGLE, "androidx.appcompat", "appcompat"),
@@ -61,13 +68,13 @@ object AndroidSinglePlatformModuleConfigurator :
         )
     }
 
-    override fun WritingContext.runArbitraryTask(
-        configurationData: ModuleConfigurationData,
+    override fun Writer.runArbitraryTask(
+        configurationData: ModulesToIrConversionData,
         module: Module,
         modulePath: Path
     ): TaskResult<Unit> = computeM {
         val javaPackage = module.javaPackage(configurationData.pomIr)
-        val settings = mapOf("package" to javaPackage)
+        val settings = mapOf("package" to javaPackage.asCodePackage())
         TemplatesPlugin::addFileTemplates.execute(
             listOf(
                 FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.activityMainXml, modulePath, settings),
@@ -77,6 +84,6 @@ object AndroidSinglePlatformModuleConfigurator :
         )
     }
 
-    override fun ReadingContext.createAndroidPlugin(module: Module): AndroidGradlePlugin =
+    override fun Reader.createAndroidPlugin(module: Module): AndroidGradlePlugin =
         AndroidGradlePlugin.APPLICATION
 }

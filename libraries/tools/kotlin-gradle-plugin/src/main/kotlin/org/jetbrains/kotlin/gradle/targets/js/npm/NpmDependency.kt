@@ -16,6 +16,7 @@ import org.gradle.api.internal.artifacts.dependencies.SelfResolvingDependencyInt
 import org.gradle.api.tasks.TaskDependency
 import org.gradle.internal.component.local.model.DefaultLibraryBinaryIdentifier
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.File
 
@@ -125,3 +126,18 @@ data class NpmDependency(
 
     override fun getReason(): String? = reason
 }
+
+internal fun fileVersion(directory: File): String =
+    "$FILE_VERSION_PREFIX${directory.canonicalPath}"
+
+internal fun moduleName(directory: File): String {
+    val packageJson = directory.resolve(PACKAGE_JSON)
+
+    if (packageJson.isFile) {
+        return fromSrcPackageJson(packageJson)!!.name
+    }
+
+    return directory.name
+}
+
+const val FILE_VERSION_PREFIX = "file:"

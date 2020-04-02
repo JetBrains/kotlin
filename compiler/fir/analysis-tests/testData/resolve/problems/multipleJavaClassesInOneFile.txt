@@ -1,0 +1,5 @@
+FILE: main.kt
+    public final fun test(): R|kotlin/Unit| {
+        lval some: R|Some| = R|/Some.Some|()
+        lval another: <ERROR TYPE REF: Unresolved name: Another> = <Unresolved name: Another>#()
+    }

@@ -86,14 +86,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             isMutable("safe")
         }
 
-        impl(arraySetCall) {
-            parents += modifiableQualifiedAccess
-            default("lValue") {
-                value = "calleeReference"
-                customSetter = "calleeReference = value"
-            }
-        }
-
         impl(callableReferenceAccess) {
             parents += modifiableQualifiedAccess
         }
@@ -147,8 +139,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(errorLoop) {
             default("block", "FirEmptyExpressionBlock()")
-            default("condition", "FirErrorExpressionImpl(source, diagnostic)")
-            useTypes(emptyExpressionBlock)
+            default("condition", "FirErrorExpressionImpl(source, ConeStubDiagnostic(diagnostic))")
+            useTypes(emptyExpressionBlock, coneStubDiagnosticType)
         }
 
         impl(expression, "FirExpressionStub") {
@@ -398,8 +390,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(errorExpression) {
             defaultEmptyList("annotations")
-            default("typeRef", "FirErrorTypeRefImpl(source, diagnostic)")
-            useTypes(errorTypeRefImpl)
+            default("typeRef", "FirErrorTypeRefImpl(source, ConeStubDiagnostic(diagnostic))")
+            useTypes(errorTypeRefImpl, coneStubDiagnosticType)
         }
 
         impl(resolvedFunctionTypeRef) {

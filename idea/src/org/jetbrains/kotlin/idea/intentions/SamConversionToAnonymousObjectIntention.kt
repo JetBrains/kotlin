@@ -11,14 +11,14 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
@@ -31,20 +31,19 @@ import org.jetbrains.kotlin.resolve.sam.getSingleAbstractMethodOrNull
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCallExpression>(
-    KtCallExpression::class.java, "Convert to anonymous object"
+    KtCallExpression::class.java, KotlinBundle.message("convert.to.anonymous.object")
 ), LowPriorityAction {
 
     override fun applicabilityRange(element: KtCallExpression): TextRange? {
         val callee = element.calleeExpression ?: return null
         val lambda = getLambdaExpression(element) ?: return null
         val functionLiteral = lambda.functionLiteral
-        val descriptor = (functionLiteral.descriptor as? FunctionDescriptor) ?: return null
         val bindingContext = functionLiteral.analyze()
         val sam = element.getSingleAbstractMethod(bindingContext) ?: return null
 
         val samValueParameters = sam.valueParameters
         val samValueParameterSize = samValueParameters.size
-        if (descriptor.valueParameters.size != samValueParameterSize) return null
+        if (samValueParameterSize != functionLiteral.functionDescriptor(bindingContext)?.valueParameters?.size) return null
 
         val samName = sam.name.asString()
         if (functionLiteral.anyDescendantOfType<KtCallExpression> { call ->
@@ -64,25 +63,24 @@ class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCa
 
     override fun applyTo(element: KtCallExpression, editor: Editor?) {
         val lambda = getLambdaExpression(element) ?: return
-        val functionDescriptor = lambda.functionLiteral.descriptor as? FunctionDescriptor ?: return
-        val functionName = element.getSingleAbstractMethod(element.analyze(BodyResolveMode.PARTIAL))?.name?.asString() ?: return
+        val context = element.analyze(BodyResolveMode.PARTIAL)
+        val functionDescriptor = lambda.functionLiteral.functionDescriptor(context) ?: return
+        val functionName = element.getSingleAbstractMethod(context)?.name?.asString() ?: return
         convertToAnonymousObject(element, lambda, functionDescriptor, functionName)
     }
 
     private fun KtCallExpression.getSingleAbstractMethod(context: BindingContext): FunctionDescriptor? {
         val type = getType(context) ?: return null
         if (!JavaSingleAbstractMethodUtils.isSamType(type)) return null
-        val javaClass = type.constructor.declarationDescriptor as? JavaClassDescriptor ?: return null
-        return getSingleAbstractMethodOrNull(javaClass)
+        val classDescriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+        return getSingleAbstractMethodOrNull(classDescriptor)
     }
 
-    companion object {
-        fun convertToAnonymousObject(call: KtCallExpression, functionDescriptor: FunctionDescriptor, functionName: String) {
-            val lambda = getLambdaExpression(call) ?: return
-            convertToAnonymousObject(call, lambda, functionDescriptor, functionName)
-        }
+    private fun KtFunctionLiteral.functionDescriptor(context: BindingContext): FunctionDescriptor? =
+        context[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? FunctionDescriptor
 
-        private fun convertToAnonymousObject(
+    companion object {
+        fun convertToAnonymousObject(
             call: KtCallExpression,
             lambda: KtLambdaExpression,
             functionDescriptor: FunctionDescriptor,
@@ -107,7 +105,7 @@ class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCa
             }
         }
 
-        private fun getLambdaExpression(element: KtCallExpression): KtLambdaExpression? {
+        fun getLambdaExpression(element: KtCallExpression): KtLambdaExpression? {
             return element.lambdaArguments.firstOrNull()?.getLambdaExpression()
                 ?: element.valueArguments.firstOrNull()?.getArgumentExpression() as? KtLambdaExpression
         }

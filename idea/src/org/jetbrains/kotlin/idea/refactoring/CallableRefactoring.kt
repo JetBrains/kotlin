@@ -82,7 +82,7 @@ abstract class CallableRefactoring<out T : CallableDescriptor>(
             it.containingDeclaration.name.asString()
         }
         val message = KotlinBundle.message(
-            "x.overrides.y.in.class.list",
+            "override.declaration.x.overrides.y.in.class.list",
             DescriptorRenderer.COMPACT.render(callableFromEditor),
             superString,
             "refactor"

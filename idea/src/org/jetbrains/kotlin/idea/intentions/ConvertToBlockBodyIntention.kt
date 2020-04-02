@@ -19,17 +19,21 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.setType
+import org.jetbrains.kotlin.idea.formatter.adjustLineIndent
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody>(
-    KtDeclarationWithBody::class.java, "Convert to block body"
+    KtDeclarationWithBody::class.java, KotlinBundle.message("convert.to.block.body")
 ) {
     override fun isApplicableTo(element: KtDeclarationWithBody, caretOffset: Int): Boolean {
         if (element is KtFunctionLiteral || element.hasBlockBody() || !element.hasBody()) return false
@@ -92,7 +96,8 @@ class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody
             }
 
             declaration.equalsToken!!.delete()
-            body.replace(newBody)
+            val replaced = body.replace(newBody)
+            declaration.containingKtFile.adjustLineIndent(replaced.startOffset, replaced.endOffset)
             return declaration
         }
 

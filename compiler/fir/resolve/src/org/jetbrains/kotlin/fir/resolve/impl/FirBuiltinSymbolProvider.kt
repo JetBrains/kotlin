@@ -78,6 +78,7 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
             FirDeserializationContext.createForPackage(
                 fqName, packageProto.`package`, nameResolver, session,
                 FirBuiltinAnnotationDeserializer(session),
+                containerSource = null
             ).memberDeserializer
         }
 
@@ -99,6 +100,7 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
                 deserializeClassToSymbol(
                     classId, classProto, symbol, nameResolver, session,
                     null, kotlinScopeProvider, parentContext,
+                    null,
                     this::findAndDeserializeClass,
                 )
             }

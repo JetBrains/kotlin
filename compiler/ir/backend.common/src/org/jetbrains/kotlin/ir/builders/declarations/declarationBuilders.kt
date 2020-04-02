@@ -44,8 +44,7 @@ fun IrFieldBuilder.buildField(): IrField {
     return IrFieldImpl(
         startOffset, endOffset, origin,
         IrFieldSymbolImpl(wrappedDescriptor),
-        name, type, visibility, isFinal, isExternal, isStatic,
-        origin == IrDeclarationOrigin.FAKE_OVERRIDE
+        name, type, visibility, isFinal, isExternal, isStatic, isFakeOverride
     ).also {
         it.metadata = metadata
         wrappedDescriptor.bind(it)
@@ -81,7 +80,7 @@ fun IrPropertyBuilder.buildProperty(): IrProperty {
         IrPropertySymbolImpl(wrappedDescriptor),
         name, visibility, modality,
         isVar = isVar, isConst = isConst, isLateinit = isLateinit, isDelegated = isDelegated, isExpect = isExpect, isExternal = isExternal,
-        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+        isFakeOverride = isFakeOverride
     ).also {
         wrappedDescriptor.bind(it)
     }
@@ -133,8 +132,7 @@ fun IrFunctionBuilder.buildFun(originalDescriptor: FunctionDescriptor? = null): 
         IrSimpleFunctionSymbolImpl(wrappedDescriptor),
         name, visibility, modality, returnType,
         isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect,
-        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-        isOperator = isOperator
+        isFakeOverride = isFakeOverride, isOperator = isOperator
     ).also {
         wrappedDescriptor.bind(it)
     }
@@ -183,6 +181,7 @@ fun IrDeclarationContainer.addFunction(
     visibility: Visibility = Visibilities.PUBLIC,
     isStatic: Boolean = false,
     isSuspend: Boolean = false,
+    isFakeOverride: Boolean = false,
     origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
 ): IrSimpleFunction =
     addFunction {
@@ -191,6 +190,7 @@ fun IrDeclarationContainer.addFunction(
         this.modality = modality
         this.visibility = visibility
         this.isSuspend = isSuspend
+        this.isFakeOverride = isFakeOverride
         this.origin = origin
     }.apply {
         if (!isStatic) {

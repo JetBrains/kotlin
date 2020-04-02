@@ -55,13 +55,16 @@ object NativeUsage {
 interface KotlinUsageContext : UsageContext {
     val compilation: KotlinCompilation<*>
     val dependencyConfigurationName: String
+    val includeIntoProjectStructureMetadata: Boolean
 }
 
 class DefaultKotlinUsageContext(
     override val compilation: KotlinCompilation<*>,
     private val usage: Usage,
     override val dependencyConfigurationName: String,
-    private val overrideConfigurationArtifacts: Set<PublishArtifact>? = null
+    private val overrideConfigurationArtifacts: Set<PublishArtifact>? = null,
+    private val overrideConfigurationAttributes: AttributeContainer? = null,
+    override val includeIntoProjectStructureMetadata: Boolean = true
 ) : KotlinUsageContext {
 
     private val kotlinTarget: KotlinTarget get() = compilation.target
@@ -72,7 +75,7 @@ class DefaultKotlinUsageContext(
     override fun getName(): String = kotlinTarget.targetName + when (dependencyConfigurationName) {
         kotlinTarget.apiElementsConfigurationName -> "-api"
         kotlinTarget.runtimeElementsConfigurationName -> "-runtime"
-        else -> "-$dependencyConfigurationName" // for Android variants
+        else -> "-$dependencyConfigurationName"
     }
 
     private val configuration: Configuration
@@ -90,7 +93,7 @@ class DefaultKotlinUsageContext(
         configuration.artifacts
 
     override fun getAttributes(): AttributeContainer {
-        val configurationAttributes = configuration.attributes
+        val configurationAttributes = overrideConfigurationAttributes ?: configuration.attributes
 
         /** TODO Using attributes of a detached configuration is a small and 'conservative' fix for KT-29758, [HierarchyAttributeContainer]
          * being rejected by Gradle 5.2+; we may need to either not filter the attributes, which will lead to

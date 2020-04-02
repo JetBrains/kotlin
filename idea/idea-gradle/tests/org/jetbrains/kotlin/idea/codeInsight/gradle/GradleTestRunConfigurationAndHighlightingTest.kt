@@ -49,7 +49,12 @@ class GradleTestRunConfigurationAndHighlightingTest : GradleImportingTestCase() 
         checkFiles(
             files.filter { it.extension == "kt" },
             project,
-            object : GradleDaemonAnalyzerTestCase(testLineMarkers = true, checkWarnings = true, checkInfos = false) {
+            object : GradleDaemonAnalyzerTestCase(
+                testLineMarkers = true,
+                checkWarnings = true,
+                checkInfos = false,
+                rootDisposable = testRootDisposable
+            ) {
                 override fun renderAdditionalAttributeForTag(tag: TagsTestDataUtil.TagInfo<*>): String? {
                     val lineMarkerInfo = tag.data as? LineMarkerInfo<*> ?: return null
 

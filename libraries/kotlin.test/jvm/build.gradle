@@ -5,7 +5,7 @@ apply plugin: 'kotlin-platform-jvm'
 configureJvm6Project(project)
 configurePublishing(project)
 
-def includeJava9 = BuildPropertiesKt.getKotlinBuildProperties(project).includeJava9
+def includeJava9 = BuildPropertiesExtKt.getIncludeJava9(project.kotlinBuildProperties)
 
 sourceSets {
     if (includeJava9) {

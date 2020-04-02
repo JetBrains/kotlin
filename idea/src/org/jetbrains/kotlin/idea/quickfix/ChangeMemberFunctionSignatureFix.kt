@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -230,11 +231,13 @@ class ChangeMemberFunctionSignatureFix private constructor(
 
     override fun getText(): String {
         val single = signatures.singleOrNull()
-        return if (single != null) "Change function signature to '${single.preview}'"
-        else "Change function signature..."
+        return when {
+            single != null -> KotlinBundle.message("fix.change.signature.function.text", single.preview)
+            else -> KotlinBundle.message("fix.change.signature.function.text.generic")
+        }
     }
 
-    override fun getFamilyName() = "Change function signature"
+    override fun getFamilyName() = KotlinBundle.message("fix.change.signature.function.family")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
@@ -291,7 +294,10 @@ class ChangeMemberFunctionSignatureFix private constructor(
 
         private val signaturePopup: BaseListPopupStep<Signature>
             get() {
-                return object : BaseListPopupStep<Signature>("Choose Signature", signatures) {
+                return object : BaseListPopupStep<Signature>(
+                    KotlinBundle.message("fix.change.signature.function.popup.title"),
+                    signatures
+                ) {
                     override fun isAutoSelectionEnabled() = false
 
                     override fun onChosen(selectedValue: Signature, finalChoice: Boolean): PopupStep<Any>? {
@@ -310,7 +316,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
         private fun changeSignature(signature: Signature) {
             PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-            project.executeWriteCommand("Change Function Signature") {
+            project.executeWriteCommand(KotlinBundle.message("fix.change.signature.function.family")) {
                 val patternFunction = KtPsiFactory(project).createFunction(signature.sourceCode)
 
                 val newTypeRef = function.setTypeReference(patternFunction.typeReference)

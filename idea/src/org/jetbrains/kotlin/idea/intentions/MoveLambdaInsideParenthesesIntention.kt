@@ -18,13 +18,14 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.moveInsideParentheses
 import org.jetbrains.kotlin.psi.KtLambdaArgument
 import org.jetbrains.kotlin.psi.psiUtil.containsInside
 
 class MoveLambdaInsideParenthesesIntention : SelfTargetingIntention<KtLambdaArgument>(
-    KtLambdaArgument::class.java, "Move lambda argument into parentheses"
+    KtLambdaArgument::class.java, KotlinBundle.message("move.lambda.argument.into.parentheses")
 ), LowPriorityAction {
     override fun isApplicableTo(element: KtLambdaArgument, caretOffset: Int): Boolean {
         val body = element.getLambdaExpression()?.bodyExpression ?: return true

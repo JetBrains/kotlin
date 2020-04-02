@@ -110,8 +110,10 @@ class InspectionDescriptionTest : LightPlatformTestCase() {
                 checkValue(failMessages, toolName, "suppressId", ep.id, ep.getShortName(), tool.id)
                 checkValue(failMessages, toolName, "alternateId", ep.alternativeId, null, tool.alternativeID)
                 checkValue(failMessages, toolName, "shortName", ep.getShortName(), null, tool.shortName)
+                checkValue(failMessages, toolName, "runForWholeFile", null, "false", tool.runForWholeFile().toString())
             }
         }
+
         UsefulTestCase.assertEmpty(StringUtil.join(failMessages, "\n"), failMessages)
     }
 

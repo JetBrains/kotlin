@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -82,8 +83,8 @@ class WrongPrimitiveLiteralFix(element: KtConstantExpression, type: KotlinType) 
         return constValue.toLong() in valueRanges[typeName] ?: return false
     }
 
-    override fun getFamilyName() = "Change to correct primitive type"
-    override fun getText() = "Change to '$fixedExpression'"
+    override fun getFamilyName() = KotlinBundle.message("change.to.correct.primitive.type")
+    override fun getText() = KotlinBundle.message("change.to.0", fixedExpression)
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

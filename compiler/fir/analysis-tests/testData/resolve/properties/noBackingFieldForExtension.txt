@@ -1,0 +1,21 @@
+FILE: noBackingFieldForExtension.kt
+    public abstract interface B : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Int|
+
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val R|kotlin/String|.x: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ (this@R|/A|, this@R|/A.x|).R|/A.field|.R|/B.foo|()
+            }
+
+        public final val R|kotlin/String|.field: R|B|
+            public get(): R|B| {
+                ^ R|kotlin/TODO|()
+            }
+
+    }

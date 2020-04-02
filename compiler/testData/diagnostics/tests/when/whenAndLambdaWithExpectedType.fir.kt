@@ -1,4 +1,5 @@
 // !WITH_NEW_INFERENCE
+
 val test1: (String) -> Boolean =
         when {
             true -> {{ true }}

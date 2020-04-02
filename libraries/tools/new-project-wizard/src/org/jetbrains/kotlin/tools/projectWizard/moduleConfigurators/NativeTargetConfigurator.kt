@@ -1,25 +1,42 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 import kotlinx.collections.immutable.toPersistentList
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
+
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.CreateGradleValueIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleImportIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.RawGradleIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.NonDefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 
-interface NativeTargetConfigurator : TargetConfigurator
+interface NativeTargetConfigurator : TargetConfigurator {
+    val isDesktopTarget: Boolean
+}
 
 class RealNativeTargetConfigurator private constructor(
     override val moduleSubType: ModuleSubType
 ) : NativeTargetConfigurator, SimpleTargetConfigurator {
+    override val text: String = moduleSubType.name.capitalize()
+    override val isDesktopTarget: Boolean
+        get() = moduleSubType.isNativeDesktop
+
+    override fun createInnerTargetIrs(reader: Reader, module: Module): List<BuildSystemIR> = if (moduleSubType.isIOS) {
+        listOf(
+            GradleSectionIR("binaries") {
+                add(
+                    GradleSectionIR("framework") {
+                        add(GradleAssignmentIR("baseName", GradleStringConstIR(module.parent!!.name)))
+                    }
+                )
+            }
+        )
+    } else emptyList()
+
     companion object {
         val configurators = ModuleSubType.values()
             .filter { it.moduleType == ModuleType.native }
@@ -31,11 +48,17 @@ class RealNativeTargetConfigurator private constructor(
 
 object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenceTargetConfigurator {
     override val moduleType = ModuleType.native
+    override val isDesktopTarget: Boolean = true
+
+    @NonNls
     override val id = "nativeForCurrentSystem"
-    override val text = "For Current System"
+
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.native.for.current.system")
 
 
-    override fun ReadingContext.createTargetIrs(module: Module): List<BuildSystemIR> {
+    override fun Reader.createTargetIrs(
+        module: Module
+    ): List<BuildSystemIR> {
         val moduleName = module.name
         val variableName = "${moduleName}Target"
 
@@ -70,14 +93,14 @@ object NativeForCurrentSystemTarget : NativeTargetConfigurator, SingleCoexistenc
             +NonDefaultTargetConfigurationIR(
                 variableName = variableName,
                 targetName = moduleName,
-                irs = createInnerTargetIrs(module).toPersistentList()
+                irs = createInnerTargetIrs(this@createTargetIrs, module).toPersistentList()
             )
         }
     }
 
     override fun createBuildFileIRs(
-        readingContext: ReadingContext,
-        configurationData: ModuleConfigurationData,
+        reader: Reader,
+        configurationData: ModulesToIrConversionData,
         module: Module
     ): List<BuildSystemIR> = buildList {
         if (configurationData.buildSystemType == BuildSystemType.GradleGroovyDsl) {

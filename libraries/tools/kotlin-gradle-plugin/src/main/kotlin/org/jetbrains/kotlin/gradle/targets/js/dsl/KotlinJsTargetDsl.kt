@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
@@ -32,6 +33,8 @@ interface KotlinJsSubTargetContainerDsl : KotlinTarget {
 }
 
 interface KotlinJsTargetDsl : KotlinTarget {
+    var moduleName: String?
+
     fun browser() = browser { }
     fun browser(body: KotlinJsBrowserDsl.() -> Unit)
     fun browser(fn: Closure<*>) {
@@ -48,11 +51,9 @@ interface KotlinJsTargetDsl : KotlinTarget {
         }
     }
 
-    fun produceKotlinLibrary()
-
-    fun produceExecutable()
-
     fun useCommonJs()
+
+    val binaries: KotlinJsBinaryContainer
 
     val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
 

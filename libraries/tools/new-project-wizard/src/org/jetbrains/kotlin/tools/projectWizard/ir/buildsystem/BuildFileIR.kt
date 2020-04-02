@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem
 
 import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetConfigurationIR
@@ -13,6 +12,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.MavenPrinter
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import java.nio.file.Path
 
 interface FileIR : BuildSystemIR, IrsOwner
@@ -21,6 +21,7 @@ data class BuildFileIR(
     val name: String,
     val directoryPath: Path,
     val modules: ModulesStructureIR,
+    val fromModules: List<Module>,
     val pom: PomIR,
     override val irs: PersistentList<BuildSystemIR>
 ) : FileIR {
@@ -31,18 +32,10 @@ data class BuildFileIR(
         modules.withModulesUpdated(updater).map { newModules -> copy(modules = newModules) }
 
     private fun distinctRepositories(): List<RepositoryIR> =
-        irsOfType<RepositoryIR>()
-            .distinctBy(RepositoryIR::repository)
-            .sortedBy { repositoryIR ->
-                if (repositoryIR.repository is DefaultRepository) 0 else 1
-            }
+        irsOfType<RepositoryIR>().distinctAndSorted()
 
     private fun distinctPluginRepositories(): List<PluginRepositoryMavenIR> =
-        irsOfType<PluginRepositoryMavenIR>()
-            .distinctBy(PluginRepositoryMavenIR::repository)
-            .sortedBy { repositoryIR ->
-                if (repositoryIR.repository is DefaultRepository) 0 else 1
-            }
+        irsOfType<PluginRepositoryMavenIR>().distinctAndSorted()
 
     private fun distinctImportsOrNull(): List<GradleImportIR>? =
         irsOfTypeOrNull<GradleImportIR>()

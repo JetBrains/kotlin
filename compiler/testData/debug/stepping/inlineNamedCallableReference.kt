@@ -11,10 +11,10 @@ inline fun f(block: () -> Unit) {
 fun g() {}
 
 // LINENUMBERS
-// TestKt.box():3
-// TestKt.box():4
-// TestKt.box():8
-// TestKt.box():4
-// TestKt.g():11
-// TestKt.box():9
-// TestKt.box():5
+// test.kt:3
+// test.kt:4
+// test.kt:8
+// test.kt:4
+// test.kt:11
+// test.kt:9
+// test.kt:5

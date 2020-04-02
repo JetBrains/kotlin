@@ -1,6 +1,6 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
+// IGNORE_BACKEND_FIR: JVM_IR
 
 fun testBreak() {
     for (i in 0..1) {

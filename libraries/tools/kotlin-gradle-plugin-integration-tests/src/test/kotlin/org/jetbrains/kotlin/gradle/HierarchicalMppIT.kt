@@ -376,6 +376,7 @@ class HierarchicalMppIT : BaseGradleIT() {
                     ModuleDependencyIdentifier(it.first, it.second)
                 }.toSet()
             },
+            hostSpecificSourceSets = emptySet(),
             sourceSetBinaryLayout = sourceSetModuleDependencies.mapValues { SourceSetMetadataLayout.KLIB }
         )
     }

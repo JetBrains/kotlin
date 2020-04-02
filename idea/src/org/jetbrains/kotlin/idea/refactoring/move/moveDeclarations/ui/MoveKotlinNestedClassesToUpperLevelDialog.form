@@ -80,7 +80,7 @@
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Packa&amp;ge name:"/>
+          <text resource-bundle="messages/KotlinBundle" key="label.text.package.name"/>
         </properties>
       </component>
       <component id="18010" class="com.intellij.refactoring.ui.PackageNameReferenceEditorCombo" binding="packageNameField" custom-create="true">

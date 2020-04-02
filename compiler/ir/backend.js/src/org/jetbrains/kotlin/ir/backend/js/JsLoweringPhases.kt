@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
+import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.FoldConstantLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
@@ -168,11 +171,40 @@ private val arrayConstructorPhase = makeBodyLoweringPhase(
     description = "Transform `Array(size) { index -> value }` into a loop"
 )
 
+private val sharedVariablesLoweringPhase = makeBodyLoweringPhase(
+    ::SharedVariablesLowering,
+    name = "SharedVariablesLowering",
+    description = "Box captured mutable variables",
+    prerequisite = setOf(lateinitDeclarationLoweringPhase, lateinitUsageLoweringPhase)
+)
+
+private val localClassesInInlineLambdasPhase = makeBodyLoweringPhase(
+    ::LocalClassesInInlineLambdasLowering,
+    name = "LocalClassesInInlineLambdasPhase",
+    description = "Extract local classes from inline lambdas"
+)
+
+private val localClassesInInlineFunctionsPhase = makeBodyLoweringPhase(
+    ::LocalClassesInInlineFunctionsLowering,
+    name = "LocalClassesInInlineFunctionsPhase",
+    description = "Extract local classes from inline functions"
+)
+
+private val localClassesExtractionFromInlineFunctionsPhase = makeBodyLoweringPhase(
+    ::LocalClassesExtractionFromInlineFunctionsLowering,
+    name = "localClassesExtractionFromInlineFunctionsPhase",
+    description = "Move local classes from inline functions into nearest declaration container",
+    prerequisite = setOf(localClassesInInlineFunctionsPhase)
+)
+
 private val functionInliningPhase = makeBodyLoweringPhase(
     ::FunctionInlining,
     name = "FunctionInliningPhase",
     description = "Perform function inlining",
-    prerequisite = setOf(expectDeclarationsRemovingPhase)
+    prerequisite = setOf(
+        expectDeclarationsRemovingPhase, sharedVariablesLoweringPhase,
+        localClassesInInlineLambdasPhase, localClassesExtractionFromInlineFunctionsPhase
+    )
 )
 
 private val copyInlineFunctionBodyLoweringPhase = makeDeclarationTransformerPhase(
@@ -261,12 +293,6 @@ private val enumEntryRemovalLoweringPhase = makeDeclarationTransformerPhase(
     name = "EnumEntryRemovalLowering",
     description = "Replace enum entry with corresponding class",
     prerequisite = setOf(enumUsageLoweringPhase)
-)
-
-private val sharedVariablesLoweringPhase = makeBodyLoweringPhase(
-    ::SharedVariablesLowering,
-    name = "SharedVariablesLowering",
-    description = "Box captured mutable variables"
 )
 
 private val callableReferenceLowering = makeBodyLoweringPhase(
@@ -585,18 +611,21 @@ val loweringList = listOf<Lowering>(
     expectDeclarationsRemovingPhase,
     stripTypeAliasDeclarationsPhase,
     arrayConstructorPhase,
+    lateinitNullableFieldsPhase,
+    lateinitDeclarationLoweringPhase,
+    lateinitUsageLoweringPhase,
+    sharedVariablesLoweringPhase,
+    localClassesInInlineLambdasPhase,
+    localClassesInInlineFunctionsPhase,
+    localClassesExtractionFromInlineFunctionsPhase,
     functionInliningPhase,
     copyInlineFunctionBodyLoweringPhase,
     createScriptFunctionsPhase,
     callableReferenceLowering,
     singleAbstractMethodPhase,
-    lateinitNullableFieldsPhase,
-    lateinitDeclarationLoweringPhase,
-    lateinitUsageLoweringPhase,
     tailrecLoweringPhase,
     enumClassConstructorLoweringPhase,
     enumClassConstructorBodyLoweringPhase,
-    sharedVariablesLoweringPhase,
     localDelegatedPropertiesLoweringPhase,
     localDeclarationsLoweringPhase,
     localClassExtractionPhase,

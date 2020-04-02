@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToParameterDescriptorIfAny
 import org.jetbrains.kotlin.idea.intentions.RemoveEmptyPrimaryConstructorIntention
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
@@ -23,7 +24,7 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter, private val check
     KotlinQuickFixAction<KtParameter>(parameter) {
     override fun getFamilyName() = ChangeFunctionSignatureFix.FAMILY_NAME
 
-    override fun getText() = element?.let { "Remove parameter '${it.name}'" } ?: ""
+    override fun getText() = element?.let { KotlinBundle.message("remove.parameter.0", it.name.toString()) } ?: ""
 
     override fun startInWriteAction(): Boolean = false
 

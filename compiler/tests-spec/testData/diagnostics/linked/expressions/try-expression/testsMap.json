@@ -137,6 +137,15 @@
           "description": "try-expression has to start with a try body",
           "unexpectedBehaviour": false
         }
+      ],
+      "5": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 2,
+          "description": "try-expression has to start with a try body",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        }
       ]
     }
   },
@@ -144,7 +153,7 @@
     "neg": {
       "1": [
         {
-          "specVersion": "0.1-218",
+          "specVersion": "0.1-296",
           "casesNumber": 3,
           "description": "The type of the try-expression is the least upper bound of the types of the last expressions of the try body and the last expressions of all the catch blocks",
           "unexpectedBehaviour": true
@@ -154,7 +163,7 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-218",
+          "specVersion": "0.1-296",
           "casesNumber": 3,
           "description": "The type of the try-expression is the least upper bound of the types of the last expressions of the try body and the last expressions of all the catch blocks",
           "unexpectedBehaviour": false
@@ -166,7 +175,7 @@
     "neg": {
       "1": [
         {
-          "specVersion": "0.1-218",
+          "specVersion": "0.1-296",
           "casesNumber": 3,
           "description": "The type of the try-expression is the least upper bound of the types of the last expressions of the try body and the last expressions of all the catch blocks",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/neg/1.1.kt",
@@ -177,7 +186,7 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-218",
+          "specVersion": "0.1-296",
           "casesNumber": 3,
           "description": "The type of the try-expression is the least upper bound of the types of the last expressions of the try body and the last expressions of all the catch blocks",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/pos/1.1.kt",

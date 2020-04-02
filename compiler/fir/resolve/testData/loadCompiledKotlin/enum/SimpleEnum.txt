@@ -1,6 +1,0 @@
-public final enum class MyEnum : R|kotlin/Enum<test/MyEnum>| {
-    private constructor(): R|test/MyEnum|
-
-    public final static enum entry ENTRY: R|test/MyEnum|
-}
-

@@ -47,7 +47,7 @@ object ReviewAddedImports {
                 removeImports(project, file, importsToBeDeleted)
                 return
             }
-            val notificationText = KotlinBundle.message("copy.paste.reference.notification", imported.size)
+            val notificationText = KotlinBundle.htmlMessage("copy.paste.reference.notification", imported.size)
             ApplicationManager.getApplication().invokeLater(
                 Runnable {
                     showHint(
@@ -94,7 +94,7 @@ object ReviewAddedImports {
     ) {
         if (importsToRemove.isEmpty()) return
 
-        WriteCommandAction.runWriteCommandAction(project, "revert applied imports", null, Runnable {
+        WriteCommandAction.runWriteCommandAction(project, KotlinBundle.message("revert.applied.imports"), null, Runnable {
             val newImports = file.importDirectives.mapNotNull {
                 val importedFqName = it.importedFqName ?: return@mapNotNull null
                 if (importsToRemove.contains(importedFqName.asString())) return@mapNotNull null

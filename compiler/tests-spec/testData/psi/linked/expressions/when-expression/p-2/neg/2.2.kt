@@ -9,8 +9,8 @@
 
 fun case_1() {
     when {
-        value == 21, -> return ""
-        value is Int, value is String, -> return ""
+        value == 21,, -> return ""
+        value is Int, ,value is String, -> return ""
         value in -100..100, value in value, -> return ""
     }
     when {

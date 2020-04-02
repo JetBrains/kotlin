@@ -11,6 +11,7 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.RadioUpDownListener
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtEnumEntry
@@ -40,10 +41,10 @@ internal class KotlinSelectNestedClassRefactoringDialog private constructor(
     }
 
     override fun createCenterPanel(): JComponent? {
-        moveToUpperLevelButton.text = BundleBase.replaceMnemonicAmpersand("Move &nested class ${nestedClass.name} to upper level")
+        moveToUpperLevelButton.text = KotlinBundle.message("button.text.move.nested.class.0.to.upper.level", nestedClass.name.toString())
         moveToUpperLevelButton.isSelected = true
 
-        moveMembersButton.text = BundleBase.replaceMnemonicAmpersand("&Move nested class ${nestedClass.name} to another class")
+        moveMembersButton.text = KotlinBundle.message("button.text.move.nested.class.0.to.another.class", nestedClass.name.toString())
 
         ButtonGroup().apply {
             add(moveToUpperLevelButton)

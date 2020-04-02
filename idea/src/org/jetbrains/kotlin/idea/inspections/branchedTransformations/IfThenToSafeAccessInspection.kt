@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspection
@@ -29,12 +30,12 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
 
     override fun inspectionHighlightRangeInElement(element: KtIfExpression) = element.fromIfKeywordToRightParenthesisTextRangeInThis()
 
-    override fun inspectionText(element: KtIfExpression) = "Foldable if-then"
+    override fun inspectionText(element: KtIfExpression) = KotlinBundle.message("foldable.if.then")
 
     override fun inspectionHighlightType(element: KtIfExpression): ProblemHighlightType =
         if (element.shouldBeTransformed()) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION
 
-    override val defaultFixText = "Simplify foldable if-then"
+    override val defaultFixText get() = KotlinBundle.message("simplify.foldable.if.then")
 
     override fun fixText(element: KtIfExpression): String = fixTextFor(element)
 
@@ -49,12 +50,12 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
             val ifThenToSelectData = element.buildSelectTransformationData()
             return if (ifThenToSelectData?.baseClauseEvaluatesToReceiver() == true) {
                 if (ifThenToSelectData.condition is KtIsExpression) {
-                    "Replace 'if' expression with safe cast expression"
+                    KotlinBundle.message("replace.if.expression.with.safe.cast.expression")
                 } else {
-                    "Remove redundant 'if' expression"
+                    KotlinBundle.message("remove.redundant.if.expression")
                 }
             } else {
-                "Replace 'if' expression with safe access expression"
+                KotlinBundle.message("replace.if.expression.with.safe.access.expression")
             }
         }
 

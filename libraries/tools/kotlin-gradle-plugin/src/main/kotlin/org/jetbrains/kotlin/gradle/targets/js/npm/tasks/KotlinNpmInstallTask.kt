@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import java.io.File
 
 open class KotlinNpmInstallTask : DefaultTask() {
@@ -20,6 +20,9 @@ open class KotlinNpmInstallTask : DefaultTask() {
 
     private val nodeJs get() = NodeJsRootPlugin.apply(project.rootProject)
     private val resolutionManager get() = nodeJs.npmResolutionManager
+
+    @Input
+    val args: MutableList<String> = mutableListOf()
 
     @Suppress("unused")
     @get:InputFiles

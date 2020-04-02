@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 
 fun <T> myRun(action: () -> T): T = action()
 fun foo(): String = "foo"

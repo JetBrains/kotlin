@@ -208,7 +208,7 @@ class ResolvedAtomCompleter(
             val resultValueArgument = lambdaResult as? PSIKotlinCallArgument ?: continue
             val newContext =
                 topLevelCallContext.replaceDataFlowInfo(resultValueArgument.dataFlowInfoAfterThisArgument)
-                    .replaceExpectedType(returnType)
+                    .replaceExpectedType(approximatedReturnType)
                     .replaceBindingTrace(topLevelTrace)
 
             val argumentExpression = resultValueArgument.valueArgument.getArgumentExpression() ?: continue

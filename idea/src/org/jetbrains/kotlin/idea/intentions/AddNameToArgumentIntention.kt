@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.util.end
 import org.jetbrains.kotlin.idea.core.util.start
@@ -37,7 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 
 class AddNameToArgumentIntention : SelfTargetingIntention<KtValueArgument>(
-    KtValueArgument::class.java, "Add name to argument"
+    KtValueArgument::class.java, KotlinBundle.message("add.name.to.argument")
 ), LowPriorityAction {
 
     override fun isApplicableTo(element: KtValueArgument, caretOffset: Int): Boolean {
@@ -47,7 +48,7 @@ class AddNameToArgumentIntention : SelfTargetingIntention<KtValueArgument>(
             shouldBeLastUnnamed = !element.languageVersionSettings.supportsFeature(LanguageFeature.MixedNamedArgumentsInTheirOwnPosition)
         ) ?: return false
 
-        text = "Add '$name =' to argument"
+        text = KotlinBundle.message("add.0.to.argument", name)
 
         if (expression is KtLambdaExpression) {
             val range = expression.textRange

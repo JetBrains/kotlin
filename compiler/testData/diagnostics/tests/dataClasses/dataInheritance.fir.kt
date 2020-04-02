@@ -2,7 +2,7 @@ interface SuperInterface
 
 open class SuperClass
 
-abstract data class Base(val x: Int)
+<!INCOMPATIBLE_MODIFIERS!>abstract<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class Base(val x: Int)
 
 class Derived: Base(42)
 

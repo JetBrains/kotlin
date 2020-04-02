@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
@@ -24,16 +25,22 @@ abstract class AbstractChangeFeatureSupportLevelFix(
     protected val featureSupportEnabled: Boolean
         get() = featureSupport == LanguageFeature.State.ENABLED || featureSupport == LanguageFeature.State.ENABLED_WITH_WARNING
 
-    final override fun getFamilyName() = "Enable/Disable $featureShortName support"
+    final override fun getFamilyName() = KotlinBundle.message("fix.change.feature.support.family", featureShortName)
 
     override fun getText(): String = getFixText(featureSupport, featureShortName)
 
     companion object {
         fun getFixText(state: LanguageFeature.State, featureShortName: String): String {
             return when (state) {
-                LanguageFeature.State.ENABLED -> "Enable $featureShortName support"
-                LanguageFeature.State.ENABLED_WITH_WARNING -> "Enable $featureShortName support (with warning)"
-                LanguageFeature.State.ENABLED_WITH_ERROR, LanguageFeature.State.DISABLED -> "Disable $featureShortName support"
+                LanguageFeature.State.ENABLED -> {
+                    KotlinBundle.message("fix.change.feature.support.enabled", featureShortName)
+                }
+                LanguageFeature.State.ENABLED_WITH_WARNING -> {
+                    KotlinBundle.message("fix.change.feature.support.enabled.warning", featureShortName)
+                }
+                LanguageFeature.State.ENABLED_WITH_ERROR, LanguageFeature.State.DISABLED -> {
+                    KotlinBundle.message("fix.change.feature.support.disabled", featureShortName)
+                }
             }
         }
     }

@@ -5,6 +5,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
@@ -20,8 +21,8 @@ internal class DeprecatedJavaAnnotationFix(
     element: KtAnnotationEntry,
     private val annotationFqName: FqName
 ) : KotlinQuickFixAction<KtAnnotationEntry>(element) {
-    override fun getFamilyName() = "Replace Annotation"
-    override fun getText(): String = "Replace annotation with ${annotationFqName.asString()}"
+    override fun getFamilyName() = KotlinBundle.message("replace.annotation")
+    override fun getText(): String = KotlinBundle.message("replace.annotation.with.0", annotationFqName.asString())
 
     override fun startInWriteAction(): Boolean = false
 

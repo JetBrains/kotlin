@@ -9,6 +9,7 @@ import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
@@ -25,13 +26,13 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 class ReplaceAssertBooleanWithAssertEqualityInspection : AbstractApplicabilityBasedInspection<KtCallExpression>(
     KtCallExpression::class.java
 ) {
-    override fun inspectionText(element: KtCallExpression) = "Replace assert boolean with assert equality"
+    override fun inspectionText(element: KtCallExpression) = KotlinBundle.message("replace.assert.boolean.with.assert.equality")
 
-    override val defaultFixText = "Replace assert boolean with assert equality"
+    override val defaultFixText get() = KotlinBundle.message("replace.assert.boolean.with.assert.equality")
 
     override fun fixText(element: KtCallExpression): String {
         val assertion = element.replaceableAssertion() ?: return defaultFixText
-        return "Replace with '$assertion'"
+        return KotlinBundle.message("replace.with.0", assertion)
     }
 
     override fun isApplicable(element: KtCallExpression): Boolean {

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor.Companion.TC_PROJECT_PROPERTY
+import org.jetbrains.kotlin.gradle.plugin.mpp.isAtLeast
 import org.jetbrains.kotlin.gradle.targets.native.internal.parseKotlinNativeStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.konan.CompilerVersion
@@ -101,12 +102,6 @@ abstract class KotlinNativeTest : KotlinTest() {
 
     @get:Internal
     protected abstract val testCommand: TestCommand
-
-    // KonanVersion doesn't provide an API to compare versions,
-    // so we have to transform it to KotlinVersion first.
-    // Note: this check doesn't take into account the meta version (release, eap, dev).
-    private fun CompilerVersion.isAtLeast(major: Int, minor: Int, patch: Int): Boolean =
-        KotlinVersion(this.major, this.minor, this.maintenance).isAtLeast(major, minor, patch)
 
     override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
         val extendedForkOptions = DefaultProcessForkOptions(fileResolver)
@@ -195,11 +190,13 @@ open class KotlinNativeHostTest : KotlinNativeTest() {
 /**
  * A task running Kotlin/Native tests on a simulator (iOS/watchOS/tvOS).
  */
-// TODO: Support debugging.
 open class KotlinNativeSimulatorTest : KotlinNativeTest() {
     @Input
     @Option(option = "device", description = "Sets a simulated device used to execute tests.")
     lateinit var deviceId: String
+
+    @Internal
+    var debugMode = false
 
     @get:Internal
     override val testCommand: TestCommand = object : TestCommand() {
@@ -213,7 +210,15 @@ open class KotlinNativeSimulatorTest : KotlinNativeTest() {
             testNegativeGradleFilter: Set<String>,
             userArgs: List<String>
         ): List<String> =
-            listOf("simctl", "spawn", "--standalone", deviceId, this@KotlinNativeSimulatorTest.executable.absolutePath, "--") +
+            listOfNotNull(
+                "simctl",
+                "spawn",
+                "--wait-for-debugger".takeIf { debugMode },
+                "--standalone",
+                deviceId,
+                this@KotlinNativeSimulatorTest.executable.absolutePath,
+                "--"
+            ) +
                     testArgs(testLogger, checkExitCode, testGradleFilter, testNegativeGradleFilter, userArgs)
     }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import java.io.File
@@ -71,3 +72,8 @@ class PackageJson(
         }
     }
 }
+
+fun fromSrcPackageJson(packageJson: File?): PackageJson? =
+    packageJson?.reader()?.use {
+        Gson().fromJson(it, PackageJson::class.java)
+    }

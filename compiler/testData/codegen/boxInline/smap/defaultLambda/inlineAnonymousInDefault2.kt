@@ -56,7 +56,6 @@ Kotlin
 test/_1Kt
 *L
 1#1,40:1
-36#1,2:41
 *E
 
 SMAP
@@ -129,9 +128,9 @@ test/_1Kt$lParams$1
 + 1 2.kt
 _2Kt
 *L
-5#1,5:11
-5#1:17
-5#1:16
+6#1,5:11
+6#1:17
+6#1:16
 *E
 
 // FILE: 2.smap-separate-compilation
@@ -157,9 +156,9 @@ test/_1Kt$lParams$1
 + 1 2.kt
 _2Kt
 *L
-5#1,5:11
-5#1:17
-5#1:16
+6#1,5:11
+6#1:17
+6#1:16
 *E
 
 SMAP

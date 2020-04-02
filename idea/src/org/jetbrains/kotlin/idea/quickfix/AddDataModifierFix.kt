@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.isVisible
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
 class AddDataModifierFix(element: KtClass, private val fqName: String) : AddModifierFix(element, KtTokens.DATA_KEYWORD) {
 
-    override fun getText() = "Make '$fqName' data class"
+    override fun getText() = KotlinBundle.message("fix.make.data.class", fqName)
 
     override fun getFamilyName() = text
 

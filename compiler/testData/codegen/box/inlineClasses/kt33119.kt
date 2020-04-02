@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 
 inline class WrappingInt(val value: Int) {
     operator fun inc(): WrappingInt = plus(1)

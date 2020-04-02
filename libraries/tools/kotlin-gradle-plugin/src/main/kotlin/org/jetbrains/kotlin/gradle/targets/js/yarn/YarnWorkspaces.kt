@@ -19,23 +19,35 @@ class YarnWorkspaces : YarnBasics() {
     override fun resolveRootProject(
         rootProject: Project,
         subProjects: Collection<KotlinCompilationNpmResolution>,
-        skipExecution: Boolean
+        skipExecution: Boolean,
+        cliArgs: List<String>
     ) {
         check(rootProject == rootProject.rootProject)
         if (!skipExecution) setup(rootProject)
-        return resolveWorkspaces(rootProject, subProjects, skipExecution)
+        return resolveWorkspaces(
+            rootProject,
+            subProjects,
+            skipExecution,
+            cliArgs
+        )
     }
 
     private fun resolveWorkspaces(
         rootProject: Project,
         npmProjects: Collection<KotlinCompilationNpmResolution>,
-        skipExecution: Boolean
+        skipExecution: Boolean,
+        cliArgs: List<String>
     ) {
         val nodeJsWorldDir = NodeJsRootPlugin.apply(rootProject).rootPackageDir
 
         if (!skipExecution) {
             saveRootProjectWorkspacesPackageJson(rootProject, npmProjects, nodeJsWorldDir)
-            yarnExec(rootProject, nodeJsWorldDir, NpmApi.resolveOperationDescription("yarn"))
+            yarnExec(
+                rootProject,
+                nodeJsWorldDir,
+                NpmApi.resolveOperationDescription("yarn"),
+                cliArgs
+            )
         }
 
         yarnLockReadTransitiveDependencies(nodeJsWorldDir, npmProjects.flatMap { it.externalNpmDependencies })
@@ -50,7 +62,8 @@ class YarnWorkspaces : YarnBasics() {
         rootPackageJson.private = true
 
         val npmProjectWorkspaces = npmProjects.map { it.npmProject.dir.relativeTo(nodeJsWorldDir).path }
-        val importedProjectWorkspaces = YarnImportedPackagesVersionResolver(rootProject, npmProjects, nodeJsWorldDir).resolveAndUpdatePackages()
+        val importedProjectWorkspaces =
+            YarnImportedPackagesVersionResolver(rootProject, npmProjects, nodeJsWorldDir).resolveAndUpdatePackages()
 
         rootPackageJson.workspaces = npmProjectWorkspaces + importedProjectWorkspaces
         rootPackageJson.saveTo(

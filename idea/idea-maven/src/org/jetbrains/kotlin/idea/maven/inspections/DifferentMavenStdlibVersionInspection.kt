@@ -18,6 +18,7 @@ import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel
 import org.jetbrains.idea.maven.model.MavenId
 import org.jetbrains.idea.maven.project.MavenProject
 import org.jetbrains.idea.maven.project.MavenProjectsManager
+import org.jetbrains.kotlin.idea.maven.KotlinMavenBundle
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import org.jetbrains.kotlin.utils.PathUtil
@@ -50,7 +51,7 @@ class DifferentMavenStdlibVersionInspection : DomElementsInspection<MavenDomProj
             holder.createProblem(
                 plugin.version,
                 HighlightSeverity.WARNING,
-                "Plugin version (${plugin.version}) is not the same as library version (${stdlibVersion.joinToString(",", "", "")})",
+                KotlinMavenBundle.message("version.different.plugin.library", plugin.version, stdlibVersion.joinToString(",", "", "")),
                 *fixes.toTypedArray()
             )
         }
@@ -65,7 +66,7 @@ class DifferentMavenStdlibVersionInspection : DomElementsInspection<MavenDomProj
                 holder.createProblem(
                     dependency.version,
                     HighlightSeverity.WARNING,
-                    "Plugin version ($pluginVersion) is not the same as library version (${dependency.version})",
+                    KotlinMavenBundle.message("version.different.plugin.library", pluginVersion, dependency.version),
                     *fixes.toTypedArray()
                 )
             }
@@ -85,10 +86,12 @@ class DifferentMavenStdlibVersionInspection : DomElementsInspection<MavenDomProj
 
     private class SetVersionQuickFix(val versionElement: GenericDomValue<*>, val newVersion: String, val versionResolved: String?) :
         LocalQuickFix {
-        override fun getName() =
-            if (versionResolved == null) "Change version to $newVersion" else "Change version to $newVersion ($versionResolved)"
+        override fun getName() = when (versionResolved) {
+            null -> KotlinMavenBundle.message("fix.set.version.name", newVersion)
+            else -> KotlinMavenBundle.message("fix.set.version.name1", newVersion, versionResolved)
+        }
 
-        override fun getFamilyName() = "Change version"
+        override fun getFamilyName() = KotlinMavenBundle.message("fix.set.version.family")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             versionElement.value = newVersion

@@ -1,0 +1,4 @@
+FILE: main.kt
+    public final fun main(b: R|B|): R|kotlin/Unit| {
+        R|<local>/b|.R|/B.x|.R|kotlin/Int.plus|(Int(1))
+    }

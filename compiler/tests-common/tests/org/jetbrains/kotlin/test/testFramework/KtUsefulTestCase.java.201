@@ -63,6 +63,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.testFramework.MockComponentManagerCreationTracer;
+import org.jetbrains.kotlin.types.AbstractTypeChecker;
+import org.jetbrains.kotlin.types.FlexibleTypeImpl;
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
 
@@ -124,6 +126,13 @@ public abstract class KtUsefulTestCase extends TestCase {
         catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+        // -- KOTLIN ADDITIONAL START --
+
+        FlexibleTypeImpl.RUN_SLOW_ASSERTIONS = true;
+        AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true;
+
+        // -- KOTLIN ADDITIONAL END --
     }
 
     /**

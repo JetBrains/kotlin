@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.spec.utils.generators.templates
 
-import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TESTDATA_PATH
+import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.SPEC_TESTDATA_PATH
 import org.jetbrains.kotlin.spec.utils.TestArea
 import java.io.File
 
@@ -24,7 +24,7 @@ class FeatureTemplatesConfig(
     var currentTemplatesIterator = getTemplatesIterator()
 
     private fun getTemplatesPath(testArea: TestArea) = buildString {
-        append(TESTDATA_PATH)
+        append(SPEC_TESTDATA_PATH)
         append("/${testArea.testDataPath}")
         append("/${FeatureInteractionTestDataGenerator.TEMPLATES_PATH}")
         append("/$templatesPath")

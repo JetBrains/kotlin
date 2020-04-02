@@ -78,7 +78,7 @@ fun test() {
     "sd".<!UNRESOLVED_REFERENCE!>(fun Int.() = 1)()<!>
     val i : Int? = null
     i.<!UNRESOLVED_REFERENCE!>(fun Int.() = 1)()<!>;
-    {}<Int>()
+    <!INAPPLICABLE_CANDIDATE!>{}<Int>()<!>
     1?.<!UNRESOLVED_REFERENCE!>(fun Int.() = 1)()<!>
     1.<!UNRESOLVED_REFERENCE!>{}()<!>
 }

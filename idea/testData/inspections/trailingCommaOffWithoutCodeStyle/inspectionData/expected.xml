@@ -1,10 +1,10 @@
 <problems>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>1</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Useless trailing comma</description>
     <highlighted_element>,</highlighted_element>
@@ -12,11 +12,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>1</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Useless trailing comma</description>
     <highlighted_element>,</highlighted_element>
@@ -24,11 +24,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>5</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Useless trailing comma</description>
     <highlighted_element>,</highlighted_element>
@@ -36,11 +36,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>9</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>x</highlighted_element>
@@ -48,11 +48,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>10</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>)</highlighted_element>
@@ -60,11 +60,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>9</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element />
@@ -72,11 +72,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>10</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>-</highlighted_element>
@@ -84,11 +84,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>16</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>)</highlighted_element>
@@ -96,11 +96,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>14</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element />
@@ -108,11 +108,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>16</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>-</highlighted_element>
@@ -120,11 +120,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>22</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Comma loses the advantages in this position</description>
     <highlighted_element>,</highlighted_element>
@@ -132,11 +132,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>22</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>)</highlighted_element>
@@ -144,11 +144,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>20</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element />
@@ -156,11 +156,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>22</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>-</highlighted_element>
@@ -168,11 +168,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>28</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Comma loses the advantages in this position</description>
     <highlighted_element>,</highlighted_element>
@@ -180,11 +180,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>26</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>x</highlighted_element>
@@ -192,11 +192,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>28</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>)</highlighted_element>
@@ -204,11 +204,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>26</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element />
@@ -216,11 +216,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>28</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>-</highlighted_element>
@@ -228,11 +228,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>32</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Useless trailing comma</description>
     <highlighted_element>,</highlighted_element>
@@ -240,11 +240,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>36</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Useless trailing comma</description>
     <highlighted_element>,</highlighted_element>
@@ -252,11 +252,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>40</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>x</highlighted_element>
@@ -264,11 +264,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>41</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>)</highlighted_element>
@@ -276,11 +276,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>40</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element />
@@ -288,11 +288,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>41</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>-</highlighted_element>
@@ -300,11 +300,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>46</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Comma loses the advantages in this position</description>
     <highlighted_element>,</highlighted_element>
@@ -312,11 +312,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>45</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>/</highlighted_element>
@@ -324,11 +324,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>48</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>)</highlighted_element>
@@ -336,11 +336,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>45</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element />
@@ -348,11 +348,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>48</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>-</highlighted_element>
@@ -360,11 +360,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>54</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Comma loses the advantages in this position</description>
     <highlighted_element>,</highlighted_element>
@@ -372,11 +372,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>53</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>/</highlighted_element>
@@ -384,11 +384,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>56</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>)</highlighted_element>
@@ -396,11 +396,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>57</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>-</highlighted_element>
@@ -408,11 +408,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>61</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Useless trailing comma</description>
     <highlighted_element>,</highlighted_element>
@@ -420,11 +420,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>61</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element />
@@ -432,11 +432,11 @@
     <length>1</length>
   </problem>
   <problem>
-    <file>DestructionDeclarationsInLambda.kt</file>
+    <file>DestructuringDeclarationsInLambda.kt</file>
     <line>62</line>
     <module>testProject</module>
     <package>light_idea_test_case</package>
-    <entry_point TYPE="file" FQNAME="DestructionDeclarationsInLambda.kt" />
+    <entry_point TYPE="file" FQNAME="DestructuringDeclarationsInLambda.kt" />
     <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Trailing comma recommendations</problem_class>
     <description>Missing line break</description>
     <highlighted_element>-</highlighted_element>

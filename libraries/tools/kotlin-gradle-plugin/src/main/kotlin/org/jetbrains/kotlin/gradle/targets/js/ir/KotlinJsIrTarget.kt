@@ -9,15 +9,18 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetWithBinaries
 import org.jetbrains.kotlin.gradle.plugin.removeJsCompilerSuffix
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsProducingType
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
-import org.jetbrains.kotlin.gradle.targets.js.dsl.*
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
@@ -29,17 +32,29 @@ constructor(
     platformType: KotlinPlatformType,
     internal val mixedMode: Boolean
 ) :
-    KotlinOnlyTarget<KotlinJsIrCompilation>(project, platformType),
+    KotlinTargetWithBinaries<KotlinJsIrCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
     KotlinJsTargetDsl,
     KotlinJsSubTargetContainerDsl {
     override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
         internal set
 
+    override var moduleName: String? = null
+        set(value) {
+            check(!isBrowserConfigured && !isNodejsConfigured) {
+                "Please set moduleName before initialize browser() or nodejs()"
+            }
+            field = value
+        }
+
     val disambiguationClassifierInPlatform: String?
         get() = disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.IR)
 
-    var producingType: KotlinJsProducingType? = null
+    override val binaries: KotlinJsBinaryContainer
+        get() = compilations.withType(KotlinJsIrCompilation::class.java)
+            .named(MAIN_COMPILATION_NAME)
+            .map { it.binaries }
+            .get()
 
     private val runTaskName get() = lowerCamelCaseName(disambiguationClassifier, runTaskNameSuffix)
     val runTask: Task
@@ -90,35 +105,6 @@ constructor(
         body(nodejs)
     }
 
-    override fun produceKotlinLibrary() {
-        produce(KotlinJsProducingType.KOTLIN_LIBRARY)
-    }
-
-    override fun produceExecutable() {
-        produce(KotlinJsProducingType.EXECUTABLE) {
-            (this as KotlinJsIrSubTarget).produceExecutable()
-        }
-    }
-
-    private fun produce(
-        producingType: KotlinJsProducingType,
-        producer: KotlinJsSubTargetDsl.() -> Unit = {}
-    ) {
-        check(this.producingType == null || this.producingType == producingType) {
-            "Only one producing type supported. Try to set $producingType but previously ${this.producingType} found"
-        }
-
-        this.producingType = producingType
-
-        whenBrowserConfigured {
-            producer()
-        }
-
-        whenNodejsConfigured {
-            producer()
-        }
-    }
-
     override fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit) {
         if (browserLazyDelegate.isInitialized()) {
             browser(body)
@@ -139,14 +125,13 @@ constructor(
         compilations.all {
             it.compileKotlinTask.configureCommonJsOptions()
 
-            listOf(
-                it.productionLinkTask,
-                it.developmentLinkTask
-            ).forEach {
-                it.configure { linkTask ->
-                    linkTask.configureCommonJsOptions()
+            binaries
+                .withType(JsIrBinary::class.java)
+                .all {
+                    it.linkTask.configure { linkTask ->
+                        linkTask.configureCommonJsOptions()
+                    }
                 }
-            }
         }
     }
 

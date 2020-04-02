@@ -4,7 +4,7 @@ fun test(x: Any) {
   class LocalOuter {
     inner class Local {
       init {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
       }
     }
   }

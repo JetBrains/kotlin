@@ -242,6 +242,10 @@ fun KtElement.resolveMainReferenceToDescriptors(): Collection<DeclarationDescrip
     return mainReference?.resolveToDescriptors(bindingContext) ?: emptyList()
 }
 
+fun PsiReference.getImportAlias(): KtImportAlias? {
+    return (this as? KtSimpleNameReference)?.getImportAlias()
+}
+
 // ----------- Read/write access -----------------------------------------------------------------------------------------------------------------------
 
 enum class ReferenceAccess(val isRead: Boolean, val isWrite: Boolean) {

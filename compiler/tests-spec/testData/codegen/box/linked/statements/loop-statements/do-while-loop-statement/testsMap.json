@@ -1,0 +1,56 @@
+{
+  "1": {
+    "pos": {
+      "3": [
+        {
+          "specVersion": "0.1-253",
+          "casesNumber": 0,
+          "description": "do-while-loop-statement evaluates the loop condition expression after evaluating the loop body.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-253",
+          "casesNumber": 0,
+          "description": "do-while-loop-statement evaluates the loop condition expression after evaluating the loop body.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-253",
+          "casesNumber": 0,
+          "description": "do-while-loop-statement evaluates the loop condition expression after evaluating the loop body.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement/p-1/pos/3.1.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-253",
+          "casesNumber": 0,
+          "description": "do-while-loop-statement evaluates the loop condition expression after evaluating the loop body.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement/p-1/pos/3.2.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "2": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-253",
+          "casesNumber": 0,
+          "description": "do-while-loop-statement evaluates the loop condition expression after evaluating the loop body.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement/p-1/pos/3.1.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-253",
+          "casesNumber": 0,
+          "description": "do-while-loop-statement evaluates the loop condition expression after evaluating the loop body.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/statements/loop-statements/do-while-loop-statement/p-1/pos/3.2.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

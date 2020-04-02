@@ -15,16 +15,19 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.Name
 
-interface ImplicitReceiverStack {
-    fun add(name: Name?, value: ImplicitReceiverValue<*>)
-    fun pop(name: Name?)
+abstract class ImplicitReceiverStack : Iterable<ImplicitReceiverValue<*>> {
+    abstract operator fun get(name: String?): ImplicitReceiverValue<*>?
 
-    operator fun get(name: String?): ImplicitReceiverValue<*>?
+    abstract fun lastDispatchReceiver(): ImplicitDispatchReceiverValue?
+    abstract fun lastDispatchReceiver(lookupCondition: (ImplicitReceiverValue<*>) -> Boolean): ImplicitDispatchReceiverValue?
+    abstract fun receiversAsReversed(): List<ImplicitReceiverValue<*>>
+}
 
-    fun lastDispatchReceiver(): ImplicitDispatchReceiverValue?
-    fun receiversAsReversed(): List<ImplicitReceiverValue<*>>
+abstract class MutableImplicitReceiverStack : ImplicitReceiverStack() {
+    abstract fun add(name: Name?, value: ImplicitReceiverValue<*>)
+    abstract fun pop(name: Name?)
 
-    fun snapshot(): ImplicitReceiverStack
+    abstract fun snapshot(): MutableImplicitReceiverStack
 }
 
 class ImplicitReceiverStackImpl private constructor(
@@ -33,7 +36,7 @@ class ImplicitReceiverStackImpl private constructor(
     private var originalTypes: PersistentList<ConeKotlinType>,
     private var indexesPerLabel: PersistentSetMultimap<Name, Int>,
     private var indexesPerSymbol: PersistentMap<FirBasedSymbol<*>, Int>
-) : ImplicitReceiverStack, Iterable<ImplicitReceiverValue<*>> {
+) : MutableImplicitReceiverStack() {
     val size: Int get() = stack.size
 
     constructor() : this(
@@ -65,12 +68,22 @@ class ImplicitReceiverStackImpl private constructor(
     }
 
     override operator fun get(name: String?): ImplicitReceiverValue<*>? {
-        if (name == null) return stack.lastOrNull()
-        return indexesPerLabel[Name.identifier(name)].lastOrNull()?.let { stack[it] }
+        if (name == null) {
+            return stack.lastOrNull {
+                it !is ImplicitDispatchReceiverValue || !it.inDelegated
+            }
+        }
+        return indexesPerLabel[Name.identifier(name)].lastOrNull()?.let { stack[it] }?.takeIf {
+            it !is ImplicitDispatchReceiverValue || !it.inDelegated
+        }
     }
 
     override fun lastDispatchReceiver(): ImplicitDispatchReceiverValue? {
         return stack.filterIsInstance<ImplicitDispatchReceiverValue>().lastOrNull()
+    }
+
+    override fun lastDispatchReceiver(lookupCondition: (ImplicitReceiverValue<*>) -> Boolean): ImplicitDispatchReceiverValue? {
+        return stack.filterIsInstance<ImplicitDispatchReceiverValue>().lastOrNull(lookupCondition)
     }
 
     override fun receiversAsReversed(): List<ImplicitReceiverValue<*>> = stack.asReversed()
@@ -90,7 +103,7 @@ class ImplicitReceiverStackImpl private constructor(
         return stack.iterator()
     }
 
-    override fun snapshot(): ImplicitReceiverStack {
+    override fun snapshot(): ImplicitReceiverStackImpl {
         return ImplicitReceiverStackImpl(stack, originalTypes, indexesPerLabel, indexesPerSymbol)
     }
 }

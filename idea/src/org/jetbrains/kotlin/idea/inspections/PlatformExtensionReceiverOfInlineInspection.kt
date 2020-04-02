@@ -16,6 +16,7 @@ import com.intellij.ui.EditorTextField
 import org.intellij.lang.regexp.RegExpFileType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -77,7 +78,7 @@ class PlatformExtensionReceiverOfInlineInspection : AbstractKotlinInspection() {
 
                 holder.registerProblem(
                     receiverExpression,
-                    "Call of inline function with nullable extension receiver can provoke NPE in Kotlin 1.2+",
+                    KotlinBundle.message("call.of.inline.function.with.nullable.extension.receiver.can.provoke.npe.in.kotlin.1.2"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     IntentionWrapper(AddExclExclCallFix(receiverExpression), receiverExpression.containingKtFile)
                 )
@@ -98,7 +99,7 @@ class PlatformExtensionReceiverOfInlineInspection : AbstractKotlinInspection() {
                     owner.namePattern = regexField.text
                 }
             })
-            val labeledComponent = LabeledComponent.create(regexField, "Pattern:", BorderLayout.WEST)
+            val labeledComponent = LabeledComponent.create(regexField, KotlinBundle.message("text.pattern"), BorderLayout.WEST)
             add(labeledComponent, BorderLayout.NORTH)
         }
     }

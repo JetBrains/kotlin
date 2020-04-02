@@ -41,7 +41,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.java.debugger.breakpoints.properties.JavaBreakpointProperties;
 import org.jetbrains.java.debugger.breakpoints.properties.JavaLineBreakpointProperties;
-import org.jetbrains.kotlin.idea.KotlinBundle;
+import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerCoreBundle;
 import org.jetbrains.kotlin.idea.debugger.KotlinPositionManager;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtElement;
@@ -54,7 +54,7 @@ import static org.jetbrains.kotlin.idea.debugger.breakpoints.BreakpointTypeUtils
 
 public class KotlinLineBreakpointType extends JavaLineBreakpointType implements KotlinBreakpointType {
     public KotlinLineBreakpointType() {
-        super("kotlin-line", KotlinBundle.message("debugger.line.breakpoints.tab.title"));
+        super("kotlin-line", KotlinDebuggerCoreBundle.message("line.breakpoint.tab.title"));
     }
 
     @NotNull
@@ -263,7 +263,7 @@ public class KotlinLineBreakpointType extends JavaLineBreakpointType implements 
         @NotNull
         @Override
         public String getText() {
-            return "Line Breakpoint";
+            return KotlinDebuggerCoreBundle.message("line.breakpoint");
         }
     }
 
@@ -278,8 +278,7 @@ public class KotlinLineBreakpointType extends JavaLineBreakpointType implements 
         @NotNull
         @Override
         public String getText() {
-            String lambdas = lambdaCount > 1 ? "Lambdas" : "Lambda";
-            return "Line and " + lambdas + " Breakpoints";
+            return KotlinDebuggerCoreBundle.message("line.and.lambda.breakpoint", lambdaCount);
         }
     }
 }

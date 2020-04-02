@@ -282,6 +282,8 @@ public abstract class Random {
  * *Note:* Future versions of Kotlin may change the algorithm of this seeded number generator so that it will return
  * a sequence of values different from the current one for a given seed.
  *
+ * On JVM the returned generator is NOT thread-safe. Do not invoke it from multiple threads without proper synchronization.
+ *
  * @sample samples.random.Randoms.seededRandom
  */
 @SinceKotlin("1.3")
@@ -294,6 +296,8 @@ public fun Random(seed: Int): Random = XorWowRandom(seed, seed.shr(31))
  *
  * *Note:* Future versions of Kotlin may change the algorithm of this seeded number generator so that it will return
  * a sequence of values different from the current one for a given seed.
+ *
+ * On JVM the returned generator is NOT thread-safe. Do not invoke it from multiple threads without proper synchronization.
  *
  * @sample samples.random.Randoms.seededRandom
  */

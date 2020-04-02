@@ -71,7 +71,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 if (property.visibility != Visibilities.PUBLIC)
                     continue
 
-                if (property.origin == IrDeclarationOrigin.FAKE_OVERRIDE)
+                if (property.isFakeOverride)
                     continue
 
                 fun IrSimpleFunction.accessorRef(): JsNameRef? =

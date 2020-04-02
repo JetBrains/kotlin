@@ -322,7 +322,7 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
         if (mainFile.extension == KotlinParserDefinition.STD_SCRIPT_SUFFIX) {
             val virtualFile = VfsUtil.findFileByIoFile(mainFile, true)!!
             val ktFile = PsiManager.getInstance(project).findFile(virtualFile)!!
-            ScriptConfigurationManager.updateScriptDependenciesSynchronously(ktFile, project)
+            ScriptConfigurationManager.updateScriptDependenciesSynchronously(ktFile)
         }
 
         fixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.parent}"

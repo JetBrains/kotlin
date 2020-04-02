@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class RemoveNoConstructorFix(constructor: KtValueArgumentList) : KotlinQuickFixAction<KtValueArgumentList>(constructor) {
 
-    override fun getText() = "Remove constructor call"
+    override fun getText() = KotlinBundle.message("remove.constructor.call")
 
     override fun getFamilyName() = text
 

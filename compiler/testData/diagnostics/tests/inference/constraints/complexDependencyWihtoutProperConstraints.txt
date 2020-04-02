@@ -1,0 +1,20 @@
+package
+
+public fun </*0*/ I> id(/*0*/ arg: I): I
+public fun </*0*/ S> select(/*0*/ vararg args: S /*kotlin.Array<out S>*/): S
+public fun test(/*0*/ bool: kotlin.Boolean): kotlin.Unit
+public infix fun </*0*/ M, /*1*/ N> M.to(/*0*/ other: N): Pair<M, N>
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>(/*0*/ arg: T)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Pair</*0*/ A, /*1*/ B> {
+    public constructor Pair</*0*/ A, /*1*/ B>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

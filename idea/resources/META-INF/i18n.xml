@@ -7,6 +7,7 @@
                        groupName="Kotlin"
                        enabledByDefault="true"
                        level="ERROR"
+                       suppressId="InvalidBundleOrProperty"
       />
   </extensions>
 </idea-plugin>

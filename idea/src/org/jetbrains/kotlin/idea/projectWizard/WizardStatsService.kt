@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.projectWizard
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
 import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 
@@ -36,7 +37,7 @@ data class UiEditorUsageStats(
     )
 }
 
-private enum class WizardStatsEvent(val text: String) {
+private enum class WizardStatsEvent(@NonNls val text: String) {
     PROJECT_CREATED("Project Created"),
     WIZARD_STATE_CHANGE("New Wizard enabled or disable")
 }

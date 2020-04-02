@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.plugins
 
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.Plugin
 import org.jetbrains.kotlin.tools.projectWizard.core.UNIT_SUCCESS
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
 
 class AndroidPlugin(context: Context) : Plugin(context) {
     val androidSdkPath by pathSetting(
-        "Android SDK Path",
+        KotlinNewProjectWizardBundle.message("plugin.android.setting.sdk"),
         neededAtPhase = GenerationPhase.PROJECT_GENERATION
     ) {
         isSavable = true

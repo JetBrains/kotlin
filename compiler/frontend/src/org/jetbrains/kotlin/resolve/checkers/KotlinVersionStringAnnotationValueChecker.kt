@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.resolve.RequireKotlinNames
+import org.jetbrains.kotlin.resolve.RequireKotlinConstants
 import org.jetbrains.kotlin.resolve.SINCE_KOTLIN_FQ_NAME
 import org.jetbrains.kotlin.resolve.source.getPsi
 
@@ -34,7 +34,7 @@ abstract class KotlinVersionStringAnnotationValueChecker(
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val annotation = descriptor.annotations.findAnnotation(annotationFqName) ?: return
         val version = annotation.allValueArguments.values.singleOrNull()?.value as? String ?: return
-        if (!version.matches(VERSION_REGEX)) {
+        if (!version.matches(RequireKotlinConstants.VERSION_REGEX)) {
             context.trace.report(Errors.ILLEGAL_KOTLIN_VERSION_STRING_VALUE.on(annotation.source.getPsi() ?: declaration, annotationFqName))
             return
         }
@@ -49,10 +49,6 @@ abstract class KotlinVersionStringAnnotationValueChecker(
         diagnosticHolder: DiagnosticSink,
         languageVersionSettings: LanguageVersionSettings
     ) {
-    }
-
-    companion object {
-        val VERSION_REGEX: Regex = "(0|[1-9][0-9]*)".let { number -> Regex("$number\\.$number(\\.$number)?") }
     }
 }
 
@@ -77,4 +73,4 @@ object SinceKotlinAnnotationValueChecker : KotlinVersionStringAnnotationValueChe
     }
 }
 
-object RequireKotlinAnnotationValueChecker : KotlinVersionStringAnnotationValueChecker(RequireKotlinNames.FQ_NAME)
+object RequireKotlinAnnotationValueChecker : KotlinVersionStringAnnotationValueChecker(RequireKotlinConstants.FQ_NAME)

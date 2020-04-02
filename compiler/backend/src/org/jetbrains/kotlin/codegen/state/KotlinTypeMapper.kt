@@ -362,6 +362,19 @@ class KotlinTypeMapper @JvmOverloads constructor(
         }
     }
 
+    fun getReturnValueType(functionDescriptor: FunctionDescriptor): KotlinType =
+        getActualReturnTypeForSuspendFunctionWithInlineClassReturnTypeHack(functionDescriptor)
+            ?: functionDescriptor.returnType!!
+
+    private fun getActualReturnTypeForSuspendFunctionWithInlineClassReturnTypeHack(functionDescriptor: FunctionDescriptor): KotlinType? {
+        val originalSuspendFunctionForJvmView = functionDescriptor.unwrapInitialDescriptorForSuspendFunction()
+        if (originalSuspendFunctionForJvmView === functionDescriptor) return null
+        val originalReturnType = originalSuspendFunctionForJvmView.returnType!!
+        if (!originalReturnType.isInlineClassType()) return null
+        val jvmReturnType = mapType(originalReturnType)
+        return if (AsmUtil.isPrimitive(jvmReturnType)) null else originalReturnType
+    }
+
     @JvmOverloads
     fun mapToCallableMethod(
         descriptor: FunctionDescriptor,
@@ -431,7 +444,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
                     invokeOpcode = INVOKESTATIC
                     val originalDescriptor = descriptor.original
                     signature = mapSignatureSkipGeneric(originalDescriptor, OwnerKind.DEFAULT_IMPLS)
-                    returnKotlinType = originalDescriptor.returnType
+                    returnKotlinType = getReturnValueType(originalDescriptor)
                     if (descriptor is AccessorForCallableDescriptor<*> && descriptor.calleeDescriptor.hasJvmDefaultAnnotation()) {
                         owner = mapClass(functionParent)
                         isInterfaceMember = true
@@ -482,7 +495,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
                         skipGenericSignature = true,
                         hasSpecialBridge = false
                     )
-                returnKotlinType = functionToCall.returnType
+                returnKotlinType = getReturnValueType(functionToCall)
 
                 val receiver = if (currentIsInterface && !originalIsInterface || functionParent is FunctionClassDescriptor)
                     declarationOwner
@@ -495,7 +508,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         } else {
             val originalDescriptor = functionDescriptor.original
             signature = mapSignatureSkipGeneric(originalDescriptor)
-            returnKotlinType = originalDescriptor.returnType
+            returnKotlinType = getReturnValueType(originalDescriptor)
             owner = mapOwner(functionDescriptor)
             ownerForDefaultImpl = owner
             baseMethodDescriptor = functionDescriptor
@@ -923,21 +936,18 @@ class KotlinTypeMapper @JvmOverloads constructor(
     private fun forceBoxedReturnType(descriptor: FunctionDescriptor): Boolean {
         if (isBoxMethodForInlineClass(descriptor)) return true
 
-        return isJvmPrimitive(descriptor.returnType!!) &&
-                getAllOverriddenDescriptors(descriptor).any { !isJvmPrimitive(it.returnType!!) }
+        return isJvmPrimitiveOrInlineClass(descriptor.returnType!!) &&
+                getAllOverriddenDescriptors(descriptor).any { !isJvmPrimitiveOrInlineClass(it.returnType!!) }
     }
+
+    private fun isJvmPrimitiveOrInlineClass(kotlinType: KotlinType) =
+        KotlinBuiltIns.isPrimitiveType(kotlinType) || kotlinType.isInlineClassType()
 
     private fun isBoxMethodForInlineClass(descriptor: FunctionDescriptor): Boolean {
         val containingDeclaration = descriptor.containingDeclaration
         return containingDeclaration.isInlineClass() &&
                 descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED &&
                 descriptor.name == InlineClassDescriptorResolver.BOX_METHOD_NAME
-    }
-
-    private fun isJvmPrimitive(kotlinType: KotlinType): Boolean {
-        if (KotlinBuiltIns.isPrimitiveType(kotlinType)) return true
-
-        return kotlinType.isInlineClassType() && !kotlinType.isError && AsmUtil.isPrimitive(mapInlineClassType(kotlinType))
     }
 
     fun mapFieldSignature(backingFieldType: KotlinType, propertyDescriptor: PropertyDescriptor): String? {

@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    kotlin("android") version "1.3.61"
+    kotlin("android") version "1.3.70"
     id("kotlin-android-extensions")
 }
 group = "testGroupId"

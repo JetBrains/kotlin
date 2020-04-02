@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingIntention
@@ -25,7 +26,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class FlattenWhenIntention : SelfTargetingIntention<KtWhenExpression>(KtWhenExpression::class.java, "Flatten 'when' expression") {
+class FlattenWhenIntention : SelfTargetingIntention<KtWhenExpression>(
+    KtWhenExpression::class.java,
+    KotlinBundle.message("flatten.when.expression")
+) {
     override fun isApplicableTo(element: KtWhenExpression, caretOffset: Int): Boolean {
         val subject = element.subjectExpression
         if (subject != null && subject !is KtNameReferenceExpression) return false

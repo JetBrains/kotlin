@@ -123,5 +123,9 @@ fun buildKoltinLibrary(
 }
 
 enum class BuiltInsPlatform {
-    JVM, JS, NATIVE, COMMON
+    JVM, JS, NATIVE, COMMON;
+
+    companion object {
+        fun parseFromString(name: String): BuiltInsPlatform? = values().firstOrNull { it.name == name }
+    }
 }

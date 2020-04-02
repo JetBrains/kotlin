@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
@@ -42,8 +41,15 @@ fun FirElement.render(mode: FirRenderer.RenderMode = FirRenderer.RenderMode.Norm
     buildString { this@render.accept(FirRenderer(this, mode)) }
 
 class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderMode.Normal) : FirVisitorVoid() {
-    enum class RenderMode {
-        Normal, DontRenderLambdaBodies
+    companion object {
+        private val visibilitiesToRenderEffectiveSet = setOf(
+            Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS, Visibilities.INTERNAL,
+            Visibilities.PROTECTED, Visibilities.PUBLIC, Visibilities.LOCAL
+        )
+    }
+
+    abstract class RenderMode(val renderLambdaBodies: Boolean, val renderCallArguments: Boolean) {
+        object Normal : RenderMode(renderLambdaBodies = true, renderCallArguments = true)
     }
 
     private val printer = Printer(builder)
@@ -153,11 +159,18 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         callableDeclaration.returnTypeRef.accept(this)
     }
 
-    private fun Visibility.asString() =
-        when (this) {
-            Visibilities.UNKNOWN -> "public?"
+    private fun Visibility.asString(effectiveVisibility: FirEffectiveVisibility? = null): String {
+        val itself = when (this) {
+            Visibilities.UNKNOWN -> return "public?"
             else -> toString()
         }
+        if (effectiveVisibility == null) return itself
+        val effectiveAsVisibility = effectiveVisibility.toVisibility()
+        if (effectiveAsVisibility == this) return itself
+        if (effectiveAsVisibility == Visibilities.PRIVATE && this == Visibilities.PRIVATE_TO_THIS) return itself
+        if (this !in visibilitiesToRenderEffectiveSet) return itself
+        return itself + "[${effectiveVisibility.name}]"
+    }
 
     private fun FirMemberDeclaration.modalityAsString(): String {
         return modality?.name?.toLowerCase() ?: run {
@@ -188,7 +201,8 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
         memberDeclaration.annotations.renderAnnotations()
         if (memberDeclaration !is FirProperty || !memberDeclaration.isLocal) {
-            print(memberDeclaration.visibility.asString() + " " + memberDeclaration.modalityAsString() + " ")
+            print(memberDeclaration.visibility.asString(memberDeclaration.effectiveVisibility) + " ")
+            print(memberDeclaration.modalityAsString() + " ")
         }
         if (memberDeclaration.isExpect) {
             print("expect ")
@@ -378,7 +392,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
 
     override fun visitConstructor(constructor: FirConstructor) {
         constructor.annotations.renderAnnotations()
-        print(constructor.visibility.asString() + " constructor")
+        print(constructor.visibility.asString(constructor.effectiveVisibility) + " constructor")
         constructor.typeParameters.renderTypeParameters()
         constructor.valueParameters.renderParameters()
         print(": ")
@@ -427,7 +441,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         if (anonymousFunction.invocationKind != null) {
             print(" <kind=${anonymousFunction.invocationKind}> ")
         }
-        if (mode != RenderMode.DontRenderLambdaBodies) {
+        if (mode.renderLambdaBodies) {
             anonymousFunction.body?.renderBody()
         }
     }
@@ -677,7 +691,13 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
 
     override fun visitCall(call: FirCall) {
         print("(")
-        call.arguments.renderSeparated()
+        if (mode.renderCallArguments) {
+            call.arguments.renderSeparated()
+        } else {
+            if (call.arguments.isNotEmpty()) {
+                print("...")
+            }
+        }
         print(")")
     }
 
@@ -992,14 +1012,11 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         visitAssignment(FirOperation.ASSIGN, variableAssignment.rValue)
     }
 
-    override fun visitArraySetCall(arraySetCall: FirArraySetCall) {
-        arraySetCall.annotations.renderAnnotations()
-        visitQualifiedAccess(arraySetCall)
-        arraySetCall.lValue.accept(this)
-        print("[")
-        arraySetCall.indexes.renderSeparated()
-        print("] ")
-        visitAssignment(arraySetCall.operation, arraySetCall.rValue)
+    override fun visitAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall) {
+        augmentedArraySetCall.annotations.renderAnnotations()
+        print("ArraySet:[")
+        augmentedArraySetCall.assignCall.accept(this)
+        print("]")
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall) {

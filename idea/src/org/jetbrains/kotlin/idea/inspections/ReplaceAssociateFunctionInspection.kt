@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.getLastLambdaExpression
 import org.jetbrains.kotlin.idea.inspections.AssociateFunction.*
@@ -70,7 +71,7 @@ class ReplaceAssociateFunctionInspection : AbstractKotlinInspection() {
         }
         holder.registerProblemWithoutOfflineInformation(
             calleeExpression,
-            "Replace '${calleeExpression.text}' with '${associateFunction.name(isAssociateTo)}'",
+            KotlinBundle.message("replace.0.with.1", calleeExpression.text, associateFunction.name(isAssociateTo)),
             isOnTheFly,
             highlightType,
             ReplaceAssociateFunctionFix(associateFunction, isAssociateTo)
@@ -85,7 +86,7 @@ class ReplaceAssociateFunctionInspection : AbstractKotlinInspection() {
 private class ReplaceAssociateFunctionFix(private val function: AssociateFunction, private val hasDestination: Boolean) : LocalQuickFix {
     private val functionName = function.name(hasDestination)
 
-    override fun getName() = "Replace with '$functionName'"
+    override fun getName() = KotlinBundle.message("replace.with.0", functionName)
 
     override fun getFamilyName() = name
 

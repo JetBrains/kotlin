@@ -4,7 +4,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-100
+ * SPEC VERSION: 0.1-313
  * PLACE: expressions, when-expression -> paragraph 5 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: 'When' with bound value and with different variants of expressions in the control structure body.
@@ -117,12 +117,16 @@ fun case_8(value_1: Int, value_2: Int) = when (value_1) {
     else "4"
 }
 
-// TESTCASE NUMBER: 9
+/*
+ * TESTCASE NUMBER: 9
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-37249
+ */
 fun case_9(value_1: Int, value_2: String, value_3: String): Any {
     return when (value_1) {
         1 -> try { 4 } catch (e: Exception) { 5 }
         2 -> try { throw Exception() } catch (e: Exception) { value_2 }
-        else -> try { throw Exception() } catch (e: Exception) { {value_3} } finally { }
+        else -> try { throw Exception() } catch (e: Exception) <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>{ {<!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>value_3<!>} }<!> finally { }
     }
 }
 

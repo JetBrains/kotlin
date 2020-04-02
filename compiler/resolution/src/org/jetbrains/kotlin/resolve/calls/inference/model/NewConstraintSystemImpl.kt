@@ -246,7 +246,7 @@ class NewConstraintSystemImpl(
         return typeVariable in postponedTypeVariables
     }
 
-    // ConstraintInjector.Context
+    // ConstraintInjector.Context, KotlinConstraintSystemCompleter.Context
     override val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker>
         get() {
             checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)

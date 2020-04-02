@@ -8,10 +8,10 @@ val String.foo: Int
 
 val String.bar: Int = 13
     // Error
-    get() = field
+    get() = <!UNRESOLVED_REFERENCE!>field<!>
 
 class My {
     val String.x: Int = 7
         // Error
-        get() = field
+        get() = <!UNRESOLVED_REFERENCE!>field<!>
 }

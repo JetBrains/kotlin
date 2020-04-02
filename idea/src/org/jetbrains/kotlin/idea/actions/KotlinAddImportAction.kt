@@ -186,7 +186,7 @@ class KotlinAddImportAction internal constructor(
     }
 
     private fun getVariantSelectionPopup(): BaseListPopupStep<AutoImportVariant> {
-        return object : BaseListPopupStep<AutoImportVariant>(KotlinBundle.message("imports.chooser.title"), variants) {
+        return object : BaseListPopupStep<AutoImportVariant>(KotlinBundle.message("action.add.import.chooser.title"), variants) {
             override fun isAutoSelectionEnabled() = false
 
             override fun isSpeedSearchEnabled() = true
@@ -203,7 +203,7 @@ class KotlinAddImportAction internal constructor(
 
                 return object : BaseListPopupStep<String>(null, toExclude) {
                     override fun getTextFor(value: String): String {
-                        return "Exclude '$value' from auto-import"
+                        return KotlinBundle.message("fix.import.exclude", value)
                     }
 
                     override fun onChosen(selectedValue: String, finalChoice: Boolean): PopupStep<Any>? {
@@ -338,7 +338,7 @@ private class GroupedImportVariant(
 ) : AutoImportVariant {
     override val excludeFqNameCheck: FqName = descriptors.first().importableFqName!!.parent()
     override val descriptorsToImport: Collection<DeclarationDescriptor> get() = descriptors
-    override val hint: String get() = "$autoImportDescription from $excludeFqNameCheck"
+    override val hint: String get() = KotlinBundle.message("0.from.1", autoImportDescription, excludeFqNameCheck)
 }
 
 private class SingleImportVariant(

@@ -4,5 +4,5 @@ open class B(x: Int) {
 }
 class A : B {
     constructor(x: Int, y: Int = x + foo() + this.foo() + super.foo()) :
-        <!INAPPLICABLE_CANDIDATE!>super<!>(x + foo() + this.foo() + super.foo())
+        <!INAPPLICABLE_CANDIDATE!>super<!>(x <!AMBIGUITY!>+<!> <!UNRESOLVED_REFERENCE!>foo<!>() + this.<!UNRESOLVED_REFERENCE!>foo<!>() + super.foo())
 }

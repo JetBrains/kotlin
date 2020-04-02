@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.core.script.settings
 
 import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.project.Project
@@ -14,6 +13,7 @@ import com.intellij.util.addOptionTag
 import com.intellij.util.attribute
 import com.intellij.util.getAttributeBooleanValue
 import org.jdom.Element
+import org.jetbrains.kotlin.idea.util.application.getServiceSafe
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 
 @State(
@@ -136,8 +136,7 @@ class KotlinScriptingSettings : PersistentStateComponent<Element> {
         getChildren("option").firstOrNull { it.getAttribute("name").value == name }?.getAttributeBooleanValue("value")
 
     companion object {
-        fun getInstance(project: Project): KotlinScriptingSettings =
-            ServiceManager.getService(project, KotlinScriptingSettings::class.java)
+        fun getInstance(project: Project): KotlinScriptingSettings = project.getServiceSafe()
 
         private const val SCRIPT_DEFINITION_TAG = "scriptDefinition"
 

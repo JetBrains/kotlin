@@ -10,6 +10,7 @@ import com.intellij.psi.codeStyle.PackageEntry
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -39,6 +40,10 @@ abstract class AbstractImportsTest : KotlinLightCodeInsightFixtureTestCase() {
             fixture.configureByFile(fileName())
 
             val file = fixture.file as KtFile
+
+            if (file.isScript()) {
+                ScriptConfigurationManager.updateScriptDependenciesSynchronously(file)
+            }
 
             val fileText = file.text
 

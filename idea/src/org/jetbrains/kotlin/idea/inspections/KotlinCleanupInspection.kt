@@ -15,6 +15,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiChecker
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
@@ -32,7 +33,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 class KotlinCleanupInspection : LocalInspectionTool(), CleanupLocalInspectionTool {
     // required to simplify the inspection registration in tests
-    override fun getDisplayName(): String = "Usage of redundant or deprecated syntax or deprecated symbols"
+    override fun getDisplayName(): String = KotlinBundle.message("usage.of.redundant.or.deprecated.syntax.or.deprecated.symbols")
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<out ProblemDescriptor>? {
         if (isOnTheFly || file !is KtFile || !ProjectRootsUtil.isInProjectSource(file)) {
@@ -134,7 +135,7 @@ class KotlinCleanupInspection : LocalInspectionTool(), CleanupLocalInspectionToo
     }
 
     private class RemoveImportFix(import: KtImportDirective) : KotlinQuickFixAction<KtImportDirective>(import), CleanupFix {
-        override fun getFamilyName() = "Remove deprecated symbol import"
+        override fun getFamilyName() = KotlinBundle.message("remove.deprecated.symbol.import")
         override fun getText() = familyName
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {

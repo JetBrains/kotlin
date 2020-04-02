@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.*
@@ -27,7 +28,7 @@ class ConvertTryFinallyToUseCallInspection : IntentionBasedInspection<KtTryExpre
 }
 
 class ConvertTryFinallyToUseCallIntention : SelfTargetingRangeIntention<KtTryExpression>(
-    KtTryExpression::class.java, "Convert try-finally to .use()"
+    KtTryExpression::class.java, KotlinBundle.message("convert.try.finally.to.use")
 ) {
     override fun applyTo(element: KtTryExpression, editor: Editor?) {
         val finallySection = element.finallyBlock!!

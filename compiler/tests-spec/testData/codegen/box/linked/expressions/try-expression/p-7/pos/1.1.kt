@@ -3,7 +3,7 @@
 /*
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-218
+ * SPEC VERSION: 0.1-313
  * PLACE: expressions, try-expression -> paragraph 7 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: finally block has no effect on the value returned by the try-expression

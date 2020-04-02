@@ -1,6 +1,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem
 
-import kotlinx.collections.immutable.*
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.plus
+import kotlinx.collections.immutable.toPersistentList
 
 
 interface IrsOwner {

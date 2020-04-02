@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.util.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
 class MissingConstructorBracketsFix(element: KtPrimaryConstructor) : KotlinQuickFixAction<KtPrimaryConstructor>(element), CleanupFix {
     override fun getFamilyName(): String = text
-    override fun getText(): String = "Add empty brackets after primary constructor"
+    override fun getText(): String = KotlinBundle.message("add.empty.brackets.after.primary.constructor")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val constructor = element ?: return

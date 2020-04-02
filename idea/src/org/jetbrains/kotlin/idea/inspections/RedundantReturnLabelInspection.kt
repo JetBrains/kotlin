@@ -9,6 +9,7 @@ import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.quickfix.RemoveReturnLabelFix
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -24,7 +25,7 @@ class RedundantReturnLabelInspection : AbstractKotlinInspection() {
             val labelName = label.getReferencedName()
             holder.registerProblem(
                 label,
-                "Redundant '@$labelName'",
+                KotlinBundle.message("redundant.0", labelName),
                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                 IntentionWrapper(RemoveReturnLabelFix(returnExpression, labelName), returnExpression.containingKtFile),
             )

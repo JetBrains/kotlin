@@ -31,7 +31,7 @@ object SMAPParser {
                 FileMapping(source, path).apply {
                     if (methodStartLine <= methodEndLine) {
                         //one to one
-                        addRangeMapping(RangeMapping(methodStartLine, methodStartLine, methodEndLine - methodStartLine + 1))
+                        mapNewInterval(methodStartLine, methodStartLine, methodEndLine - methodStartLine + 1)
                     }
                 }
 
@@ -42,6 +42,8 @@ object SMAPParser {
     fun parse(mappingInfo: String): SMAP {
         val fileMappings = linkedMapOf<Int, FileMapping>()
 
+        // Assuming we want the first stratum (which should be "Kotlin" for Kotlin classes, though you never know).
+        // Also, JSR-045 allows the line section to come before the file section, but we don't generate SMAPs like this.
         val iterator = mappingInfo.lineSequence().dropWhile { it.trim() != SMAP.FILE_SECTION }.drop(1).iterator()
         while (iterator.hasNext()) {
             val fileDeclaration = iterator.next().trim()
@@ -59,7 +61,8 @@ object SMAPParser {
         }
 
         for (lineMapping in iterator) {
-            if (lineMapping.trim() == SMAP.END) break
+            // The stratum is terminated either by *E or another stratum.
+            if (lineMapping.trim().startsWith("*")) break
             /*only simple mapping now*/
             val targetSplit = lineMapping.indexOf(':')
             val originalPart = lineMapping.substring(0, targetSplit)
@@ -71,7 +74,7 @@ object SMAPParser {
 
             val fileIndex = lineMapping.substring(fileSeparator + 1, rangeSeparator).toInt()
             val targetIndex = lineMapping.substring(targetSplit + 1).toInt()
-            fileMappings[fileIndex]!!.addRangeMapping(RangeMapping(originalIndex, targetIndex, range))
+            fileMappings[fileIndex]!!.mapNewInterval(originalIndex, targetIndex, range)
         }
 
         return SMAP(fileMappings.values.toList())

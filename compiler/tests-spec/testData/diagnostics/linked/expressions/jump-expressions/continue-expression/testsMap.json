@@ -1,0 +1,14 @@
+{
+  "1": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 3,
+          "description": "A continue expression is a jump expression allowed only within loop bodies.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

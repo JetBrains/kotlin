@@ -107,13 +107,6 @@ internal class KotlinProjectNpmResolver(
         fun getTaskRequirements(compilation: KotlinJsCompilation): Collection<RequiresNpmDependencies> =
             byCompilation[compilation] ?: listOf()
 
-        val hasNodeModulesDependentTasks: Boolean
-            get() = _hasNodeModulesDependentTasks
-
-        @Volatile
-        var _hasNodeModulesDependentTasks = false
-            private set
-
         init {
             projectNpmResolver.project.tasks.implementing(RequiresNpmDependencies::class).forEach { task ->
                 if (task.enabled) {
@@ -125,10 +118,6 @@ internal class KotlinProjectNpmResolver(
         }
 
         private fun addTaskRequirements(task: RequiresNpmDependencies) {
-            if (!_hasNodeModulesDependentTasks && task.nodeModulesRequired) {
-                _hasNodeModulesDependentTasks = true
-            }
-
             val requirements = task.requiredNpmDependencies.toList()
 
             byTask[task] = requirements

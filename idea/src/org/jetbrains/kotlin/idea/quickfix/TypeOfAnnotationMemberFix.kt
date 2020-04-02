@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -22,7 +23,7 @@ class TypeOfAnnotationMemberFix(
     typeReference: KtTypeReference,
     private val fixedType: String
 ) : KotlinQuickFixAction<KtTypeReference>(typeReference), CleanupFix {
-    override fun getText(): String = "Replace array of boxed with array of primitive"
+    override fun getText(): String = KotlinBundle.message("replace.array.of.boxed.with.array.of.primitive")
 
     override fun getFamilyName(): String = text
 

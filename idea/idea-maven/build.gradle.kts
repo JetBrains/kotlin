@@ -42,8 +42,7 @@ dependencies {
     }
 
     testCompile(project(":idea:idea-native")) { isTransitive = false }
-    testRuntime(project(":native:frontend.native")) { isTransitive = false }
-    testRuntime(project(":native:kotlin-native-utils")) { isTransitive = false }
+    testRuntime(project(":native:frontend.native"))
 
     testRuntimeOnly(toolsJar())
     testRuntime(project(":kotlin-reflect"))

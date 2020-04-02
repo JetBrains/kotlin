@@ -50,7 +50,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         // it means an abstract function in superclass that is not implemented yet,
         // stub generation is still needed to avoid invocation error.
         val existingMethodsBySignature = irClass.functions.filterNot {
-            it.modality == Modality.ABSTRACT && it.origin == IrDeclarationOrigin.FAKE_OVERRIDE
+            it.modality == Modality.ABSTRACT && it.isFakeOverride
         }.associateBy { it.toSignature() }
 
         for (member in methodStubsToGenerate) {
@@ -184,8 +184,20 @@ internal class CollectionStubComputer(val context: JvmBackendContext) {
         val readOnlyClass: IrClassSymbol,
         val mutableClass: IrClassSymbol
     ) {
+        // Preserve old backend's logic to generate stubs for special cases where a mutable method
+        // has the same JVM signature as the immutable method. See KT-36724 for more details.
+        private val specialCaseStubSignaturesForOldBackend = setOf(
+            "listIterator()Ljava/util/ListIterator;",
+            "listIterator(I)Ljava/util/ListIterator;",
+            "subList(II)Ljava/util/List;"
+        )
+
         val mutableOnlyMethods: Collection<IrSimpleFunction> by lazy {
-            val readOnlyMethodSignatures = readOnlyClass.functions.map { getSignature(it.owner) }.toHashSet()
+            val readOnlyMethodSignatures = readOnlyClass
+                .functions
+                .map { getSignature(it.owner) }
+                .filter { it !in specialCaseStubSignaturesForOldBackend }
+                .toHashSet()
             mutableClass.functions
                 .map { it.owner }
                 .filter { getSignature(it) !in readOnlyMethodSignatures }

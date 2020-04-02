@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.framework
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.libraries.NewLibraryConfiguration
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator
 
 /**
@@ -29,11 +30,11 @@ class JSLibraryStdDescription(project: Project?) : CustomLibraryDescriptorWithDe
     }
 
     companion object {
-        val LIBRARY_NAME = "KotlinJavaScript"
+        const val LIBRARY_NAME = "KotlinJavaScript"
 
-        val JAVA_SCRIPT_LIBRARY_CREATION = "JavaScript Library Creation"
-        val DIALOG_TITLE = "Create Kotlin JavaScript Library"
-        val LIBRARY_CAPTION = "Kotlin JavaScript Library"
+        val JAVA_SCRIPT_LIBRARY_CREATION get() = KotlinJvmBundle.message("javascript.library.creation")
+        val DIALOG_TITLE get() = KotlinJvmBundle.message("create.kotlin.javascript.library")
+        val LIBRARY_CAPTION get() = KotlinJvmBundle.message("kotlin.javascript.library")
         val SUITABLE_LIBRARY_KINDS = setOf(JSLibraryKind)
     }
 }

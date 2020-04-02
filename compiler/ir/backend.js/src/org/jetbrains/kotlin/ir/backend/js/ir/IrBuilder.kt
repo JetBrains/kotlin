@@ -93,6 +93,7 @@ object JsIrBuilder {
         isTailrec: Boolean = false,
         isSuspend: Boolean = false,
         isExpect: Boolean = false,
+        isFakeOverride: Boolean = false,
         origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION
     ) = buildFunction(
         Name.identifier(name),
@@ -105,6 +106,7 @@ object JsIrBuilder {
         isTailrec = isTailrec,
         isSuspend = isSuspend,
         isExpect = isExpect,
+        isFakeOverride = isFakeOverride,
         origin = origin
     )
 
@@ -120,6 +122,7 @@ object JsIrBuilder {
         isSuspend: Boolean = false,
         isExpect: Boolean = false,
         isOperator: Boolean = false,
+        isFakeOverride: Boolean = false,
         origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION
     ): IrSimpleFunction {
         val descriptor = WrappedSimpleFunctionDescriptor()
@@ -137,7 +140,7 @@ object JsIrBuilder {
             isTailrec = isTailrec,
             isSuspend = isSuspend,
             isExpect = isExpect,
-            isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+            isFakeOverride = isFakeOverride,
             isOperator = isOperator
         ).also {
             descriptor.bind(it)

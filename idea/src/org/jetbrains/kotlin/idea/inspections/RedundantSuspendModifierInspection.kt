@@ -12,6 +12,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.highlighter.hasSuspendCalls
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -41,7 +42,7 @@ class RedundantSuspendModifierInspection : AbstractKotlinInspection() {
 
             holder.registerProblem(
                 suspendModifier,
-                "Redundant 'suspend' modifier",
+                KotlinBundle.message("redundant.suspend.modifier"),
                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                 IntentionWrapper(
                     RemoveModifierFix(function, KtTokens.SUSPEND_KEYWORD, isRedundant = true),

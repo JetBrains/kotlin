@@ -31,6 +31,7 @@ import org.jetbrains.jps.model.module.JpsTypedModuleSourceRoot
 import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer
 import org.jetbrains.jps.model.serialization.module.JpsModuleRootModelSerializer.*
 import org.jetbrains.kotlin.config.getFacetPlatformByConfigurationElement
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.util.toVirtualFile
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
@@ -218,7 +219,8 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
         }
     }
 
-    override fun getConversionDescription() = "Update source roots for non-JVM modules in Kotlin project"
+    override fun getConversionDescription() =
+        KotlinBundle.message("roots.description.text.update.source.roots.for.non.jvm.modules.in.kotlin.project")
 
     override fun createConverter(context: ConversionContext) = ConverterImpl(context)
 }

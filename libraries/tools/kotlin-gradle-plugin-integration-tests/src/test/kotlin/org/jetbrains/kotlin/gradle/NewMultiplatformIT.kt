@@ -1635,7 +1635,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     .single { it.getAttribute("name").value == "fail" }
                     .getChild("failure")
                     .text
-                assertTrue(stacktrace.contains("""at org\.foo\.test\.fail\(.*test\.kt:24\)""".toRegex()))
+                assertTrue(stacktrace.contains("""at org\.foo\.test#fail\(.*test\.kt:24\)""".toRegex()))
             }
 
             assertTestResults("testProject/new-mpp-native-tests/TEST-TestKt.xml", hostTestTask)
@@ -1803,20 +1803,6 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertTrue(output.contains("Kotlin/Native distribution: "))
                 // Check for KT-30258.
                 assertFalse(output.contains("Deprecated Gradle features were used in this build, making it incompatible with Gradle 6.0."))
-            }
-
-            build("tasks", "-Pkotlin.native.restrictedDistribution=true") {
-                assertSuccessful()
-                val dists = output.lineSequence().filter {
-                    it.contains("Kotlin/Native distribution: ")
-                }
-
-                // Restricted distribution is available for Mac hosts only.
-                if (HostManager.hostIsMac) {
-                    assertTrue(dists.all { it.contains("-restricted-") })
-                } else {
-                    assertTrue(dists.none { it.contains("-restricted-") })
-                }
             }
 
             // This directory actually doesn't contain a K/N distribution
@@ -2198,7 +2184,7 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testDependenciesDsl() = with(transformProjectWithPluginsDsl("newMppDependenciesDsl", GradleVersionRequired.AtLeast("4.10"))) {
+    fun testDependenciesDsl() = with(transformProjectWithPluginsDsl("newMppDependenciesDsl", GradleVersionRequired.AtLeast("5.0"))) {
         val originalBuildscriptContent = gradleBuildScript("app").readText()
 
         fun testDependencies() = testResolveAllConfigurations("app") {

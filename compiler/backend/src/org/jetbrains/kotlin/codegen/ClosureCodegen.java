@@ -12,6 +12,7 @@ import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.ClosureContext;
@@ -32,9 +33,11 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.metadata.ProtoBuf;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
+import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.SimpleType;
@@ -64,6 +67,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     private final SamType samType;
     private final KotlinType superClassType;
     private final List<KotlinType> superInterfaceTypes;
+    private final ResolvedCall<FunctionDescriptor> functionReferenceCall;
     private final FunctionDescriptor functionReferenceTarget;
     private final FunctionGenerationStrategy strategy;
     protected final CalculatedClosure closure;
@@ -80,7 +84,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             @NotNull KtElement element,
             @Nullable SamType samType,
             @NotNull ClosureContext context,
-            @Nullable FunctionDescriptor functionReferenceTarget,
+            @Nullable ResolvedCall<FunctionDescriptor> functionReferenceCall,
             @NotNull FunctionGenerationStrategy strategy,
             @NotNull MemberCodegen<?> parentCodegen,
             @NotNull ClassBuilder classBuilder
@@ -90,7 +94,8 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         this.funDescriptor = context.getFunctionDescriptor();
         this.classDescriptor = context.getContextDescriptor();
         this.samType = samType;
-        this.functionReferenceTarget = functionReferenceTarget;
+        this.functionReferenceCall = functionReferenceCall;
+        this.functionReferenceTarget = functionReferenceCall != null ? functionReferenceCall.getResultingDescriptor() : null;
         this.strategy = strategy;
 
         if (samType == null) {
@@ -510,7 +515,10 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                     generateCallableReferenceDeclarationContainerClass(iv, functionReferenceTarget, state);
                     iv.aconst(functionReferenceTarget.getName().asString());
                     PropertyReferenceCodegen.generateCallableReferenceSignature(iv, functionReferenceTarget, state);
-                    iv.aconst(isTopLevelCallableReference(functionReferenceTarget) ? 1 : 0);
+                    int flags =
+                            (isTopLevelCallableReference(functionReferenceTarget) ? 1 : 0) +
+                            (calculateFunctionReferenceFlags(functionReferenceCall, funDescriptor) << 1);
+                    iv.aconst(flags);
                     superCtorArgTypes.add(JAVA_CLASS_TYPE);
                     superCtorArgTypes.add(JAVA_STRING_TYPE);
                     superCtorArgTypes.add(JAVA_STRING_TYPE);
@@ -530,6 +538,32 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             FunctionCodegen.endVisit(iv, "constructor", element);
         }
         return constructor;
+    }
+
+    private static int calculateFunctionReferenceFlags(
+            @NotNull ResolvedCall<?> call, @NotNull FunctionDescriptor anonymousAdaptedFunction
+    ) {
+        boolean hasVarargMappedToElement = false;
+        CallableDescriptor target = call.getResultingDescriptor();
+        int shift =
+                (call.getDispatchReceiver() instanceof TransientReceiver ? 1 : 0) +
+                (call.getExtensionReceiver() instanceof TransientReceiver ? 1 : 0);
+        for (int i = shift;
+             i < anonymousAdaptedFunction.getValueParameters().size() && i - shift < target.getValueParameters().size();
+             i++) {
+            KotlinType varargElementType = target.getValueParameters().get(i - shift).getVarargElementType();
+            if (varargElementType != null && !varargElementType.equals(anonymousAdaptedFunction.getValueParameters().get(i).getType())) {
+                hasVarargMappedToElement = true;
+                break;
+            }
+        }
+
+        //noinspection ConstantConditions
+        boolean hasCoercionToUnit = KotlinBuiltIns.isUnit(anonymousAdaptedFunction.getReturnType()) &&
+                                    !KotlinBuiltIns.isUnit(target.getReturnType());
+
+        return (hasVarargMappedToElement ? 1 : 0) +
+               ((hasCoercionToUnit ? 1 : 0) << 1);
     }
 
     protected int calculateArity() {

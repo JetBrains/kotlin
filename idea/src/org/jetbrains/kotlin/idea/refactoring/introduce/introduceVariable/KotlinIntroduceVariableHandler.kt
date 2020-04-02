@@ -25,6 +25,7 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.analysis.computeTypeInfoInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -63,7 +64,7 @@ import java.util.*
 import kotlin.math.min
 
 object KotlinIntroduceVariableHandler : RefactoringActionHandler {
-    val INTRODUCE_VARIABLE = KotlinRefactoringBundle.message("introduce.variable")
+    val INTRODUCE_VARIABLE = KotlinBundle.message("introduce.variable")
 
     private val EXPRESSION_KEY = Key.create<Boolean>("EXPRESSION_KEY")
     private val REPLACE_KEY = Key.create<Boolean>("REPLACE_KEY")
@@ -475,13 +476,13 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
         when {
             parent is KtQualifiedExpression -> {
                 if (parent.receiverExpression != physicalExpression) {
-                    return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.expression"))
+                    return showErrorHint(project, editor, KotlinBundle.message("cannot.refactor.no.expression"))
                 }
             }
             physicalExpression is KtStatementExpression ->
-                return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.expression"))
+                return showErrorHint(project, editor, KotlinBundle.message("cannot.refactor.no.expression"))
             parent is KtOperationExpression && parent.operationReference == physicalExpression ->
-                return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.expression"))
+                return showErrorHint(project, editor, KotlinBundle.message("cannot.refactor.no.expression"))
         }
 
         PsiTreeUtil.getNonStrictParentOfType(
@@ -492,7 +493,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
             KtConstructorDelegationReferenceExpression::class.java,
             KtAnnotationEntry::class.java
         )?.let {
-            return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.container"))
+            return showErrorHint(project, editor, KotlinBundle.message("cannot.refactor.no.container"))
         }
 
         val expressionType = substringInfo?.type ?: bindingContext.getType(physicalExpression) //can be null or error type
@@ -507,11 +508,11 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                 && !TypeCheckerImpl(project).equalTypes(expressionType, typeNoExpectedType)
 
         if (expressionType == null && bindingContext.get(BindingContext.QUALIFIER, physicalExpression) != null) {
-            return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.package.expression"))
+            return showErrorHint(project, editor, KotlinBundle.message("cannot.refactor.package.expression"))
         }
 
         if (expressionType != null && KotlinBuiltIns.isUnit(expressionType)) {
-            return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.expression.has.unit.type"))
+            return showErrorHint(project, editor, KotlinBundle.message("cannot.refactor.expression.has.unit.type"))
         }
 
         val typeArgumentList = getQualifiedTypeArgumentList(KtPsiUtil.safeDeparenthesize(physicalExpression))
@@ -717,10 +718,10 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
         onNonInteractiveFinish: ((KtDeclaration) -> Unit)?
     ) {
         val expression = expressionToExtract?.let { KtPsiUtil.safeDeparenthesize(it) }
-            ?: return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.expression"))
+            ?: return showErrorHint(project, editor, KotlinBundle.message("cannot.refactor.no.expression"))
 
         if (expression.isAssignmentLHS()) {
-            return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.expression"))
+            return showErrorHint(project, editor, KotlinBundle.message("cannot.refactor.no.expression"))
         }
 
         val physicalExpression = expression.substringContextOrThis
@@ -736,7 +737,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
         }
 
         val candidateContainers = expression.getCandidateContainers(resolutionFacade, bindingContext).ifEmpty {
-            return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.container"))
+            return showErrorHint(project, editor, KotlinBundle.message("cannot.refactor.no.container"))
         }
 
         if (editor == null) {
@@ -747,7 +748,8 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
             return candidateContainers.last().let { runWithChosenContainers(it.first, it.second) }
         }
 
-        chooseContainerElementIfNecessary(candidateContainers, editor, "Select target code block", true, { it.first }) {
+        chooseContainerElementIfNecessary(candidateContainers, editor,
+                                          KotlinBundle.message("text.select.target.code.block"), true, { it.first }) {
             runWithChosenContainers(it.first, it.second)
         }
     }

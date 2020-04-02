@@ -375,6 +375,8 @@ public fun <T> Sequence<T>.dropWhile(predicate: (T) -> Boolean): Sequence<T> {
  * Returns a sequence containing only elements matching the given [predicate].
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public fun <T> Sequence<T>.filter(predicate: (T) -> Boolean): Sequence<T> {
     return FilteringSequence(this, true, predicate)
@@ -430,6 +432,8 @@ public inline fun <reified R, C : MutableCollection<in R>> Sequence<*>.filterIsI
  * Returns a sequence containing all elements not matching the given [predicate].
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public fun <T> Sequence<T>.filterNot(predicate: (T) -> Boolean): Sequence<T> {
     return FilteringSequence(this, false, predicate)
@@ -439,6 +443,8 @@ public fun <T> Sequence<T>.filterNot(predicate: (T) -> Boolean): Sequence<T> {
  * Returns a sequence containing all elements that are not `null`.
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterNotNull
  */
 public fun <T : Any> Sequence<T?>.filterNotNull(): Sequence<T> {
     @Suppress("UNCHECKED_CAST")
@@ -1717,6 +1723,8 @@ public inline fun <T> Sequence<T>.minusElement(element: T): Sequence<T> {
  * while *second* list contains elements for which [predicate] yielded `false`.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Sequences.Transformations.partition
  */
 public inline fun <T> Sequence<T>.partition(predicate: (T) -> Boolean): Pair<List<T>, List<T>> {
     val first = ArrayList<T>()

@@ -39,7 +39,6 @@ abstract class KotlinJsSubTarget(
         private set
 
     internal open fun produceExecutable() {
-        configureBuildVariants()
         configureMain()
     }
 
@@ -60,8 +59,6 @@ abstract class KotlinJsSubTarget(
 
     protected fun disambiguateCamelCased(vararg names: String): String =
         lowerCamelCaseName(target.disambiguationClassifier, disambiguationClassifier, *names)
-
-    abstract fun configureBuildVariants()
 
     private fun configureTests() {
         testRuns = project.container(KotlinJsPlatformTestRun::class.java) { name -> KotlinJsPlatformTestRun(name, target) }.also {

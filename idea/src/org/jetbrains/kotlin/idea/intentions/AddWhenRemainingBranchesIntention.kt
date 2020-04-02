@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.quickfix.AddWhenRemainingBranchesFix
 import org.jetbrains.kotlin.psi.KtWhenExpression
 
 class AddWhenRemainingBranchesIntention : SelfTargetingIntention<KtWhenExpression>(
-    KtWhenExpression::class.java, "Add remaining branches"
+    KtWhenExpression::class.java, KotlinBundle.message("add.remaining.branches")
 ) {
     override fun isApplicableTo(element: KtWhenExpression, caretOffset: Int): Boolean {
         if (element.entries.none { it.isElse }) return false

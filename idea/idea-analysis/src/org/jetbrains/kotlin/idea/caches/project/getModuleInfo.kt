@@ -17,6 +17,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.caches.project.cacheByClassInvalidatingOnRootModifications
 import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
@@ -43,16 +44,10 @@ fun PsiElement.getNullableModuleInfo(): IdeaModuleInfo? = this.collectInfos(Modu
 
 fun PsiElement.getModuleInfos(): Sequence<IdeaModuleInfo> = this.collectInfos(ModuleInfoCollector.ToSequence)
 
-private fun ModuleInfo.doFindSdk(): SdkInfo? = dependencies().lazyClosure { it.dependencies() }.firstIsInstanceOrNull<SdkInfo>()
-
 fun ModuleInfo.findSdkAcrossDependencies(): SdkInfo? {
-    return when (this) {
-        // It is important to check for cases of test/production explicitly, because we're using lambda's class
-        // of 'cacheInvalidatingOnRootModifications' as key for cache, and it should be different for Production/Source
-        is ModuleProductionSourceInfo -> module.cacheInvalidatingOnRootModifications { doFindSdk() }
-        is ModuleTestSourceInfo -> module.cacheInvalidatingOnRootModifications { doFindSdk() }
-        else -> doFindSdk()
-    }
+    val project = (this as? IdeaModuleInfo)?.project ?: return null
+
+    return SdkInfoCache.getInstance(project).findOrGetCachedSdk(this)
 }
 
 fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFile): IdeaModuleInfo? =

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.*
 import java.util.*
 
 class CallGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
@@ -187,7 +187,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                     dispatchReceiverValue?.load(),
                     IrStatementOrigin.GET_PROPERTY,
                     superQualifierSymbol
-                )
+                ).also { context.callToSubstitutedDescriptorMap[it] = descriptor }
             }
         } else {
             call.callReceiver.adjustForCallee(getMethodDescriptor).call { dispatchReceiverValue, extensionReceiverValue ->
@@ -211,7 +211,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                         IrStatementOrigin.GET_PROPERTY,
                         superQualifierSymbol
                     ).apply {
-                        context.callToSubstitutedDescriptorMap[this] = getMethodDescriptor
+                        context.callToSubstitutedDescriptorMap[this] = computeSubstitutedSyntheticAccessor(descriptor, getMethodDescriptor)
                         putTypeArguments(call.typeArguments) { it.toIrType() }
                         dispatchReceiver = dispatchReceiverValue?.load()
                         extensionReceiver = extensionReceiverValue?.load()
@@ -384,7 +384,10 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         for (valueArgument in valueArgumentsInEvaluationOrder) {
             val valueParameter = valueArgumentsToValueParameters[valueArgument]!!
             val irArgument = call.getValueArgument(valueParameter) ?: continue
-            val irArgumentValue = scope.createTemporaryVariableInBlock(context, irArgument, irBlock, valueParameter.name.asString())
+            val irArgumentValue = if (irArgument.hasNoSideEffects())
+                generateExpressionValue(irArgument.type) { irArgument }    // Computing a lambda has no side effects, can generate in place
+            else
+                scope.createTemporaryVariableInBlock(context, irArgument, irBlock, valueParameter.name.asString())
             irArgumentValues[valueParameter] = irArgumentValue
         }
 
@@ -398,6 +401,12 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         return irBlock
     }
 }
+
+fun IrExpression.hasNoSideEffects() =
+    this is IrFunctionExpression ||
+            (this is IrCallableReference && dispatchReceiver == null && extensionReceiver == null) ||
+            this is IrClassReference ||
+            this is IrConst<*>
 
 fun CallGenerator.generateCall(ktElement: KtElement, call: CallBuilder, origin: IrStatementOrigin? = null) =
     generateCall(ktElement.startOffsetSkippingComments, ktElement.endOffset, call, origin)

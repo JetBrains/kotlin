@@ -13,10 +13,10 @@ fun main() {
     val finfn = Float.NEGATIVE_INFINITY
 }
 
-// 5 GETSTATIC kotlin/jvm/internal/DoubleCompanionObject.INSTANCE
-// 5 GETSTATIC kotlin/jvm/internal/FloatCompanionObject.INSTANCE
-// 2 getMAX_VALUE
-// 2 getMIN_VALUE
-// 2 getNaN
-// 2 getPOSITIVE_INFINITY
-// 2 getNEGATIVE_INFINITY
+// 0 GETSTATIC kotlin/jvm/internal/DoubleCompanionObject.INSTANCE
+// 0 GETSTATIC kotlin/jvm/internal/FloatCompanionObject.INSTANCE
+// 0 getMAX_VALUE
+// 0 getMIN_VALUE
+// 0 getNaN
+// 0 getPOSITIVE_INFINITY
+// 0 getNEGATIVE_INFINITY

@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
@@ -104,19 +105,18 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
         }
     }
 
-    override fun inspectionText(element: KtDotQualifiedExpression) = "Call replaceable with binary operator"
+    override fun inspectionText(element: KtDotQualifiedExpression) = KotlinBundle.message("call.replaceable.with.binary.operator")
 
-    override val defaultFixText: String
-        get() = "Replace with binary operator"
+    override val defaultFixText: String get() = KotlinBundle.message("replace.with.binary.operator")
 
     override fun fixText(element: KtDotQualifiedExpression): String {
         val calleeExpression = element.callExpression?.calleeExpression as? KtSimpleNameExpression ?: return defaultFixText
         if (calleeExpression.isFloatingPointNumberEquals()) {
-            return "Replace total order equality with IEEE 754 equality"
+            return KotlinBundle.message("replace.total.order.equality.with.ieee.754.equality")
         }
 
         val operation = operation(calleeExpression) ?: return defaultFixText
-        return "Replace with '${operation.value}'"
+        return KotlinBundle.message("replace.with.0", operation.value)
     }
 
     override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {

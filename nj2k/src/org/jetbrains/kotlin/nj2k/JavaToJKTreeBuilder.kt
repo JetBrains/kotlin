@@ -46,9 +46,7 @@ import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType.*
 import org.jetbrains.kotlin.nj2k.types.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -472,6 +470,7 @@ class JavaToJKTreeBuilder constructor(
                 is JKClassSymbol -> JKClassAccessExpression(symbol)
                 is JKFieldSymbol -> JKFieldAccessExpression(symbol)
                 is JKPackageSymbol -> JKPackageAccessExpression(symbol)
+                is JKMethodSymbol -> JKMethodAccessExpression(symbol)
                 else -> throwCanNotConvertError("unexpected symbol ${symbol::class}")
             }.qualified(qualifierExpression?.toJK()).also {
                 it.withFormattingFrom(this)
@@ -492,21 +491,21 @@ class JavaToJKTreeBuilder constructor(
             val newExpression =
                 if (findChildByRole(ChildRole.LBRACKET) != null) {
                     arrayInitializer?.toJK() ?: run {
-                        val dimensions = mutableListOf<PsiExpression?>()
+                        val dimensions = mutableListOf<JKExpression>()
                         var child = firstChild
                         while (child != null) {
                             if (child.node.elementType == JavaTokenType.LBRACKET) {
-                                child = child.nextSibling
-                                dimensions += if (child.node.elementType == JavaTokenType.RBRACKET) {
-                                    null
+                                child = child.getNextSiblingIgnoringWhitespaceAndComments()
+                                if (child.node.elementType == JavaTokenType.RBRACKET) {
+                                    dimensions += JKStubExpression()
                                 } else {
-                                    child as PsiExpression? //TODO
+                                    child.safeAs<PsiExpression>()?.toJK()?.also { dimensions += it }
                                 }
                             }
                             child = child.nextSibling
                         }
                         JKJavaNewEmptyArray(
-                            dimensions.map { it?.toJK()?.withLineBreaksFrom(it) ?: JKStubExpression() },
+                            dimensions,
                             JKTypeElement(generateSequence(type?.toJK()) { it.safeAs<JKJavaArrayType>()?.type }.last())
                         ).also {
                             it.psi = this

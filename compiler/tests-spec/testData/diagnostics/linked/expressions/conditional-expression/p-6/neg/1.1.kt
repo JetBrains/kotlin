@@ -6,7 +6,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SPEC VERSION: 0.1-218
+ * SPEC VERSION: 0.1-313
  * PLACE: expressions, conditional-expression -> paragraph 6 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: The type of the condition expression must be a subtype of kotlin.Boolean
@@ -49,4 +49,22 @@ fun case2() {
     val a = JavaContainer.aO
     if (<!TYPE_MISMATCH, TYPE_MISMATCH!>a<!>) { "true" } else "false"
     checkSubtype<Boolean>(<!TYPE_MISMATCH!>a<!>)
+}
+
+// TESTCASE NUMBER: 3
+// FILE: JavaClassCase3.java
+public class JavaClassCase3{
+    public static <T> T id(T x) {
+        return null;
+    }
+}
+
+// FILE: KotlinClassCase3.kt
+// TESTCASE NUMBER: 3
+fun case3() {
+    val x = JavaClassCase3.id(null) // Nothing!
+    <!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
+    val a = if (<!DEBUG_INFO_CONSTANT, TYPE_MISMATCH, TYPE_MISMATCH!>x<!>) {
+        "NOK"
+    } else "NOK"
 }

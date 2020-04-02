@@ -11,6 +11,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
@@ -145,7 +146,7 @@ private fun reportProblem(holder: ProblemsHolder, element: KtElement) {
     val firstChild = element.firstChild
     holder.registerProblem(
         element,
-        "Redundant qualifier name",
+        KotlinBundle.message("redundant.qualifier.name"),
         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
         TextRange.from(firstChild.startOffsetInParent, firstChild.textLength + 1),
         RemoveRedundantQualifierNameQuickFix()
@@ -153,7 +154,7 @@ private fun reportProblem(holder: ProblemsHolder, element: KtElement) {
 }
 
 class RemoveRedundantQualifierNameQuickFix : LocalQuickFix {
-    override fun getName() = "Remove redundant qualifier name"
+    override fun getName() = KotlinBundle.message("remove.redundant.qualifier.name.quick.fix.text")
     override fun getFamilyName() = name
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {

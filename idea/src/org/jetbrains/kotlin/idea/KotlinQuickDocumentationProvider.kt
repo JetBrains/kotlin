@@ -22,8 +22,6 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.DocumentationURLs.LATE_INITIALIZED_PROPERTIES_AND_VARIABLES_URL
-import org.jetbrains.kotlin.idea.DocumentationURLs.TAIL_RECURSIVE_FUNCTIONS_URL
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -56,14 +54,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-
-private object DocumentationURLs {
-    const val LATE_INITIALIZED_PROPERTIES_AND_VARIABLES_URL =
-        "https://kotlinlang.org/docs/reference/properties.html#late-initialized-properties-and-variables"
-
-    const val TAIL_RECURSIVE_FUNCTIONS_URL =
-        "https://kotlinlang.org/docs/reference/functions.html#tail-recursive-functions"
-}
 
 class HtmlClassifierNamePolicy(val base: ClassifierNamePolicy) : ClassifierNamePolicy {
     override fun renderClassifier(classifier: ClassifierDescriptor, renderer: DescriptorRenderer): String {
@@ -272,7 +262,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                         definition {
                             it.inherit()
                             ordinal?.let {
-                                append("<br>Enum constant ordinal: $ordinal")
+                                append("<br>").append(KotlinBundle.message("quick.doc.text.enum.ordinal", ordinal))
                             }
                         }
                     }
@@ -286,17 +276,8 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 return renderKotlinDeclaration(origin, quickNavigation)
             } else if (element.isModifier()) {
                 when (element.text) {
-                    KtTokens.LATEINIT_KEYWORD.value -> {
-                        return "lateinit allows initializing a ${a(
-                            LATE_INITIALIZED_PROPERTIES_AND_VARIABLES_URL,
-                            "non-null property outside of a constructor"
-                        )}"
-                    }
-
-                    KtTokens.TAILREC_KEYWORD.value -> {
-                        return "tailrec marks a function as ${a(TAIL_RECURSIVE_FUNCTIONS_URL, "tail-recursive")} " +
-                                "(allowing the compiler to replace recursion with iteration)"
-                    }
+                    KtTokens.LATEINIT_KEYWORD.value -> return KotlinBundle.message("quick.doc.text.lateinit")
+                    KtTokens.TAILREC_KEYWORD.value -> return KotlinBundle.message("quick.doc.text.tailrec")
                 }
             }
 
@@ -328,7 +309,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
                 LOG.info("Failed to find descriptor for declaration " + declaration.getElementTextWithContext())
                 return KDocTemplate.NoDocTemplate().apply {
                     error {
-                        append("No documentation available")
+                        append(KotlinBundle.message("quick.doc.no.documentation"))
                     }
                 }
             }
@@ -455,14 +436,14 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             deprecation {
                 deprecationInfo.message?.let { message ->
                     append(SECTION_HEADER_START)
-                    append("Deprecated:")
+                    append(KotlinBundle.message("quick.doc.section.deprecated"))
                     append(SECTION_SEPARATOR)
                     append(message.htmlEscape())
                     append(SECTION_END)
                 }
                 deprecationInfo.deprecatedByAnnotationReplaceWithExpression()?.let { replaceWith ->
                     append(SECTION_HEADER_START)
-                    append("Replace with:")
+                    append(KotlinBundle.message("quick.doc.section.replace.with"))
                     append(SECTION_SEPARATOR)
                     wrapTag("code") { append(replaceWith.htmlEscape()) }
                     append(SECTION_END)
@@ -482,10 +463,6 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             wrap("<$tag>", "</$tag>", body)
         }
 
-        private fun a(url: String, text: String): String {
-            return """<a href="$url">$text</a>"""
-        }
-
         private fun mixKotlinToJava(
             declarationDescriptor: DeclarationDescriptor,
             element: PsiElement,
@@ -496,7 +473,7 @@ class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
             val originalInfo = JavaDocumentationProvider().getQuickNavigateInfo(element, originalElement)
             if (originalInfo != null) {
                 val renderedDecl = constant { DESCRIPTOR_RENDERER.withOptions { withDefinedIn = false } }.render(declarationDescriptor)
-                return "$renderedDecl<br/>Java declaration:<br/>$originalInfo"
+                return "$renderedDecl<br/>" + KotlinBundle.message("quick.doc.section.java.declaration") + "<br/>$originalInfo"
             }
 
             return null

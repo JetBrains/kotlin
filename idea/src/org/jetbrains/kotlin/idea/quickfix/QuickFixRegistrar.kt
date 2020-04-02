@@ -642,5 +642,7 @@ class QuickFixRegistrar : QuickFixContributor {
         MUST_BE_INITIALIZED.registerFactory(ChangeVariableMutabilityFix.MUST_BE_INITIALIZED_FACTORY)
 
         TOO_MANY_ARGUMENTS.registerFactory(RemoveArgumentFix)
+
+        FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS.registerFactory(RemoveModifierFix.createRemoveFunFromInterfaceFactory())
     }
 }

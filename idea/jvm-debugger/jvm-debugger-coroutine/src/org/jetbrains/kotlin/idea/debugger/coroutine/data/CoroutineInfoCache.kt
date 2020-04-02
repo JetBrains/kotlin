@@ -14,9 +14,10 @@ class CoroutineInfoCache(
         state = CacheState.OK
     }
 
-    fun fail() {
+    fun fail(): CoroutineInfoCache {
         cache.clear()
         state = CacheState.FAIL
+        return this
     }
 
     fun isOk(): Boolean {

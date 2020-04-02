@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.findApplicableConfigurator
@@ -35,17 +36,24 @@ import org.jetbrains.kotlin.psi.KtFile
 sealed class EnableUnsupportedFeatureFix(
     element: PsiElement,
     protected val feature: LanguageFeature,
-    protected val apiVersionOnly: Boolean
+    protected val apiVersionOnly: Boolean,
+    protected val isModule: Boolean,
 ) : KotlinQuickFixAction<PsiElement>(element) {
+    override fun getFamilyName() = KotlinJvmBundle.message(
+        "enable.feature.family",
+        0.takeIf { isModule } ?: 1,
+        0.takeIf { apiVersionOnly } ?: 1
+    )
+
+    override fun getText() = KotlinJvmBundle.message(
+        "enable.feature.text",
+        0.takeIf { isModule } ?: 1,
+        0.takeIf { apiVersionOnly } ?: 1,
+        if (apiVersionOnly) feature.sinceApiVersion.versionString else feature.sinceVersion?.versionString.toString()
+    )
+
     class InModule(element: PsiElement, feature: LanguageFeature, apiVersionOnly: Boolean) :
-        EnableUnsupportedFeatureFix(element, feature, apiVersionOnly) {
-        override fun getFamilyName() = "Increase module " + if (apiVersionOnly) "API version" else "language version"
-
-        override fun getText() = if (apiVersionOnly)
-            "Set module API version to ${feature.sinceApiVersion.versionString}"
-        else
-            "Set module language version to ${feature.sinceVersion!!.description}"
-
+        EnableUnsupportedFeatureFix(element, feature, apiVersionOnly, isModule = true) {
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
             val module = ModuleUtilCore.findModuleForPsiElement(file) ?: return
 
@@ -69,14 +77,7 @@ sealed class EnableUnsupportedFeatureFix(
     }
 
     class InProject(element: PsiElement, feature: LanguageFeature, apiVersionOnly: Boolean) :
-        EnableUnsupportedFeatureFix(element, feature, apiVersionOnly) {
-        override fun getFamilyName() = "Increase project " + if (apiVersionOnly) "API version" else "language version"
-
-        override fun getText() = if (apiVersionOnly)
-            "Set project API version to ${feature.sinceApiVersion.versionString}"
-        else
-            "Set project language version to ${feature.sinceVersion!!.versionString}"
-
+        EnableUnsupportedFeatureFix(element, feature, apiVersionOnly, isModule = false) {
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
             val targetVersion = feature.sinceVersion!!
 
@@ -140,9 +141,11 @@ fun askUpdateRuntime(project: Project, requiredVersion: ApiVersion, librariesToU
     if (!ApplicationManager.getApplication().isUnitTestMode) {
         val rc = Messages.showOkCancelDialog(
             project,
-            "This language feature requires version $requiredVersion or later of the Kotlin runtime library. " +
-                    "Would you like to update the runtime library in your project?",
-            "Update Runtime Library",
+            KotlinJvmBundle.message(
+                "this.language.feature.requires.version.0.or.later.of.the.kotlin.runtime.library.would.you.like.to.update.the.runtime.library.in.your.project",
+                requiredVersion
+            ),
+            KotlinJvmBundle.message("update.runtime.library"),
             Messages.getQuestionIcon()
         )
         if (rc != Messages.OK) return false

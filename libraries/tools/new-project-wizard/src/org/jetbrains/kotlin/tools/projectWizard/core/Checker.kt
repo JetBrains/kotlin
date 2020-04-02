@@ -1,8 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
-
-typealias Checker = ReadingContext.() -> Boolean
+typealias Checker = Reader.() -> Boolean
 
 val ALWAYS_AVAILABLE_CHECKER = checker { true }
 
@@ -15,5 +13,5 @@ interface ContextOwner {
 interface ActivityCheckerOwner {
     val isAvailable: Checker
 
-    fun isActive(readingContext: ReadingContext) = isAvailable(readingContext)
+    fun isActive(reader: Reader) = isAvailable(reader)
 }

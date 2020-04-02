@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.util.range
@@ -23,7 +24,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
 
-class ImportAllMembersIntention : SelfTargetingIntention<KtElement>(KtElement::class.java, "Import members with '*'"), HighPriorityAction {
+class ImportAllMembersIntention : SelfTargetingIntention<KtElement>(KtElement::class.java, KotlinBundle.message("import.members.with")),
+    HighPriorityAction {
     override fun isApplicableTo(element: KtElement, caretOffset: Int): Boolean {
         val receiverExpression = element.receiverExpression() ?: return false
         if (!receiverExpression.range.containsOffset(caretOffset)) return false
@@ -40,7 +42,7 @@ class ImportAllMembersIntention : SelfTargetingIntention<KtElement>(KtElement::c
         val helper = ImportInsertHelper.getInstance(project)
         if (helper.importDescriptor(dummyFile, target, forceAllUnderImport = true) == ImportDescriptorResult.FAIL) return false
 
-        text = "Import members from '${targetFqName.parent().asString()}'"
+        text = KotlinBundle.message("import.members.from.0", targetFqName.parent().asString())
         return true
     }
 

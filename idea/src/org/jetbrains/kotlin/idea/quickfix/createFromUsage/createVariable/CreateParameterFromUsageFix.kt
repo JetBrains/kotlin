@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableBuilderConfiguration
@@ -28,7 +29,10 @@ open class CreateParameterFromUsageFix<E : KtElement>(
 ) : CreateFromUsageFixBase<E>(data.originalExpression) {
     override fun getText(): String {
         return with(data.parameterInfo) {
-            if (valOrVar != KotlinValVar.None) "Create property '$name' as constructor parameter" else "Create parameter '$name'"
+            if (valOrVar != KotlinValVar.None)
+                KotlinBundle.message("create.property.0.as.constructor.parameter", name)
+            else
+                KotlinBundle.message("create.parameter.0", name)
         }
     }
 

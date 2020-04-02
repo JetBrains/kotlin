@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -126,7 +126,7 @@ class BasicCompletionSession(
 
         if (parameters.isAutoPopup) {
             collector.addLookupElementPostProcessor { lookupElement ->
-                lookupElement.putUserData(LookupCancelWatcher.AUTO_POPUP_AT, position.startOffset)
+                lookupElement.putUserData(LookupCancelService.AUTO_POPUP_AT, position.startOffset)
                 lookupElement
             }
 
@@ -482,7 +482,12 @@ class BasicCompletionSession(
 
                                 override fun renderElement(presentation: LookupElementPresentation?) {
                                     super.renderElement(presentation)
-                                    presentation?.appendTailText(" for $name in $packageName", true)
+                                    presentation?.appendTailText(
+                                        KotlinIdeaCompletionBundle.message(
+                                            "presentation.tail.for.0.in.1",
+                                            name,
+                                            packageName
+                                        ), true)
                                 }
                             }
                         })
@@ -528,7 +533,7 @@ class BasicCompletionSession(
     }
 
     private fun wasAutopopupRecentlyCancelled(parameters: CompletionParameters) =
-        LookupCancelWatcher.getInstance(project).wasAutoPopupRecentlyCancelled(parameters.editor, position.startOffset)
+        LookupCancelService.getInstance(project).wasAutoPopupRecentlyCancelled(parameters.editor, position.startOffset)
 
     private val KEYWORDS_ONLY = object : CompletionKind {
         override val descriptorKindFilter: DescriptorKindFilter?

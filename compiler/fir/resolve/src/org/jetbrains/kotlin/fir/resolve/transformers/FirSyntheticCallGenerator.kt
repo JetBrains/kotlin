@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedNameError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
@@ -114,7 +114,7 @@ class FirSyntheticCallGenerator(
                 StoreCalleeReference,
                 buildErrorNamedReference {
                     source = callableReferenceAccess.source
-                    diagnostic = FirUnresolvedNameError(callableReferenceAccess.calleeReference.name)
+                    diagnostic = ConeUnresolvedNameError(callableReferenceAccess.calleeReference.name)
                 }
             )
         val fakeCallElement = buildFunctionCall {
@@ -122,7 +122,7 @@ class FirSyntheticCallGenerator(
             this.argumentList = argumentList
         }
 
-        val argument = callCompleter.completeCall(fakeCallElement, expectedTypeRef).argument
+        val argument = callCompleter.completeCall(fakeCallElement, expectedTypeRef).result.argument
         return ((argument as? FirVarargArgumentsExpression)?.arguments?.get(0) ?: argument) as FirCallableReferenceAccess?
     }
 

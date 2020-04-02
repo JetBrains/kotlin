@@ -28,6 +28,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingIntention
 import org.jetbrains.kotlin.idea.search.allScope
@@ -67,7 +68,9 @@ class AddConstModifierFix(property: KtProperty) : AddModifierFix(property, KtTok
     }
 }
 
-class AddConstModifierIntention : SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Add 'const' modifier") {
+class AddConstModifierIntention : SelfTargetingIntention<KtProperty>(
+    KtProperty::class.java, KotlinBundle.message("fix.add.const.modifier")
+) {
     override fun applyTo(element: KtProperty, editor: Editor?) {
         AddConstModifierFix.addConstModifier(element)
     }

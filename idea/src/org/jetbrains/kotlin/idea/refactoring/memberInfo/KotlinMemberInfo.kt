@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -51,10 +52,10 @@ class KotlinMemberInfo @JvmOverloads constructor(
         } else {
             displayName = RENDERER.render(memberDescriptor)
             if (member.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
-                displayName = "abstract $displayName"
+                displayName = KotlinBundle.message("member.info.abstract.0", displayName)
             }
             if (isCompanionMember) {
-                displayName = "companion $displayName"
+                displayName = KotlinBundle.message("member.info.companion.0", displayName)
             }
 
             val overriddenDescriptors = (memberDescriptor as? CallableMemberDescriptor)?.overriddenDescriptors ?: emptySet()

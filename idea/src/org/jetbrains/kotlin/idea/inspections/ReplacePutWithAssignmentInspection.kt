@@ -20,6 +20,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.util.calleeTextRangeInThis
@@ -82,9 +83,10 @@ class ReplacePutWithAssignmentInspection : AbstractApplicabilityBasedInspection<
 
     override fun inspectionHighlightRangeInElement(element: KtDotQualifiedExpression) = element.calleeTextRangeInThis()
 
-    override fun inspectionText(element: KtDotQualifiedExpression): String = "map.put() should be converted to assignment"
+    override fun inspectionText(element: KtDotQualifiedExpression): String =
+        KotlinBundle.message("map.put.should.be.converted.to.assignment")
 
-    override val defaultFixText = "Convert put to assignment"
+    override val defaultFixText get() = KotlinBundle.message("convert.put.to.assignment")
 
     companion object {
         private val compatibleNames = setOf("put")

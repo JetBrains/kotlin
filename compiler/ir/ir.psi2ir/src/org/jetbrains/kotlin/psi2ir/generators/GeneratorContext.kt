@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
 import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -60,14 +60,14 @@ class GeneratorContext(
     override val irBuiltIns: IrBuiltIns
 ) : IrGeneratorContext() {
 
-    val callToSubstitutedDescriptorMap = mutableMapOf<IrMemberAccessExpression, CallableDescriptor>()
+    val callToSubstitutedDescriptorMap = mutableMapOf<IrDeclarationReference, CallableDescriptor>()
 
     val sourceManager = PsiSourceManager()
 
     // TODO: inject a correct StorageManager instance, or store NotFoundClasses inside ModuleDescriptor
     val reflectionTypes = ReflectionTypes(moduleDescriptor, NotFoundClasses(LockBasedStorageManager.NO_LOCKS, moduleDescriptor))
 
-    fun IrMemberAccessExpression.commitSubstituted(descriptor: CallableDescriptor) {
+    fun IrDeclarationReference.commitSubstituted(descriptor: CallableDescriptor) {
         callToSubstitutedDescriptorMap[this] = descriptor
     }
 }

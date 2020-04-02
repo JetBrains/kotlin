@@ -9,14 +9,23 @@ sealed class FirConstKind<T>(val asString: kotlin.String) {
     object Null : FirConstKind<Nothing?>("Null")
     object Boolean : FirConstKind<kotlin.Boolean>("Boolean")
     object Char : FirConstKind<kotlin.Char>("Char")
+
     object Byte : FirConstKind<kotlin.Byte>("Byte")
+    object UnsignedByte : FirConstKind<kotlin.Byte>("UByte")
     object Short : FirConstKind<kotlin.Short>("Short")
+    object UnsignedShort : FirConstKind<kotlin.Short>("UShort")
     object Int : FirConstKind<kotlin.Int>("Int")
+    object UnsignedInt : FirConstKind<kotlin.Int>("UInt")
     object Long : FirConstKind<kotlin.Long>("Long")
+    object UnsignedLong : FirConstKind<kotlin.Long>("ULong")
+
     object String : FirConstKind<kotlin.String>("String")
+
     object Float : FirConstKind<kotlin.Float>("Float")
     object Double : FirConstKind<kotlin.Double>("Double")
+
     object IntegerLiteral : FirConstKind<kotlin.Long>("IntegerLiteral")
+    object UnsignedIntegerLiteral : FirConstKind<kotlin.Long>("UnsignedIntegerLiteral")
 
     override fun toString() = asString
 }

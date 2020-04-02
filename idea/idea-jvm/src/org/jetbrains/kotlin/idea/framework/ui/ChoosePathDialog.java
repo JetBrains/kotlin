@@ -26,6 +26,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import org.jdesktop.swingx.VerticalLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.KotlinJvmBundle;
 
 import javax.swing.*;
 
@@ -61,7 +62,11 @@ class ChoosePathDialog extends DialogWrapper {
         field.getField().setColumns(25);
 
         myPathField = new TextFieldWithBrowseButton(field.getField());
-        myPathField.addBrowseFolderListener("Choose Destination Folder", "Choose folder", myProject, descriptor);
+        myPathField.addBrowseFolderListener(
+                KotlinJvmBundle.message("choose.path.title"),
+                KotlinJvmBundle.message("choose.path.description"),
+                myProject, descriptor
+        );
         myPathField.setText(defaultPath);
 
         panel.add(myPathField);

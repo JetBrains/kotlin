@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.core.compareDescriptors
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.createTempCopy
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
@@ -763,7 +763,7 @@ internal fun KtNamedDeclaration.getGeneratedBody() =
 fun ExtractableCodeDescriptor.validate(target: ExtractionTarget = ExtractionTarget.FUNCTION): ExtractableCodeDescriptorWithConflicts {
     fun getDeclarationMessage(declaration: PsiElement, messageKey: String, capitalize: Boolean = true): String {
         val declarationStr = RefactoringUIUtil.getDescription(declaration, true)
-        val message = KotlinRefactoringBundle.message(messageKey, declarationStr)
+        val message = KotlinBundle.message(messageKey, declarationStr)
         return if (capitalize) message.capitalize() else message
     }
 

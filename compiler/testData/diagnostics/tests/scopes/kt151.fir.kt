@@ -32,7 +32,7 @@ class E : C(), T {
 }
 
 class F : C(), T {
-    private override fun foo() {}
+    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>override<!> fun foo() {}
 }
 
 class G : C(), T {

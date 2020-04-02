@@ -117,7 +117,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
                     fileName,
                     text,
                     object : TestFileFactoryNoModules<File>() {
-                        override fun create(fileName: String, text: String, directives: Map<String, String>): File {
+                        override fun create(fileName: String, text: String, directives: Directives): File {
                             val targetFile = File(tmpdir, fileName)
                             targetFile.writeText(adaptJavaSource(text))
                             return targetFile

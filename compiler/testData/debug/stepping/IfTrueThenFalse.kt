@@ -9,8 +9,8 @@ fun box() {
 }
 
 // LINENUMBERS
-// TestKt.box():5
-// TestKt.cond():2
-// TestKt.box():5
-// TestKt.box():8
-// TestKt.box():9
+// test.kt:5
+// test.kt:2
+// test.kt:5
+// test.kt:8
+// test.kt:9

@@ -28,6 +28,7 @@ import com.intellij.util.text.VersionComparatorUtil
 import org.gradle.tooling.model.UnsupportedMethodException
 import org.gradle.tooling.model.idea.IdeaContentRoot
 import org.gradle.tooling.model.idea.IdeaModule
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
@@ -38,7 +39,7 @@ import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.idea.configuration.GradlePropertiesFileFacade.Companion.KOTLIN_NOT_IMPORTED_COMMON_SOURCE_SETS_SETTING
 import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibrariesDependencySubstitutor
 import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibrariesFixer
-import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.KOTLIN_NATIVE_LIBRARY_PREFIX
+import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
@@ -171,7 +172,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                     externalProject?.sourceSets?.values?.forEach { sourceSet ->
                         sourceSet.dependencies.forEach { dependency ->
                             dependency.getDependencyArtifacts().map { toCanonicalPath(it.absolutePath) }
-                                .filter { mppArtifacts.keys.contains(it) }.forEach {filePath ->
+                                .filter { mppArtifacts.keys.contains(it) }.forEach { filePath ->
                                     (artifactToDependency[filePath] ?: ArrayList<ExternalDependency>().also { newCollection ->
                                         artifactToDependency[filePath] = newCollection
                                     }).add(dependency)
@@ -292,7 +293,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                     it.archiveFile = target.jar?.archiveFile
                     it.konanArtifacts = target.konanArtifacts
                 }
-                val targetDataNode = mainModuleNode.createChild<KotlinTargetData>(KotlinTargetData.KEY, targetData)
+                mainModuleNode.createChild(KotlinTargetData.KEY, targetData)
 
                 val compilationIds = LinkedHashSet<String>()
                 for (compilation in target.compilations) {
@@ -492,7 +493,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
             val substitutedDependencies: List<ExternalDependency>
         ) {
             val konanTarget: String?
-                get() = compilation.nativeExtensions.konanTarget
+                get() = compilation.nativeExtensions?.konanTarget
 
             val dependencyNames: Map<String, ExternalDependency> by lazy {
                 substitutedDependencies.associateBy { it.name.removeSuffixIfPresent(" [$konanTarget]") }
@@ -513,8 +514,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
             val processedModuleIds = HashSet<String>()
             processCompilations(gradleModule, mppModel, ideModule, resolverCtx) { dataNode, compilation ->
                 if (processedModuleIds.add(getKotlinModuleId(gradleModule, compilation, resolverCtx))) {
-                    val substitutedDependencies =
-                        substitutor.substituteDependencies(compilation.dependencies.mapNotNull { mppModel.dependencyMap[it] })
+                    val substitutedDependencies = substitutor.substituteDependencies(compilation)
                     buildDependencies(
                         resolverCtx,
                         sourceSetMap,
@@ -595,26 +595,36 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                     addDependency(fromDataNode, toDataNode, dependeeSourceSet.isTestModule)
                 }
                 if (processedModuleIds.add(getKotlinModuleId(gradleModule, sourceSet, resolverCtx))) {
-                    val mergedDependencies = LinkedHashSet<KotlinDependency>().apply {
-                        addAll(sourceSet.dependencies.mapNotNull { mppModel.dependencyMap[it] })
-                        dependeeSourceSets.flatMapTo(this) { it.dependencies.mapNotNull { mppModel.dependencyMap[it] } }
-                        if (mppModel.extraFeatures.isNativeDependencyPropagationEnabled
-                            && mppModel.extraFeatures.isHMPPEnabled
-                            && sourceSet.actualPlatforms.getSinglePlatform() == KotlinPlatform.NATIVE
-                        ) {
+                    val mergedSubstitutedDependencies = LinkedHashSet<KotlinDependency>().apply {
+                        val forceNativeDependencyPropagation: Boolean
+                        val excludeInheritedNativeDependencies: Boolean
+                        if (mppModel.extraFeatures.isHMPPEnabled && sourceSet.actualPlatforms.getSinglePlatform() == KotlinPlatform.NATIVE) {
+                            forceNativeDependencyPropagation = mppModel.extraFeatures.isNativeDependencyPropagationEnabled
+                            excludeInheritedNativeDependencies = !forceNativeDependencyPropagation
+                        } else {
+                            forceNativeDependencyPropagation = false
+                            excludeInheritedNativeDependencies = false
+                        }
+                        addAll(substitutor.substituteDependencies(sourceSet))
+                        dependeeSourceSets.flatMapTo(this) { dependeeSourceSet ->
+                            substitutor.substituteDependencies(dependeeSourceSet).run {
+                                if (excludeInheritedNativeDependencies)
+                                    filter { !it.name.startsWith(KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE) }
+                                else this
+                            }
+                        }
+                        if (forceNativeDependencyPropagation) {
                             sourceSetToCompilations[sourceSet.name]?.let { compilations ->
                                 addAll(propagatedNativeDependencies(compilations))
                             }
                         }
                     }
-                    val substitutedDependencies =
-                        substitutor.substituteDependencies(mergedDependencies)
                     buildDependencies(
                         resolverCtx,
                         sourceSetMap,
                         artifactsMap,
                         fromDataNode,
-                        preprocessDependencies(substitutedDependencies),
+                        preprocessDependencies(mergedSubstitutedDependencies),
                         ideProject
                     )
                     @Suppress("UNCHECKED_CAST")
@@ -622,6 +632,9 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                 }
             }
         }
+
+        private fun KotlinNativeLibrariesDependencySubstitutor.substituteDependencies(kotlinModule: KotlinModule): List<ExternalDependency> =
+            substituteDependencies(kotlinModule.dependencies.mapNotNull { mppModel.dependencyMap[it] })
 
         // We can't really commonize native platform libraries yet.
         // But APIs for different targets may be very similar.
@@ -654,7 +667,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
 
             return copyFrom.dependencyNames.mapNotNull { (name, dependency) ->
                 when {
-                    !name.startsWith(KOTLIN_NATIVE_LIBRARY_PREFIX) -> null  // Support only default platform libs for now.
+                    !name.startsWith(KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE) -> null  // Support only default platform libs for now.
                     compilations.all { it.dependencyNames.containsKey(name) } -> dependency
                     else -> null
                 }
@@ -666,7 +679,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                 it.startsWith("ios") || it.startsWith("watchos") || it.startsWith("tvos")
             } ?: false
 
-        private fun Iterable<CompilationWithDependencies>.selectFirstAvailableTarget(vararg targetsByPriority: String): CompilationWithDependencies {
+        private fun Iterable<CompilationWithDependencies>.selectFirstAvailableTarget(@NonNls vararg targetsByPriority: String): CompilationWithDependencies {
             for (target in targetsByPriority) {
                 val result = firstOrNull { it.konanTarget == target }
                 if (result != null) {

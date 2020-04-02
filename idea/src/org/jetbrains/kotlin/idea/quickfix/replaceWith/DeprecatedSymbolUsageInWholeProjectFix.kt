@@ -9,6 +9,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.replaceUsagesInWholeProject
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
@@ -24,7 +25,7 @@ class DeprecatedSymbolUsageInWholeProjectFix(
     private val text: String
 ) : DeprecatedSymbolUsageFixBase(element, replaceWith) {
 
-    override fun getFamilyName() = "Replace deprecated symbol usage in whole project"
+    override fun getFamilyName() = KotlinBundle.message("replace.deprecated.symbol.usage.in.whole.project")
 
     override fun getText() = text
 
@@ -37,7 +38,11 @@ class DeprecatedSymbolUsageInWholeProjectFix(
 
     override fun invoke(replacementStrategy: UsageReplacementStrategy, project: Project, editor: Editor?) {
         val psiElement = targetPsiElement()!!
-        replacementStrategy.replaceUsagesInWholeProject(psiElement, progressTitle = "Applying '$text'", commandName = text)
+        replacementStrategy.replaceUsagesInWholeProject(
+            psiElement,
+            progressTitle = KotlinBundle.message("applying.0", text),
+            commandName = text
+        )
     }
 
     private fun targetPsiElement(): KtDeclaration? = when (val referenceTarget = element?.mainReference?.resolve()) {
@@ -68,7 +73,7 @@ class DeprecatedSymbolUsageInWholeProjectFix(
             return DeprecatedSymbolUsageInWholeProjectFix(
                 nameExpression,
                 replacement,
-                "Replace usages of '$descriptorName' in whole project"
+                KotlinBundle.message("replace.usages.of.0.in.whole.project", descriptorName)
             )
         }
     }

@@ -31,6 +31,8 @@ KtFile: 2.2.kt
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('21')
           PsiElement(COMMA)(',')
+          PsiErrorElement:Expecting a when-condition
+            PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           WHEN_CONDITION_WITH_EXPRESSION
             PsiErrorElement:Expecting an expression, is-condition or in-condition
@@ -59,6 +61,8 @@ KtFile: 2.2.kt
                     PsiElement(IDENTIFIER)('Int')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting a when-condition
+            PsiElement(COMMA)(',')
           WHEN_CONDITION_WITH_EXPRESSION
             IS_EXPRESSION
               REFERENCE_EXPRESSION
@@ -73,9 +77,6 @@ KtFile: 2.2.kt
                     PsiElement(IDENTIFIER)('String')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          WHEN_CONDITION_WITH_EXPRESSION
-            PsiErrorElement:Expecting an expression, is-condition or in-condition
-              <empty list>
           PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           RETURN
@@ -118,9 +119,6 @@ KtFile: 2.2.kt
                 PsiElement(IDENTIFIER)('value')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          WHEN_CONDITION_WITH_EXPRESSION
-            PsiErrorElement:Expecting an expression, is-condition or in-condition
-              <empty list>
           PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
           RETURN

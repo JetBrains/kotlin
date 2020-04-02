@@ -5,7 +5,7 @@ import java.util.HashMap
 
 //KT-250 Incorrect variable resolve in constructor arguments of superclass
 open class A(val x: Int)
-class B(y: Int) : A(x)  //x is resolved as a property in a, so no error is generated
+class B(y: Int) : A(<!UNRESOLVED_REFERENCE!>x<!>)  //x is resolved as a property in a, so no error is generated
 
 //KT-617 Prohibit dollars in call to superclass constructors
 open class M(p: Int)
@@ -29,9 +29,9 @@ abstract class TagWithText(name : String) : Tag(name) {
 open class BodyTag(name : String) : TagWithText(name) {
 }
 
-class Body() : BodyTag(name) { // Must be an error!
+class Body() : BodyTag(<!UNRESOLVED_REFERENCE!>name<!>) { // Must be an error!
 }
-class Body1() : BodyTag(this.name) { // Must be an error!
+class Body1() : BodyTag(this.<!UNRESOLVED_REFERENCE!>name<!>) { // Must be an error!
 }
 
 //more tests
@@ -40,10 +40,10 @@ open class X(p: Int, r: Int) {
     val s = "s"
 }
 
-class Y(i: Int) : X(i, rrr) {
+class Y(i: Int) : X(i, <!UNRESOLVED_REFERENCE!>rrr<!>) {
     val rrr = 3
 }
 
-class Z(val i: Int) : <!INAPPLICABLE_CANDIDATE!>X<!>(s, x) {
+class Z(val i: Int) : X(<!UNRESOLVED_REFERENCE!>s<!>, <!UNRESOLVED_REFERENCE!>x<!>) {
     val x = 2
 }

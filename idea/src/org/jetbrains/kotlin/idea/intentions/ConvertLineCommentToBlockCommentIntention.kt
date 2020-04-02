@@ -9,13 +9,14 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespace
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespace
 
 class ConvertLineCommentToBlockCommentIntention : SelfTargetingIntention<PsiComment>(
-    PsiComment::class.java, "Replace with block comment"
+    PsiComment::class.java, KotlinBundle.message("replace.with.block.comment")
 ) {
 
     override fun isApplicableTo(element: PsiComment, caretOffset: Int): Boolean {

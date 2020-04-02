@@ -13,6 +13,7 @@ import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.openapi.roots.OrderEnumerator
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.script.loadDefinitionsFromTemplates
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.scripting.definitions.SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT
@@ -43,7 +44,7 @@ class ScriptTemplatesFromDependenciesProvider(project: Project) : AsyncScriptDef
     }
 
     override val id = "ScriptTemplatesFromDependenciesProvider"
-    override val progressMessage = "Kotlin: scanning dependencies for script definitions..."
+    override val progressMessage = KotlinBundle.message("script.progress.text.kotlin.scanning.dependencies.for.script.definitions")
 
     override fun loadScriptDefinitions(previous: List<ScriptDefinition>?): List<ScriptDefinition> {
         if (project.isDefault) return emptyList()

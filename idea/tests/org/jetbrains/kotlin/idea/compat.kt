@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.idea
 
 import com.intellij.ide.hierarchy.HierarchyTreeStructure
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.util.Computable
+import com.intellij.testFramework.ExtensionTestUtil
 import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestFixture
 
 // BUNCH: 193
@@ -17,4 +20,12 @@ fun doHierarchyTestCompat(
     expectedStructure: String,
 ) {
     HierarchyViewTestFixture.doHierarchyTest(treeStructureComputable.compute(), expectedStructure)
+}
+
+fun <T> maskExtensions(
+    pointName: ExtensionPointName<T>,
+    newExtensions: List<T>,
+    parentDisposable: Disposable
+) {
+    ExtensionTestUtil.maskExtensions(pointName, newExtensions, parentDisposable)
 }

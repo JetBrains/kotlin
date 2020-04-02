@@ -97,7 +97,7 @@ public class KotlinTestUtils {
 
     private static final List<File> filesToDelete = new ArrayList<>();
 
-    static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!([\\w_]+)(:\\s*(.*)$)?", Pattern.MULTILINE);
+    private static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*[!]?([A-Z_]+)(:[ \\t]*(.*))?$", Pattern.MULTILINE);
 
     private KotlinTestUtils() {
     }
@@ -524,14 +524,17 @@ public class KotlinTestUtils {
     }
 
     @NotNull
-    public static Map<String, String> parseDirectives(String expectedText) {
-        Map<String, String> directives = new HashMap<>();
+    public static Directives parseDirectives(String expectedText) {
+        return parseDirectives(expectedText, new Directives());
+    }
+
+    @NotNull
+    public static Directives parseDirectives(String expectedText, @NotNull Directives directives) {
         Matcher directiveMatcher = DIRECTIVE_PATTERN.matcher(expectedText);
         while (directiveMatcher.find()) {
             String name = directiveMatcher.group(1);
             String value = directiveMatcher.group(3);
-            String oldValue = directives.put(name, value);
-            Assert.assertNull("Directive overwritten: " + name + " old value: " + oldValue + " new value: " + value, oldValue);
+            directives.put(name, value);
         }
         return directives;
     }
@@ -549,7 +552,7 @@ public class KotlinTestUtils {
         List<String> files = TestFiles.createTestFiles("", content, new TestFiles.TestFileFactoryNoModules<String>() {
             @NotNull
             @Override
-            public String create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
+            public String create(@NotNull String fileName, @NotNull String text, @NotNull Directives directives) {
                 int firstLineEnd = text.indexOf('\n');
                 return StringUtil.trimTrailing(text.substring(firstLineEnd + 1));
             }

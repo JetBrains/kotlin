@@ -238,6 +238,7 @@ private class ConvertGettersAndSettersToPropertyStatefulProcessing(
             modifiers
         )
         ktSetter.filterModifiers()
+        val propertyName = property.name
         if (setter is RealSetter) {
             setter.function.forAllUsages { usage ->
                 val callExpression = usage.getStrictParentOfType<KtCallExpression>() ?: return@forAllUsages
@@ -245,10 +246,10 @@ private class ConvertGettersAndSettersToPropertyStatefulProcessing(
                 val newValue = callExpression.valueArguments.single()
                 if (qualifier != null) {
                     qualifier.replace(
-                        factory.createExpression("${qualifier.receiverExpression.text}.${setter.name} = ${newValue.text}")
+                        factory.createExpression("${qualifier.receiverExpression.text}.$propertyName = ${newValue.text}")
                     )
                 } else {
-                    callExpression.replace(factory.createExpression("${setter.name} = ${newValue.text}"))
+                    callExpression.replace(factory.createExpression("$propertyName = ${newValue.text}"))
                 }
             }
         }

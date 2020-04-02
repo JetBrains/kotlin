@@ -12,6 +12,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -33,7 +34,7 @@ class RedundantElvisReturnNullInspection : AbstractKotlinInspection() {
 
             holder.registerProblem(
                 binaryExpression,
-                "Redundant '?: return null'",
+                KotlinBundle.message("inspection.redundant.elvis.return.null.descriptor"),
                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                 TextRange(binaryExpression.operationReference.startOffset, right.endOffset).shiftLeft(binaryExpression.startOffset),
                 RemoveRedundantElvisReturnNull()
@@ -44,7 +45,7 @@ class RedundantElvisReturnNullInspection : AbstractKotlinInspection() {
     private fun KtExpression.deparenthesize() = KtPsiUtil.deparenthesize(this)
 
     private class RemoveRedundantElvisReturnNull : LocalQuickFix {
-        override fun getName() = "Remove redundant '?: return null'"
+        override fun getName() = KotlinBundle.message("remove.redundant.elvis.return.null.text")
 
         override fun getFamilyName() = name
 

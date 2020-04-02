@@ -139,6 +139,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
             name = method.name
             returnType = method.returnType
             visibility = method.visibility
+            isFakeOverride = true
             origin = IrDeclarationOrigin.FAKE_OVERRIDE
         }.apply {
             overriddenSymbols += method.symbol
@@ -290,6 +291,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
 
                 val receiverField = referenceClass.addField {
                     name = backingFieldFromSuper.name
+                    isFakeOverride = true
                     origin = IrDeclarationOrigin.FAKE_OVERRIDE
                     type = backingFieldFromSuper.type
                     isFinal = backingFieldFromSuper.isFinal

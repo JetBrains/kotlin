@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !LANGUAGE: +NewInference
 
 import kotlin.test.assertEquals
@@ -9,5 +8,5 @@ fun test() {
         else -> 1.0
     }
 
-    assertEquals(42, u)
+    <!TYPE_INFERENCE_ONLY_INPUT_TYPES_WARNING!>assertEquals<!>(42, u)
 }

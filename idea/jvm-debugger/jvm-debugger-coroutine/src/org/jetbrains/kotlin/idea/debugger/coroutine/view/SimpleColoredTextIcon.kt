@@ -8,25 +8,21 @@ package org.jetbrains.kotlin.idea.debugger.coroutine.view
 import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.debugger.settings.ThreadsViewSettings
 import com.intellij.icons.AllIcons
-import com.intellij.ide.highlighter.JavaHighlightingColors
-import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
+import com.intellij.icons.AllIcons.General.Information
 import com.intellij.openapi.editor.HighlighterColors
-import com.intellij.openapi.editor.colors.CodeInsightColors
-import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
-import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.ui.ColoredTextContainer
 import com.intellij.ui.SimpleColoredComponent
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.xdebugger.frame.presentation.XValuePresentation
 import com.intellij.xdebugger.impl.ui.DebuggerUIUtil
 import com.intellij.xdebugger.impl.ui.XDebuggerUIConstants
-import com.intellij.xdebugger.ui.DebuggerColors
 import com.sun.jdi.Location
 import com.sun.jdi.ReferenceType
+import org.jetbrains.kotlin.idea.debugger.coroutine.KotlinDebuggerCoroutinesBundle
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
+import org.jetbrains.kotlin.idea.debugger.coroutine.data.State
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
-import java.awt.Color
 import javax.swing.Icon
 
 class SimpleColoredTextIcon(val icon: Icon?, val hasChildrens: Boolean) {
@@ -99,26 +95,31 @@ interface CoroutineDebuggerColors {
     }
 }
 
+fun fromState(state: State): Icon =
+    when (state) {
+        State.SUSPENDED -> AllIcons.Debugger.ThreadSuspended
+        State.RUNNING -> AllIcons.Debugger.ThreadRunning
+        State.CREATED -> AllIcons.Debugger.ThreadStates.Idle
+        else -> AllIcons.Debugger.ThreadStates.Daemon_sign
+    }
+
 class SimpleColoredTextIconPresentationRenderer {
     val log by logger
     private val settings: ThreadsViewSettings = ThreadsViewSettings.getInstance()
 
     fun render(infoData: CoroutineInfoData): SimpleColoredTextIcon {
         val thread = infoData.activeThread
-        val name = thread?.name()?.substringBefore(" @${infoData.name}") ?: ""
+        val name = thread?.name()?.substringBefore(" @${infoData.key.name}") ?: ""
         val threadState = if (thread != null) DebuggerUtilsEx.getThreadStatusText(thread.status()) else ""
 
-        val icon = when (infoData.state) {
-            CoroutineInfoData.State.SUSPENDED -> AllIcons.Debugger.ThreadSuspended
-            CoroutineInfoData.State.RUNNING -> AllIcons.Debugger.ThreadRunning
-            CoroutineInfoData.State.CREATED -> AllIcons.Debugger.ThreadStates.Idle
-        }
+        val icon = fromState(infoData.key.state)
 
-        val label = SimpleColoredTextIcon(icon, true)
+        val hasChildren = infoData.stackTrace.isNotEmpty() || infoData.creationStackTrace.isNotEmpty()
+        val label = SimpleColoredTextIcon(icon, hasChildren)
         label.append("\"")
-        label.appendValue(infoData.name)
-        label.append("\": ${infoData.state}")
-        if(name.isNotEmpty()) {
+        label.appendValue(infoData.key.name)
+        label.append("\": ${infoData.key.state}")
+        if (name.isNotEmpty()) {
             label.append(" on thread \"")
             label.appendValue(name)
             label.append("\": $threadState")
@@ -160,7 +161,7 @@ class SimpleColoredTextIconPresentationRenderer {
                 } else {
                     label.append(name.substring(dotIndex + 1))
                     if (settings.SHOW_PACKAGE_NAME) {
-                        label.append(" (${name.substring( 0, dotIndex)})")
+                        label.append(" (${name.substring(0, dotIndex)})")
                     }
                 }
             }
@@ -177,14 +178,18 @@ class SimpleColoredTextIconPresentationRenderer {
     }
 
     fun renderCreationNode(infoData: CoroutineInfoData) =
-        SimpleColoredTextIcon(AllIcons.Debugger.ThreadSuspended, true, "Creation stack frame of ${infoData.name}")
+        SimpleColoredTextIcon(
+            AllIcons.Debugger.ThreadSuspended,
+            true,
+            KotlinDebuggerCoroutinesBundle.message("coroutine.dump.creation.frame", infoData.key.name)
+        )
 
     fun renderErrorNode(error: String) =
-        SimpleColoredTextIcon(AllIcons.Actions.Lightning,false, error)
+        SimpleColoredTextIcon(AllIcons.Actions.Lightning,false, KotlinDebuggerCoroutinesBundle.message(error))
 
-    fun renderRoorNode(text: String) =
-        SimpleColoredTextIcon(null, true, text)
+    fun renderInfoNode(text: String) =
+        SimpleColoredTextIcon(AllIcons.General.Information, false, KotlinDebuggerCoroutinesBundle.message(text))
 
     fun renderGroup(groupName: String) =
-        SimpleColoredTextIcon(AllIcons.Debugger.ThreadGroup,true, groupName)
+        SimpleColoredTextIcon(AllIcons.Debugger.ThreadGroup, true, groupName)
 }

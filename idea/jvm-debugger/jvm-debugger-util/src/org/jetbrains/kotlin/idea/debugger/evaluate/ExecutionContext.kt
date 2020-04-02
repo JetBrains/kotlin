@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
 import com.intellij.debugger.engine.DebugProcessImpl
-import com.intellij.debugger.engine.DebuggerManagerThreadImpl
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
-import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.jdi.VirtualMachineProxyImpl
@@ -21,7 +19,32 @@ import com.sun.jdi.request.EventRequest
 import org.jetbrains.kotlin.idea.debugger.hopelessAware
 import org.jetbrains.org.objectweb.asm.Type
 
-class ExecutionContext(val evaluationContext: EvaluationContextImpl, val frameProxy: StackFrameProxyImpl) {
+class ExecutionContext(evaluationContext: EvaluationContextImpl, val frameProxy: StackFrameProxyImpl) :
+    BaseExecutionContext(evaluationContext) {
+}
+
+class DefaultExecutionContext(evaluationContext: EvaluationContextImpl) : BaseExecutionContext(evaluationContext) {
+
+    constructor(suspendContext: SuspendContextImpl) : this(
+        EvaluationContextImpl(
+            suspendContext,
+            null
+        )
+    )
+
+    constructor(suspendContext: SuspendContextImpl, frameProxy: StackFrameProxyImpl?) : this(
+        EvaluationContextImpl(
+            suspendContext,
+            frameProxy
+        )
+    )
+
+    val frameProxy: StackFrameProxyImpl?
+        get() =
+            evaluationContext.frameProxy
+}
+
+sealed class BaseExecutionContext(val evaluationContext: EvaluationContextImpl) {
     val vm: VirtualMachineProxyImpl
         get() = evaluationContext.debugProcess.virtualMachineProxy
 
@@ -121,7 +144,12 @@ class ExecutionContext(val evaluationContext: EvaluationContextImpl, val framePr
     fun invokeMethodAsObject(instance: ObjectReference, methodName: String, vararg params: Value): ObjectReference? =
         invokeMethodAsObject(instance, methodName, null, *params)
 
-    fun invokeMethodAsObject(instance: ObjectReference, methodName: String, methodSignature: String?, vararg params: Value): ObjectReference? =
+    fun invokeMethodAsObject(
+        instance: ObjectReference,
+        methodName: String,
+        methodSignature: String?,
+        vararg params: Value
+    ): ObjectReference? =
         findAndInvoke(instance, methodName, methodSignature, *params) as? ObjectReference
 
     fun invokeMethodAsObject(instance: ObjectReference, method: Method, vararg params: Value): ObjectReference? =
@@ -130,13 +158,24 @@ class ExecutionContext(val evaluationContext: EvaluationContextImpl, val framePr
     fun invokeMethodAsVoid(type: ClassType, methodName: String, methodSignature: String? = null, vararg params: Value = emptyArray()) =
         findAndInvoke(type, methodName, methodSignature, *params)
 
-    fun invokeMethodAsVoid(instance: ObjectReference, methodName: String, methodSignature: String? = null, vararg params: Value = emptyArray()) =
+    fun invokeMethodAsVoid(
+        instance: ObjectReference,
+        methodName: String,
+        methodSignature: String? = null,
+        vararg params: Value = emptyArray()
+    ) =
         findAndInvoke(instance, methodName, methodSignature, *params)
 
     fun invokeMethodAsArray(instance: ClassType, methodName: String, methodSignature: String, vararg params: Value): ArrayReference? =
         findAndInvoke(instance, methodName, methodSignature, *params) as? ArrayReference
 
-    private fun findAndInvoke(ref: ObjectReference, type: ReferenceType, name: String, methodSignature: String, vararg params: Value): Value? {
+    private fun findAndInvoke(
+        ref: ObjectReference,
+        type: ReferenceType,
+        name: String,
+        methodSignature: String,
+        vararg params: Value
+    ): Value? {
         val method = type.methodsByName(name, methodSignature).single()
         return invokeMethod(ref, method, params.asList())
     }
@@ -155,6 +194,7 @@ class ExecutionContext(val evaluationContext: EvaluationContextImpl, val framePr
 
     fun findAndInvoke(instance: ObjectReference, name: String, methodSignature: String? = null, vararg params: Value): Value? {
         val type = instance.referenceType()
+        type.allMethods()
         val method =
             if (methodSignature is String)
                 type.methodsByName(name, methodSignature).single()

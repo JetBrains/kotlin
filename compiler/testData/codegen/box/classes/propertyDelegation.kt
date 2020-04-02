@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 open class Base() {
     val plain = 239
     public val read : Int

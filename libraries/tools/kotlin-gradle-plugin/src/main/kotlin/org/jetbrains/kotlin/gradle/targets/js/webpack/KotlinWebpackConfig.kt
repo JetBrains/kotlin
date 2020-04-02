@@ -27,7 +27,7 @@ data class KotlinWebpackConfig(
     val bundleAnalyzerReportDir: File? = null,
     val reportEvaluatedConfigFile: File? = null,
     val devServer: DevServer? = null,
-    val devtool: Devtool? = Devtool.EVAL_SOURCE_MAP,
+    val devtool: String? = WebpackDevtool.EVAL_SOURCE_MAP,
     val showProgress: Boolean = false,
     val sourceMaps: Boolean = false,
     val export: Boolean = true,
@@ -78,11 +78,6 @@ data class KotlinWebpackConfig(
         val proxy: Map<String, Any>? = null,
         val contentBase: List<String>
     ) : Serializable
-
-    enum class Devtool(val code: String) {
-        EVAL_SOURCE_MAP("eval-source-map"),
-        SOURCE_MAP("source-map")
-    }
 
     fun save(configFile: File) {
         configFile.writer().use {
@@ -146,7 +141,7 @@ data class KotlinWebpackConfig(
     }
 
     private fun Appendable.appendFromConfigDir() {
-        if (configDirectory == null) return
+        if (configDirectory == null || !configDirectory.isDirectory) return
 
         appendln()
         appendConfigsFromDir(configDirectory)
@@ -199,7 +194,7 @@ data class KotlinWebpackConfig(
                         use: ["kotlin-source-map-loader"],
                         enforce: "pre"
                 });
-                config.devtool = ${devtool?.code?.let { "'$it'" } ?: false};
+                config.devtool = ${devtool?.let { "'$it'" } ?: false};
                 
             """.trimIndent()
         )

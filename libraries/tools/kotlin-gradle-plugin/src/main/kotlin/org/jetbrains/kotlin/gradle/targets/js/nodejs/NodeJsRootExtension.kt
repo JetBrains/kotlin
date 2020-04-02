@@ -26,7 +26,7 @@ open class NodeJsRootExtension(val rootProject: Project) : ConfigurationPhaseAwa
     var download by Property(true)
 
     var nodeDownloadBaseUrl by Property("https://nodejs.org/dist")
-    var nodeVersion by Property("12.14.0")
+    var nodeVersion by Property("12.16.1")
 
     var nodeCommand by Property("node")
 

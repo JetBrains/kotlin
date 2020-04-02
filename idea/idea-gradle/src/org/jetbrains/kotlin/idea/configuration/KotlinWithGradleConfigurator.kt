@@ -26,9 +26,11 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.util.PathUtil
 import org.gradle.util.GradleVersion
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.facet.toApiVersion
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion
@@ -109,7 +111,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
     }
 
     fun configureSilently(project: Project, modules: List<Module>, version: String): NotificationMessageCollector {
-        return project.executeCommand("Configure Kotlin") {
+        return project.executeCommand(KotlinIdeaGradleBundle.message("comman.name.configure.kotlin")) {
             val collector = createConfigureKotlinNotificationCollector(project)
             val changedFiles = configureWithVersion(project, modules, version, collector)
 
@@ -140,7 +142,10 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
             if (file != null && canConfigureFile(file)) {
                 configureModule(module, file, false, kotlinVersion, collector, filesToOpen)
             } else {
-                showErrorMessage(project, "Cannot find build.gradle file for module " + module.name)
+                showErrorMessage(
+                    project,
+                    KotlinIdeaGradleBundle.message("error.text.cannot.find.build.gradle.file.for.module", module.name)
+                )
             }
         }
         return filesToOpen
@@ -198,7 +203,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         version: String,
         collector: NotificationMessageCollector
     ): Boolean {
-        val isModified = file.project.executeWriteCommand("Configure ${file.name}", null) {
+        val isModified = file.project.executeWriteCommand(KotlinIdeaGradleBundle.message("command.name.configure.0", file.name), null) {
             val isModified = addElementsToFile(file, isTopLevelProjectFile, version)
 
             CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(file)
@@ -207,7 +212,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
 
         val virtualFile = file.virtualFile
         if (virtualFile != null && isModified) {
-            collector.addMessage(virtualFile.path + " was modified")
+            collector.addMessage(KotlinIdeaGradleBundle.message("text.was.modified", virtualFile.path))
         }
         return isModified
     }
@@ -226,9 +231,8 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         if (runtimeUpdateRequired) {
             Messages.showErrorDialog(
                 module.project,
-                "This language feature requires version $requiredStdlibVersion or later of the Kotlin runtime library. " +
-                        "Please update the version in your build script.",
-                "Update Language Version"
+                KotlinIdeaGradleBundle.message("error.text.this.language.feature.requires.version", requiredStdlibVersion),
+                KotlinIdeaGradleBundle.message("title.update.language.version")
             )
             return
         }
@@ -247,8 +251,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         if (runtimeUpdateRequired) {
             Messages.showErrorDialog(
                 module.project,
-                "Coroutines support requires version 1.1 or later of the Kotlin runtime library. " +
-                        "Please update the version in your build script.",
+                KotlinIdeaGradleBundle.message("error.text.coroutines.support.requires.version.1.1.or.later.of.the.kotlin.runtime.library"),
                 ChangeCoroutineSupportFix.getFixText(state)
             )
             return
@@ -271,8 +274,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         if (state != LanguageFeature.State.DISABLED && getRuntimeLibraryVersion(module).toApiVersion() < sinceVersion) {
             Messages.showErrorDialog(
                 module.project,
-                "${feature.presentableName} support requires version $sinceVersion or later of the Kotlin runtime library. " +
-                        "Please update the version in your build script.",
+                KotlinIdeaGradleBundle.message("error.text.support.requires.version", feature.presentableName, sinceVersion),
                 ChangeCoroutineSupportFix.getFixText(state)
             )
             return
@@ -304,13 +306,20 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         fun getManipulator(file: PsiFile, preferNewSyntax: Boolean = true): GradleBuildScriptManipulator<*> =
             getManipulatorIfAny(file, preferNewSyntax) ?: error("Unknown build script file type (${file::class.qualifiedName})!")
 
-        val GROUP_ID = "org.jetbrains.kotlin"
-        val GRADLE_PLUGIN_ID = "kotlin-gradle-plugin"
+        @NonNls
+        const val GROUP_ID = "org.jetbrains.kotlin"
 
-        val CLASSPATH = "classpath \"$GROUP_ID:$GRADLE_PLUGIN_ID:\$kotlin_version\""
+        @NonNls
+        const val GRADLE_PLUGIN_ID = "kotlin-gradle-plugin"
 
-        private val KOTLIN_BUILD_SCRIPT_NAME = "build.gradle.kts"
-        private val KOTLIN_SETTINGS_SCRIPT_NAME = "settings.gradle.kts"
+        @NonNls
+        const val CLASSPATH = "classpath \"$GROUP_ID:$GRADLE_PLUGIN_ID:\$kotlin_version\""
+
+        @NonNls
+        private const val KOTLIN_BUILD_SCRIPT_NAME = "build.gradle.kts"
+
+        @NonNls
+        private const val KOTLIN_SETTINGS_SCRIPT_NAME = "settings.gradle.kts"
 
         fun getGroovyDependencySnippet(artifactName: String, scope: String, withVersion: Boolean, gradleVersion: GradleVersion): String {
             val updatedScope = gradleVersion.scope(scope)
@@ -331,7 +340,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
 
             buildScript.virtualFile?.let {
                 createConfigureKotlinNotificationCollector(buildScript.project)
-                    .addMessage(it.path + " was modified")
+                    .addMessage(KotlinIdeaGradleBundle.message("text.was.modified", it.path))
                     .showNotification()
             }
         }
@@ -367,7 +376,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         private fun changeBuildGradle(module: Module, body: (PsiFile) -> PsiElement?): PsiElement? {
             val buildScriptFile = module.getBuildScriptPsiFile()
             if (buildScriptFile != null && canConfigureFile(buildScriptFile)) {
-                return buildScriptFile.project.executeWriteCommand("Change build.gradle configuration", null) {
+                return buildScriptFile.project.executeWriteCommand(KotlinIdeaGradleBundle.message("change.build.gradle.configuration"), null) {
                     body(buildScriptFile)
                 }
             }
@@ -431,7 +440,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         }
 
         private fun findBuildGradleFile(path: String, vararg fileNames: String): File? =
-            fileNames.asSequence().map { File(path + "/" + it) }.firstOrNull { it.exists() }
+            fileNames.asSequence().map { File("$path/$it") }.firstOrNull { it.exists() }
 
         private fun File.getPsiFile(project: Project) = VfsUtil.findFileByIoFile(this, true)?.let {
             PsiManager.getInstance(project).findFile(it)
@@ -440,10 +449,10 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         private fun showErrorMessage(project: Project, message: String?) {
             Messages.showErrorDialog(
                 project,
-                "<html>Couldn't configure kotlin-gradle plugin automatically.<br/>" +
-                        (if (message != null) message + "<br/>" else "") +
-                        "<br/>See manual installation instructions <a href=\"https://kotlinlang.org/docs/reference/using-gradle.html\">here</a>.</html>",
-                "Configure Kotlin-Gradle Plugin"
+                "<html>" + KotlinIdeaGradleBundle.message("text.couldn.t.configure.kotlin.gradle.plugin.automatically") + "<br/>" +
+                        (if (message != null) "$message<br/>" else "") +
+                        "<br/>${KotlinIdeaGradleBundle.message("text.see.manual.installation.instructions")}</html>",
+                KotlinIdeaGradleBundle.message("title.configure.kotlin.gradle.plugin")
             )
         }
     }

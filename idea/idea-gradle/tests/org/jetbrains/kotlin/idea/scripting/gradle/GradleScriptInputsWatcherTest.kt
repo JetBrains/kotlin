@@ -11,9 +11,12 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationLoadingTest
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.plugins.gradle.util.GradleConstants
+import org.junit.runner.RunWith
 import java.io.File
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 open class GradleScriptInputsWatcherTest : AbstractScriptConfigurationLoadingTest() {
     companion object {
         internal const val outsidePlaceholder = "// OUTSIDE_SECTIONS"

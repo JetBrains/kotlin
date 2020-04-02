@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.KotlinJvmBundle;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,7 +28,7 @@ public class AddToIncompatibleApiDialog extends DialogWrapper {
         this.project = project;
 
         setModal(true);
-        setTitle("Report as Incompatible API");
+        setTitle(KotlinJvmBundle.message("incompatible.api.report"));
         referenceTextField.setText(qualifiedReference);
 
         init();

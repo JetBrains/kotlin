@@ -36,9 +36,10 @@ internal class DukatCompilationResolverPlugin(
     }
 
     override fun hookDependencies(
-        internalDependencies: MutableSet<KotlinCompilationNpmResolver>,
-        externalGradleDependencies: MutableSet<KotlinCompilationNpmResolver.ExternalGradleDependency>,
-        externalNpmDependencies: MutableSet<NpmDependency>
+        internalDependencies: Set<KotlinCompilationNpmResolver>,
+        internalCompositeDependencies: Set<KotlinCompilationNpmResolver.CompositeDependency>,
+        externalGradleDependencies: Set<KotlinCompilationNpmResolver.ExternalGradleDependency>,
+        externalNpmDependencies: Set<NpmDependency>
     ) {
         if (nodeJs.experimental.discoverTypes) {
             // todo: discoverTypes

@@ -47,7 +47,7 @@ class FirControlFlowGraphRenderVisitor(
         printer
             .println("digraph ${file.name.replace(".", "_")} {")
             .pushIndent()
-            .println("graph [splines=ortho nodesep=3]")
+            .println("graph [nodesep=3]")
             .println("node [shape=box penwidth=2]")
             .println("edge [penwidth=2]")
             .println()
@@ -92,13 +92,19 @@ class FirControlFlowGraphRenderVisitor(
                 }
                 val attributes = mutableListOf<String>()
                 attributes += "label=\"${it.render().replace("\"", "")}\""
-                if (it == enterNode || it == exitNode) {
+
+                fun fillColor(color: String) {
                     attributes += "style=\"filled\""
-                    attributes += "fillcolor=red"
+                    attributes += "fillcolor=$color"
+                }
+
+                if (it == enterNode || it == exitNode) {
+                    fillColor("red")
                 }
                 if (it.isDead) {
-                    attributes += "style=\"filled\""
-                    attributes += "fillcolor=gray"
+                    fillColor("gray")
+                } else if (it is UnionFunctionCallArgumentsNode) {
+                    fillColor("yellow")
                 }
                 println(indices.getValue(it), attributes.joinToString(separator = " ", prefix = " [", postfix = "];"))
                 if (it is ExitNodeMarker) {
@@ -132,6 +138,8 @@ class FirControlFlowGraphRenderVisitor(
     }
 }
 
+private object CfgRenderMode : FirRenderer.RenderMode(renderLambdaBodies = false, renderCallArguments = false)
+
 private fun CFGNode<*>.render(): String =
     buildString {
         append(
@@ -157,26 +165,28 @@ private fun CFGNode<*>.render(): String =
                 is LoopConditionExitNode -> "Exit loop condition"
                 is LoopExitNode -> "Exit ${fir.type()}loop"
 
-                is QualifiedAccessNode -> "Access variable ${fir.calleeReference.render(FirRenderer.RenderMode.DontRenderLambdaBodies)}"
+                is QualifiedAccessNode -> "Access variable ${fir.calleeReference.render(CfgRenderMode)}"
+                is ResolvedQualifierNode -> "Access qualifier ${fir.classId}"
                 is OperatorCallNode -> "Operator ${fir.operation.operator}"
                 is ComparisonExpressionNode -> "Comparison ${fir.operation.operator}"
-                is TypeOperatorCallNode -> "Type operator: \"${fir.render(FirRenderer.RenderMode.DontRenderLambdaBodies)}\""
+                is TypeOperatorCallNode -> "Type operator: \"${fir.render(CfgRenderMode)}\""
                 is JumpNode -> "Jump: ${fir.render()}"
                 is StubNode -> "Stub"
-                is CheckNotNullCallNode -> "Check not null: ${fir.render(FirRenderer.RenderMode.DontRenderLambdaBodies)}"
+                is CheckNotNullCallNode -> "Check not null: ${fir.render(CfgRenderMode)}"
 
                 is ConstExpressionNode -> "Const: ${fir.render()}"
                 is VariableDeclarationNode ->
                     "Variable declaration: ${buildString {
                         FirRenderer(
                             this,
-                            FirRenderer.RenderMode.DontRenderLambdaBodies
+                            CfgRenderMode
                         ).visitCallableDeclaration(fir)
                     }}"
 
-                is VariableAssignmentNode -> "Assignmenet: ${fir.lValue.render(FirRenderer.RenderMode.DontRenderLambdaBodies)}"
-                is FunctionCallNode -> "Function call: ${fir.render(FirRenderer.RenderMode.DontRenderLambdaBodies)}"
-                is ThrowExceptionNode -> "Throw: ${fir.render(FirRenderer.RenderMode.DontRenderLambdaBodies)}"
+                is VariableAssignmentNode -> "Assignmenet: ${fir.lValue.render(CfgRenderMode)}"
+                is FunctionCallNode -> "Function call: ${fir.render(CfgRenderMode)}"
+                is DelegatedConstructorCallNode -> "Delegated constructor call: ${fir.render(CfgRenderMode)}"
+                is ThrowExceptionNode -> "Throw: ${fir.render(CfgRenderMode)}"
 
                 is TryExpressionEnterNode -> "Try expression enter"
                 is TryMainBlockEnterNode -> "Try main block enter"
@@ -215,6 +225,8 @@ private fun CFGNode<*>.render(): String =
                 is PostponedLambdaExitNode -> "Postponed exit from lambda"
 
                 is AnonymousObjectExitNode -> "Exit anonymous object"
+
+                is UnionFunctionCallArgumentsNode -> "Call arguments union"
 
                 else -> TODO(this@render.toString())
             },

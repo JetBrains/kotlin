@@ -17,21 +17,16 @@
 package org.jetbrains.uast.kotlin.declarations
 
 import com.intellij.psi.*
-import com.intellij.psi.impl.light.LightMethodBuilder
-import com.intellij.psi.impl.light.LightModifierList
-import com.intellij.psi.impl.light.LightParameterListBuilder
-import com.intellij.psi.impl.light.LightTypeParameterBuilder
 import org.jetbrains.kotlin.asJava.elements.*
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.*
 import org.jetbrains.uast.java.internal.JavaUElementWithComments
 import org.jetbrains.uast.kotlin.*
+import org.jetbrains.uast.kotlin.psi.UastFakeLightMethod
+import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 
 open class KotlinUMethod(
     psi: PsiMethod,
@@ -68,13 +63,18 @@ open class KotlinUMethod(
     private val receiver by lz { (sourcePsi as? KtCallableDeclaration)?.receiverTypeReference }
 
     override val uastParameters by lz {
-        val lightParams = psi.parameterList.parameters
-        val receiver = receiver ?: return@lz lightParams.map {
-            KotlinUParameter(it, (it as? KtLightElement<*, *>)?.kotlinOrigin, this)
+
+        fun parameterOrigin(psiParameter: PsiParameter?): KtElement? = when (psiParameter) {
+            is KtLightElement<*, *> -> psiParameter.kotlinOrigin
+            is UastKotlinPsiParameter -> psiParameter.ktParameter
+            else -> null
         }
+
+        val lightParams = psi.parameterList.parameters
+        val receiver = receiver ?: return@lz lightParams.map { KotlinUParameter(it, parameterOrigin(it), this) }
         val receiverLight = lightParams.firstOrNull() ?: return@lz emptyList<UParameter>()
         val uParameters = SmartList<UParameter>(KotlinReceiverUParameter(receiverLight, receiver, this))
-        lightParams.drop(1).mapTo(uParameters) { KotlinUParameter(it, (it as? KtLightElement<*, *>)?.kotlinOrigin, this) }
+        lightParams.drop(1).mapTo(uParameters) { KotlinUParameter(it, parameterOrigin(it), this) }
         uParameters
     }
 
@@ -158,50 +158,15 @@ open class KotlinUAnnotationMethod(
 
 }
 
-private class UastFakeLightMethod(private val original: KtFunction, containingClass: PsiClass) : LightMethodBuilder(
-    original.manager, original.language, original.name ?: "<no name provided>",
-    LightParameterListBuilder(original.manager, original.language),
-    LightModifierList(original.manager)
-) {
+class KotlinUMethodWithFakeLightDelegate internal constructor(
+    val original: KtFunction,
+    fakePsi: UastFakeLightMethod,
+    givenParent: UElement?
+) : KotlinUMethod(fakePsi, original, givenParent) {
 
-    init {
-        this.containingClass = containingClass
-    }
+    constructor(original: KtFunction, containingLightClass: PsiClass, givenParent: UElement?)
+            : this(original, UastFakeLightMethod(original, containingLightClass), givenParent)
 
-    private val _buildTypeParameterList by lazy {
-        KotlinLightTypeParameterListBuilder(this).also { paramList ->
-            for ((i, p) in original.typeParameters.withIndex()) {
-                paramList.addParameter(LightTypeParameterBuilder(p.name ?: "__no_name__", this, i))
-            }
-        }
-    }
-
-    override fun getTypeParameterList(): PsiTypeParameterList? = _buildTypeParameterList
-
-    override fun getReturnType(): PsiType? {
-        val context = original.analyze()
-        val descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, original).safeAs<CallableDescriptor>() ?: return null
-        return descriptor.returnType?.toPsiType(this, original, false)
-    }
-
-    override fun getParent(): PsiElement? = containingClass
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as UastFakeLightMethod
-
-        if (original != other.original) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int = original.hashCode()
-}
-
-class KotlinUMethodWithFakeLightDelegate(val original: KtFunction, containingLightClass: PsiClass, givenParent: UElement?) :
-    KotlinUMethod(UastFakeLightMethod(original, containingLightClass), original, givenParent) {
     override val annotations: List<UAnnotation>
         get() = original.annotationEntries.mapNotNull { it.toUElementOfType<UAnnotation>() }
 

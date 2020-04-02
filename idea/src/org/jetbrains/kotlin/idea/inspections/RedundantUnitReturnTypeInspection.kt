@@ -10,6 +10,7 @@ import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeIntention
 import org.jetbrains.kotlin.psi.KtCodeFragment
@@ -25,7 +26,7 @@ class RedundantUnitReturnTypeInspection : AbstractKotlinInspection(), CleanupLoc
             if (hasRedundantUnitReturnType(function)) {
                 holder.registerProblem(
                     typeElement,
-                    "Redundant 'Unit' return type",
+                    KotlinBundle.message("redundant.unit.return.type"),
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                     IntentionWrapper(RemoveExplicitTypeIntention(), function.containingKtFile)
                 )

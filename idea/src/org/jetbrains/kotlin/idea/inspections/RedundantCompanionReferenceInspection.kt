@@ -12,10 +12,10 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -41,7 +41,7 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
             if (isRedundantCompanionReference(expression)) {
                 holder.registerProblem(
                     expression,
-                    "Redundant Companion reference",
+                    KotlinBundle.message("redundant.companion.reference"),
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                     RemoveRedundantCompanionReferenceFix()
                 )
@@ -140,7 +140,7 @@ private fun CallableDescriptor.isLocalOrExtension(extensionClassDescriptor: Clas
 }
 
 class RemoveRedundantCompanionReferenceFix : LocalQuickFix {
-    override fun getName() = "Remove redundant Companion reference"
+    override fun getName() = KotlinBundle.message("remove.redundant.companion.reference.fix.text")
 
     override fun getFamilyName() = name
 

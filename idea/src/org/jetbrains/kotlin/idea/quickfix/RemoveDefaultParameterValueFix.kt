@@ -3,13 +3,14 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtParameter
 
 class RemoveDefaultParameterValueFix(parameter: KtParameter) : KotlinQuickFixAction<KtParameter>(parameter) {
 
-    override fun getText() = "Remove default parameter value"
+    override fun getText() = KotlinBundle.message("remove.default.parameter.value")
 
     override fun getFamilyName() = text
 

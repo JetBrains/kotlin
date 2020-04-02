@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.injection
@@ -30,6 +19,7 @@ import org.intellij.plugins.intelliLang.Configuration
 import org.intellij.plugins.intelliLang.inject.*
 import org.intellij.plugins.intelliLang.inject.config.BaseInjection
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.patterns.KotlinPatterns
 import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -40,7 +30,8 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-@NonNls val KOTLIN_SUPPORT_ID = "kotlin"
+@NonNls
+val KOTLIN_SUPPORT_ID = "kotlin"
 
 class KotlinLanguageInjectionSupport : AbstractLanguageInjectionSupport() {
     override fun getId(): String = KOTLIN_SUPPORT_ID
@@ -83,7 +74,7 @@ class KotlinLanguageInjectionSupport : AbstractLanguageInjectionSupport() {
 
         TemporaryPlacesRegistry.getInstance(project).removeHostWithUndo(project, psiElement)
 
-        project.executeWriteCommand("remove injection in-code instructions") {
+        project.executeWriteCommand(KotlinJvmBundle.message("command.action.remove.injection.in.code.instructions")) {
             injectInstructions.forEach(PsiElement::delete)
         }
 
@@ -182,7 +173,7 @@ private fun addInjectionInstructionInCode(language: Language, host: PsiLanguageI
     val modifierListOwner = findElementToInjectWithAnnotation(ktHost)
 
     if (modifierListOwner != null && canInjectWithAnnotation(ktHost)) {
-        project.executeWriteCommand("Add injection annotation") {
+        project.executeWriteCommand(KotlinJvmBundle.message("command.action.add.injection.annotation")) {
             modifierListOwner.addAnnotation(FqName(AnnotationUtil.LANGUAGE), "\"${language.id}\"")
         }
 
@@ -198,7 +189,7 @@ private fun addInjectionInstructionInCode(language: Language, host: PsiLanguageI
     val psiFactory = KtPsiFactory(project)
     val injectComment = psiFactory.createComment("//language=" + language.id)
 
-    project.executeWriteCommand("Add injection comment") {
+    project.executeWriteCommand(KotlinJvmBundle.message("command.action.add.injection.comment")) {
         commentBeforeAnchor.parent.addBefore(injectComment, commentBeforeAnchor)
     }
 

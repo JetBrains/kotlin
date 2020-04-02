@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.BuiltInsProvider
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider
-import org.jetbrains.kotlin.descriptors.commonizer.utils.NativeFactories.DefaultDeserializedDescriptorFactory
+import org.jetbrains.kotlin.descriptors.commonizer.utils.NativeFactories
 import org.jetbrains.kotlin.descriptors.commonizer.utils.createKotlinNativeForwardDeclarationsModule
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.storage.StorageManager
@@ -20,7 +20,7 @@ internal class NativeDistributionModulesProvider(
     private val libraries: NativeDistributionLibraries
 ) : BuiltInsProvider, ModulesProvider {
     override fun loadBuiltIns(): KotlinBuiltIns {
-        val stdlib = DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(
+        val stdlib = NativeFactories.DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(
             library = libraries.stdlib.library,
             languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
             storageManager = storageManager,
@@ -37,7 +37,7 @@ internal class NativeDistributionModulesProvider(
 
         val platformModulesMap = libraries.platformLibs.associate { library ->
             val name = library.manifestData.uniqueName
-            val module = DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+            val module = NativeFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
                 library = library.library,
                 languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
                 storageManager = storageManager,

@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateEqualsAndHashcodeAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -36,7 +37,7 @@ class ArrayInDataClassInspection : AbstractKotlinInspection() {
                 if (KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)) {
                     holder.registerProblem(
                         parameter,
-                        "Array property in data class: it's recommended to override equals() / hashCode()",
+                        KotlinBundle.message("array.property.in.data.class.it.s.recommended.to.override.equals.hashcode"),
                         ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                         GenerateEqualsAndHashcodeFix()
                     )
@@ -65,7 +66,7 @@ class ArrayInDataClassInspection : AbstractKotlinInspection() {
     }
 
     class GenerateEqualsAndHashcodeFix : LocalQuickFix {
-        override fun getName() = "Generate equals() and hashCode()"
+        override fun getName() = KotlinBundle.message("generate.equals.and.hashcode.fix.text")
 
         override fun getFamilyName() = name
 

@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
@@ -26,7 +27,7 @@ internal class AddExplicitImportForDeprecatedVisibilityFix(expression: KtElement
 
     override fun getFamilyName(): String = text
 
-    override fun getText(): String = "Add explicit import"
+    override fun getText(): String = KotlinBundle.message("fix.add.explicit.import")
 
     object Factory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {

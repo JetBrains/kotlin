@@ -2,13 +2,9 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui
 
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.components.JBList
-import org.jetbrains.kotlin.tools.projectWizard.core.ignore
 import javax.swing.DefaultListModel
 import javax.swing.JList
-import javax.swing.ListModel
 import javax.swing.ListSelectionModel
-import javax.swing.event.ListDataEvent
-import javax.swing.event.ListDataListener
 
 abstract class AbstractSingleSelectableListWithIcon<V>(initialValues: List<V> = emptyList()) : JBList<V>() {
     protected abstract fun ColoredListCellRenderer<V>.render(value: V)

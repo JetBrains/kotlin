@@ -36,7 +36,7 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
     override val template: KClass<*> get() = baseClass
 
     override val name: String
-        get() = scriptCompilationConfiguration[ScriptCompilationConfiguration.displayName] ?: "Kotlin Script"
+        get() = scriptCompilationConfiguration[ScriptCompilationConfiguration.displayName] ?: KOTLIN_SCRIPT
 
     override val fileType: LanguageFileType = KotlinFileType.INSTANCE
 

@@ -357,7 +357,16 @@ fun IrDeclarationContainer.addChild(declaration: IrDeclaration) {
     stageController.unrestrictDeclarationListsAccess {
         this.declarations += declaration
     }
-    declaration.accept(SetDeclarationsParentVisitor, this)
+    declaration.setDeclarationsParent(this)
+}
+
+fun IrDeclarationContainer.addChildren(declarations: List<IrDeclaration>) {
+    declarations.forEach { this.addChild(it) }
+}
+
+fun <T : IrElement> T.setDeclarationsParent(parent: IrDeclarationParent): T {
+    accept(SetDeclarationsParentVisitor, parent)
+    return this
 }
 
 object SetDeclarationsParentVisitor : IrElementVisitor<Unit, IrDeclarationParent> {
@@ -551,6 +560,7 @@ fun createStaticFunctionWithReceivers(
     origin: IrDeclarationOrigin = oldFunction.origin,
     modality: Modality = Modality.FINAL,
     visibility: Visibility = oldFunction.visibility,
+    isFakeOverride: Boolean = oldFunction.isFakeOverride,
     copyMetadata: Boolean = true,
     typeParametersFromContext: List<IrTypeParameter> = listOf()
 ): IrSimpleFunction {
@@ -570,7 +580,7 @@ fun createStaticFunctionWithReceivers(
         isTailrec = false,
         isSuspend = oldFunction.isSuspend,
         isExpect = oldFunction.isExpect,
-        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+        isFakeOverride = isFakeOverride,
         isOperator = oldFunction is IrSimpleFunction && oldFunction.isOperator
     ).apply {
         descriptor.bind(this)

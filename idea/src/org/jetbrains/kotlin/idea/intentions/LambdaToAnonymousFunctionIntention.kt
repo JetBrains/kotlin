@@ -9,6 +9,7 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.moveInsideParentheses
@@ -30,8 +31,8 @@ import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpression>(
     KtLambdaExpression::class.java,
-    "Convert to anonymous function",
-    "Convert lambda expression to anonymous function"
+    KotlinBundle.message("convert.to.anonymous.function"),
+    KotlinBundle.message("convert.lambda.expression.to.anonymous.function")
 ), LowPriorityAction {
     override fun isApplicableTo(element: KtLambdaExpression, caretOffset: Int): Boolean {
         if (element.getStrictParentOfType<KtValueArgument>() == null) return false

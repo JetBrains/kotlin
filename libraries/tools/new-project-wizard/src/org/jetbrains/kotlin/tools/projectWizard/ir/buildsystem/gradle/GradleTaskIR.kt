@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.FreeIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.render
@@ -26,7 +27,7 @@ data class GradleByNameTaskAccessIR(
 }
 
 data class GradleByClassTasksAccessIR(
-    val taskClass: String
+    @NonNls val taskClass: String
 ) : GradleTaskAccessIR {
     override fun GradlePrinter.renderGradle() {
         when (dsl) {
@@ -40,11 +41,34 @@ data class GradleByClassTasksAccessIR(
     }
 }
 
+data class GradleByClassTasksCreateIR(
+    val taskName: String,
+    val taskClass: String
+) : GradleTaskAccessIR {
+    override fun GradlePrinter.renderGradle() {
+        when (dsl) {
+            GradlePrinter.GradleDsl.KOTLIN -> {
+                +"val $taskName by tasks.creating($taskClass::class)"
+            }
+            GradlePrinter.GradleDsl.GROOVY -> {
+                +"task($taskName, type: $taskClass)"
+            }
+        }
+    }
+}
+
+
 data class GradleConfigureTaskIR(
     val taskAccess: GradleTaskAccessIR,
     val dependsOn: List<BuildSystemIR> = emptyList(),
     val irs: List<BuildSystemIR> = emptyList()
 ) : GradleIR, FreeIR {
+    constructor(
+        taskAccess: GradleTaskAccessIR,
+        dependsOn: List<BuildSystemIR> = emptyList(),
+        createIrs: MutableList<BuildSystemIR>.() -> Unit = {}
+    ) : this(taskAccess, dependsOn, mutableListOf<BuildSystemIR>().apply(createIrs))
+
     override fun GradlePrinter.renderGradle() {
         taskAccess.render(this)
         +" "

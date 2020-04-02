@@ -14,7 +14,12 @@ abstract class FirPartialBodyResolveTransformer(
     val transformer: FirBodyResolveTransformer
 ) : FirAbstractBodyResolveTransformer(transformer.transformerPhase) {
     @Suppress("OVERRIDE_BY_INLINE")
-    final override inline val components: BodyResolveTransformerComponents get() = transformer.components
+    final override inline val context: BodyResolveContext
+        get() = transformer.context
+
+    @Suppress("OVERRIDE_BY_INLINE")
+    final override inline val components: BodyResolveTransformerComponents
+        get() = transformer.components
 
     @set:PrivateForInline
     override var implicitTypeOnly: Boolean

@@ -13,6 +13,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.refactoring.ValVarExpression
@@ -25,10 +26,10 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 interface AddValVarToConstructorParameterAction {
     companion object {
-        const val actionFamily = "Add val/var to primary constructor parameter"
+        val actionFamily: String get() = KotlinBundle.message("add.val.var.to.primary.constructor.parameter")
     }
 
-    fun getActionText(element: KtParameter) = "Add val/var to parameter '${element.name ?: ""}'"
+    fun getActionText(element: KtParameter) = KotlinBundle.message("add.val.var.to.parameter.0", element.name ?: "")
 
     fun canInvoke(element: KtParameter): Boolean {
         return element.valOrVarKeyword == null && ((element.parent as? KtParameterList)?.parent as? KtPrimaryConstructor)

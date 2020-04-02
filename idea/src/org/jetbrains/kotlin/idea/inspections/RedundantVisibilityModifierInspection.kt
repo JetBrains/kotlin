@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.implicitVisibility
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -60,7 +61,7 @@ class RedundantVisibilityModifierInspection : AbstractKotlinInspection(), Cleanu
 
             holder.registerProblem(
                 visibilityModifier,
-                "Redundant visibility modifier",
+                KotlinBundle.message("redundant.visibility.modifier"),
                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                 IntentionWrapper(
                     RemoveModifierFix(declaration, redundantVisibility, isRedundant = true),

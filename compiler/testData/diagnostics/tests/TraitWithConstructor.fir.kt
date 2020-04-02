@@ -9,7 +9,7 @@ interface T2 constructor() {}
 interface T3 private constructor(a: Int) {}
 
 interface T4 {
-    constructor(a: Int) {
+    <!CONSTRUCTOR_IN_INTERFACE!>constructor(a: Int)<!> {
         val b: Int = 1
     }
 }

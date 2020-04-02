@@ -18,7 +18,7 @@ import com.intellij.xdebugger.breakpoints.ui.XBreakpointCustomPropertiesPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.java.debugger.breakpoints.properties.JavaMethodBreakpointProperties;
-import org.jetbrains.kotlin.idea.KotlinBundle;
+import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerCoreBundle;
 import org.jetbrains.kotlin.psi.*;
 
 import javax.swing.*;
@@ -34,7 +34,7 @@ public class KotlinFunctionBreakpointType
 {
     // MODIFICATION: Start Kotlin implementation
     public KotlinFunctionBreakpointType() {
-        super("kotlin-function", KotlinBundle.message("debugger.function.breakpoints.tab.title"));
+        super("kotlin-function", KotlinDebuggerCoreBundle.message("function.breakpoint.tab.title"));
     }
 
     @Override

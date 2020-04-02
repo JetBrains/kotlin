@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.codegen.SamCodegenUtil
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -36,7 +37,8 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.sam.SamConversionOracle
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.resolve.sam.getFunctionTypeForPossibleSamType
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 
@@ -53,7 +55,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
                 val problemDescriptor = holder.manager.createProblemDescriptor(
                     single.getQualifiedExpressionForSelector()?.receiverExpression ?: calleeExpression,
                     single.typeArgumentList ?: calleeExpression,
-                    "Redundant SAM-constructor",
+                    KotlinBundle.message("redundant.sam.constructor"),
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                     isOnTheFly,
                     createQuickFix(single)
@@ -63,7 +65,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             } else {
                 val problemDescriptor = holder.manager.createProblemDescriptor(
                     expression.valueArgumentList!!,
-                    "Redundant SAM-constructors",
+                    KotlinBundle.message("redundant.sam.constructors"),
                     createQuickFix(samConstructorCalls),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     isOnTheFly
@@ -76,7 +78,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
 
     private fun createQuickFix(expression: KtCallExpression): LocalQuickFix {
         return object : LocalQuickFix {
-            override fun getName() = "Remove redundant SAM-constructor"
+            override fun getName() = KotlinBundle.message("remove.redundant.sam.constructor")
             override fun getFamilyName() = name
             override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
                 if (!FileModificationService.getInstance().preparePsiElementForWrite(expression)) return
@@ -87,7 +89,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
 
     private fun createQuickFix(expressions: Collection<KtCallExpression>): LocalQuickFix {
         return object : LocalQuickFix {
-            override fun getName() = "Remove redundant SAM-constructors"
+            override fun getName() = KotlinBundle.message("remove.redundant.sam.constructors")
             override fun getFamilyName() = name
             override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
                 for (callExpression in expressions) {

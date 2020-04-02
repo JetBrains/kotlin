@@ -14,6 +14,7 @@ import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExe
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.core.TaskResult
 import org.jetbrains.kotlin.tools.projectWizard.core.andThen
 import org.jetbrains.kotlin.tools.projectWizard.core.safe
@@ -34,7 +35,8 @@ class IdeaGradleWizardService(private val project: Project) : ProjectImportingWi
     // to import Gradle project in all IDEAs from 183 to 193
     override fun importProject(
         path: Path,
-        modulesIrs: List<ModuleIR>
+        modulesIrs: List<ModuleIR>,
+        buildSystem: BuildSystemType
     ): TaskResult<Unit> = performImport(path) andThen createGradleWrapper(path)
 
     private fun performImport(path: Path) = safe {
@@ -68,6 +70,7 @@ class IdeaGradleWizardService(private val project: Project) : ProjectImportingWi
     }
 
     companion object {
+        @NonNls
         private const val WRAPPER_TASK_NAME = "wrapper"
     }
 }
