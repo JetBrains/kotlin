@@ -80,7 +80,8 @@ public class InspectionFilterAction extends DefaultActionGroup implements Toggle
 
     final Set<String> languageIds = new THashSet<>();
     for (ScopeToolState state : profile.getDefaultStates(project)) {
-      languageIds.add(state.getTool().getLanguage());
+      final String language = state.getTool().getLanguage();
+      if (language != null) languageIds.add(language);
     }
 
     final List<Language> languages = new SmartList<>();
