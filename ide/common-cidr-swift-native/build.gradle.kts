@@ -29,6 +29,7 @@ repositories {
 dependencies {
     addIdeaNativeModuleDeps(project)
     compile(project(":kotlin-ultimate:ide:common-cidr-native"))
+    compile(project(":kotlin-ultimate:ide:cidr-gradle-tooling"))
     compileOnly("com.jetbrains.intellij.swift:swift:$cidrVersion")
     compileOnly("com.jetbrains.intellij.cidr:cidr-cocoa:$cidrVersion")
     compileOnly("com.jetbrains.intellij.platform:external-system-rt:$cidrVersion")

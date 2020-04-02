@@ -10,7 +10,7 @@ import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.idea.facet.KotlinFacetConfiguration
 import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
-import org.jetbrains.kotlin.platform.konan.KonanPlatform
+import org.jetbrains.kotlin.platform.konan.NativePlatform
 
 private fun Module.targetPlatformOrNull(): SimplePlatform? {
     val facets = FacetManager.getInstance(this).allFacets
@@ -23,7 +23,7 @@ val Module.isAndroid: Boolean
     get() = targetPlatformOrNull() is JdkPlatform
 
 val Module.isApple: Boolean
-    get() = targetPlatformOrNull() is KonanPlatform
+    get() = targetPlatformOrNull() is NativePlatform
 
 val Module.isMobileAppMain: Boolean
     get() = name.endsWith("Main") && (isAndroid || isApple)

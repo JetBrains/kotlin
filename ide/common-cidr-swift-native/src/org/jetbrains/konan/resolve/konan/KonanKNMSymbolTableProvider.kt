@@ -9,7 +9,7 @@ import com.jetbrains.cidr.lang.preprocessor.OCInclusionContext
 import com.jetbrains.cidr.lang.symbols.symtable.ContextSignature
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTable
 import com.jetbrains.cidr.lang.symbols.symtable.SymbolTableProvider
-import org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeMetaFileType
+import org.jetbrains.kotlin.idea.klib.KlibMetaFileType
 
 class KonanKNMSymbolTableProvider : SymbolTableProvider() {
     override fun isOutOfCodeBlockChange(event: PsiTreeChangeEventImpl): Boolean = false
@@ -18,10 +18,10 @@ class KonanKNMSymbolTableProvider : SymbolTableProvider() {
 
     private fun empty(virtualFile: VirtualFile) = FileSymbolTable(virtualFile, ContextSignature())
 
-    override fun isSource(psiFile: PsiFile): Boolean = psiFile.virtualFile.fileType is KotlinNativeMetaFileType
+    override fun isSource(psiFile: PsiFile): Boolean = psiFile.virtualFile.fileType is KlibMetaFileType
 
     override fun isSource(project: Project, virtualFile: VirtualFile): Boolean =
-        FileTypeManager.getInstance().isFileOfType(virtualFile, KotlinNativeMetaFileType)
+        FileTypeManager.getInstance().isFileOfType(virtualFile, KlibMetaFileType)
 
     override fun isSource(project: Project, virtualFile: VirtualFile, inclusionContext: OCInclusionContext): Boolean =
         isSource(project, virtualFile)
