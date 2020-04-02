@@ -320,10 +320,11 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
                     type = ownerSymbol.constructStarProjectedType(typeParameterNumber)
                 }
             }
-            // ???
-            isExtension -> buildQualifiedAccessExpression {
+            isExtension -> buildThisReceiverExpression {
                 source = delegateBuilder.source
-                calleeReference = buildExplicitThisReference {}
+                calleeReference = buildImplicitThisReference {
+                    boundSymbol = this@generateAccessorsByDelegate.symbol
+                }
             }
             else -> buildConstExpression(null, FirConstKind.Null, null)
         }
