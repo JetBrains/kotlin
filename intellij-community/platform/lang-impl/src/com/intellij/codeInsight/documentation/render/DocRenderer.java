@@ -373,7 +373,8 @@ class DocRenderer implements EditorCustomElementRenderer {
         "th { text-align: left; }" +
         "td {padding: 4px 0 0 0}" +
         "td p {padding-top: 0}" +
-        ".sections {border-spacing: 0}"
+        ".sections {border-spacing: 0}" +
+        ".section {padding-right: 4px; white-space: nowrap}"
       );
       ourCachedStyleSheetLinkColor = linkColorHex;
       ourCachedStyleSheetMonoFont = editorFontName;
