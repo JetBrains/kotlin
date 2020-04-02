@@ -61,14 +61,16 @@ class JdkPlatform(val targetVersion: JvmTarget) : JvmPlatform() {
         get() = targetVersion
 
     // TODO(dsavvinov): temporarily conservative measure; make JdkPlatform data class later
-    // Explanation: previously we had only one JvmPlatform, and all 'TargetPlatform's had an
-    //   equality (actually, identity, because each platform had only one instance). This lead
-    //   to common pattern of putting them in map (e.g., see KotlinCacheServiceImpl.globalFacadesPerPlatformAndSdk).
-    //
-    //   If we start distinguishing JvmPlatforms with different JvmTarget right now, it may accidentally
-    //   break some clients (in particular, we'll create global facade for *each* JvmTarget, which is a bad idea)
+    //  Explanation: previously we had only one JvmPlatform, and all 'TargetPlatform's had an
+    //  equality (actually, identity, because each platform had only one instance). This lead
+    //  to common pattern of putting them in map (e.g., see KotlinCacheServiceImpl.globalFacadesPerPlatformAndSdk).
+    //  .
+    //  If we start distinguishing JvmPlatforms with different JvmTarget right now, it may accidentally
+    //  break some clients (in particular, we'll create global facade for *each* JvmTarget, which is a bad idea)
     override fun equals(other: Any?): Boolean = other is JdkPlatform
     override fun hashCode(): Int = JdkPlatform::class.hashCode()
 }
 
+// TODO: temporarily conservative implementation; use the same approach as for TargetPlatform?.isNative()
+//  when JdkPlatform becomes a data class
 fun TargetPlatform?.isJvm(): Boolean = this?.singleOrNull() is JvmPlatform
