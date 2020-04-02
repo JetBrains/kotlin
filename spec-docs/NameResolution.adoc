@@ -364,7 +364,7 @@ Note that the functions imported in this way have lower priority then the functi
 4. _Functions from stdlib_.
 The Kotlin standard library contains lots of extension functions.
 They are all implicitly imported in any Kotlin file.
-If you declare the function with the same name as in stdlib, then use it from the same package or import it, your function will have higher priority then the library function.
+If you declare the function with the same name as in stdlib, then use it from the same package or import it, your function will have higher priority than the library function.
 
 Note that explicit import has the highest priority.
 That means it might be unsafe to replace an explicit import with star import, because the resolution for the call of imported function might change.
