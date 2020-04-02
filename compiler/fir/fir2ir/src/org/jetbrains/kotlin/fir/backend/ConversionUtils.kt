@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.AccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.*
@@ -92,7 +93,8 @@ fun FirClassifierSymbol<*>.toSymbol(
 fun FirReference.toSymbol(
     session: FirSession,
     classifierStorage: Fir2IrClassifierStorage,
-    declarationStorage: Fir2IrDeclarationStorage
+    declarationStorage: Fir2IrDeclarationStorage,
+    conversionScope: Fir2IrConversionScope
 ): IrSymbol? {
     return when (this) {
         is FirResolvedNamedReference -> {
@@ -114,6 +116,10 @@ fun FirReference.toSymbol(
             when (val boundSymbol = boundSymbol) {
                 is FirClassSymbol<*> -> classifierStorage.getIrClassSymbol(boundSymbol).owner.thisReceiver?.symbol
                 is FirFunctionSymbol -> declarationStorage.getIrFunctionSymbol(boundSymbol).owner.extensionReceiverParameter?.symbol
+                is FirPropertySymbol -> {
+                    val property = declarationStorage.getIrPropertyOrFieldSymbol(boundSymbol).owner as? IrProperty
+                    property?.let { conversionScope.parentAccessorOfPropertyFromStack(it) }?.symbol
+                }
                 else -> null
             }
         }

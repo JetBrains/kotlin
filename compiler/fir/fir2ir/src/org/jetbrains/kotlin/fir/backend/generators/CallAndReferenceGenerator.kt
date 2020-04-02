@@ -51,7 +51,7 @@ internal class CallAndReferenceGenerator(
     private fun ConeKotlinType.toIrType(): IrType = with(typeConverter) { toIrType() }
 
     fun convertToIrCallableReference(callableReferenceAccess: FirCallableReferenceAccess): IrExpression {
-        val symbol = callableReferenceAccess.calleeReference.toSymbol(session, classifierStorage, declarationStorage)
+        val symbol = callableReferenceAccess.calleeReference.toSymbol(session, classifierStorage, declarationStorage, conversionScope)
         val type = callableReferenceAccess.typeRef.toIrType()
         return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
             when (symbol) {
@@ -147,7 +147,8 @@ internal class CallAndReferenceGenerator(
         val symbol = qualifiedAccess.calleeReference.toSymbol(
             session,
             classifierStorage,
-            declarationStorage
+            declarationStorage,
+            conversionScope
         )
         return typeRef.convertWithOffsets { startOffset, endOffset ->
             if (qualifiedAccess.calleeReference is FirSuperReference) {
@@ -192,7 +193,7 @@ internal class CallAndReferenceGenerator(
     fun convertToIrSetCall(variableAssignment: FirVariableAssignment): IrExpression {
         val type = irBuiltIns.unitType
         val calleeReference = variableAssignment.calleeReference
-        val symbol = calleeReference.toSymbol(session, classifierStorage, declarationStorage)
+        val symbol = calleeReference.toSymbol(session, classifierStorage, declarationStorage, conversionScope)
         val origin = IrStatementOrigin.EQ
         return variableAssignment.convertWithOffsets { startOffset, endOffset ->
             val assignedValue = visitor.convertToIrExpression(variableAssignment.rValue)

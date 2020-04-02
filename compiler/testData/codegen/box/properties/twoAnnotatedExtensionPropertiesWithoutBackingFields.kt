@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 annotation class Anno
 
 @Anno val Int.foo: Int
