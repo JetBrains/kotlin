@@ -44,6 +44,11 @@ public class ParcelBoxTestGenerated extends AbstractParcelBoxTest {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/arrays.kt");
     }
 
+    @TestMetadata("binder.kt")
+    public void testBinder() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/binder.kt");
+    }
+
     @TestMetadata("boxedTypes.kt")
     public void testBoxedTypes() throws Exception {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/boxedTypes.kt");
