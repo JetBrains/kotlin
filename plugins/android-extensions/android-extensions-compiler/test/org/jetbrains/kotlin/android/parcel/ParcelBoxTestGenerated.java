@@ -89,6 +89,11 @@ public class ParcelBoxTestGenerated extends AbstractParcelBoxTest {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/enums.kt");
     }
 
+    @TestMetadata("exceptions.kt")
+    public void testExceptions() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/exceptions.kt");
+    }
+
     @TestMetadata("intArray.kt")
     public void testIntArray() throws Exception {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/intArray.kt");
