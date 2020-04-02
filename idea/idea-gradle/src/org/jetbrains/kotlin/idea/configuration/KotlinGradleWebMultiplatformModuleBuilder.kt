@@ -225,7 +225,7 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
                 js {
                     browser {
                     }
-                    produceExecutable()
+                    binaries.executable()
                 }
                 sourceSets {
                     $commonSourceName {
