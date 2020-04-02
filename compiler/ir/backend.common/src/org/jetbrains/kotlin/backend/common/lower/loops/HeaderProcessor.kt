@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
@@ -50,7 +49,6 @@ internal interface ForLoopHeader {
     fun initializeIteration(
         loopVariable: IrVariable?,
         loopVariableComponents: Map<Int, IrVariable>,
-        symbols: Symbols<CommonBackendContext>,
         builder: DeclarationIrBuilder
     ): List<IrStatement>
 
@@ -61,6 +59,7 @@ internal interface ForLoopHeader {
 internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
     protected val headerInfo: T,
     builder: DeclarationIrBuilder,
+    context: CommonBackendContext,
     protected val isLastInclusive: Boolean
 ) : ForLoopHeader {
 
@@ -68,16 +67,18 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
 
     val inductionVariable: IrVariable
     val stepVariable: IrVariable
+    val stepVariableForIncrement: IrVariable?
     protected val lastVariableIfCanCacheLast: IrVariable?
     protected val lastExpression: IrExpression
         // Always copy `lastExpression` is it may be used in multiple conditions.
         get() = field.deepCopyWithSymbols()
 
+    private val symbols = context.ir.symbols
     private val elementType: IrType
 
     init {
         with(builder) {
-            elementType = headerInfo.progressionType.elementType(context.irBuiltIns)
+            elementType = headerInfo.progressionType.elementType(symbols)
 
             // For this loop:
             //
@@ -89,10 +90,7 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
             // In the above example, if first() is a Long and last() is an Int, this creates a
             // LongProgression so last() should be cast to a Long.
             inductionVariable = scope.createTemporaryVariable(
-                headerInfo.first.castIfNecessary(
-                    elementType,
-                    headerInfo.progressionType.elementCastFunctionName
-                ),
+                headerInfo.progressionType.castElementIfNecessary(headerInfo.first, context),
                 nameHint = "inductionVariable",
                 isMutable = true
             )
@@ -101,12 +99,7 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
             // they are non-nullable (the frontend takes care about this). So we need to cast
             // them to non-nullable.
             // TODO: Confirm if casting to non-nullable is still necessary
-            val last = ensureNotNullable(
-                headerInfo.last.castIfNecessary(
-                    elementType,
-                    headerInfo.progressionType.elementCastFunctionName
-                )
-            )
+            val last = ensureNotNullable(headerInfo.progressionType.castElementIfNecessary(headerInfo.last, context))
 
             lastVariableIfCanCacheLast = if (headerInfo.canCacheLast) {
                 scope.createTemporaryVariable(
@@ -117,17 +110,29 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
 
             lastExpression = if (headerInfo.canCacheLast) irGet(lastVariableIfCanCacheLast!!) else last
 
-            stepVariable = headerInfo.progressionType.stepType(context.irBuiltIns).let {
+            stepVariable =
                 scope.createTemporaryVariable(
-                    ensureNotNullable(
-                        headerInfo.step.castIfNecessary(
-                            it,
-                            headerInfo.progressionType.stepCastFunctionName
-                        )
-                    ),
+                    ensureNotNullable(headerInfo.progressionType.castStepIfNecessary(headerInfo.step, context)),
                     nameHint = "step",
-                    irType = it
+                    irType = headerInfo.progressionType.stepType(context.irBuiltIns)
                 )
+
+            stepVariableForIncrement = when (headerInfo.progressionType) {
+                ProgressionType.UINT_PROGRESSION -> {
+                    val castFun = context.ir.symbols.toUIntByExtensionReceiver.getValue(stepVariable.type.toKotlinType())
+                    scope.createTemporaryVariable(
+                        irCall(castFun).apply { extensionReceiver = irGet(stepVariable) },
+                        nameHint = "stepForIncrement"
+                    )
+                }
+                ProgressionType.ULONG_PROGRESSION -> {
+                    val castFun = context.ir.symbols.toULongByExtensionReceiver.getValue(stepVariable.type.toKotlinType())
+                    scope.createTemporaryVariable(
+                        irCall(castFun).apply { extensionReceiver = irGet(stepVariable) },
+                        nameHint = "stepForIncrement"
+                    )
+                }
+                else -> null
             }
         }
     }
@@ -142,16 +147,17 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
     /** Statement used to increment the induction variable. */
     protected fun incrementInductionVariable(builder: DeclarationIrBuilder): IrStatement = with(builder) {
         // inductionVariable = inductionVariable + step
+        val stepVariableToUse = stepVariableForIncrement ?: stepVariable
         val plusFun = elementType.getClass()!!.functions.single {
             it.name == OperatorNameConventions.PLUS &&
                     it.valueParameters.size == 1 &&
-                    it.valueParameters[0].type == stepVariable.type
+                    it.valueParameters[0].type == stepVariableToUse.type
         }
         irSetVar(
             inductionVariable.symbol, irCallOp(
                 plusFun.symbol, plusFun.returnType,
                 irGet(inductionVariable),
-                irGet(stepVariable)
+                irGet(stepVariableToUse)
             )
         )
     }
@@ -160,25 +166,65 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
         with(builder) {
             val builtIns = context.irBuiltIns
             val progressionType = headerInfo.progressionType
-            val progressionElementType = progressionType.elementType(builtIns)
-            val compFun =
-                if (isLastInclusive) builtIns.lessOrEqualFunByOperandType[progressionElementType.classifierOrFail]!!
-                else builtIns.lessFunByOperandType[progressionElementType.classifierOrFail]!!
+            val progressionElementType = progressionType.elementType(symbols)
 
-            // The default condition depends on the direction.
-            when (headerInfo.direction) {
-                ProgressionDirection.DECREASING ->
-                    // last <= inductionVar (use `<` if last is exclusive)
-                    irCall(compFun).apply {
+            // `compareTo` must be used for UInt/ULong; they don't have intrinsic comparison operators.
+            val intCompFun = if (isLastInclusive) {
+                builtIns.lessOrEqualFunByOperandType.getValue(builtIns.intClass)
+            } else {
+                builtIns.lessFunByOperandType.getValue(builtIns.intClass)
+            }
+            val elementCompareToFun = progressionElementType.getClass()!!.functions.single {
+                it.name == OperatorNameConventions.COMPARE_TO &&
+                        it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null &&
+                        it.valueParameters.size == 1 && it.valueParameters[0].type == progressionElementType
+            }
+
+            val elementCompFun =
+                if (isLastInclusive) {
+                    builtIns.lessOrEqualFunByOperandType[progressionElementType.classifierOrFail]
+                } else {
+                    builtIns.lessFunByOperandType[progressionElementType.classifierOrFail]
+                }
+
+            fun conditionForDecreasing(): IrExpression =
+                // last <= inductionVar (use `<` if last is exclusive)
+                if (progressionType.isUnsigned) {
+                    irCall(intCompFun).apply {
+                        putValueArgument(0, irCall(elementCompareToFun).apply {
+                            dispatchReceiver = lastExpression
+                            putValueArgument(0, irGet(inductionVariable))
+                        })
+                        putValueArgument(1, irInt(0))
+                    }
+                } else {
+                    irCall(elementCompFun!!).apply {
                         putValueArgument(0, lastExpression)
                         putValueArgument(1, irGet(inductionVariable))
                     }
-                ProgressionDirection.INCREASING ->
-                    // inductionVar <= last (use `<` if last is exclusive)
-                    irCall(compFun).apply {
+                }
+
+            fun conditionForIncreasing(): IrExpression =
+                // inductionVar <= last (use `<` if last is exclusive)
+                if (progressionType.isUnsigned) {
+                    irCall(intCompFun).apply {
+                        putValueArgument(0, irCall(elementCompareToFun).apply {
+                            dispatchReceiver = irGet(inductionVariable)
+                            putValueArgument(0, lastExpression)
+                        })
+                        putValueArgument(1, irInt(0))
+                    }
+                } else {
+                    irCall(elementCompFun!!).apply {
                         putValueArgument(0, irGet(inductionVariable))
                         putValueArgument(1, lastExpression)
                     }
+                }
+
+            // The default condition depends on the direction.
+            when (headerInfo.direction) {
+                ProgressionDirection.DECREASING -> conditionForDecreasing()
+                ProgressionDirection.INCREASING -> conditionForIncreasing()
                 ProgressionDirection.UNKNOWN -> {
                     // If the direction is unknown, we check depending on the "step" value:
                     //   // (use `<` if last is exclusive)
@@ -187,33 +233,31 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                     val isLong = progressionType == ProgressionType.LONG_PROGRESSION
                     context.oror(
                         context.andand(
-                            irCall(builtIns.greaterFunByOperandType[stepTypeClassifier]!!).apply {
+                            irCall(builtIns.greaterFunByOperandType.getValue(stepTypeClassifier)).apply {
                                 putValueArgument(0, irGet(stepVariable))
-                                putValueArgument(1, if (isLong) irLong(0) else irInt(0))
+                                putValueArgument(1, if (progressionType.isLong) irLong(0) else irInt(0))
                             },
-                            irCall(compFun).apply {
-                                putValueArgument(0, irGet(inductionVariable))
-                                putValueArgument(1, lastExpression)
-                            }),
+                            conditionForIncreasing()
+                        ),
                         context.andand(
-                            irCall(builtIns.lessFunByOperandType[stepTypeClassifier]!!).apply {
+                            irCall(builtIns.lessFunByOperandType.getValue(stepTypeClassifier)).apply {
                                 putValueArgument(0, irGet(stepVariable))
-                                putValueArgument(1, if (isLong) irLong(0) else irInt(0))
+                                putValueArgument(1, if (progressionType.isLong) irLong(0) else irInt(0))
                             },
-                            irCall(compFun).apply {
-                                putValueArgument(0, lastExpression)
-                                putValueArgument(1, irGet(inductionVariable))
-                            })
+                            conditionForDecreasing()
+                        )
                     )
                 }
             }
+
         }
 }
 
 internal class ProgressionLoopHeader(
     headerInfo: ProgressionHeaderInfo,
-    builder: DeclarationIrBuilder
-) : NumericForLoopHeader<ProgressionHeaderInfo>(headerInfo, builder, isLastInclusive = true) {
+    builder: DeclarationIrBuilder,
+    context: CommonBackendContext
+) : NumericForLoopHeader<ProgressionHeaderInfo>(headerInfo, builder, context, isLastInclusive = true) {
 
     // For this loop:
     //
@@ -230,14 +274,14 @@ internal class ProgressionLoopHeader(
             else
                 listOfNotNull(inductionVariable, lastVariableIfCanCacheLast)
             ) +
-            stepVariable
+            listOfNotNull(stepVariable, stepVariableForIncrement)
 
     private var loopVariable: IrVariable? = null
 
+    @ExperimentalUnsignedTypes
     override fun initializeIteration(
         loopVariable: IrVariable?,
         loopVariableComponents: Map<Int, IrVariable>,
-        symbols: Symbols<CommonBackendContext>,
         builder: DeclarationIrBuilder
     ) =
         with(builder) {
@@ -258,6 +302,7 @@ internal class ProgressionLoopHeader(
             listOfNotNull(loopVariable, incrementInductionVariable(this))
         }
 
+    @ExperimentalUnsignedTypes
     override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?) =
         with(builder) {
             val newLoop = if (headerInfo.canOverflow) {
@@ -322,15 +367,16 @@ private class InitializerCallReplacer(symbolRemapper: SymbolRemapper, typeRemapp
 
 internal class IndexedGetLoopHeader(
     headerInfo: IndexedGetHeaderInfo,
-    builder: DeclarationIrBuilder
-) : NumericForLoopHeader<IndexedGetHeaderInfo>(headerInfo, builder, isLastInclusive = false) {
+    builder: DeclarationIrBuilder,
+    context: CommonBackendContext
+) : NumericForLoopHeader<IndexedGetHeaderInfo>(headerInfo, builder, context, isLastInclusive = false) {
 
-    override val loopInitStatements = listOfNotNull(headerInfo.objectVariable, inductionVariable, lastVariableIfCanCacheLast, stepVariable)
+    override val loopInitStatements =
+        listOfNotNull(headerInfo.objectVariable, inductionVariable, lastVariableIfCanCacheLast, stepVariable, stepVariableForIncrement)
 
     override fun initializeIteration(
         loopVariable: IrVariable?,
         loopVariableComponents: Map<Int, IrVariable>,
-        symbols: Symbols<CommonBackendContext>,
         builder: DeclarationIrBuilder
     ) =
         with(builder) {
@@ -371,7 +417,8 @@ internal class IndexedGetLoopHeader(
 
 internal class WithIndexLoopHeader(
     headerInfo: WithIndexHeaderInfo,
-    builder: DeclarationIrBuilder
+    builder: DeclarationIrBuilder,
+    context: CommonBackendContext
 ) : ForLoopHeader {
 
     private val nestedLoopHeader: ForLoopHeader
@@ -384,8 +431,8 @@ internal class WithIndexLoopHeader(
             // To build the optimized/lowered `for` loop over a `withIndex()` call, we first need the header for the underlying iterable so
             // so that we know how to build the loop for that iterable. More info in comments in initializeIteration().
             nestedLoopHeader = when (val nestedInfo = headerInfo.nestedInfo) {
-                is IndexedGetHeaderInfo -> IndexedGetLoopHeader(nestedInfo, this@with)
-                is ProgressionHeaderInfo -> ProgressionLoopHeader(nestedInfo, this@with)
+                is IndexedGetHeaderInfo -> IndexedGetLoopHeader(nestedInfo, this@with, context)
+                is ProgressionHeaderInfo -> ProgressionLoopHeader(nestedInfo, this@with, context)
                 is IterableHeaderInfo -> IterableLoopHeader(nestedInfo)
                 is WithIndexHeaderInfo -> throw IllegalStateException("Nested WithIndexHeaderInfo not allowed for WithIndexLoopHeader")
             }
@@ -409,7 +456,7 @@ internal class WithIndexLoopHeader(
                 )
                 ownsIndexVariable = true
                 // `index++` during iteration initialization
-                // TODO: MUSTDO: Check for overflow for Iterable and Sequence (call to checkIndexOverflow()).
+                // TODO: KT-34665: Check for overflow for Iterable and Sequence (call to checkIndexOverflow()).
                 val plusFun = indexVariable.type.getClass()!!.functions.first {
                     it.name == OperatorNameConventions.PLUS &&
                             it.valueParameters.size == 1 &&
@@ -435,7 +482,6 @@ internal class WithIndexLoopHeader(
     override fun initializeIteration(
         loopVariable: IrVariable?,
         loopVariableComponents: Map<Int, IrVariable>,
-        symbols: Symbols<CommonBackendContext>,
         builder: DeclarationIrBuilder
     ) =
         with(builder) {
@@ -508,7 +554,6 @@ internal class WithIndexLoopHeader(
             listOfNotNull(loopVariableComponents[1], incrementIndexStatement) + nestedLoopHeader.initializeIteration(
                 loopVariableComponents[2],
                 linkedMapOf(),
-                symbols,
                 builder
             )
         }
@@ -528,7 +573,6 @@ internal class IterableLoopHeader(
     override fun initializeIteration(
         loopVariable: IrVariable?,
         loopVariableComponents: Map<Int, IrVariable>,
-        symbols: Symbols<CommonBackendContext>,
         builder: DeclarationIrBuilder
     ) =
         with(builder) {
@@ -615,9 +659,9 @@ internal class HeaderProcessor(
 
         val builder = context.createIrBuilder(scopeOwnerSymbol(), variable.startOffset, variable.endOffset)
         return when (headerInfo) {
-            is IndexedGetHeaderInfo -> IndexedGetLoopHeader(headerInfo, builder)
-            is ProgressionHeaderInfo -> ProgressionLoopHeader(headerInfo, builder)
-            is WithIndexHeaderInfo -> WithIndexLoopHeader(headerInfo, builder)
+            is IndexedGetHeaderInfo -> IndexedGetLoopHeader(headerInfo, builder, context)
+            is ProgressionHeaderInfo -> ProgressionLoopHeader(headerInfo, builder, context)
+            is WithIndexHeaderInfo -> WithIndexLoopHeader(headerInfo, builder, context)
             is IterableHeaderInfo -> IterableLoopHeader(headerInfo)
         }
     }
