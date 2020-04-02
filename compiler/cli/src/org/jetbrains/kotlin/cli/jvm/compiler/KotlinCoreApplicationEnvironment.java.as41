@@ -1,0 +1,98 @@
+/*
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+package org.jetbrains.kotlin.cli.jvm.compiler;
+
+import com.intellij.DynamicBundle;
+import com.intellij.codeInsight.ContainerProvider;
+import com.intellij.codeInsight.runner.JavaMainMethodProvider;
+import com.intellij.core.JavaCoreApplicationEnvironment;
+import com.intellij.lang.MetaLanguage;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.vfs.VirtualFileSystem;
+import com.intellij.psi.FileContextProvider;
+import com.intellij.psi.augment.PsiAugmentProvider;
+import com.intellij.psi.augment.TypeAnnotationModifier;
+import com.intellij.psi.compiled.ClassFileDecompilers;
+import com.intellij.psi.meta.MetaDataContributor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+
+
+public class KotlinCoreApplicationEnvironment extends JavaCoreApplicationEnvironment {
+    public static KotlinCoreApplicationEnvironment create(@NotNull Disposable parentDisposable, boolean unitTestMode) {
+        KotlinCoreApplicationEnvironment environment = new KotlinCoreApplicationEnvironment(parentDisposable, unitTestMode);
+        registerExtensionPoints();
+        return environment;
+    }
+
+    private KotlinCoreApplicationEnvironment(@NotNull Disposable parentDisposable, boolean unitTestMode) {
+        super(parentDisposable, unitTestMode);
+    }
+
+    private static void registerExtensionPoints() {
+        registerApplicationExtensionPoint(DynamicBundle.LanguageBundleEP.EP_NAME, DynamicBundle.LanguageBundleEP.class);
+        registerApplicationExtensionPoint(FileContextProvider.EP_NAME, FileContextProvider.class);
+
+        registerApplicationExtensionPoint(MetaDataContributor.EP_NAME, MetaDataContributor.class);
+        registerApplicationExtensionPoint(PsiAugmentProvider.EP_NAME, PsiAugmentProvider.class);
+        registerApplicationExtensionPoint(JavaMainMethodProvider.EP_NAME, JavaMainMethodProvider.class);
+
+        registerApplicationExtensionPoint(ContainerProvider.EP_NAME, ContainerProvider.class);
+        registerApplicationExtensionPoint(ClassFileDecompilers.EP_NAME, ClassFileDecompilers.Decompiler.class);
+
+        registerApplicationExtensionPoint(TypeAnnotationModifier.EP_NAME, TypeAnnotationModifier.class);
+        registerApplicationExtensionPoint(MetaLanguage.EP_NAME, MetaLanguage.class);
+
+        IdeaExtensionPoints.INSTANCE.registerVersionSpecificAppExtensionPoints(Extensions.getRootArea());
+    }
+
+    @Nullable
+    @Override
+    protected VirtualFileSystem createJrtFileSystem() {
+        return new CoreJrtFileSystem();
+    }
+
+    private static void updateInterfaceField(Class<?> klass, String name, Object value) {
+        try {
+            Field field = klass.getDeclaredField(name);
+
+            boolean wasAccessible = field.isAccessible();
+
+            try {
+                if (!wasAccessible) {
+                    field.setAccessible(true);
+                }
+
+                Field modifiersField = Field.class.getDeclaredField("modifiers");
+
+                int modifiers = field.getModifiers();
+
+                try {
+                    modifiersField.setAccessible(true);
+                    modifiersField.setInt(field, modifiers & ~Modifier.FINAL);
+
+                    field.set(null, value);
+                }
+                finally {
+                    modifiersField.setInt(field, modifiers);
+                    modifiersField.setAccessible(false);
+                }
+            }
+            finally {
+                if (!wasAccessible) {
+                    field.setAccessible(false);
+                }
+            }
+        }
+        catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+}
