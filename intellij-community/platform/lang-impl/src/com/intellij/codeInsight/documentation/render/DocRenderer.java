@@ -58,7 +58,7 @@ class DocRenderer implements EditorCustomElementRenderer {
   private static final int MAX_WIDTH = 680;
   private static final int LEFT_INSET = 14;
   private static final int RIGHT_INSET = 12;
-  private static final int TOP_BOTTOM_INSETS = 4;
+  private static final int TOP_BOTTOM_INSETS = 2;
 
   private static StyleSheet ourCachedStyleSheet;
   private static String ourCachedStyleSheetLinkColor = "non-existing";
@@ -371,10 +371,11 @@ class DocRenderer implements EditorCustomElementRenderer {
         "li { padding: 1px 0 2px 0; }" +
         "table p { padding-bottom: 0}" +
         "th { text-align: left; }" +
-        "td {padding: 4px 0 0 0}" +
+        "td {padding: 2px 0 2px 0}" +
         "td p {padding-top: 0}" +
         ".sections {border-spacing: 0}" +
-        ".section {padding-right: 4px; white-space: nowrap}"
+        ".section {padding-right: 4px; white-space: nowrap}" +
+        ".content {padding: 2px 0 2px 0}"
       );
       ourCachedStyleSheetLinkColor = linkColorHex;
       ourCachedStyleSheetMonoFont = editorFontName;
