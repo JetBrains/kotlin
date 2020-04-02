@@ -77,7 +77,13 @@ interface TargetPlatformVersion {
     }
 }
 
-fun TargetPlatform?.isCommon(): Boolean = this != null && this.size > 1
+fun TargetPlatform?.isCommon(): Boolean = this != null && size > 1 && iterator().let { i ->
+    val firstPlatformName = i.next().platformName
+    while (i.hasNext()) {
+        if (i.next().platformName != firstPlatformName) return@let true
+    }
+    false
+}
 
 fun SimplePlatform.toTargetPlatform(): TargetPlatform = TargetPlatform(setOf(this))
 
