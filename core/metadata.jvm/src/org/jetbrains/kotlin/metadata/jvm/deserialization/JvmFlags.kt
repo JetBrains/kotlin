@@ -12,12 +12,15 @@ import org.jetbrains.kotlin.metadata.deserialization.Flags
  */
 object JvmFlags {
     // Properties
-
     val IS_MOVED_FROM_INTERFACE_COMPANION = Flags.FlagField.booleanFirst()
-
-    fun getPropertyFlags(booleanToIntFlag: Boolean): Int =
-        IS_MOVED_FROM_INTERFACE_COMPANION.toFlags(booleanToIntFlag)
 
     //Class
     val ARE_INTERFACE_METHOD_BODIES_INSIDE = Flags.FlagField.booleanFirst()
+
+    fun getPropertyFlags(isMovedFromInterfaceCompanion: Boolean): Int =
+        IS_MOVED_FROM_INTERFACE_COMPANION.toFlags(isMovedFromInterfaceCompanion)
+
+    fun getClassFlags(isAllInterfaceBodiesInside: Boolean): Int =
+        ARE_INTERFACE_METHOD_BODIES_INSIDE.toFlags(isAllInterfaceBodiesInside)
+
 }

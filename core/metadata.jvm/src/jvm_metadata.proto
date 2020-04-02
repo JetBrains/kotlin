@@ -130,7 +130,7 @@ extend Class {
 
 
   // isFunctionBodyInInterface: 0 if actual body generated in DefaultImpl, 1 - otherwise (in interface default method)
-  optional int32 generation_options = 104 [default = 0];
+  optional int32 jvm_class_flags = 104 [default = 0];
 }
 
 extend Package {

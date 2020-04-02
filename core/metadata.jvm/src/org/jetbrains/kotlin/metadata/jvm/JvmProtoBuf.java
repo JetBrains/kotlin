@@ -18,7 +18,7 @@ public final class JvmProtoBuf {
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.classModuleName);
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.classLocalVariable);
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.anonymousObjectOriginName);
-    registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.generationOptions);
+    registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.jvmClassFlags);
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.packageModuleName);
     registry.add(org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.packageLocalVariable);
   }
@@ -3986,7 +3986,7 @@ public final class JvmProtoBuf {
         103,
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
         java.lang.Integer.class);
-  public static final int GENERATION_OPTIONS_FIELD_NUMBER = 104;
+  public static final int JVM_CLASS_FLAGS_FIELD_NUMBER = 104;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Class { ... }</code>
    *
@@ -3997,7 +3997,7 @@ public final class JvmProtoBuf {
   public static final
     org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.Class,
-      java.lang.Integer> generationOptions = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+      java.lang.Integer> jvmClassFlags = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
           .newSingularGeneratedExtension(
         org.jetbrains.kotlin.metadata.ProtoBuf.Class.getDefaultInstance(),
         0,

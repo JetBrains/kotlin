@@ -132,5 +132,5 @@ object JvmProtoBufUtil {
 
     @JvmStatic
     fun isNewPlaceForBodyGeneration(proto: ProtoBuf.Class): Boolean =
-        JvmFlags.ARE_INTERFACE_METHOD_BODIES_INSIDE.get(proto.getExtension(JvmProtoBuf.generationOptions))
+        JvmFlags.ARE_INTERFACE_METHOD_BODIES_INSIDE.get(proto.getExtension(JvmProtoBuf.jvmClassFlags))
 }
