@@ -86,16 +86,6 @@ private fun GradleJvmResolutionContext.resolvePossibleGradleJvms(): List<Sdk> {
     .filter { isValidAndSupported(it) }
 }
 
-private fun findOrAddJdk(homePath: String): Sdk? {
-  val projectJdkTable = ProjectJdkTable.getInstance()
-  val javaSdkType = ExternalSystemJdkUtil.getJavaSdkType()
-  val canonicalHomePath = FileUtil.toCanonicalPath(homePath)
-  val foundJdk = projectJdkTable.getSdksOfType(javaSdkType)
-    .find { FileUtil.toCanonicalPath(it.homePath) == canonicalHomePath }
-  if (foundJdk != null) return foundJdk
-  return ExternalSystemJdkUtil.addJdk(canonicalHomePath)
-}
-
 private fun GradleJvmResolutionContext.findOrAddGradleJdk(homePath: String): Sdk? {
   val canonicalHomePath = FileUtil.toCanonicalPath(homePath)
   val foundJdk = possibleGradleJvms.find { FileUtil.toCanonicalPath(it.homePath) == canonicalHomePath }
@@ -115,8 +105,9 @@ private fun GradleJvmResolutionContext.getGradleJdkReference(): Sdk? {
 private fun GradleJvmResolutionContext.getOrAddGradleJavaHomeJdkReference(): Sdk? {
   val properties = getGradleProperties(externalProjectPath)
   val javaHomeProperty = properties.javaHomeProperty ?: return null
-  val javaHome = javaHomeProperty.value
-  return findOrAddJdk(javaHome)
+  val validationStatus = validateGradleJavaHome(gradleVersion, javaHomeProperty.value)
+  if (validationStatus !is Success) return null
+  return findOrAddGradleJdk(validationStatus.javaHome)
 }
 
 private fun GradleJvmResolutionContext.getOrAddEnvJavaHomeJdkReference(): Sdk? {

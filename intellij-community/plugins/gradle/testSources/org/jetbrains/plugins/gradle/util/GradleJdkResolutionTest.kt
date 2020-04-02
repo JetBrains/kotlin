@@ -66,7 +66,7 @@ class GradleJdkResolutionTest : GradleJdkResolutionTestCase() {
       assertGradleJvmSuggestion(expected = latestSdk, expectsSdkRegistration = true)
     }
     withGradleProperties(externalProjectPath, java = unsupportedSdk) {
-      assertGradleJvmSuggestion(expected = unsupportedSdk, expectsSdkRegistration = true)
+      assertGradleJvmSuggestion(expected = latestSdk, expectsSdkRegistration = true)
     }
   }
 
