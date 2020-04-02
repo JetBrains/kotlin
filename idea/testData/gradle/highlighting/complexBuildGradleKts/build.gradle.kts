@@ -401,7 +401,6 @@ tasks {
     create("plugins-tests") {
         dependsOn("dist")
         dependsOn(":kotlin-annotation-processing:test",
-                  ":kotlin-source-sections-compiler-plugin:test",
                   ":kotlin-allopen-compiler-plugin:test",
                   ":kotlin-noarg-compiler-plugin:test",
                   ":kotlin-sam-with-receiver-compiler-plugin:test",
