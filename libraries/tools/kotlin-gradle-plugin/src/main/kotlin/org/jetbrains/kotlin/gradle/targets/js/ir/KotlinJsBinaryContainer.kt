@@ -34,6 +34,11 @@ constructor(
     private val defaultCompilation: KotlinJsCompilation
         get() = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
+    // For Groovy DSL
+    fun executable() {
+        executable(defaultCompilation)
+    }
+
     fun executable(
         compilation: KotlinJsCompilation = defaultCompilation
     ) {
