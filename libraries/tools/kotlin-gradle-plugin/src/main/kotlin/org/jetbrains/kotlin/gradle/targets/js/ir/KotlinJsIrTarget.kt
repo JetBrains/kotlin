@@ -59,7 +59,12 @@ constructor(
             it.description = "Run js on all configured platforms"
         }
 
-    private var testsConfigured: Boolean = false
+    private val configureTestSideEffect: Unit by lazy {
+        compilations.matching { it.name == KotlinCompilation.TEST_COMPILATION_NAME }
+            .all { compilation ->
+                compilation.binaries.executableIrInternal(compilation)
+            }
+    }
 
     private val browserLazyDelegate = lazy {
         project.objects.newInstance(KotlinBrowserJsIr::class.java, this).also {
@@ -105,13 +110,7 @@ constructor(
     }
 
     private fun KotlinJsIrSubTarget.configureSubTarget() {
-        compilations.matching { it.name == KotlinCompilation.TEST_COMPILATION_NAME }
-            .all { compilation ->
-                if (!testsConfigured) {
-                    testsConfigured = true
-                    compilation.binaries.executableIrInternal(compilation)
-                }
-            }
+        configureTestSideEffect
         configure()
     }
 
