@@ -74,10 +74,10 @@ abstract class KotlinJsIrSubTarget(
     }
 
     protected open fun configureTestRunDefaults(testRun: KotlinJsPlatformTestRun) {
-        target.compilations.matching { it.name == KotlinCompilation.TEST_COMPILATION_NAME }.all { compilation ->
-            compilation.binaries.executableIrInternal(compilation)
-            configureTestsRun(testRun, compilation)
-        }
+        target.compilations.matching { it.name == KotlinCompilation.TEST_COMPILATION_NAME }
+            .all { compilation ->
+                configureTestsRun(testRun, compilation)
+            }
     }
 
     private fun configureTestsRun(testRun: KotlinJsPlatformTestRun, compilation: KotlinJsIrCompilation) {

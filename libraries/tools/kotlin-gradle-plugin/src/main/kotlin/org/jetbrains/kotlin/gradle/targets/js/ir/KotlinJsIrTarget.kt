@@ -8,13 +8,10 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetWithBinaries
-import org.jetbrains.kotlin.gradle.plugin.removeJsCompilerSuffix
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
@@ -62,9 +59,11 @@ constructor(
             it.description = "Run js on all configured platforms"
         }
 
+    private var testsConfigured: Boolean = false
+
     private val browserLazyDelegate = lazy {
         project.objects.newInstance(KotlinBrowserJsIr::class.java, this).also {
-            it.configure()
+            it.configureSubTarget()
             browserConfiguredHandlers.forEach { handler ->
                 handler(it)
             }
@@ -85,7 +84,7 @@ constructor(
 
     private val nodejsLazyDelegate = lazy {
         project.objects.newInstance(KotlinNodeJsIr::class.java, this).also {
-            it.configure()
+            it.configureSubTarget()
             nodejsConfiguredHandlers.forEach { handler ->
                 handler(it)
             }
@@ -103,6 +102,17 @@ constructor(
 
     override fun nodejs(body: KotlinJsNodeDsl.() -> Unit) {
         body(nodejs)
+    }
+
+    private fun KotlinJsIrSubTarget.configureSubTarget() {
+        compilations.matching { it.name == KotlinCompilation.TEST_COMPILATION_NAME }
+            .all { compilation ->
+                if (!testsConfigured) {
+                    testsConfigured = true
+                    compilation.binaries.executableIrInternal(compilation)
+                }
+            }
+        configure()
     }
 
     override fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit) {
