@@ -109,6 +109,8 @@ constructor(
                 "Cannot create binary $name: binary with such a name already exists"
             }
 
+            binaryNames.add(name)
+
             val binary = create(compilation, name, buildVariantKind)
             add(binary)
             // Allow accessing binaries as properties of the container in Groovy DSL.
