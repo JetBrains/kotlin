@@ -110,7 +110,7 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
 
         addMavenLibrary(
             "kotlin_test_junit.xml", "kotlin-test-junit",
-            "org.jetbrains.kotlin", "kotlin-test-junit", "1.3.70",
+            "org.jetbrains.kotlin", "kotlin-test-junit", "1.4.0-dev-5087",
             "org.jetbrains.kotlin:kotlin-stdlib",
             // Excluded
             "org.hamcrest:hamcrest-core",
@@ -124,7 +124,7 @@ class IntellijComboGenerator(kotlinProjectDir: File) : IntellijComboGeneratorBas
 
         addMavenLibrary(
             "kotlin_annotations_jvm.xml", "kotlin-annotations-jvm",
-            "org.jetbrains.kotlin", "kotlin-annotations-jvm", "1.3.70"
+            "org.jetbrains.kotlin", "kotlin-annotations-jvm", "1.4.0-dev-5087"
         )
 
         copyKotlinLibrary("kotlin_coroutines_experimental_compat")
