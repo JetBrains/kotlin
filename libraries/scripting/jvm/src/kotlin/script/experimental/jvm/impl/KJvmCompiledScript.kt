@@ -18,7 +18,7 @@ internal class KJvmCompiledScriptData(
     var compilationConfiguration: ScriptCompilationConfiguration,
     var scriptClassFQName: String,
     var resultField: Pair<String, KotlinType>?,
-    var otherScripts: List<CompiledScript<*>> = emptyList()
+    var otherScripts: List<CompiledScript> = emptyList()
 ) : Serializable {
 
     private fun writeObject(outputStream: ObjectOutputStream) {
@@ -33,7 +33,7 @@ internal class KJvmCompiledScriptData(
     private fun readObject(inputStream: ObjectInputStream) {
         compilationConfiguration = inputStream.readObject() as ScriptCompilationConfiguration
         sourceLocationId = inputStream.readObject() as String?
-        otherScripts = inputStream.readObject() as List<CompiledScript<*>>
+        otherScripts = inputStream.readObject() as List<CompiledScript>
         scriptClassFQName = inputStream.readObject() as String
         resultField = inputStream.readObject() as Pair<String, KotlinType>?
     }
@@ -44,17 +44,17 @@ internal class KJvmCompiledScriptData(
     }
 }
 
-class KJvmCompiledScript<out ScriptBase : Any> internal constructor(
+class KJvmCompiledScript internal constructor(
     internal var data: KJvmCompiledScriptData,
     var compiledModule: KJvmCompiledModule? // module should be null for imported (other) scripts, so only one reference to the module is kept
-) : CompiledScript<ScriptBase>, Serializable {
+) : CompiledScript, Serializable {
 
     constructor(
         sourceLocationId: String?,
         compilationConfiguration: ScriptCompilationConfiguration,
         scriptClassFQName: String,
         resultField: Pair<String, KotlinType>?,
-        otherScripts: List<CompiledScript<*>> = emptyList(),
+        otherScripts: List<CompiledScript> = emptyList(),
         compiledModule: KJvmCompiledModule? // module should be null for imported (other) scripts, so only one reference to the module is kept
     ) : this(
         KJvmCompiledScriptData(sourceLocationId, compilationConfiguration, scriptClassFQName, resultField, otherScripts),
@@ -67,7 +67,7 @@ class KJvmCompiledScript<out ScriptBase : Any> internal constructor(
     override val compilationConfiguration: ScriptCompilationConfiguration
         get() = data.compilationConfiguration
 
-    override val otherScripts: List<CompiledScript<*>>
+    override val otherScripts: List<CompiledScript>
         get() = data.otherScripts
 
     val scriptClassFQName: String
@@ -111,7 +111,7 @@ class KJvmCompiledScript<out ScriptBase : Any> internal constructor(
     }
 }
 
-fun KJvmCompiledScript<*>.getOrCreateActualClassloader(evaluationConfiguration: ScriptEvaluationConfiguration): ClassLoader =
+fun KJvmCompiledScript.getOrCreateActualClassloader(evaluationConfiguration: ScriptEvaluationConfiguration): ClassLoader =
     evaluationConfiguration[ScriptEvaluationConfiguration.jvm.actualClassLoader] ?: run {
         val module = compiledModule
             ?: throw IllegalStateException("Illegal call sequence, actualClassloader should be set before calling function on the class without module")
@@ -123,12 +123,12 @@ fun KJvmCompiledScript<*>.getOrCreateActualClassloader(evaluationConfiguration: 
     }
 
 fun getConfigurationWithClassloader(
-    script: CompiledScript<*>, baseConfiguration: ScriptEvaluationConfiguration
+    script: CompiledScript, baseConfiguration: ScriptEvaluationConfiguration
 ): ScriptEvaluationConfiguration =
     if (baseConfiguration.containsKey(ScriptEvaluationConfiguration.jvm.actualClassLoader))
         baseConfiguration
     else {
-        val jvmScript = (script as? KJvmCompiledScript<*>)
+        val jvmScript = (script as? KJvmCompiledScript)
             ?: throw IllegalArgumentException("Unexpected compiled script type: $script")
 
         val classloader = jvmScript.getOrCreateActualClassloader(baseConfiguration)
@@ -141,9 +141,9 @@ fun getConfigurationWithClassloader(
         }
     }
 
-private fun CompiledScript<*>.makeClassLoaderFromDependencies(baseClassLoader: ClassLoader?): ClassLoader? {
-    val processedScripts = mutableSetOf<CompiledScript<*>>()
-    fun recursiveScriptsSeq(res: Sequence<CompiledScript<*>>, script: CompiledScript<*>): Sequence<CompiledScript<*>> =
+private fun CompiledScript.makeClassLoaderFromDependencies(baseClassLoader: ClassLoader?): ClassLoader? {
+    val processedScripts = mutableSetOf<CompiledScript>()
+    fun recursiveScriptsSeq(res: Sequence<CompiledScript>, script: CompiledScript): Sequence<CompiledScript> =
         if (processedScripts.add(script)) script.otherScripts.asSequence().fold(res + script, ::recursiveScriptsSeq)
         else res
 
@@ -188,9 +188,9 @@ const val KOTLIN_SCRIPT_METADATA_EXTENSION_WITH_DOT = ".kotlin_script"
 fun scriptMetadataPath(scriptClassFQName: String) =
     "$KOTLIN_SCRIPT_METADATA_PATH/$scriptClassFQName$KOTLIN_SCRIPT_METADATA_EXTENSION_WITH_DOT"
 
-fun <T : Any> KJvmCompiledScript<T>.copyWithoutModule(): KJvmCompiledScript<T> = KJvmCompiledScript(data, null)
+fun KJvmCompiledScript.copyWithoutModule(): KJvmCompiledScript = KJvmCompiledScript(data, null)
 
-fun KJvmCompiledScript<*>.toBytes(): ByteArray {
+fun KJvmCompiledScript.toBytes(): ByteArray {
     val bos = ByteArrayOutputStream()
     var oos: ObjectOutputStream? = null
     try {
@@ -206,11 +206,11 @@ fun KJvmCompiledScript<*>.toBytes(): ByteArray {
     }
 }
 
-fun createScriptFromClassLoader(scriptClassFQName: String, classLoader: ClassLoader): KJvmCompiledScript<*> {
+fun createScriptFromClassLoader(scriptClassFQName: String, classLoader: ClassLoader): KJvmCompiledScript {
     val scriptDataStream = classLoader.getResourceAsStream(scriptMetadataPath(scriptClassFQName))
         ?: throw IllegalArgumentException("Cannot find metadata for script $scriptClassFQName")
     val script = ObjectInputStream(scriptDataStream).use {
-        it.readObject() as KJvmCompiledScript<*>
+        it.readObject() as KJvmCompiledScript
     }
     script.compiledModule = KJvmCompiledModuleFromClassLoader(classLoader)
     return script

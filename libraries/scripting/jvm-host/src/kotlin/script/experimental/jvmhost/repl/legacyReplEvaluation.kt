@@ -35,7 +35,7 @@ class JvmReplEvaluator(
     ): ReplEvalResult = state.lock.write {
         val evalState = state.asState(JvmReplEvaluatorState::class.java)
         val history = evalState.history as ReplStageHistoryWithReplace
-        val compiledScript = (compileResult.data as? KJvmCompiledScript<*>)
+        val compiledScript = (compileResult.data as? KJvmCompiledScript)
             ?: return ReplEvalResult.Error.CompileTime("Unable to access compiled script: ${compileResult.data}")
 
         val lastSnippetClass = history.peek()?.item?.first

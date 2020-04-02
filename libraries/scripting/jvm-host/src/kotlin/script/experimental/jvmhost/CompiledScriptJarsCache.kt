@@ -22,7 +22,7 @@ import kotlin.script.experimental.jvm.jvm
 open class CompiledScriptJarsCache(val scriptToFile: (SourceCode, ScriptCompilationConfiguration) -> File?) :
     CompiledJvmScriptsCache {
 
-    override fun get(script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration): CompiledScript<*>? {
+    override fun get(script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration): CompiledScript? {
         val file = scriptToFile(script, scriptCompilationConfiguration)
             ?: throw IllegalArgumentException("Unable to find a mapping to a file for the script $script")
 
@@ -42,14 +42,14 @@ open class CompiledScriptJarsCache(val scriptToFile: (SourceCode, ScriptCompilat
     }
 
     override fun store(
-        compiledScript: CompiledScript<*>,
+        compiledScript: CompiledScript,
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
     ) {
         val file = scriptToFile(script, scriptCompilationConfiguration)
             ?: throw IllegalArgumentException("Unable to find a mapping to a file for the script $script")
 
-        val jvmScript = (compiledScript as? KJvmCompiledScript<*>)
+        val jvmScript = (compiledScript as? KJvmCompiledScript)
             ?: throw IllegalArgumentException("Unsupported script type ${compiledScript::class.java.name}")
 
         jvmScript.saveToJar(file)

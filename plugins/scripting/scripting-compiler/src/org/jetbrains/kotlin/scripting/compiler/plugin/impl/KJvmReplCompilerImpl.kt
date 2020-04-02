@@ -69,7 +69,7 @@ class KJvmReplCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : 
         snippetId: ReplSnippetId,
         // TODO: replace history with some interface based on CompiledScript
         history: IReplStageHistory<ScriptDescriptor>
-    ): ResultWithDiagnostics<CompiledScript<*>> =
+    ): ResultWithDiagnostics<CompiledScript> =
         withMessageCollector(snippet) { messageCollector ->
 
             val context = (compilationState as? ReplCompilationState)?.context

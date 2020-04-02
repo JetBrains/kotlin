@@ -147,7 +147,7 @@ val ScriptEvaluationContextDataKeys.commandLineArgs by PropertiesCollection.key<
  * The facade to the script data for evaluation configuration refinement callbacks
  */
 data class ScriptEvaluationConfigurationRefinementContext(
-    val compiledScript: CompiledScript<*>,
+    val compiledScript: CompiledScript,
     val evaluationConfiguration: ScriptEvaluationConfiguration,
     val contextData: ScriptEvaluationContextData? = null
 )

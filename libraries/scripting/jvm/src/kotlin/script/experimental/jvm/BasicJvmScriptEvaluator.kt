@@ -13,7 +13,7 @@ import kotlin.script.experimental.jvm.impl.getConfigurationWithClassloader
 open class BasicJvmScriptEvaluator : ScriptEvaluator {
 
     override suspend operator fun invoke(
-        compiledScript: CompiledScript<*>,
+        compiledScript: CompiledScript,
         scriptEvaluationConfiguration: ScriptEvaluationConfiguration
     ): ResultWithDiagnostics<EvaluationResult> = try {
         val configuration = getConfigurationWithClassloader(compiledScript, scriptEvaluationConfiguration)

@@ -30,7 +30,7 @@ interface KJvmReplCompilerProxy {
         snippet: SourceCode,
         snippetId: ReplSnippetId,
         history: IReplStageHistory<ScriptDescriptor>
-    ): ResultWithDiagnostics<CompiledScript<*>>
+    ): ResultWithDiagnostics<CompiledScript>
 }
 
 class JvmReplCompilerStageHistory(private val state: JvmReplCompilerState) :

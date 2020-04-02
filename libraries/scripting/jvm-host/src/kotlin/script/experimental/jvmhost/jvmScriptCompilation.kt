@@ -26,7 +26,7 @@ open class JvmScriptCompiler(
     override suspend operator fun invoke(
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
-    ): ResultWithDiagnostics<CompiledScript<*>> =
+    ): ResultWithDiagnostics<CompiledScript> =
         compilerProxy.compile(
             script,
             scriptCompilationConfiguration.with {

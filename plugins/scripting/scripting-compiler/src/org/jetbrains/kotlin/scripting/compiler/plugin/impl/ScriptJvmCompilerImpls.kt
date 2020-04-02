@@ -37,7 +37,7 @@ class ScriptJvmCompilerIsolated(val hostConfiguration: ScriptingHostConfiguratio
     override fun compile(
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
-    ): ResultWithDiagnostics<CompiledScript<*>> =
+    ): ResultWithDiagnostics<CompiledScript> =
         withMessageCollectorAndDisposable(script = script) { messageCollector, disposable ->
             withScriptCompilationCache(script, scriptCompilationConfiguration, messageCollector) {
                 val initialConfiguration = scriptCompilationConfiguration.refineBeforeParsing(script).valueOr {
@@ -58,7 +58,7 @@ class ScriptJvmCompilerFromEnvironment(val environment: KotlinCoreEnvironment) :
     override fun compile(
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
-    ): ResultWithDiagnostics<CompiledScript<*>> {
+    ): ResultWithDiagnostics<CompiledScript> {
         val parentMessageCollector = environment.configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]
         return withMessageCollector(script = script, parentMessageCollector = parentMessageCollector) { messageCollector ->
             withScriptCompilationCache(script, scriptCompilationConfiguration, messageCollector) {
@@ -86,8 +86,8 @@ private fun withScriptCompilationCache(
     script: SourceCode,
     scriptCompilationConfiguration: ScriptCompilationConfiguration,
     messageCollector: ScriptDiagnosticsMessageCollector,
-    body: () -> ResultWithDiagnostics<CompiledScript<*>>
-): ResultWithDiagnostics<CompiledScript<*>> {
+    body: () -> ResultWithDiagnostics<CompiledScript>
+): ResultWithDiagnostics<CompiledScript> {
     val cache = scriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]?.get(ScriptingHostConfiguration.jvm.compilationCache)
 
     val cached = cache?.get(script, scriptCompilationConfiguration)
@@ -104,7 +104,7 @@ private fun compileImpl(
     script: SourceCode,
     context: SharedScriptCompilationContext,
     messageCollector: ScriptDiagnosticsMessageCollector
-): ResultWithDiagnostics<CompiledScript<*>> {
+): ResultWithDiagnostics<CompiledScript> {
     val mainKtFile =
         getScriptKtFile(
             script,
@@ -168,7 +168,7 @@ private fun doCompile(
     sourceDependencies: List<ScriptsCompilationDependencies.SourceDependencies>,
     messageCollector: ScriptDiagnosticsMessageCollector,
     getScriptConfiguration: (KtFile) -> ScriptCompilationConfiguration
-): ResultWithDiagnostics<KJvmCompiledScript<Any>> {
+): ResultWithDiagnostics<KJvmCompiledScript> {
 
     registerPackageFragmentProvidersIfNeeded(getScriptConfiguration(sourceFiles.first()), context.environment)
 

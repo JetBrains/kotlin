@@ -105,12 +105,12 @@ internal fun makeCompiledScript(
     ktFile: KtFile,
     sourceDependencies: List<ScriptsCompilationDependencies.SourceDependencies>,
     getScriptConfiguration: (KtFile) -> ScriptCompilationConfiguration
-): KJvmCompiledScript<Any> {
+): KJvmCompiledScript {
     val scriptDependenciesStack = ArrayDeque<KtScript>()
     val ktScript = ktFile.declarations.firstIsInstanceOrNull<KtScript>()
         ?: throw IllegalStateException("Expecting script file: KtScript is not found in ${ktFile.name}")
 
-    fun makeOtherScripts(script: KtScript): List<KJvmCompiledScript<*>> {
+    fun makeOtherScripts(script: KtScript): List<KJvmCompiledScript> {
 
         // TODO: ensure that it is caught earlier (as well) since it would be more economical
         if (scriptDependenciesStack.contains(script))
@@ -118,10 +118,10 @@ internal fun makeCompiledScript(
         scriptDependenciesStack.push(script)
 
         val containingKtFile = script.containingKtFile
-        val otherScripts: List<KJvmCompiledScript<*>> =
+        val otherScripts: List<KJvmCompiledScript> =
             sourceDependencies.find { it.scriptFile == containingKtFile }?.sourceDependencies?.valueOrThrow()?.mapNotNull { sourceFile ->
                 sourceFile.declarations.firstIsInstanceOrNull<KtScript>()?.let {
-                    KJvmCompiledScript<Any>(
+                    KJvmCompiledScript(
                         containingKtFile.virtualFile?.path,
                         getScriptConfiguration(sourceFile),
                         it.fqName.asString(),

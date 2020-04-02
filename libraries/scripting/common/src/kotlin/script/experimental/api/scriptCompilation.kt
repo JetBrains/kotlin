@@ -317,13 +317,13 @@ interface ScriptCompiler {
     suspend operator fun invoke(
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
-    ): ResultWithDiagnostics<CompiledScript<*>>
+    ): ResultWithDiagnostics<CompiledScript>
 }
 
 /**
  * The interface to the compiled script
  */
-interface CompiledScript<out ScriptBase : Any> {
+interface CompiledScript {
 
     /**
      * The location identifier for the script source, taken from SourceCode.locationId
@@ -346,7 +346,7 @@ interface CompiledScript<out ScriptBase : Any> {
     /**
      * The scripts compiled along with this one in one module, imported or otherwise included into compilation
      */
-    val otherScripts: List<CompiledScript<*>>
+    val otherScripts: List<CompiledScript>
         get() = emptyList()
 
     /**

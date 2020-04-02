@@ -22,11 +22,11 @@ import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 open class BasicJvmScriptClassFilesGenerator(val outputDir: File) : ScriptEvaluator {
 
     override suspend operator fun invoke(
-        compiledScript: CompiledScript<*>,
+        compiledScript: CompiledScript,
         scriptEvaluationConfiguration: ScriptEvaluationConfiguration
     ): ResultWithDiagnostics<EvaluationResult> {
         try {
-            if (compiledScript !is KJvmCompiledScript<*>)
+            if (compiledScript !is KJvmCompiledScript)
                 return failure("Cannot generate classes: unsupported compiled script type $compiledScript")
             val module = (compiledScript.compiledModule as? KJvmCompiledModuleInMemory)
                 ?: return failure("Cannot generate classes: unsupported module type ${compiledScript.compiledModule}")
@@ -47,7 +47,7 @@ open class BasicJvmScriptClassFilesGenerator(val outputDir: File) : ScriptEvalua
     }
 }
 
-fun KJvmCompiledScript<*>.saveToJar(outputJar: File) {
+fun KJvmCompiledScript.saveToJar(outputJar: File) {
     val module = (compiledModule as? KJvmCompiledModuleInMemory)
         ?: throw IllegalArgumentException("Unsupported module type $compiledModule")
     val dependenciesFromScript = compilationConfiguration[ScriptCompilationConfiguration.dependencies]
@@ -90,11 +90,11 @@ fun KJvmCompiledScript<*>.saveToJar(outputJar: File) {
 open class BasicJvmScriptJarGenerator(val outputJar: File) : ScriptEvaluator {
 
     override suspend operator fun invoke(
-        compiledScript: CompiledScript<*>,
+        compiledScript: CompiledScript,
         scriptEvaluationConfiguration: ScriptEvaluationConfiguration
     ): ResultWithDiagnostics<EvaluationResult> {
         try {
-            if (compiledScript !is KJvmCompiledScript<*>)
+            if (compiledScript !is KJvmCompiledScript)
                 return failure("Cannot generate jar: unsupported compiled script type $compiledScript")
             compiledScript.saveToJar(outputJar)
             return ResultWithDiagnostics.Success(EvaluationResult(ResultValue.NotEvaluated, scriptEvaluationConfiguration))

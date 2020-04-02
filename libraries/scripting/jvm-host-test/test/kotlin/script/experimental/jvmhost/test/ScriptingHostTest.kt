@@ -377,7 +377,7 @@ class ScriptingHostTest : TestCase() {
         val compiler = JvmScriptCompiler(defaultJvmScriptingHostConfiguration)
         val compiledScript = runBlocking {
             val res = compiler(script.toScriptSource(), scriptCompilationConfiguration).throwOnFailure()
-            (res as ResultWithDiagnostics.Success<CompiledScript<*>>).value
+            (res as ResultWithDiagnostics.Success<CompiledScript>).value
         }
         val compiledScriptClass = runBlocking { compiledScript.getClass(null).throwOnFailure().valueOrNull()!! as KClass<*> }
         val classLoader = compiledScriptClass.java.classLoader
