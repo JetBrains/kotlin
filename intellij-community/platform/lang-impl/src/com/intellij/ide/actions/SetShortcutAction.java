@@ -9,6 +9,7 @@ import com.intellij.openapi.keymap.impl.ui.KeymapPanel;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.codeWithMe.ClientId;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
