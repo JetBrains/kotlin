@@ -19,19 +19,18 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.inference.FirDelegatedPropertyInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionalType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
+import org.jetbrains.kotlin.fir.symbols.constructStarProjectedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
@@ -149,6 +148,9 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         if (typeRef is FirResolvedTypeRef && property.returnTypeRef is FirResolvedTypeRef) {
             val typeArguments = (typeRef.type as ConeClassLikeType).typeArguments
             val extensionType = property.receiverTypeRef?.coneTypeSafe<ConeKotlinType>()
+            val dispatchType = containingClass?.let { containingClass ->
+                containingClass.symbol.constructStarProjectedType(containingClass.typeParameters.size)
+            }
             propertyReferenceAccess.replaceTypeRef(
                 buildResolvedTypeRef {
                     source = typeRef.source
@@ -157,12 +159,8 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                         typeArguments.mapIndexed { index, argument ->
                             when (index) {
                                 typeArguments.lastIndex -> property.returnTypeRef.coneTypeUnsafe()
-                                0 -> containingClass?.let { containingClass ->
-                                    containingClass.symbol.constructType(
-                                        Array(containingClass.typeParameters.size) { ConeStarProjection }, isNullable = false
-                                    )
-                                } ?: extensionType
-                                else -> extensionType
+                                0 -> extensionType ?: dispatchType
+                                else -> dispatchType
                             } ?: argument
                         }.toTypedArray(),
                         isNullable = false
