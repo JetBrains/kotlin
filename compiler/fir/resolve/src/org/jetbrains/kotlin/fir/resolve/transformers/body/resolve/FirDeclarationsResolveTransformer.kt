@@ -175,6 +175,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             (returnExpression.result as? FirFunctionCall)?.replacePropertyReferenceTypeInDelegateAccessors(property)
         }
         (property.setter?.body?.statements?.singleOrNull() as? FirFunctionCall)?.replacePropertyReferenceTypeInDelegateAccessors(property)
+        (property.delegate as? FirFunctionCall)?.replacePropertyReferenceTypeInDelegateAccessors(property)
     }
 
     private fun transformPropertyWithDelegate(property: FirProperty) {
