@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.editorActions.wordSelection;
 
@@ -44,6 +44,7 @@ public class InjectedFileReferenceSelectioner extends AbstractWordSelectioner {
 
     TextRange realRange = ElementManipulators.getValueTextRange(host)
       .shiftRight(host.getTextRange().getStartOffset());
+    if (!realRange.contains(cursorOffset)) return Collections.emptyList();
 
     PsiElement valueElement = findValueElement(host, realRange);
 
