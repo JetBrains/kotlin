@@ -48,7 +48,7 @@ public class AsyncProjectViewSupport {
   private final StructureTreeModel myStructureTreeModel;
   private final AsyncTreeModel myAsyncTreeModel;
 
-  AsyncProjectViewSupport(@NotNull Disposable parent,
+  public AsyncProjectViewSupport(@NotNull Disposable parent,
                           @NotNull Project project,
                           @NotNull AbstractTreeStructure structure,
                           @NotNull Comparator<NodeDescriptor<?>> comparator) {
