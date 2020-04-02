@@ -10,6 +10,7 @@ enum class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckVisibility,
         DiscriminateSynthetics,
         CheckExplicitReceiverConsistency,
+        NoTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
         CheckReceivers.Dispatch,
         CheckReceivers.Extension,
@@ -17,6 +18,7 @@ enum class CallKind(vararg resolutionSequence: ResolutionStage) {
     ),
     SyntheticSelect(
         MapArguments,
+        NoTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
         CheckArguments,
         EagerResolveOfCallableReferences
@@ -26,6 +28,7 @@ enum class CallKind(vararg resolutionSequence: ResolutionStage) {
         DiscriminateSynthetics,
         MapArguments,
         CheckExplicitReceiverConsistency,
+        MapTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
         CheckReceivers.Dispatch,
         CheckReceivers.Extension,
@@ -33,14 +36,26 @@ enum class CallKind(vararg resolutionSequence: ResolutionStage) {
         EagerResolveOfCallableReferences,
         CheckLowPriorityInOverloadResolution
     ),
+    DelegatingConstructorCall(
+        CheckVisibility,
+        MapArguments,
+        CheckExplicitReceiverConsistency,
+        CreateFreshTypeVariableSubstitutorStage,
+        CheckReceivers.Dispatch,
+        CheckReceivers.Extension,
+        CheckArguments,
+        EagerResolveOfCallableReferences
+    ),
     CallableReference(
         CheckVisibility,
         DiscriminateSynthetics,
+        NoTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
         CheckCallableReferenceExpectedType
     ),
     SyntheticIdForCallableReferencesResolution(
         MapArguments,
+        NoTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
         CheckArguments,
         EagerResolveOfCallableReferences

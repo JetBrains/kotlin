@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.actions.KOTLIN_WORKSHEET_EXTENSION
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
 import org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
@@ -99,7 +100,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
             )
         }
 
-        val outputDir = createTempDir(dirName)
+        val outputDir = FileUtil.createTempDirectory(dirName, "")
 
         if (javaFiles.isNotEmpty()) {
             val options = listOf("-d", outputDir.path)
@@ -216,7 +217,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         myFixture.openFileInEditor(scratchVirtualFile)
 
-        ScriptConfigurationManager.updateScriptDependenciesSynchronously(myFixture.file, project)
+        ScriptConfigurationManager.updateScriptDependenciesSynchronously(myFixture.file)
 
         val scratchFileEditor = getScratchEditorForSelectedFile(myManager, myFixture.file.virtualFile)
             ?: error("Couldn't find scratch file")
@@ -229,7 +230,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     protected fun configureWorksheetByText(name: String, text: String): ScratchFile {
         val worksheetFile = myFixture.configureByText(name, text).virtualFile
 
-        ScriptConfigurationManager.updateScriptDependenciesSynchronously(myFixture.file, project)
+        ScriptConfigurationManager.updateScriptDependenciesSynchronously(myFixture.file)
 
         val scratchFileEditor = getScratchEditorForSelectedFile(myManager, myFixture.file.virtualFile)
             ?: error("Couldn't find scratch panel")
@@ -259,7 +260,11 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         val start = System.currentTimeMillis()
         // wait until output is displayed in editor or for 1 minute
-        while (ScratchCompilationSupport.isAnyInProgress() && (System.currentTimeMillis() - start) < 60000) {
+        while (ScratchCompilationSupport.isAnyInProgress()) {
+            if ((System.currentTimeMillis() - start) > TIME_OUT) {
+                LOG.warn("Waiting timeout $TIME_OUT ms is exceed")
+                break
+            }
             Thread.sleep(100)
         }
 
@@ -323,6 +328,8 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     }
 
     companion object {
+        private const val TIME_OUT = 60000 // 1 min
+
         private val INSTANCE_WITH_KOTLIN_TEST = object : KotlinWithJdkAndRuntimeLightProjectDescriptor(
             arrayListOf(
                 ForTestCompileRuntime.runtimeJarForTests(),

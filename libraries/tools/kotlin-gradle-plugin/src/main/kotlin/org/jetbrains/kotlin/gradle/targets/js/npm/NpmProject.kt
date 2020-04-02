@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 import org.gradle.api.Project
 import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import java.io.File
@@ -34,8 +34,8 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
     val dir: File
         get() = nodeJs.projectPackagesDir.resolve(name)
 
-    val target: KotlinTarget
-        get() = compilation.target
+    val target: KotlinJsTargetDsl
+        get() = compilation.target as KotlinJsTargetDsl
 
     val project: Project
         get() = target.project
@@ -64,9 +64,7 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
     val externalsDir: File
         get() = externalsDirRoot.resolve("src")
 
-    internal val modules = object : NpmProjectModules(dir, nodeModulesDir) {
-        override val parent get() = rootNodeModules
-    }
+    internal val modules = NpmProjectModules(dir)
 
     private val rootNodeModules: NpmProjectModules?
         get() = NpmProjectModules(nodeJs.rootPackageDir)
@@ -92,25 +90,42 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
     internal fun resolve(name: String): File? = modules.resolve(name)
 
     private fun buildNpmProjectName(): String {
+        compilation.outputModuleName?.let {
+            return it
+        }
+
         val project = target.project
-        val name = StringBuilder()
 
-        name.append(project.rootProject.name)
+        val moduleName = target.moduleName
 
-        if (project != project.rootProject) {
-            name.append("-")
-            name.append(project.name)
+        val compilationName = if (compilation.name != KotlinCompilation.MAIN_COMPILATION_NAME) {
+            compilation.name
+        } else null
+
+        if (moduleName != null) {
+            return sequenceOf(moduleName, compilationName)
+                .filterNotNull()
+                .joinToString("-")
         }
 
-        if (target.name.isNotEmpty() && target.name.toLowerCase() != "js") {
-            name.append("-").append(target.name)
-        }
+        val rootProjectName = project.rootProject.name
 
-        if (compilation.name != KotlinCompilation.MAIN_COMPILATION_NAME) {
-            name.append("-").append(compilation.name)
-        }
+        val localName = if (project != project.rootProject) {
+            project.name
+        } else null
 
-        return name.toString()
+        val targetName = if (target.name.isNotEmpty() && target.name.toLowerCase() != "js") {
+            target.name
+        } else null
+
+        return sequenceOf(
+            rootProjectName,
+            localName,
+            targetName,
+            compilationName
+        )
+            .filterNotNull()
+            .joinToString("-")
     }
 
     override fun toString() = "NpmProject($name)"

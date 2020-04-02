@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtElement
@@ -21,8 +22,15 @@ class AddInlineModifierFix(
     modifier: KtModifierKeywordToken
 ) : AddModifierFix(parameter, modifier) {
 
-    override fun getText() = element?.let { "Add '${modifier.value}' to parameter '${it.name}'" } ?: ""
-    override fun getFamilyName() = "Add '${modifier.value}' to parameter"
+    override fun getText(): String {
+        val element = this.element
+        return when {
+            element != null -> KotlinBundle.message("fix.add.modifier.inline.parameter.text", modifier.value, element.name.toString())
+            else -> null
+        } ?: ""
+    }
+
+    override fun getFamilyName() = KotlinBundle.message("fix.add.modifier.inline.parameter.family", modifier.value)
 
     companion object {
         private fun KtElement.findParameterWithName(name: String): KtParameter? {

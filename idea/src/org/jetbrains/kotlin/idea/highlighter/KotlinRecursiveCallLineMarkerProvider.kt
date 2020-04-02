@@ -26,6 +26,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.RecursivePropertyAccessorInspection
 import org.jetbrains.kotlin.idea.util.getReceiverTargetDescriptor
@@ -124,7 +125,7 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
         callElement.textRange,
         AllIcons.Gutter.RecursiveMethod,
         Pass.LINE_MARKERS,
-        { "Recursive call" },
+        { KotlinBundle.message("highlighter.tool.tip.text.recursive.call") },
         null,
         GutterIconRenderer.Alignment.RIGHT
     ) {

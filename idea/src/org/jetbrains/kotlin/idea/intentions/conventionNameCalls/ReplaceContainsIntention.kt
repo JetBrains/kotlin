@@ -9,6 +9,7 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(
-    KtDotQualifiedExpression::class.java, "Replace 'contains' call with 'in' operator"
+    KtDotQualifiedExpression::class.java, KotlinBundle.message("replace.contains.call.with.in.operator")
 ), HighPriorityAction {
     override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
         if (element.calleeName != OperatorNameConventions.CONTAINS.asString()) return null

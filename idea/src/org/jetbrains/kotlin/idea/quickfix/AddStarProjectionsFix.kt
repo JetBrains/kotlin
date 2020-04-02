@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -38,13 +39,14 @@ object AddStarProjectionsFixFactory : KotlinSingleIntentionActionFactory() {
     }
 }
 
-private val starProjectionFixFamilyName = "Add star projections"
+private val starProjectionFixFamilyName = KotlinBundle.message("fix.add.star.projection.family")
 
 class AddStarProjectionsFix(element: KtUserType, private val argumentCount: Int) : KotlinQuickFixAction<KtUserType>(element) {
 
     override fun getFamilyName() = starProjectionFixFamilyName
 
-    override fun getText() = "Add '${TypeReconstructionUtil.getTypeNameAndStarProjectionsString("", argumentCount)}'"
+    override fun getText() =
+        KotlinBundle.message("fix.add.star.projection.text", TypeReconstructionUtil.getTypeNameAndStarProjectionsString("", argumentCount))
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

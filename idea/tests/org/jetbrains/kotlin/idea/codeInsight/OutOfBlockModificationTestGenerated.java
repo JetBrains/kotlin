@@ -318,6 +318,11 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
         runTest("idea/testData/codeInsight/outOfBlock/InUninitializedPropertyAccessor.kt");
     }
 
+    @TestMetadata("InfixFunWhitespace.kt")
+    public void testInfixFunWhitespace() throws Exception {
+        runTest("idea/testData/codeInsight/outOfBlock/InfixFunWhitespace.kt");
+    }
+
     @TestMetadata("InitBlock.kt")
     public void testInitBlock() throws Exception {
         runTest("idea/testData/codeInsight/outOfBlock/InitBlock.kt");

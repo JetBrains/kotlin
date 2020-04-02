@@ -6,17 +6,20 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatRootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.npm.CompositeNodeModulesCache
 import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModulesCache
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonUpToDateCheck
 import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.RootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 /**
  * See [KotlinNpmResolutionManager] for details about resolution process.
@@ -37,6 +40,8 @@ internal class KotlinRootNpmResolver internal constructor(
     private var closed: Boolean = false
 
     val gradleNodeModules = GradleNodeModulesCache(nodeJs)
+    val compositeNodeModules = CompositeNodeModulesCache(nodeJs)
+    val packageJsonUmbrella = rootProject.registerTask(PACKAGE_JSON_UMBRELLA_TASK_NAME, Task::class.java) {}
     private val projectResolvers = mutableMapOf<Project, KotlinProjectNpmResolver>()
 
     fun alreadyResolvedMessage(action: String) = "Cannot $action. NodeJS projects already resolved."
@@ -103,10 +108,12 @@ internal class KotlinRootNpmResolver internal constructor(
         }
         val upToDate = forceUpToDate || upToDateChecks.all { it.upToDate }
 
-        val hasNodeModulesDependentTasks = projectResolvers.values.any { it.taskRequirements.hasNodeModulesDependentTasks }
-        if (hasNodeModulesDependentTasks) {
-            nodeJs.packageManager.resolveRootProject(rootProject, allNpmPackages, upToDate)
-        }
+        nodeJs.packageManager.resolveRootProject(
+            rootProject,
+            allNpmPackages,
+            upToDate,
+            nodeJs.npmInstallTask.args
+        )
 
         nodeJs.rootNodeModulesStateFile.writeText(System.currentTimeMillis().toString())
 
@@ -130,3 +137,5 @@ internal class KotlinRootNpmResolver internal constructor(
         }
     }
 }
+
+const val PACKAGE_JSON_UMBRELLA_TASK_NAME = "packageJsonUmbrella"

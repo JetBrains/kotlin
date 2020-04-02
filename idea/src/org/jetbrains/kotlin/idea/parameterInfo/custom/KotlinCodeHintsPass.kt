@@ -5,16 +5,13 @@
 
 package org.jetbrains.kotlin.idea.parameterInfo.custom
 
-import com.intellij.codeHighlighting.EditorBoundHighlightingPass
-import com.intellij.codeHighlighting.TextEditorHighlightingPass
-import com.intellij.codeHighlighting.TextEditorHighlightingPassFactory
-import com.intellij.codeHighlighting.TextEditorHighlightingPassRegistrar
+import com.intellij.codeHighlighting.*
 import com.intellij.codeInsight.hints.InlayParameterHintsExtension
 import com.intellij.diff.util.DiffUtil
-import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SyntaxTraverser
@@ -84,18 +81,27 @@ class KotlinCodeHintsPass(private val myRootElement: PsiElement, editor: Editor)
         return myDocument != null && myDocument.textLength == rootRange.length
     }
 
-    companion object {
-        class Factory(registrar: TextEditorHighlightingPassRegistrar) : ProjectComponent, TextEditorHighlightingPassFactory {
-            init {
-                registrar.registerTextEditorHighlightingPass(this, null, null, false, -1)
-            }
 
-            override fun createHighlightingPass(file: PsiFile, editor: Editor): TextEditorHighlightingPass? {
-                if (file.language != KotlinLanguage.INSTANCE) return null
-                return KotlinCodeHintsPass(file, editor)
-            }
+    class Registrar : TextEditorHighlightingPassFactoryRegistrar {
+        override fun registerHighlightingPassFactory(registrar: TextEditorHighlightingPassRegistrar, project: Project) {
+            registrar.registerTextEditorHighlightingPass(
+                Factory(),
+                null,
+                null,
+                false,
+                -1
+            )
         }
+    }
 
+    class Factory : TextEditorHighlightingPassFactory {
+        override fun createHighlightingPass(file: PsiFile, editor: Editor): TextEditorHighlightingPass? {
+            if (file.language != KotlinLanguage.INSTANCE) return null
+            return KotlinCodeHintsPass(file, editor)
+        }
+    }
+
+    companion object {
         private val isEnabled: Boolean
             get() =
                 EditorSettingsExternalizable.getInstance().isShowParameterNameHints

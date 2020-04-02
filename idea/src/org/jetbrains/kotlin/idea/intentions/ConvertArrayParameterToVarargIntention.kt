@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -60,9 +61,9 @@ class ConvertArrayParameterToVarargIntention : SelfTargetingIntention<KtParamete
     }
 
     companion object {
-        private const val DEFAULT_TEXT = "Convert to vararg parameter"
+        private val DEFAULT_TEXT: String get() = KotlinBundle.message("convert.to.vararg.parameter")
 
-        private const val BREAKING_TEXT = "$DEFAULT_TEXT (may break code)"
+        private val BREAKING_TEXT: String get() = KotlinBundle.message("0.may.break.code", DEFAULT_TEXT)
     }
 
 }

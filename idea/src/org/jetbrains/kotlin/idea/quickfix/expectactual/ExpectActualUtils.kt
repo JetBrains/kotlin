@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.idea.quickfix.expectactual
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.JavaDirectoryService
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToBeShortenedDescendantsToWaitingSet
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -101,16 +101,16 @@ fun KtPsiFactory.createClassHeaderCopyByText(originalClass: KtClassOrObject): Kt
 }
 
 fun KtNamedDeclaration?.getTypeDescription(): String = when (this) {
-    is KtObjectDeclaration -> "object"
+    is KtObjectDeclaration -> KotlinBundle.message("text.object")
     is KtClass -> when {
-        isInterface() -> "interface"
-        isEnum() -> "enum class"
-        isAnnotation() -> "annotation class"
-        else -> "class"
+        isInterface() -> KotlinBundle.message("text.interface")
+        isEnum() -> KotlinBundle.message("text.enum.class")
+        isAnnotation() -> KotlinBundle.message("text.annotation.class")
+        else -> KotlinBundle.message("text.class")
     }
-    is KtProperty, is KtParameter -> "property"
-    is KtFunction -> "function"
-    else -> "declaration"
+    is KtProperty, is KtParameter -> KotlinBundle.message("text.property")
+    is KtFunction -> KotlinBundle.message("text.function")
+    else -> KotlinBundle.message("text.declaration")
 }
 
 internal fun KtPsiFactory.generateClassOrObject(
@@ -381,10 +381,11 @@ private fun AnnotationDescriptor.isValidInModule(checker: TypeAccessibilityCheck
 }
 
 class KotlinTypeInaccessibleException(fqNames: Collection<FqName?>) : Exception() {
-    override val message: String = "${StringUtil.pluralize(
-        "Type",
-        fqNames.size
-    )} ${TypeAccessibilityChecker.typesToString(fqNames)} is not accessible from target module"
+    override val message: String = KotlinBundle.message(
+        "type.0.1.is.not.accessible.from.target.module",
+        fqNames.size,
+        TypeAccessibilityChecker.typesToString(fqNames)
+    )
 }
 
 fun KtNamedDeclaration.isAlwaysActual(): Boolean = safeAs<KtParameter>()?.parent?.parent?.safeAs<KtPrimaryConstructor>()
@@ -395,7 +396,10 @@ fun TypeAccessibilityChecker.isCorrectAndHaveAccessibleModifiers(declaration: Kt
     if (declaration.anyInaccessibleModifier(INACCESSIBLE_MODIFIERS, showErrorHint)) return false
 
     if (declaration is KtFunction && declaration.hasBody() && declaration.containingClassOrObject?.isInterfaceClass() == true) {
-        if (showErrorHint) showInaccessibleDeclarationError(declaration, "The function declaration shouldn't have a default implementation")
+        if (showErrorHint) showInaccessibleDeclarationError(
+            declaration,
+            KotlinBundle.message("the.function.declaration.shouldn.t.have.a.default.implementation")
+        )
         return false
     }
 
@@ -404,8 +408,10 @@ fun TypeAccessibilityChecker.isCorrectAndHaveAccessibleModifiers(declaration: Kt
     val types = incorrectTypes(declaration).ifEmpty { return true }
     showInaccessibleDeclarationError(
         declaration,
-        "Some types are not accessible from ${targetModule.name}:\n" + TypeAccessibilityChecker.typesToString(
-            types
+        KotlinBundle.message(
+            "some.types.are.not.accessible.from.0.1",
+            targetModule.name,
+            TypeAccessibilityChecker.typesToString(types)
         )
     )
 
@@ -417,7 +423,7 @@ private val INACCESSIBLE_MODIFIERS = listOf(KtTokens.PRIVATE_KEYWORD, KtTokens.C
 private fun KtModifierListOwner.anyInaccessibleModifier(modifiers: Collection<KtModifierKeywordToken>, showErrorHint: Boolean): Boolean {
     for (modifier in modifiers) {
         if (hasModifier(modifier)) {
-            if (showErrorHint) showInaccessibleDeclarationError(this, "The declaration has `$modifier` modifier")
+            if (showErrorHint) showInaccessibleDeclarationError(this, KotlinBundle.message("the.declaration.has.0.modifier", modifier))
             return true
         }
     }
@@ -426,7 +432,7 @@ private fun KtModifierListOwner.anyInaccessibleModifier(modifiers: Collection<Kt
 
 fun showInaccessibleDeclarationError(element: PsiElement, message: String, editor: Editor? = element.findExistingEditor()) {
     editor?.let {
-        showErrorHint(element.project, editor, escapeXml(message), "Inaccessible declaration")
+        showErrorHint(element.project, editor, escapeXml(message), KotlinBundle.message("inaccessible.declaration"))
     }
 }
 

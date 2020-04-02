@@ -366,6 +366,8 @@ public inline fun String.dropWhile(predicate: (Char) -> Boolean): String {
 
 /**
  * Returns a char sequence containing only those characters from the original char sequence that match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun CharSequence.filter(predicate: (Char) -> Boolean): CharSequence {
     return filterTo(StringBuilder(), predicate)
@@ -373,6 +375,8 @@ public inline fun CharSequence.filter(predicate: (Char) -> Boolean): CharSequenc
 
 /**
  * Returns a string containing only those characters from the original string that match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun String.filter(predicate: (Char) -> Boolean): String {
     return filterTo(StringBuilder(), predicate).toString()
@@ -410,6 +414,8 @@ public inline fun <C : Appendable> CharSequence.filterIndexedTo(destination: C, 
 
 /**
  * Returns a char sequence containing only those characters from the original char sequence that do not match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun CharSequence.filterNot(predicate: (Char) -> Boolean): CharSequence {
     return filterNotTo(StringBuilder(), predicate)
@@ -417,6 +423,8 @@ public inline fun CharSequence.filterNot(predicate: (Char) -> Boolean): CharSequ
 
 /**
  * Returns a string containing only those characters from the original string that do not match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun String.filterNot(predicate: (Char) -> Boolean): String {
     return filterNotTo(StringBuilder(), predicate).toString()
@@ -1456,7 +1464,7 @@ public inline fun CharSequence.sumByDouble(selector: (Char) -> Double): Double {
  * 
  * @param size the number of elements to take in each string, must be positive and can be greater than the number of elements in this char sequence.
  * 
- * @sample samples.collections.Collections.Transformations.chunked
+ * @sample samples.text.Strings.chunked
  */
 @SinceKotlin("1.2")
 public fun CharSequence.chunked(size: Int): List<String> {
@@ -1519,6 +1527,8 @@ public fun <R> CharSequence.chunkedSequence(size: Int, transform: (CharSequence)
  * Splits the original char sequence into pair of char sequences,
  * where *first* char sequence contains characters for which [predicate] yielded `true`,
  * while *second* char sequence contains characters for which [predicate] yielded `false`.
+ * 
+ * @sample samples.text.Strings.partition
  */
 public inline fun CharSequence.partition(predicate: (Char) -> Boolean): Pair<CharSequence, CharSequence> {
     val first = StringBuilder()
@@ -1537,6 +1547,8 @@ public inline fun CharSequence.partition(predicate: (Char) -> Boolean): Pair<Cha
  * Splits the original string into pair of strings,
  * where *first* string contains characters for which [predicate] yielded `true`,
  * while *second* string contains characters for which [predicate] yielded `false`.
+ * 
+ * @sample samples.text.Strings.partition
  */
 public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, String> {
     val first = StringBuilder()

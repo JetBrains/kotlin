@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
 class ConvertRangeCheckToTwoComparisonsIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(
     KtBinaryExpression::class.java,
-    "Convert to comparisons"
+    KotlinBundle.message("convert.to.comparisons")
 ) {
     private fun KtExpression?.isSimple() = this is KtConstantExpression || this is KtNameReferenceExpression
 

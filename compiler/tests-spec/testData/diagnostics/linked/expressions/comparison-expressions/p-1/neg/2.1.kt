@@ -7,6 +7,7 @@
  *
  * SPEC VERSION: 0.1-220
  * PLACE: expressions, comparison-expressions -> paragraph 1 -> sentence 2
+ * RELEVANT PLACES: overloadable-operators -> paragraph 4 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: <, >, <= and >=  operators are overloadable
  */

@@ -43,6 +43,16 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         runTest("idea/testData/diagnosticMessage/assignedButNeverAccessedVariable.kt");
     }
 
+    @TestMetadata("callableReferenceResolutionAmbiguityHtml.kt")
+    public void testCallableReferenceResolutionAmbiguityHtml() throws Exception {
+        runTest("idea/testData/diagnosticMessage/callableReferenceResolutionAmbiguityHtml.kt");
+    }
+
+    @TestMetadata("callableReferenceResolutionAmbiguityTxt.kt")
+    public void testCallableReferenceResolutionAmbiguityTxt() throws Exception {
+        runTest("idea/testData/diagnosticMessage/callableReferenceResolutionAmbiguityTxt.kt");
+    }
+
     @TestMetadata("cannotInferVisibility.kt")
     public void testCannotInferVisibility() throws Exception {
         runTest("idea/testData/diagnosticMessage/cannotInferVisibility.kt");

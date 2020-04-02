@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.konan.target.presetName
 import java.io.BufferedWriter
 
@@ -29,10 +30,10 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.shared"
 
-    override fun getPresentableName() = "Multiplatform Library | Gradle"
+    override fun getPresentableName() = KotlinIdeaGradleBundle.message("presentable.text.multiplatform.library.gradle")
 
     override fun getDescription() =
-        "Multiplatform Gradle project allowing reuse of the same Kotlin code between all three main platforms (JVM, JS, and Native)"
+        KotlinIdeaGradleBundle.message("description.text.multiplatform.jvm.js.native")
 
     override fun createProjectSkeleton(rootDir: VirtualFile) {
         val src = rootDir.createChildDirectory(this, "src")

@@ -28,12 +28,13 @@ import com.intellij.util.xml.GenericDomValue
 import org.jetbrains.idea.maven.dom.MavenDomUtil
 import org.jetbrains.idea.maven.dom.model.MavenDomBuild
 import org.jetbrains.idea.maven.dom.model.MavenDomPluginExecution
+import org.jetbrains.kotlin.idea.maven.KotlinMavenBundle
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 class MavenPluginSourcesMoveToExecutionIntention : PsiElementBaseIntentionAction() {
-    override fun getFamilyName() = "Move to compile execution"
+    override fun getFamilyName() = KotlinMavenBundle.message("fix.move.to.execution.family")
     override fun getText() = familyName
 
     override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {
@@ -95,7 +96,7 @@ class MavenPluginSourcesMoveToExecutionIntention : PsiElementBaseIntentionAction
 }
 
 class MavenPluginSourcesMoveToBuild : PsiElementBaseIntentionAction() {
-    override fun getFamilyName() = "Move to build>sourceDirectory tag"
+    override fun getFamilyName() = KotlinMavenBundle.message("fix.move.to.build.family")
     override fun getText() = familyName
 
     override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {

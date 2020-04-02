@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
@@ -41,8 +42,12 @@ sealed class CreateActualFix<D : KtNamedDeclaration>(
     generateIt: KtPsiFactory.(Project, TypeAccessibilityChecker, D) -> D?
 ) : AbstractCreateDeclarationFix<D>(declaration, actualModule, generateIt) {
 
-    override fun getText() =
-        "Create actual $elementType for module ${module.name} (${actualPlatform.singleOrNull()?.platformName ?: actualPlatform})"
+    override fun getText() = KotlinBundle.message(
+        "create.actual.0.for.module.1.2",
+        elementType,
+        module.name,
+        actualPlatform.singleOrNull()?.platformName ?: actualPlatform
+    )
 
     final override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val actualFile = getOrCreateImplementationFile() ?: return

@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/thisRefToObjectInNestedClassConstructorCall.kt
       CONSTRUCTOR visibility:public <> () returnType:<root>.Host.Derived1 [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Any) [primary] declared in <root>.Base'
-            x: GET_VAR '<this>: <root>.Host.Derived1 declared in <root>.Host.Derived1' type=<root>.Host.Derived1 origin=null
+            x: GET_OBJECT 'CLASS OBJECT name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Host
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived1 modality:FINAL visibility:public superTypes:[<root>.Base]'
       PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Host.Derived1) returnType:kotlin.Any [fake_override]

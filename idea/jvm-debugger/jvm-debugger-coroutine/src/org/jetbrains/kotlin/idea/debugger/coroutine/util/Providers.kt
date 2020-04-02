@@ -25,7 +25,7 @@ interface XDebugSessionListenerProvider {
 }
 
 /**
- * Logger instantiation sample: 'val log by logger'
+ * Logger instantiation: 'val log by logger'
  */
 val logger: ReadOnlyProperty<Any, Logger> get() = LoggerDelegate()
 

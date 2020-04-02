@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.configuration.xcode.XcodeProjectConfigurator
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import java.io.BufferedWriter
@@ -29,10 +30,11 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.mobile"
 
-    override fun getPresentableName() = "Mobile Android/iOS | Gradle"
+    override fun getPresentableName() = KotlinIdeaGradleBundle.message("presentable.text.mobile.android.ios.gradle")
 
-    override fun getDescription() =
-        "Multiplatform Gradle project allowing reuse of the same Kotlin code between Android and iOS mobile platforms"
+    override fun getDescription() = KotlinIdeaGradleBundle.message(
+        "description.text.multiplatform.gradle.project.allowing.reuse.of.the.same.kotlin.code.between.android.and.ios.mobile.platforms"
+    )
 
     override fun BuildScriptDataBuilder.setupAdditionalDependencies() {
         addBuildscriptDependencyNotation("classpath 'com.android.tools.build:gradle:3.2.1'")

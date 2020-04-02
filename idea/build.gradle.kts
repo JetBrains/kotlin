@@ -62,6 +62,7 @@ dependencies {
     compile(project(":idea:formatter"))
     compile(project(":compiler:fir:fir2ir"))
     compile(project(":compiler:fir:resolve"))
+    compile(project(":compiler:fir:checkers"))
     compile(project(":compiler:fir:java"))
     compile(project(":compiler:fir:jvm"))
     compile(project(":idea:idea-core"))
@@ -87,16 +88,14 @@ dependencies {
 
     Platform[193].orHigher {
         implementation(commonDep("org.jetbrains.intellij.deps.completion", "completion-ranking-kotlin"))
-        implementation(intellijPluginDep("stats-collector"))
+        Ide.IJ {
+            implementation(intellijPluginDep("stats-collector"))
+        }
     }
 
     compileOnly(commonDep("org.jetbrains", "markdown"))
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
-    if (Platform[201].orHigher()) {
-        compileOnly(intellijPluginDep("platform-langInjection"))
-    } else {
-        compileOnly(intellijPluginDep("IntelliLang"))
-    }
+    compileOnly(intellijPluginDep("IntelliLang"))
     compileOnly(intellijPluginDep("copyright"))
     compileOnly(intellijPluginDep("properties"))
     compileOnly(intellijPluginDep("java-i18n"))
@@ -116,7 +115,6 @@ dependencies {
     testCompileOnly(intellijPluginDep("coverage"))
 
     testRuntimeOnly(toolsJar())
-    testRuntime(project(":native:kotlin-native-utils")) { isTransitive = false }
     testRuntime(commonDep("org.jetbrains", "markdown"))
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
     testRuntime(project(":kotlin-reflect"))
@@ -146,7 +144,7 @@ dependencies {
         testRuntime(project(it))
     }
 
-    testCompile(intellijPluginDep(if (Platform[201].orHigher()) "platform-langInjection" else "IntelliLang"))
+    testCompile(intellijPluginDep("IntelliLang"))
     testCompile(intellijPluginDep("copyright"))
     testCompile(intellijPluginDep("properties"))
     testCompile(intellijPluginDep("java-i18n"))
@@ -191,15 +189,6 @@ tasks.named<Copy>("processResources") {
 projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
-}
-
-projectTest("firTest", parallel = true) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    filter {
-        includeTestsMatching("org.jetbrains.kotlin.idea.fir.*")
-        includeTestsMatching("org.jetbrains.kotlin.idea.resolve.FirReferenceResolveTestGenerated")
-    }
 }
 
 configureFormInstrumentation()

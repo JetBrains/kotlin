@@ -180,7 +180,7 @@ class JvmDeclarationFactory(
     fun getStaticBackingField(irProperty: IrProperty): IrField? {
         // Only fields defined directly in objects should be made static.
         // Fake overrides never point to those, as objects are final.
-        if (irProperty.origin == IrDeclarationOrigin.FAKE_OVERRIDE) return null
+        if (irProperty.isFakeOverride) return null
         val oldField = irProperty.backingField ?: return null
         val oldParent = irProperty.parent as? IrClass ?: return null
         if (!oldParent.isObject) return null
@@ -226,19 +226,19 @@ class JvmDeclarationFactory(
                 // is supposed to allow using `I2.DefaultImpls.f` as if it was inherited from `I1.DefaultImpls`.
                 // The classes are not actually related and `I2.DefaultImpls.f` is not a fake override but a bridge.
                 origin = when {
-                    interfaceFun.origin != IrDeclarationOrigin.FAKE_OVERRIDE -> interfaceFun.origin
+                    !interfaceFun.isFakeOverride -> interfaceFun.origin
                     interfaceFun.resolveFakeOverride()!!.origin.isSynthetic -> JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC
                     else -> JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE
                 },
                 // Old backend doesn't generate ACC_FINAL on DefaultImpls methods.
                 modality = Modality.OPEN,
 
-                // Interface functions are always public, with one exception: clone in Cloneable, which is protected. However, Cloneable
-                // has no DefaultImpls, so this merely replicates the incorrect behavior of the old backend. We should rather not generate
-                // a bridge to clone when interface inherits from Cloneable at all. Below, we force everything, including those bridges,
-                // to be public so that we won't try to generate synthetic accessor for them.
-                visibility = Visibilities.PUBLIC,
+                // Interface functions are public or private, with one exception: clone in Cloneable, which is protected.
+                // However, Cloneable has no DefaultImpls, so this merely replicates the incorrect behavior of the old backend.
+                // We should rather not generate a bridge to clone when interface inherits from Cloneable at all.
+                visibility = if (interfaceFun.visibility == Visibilities.PRIVATE) Visibilities.PRIVATE else Visibilities.PUBLIC,
 
+                isFakeOverride = false,
                 typeParametersFromContext = parent.typeParameters
             )
         }
@@ -271,7 +271,7 @@ class JvmDeclarationFactory(
 
     fun getDefaultImplsRedirection(fakeOverride: IrSimpleFunction): IrSimpleFunction =
         defaultImplsRedirections.getOrPut(fakeOverride) {
-            assert(fakeOverride.origin == IrDeclarationOrigin.FAKE_OVERRIDE)
+            assert(fakeOverride.isFakeOverride)
             val irClass = fakeOverride.parentAsClass
             val descriptor = DescriptorsToIrRemapper.remapDeclaredSimpleFunction(fakeOverride.descriptor)
             with(fakeOverride) {

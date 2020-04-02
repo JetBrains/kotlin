@@ -25,8 +25,7 @@ import org.jetbrains.plugins.gradle.settings.DistributionType
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.service.project.wizard.ExternalModuleSettingsStep
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
-import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
-import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
+import org.jetbrains.kotlin.idea.statistics.NewProjectWizardsFUSCollector
 import org.jetbrains.plugins.gradle.service.settings.GradleProjectSettingsControl
 import javax.swing.Icon
 
@@ -91,7 +90,7 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
 
     override fun setupModule(module: Module) {
         try {
-            KotlinFUSLogger.log(FUSEventGroups.NPWizards, this.javaClass.simpleName)
+            NewProjectWizardsFUSCollector.log(this.presentableName, "Kotlin", false)
             module.gradleModuleBuilder = this
             super.setupModule(module)
 

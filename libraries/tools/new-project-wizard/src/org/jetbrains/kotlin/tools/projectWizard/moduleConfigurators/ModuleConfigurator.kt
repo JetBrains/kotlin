@@ -1,35 +1,35 @@
 package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
+
 import org.jetbrains.kotlin.tools.projectWizard.Identificator
 import org.jetbrains.kotlin.tools.projectWizard.SettingsOwner
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.core.cached
-import org.jetbrains.kotlin.tools.projectWizard.core.context.SettingsWritingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
 import org.jetbrains.kotlin.tools.projectWizard.enumSettingImpl
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinBuildSystemPluginIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.StdlibType
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleConfigurationData
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.correspondingStdlib
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModulePath
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
+import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
 import java.nio.file.Path
 import kotlin.properties.ReadOnlyProperty
 
 
-sealed class ModuleCondifuratorSettingsEnvironment {
-    abstract val <V : Any, T : SettingType<V>> ModuleConfiguratorSetting<V, T>.reference: ModuleConfiguratorSettingReference<V, T>
+interface ModuleConfiguratorSettingsEnvironment {
+    val <V : Any, T : SettingType<V>> ModuleConfiguratorSetting<V, T>.reference: ModuleConfiguratorSettingReference<V, T>
 }
 
 class ModuleBasedConfiguratorSettingsEnvironment(
     private val configurator: ModuleConfigurator,
     private val module: Module
-) : ModuleCondifuratorSettingsEnvironment() {
+) : ModuleConfiguratorSettingsEnvironment {
     override val <V : Any, T : SettingType<V>> ModuleConfiguratorSetting<V, T>.reference: ModuleConfiguratorSettingReference<V, T>
         get() = ModuleBasedConfiguratorSettingReference(configurator, module, this)
 }
@@ -37,7 +37,7 @@ class ModuleBasedConfiguratorSettingsEnvironment(
 class IdBasedConfiguratorSettingsEnvironment(
     private val configurator: ModuleConfigurator,
     private val moduleId: Identificator
-) : ModuleCondifuratorSettingsEnvironment() {
+) : ModuleConfiguratorSettingsEnvironment {
     override val <V : Any, T : SettingType<V>> ModuleConfiguratorSetting<V, T>.reference: ModuleConfiguratorSettingReference<V, T>
         get() = IdBasedConfiguratorSettingReference(configurator, moduleId, this)
 }
@@ -45,13 +45,13 @@ class IdBasedConfiguratorSettingsEnvironment(
 fun <T> withSettingsOf(
     moduleId: Identificator,
     configurator: ModuleConfigurator,
-    function: ModuleCondifuratorSettingsEnvironment.() -> T
+    function: ModuleConfiguratorSettingsEnvironment.() -> T
 ): T = function(IdBasedConfiguratorSettingsEnvironment(configurator, moduleId))
 
 fun <T> withSettingsOf(
     module: Module,
     configurator: ModuleConfigurator = module.configurator,
-    function: ModuleCondifuratorSettingsEnvironment.() -> T
+    function: ModuleConfiguratorSettingsEnvironment.() -> T
 ): T = function(ModuleBasedConfiguratorSettingsEnvironment(configurator, module))
 
 
@@ -166,11 +166,10 @@ interface ModuleConfiguratorWithSettings : ModuleConfigurator {
     fun getPluginSettings(): List<PluginSettingReference<Any, SettingType<Any>>> = emptyList()
 
 
-    fun SettingsWritingContext.initDefaultValuesFor(module: Module) {
+    fun SettingsWriter.initDefaultValuesFor(module: Module) {
         withSettingsOf(module) {
             getConfiguratorSettings().forEach { setting ->
-                val defaultValue = setting.defaultValue ?: return@forEach
-                setting.reference.setValue(defaultValue)
+                setting.reference.setSettingValueToItsDefaultIfItIsNotSetValue()
             }
         }
     }
@@ -182,7 +181,7 @@ val ModuleConfigurator.settings
         else -> emptyList()
     }
 
-fun ReadingContext.allSettingsOfModuleConfigurator(moduleConfigurator: ModuleConfigurator) = when (moduleConfigurator) {
+fun Reader.allSettingsOfModuleConfigurator(moduleConfigurator: ModuleConfigurator) = when (moduleConfigurator) {
     is ModuleConfiguratorWithSettings -> buildList<Setting<Any, SettingType<Any>>> {
         +moduleConfigurator.getConfiguratorSettings()
         +moduleConfigurator.getPluginSettings().map { it.pluginSetting }
@@ -200,38 +199,43 @@ fun Module.getConfiguratorSettings() = buildList<SettingReference<*, *>> {
 
 interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
     val moduleKind: ModuleKind
-    override val text: String
-        get() = id
 
     val suggestedModuleName: String? get() = null
     val canContainSubModules: Boolean get() = false
+    val requiresRootBuildFile: Boolean get() = false
 
     fun createBuildFileIRs(
-        readingContext: ReadingContext,
-        configurationData: ModuleConfigurationData,
+        reader: Reader,
+        configurationData: ModulesToIrConversionData,
         module: Module
     ): List<BuildSystemIR> =
         emptyList()
 
     fun createModuleIRs(
-        readingContext: ReadingContext,
-        configurationData: ModuleConfigurationData,
+        reader: Reader,
+        configurationData: ModulesToIrConversionData,
         module: Module
     ): List<BuildSystemIR> =
         emptyList()
 
-    fun createStdlibType(configurationData: ModuleConfigurationData, module: Module): StdlibType? =
+    fun createStdlibType(configurationData: ModulesToIrConversionData, module: Module): StdlibType? =
         safeAs<ModuleConfiguratorWithModuleType>()?.moduleType?.correspondingStdlib()
 
-    fun createRootBuildFileIrs(configurationData: ModuleConfigurationData): List<BuildSystemIR> = emptyList()
-    fun createKotlinPluginIR(configurationData: ModuleConfigurationData, module: Module): KotlinBuildSystemPluginIR? =
+    fun createRootBuildFileIrs(configurationData: ModulesToIrConversionData): List<BuildSystemIR> = emptyList()
+    fun createKotlinPluginIR(configurationData: ModulesToIrConversionData, module: Module): KotlinBuildSystemPluginIR? =
         null
 
-    fun WritingContext.runArbitraryTask(
-        configurationData: ModuleConfigurationData,
+    fun Writer.runArbitraryTask(
+        configurationData: ModulesToIrConversionData,
         module: Module,
         modulePath: Path
     ): TaskResult<Unit> = UNIT_SUCCESS
+
+    fun Reader.createTemplates(
+        configurationData: ModulesToIrConversionData,
+        module: Module,
+        modulePath: Path
+    ): List<FileTemplate> = emptyList()
 
     companion object {
         val ALL = buildList<ModuleConfigurator> {
@@ -246,6 +250,7 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
             +JvmSinglePlatformModuleConfigurator
             +AndroidSinglePlatformModuleConfigurator
             +IOSSinglePlatformModuleConfigurator
+            +JsSingleplatformModuleConfigurator
         }
 
         init {
@@ -253,8 +258,7 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
                 .forEach { (id, configurators) -> assert(configurators.size == 1) { id } }
         }
 
-        val BY_ID = ALL.associateBy(ModuleConfigurator::id)
-        val BY_MODULE_KIND = ALL.groupBy(ModuleConfigurator::moduleKind)
+        private val BY_ID = ALL.associateBy(ModuleConfigurator::id)
 
         fun getParser(moduleIdentificator: Identificator): Parser<ModuleConfigurator> =
             valueParserM { value, path ->
@@ -263,11 +267,14 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
             } or mapParser { map, path ->
                 val (id) = map.parseValue<String>(path, "name")
                 val (configurator) = BY_ID[id].toResult { ConfiguratorNotFoundError(id) }
-                val (settingsWithValues) = configurator.settings.mapComputeM { setting ->
-                    val (settingValue) = map[setting.path].toResult { ParseError("No value was found for a key `$path.${setting.path}`") }
-                    val reference = withSettingsOf(moduleIdentificator, configurator) { setting.reference }
-                    setting.type.parse(this, settingValue, setting.path).map { reference to it }
-                }.sequence()
+                val (settingsWithValues) = parseSettingsMap(
+                    path,
+                    map,
+                    configurator.settings.map { setting ->
+                        val reference = withSettingsOf(moduleIdentificator, configurator) { setting.reference }
+                        reference to setting
+                    }
+                )
                 updateState { it.withSettings(settingsWithValues) }
                 configurator
             }
@@ -275,5 +282,5 @@ interface ModuleConfigurator : DisplayableSettingItem, EntitiesOwnerDescriptor {
 }
 
 interface GradleModuleConfigurator : ModuleConfigurator {
-    fun ReadingContext.createSettingsGradleIRs(module: Module): List<BuildSystemIR> = emptyList()
+    fun Reader.createSettingsGradleIRs(module: Module): List<BuildSystemIR> = emptyList()
 }

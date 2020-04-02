@@ -5,19 +5,21 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-220
+ * SPEC VERSION: 0.1-296
  * PLACE: expressions, not-null-assertion-expression -> paragraph 3 -> sentence 1
  * NUMBER: 1
- * DESCRIPTION: If the type of e is non-nullable, not-null assertion expression e!! has no effect.
+ * DESCRIPTION: The type of non-null assertion e!! expression is the non-nullable variant of the type of e.
+ * HELPERS: checkType
  */
+
 
 // MODULE: libModule
 // FILE: libModule/JavaClass.java
 package libModule;
 
 public class JavaClass {
-    public static final boolean FALSE = false;
-    public static int obj = 5;
+    public static final String STR;
+    public static Object obj;
 }
 
 
@@ -25,30 +27,44 @@ public class JavaClass {
 // FILE: KotlinClass.kt
 package mainModule
 import libModule.*
+import checkSubtype
 
 
 // TESTCASE NUMBER: 1
 fun case1() {
-    val res = JavaClass.FALSE<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
+    val a = JavaClass.STR
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>a<!>
+    val res = a!!
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>res<!>
 }
 
 // TESTCASE NUMBER: 2
 fun case2() {
-    val x = JavaClass.obj<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
+    val a = JavaClass.obj
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Any..kotlin.Any?)")!>a<!>
+    val x = a!!
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
 }
 
 // TESTCASE NUMBER: 3
 fun case3() {
-    val a = false
-    val x = a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
+    val a : Any? = false
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!>
+    val x = a!!
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>
 }
 
 // TESTCASE NUMBER: 4
 fun case4() {
-    val x = "weds"<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
+    val a : String? = "weds"
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>a<!>
+    val x = a!!
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x<!>
 }
 
 // TESTCASE NUMBER: 5
-fun case5(nothing: Nothing) {
-    val y = nothing<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
+fun case5(nothing: Nothing?) {
+    <!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>nothing<!>
+    val y = <!ALWAYS_NULL!>nothing<!>!!
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>y<!>
 }

@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/Derived.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]'
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public' type=kotlin.Unit origin=EQ
           receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived' type=<root>.Derived origin=null
           value: CONST Int type=kotlin.Int value=0
     FUN name:getValue visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:kotlin.Int
@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/Derived.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived
       VALUE_PARAMETER name:value index:0 type:kotlin.Int
       BLOCK_BODY
-        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public' type=kotlin.Unit origin=EQ
           receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.setValue' type=<root>.Derived origin=null
           value: GET_VAR 'value: kotlin.Int declared in <root>.Derived.setValue' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

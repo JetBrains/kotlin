@@ -59,7 +59,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
                 symbol, name, visibility, modality,
                 returnType,
                 isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect,
-                isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+                isFakeOverride = isFakeOverride,
                 isOperator = isOperator
             ).also {
                 descriptor.bind(it)

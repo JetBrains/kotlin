@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class RemoveLabeledReturnInLambdaIntention : SelfTargetingIntention<KtReturnExpression>(
     KtReturnExpression::class.java,
-    "Remove labeled return from last expression in a lambda"
+    KotlinBundle.message("remove.labeled.return.from.last.expression.in.a.lambda")
 ), LowPriorityAction {
     override fun isApplicableTo(element: KtReturnExpression, caretOffset: Int): Boolean {
         val labelName = element.getLabelName() ?: return false
@@ -21,7 +22,7 @@ class RemoveLabeledReturnInLambdaIntention : SelfTargetingIntention<KtReturnExpr
         if (block.statements.lastOrNull() != element) return false
         val callName = block.getParentLambdaLabelName() ?: return false
         if (labelName != callName) return false
-        text = "Remove return@$labelName"
+        text = KotlinBundle.message("remove.return.0", labelName)
         return true
     }
 

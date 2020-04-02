@@ -21,6 +21,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtFile
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 class MoveReceiverAnnotationFix(element: KtAnnotationEntry) : KotlinQuickFixAction<KtAnnotationEntry>(element) {
 
-    override fun getFamilyName() = "Move annotation to receiver type"
+    override fun getFamilyName() = KotlinBundle.message("move.annotation.to.receiver.type")
     override fun getText() = familyName
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {

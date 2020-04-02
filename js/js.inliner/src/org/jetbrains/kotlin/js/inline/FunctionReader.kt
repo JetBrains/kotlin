@@ -34,10 +34,8 @@ import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getModuleName
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
-import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 import org.jetbrains.kotlin.utils.JsLibraryUtils
 import java.io.File
-import java.io.StringReader
 
 // TODO: add hash checksum to defineModule?
 /**
@@ -401,7 +399,7 @@ private fun JsFunction.markInlineArguments(descriptor: CallableDescriptor) {
 
             (qualifier as? JsNameRef)?.name?.let { name ->
                 if (name in inlineFuns) {
-                    x.inlineStrategy = InlineStrategy.IN_PLACE
+                    x.isInline = true
                 }
             }
         }

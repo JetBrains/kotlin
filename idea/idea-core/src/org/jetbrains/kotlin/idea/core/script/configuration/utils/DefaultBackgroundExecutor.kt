@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Alarm
 import com.intellij.util.containers.HashSetQueue
 import org.jetbrains.kotlin.idea.core.script.debug
+import org.jetbrains.kotlin.idea.core.util.KotlinIdeaCoreBundle
 import java.util.*
 
 /**
@@ -203,7 +204,7 @@ internal class DefaultBackgroundExecutor(
         override fun start() {
             super.start()
 
-            object : Task.Backgroundable(project, "Kotlin: Loading script dependencies...", true) {
+            object : Task.Backgroundable(project, KotlinIdeaCoreBundle.message("text.kotlin.loading.script.dependencies"), true) {
                 override fun run(indicator: ProgressIndicator) {
                     progressIndicator = indicator
                     updateProgress()

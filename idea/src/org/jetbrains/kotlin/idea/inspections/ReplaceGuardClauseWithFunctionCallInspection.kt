@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
@@ -42,12 +43,12 @@ class ReplaceGuardClauseWithFunctionCallInspection : AbstractApplicabilityBasedI
             get() = "kotlin.$functionName"
     }
 
-    override fun inspectionText(element: KtIfExpression) = "Replace guard clause with kotlin's function call"
+    override fun inspectionText(element: KtIfExpression) = KotlinBundle.message("replace.guard.clause.with.kotlin.s.function.call")
 
-    override val defaultFixText = "Replace with kotlin's function call"
+    override val defaultFixText get() = KotlinBundle.message("replace.with.kotlin.s.function.call")
 
     override fun fixText(element: KtIfExpression) =
-        element.getKotlinFunction()?.let { "Replace with '${it.functionName}()' call" } ?: defaultFixText
+        element.getKotlinFunction()?.let { KotlinBundle.message("replace.with.0.call", it.functionName) } ?: defaultFixText
 
     override fun inspectionHighlightRangeInElement(element: KtIfExpression) = element.ifKeyword.textRangeIn(element)
 

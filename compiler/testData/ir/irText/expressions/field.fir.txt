@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/field.kt
       correspondingProperty: PROPERTY name:testSimple visibility:public modality:FINAL [var]
       VALUE_PARAMETER name:value index:0 type:kotlin.Int
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testSimple type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testSimple type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=EQ
           value: GET_VAR 'value: kotlin.Int declared in <root>.<set-testSimple>' type=kotlin.Int origin=null
   PROPERTY name:testAugmented visibility:public modality:FINAL [var]
     FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:private [static]
@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/field.kt
       correspondingProperty: PROPERTY name:testAugmented visibility:public modality:FINAL [var]
       VALUE_PARAMETER name:value index:0 type:kotlin.Int
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=EQ
           value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=GET_PROPERTY
             other: GET_VAR 'value: kotlin.Int declared in <root>.<set-testAugmented>' type=kotlin.Int origin=null

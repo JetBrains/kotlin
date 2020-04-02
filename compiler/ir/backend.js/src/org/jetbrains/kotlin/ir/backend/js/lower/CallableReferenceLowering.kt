@@ -14,10 +14,8 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
-import org.jetbrains.kotlin.ir.builders.irBlockBody
-import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
-import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedReceiverParameterDescriptor
@@ -27,10 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.explicitParameters
-import org.jetbrains.kotlin.ir.util.isSuspend
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -84,8 +79,16 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             clazz.parent = container
 
             return expression.run {
-                val ctorCall =
-                    IrConstructorCallImpl(startOffset, endOffset, type, ctor.symbol, 0 /*TODO: properly set type arguments*/, 0, 0, CALLABLE_REFERENCE_CREATE)
+                val boundReceiver = expression.run { dispatchReceiver ?: extensionReceiver }
+                val vpCount = if (boundReceiver != null) 1 else 0
+                val ctorCall = IrConstructorCallImpl(
+                    startOffset, endOffset, type, ctor.symbol,
+                    0 /*TODO: properly set type arguments*/, 0,
+                    vpCount, CALLABLE_REFERENCE_CREATE).apply {
+                    boundReceiver?.let {
+                        putValueArgument(0, it)
+                    }
+                }
                 IrCompositeImpl(startOffset, endOffset, type, origin, listOf(clazz, ctorCall))
             }
         }
@@ -138,10 +141,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             val boundReceiver = funRef.run { dispatchReceiver ?: extensionReceiver }
 
             if (boundReceiver != null) {
-                boundReceiverField = addField(BOUND_RECEIVER_NAME, boundReceiver.type).apply {
-                    initializer = IrExpressionBodyImpl(boundReceiver.startOffset, boundReceiver.endOffset, boundReceiver)
-                    parent = this@createReceiverField
-                }
+                boundReceiverField = addField(BOUND_RECEIVER_NAME, boundReceiver.type)
             }
         }
 
@@ -162,6 +162,14 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
 
                 val superConstructor = superClass.classOrNull!!.owner.declarations.single { it is IrConstructor && it.isPrimary } as IrConstructor
 
+                val boundReceiverParameter = boundReceiverField?.let {
+                    addValueParameter {
+                        name = BOUND_RECEIVER_NAME
+                        type = it.type
+                        index = 0
+                    }
+                }
+
                 var continuation: IrValueParameter? = null
 
                 if (isSuspendLambda) {
@@ -169,7 +177,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                     continuation = addValueParameter {
                         name = superContinuation.name
                         type = superContinuation.type
-                        index = 0
+                        index = if (boundReceiverParameter == null) 0 else 1
                     }
                 }
 
@@ -178,6 +186,9 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                         continuation?.let {
                             putValueArgument(0, getValue(it))
                         }
+                    }
+                    boundReceiverParameter?.let {
+                        +irSetField(irGet(clazz.thisReceiver!!), boundReceiverField!!, irGet(it))
                     }
                     +IrInstanceInitializerCallImpl(startOffset, endOffset, clazz.symbol, context.irBuiltIns.unitType)
                 }

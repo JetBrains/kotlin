@@ -25,6 +25,7 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.KotlinJvmBundle;
 
 import javax.swing.*;
 import java.awt.*;
@@ -388,9 +389,9 @@ public class TextEditorWithPreview extends UserDataHolderBase implements FileEdi
     }
 
     public enum Layout {
-        SHOW_EDITOR("Editor only", AllIcons.General.LayoutEditorOnly),
-        SHOW_PREVIEW("Preview only", AllIcons.General.LayoutPreviewOnly),
-        SHOW_EDITOR_AND_PREVIEW("Editor and Preview", AllIcons.General.LayoutEditorPreview);
+        SHOW_EDITOR(KotlinJvmBundle.message("editor.editor.only"), AllIcons.General.LayoutEditorOnly),
+        SHOW_PREVIEW(KotlinJvmBundle.message("editor.preview.only"), AllIcons.General.LayoutPreviewOnly),
+        SHOW_EDITOR_AND_PREVIEW(KotlinJvmBundle.message("editor.editor.and.preview"), AllIcons.General.LayoutEditorPreview);
 
         private final String myName;
         private final Icon myIcon;

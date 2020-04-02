@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.configuration
 internal object MLCompletionForKotlin {
     const val isAvailable: Boolean = false
 
-    override var isEnabled: Boolean
+    var isEnabled: Boolean
         get() = false
         set(value) {
             throw UnsupportedOperationException()

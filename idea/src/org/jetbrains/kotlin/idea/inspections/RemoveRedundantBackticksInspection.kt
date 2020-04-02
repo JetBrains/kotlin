@@ -24,6 +24,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.source.tree.SharedImplUtil
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.unquote
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtElement
@@ -45,9 +46,8 @@ class RemoveRedundantBackticksInspection : AbstractKotlinInspection() {
         }
     }
 
-    private fun isKeyword(text: String): Boolean {
-        return text == "yield" || text == "_" || (KtTokens.KEYWORDS.types + KtTokens.SOFT_KEYWORDS.types).any { it.toString() == text }
-    }
+    private fun isKeyword(text: String): Boolean =
+        text == "yield" || text.all { it == '_' } || (KtTokens.KEYWORDS.types + KtTokens.SOFT_KEYWORDS.types).any { it.toString() == text }
 
     private fun isRedundantBackticks(node: ASTNode): Boolean {
         val text = node.text
@@ -59,7 +59,7 @@ class RemoveRedundantBackticksInspection : AbstractKotlinInspection() {
     private fun registerProblem(holder: ProblemsHolder, element: PsiElement) {
         holder.registerProblem(
             element,
-            "Remove redundant backticks",
+            KotlinBundle.message("remove.redundant.backticks.quick.fix.text"),
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
             RemoveRedundantBackticksQuickFix()
         )
@@ -67,7 +67,7 @@ class RemoveRedundantBackticksInspection : AbstractKotlinInspection() {
 }
 
 class RemoveRedundantBackticksQuickFix : LocalQuickFix {
-    override fun getName() = "Remove redundant backticks"
+    override fun getName() = KotlinBundle.message("remove.redundant.backticks.quick.fix.text")
     override fun getFamilyName() = name
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {

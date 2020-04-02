@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.refactoring.rename.RenameProcessor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToParameterDescriptorIfAny
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtParameter
@@ -20,9 +21,9 @@ class RenameParameterToMatchOverriddenMethodFix(
     parameter: KtParameter,
     private val newName: String
 ) : KotlinQuickFixAction<KtParameter>(parameter) {
-    override fun getFamilyName() = "Rename"
+    override fun getFamilyName() = KotlinBundle.message("rename.identifier.fix.text")
 
-    override fun getText() = "Rename parameter to match overridden method"
+    override fun getText() = KotlinBundle.message("rename.parameter.to.match.overridden.method")
 
     override fun startInWriteAction(): Boolean = false
 

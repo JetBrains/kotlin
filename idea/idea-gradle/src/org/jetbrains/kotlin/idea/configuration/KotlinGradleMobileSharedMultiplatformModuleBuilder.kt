@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import java.io.BufferedWriter
 
 class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatformModuleBuilder() {
@@ -25,10 +26,11 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.mobileshared"
 
-    override fun getPresentableName() = "Mobile Shared Library | Gradle"
+    override fun getPresentableName() = KotlinIdeaGradleBundle.message("presentable.text.mobile.shared.library.gradle")
 
-    override fun getDescription() =
-        "Multiplatform Gradle project allowing reuse of the same Kotlin code between two mobile platforms (JVM/Android and Native)"
+    override fun getDescription() = KotlinIdeaGradleBundle.message(
+        "description.text.multiplatform.gradle.project.allowing.reuse.of.the.same.kotlin.code.between.two.mobile.platforms.jvm.android.and.native"
+    )
 
     override fun createProjectSkeleton(rootDir: VirtualFile) {
         val src = rootDir.createChildDirectory(this, "src")

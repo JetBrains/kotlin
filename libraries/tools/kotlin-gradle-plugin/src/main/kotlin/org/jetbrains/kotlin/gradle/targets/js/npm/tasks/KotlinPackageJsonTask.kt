@@ -7,12 +7,16 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import java.io.File
 
@@ -26,9 +30,11 @@ open class KotlinPackageJsonTask : DefaultTask() {
     private val producer: KotlinCompilationNpmResolver.PackageJsonProducer
         get() = compilationResolver.packageJsonProducer
 
-    private fun findDependentTasks(): Collection<KotlinPackageJsonTask> =
+    private fun findDependentTasks(): Collection<Any> =
         producer.internalDependencies.map { dependentResolver ->
             dependentResolver.npmProject.packageJsonTask
+        } + producer.internalCompositeDependencies.map { dependency ->
+            dependency.includedBuild.task(":$PACKAGE_JSON_UMBRELLA_TASK_NAME")
         }
 
     @get:Nested
@@ -54,6 +60,7 @@ open class KotlinPackageJsonTask : DefaultTask() {
             val rootClean = project.rootProject.tasks.getByName(BasePlugin.CLEAN_TASK_NAME)
             val npmInstallTask = nodeJs.npmInstallTask
             val packageJsonTaskName = npmProject.packageJsonTaskName
+            val packageJsonUmbrella = project.rootProject.tasks.named(PACKAGE_JSON_UMBRELLA_TASK_NAME)
             val packageJsonTask = project.registerTask<KotlinPackageJsonTask>(packageJsonTaskName) { task ->
                 task.nodeJs = nodeJs
                 task.compilation = compilation
@@ -62,6 +69,9 @@ open class KotlinPackageJsonTask : DefaultTask() {
 
                 task.dependsOn(target.project.provider { task.findDependentTasks() })
                 task.mustRunAfter(rootClean)
+            }
+            packageJsonUmbrella.configure { task ->
+                task.inputs.file(packageJsonTask.map { it.packageJson })
             }
 
             npmInstallTask.mustRunAfter(rootClean, packageJsonTask)

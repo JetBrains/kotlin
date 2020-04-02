@@ -38,13 +38,16 @@ abstract class KtDoubleColonExpression(node: ASTNode) : KtExpressionImpl(node) {
     val doubleColonTokenReference: PsiElement
         get() = findChildByType(KtTokens.COLONCOLON)!!
 
+    val lhs: PsiElement?
+        get() = doubleColonTokenReference.prevSibling
+
     fun setReceiverExpression(newReceiverExpression: KtExpression) {
         val oldReceiverExpression = this.receiverExpression
         oldReceiverExpression?.replace(newReceiverExpression) ?: addBefore(newReceiverExpression, doubleColonTokenReference)
     }
 
     val isEmptyLHS: Boolean
-        get() = doubleColonTokenReference.prevSibling == null
+        get() = lhs == null
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitDoubleColonExpression(this, data)

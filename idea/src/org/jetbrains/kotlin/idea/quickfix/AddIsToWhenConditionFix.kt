@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -18,9 +19,7 @@ class AddIsToWhenConditionFix(
     expression: KtWhenConditionWithExpression,
     private val referenceText: String
 ) : KotlinQuickFixAction<KtWhenConditionWithExpression>(expression) {
-
-    override fun getText(): String = "Add 'is' before '$referenceText'"
-
+    override fun getText(): String = KotlinBundle.message("fix.add.is.to.when", referenceText)
     override fun getFamilyName(): String = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {

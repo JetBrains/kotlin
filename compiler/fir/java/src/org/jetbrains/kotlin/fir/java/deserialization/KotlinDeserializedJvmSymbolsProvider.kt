@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
@@ -120,6 +120,7 @@ class KotlinDeserializedJvmSymbolsProvider(
                 FirDeserializationContext.createForPackage(
                     packageFqName, packageProto, nameResolver, session,
                     JvmBinaryAnnotationDeserializer(session),
+                    source
                 ),
                 source,
             )
@@ -166,7 +167,7 @@ class KotlinDeserializedJvmSymbolsProvider(
             buildResolvedTypeRef {
                 type = it.constructType(emptyList(), isNullable = false)
             }
-        } ?: buildErrorTypeRef { diagnostic = FirSimpleDiagnostic("Symbol not found for $classId", DiagnosticKind.Java) }
+        } ?: buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Symbol not found for $classId", DiagnosticKind.Java) }
 
     }
 
@@ -209,7 +210,7 @@ class KotlinDeserializedJvmSymbolsProvider(
                         }
                         else -> {
                             buildErrorNamedReference {
-                                diagnostic = FirSimpleDiagnostic(
+                                diagnostic = ConeSimpleDiagnostic(
                                     "Strange deserialized enum value: ${this@toEnumEntryReferenceExpression}.$name",
                                     DiagnosticKind.Java,
                                 )
@@ -332,7 +333,8 @@ class KotlinDeserializedJvmSymbolsProvider(
                 classId, classProto, symbol, nameResolver, session,
                 JvmBinaryAnnotationDeserializer(session),
                 kotlinScopeProvider,
-                parentContext, this::findAndDeserializeClass,
+                parentContext, KotlinJvmBinarySourceElement(kotlinJvmBinaryClass),
+                this::findAndDeserializeClass
             )
 
             classesCache[classId] = symbol
@@ -360,7 +362,7 @@ class KotlinDeserializedJvmSymbolsProvider(
         val functionIds = part.topLevelFunctionNameIndex[name] ?: return emptyList()
         return functionIds.map { part.proto.getFunction(it) }
             .map {
-                val firNamedFunction = part.context.memberDeserializer.loadFunction(it, containerSource = part.source) as FirSimpleFunctionImpl
+                val firNamedFunction = part.context.memberDeserializer.loadFunction(it) as FirSimpleFunctionImpl
                 firNamedFunction.symbol
             }
     }
@@ -369,7 +371,7 @@ class KotlinDeserializedJvmSymbolsProvider(
         val propertyIds = part.topLevelPropertyNameIndex[name] ?: return emptyList()
         return propertyIds.map { part.proto.getProperty(it) }
             .map {
-                val firProperty = part.context.memberDeserializer.loadProperty(it, containerSource = part.source)
+                val firProperty = part.context.memberDeserializer.loadProperty(it)
                 firProperty.symbol
             }
     }

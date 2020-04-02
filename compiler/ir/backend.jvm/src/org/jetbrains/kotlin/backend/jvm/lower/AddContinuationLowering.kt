@@ -118,7 +118,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                     irBlock {
                         +generateContinuationClassForLambda(
                             info,
-                            currentDeclarationParent,
+                            currentDeclarationParent ?: error("No current declaration parent at ${expression.dump()}"),
                             (currentFunction?.irElement as? IrFunction)?.isInline == true
                         )
                         val constructor = info.constructor
@@ -527,6 +527,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             irFunction.name.toSuspendImplementationName(),
             irFunction,
             origin = JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION,
+            isFakeOverride = false,
             copyMetadata = false
         )
         static.body = irFunction.moveBodyTo(static)
@@ -639,10 +640,8 @@ private fun IrFunction.suspendFunctionViewOrStub(context: JvmBackendContext): Ir
     return context.suspendFunctionOriginalToView.getOrPut(suspendFunctionOriginal()) { createSuspendFunctionStub(context) }
 }
 
-internal fun IrFunction.suspendFunctionOriginal(): IrFunction {
-    require(isSuspend && this is IrSimpleFunction)
-    return attributeOwnerId as IrFunction
-}
+internal fun IrFunction.suspendFunctionOriginal(): IrFunction =
+    if (this is IrSimpleFunction && isSuspend) attributeOwnerId as IrFunction else this
 
 private fun IrFunction.createSuspendFunctionStub(context: JvmBackendContext): IrFunction {
     require(this.isSuspend && this is IrSimpleFunction)

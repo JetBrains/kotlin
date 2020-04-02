@@ -64,7 +64,9 @@ FILE fqName:<root> fileName:/unboundMemberReferenceWithAdaptedArguments.kt
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use2]>#' type=IrErrorType
         FUNCTION_REFERENCE 'public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.A' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Int> origin=null reflectionTarget=<same>
+          $this: GET_VAR 'a: <root>.A declared in <root>.testBound' type=<root>.A origin=null
   FUN name:testObject visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use2]>#' type=IrErrorType
         FUNCTION_REFERENCE 'public final fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.Obj' type=kotlin.reflect.KFunction1<kotlin.IntArray, kotlin.Int> origin=null reflectionTarget=<same>
+          $this: GET_OBJECT 'CLASS OBJECT name:Obj modality:FINAL visibility:public superTypes:[<root>.A]' type=<root>.Obj

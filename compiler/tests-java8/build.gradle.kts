@@ -23,11 +23,6 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jdkHome = rootProject.extra["JDK_18"]!!.toString()
-    kotlinOptions.jvmTarget = "1.8"
-}
-
 projectTest(parallel = true) {
     executable = "${rootProject.extra["JDK_18"]!!}/bin/java"
     dependsOn(":dist")

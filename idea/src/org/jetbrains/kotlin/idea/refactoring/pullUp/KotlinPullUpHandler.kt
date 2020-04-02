@@ -15,6 +15,7 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -37,6 +38,7 @@ class KotlinPullUpHandler : AbstractPullPushMembersHandler(
     wrongPositionMessage = RefactoringBundle.message("the.caret.should.be.positioned.inside.a.class.to.pull.members.from")
 ) {
     companion object {
+        @NonNls
         const val PULL_UP_TEST_HELPER_KEY = "PULL_UP_TEST_HELPER_KEY"
     }
 
@@ -115,4 +117,4 @@ class KotlinPullUpHandler : AbstractPullPushMembersHandler(
     }
 }
 
-const val PULL_MEMBERS_UP = "Pull Members Up"
+val PULL_MEMBERS_UP: String get() = RefactoringBundle.message("pull.members.up.title")

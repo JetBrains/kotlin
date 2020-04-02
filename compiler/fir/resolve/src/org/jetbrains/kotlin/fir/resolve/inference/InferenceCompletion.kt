@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
@@ -22,77 +23,11 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraint
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-import org.jetbrains.kotlin.types.model.isIntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-
-fun Candidate.computeCompletionMode(
-    components: InferenceComponents,
-    expectedType: FirTypeRef?,
-    currentReturnType: ConeKotlinType?
-): KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode {
-    // Presence of expected type means that we trying to complete outermost call => completion mode should be full
-    if (expectedType != null) return KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL
-
-    // This is questionable as null return type can be only for error call
-    if (currentReturnType == null || currentReturnType is ConeIntegerLiteralType)
-        return KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.PARTIAL
-
-    return when {
-        // Consider call foo(bar(x)), if return type of bar is a proper one, then we can complete resolve for bar => full completion mode
-        // Otherwise, we shouldn't complete bar until we process call foo
-        csBuilder.isProperType(currentReturnType) -> KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL
-
-        // Nested call is connected with the outer one through the UPPER constraint (returnType <: expectedOuterType)
-        // This means that there will be no new LOWER constraints =>
-        //   it's possible to complete call now if there are proper LOWER constraints
-        csBuilder.isTypeVariable(currentReturnType) ->
-            if (hasProperNonTrivialLowerConstraints(components, currentReturnType))
-                KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL
-            else
-                KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.PARTIAL
-
-        // Return type has proper equal constraints => there is no need in the outer call
-        containsTypeVariablesWithProperEqualConstraints(components, currentReturnType) -> KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL
-
-        else -> KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.PARTIAL
-    }
-}
-
 val Candidate.csBuilder: NewConstraintSystemImpl get() = system.getBuilder()
-
-private fun Candidate.containsTypeVariablesWithProperEqualConstraints(components: InferenceComponents, type: ConeKotlinType): Boolean =
-    with(components.ctx){
-        for ((variableConstructor, variableWithConstraints) in csBuilder.currentStorage().notFixedTypeVariables) {
-            if (!type.contains { it.typeConstructor() == variableConstructor }) continue
-
-            val constraints = variableWithConstraints.constraints
-            val onlyProperEqualConstraints =
-                constraints.isNotEmpty() && constraints.any { it.kind.isEqual() && csBuilder.isProperType(it.type) }
-
-            if (!onlyProperEqualConstraints) return false
-        }
-
-        return true
-    }
-
-private fun Candidate.hasProperNonTrivialLowerConstraints(components: InferenceComponents, typeVariable: ConeKotlinType): Boolean {
-    assert(csBuilder.isTypeVariable(typeVariable)) { "$typeVariable is not a type variable" }
-
-    val context = components.ctx
-    val constructor = typeVariable.typeConstructor(context)
-    val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[constructor] ?: return false
-    val constraints = variableWithConstraints.constraints
-    // TODO: support Exact annotation
-    // see KotlinCallCompleter:244
-    return constraints.isNotEmpty() && constraints.any {
-        !it.type.typeConstructor(context).isIntegerLiteralTypeConstructor(context) &&
-                (it.kind.isLower() || it.kind.isEqual()) && csBuilder.isProperType(it.type)
-    }
-
-}
 
 
 class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
@@ -100,7 +35,7 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
 
     fun complete(
         c: KotlinConstraintSystemCompleter.Context,
-        completionMode: KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode,
+        completionMode: ConstraintSystemCompletionMode,
         topLevelAtoms: List<FirStatement>,
         candidateReturnType: ConeKotlinType,
         analyze: (PostponedResolvedAtom) -> Unit
@@ -117,13 +52,13 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
                 ) ?: break
 
             if (
-                completionMode == KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL &&
+                completionMode == ConstraintSystemCompletionMode.FULL &&
                 resolveLambdaOrCallableReferenceWithTypeVariableAsExpectedType(c, variableForFixation, postponedAtoms, analyze)
             ) {
                 continue
             }
 
-            if (variableForFixation.hasProperConstraint || completionMode == KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL) {
+            if (variableForFixation.hasProperConstraint || completionMode == ConstraintSystemCompletionMode.FULL) {
                 val variableWithConstraints = c.notFixedTypeVariables.getValue(variableForFixation.variable)
 
                 fixVariable(c, candidateReturnType, variableWithConstraints, emptyList())
@@ -137,7 +72,7 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
             break
         }
 
-        if (completionMode == KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL) {
+        if (completionMode == ConstraintSystemCompletionMode.FULL) {
             // force resolution for all not-analyzed argument's
             getOrderedNotAnalyzedPostponedArguments(topLevelAtoms).forEach(analyze)
 //

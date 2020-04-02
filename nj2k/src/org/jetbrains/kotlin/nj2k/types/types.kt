@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.nj2k.types
 
+import com.intellij.lang.jvm.types.JvmPrimitiveTypeKind
+import com.intellij.psi.PsiPrimitiveType
+import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
 import org.jetbrains.kotlin.nj2k.symbols.JKTypeParameterSymbol
@@ -65,7 +68,17 @@ data class JKCapturedType(
     override val nullability: Nullability = Nullability.Default
 ) : JKType
 
-class JKJavaPrimitiveType(val jvmPrimitiveType: JvmPrimitiveType) : JKType {
+
+sealed class JKJavaPrimitiveTypeBase : JKType {
+    abstract val jvmPrimitiveType: JvmPrimitiveType?
+}
+
+private object JKJavaNullPrimitiveType : JKJavaPrimitiveTypeBase() {
+    override val jvmPrimitiveType: JvmPrimitiveType? = null
+    override val nullability: Nullability = Nullability.Nullable
+}
+
+class JKJavaPrimitiveType private constructor(override val jvmPrimitiveType: JvmPrimitiveType) : JKJavaPrimitiveTypeBase() {
     override val nullability: Nullability
         get() = Nullability.NotNull
 
@@ -79,10 +92,20 @@ class JKJavaPrimitiveType(val jvmPrimitiveType: JvmPrimitiveType) : JKType {
         val LONG = JKJavaPrimitiveType(JvmPrimitiveType.LONG)
         val DOUBLE = JKJavaPrimitiveType(JvmPrimitiveType.DOUBLE)
 
-        val KEYWORD_TO_INSTANCE = listOf(
-            BOOLEAN, CHAR, BYTE, SHORT, INT, FLOAT, LONG, DOUBLE
-        ).associateBy { it.jvmPrimitiveType.javaKeywordName } + ("void" to JKJavaVoidType)
+        val ALL = listOf(BOOLEAN, CHAR, BYTE, SHORT, INT, FLOAT, LONG, DOUBLE)
+
+        @Suppress("UnstableApiUsage")
+        private val psiKindToJK =
+            ALL.associateBy { JvmPrimitiveTypeKind.getKindByName(it.jvmPrimitiveType.javaKeywordName) }
+
+        @Suppress("UnstableApiUsage")
+        fun fromPsi(psi: PsiPrimitiveType) = when (psi) {
+            PsiType.VOID -> JKJavaVoidType
+            PsiType.NULL -> JKJavaNullPrimitiveType
+            else -> psiKindToJK[psi.kind] ?: error("Invalid PSI type ${psi.presentableText}")
+        }
     }
+
 }
 
 data class JKJavaArrayType(

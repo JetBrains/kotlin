@@ -57,4 +57,16 @@ object JUnitAsserter : Asserter {
         // should not get here
         throw AssertionError(message)
     }
+
+    @SinceKotlin("1.4")
+    override fun fail(message: String?, cause: Throwable?): Nothing {
+        try {
+            Assert.fail(message)
+        } catch (e: AssertionError) {
+            e.initCause(cause)
+            throw e
+        }
+        // should not get here
+        throw AssertionError(message).initCause(cause)
+    }
 }

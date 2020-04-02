@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,6 +14,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.formatter.*
 import org.jetbrains.kotlin.idea.util.isDefaultOfficialCodeStyle
@@ -54,12 +55,8 @@ fun notifyKotlinStyleUpdateIfNeeded(project: Project) {
 
 private class KotlinCodeStyleChangedNotification(val project: Project, isProjectSettings: Boolean) : Notification(
     KOTLIN_UPDATE_CODE_STYLE_GROUP_ID,
-    "Kotlin Code Style",
-    """
-        <html>
-        Default code style was updated to Kotlin Coding Conventions.
-        </html>
-        """.trimIndent(),
+    KotlinJvmBundle.message("kotlin.code.style"),
+    "<html>${KotlinJvmBundle.message("default.code.style.was.updated.to.kotlin.coding.conventions")}</html>",
     NotificationType.WARNING,
     null
 ) {
@@ -67,7 +64,7 @@ private class KotlinCodeStyleChangedNotification(val project: Project, isProject
         val ktFormattingSettings = ktCodeStyleSettings(project)
 
         if (isProjectSettings) {
-            addAction(object : NotificationAction("Apply new code style") {
+            addAction(object : NotificationAction(KotlinJvmBundle.message("apply.new.code.style")) {
                 override fun actionPerformed(e: AnActionEvent, notification: Notification) {
                     notification.expire()
 
@@ -81,7 +78,7 @@ private class KotlinCodeStyleChangedNotification(val project: Project, isProject
         }
 
         if (ktFormattingSettings != null && ktFormattingSettings.canRestore()) {
-            addAction(object : NotificationAction("Restore old settings") {
+            addAction(object : NotificationAction(KotlinJvmBundle.message("restore.old.settings")) {
                 override fun actionPerformed(e: AnActionEvent, notification: Notification) {
                     notification.expire()
 

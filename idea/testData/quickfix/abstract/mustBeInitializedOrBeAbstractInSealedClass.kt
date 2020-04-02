@@ -1,4 +1,4 @@
-// "Make 'i' abstract" "true"
+// "Make 'i' 'abstract'" "true"
 sealed class A() {
     fun <caret>i() : Int
 }

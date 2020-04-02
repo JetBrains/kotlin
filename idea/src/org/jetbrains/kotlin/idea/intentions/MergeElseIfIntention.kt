@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.*
 
 
-class MergeElseIfIntention : SelfTargetingIntention<KtIfExpression>(KtIfExpression::class.java, "Merge 'else if'") {
+class MergeElseIfIntention : SelfTargetingIntention<KtIfExpression>(KtIfExpression::class.java, KotlinBundle.message("merge.else.if")) {
     override fun isApplicableTo(element: KtIfExpression, caretOffset: Int): Boolean {
         val elseBody = element.`else` ?: return false
         val nestedIf = elseBody.nestedIf() ?: return false

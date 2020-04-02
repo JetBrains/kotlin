@@ -22,7 +22,7 @@ abstract class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest()
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         super.doMultiFileTest(wholeFile, files)
         try {
-            InlineTestUtil.checkNoCallsToInline(initializedClassLoader.allGeneratedFiles.filterClassFiles(), myFiles.psiFiles)
+            InlineTestUtil.checkNoCallsToInline(initializedClassLoader.allGeneratedFiles.filterClassFiles(), files)
             SMAPTestUtil.checkSMAP(files, generateClassesInFile().getClassFiles(), false)
         } catch (e: Throwable) {
             println(generateToText())

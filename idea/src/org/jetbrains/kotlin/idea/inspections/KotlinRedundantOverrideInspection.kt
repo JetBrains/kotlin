@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -67,7 +68,7 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
             val descriptor = holder.manager.createProblemDescriptor(
                 function,
                 TextRange(modifierList.startOffsetInParent, funKeyword.endOffset - function.startOffset),
-                "Redundant overriding method",
+                KotlinBundle.message("redundant.overriding.method"),
                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                 isOnTheFly,
                 RedundantOverrideFix()
@@ -109,7 +110,7 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
     }
 
     private class RedundantOverrideFix : LocalQuickFix {
-        override fun getName() = "Remove redundant overriding method"
+        override fun getName() = KotlinBundle.message("redundant.override.fix.text")
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {

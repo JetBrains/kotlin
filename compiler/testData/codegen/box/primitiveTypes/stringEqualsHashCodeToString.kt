@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: NATIVE
+
 fun test(s: String) {
     if (!s.equals(s)) throw Error("fail 1 for $s")
     if (s.equals(1)) throw Error("fail 2 for $s")

@@ -10,6 +10,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.util.EnvironmentUtil
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionSourceAsContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.loadDefinitionsFromTemplates
@@ -184,10 +185,11 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
         }
 
         val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
-        if (gradleSettings.getLinkedProjectsSettings().isEmpty()) error("Project '${project.name}' isn't linked with Gradle")
+        if (gradleSettings.getLinkedProjectsSettings().isEmpty())
+            error(KotlinIdeaGradleBundle.message("error.text.project.isn.t.linked.with.gradle", project.name))
 
         val projectSettings = gradleSettings.getLinkedProjectsSettings().filterIsInstance<GradleProjectSettings>().firstOrNull()
-            ?: error("Project '${project.name}' isn't linked with Gradle")
+            ?: error(KotlinIdeaGradleBundle.message("error.text.project.isn.t.linked.with.gradle", project.name))
 
         val gradleExeSettings = ExternalSystemApiUtil.getExecutionSettings<GradleExecutionSettings>(
             project,
@@ -195,15 +197,17 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
             GradleConstants.SYSTEM_ID
         )
 
-        val gradleHome = gradleExeSettings.gradleHome ?: error("Unable to get Gradle home directory")
+        val gradleHome = gradleExeSettings.gradleHome
+            ?: error(KotlinIdeaGradleBundle.message("error.text.unable.to.get.gradle.home.directory"))
 
         val gradleLibDir = File(gradleHome, "lib").let {
-            it.takeIf { it.exists() && it.isDirectory } ?: error("Invalid Gradle libraries directory $it")
+            it.takeIf { it.exists() && it.isDirectory }
+                ?: error(KotlinIdeaGradleBundle.message("error.text.invalid.gradle.libraries.directory", it))
         }
         val templateClasspath = gradleLibDir.listFiles { it ->
             /* an inference problem without explicit 'it', TODO: remove when fixed */
             dependencySelector.matches(it.name)
-        }.takeIf { it.isNotEmpty() }?.asList() ?: error("Missing jars in gradle directory")
+        }.takeIf { it.isNotEmpty() }?.asList() ?: error(KotlinIdeaGradleBundle.message("error.text.missing.jars.in.gradle.directory"))
 
         return loadDefinitionsFromTemplates(
             listOf(templateClass),
@@ -251,9 +255,8 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
                 private const val KOTLIN_DSL_SCRIPT_EXTENSION = "gradle.kts"
             }
 
-            override val name: String = "Default Kotlin Gradle Script"
-            override val fileExtension: String =
-                KOTLIN_DSL_SCRIPT_EXTENSION
+            override val name: String get() = KotlinIdeaGradleBundle.message("text.default.kotlin.gradle.script")
+            override val fileExtension: String = KOTLIN_DSL_SCRIPT_EXTENSION
 
             override val scriptCompilationConfiguration: ScriptCompilationConfiguration = ScriptCompilationConfiguration.Default
             override val hostConfiguration: ScriptingHostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration)
@@ -274,9 +277,12 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
     private class ErrorScriptDependenciesResolver(private val message: String? = null) : DependenciesResolver {
         override fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult {
             val failureMessage = if (GradleScriptDefinitionsUpdater.gradleState.isSyncInProgress) {
-                "Highlighting is impossible during Gradle Import"
+                KotlinIdeaGradleBundle.message("error.text.highlighting.is.impossible.during.gradle.import")
             } else {
-                message ?: "Failed to load script definitions by ${GradleScriptDefinitionsContributor::class.java.name}"
+                message ?: KotlinIdeaGradleBundle.message(
+                    "error.text.failed.to.load.script.definitions.by",
+                    GradleScriptDefinitionsContributor::class.java.name
+                )
             }
             return ResolveResult.Failure(ScriptReport(failureMessage, ScriptReport.Severity.FATAL))
         }

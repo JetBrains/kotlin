@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtReturnExpression
 
@@ -16,9 +17,9 @@ class RemoveReturnLabelFix(element: KtReturnExpression, private val labelName: S
         element?.labeledExpression?.delete()
     }
 
-    override fun getFamilyName(): String = "Remove redundant label"
+    override fun getFamilyName(): String = KotlinBundle.message("remove.return.label.fix.family")
 
-    override fun getText(): String = "Remove redundant '@$labelName'"
+    override fun getText(): String = KotlinBundle.message("remove.return.label.fix.text", labelName)
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtReturnExpression>? {

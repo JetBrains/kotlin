@@ -10,19 +10,21 @@ import com.intellij.codeInspection.ui.MultipleCheckboxOptionsPanel
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.canDropBraces
 import org.jetbrains.kotlin.idea.core.dropBraces
 import org.jetbrains.kotlin.psi.KtBlockStringTemplateEntry
 
 class RemoveCurlyBracesFromTemplateInspection(@JvmField var reportWithoutWhitespace: Boolean = false) :
     AbstractApplicabilityBasedInspection<KtBlockStringTemplateEntry>(KtBlockStringTemplateEntry::class.java) {
-    override fun inspectionText(element: KtBlockStringTemplateEntry): String = "Redundant curly braces in string template"
+    override fun inspectionText(element: KtBlockStringTemplateEntry): String =
+        KotlinBundle.message("redundant.curly.braces.in.string.template")
 
     override fun inspectionHighlightType(element: KtBlockStringTemplateEntry) =
         if (reportWithoutWhitespace || element.hasWhitespaceAround()) ProblemHighlightType.GENERIC_ERROR_OR_WARNING
         else ProblemHighlightType.INFORMATION
 
-    override val defaultFixText: String = "Remove curly braces"
+    override val defaultFixText: String get() = KotlinBundle.message("remove.curly.braces")
 
     override fun isApplicable(element: KtBlockStringTemplateEntry): Boolean = element.canDropBraces()
 
@@ -31,7 +33,7 @@ class RemoveCurlyBracesFromTemplateInspection(@JvmField var reportWithoutWhitesp
     }
 
     override fun createOptionsPanel() = MultipleCheckboxOptionsPanel(this).apply {
-        addCheckbox("Report also for a variables without a whitespace around", "reportWithoutWhitespace")
+        addCheckbox(KotlinBundle.message("report.also.for.a.variables.without.a.whitespace.around"), "reportWithoutWhitespace")
     }
 }
 

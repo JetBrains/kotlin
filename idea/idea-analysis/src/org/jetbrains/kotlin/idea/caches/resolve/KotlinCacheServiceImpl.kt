@@ -226,14 +226,14 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     }
 
     private fun IdeaModuleInfo.platformSettings(targetPlatform: TargetPlatform) = PlatformAnalysisSettings.create(
-        project, targetPlatform, sdk,
-        supportsAdditionalBuiltInsMembers(project),
+        this@KotlinCacheServiceImpl.project, targetPlatform, sdk,
+        supportsAdditionalBuiltInsMembers(this@KotlinCacheServiceImpl.project),
         isReleaseCoroutines()
     )
 
     private fun IdeaModuleInfo.isReleaseCoroutines(): Boolean {
         return IDELanguageSettingsProvider
-            .getLanguageVersionSettings(this, project)
+            .getLanguageVersionSettings(this, this@KotlinCacheServiceImpl.project)
             .supportsFeature(LanguageFeature.ReleaseCoroutines)
     }
 

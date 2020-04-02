@@ -189,6 +189,8 @@ val makeIntellijAnnotations by tasks.registering(Copy::class) {
 
 val mergeSources by tasks.creating(Jar::class.java) {
     dependsOn(sources)
+    isPreserveFileTimestamps = false
+    isReproducibleFileOrder = true
     from(provider { sources.map(::zipTree) })
     destinationDirectory.set(File(repoDir, sources.name))
     archiveBaseName.set("intellij")

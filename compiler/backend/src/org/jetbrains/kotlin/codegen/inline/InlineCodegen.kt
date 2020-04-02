@@ -233,7 +233,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         val inliner = MethodInliner(
             node, parameters, info, FieldRemapper(null, null, parameters), isSameModule,
             "Method inlining " + sourceCompiler.callElementText,
-            createNestedSourceMapper(nodeAndSmap, defaultSourceMapper), info.callSiteInfo,
+            NestedSourceMapper(defaultSourceMapper, nodeAndSmap.classSMAP), info.callSiteInfo,
             if (functionDescriptor.isInlineOnly()) InlineOnlySmapSkipper(codegen) else null,
             !isInlinedToInlineFunInKotlinRuntime()
         ) //with captured
@@ -576,7 +576,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 result ?: throw IllegalStateException("Couldn't obtain compiled function body for $functionDescriptor")
             }
 
-            return resultInCache.copyWithNewNode(cloneMethodNode(resultInCache.node))
+            return SMAPAndMethodNode(cloneMethodNode(resultInCache.node), resultInCache.classSMAP)
         }
 
         private fun createDefaultFakeSMAP() = SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
@@ -703,11 +703,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 result.add(FIRST_FUN_LABEL)
             }
             return result
-        }
-
-
-        fun createNestedSourceMapper(nodeAndSmap: SMAPAndMethodNode, parent: SourceMapper): SourceMapper {
-            return NestedSourceMapper(parent, nodeAndSmap.sortedRanges, nodeAndSmap.classSMAP.sourceInfo)
         }
     }
 

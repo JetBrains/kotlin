@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class C {
     fun foo(): C = this
     fun bar(): C? = this

@@ -12,11 +12,15 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.targets.js.dsl.*
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinBrowserJs
-import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinNodeJs
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
@@ -31,12 +35,21 @@ constructor(
     project: Project,
     platformType: KotlinPlatformType
 ) :
-    KotlinOnlyTarget<KotlinJsCompilation>(project, platformType),
+    KotlinTargetWithBinaries<KotlinJsCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
     KotlinJsTargetDsl,
     KotlinJsSubTargetContainerDsl {
     override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
         internal set
+
+    override var moduleName: String? = null
+        set(value) {
+            check(!isBrowserConfigured && !isNodejsConfigured) {
+                "Please set moduleName before initialize browser() or nodejs()"
+            }
+            irTarget?.moduleName = value
+            field = value
+        }
 
     val disambiguationClassifierInPlatform: String?
         get() = disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY)
@@ -76,7 +89,11 @@ constructor(
         }
     }
 
-    var producingType: KotlinJsProducingType? = null
+    override val binaries: KotlinJsBinaryContainer
+        get() = compilations.withType(KotlinJsCompilation::class.java)
+            .named(MAIN_COMPILATION_NAME)
+            .map { it.binaries }
+            .get()
 
     var irTarget: KotlinJsIrTarget? = null
 
@@ -134,43 +151,6 @@ constructor(
     override fun nodejs(body: KotlinJsNodeDsl.() -> Unit) {
         body(nodejs)
         irTarget?.nodejs(body)
-    }
-
-    override fun produceKotlinLibrary() {
-        produce(KotlinJsProducingType.KOTLIN_LIBRARY)
-    }
-
-    override fun produceExecutable() {
-        produce(KotlinJsProducingType.EXECUTABLE) {
-            (this as KotlinJsSubTarget).produceExecutable()
-        }
-    }
-
-    private fun produce(
-        producingType: KotlinJsProducingType,
-        producer: KotlinJsSubTargetDsl.() -> Unit = {}
-    ) {
-        check(this.producingType == null || this.producingType == producingType) {
-            "Only one producing type supported. Try to set $producingType but previously ${this.producingType} found"
-        }
-
-        if (this.producingType != null) {
-            return
-        }
-
-        this.producingType = producingType
-
-        whenBrowserConfigured {
-            if (this is KotlinBrowserJs) {
-                producer()
-            }
-        }
-
-        whenNodejsConfigured {
-            if (this is KotlinNodeJs) {
-                producer()
-            }
-        }
     }
 
     override fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit) {

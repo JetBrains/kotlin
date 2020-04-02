@@ -85,9 +85,9 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
             }
     }
 
-    private fun getLibrariesToNotifyAbout(): Map<String, NativeLibraryInfo> {
+    private fun getLibrariesToNotifyAbout(): Map<String, NativeKlibLibraryInfo> {
         val incompatibleLibraries = getModuleInfosFromIdeaModel(project).asSequence()
-            .filterIsInstance<NativeLibraryInfo>()
+            .filterIsInstance<NativeKlibLibraryInfo>()
             .filter { !it.compatibilityInfo.isCompatible }
             .associateBy { it.libraryRoot }
 
@@ -102,7 +102,7 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
         return newEntries
     }
 
-    private fun prepareNotifications(librariesToNotify: Map<String, NativeLibraryInfo>): List<Notification> {
+    private fun prepareNotifications(librariesToNotify: Map<String, NativeKlibLibraryInfo>): List<Notification> {
         if (librariesToNotify.isEmpty())
             return emptyList()
 
@@ -124,37 +124,30 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
             val libraries =
                 librariesByGroups.getValue(key).sortedWith(compareBy(LIBRARY_NAME_COMPARATOR) { (libraryName, _) -> libraryName })
 
-            val compilerVersionText = if (isOldMetadata) "an older" else "a newer"
 
             val message = when (libraryGroup) {
                 is LibraryGroup.FromDistribution -> {
-                    val libraryNamesInOneLine =
-                        libraries.joinToString(limit = MAX_LIBRARY_NAMES_IN_ONE_LINE) { (libraryName, _) -> libraryName }
-
-                    """
-                    |There are ${libraries.size} libraries from the Kotlin/Native ${libraryGroup.kotlinVersion} distribution attached to the project: $libraryNamesInOneLine
-                    |
-                    |These libraries were compiled with $compilerVersionText Kotlin/Native compiler and can't be read in IDE. Please edit Gradle buildfile(s) to use Kotlin Gradle plugin version ${bundledRuntimeVersion()}. Then re-import the project in IDE.
-                    """.trimMargin()
+                    val libraryNamesInOneLine = libraries
+                        .joinToString(limit = MAX_LIBRARY_NAMES_IN_ONE_LINE) { (libraryName, _) -> libraryName }
+                    val text = KotlinGradleNativeBundle.message(
+                        "error.incompatible.libraries",
+                        libraries.size, libraryGroup.kotlinVersion, libraryNamesInOneLine
+                    )
+                    val explanation = when (isOldMetadata) {
+                        true -> KotlinGradleNativeBundle.message("error.incompatible.libraries.older")
+                        false -> KotlinGradleNativeBundle.message("error.incompatible.libraries.newer")
+                    }
+                    val recipe = KotlinGradleNativeBundle.message("error.incompatible.libraries.recipe", bundledRuntimeVersion())
+                    "$text\n\n$explanation\n$recipe"
                 }
                 is LibraryGroup.ThirdParty -> {
-                    if (libraries.size == 1) {
-                        """
-                        |There is a third-party library attached to the project that was compiled with $compilerVersionText Kotlin/Native compiler and can't be read in IDE: ${libraries.single()
-                            .first}
-                        |
-                        |Please edit Gradle buildfile(s) and specify library version compatible with Kotlin/Native ${bundledRuntimeVersion()}. Then re-import the project in IDE.
-                        """.trimMargin()
-                    } else {
-                        val librariesLineByLine = libraries.joinToString(separator = "\n") { (libraryName, _) -> libraryName }
-
-                        """
-                        |There are ${libraries.size} third-party libraries attached to the project that were compiled with $compilerVersionText Kotlin/Native compiler and can't be read in IDE:
-                        |$librariesLineByLine
-                        |
-                        |Please edit Gradle buildfile(s) and specify library versions compatible with Kotlin/Native ${bundledRuntimeVersion()}. Then re-import the project in IDE.
-                        """.trimMargin()
+                    val text = when (isOldMetadata) {
+                        true -> KotlinGradleNativeBundle.message("error.incompatible.3p.libraries.older", libraries.size)
+                        false -> KotlinGradleNativeBundle.message("error.incompatible.3p.libraries.newer", libraries.size)
                     }
+                    val librariesLineByLine = libraries.joinToString(separator = "\n") { (libraryName, _) -> libraryName }
+                    val recipe = KotlinGradleNativeBundle.message("error.incompatible.3p.libraries.recipe", bundledRuntimeVersion())
+                    "$text\n$librariesLineByLine\n\n$recipe"
                 }
                 is LibraryGroup.User -> {
                     val projectRoot = project.guessProjectDir()?.canonicalPath
@@ -169,26 +162,16 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
                                 ?.let { "${'$'}project/$it" }
                         } ?: libraryRoot
 
-                        return "\"$libraryName\" at $relativeRoot"
+                        return KotlinGradleNativeBundle.message("library.name.0.at.1.relative.root", libraryName, relativeRoot)
                     }
 
-                    if (libraries.size == 1) {
-                        """
-                        |There is a library attached to the project that was compiled with $compilerVersionText Kotlin/Native compiler and can't be read in IDE:
-                        |${getLibraryTextToPrint(libraries.single())}
-                        |
-                        |Please edit Gradle buildfile(s) to use Kotlin Gradle plugin version ${bundledRuntimeVersion()}. Then rebuild the project and re-import it in IDE.
-                        """.trimMargin()
-                    } else {
-                        val librariesLineByLine = libraries.joinToString(separator = "\n", transform = ::getLibraryTextToPrint)
-
-                        """
-                        |There are ${libraries.size} libraries attached to the project that were compiled with $compilerVersionText Kotlin/Native compiler and can't be read in IDE:
-                        |$librariesLineByLine
-                        |
-                        |Please edit Gradle buildfile(s) to use Kotlin Gradle plugin version ${bundledRuntimeVersion()}. Then rebuild the project and re-import it in IDE.
-                        """.trimMargin()
+                    val text = when (isOldMetadata) {
+                        true -> KotlinGradleNativeBundle.message("error.incompatible.user.libraries.older", libraries.size)
+                        false -> KotlinGradleNativeBundle.message("error.incompatible.user.libraries.newer", libraries.size)
                     }
+                    val librariesLineByLine = libraries.joinToString(separator = "\n", transform = ::getLibraryTextToPrint)
+                    val recipe = KotlinGradleNativeBundle.message("error.incompatible.user.libraries.recipe", bundledRuntimeVersion())
+                    "$text\n$librariesLineByLine\n\n$recipe"
                 }
             }
 
@@ -203,7 +186,7 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
     }
 
     // returns pair of library name and library group
-    private fun parseIDELibraryName(libraryInfo: NativeLibraryInfo): Pair<String, LibraryGroup> {
+    private fun parseIDELibraryName(libraryInfo: NativeKlibLibraryInfo): Pair<String, LibraryGroup> {
         val ideLibraryName = libraryInfo.library.name?.takeIf(String::isNotEmpty)
         if (ideLibraryName != null) {
             parseIDELibraryName(ideLibraryName)?.let { (kotlinVersion, libraryName) ->
@@ -236,7 +219,7 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
 
         private const val MAX_LIBRARY_NAMES_IN_ONE_LINE = 5
 
-        private const val NOTIFICATION_TITLE = "Incompatible Kotlin/Native libraries"
-        private const val NOTIFICATION_GROUP_ID = NOTIFICATION_TITLE
+        private val NOTIFICATION_TITLE get() = KotlinGradleNativeBundle.message("error.incompatible.libraries.title")
+        private const val NOTIFICATION_GROUP_ID = "Incompatible Kotlin/Native libraries"
     }
 }

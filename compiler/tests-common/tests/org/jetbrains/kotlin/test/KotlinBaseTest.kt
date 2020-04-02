@@ -70,7 +70,11 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
     }
 
 
-    open class TestFile(@JvmField val name: String, @JvmField val content: String) : Comparable<TestFile> {
+    open class TestFile @JvmOverloads constructor(
+        @JvmField val name: String,
+        @JvmField val content: String,
+        @JvmField val directives: Directives = Directives()
+    ) : Comparable<TestFile> {
         override operator fun compareTo(other: TestFile): Int {
             return name.compareTo(other.name)
         }
@@ -86,6 +90,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
         override fun toString(): String {
             return name
         }
+
     }
 
     open class TestModule(
@@ -94,12 +99,8 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
         @JvmField val friendsSymbols: List<String>
     ) : Comparable<TestModule> {
 
-        private val dependencies = ArrayList<TestModule>()
-        private val friends = ArrayList<TestModule>()
-
-        fun getDependencies(): MutableList<TestModule> = dependencies
-
-        fun getFriends(): MutableList<TestModule> = friends
+        val dependencies: MutableList<TestModule> = arrayListOf()
+        val friends: MutableList<TestModule> = arrayListOf()
 
         override fun compareTo(other: TestModule): Int = name.compareTo(other.name)
 

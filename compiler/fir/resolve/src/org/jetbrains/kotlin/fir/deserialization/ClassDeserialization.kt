@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
@@ -14,6 +15,8 @@ import org.jetbrains.kotlin.fir.declarations.addDeclarations
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.generateValueOfFunction
+import org.jetbrains.kotlin.fir.generateValuesFunction
 import org.jetbrains.kotlin.fir.resolve.impl.FirClonableSymbolProvider.Companion.CLONE
 import org.jetbrains.kotlin.fir.resolve.impl.FirClonableSymbolProvider.Companion.CLONABLE_CLASS_ID
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
@@ -31,6 +34,7 @@ import org.jetbrains.kotlin.metadata.deserialization.supertypes
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getName
 
 fun deserializeClassToSymbol(
@@ -42,6 +46,7 @@ fun deserializeClassToSymbol(
     defaultAnnotationDeserializer: AbstractAnnotationDeserializer?,
     scopeProvider: KotlinScopeProvider,
     parentContext: FirDeserializationContext? = null,
+    containerSource: DeserializedContainerSource? = null,
     deserializeNestedClass: (ClassId, FirDeserializationContext) -> FirRegularClassSymbol?
 ) {
     val flags = classProto.flags
@@ -68,7 +73,8 @@ fun deserializeClassToSymbol(
             classId.relativeClassName
         ) ?: FirDeserializationContext.createForClass(
             classId, classProto, nameResolver, session,
-            defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session)
+            defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session),
+            containerSource
         )
     classBuilder.apply {
         this.session = session
@@ -129,6 +135,11 @@ fun deserializeClassToSymbol(
                 property
             }
         )
+
+        if (classKind == ClassKind.ENUM_CLASS) {
+            generateValuesFunction(session, classId.packageFqName, classId.relativeClassName)
+            generateValueOfFunction(session, classId.packageFqName, classId.relativeClassName)
+        }
 
         if (isSealed) {
             classProto.sealedSubclassFqNameList.mapTo((this as FirSealedClassBuilder).inheritors) {

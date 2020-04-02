@@ -11,6 +11,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiClass
 import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaClassDescriptor
@@ -34,7 +35,7 @@ class RedundantInnerClassModifierInspection : AbstractKotlinInspection() {
         if (targetClass.hasOuterClassMemberReference(outerClasses)) return
         holder.registerProblem(
             innerModifier,
-            "Redundant 'inner' modifier",
+            KotlinBundle.message("inspection.redundant.inner.class.modifier.descriptor"),
             ProblemHighlightType.LIKE_UNUSED_SYMBOL,
             IntentionWrapper(
                 RemoveModifierFix(targetClass, KtTokens.INNER_KEYWORD, isRedundant = true),

@@ -117,7 +117,7 @@ class NewJavaToKotlinConverter(
 
 
     override fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result {
-        val phaseDescription = "Converting Java code to Kotlin code"
+        val phaseDescription = KotlinNJ2KBundle.message("phase.converting.j2k")
         val contextElement = inputElements.firstOrNull() ?: return Result(emptyList(), null, null)
         val resolver = JKResolver(project, targetModule, contextElement)
         val symbolProvider = JKSymbolProvider(resolver)
@@ -208,7 +208,7 @@ class NewJ2kWithProgressProcessor(
     override fun updateState(fileIndex: Int?, phase: Int, description: String) {
         progress?.checkCanceled()
         progress?.fraction = phase / phasesCount.toDouble()
-        progress?.text = "$description - phase $phase of $phasesCount"
+        progress?.text = KotlinNJ2KBundle.message("progress.text", description, phase, phasesCount)
         progress?.text2 = when {
             files != null && files.isNotEmpty() && fileIndex != null -> files[fileIndex].virtualFile.presentableUrl
             else -> ""

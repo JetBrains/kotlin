@@ -1,39 +1,4 @@
 <idea-plugin>
-  <project-components>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.highlighter.KotlinBeforeResolveHighlightingPass$Factory</implementation-class>
-    </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.parameterInfo.custom.KotlinCodeHintsPass$Companion$Factory</implementation-class>
-    </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsPassFactory</implementation-class>
-      <skipForDefaultProject/>
-    </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.highlighter.ScriptExternalHighlightingPass$Factory</implementation-class>
-    </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.completion.LookupCancelWatcher</implementation-class>
-    </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener</implementation-class>
-    </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.caches.KotlinPackageContentModificationListener</implementation-class>
-    </component>
-    <component>
-      <interface-class>org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider</interface-class>
-      <implementation-class>org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider</implementation-class>
-    </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent</implementation-class>
-    </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.parameterInfo.custom.KotlinCodeHintsModel</implementation-class>
-    </component>
-  </project-components>
-
   <application-components>
     <component>
       <implementation-class>org.jetbrains.kotlin.idea.versions.KotlinUpdatePluginComponent</implementation-class>
@@ -53,8 +18,7 @@
 
     <group id = "ConvertJavaToKotlinGroup">
       <separator/>
-      <action id="ConvertJavaToKotlin" class="org.jetbrains.kotlin.idea.actions.JavaToKotlinAction"
-              text="Convert Java File to Kotlin File">
+      <action id="ConvertJavaToKotlin" class="org.jetbrains.kotlin.idea.actions.JavaToKotlinAction">
         <keyboard-shortcut keymap="$default" first-keystroke="control alt shift K"/>
       </action>
       <add-to-group group-id="CodeMenu" anchor="last"/>
@@ -62,97 +26,78 @@
       <add-to-group group-id="EditorTabPopupMenu" anchor="last"/>
     </group>
 
-    <group id="KotlinToolsGroup" popup="true" text="Kotlin" icon="/org/jetbrains/kotlin/idea/icons/kotlin13.png"
+    <group id="KotlinToolsGroup" popup="true" icon="/org/jetbrains/kotlin/idea/icons/kotlin13.png"
            class="org.jetbrains.kotlin.idea.actions.KotlinActionGroup">
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </group>
 
-    <action id="KotlinConfigureUpdates" class="org.jetbrains.kotlin.idea.actions.ConfigurePluginUpdatesAction"
-            text="Configure Kotlin Plugin Updates"
-            description="Configure automatic updates for the Kotlin plugin">
+    <action id="KotlinConfigureUpdates" class="org.jetbrains.kotlin.idea.actions.ConfigurePluginUpdatesAction">
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
 
-    <action id="DecompileKotlinToJava" class="org.jetbrains.kotlin.idea.actions.DecompileKotlinToJavaAction"
-            text="Decompile Kotlin To Java">
+    <action id="DecompileKotlinToJava" class="org.jetbrains.kotlin.idea.actions.DecompileKotlinToJavaAction">
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
 
-    <action id="CopyKotlinProjectInformation" class="org.jetbrains.kotlin.idea.actions.internal.CopyKotlinProjectOverviewAction"
-            text="Copy Kotlin Project Overview To Clipboard">
+    <action id="CopyKotlinProjectInformation" class="org.jetbrains.kotlin.idea.actions.internal.CopyKotlinProjectOverviewAction">
     </action>
 
-    <action id="KotlinCodeMigration" class="org.jetbrains.kotlin.idea.migration.CodeMigrationAction"
-            text="Run Code Migrations">
+    <action id="KotlinCodeMigration" class="org.jetbrains.kotlin.idea.migration.CodeMigrationAction">
       <!-- TODO: Not assigned to any group because there should be a panel for filling migration options -->
     </action>
 
-    <action id="KotlinCodeMigrationToggle" class="org.jetbrains.kotlin.idea.migration.CodeMigrationToggleAction"
-            text="Enable migrations detection (experimental)">
+    <action id="KotlinCodeMigrationToggle" class="org.jetbrains.kotlin.idea.migration.CodeMigrationToggleAction">
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
 
     <action id="ExtractFunction" class="org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractFunctionAction"
-            text="_Function..." use-shortcut-of="ExtractMethod">
+            use-shortcut-of="ExtractMethod">
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="ExtractMethod"/>
     </action>
 
     <action id="IntroduceProperty" class="org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.IntroducePropertyAction"
-            text="P_roperty..." use-shortcut-of="IntroduceField">
+            use-shortcut-of="IntroduceField">
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="IntroduceField"/>
     </action>
 
-    <group id="InternalKotlin" text="Kotlin Internal Actions" internal="true">
+    <group id="InternalKotlin" internal="true">
       <separator/>
 
-      <action id="DumbModeTremble" class="org.jetbrains.kotlin.idea.actions.internal.DumbModeTrembleAction"
-              text="Tremble Dumb Mode"/>
+      <action id="DumbModeTremble" class="org.jetbrains.kotlin.idea.actions.internal.DumbModeTrembleAction"/>
 
-    <group id="KotlinRefactoringTesting" text="Kotlin refactoring testing" popup="true">
+    <group id="KotlinRefactoringTesting" popup="true">
       <action id="TestMoveRefactiringAction"
-              class="org.jetbrains.kotlin.idea.actions.internal.refactoringTesting.MoveRefactoringAction"
-              text="Test move refactoring on opened project"/>
+              class="org.jetbrains.kotlin.idea.actions.internal.refactoringTesting.MoveRefactoringAction"/>
     </group>
 
-      <group id="KotlinInternalGroup" text="Kotlin" popup="true">
-        <group id="KotlinCompletionBenchmarkGroup" popup="true" text="Benchmark completion">
+      <group id="KotlinInternalGroup" popup="true">
+        <group id="KotlinCompletionBenchmarkGroup" popup="true">
           <action id="TopLevelCompletionBenchmarkAction"
-                  class="org.jetbrains.kotlin.idea.actions.internal.benchmark.TopLevelCompletionBenchmarkAction"
-                  text="Top-level scenario"/>
+                  class="org.jetbrains.kotlin.idea.actions.internal.benchmark.TopLevelCompletionBenchmarkAction"/>
 
           <action id="LocalCompletionBenchmarkAction"
-                  class="org.jetbrains.kotlin.idea.actions.internal.benchmark.LocalCompletionBenchmarkAction"
-                  text="Local scenario"/>
+                  class="org.jetbrains.kotlin.idea.actions.internal.benchmark.LocalCompletionBenchmarkAction"/>
         </group>
 
         <action id="HighlightingBenchmarkAction"
-                class="org.jetbrains.kotlin.idea.actions.internal.benchmark.HighlightingBenchmarkAction"
-                text="Benchmark highlighting"/>
+                class="org.jetbrains.kotlin.idea.actions.internal.benchmark.HighlightingBenchmarkAction"/>
 
         <action id="CacheResetOnProcessCanceledToggleAction"
-                class="org.jetbrains.kotlin.idea.actions.internal.CacheResetOnProcessCanceledToggleAction"
-                text="Reset caches on ProcessCanceledException"/>
+                class="org.jetbrains.kotlin.idea.actions.internal.CacheResetOnProcessCanceledToggleAction"/>
 
-        <action id="CheckComponentsUsageSearchAction" class="org.jetbrains.kotlin.idea.actions.internal.CheckComponentsUsageSearchAction"
-                text="Check Component Functions Usage Search"/>
+        <action id="CheckComponentsUsageSearchAction" class="org.jetbrains.kotlin.idea.actions.internal.CheckComponentsUsageSearchAction"/>
 
-        <action id="FindImplicitNothingAction" class="org.jetbrains.kotlin.idea.actions.internal.FindImplicitNothingAction"
-                text="Find Implicit Nothing Calls"/>
+        <action id="FindImplicitNothingAction" class="org.jetbrains.kotlin.idea.actions.internal.FindImplicitNothingAction"/>
 
-        <action id="PrintOutNotPropertyMatches" class="org.jetbrains.kotlin.idea.actions.internal.SearchNotPropertyCandidatesAction"
-                text="Search Not Property Candidates"/>
+        <action id="PrintOutNotPropertyMatches" class="org.jetbrains.kotlin.idea.actions.internal.SearchNotPropertyCandidatesAction"/>
 
-        <action id="StoredExceptionsThrowToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.StoredExceptionsThrowToggleAction"
-                text="Throw cached PCE"/>
+        <action id="StoredExceptionsThrowToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.StoredExceptionsThrowToggleAction"/>
 
-        <action id="MultiplatformCompositeAnalysisToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.MultiplatformCompositeAnalysisToggleAction"
-                text="Toggle Composite Analysis"/>
+        <action id="MultiplatformCompositeAnalysisToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.MultiplatformCompositeAnalysisToggleAction"/>
 
-        <action id="CopyAsDiagnosticTest" class="org.jetbrains.kotlin.idea.actions.internal.CopyAsDiagnosticTestAction"
-                text="Copy Current File As Diagnostic Test"/>
+        <action id="CopyAsDiagnosticTest" class="org.jetbrains.kotlin.idea.actions.internal.CopyAsDiagnosticTestAction"/>
 
-        <action id="KotlinFormattingSettingsStatusAction" class="org.jetbrains.kotlin.idea.actions.internal.KotlinFormattingSettingsStatusAction"
-                text="Formatter settings info"/>
+        <action id="KotlinFormattingSettingsStatusAction" class="org.jetbrains.kotlin.idea.actions.internal.KotlinFormattingSettingsStatusAction"/>
 
         <!--        <action id="ShowFirAction" class="org.jetbrains.kotlin.idea.actions.internal.ShowFirAction"
                 text="Show RAW FIR Explorer"/> -->
@@ -162,76 +107,57 @@
       <add-to-group group-id="Internal" anchor="last"/>
     </group>
 
-    <action id="KotlinThrowException" class="org.jetbrains.kotlin.idea.actions.internal.KotlinThrowExceptionAction"
-            text="Drop an error from Kotlin plugin"/>
+    <action id="KotlinThrowException" class="org.jetbrains.kotlin.idea.actions.internal.KotlinThrowExceptionAction"/>
 
-    <action id="ExtractFunctionToScope" class="org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractFunctionToScopeAction"
-            text="Function to _Scope...">
+    <action id="ExtractFunctionToScope" class="org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractFunctionToScopeAction">
       <keyboard-shortcut keymap="$default" first-keystroke="control alt shift M"/>
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="ExtractFunction"/>
     </action>
 
-    <action id="IntroduceTypeParameter" class="org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeParameter.IntroduceTypeParameterAction"
-            text="T_ype Parameter...">
+    <action id="IntroduceTypeParameter" class="org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeParameter.IntroduceTypeParameterAction">
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="ExtractFunctionToScope"/>
     </action>
 
-    <action id="IntroduceTypeAlias" class="org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeAlias.IntroduceTypeAliasAction"
-            text="Type _Alias...">
+    <action id="IntroduceTypeAlias" class="org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeAlias.IntroduceTypeAliasAction">
       <keyboard-shortcut keymap="$default" first-keystroke="control alt shift A"/>
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="IntroduceTypeParameter"/>
     </action>
 
-    <action id="KotlinShellExecute" class="com.intellij.openapi.actionSystem.EmptyAction"
-            text="Execute Kotlin Code"
-            description="Execute Kotlin code in console">
+    <action id="KotlinShellExecute" class="com.intellij.openapi.actionSystem.EmptyAction">
       <keyboard-shortcut first-keystroke="control ENTER" keymap="$default"/>
     </action>
 
     <group id="KotlinGenerateGroup">
       <action id="KotlinGenerateTestMethod"
-              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$Test"
-              text="Test Function" />
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$Test"/>
       <action id="KotlinGenerateSetUpMethod"
-              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$SetUp"
-              text="SetUp Function" />
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$SetUp"/>
       <action id="KotlinGenerateTearDownMethod"
-              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$TearDown"
-              text="TearDown Function" />
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$TearDown"/>
       <action id="KotlinGenerateDataMethod"
-              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$Data"
-              text="Parameters Function" />
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$Data"/>
       <separator />
       <action id="KotlinGenerateSecondaryConstructor"
-              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateSecondaryConstructorAction"
-              text="Secondary Constructor" />
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateSecondaryConstructorAction"/>
       <action id="KotlinGenerateEqualsAndHashCode"
-              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateEqualsAndHashcodeAction"
-              text="equals() and hashCode()" />
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateEqualsAndHashcodeAction"/>
       <action id="KotlinGenerateToString"
-              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateToStringAction"
-              text="toString()" />
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateToStringAction"/>
 
       <add-to-group group-id="GenerateGroup" anchor="first"/>
     </group>
 
-    <action id="Kotlin.RunScratch" class="org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction"
-            text="Run Kotlin Scratch" description="Run Kotlin Scratch">
+    <action id="Kotlin.RunScratch" class="org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction">
       <keyboard-shortcut first-keystroke="control alt W" keymap="$default"/>
       <add-to-group group-id="RunContextPopupGroup" anchor="last"/>
     </action>
-    <action id="Kotlin.ClearScratch" class="org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction"
-            text="Clear Kotlin Scratch" description="Clear Kotlin Scratch">
+    <action id="Kotlin.ClearScratch" class="org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction">
     </action>
-    <action id="Kotlin.StopScratch" class="org.jetbrains.kotlin.idea.scratch.actions.StopScratchAction"
-            text="Stop scratch execution" description="Stop scratch execution">
+    <action id="Kotlin.StopScratch" class="org.jetbrains.kotlin.idea.scratch.actions.StopScratchAction">
     </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.PluginStartupService" />
-    <postStartupActivity implementation="org.jetbrains.kotlin.idea.PluginStartupActivity"/>
-
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.KotlinIconProviderService"
                         serviceImplementation="org.jetbrains.kotlin.idea.KotlinIdeFileIconProviderService"/>
 
@@ -241,28 +167,23 @@
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.KotlinReferenceProvidersService"
                         serviceImplementation="org.jetbrains.kotlin.idea.references.KtIdeReferenceProviderService"/>
 
-    <applicationService serviceInterface="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"
-                        serviceImplementation="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"/>
+    <applicationService serviceImplementation="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"/>
 
-    <applicationService serviceInterface="org.jetbrains.kotlin.idea.quickfix.QuickFixes"
-                        serviceImplementation="org.jetbrains.kotlin.idea.quickfix.QuickFixes"/>
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.quickfix.QuickFixes"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.caches.FileAttributeService"
                         serviceImplementation="org.jetbrains.kotlin.idea.caches.FileAttributeServiceImpl"/>
 
-    <applicationService serviceInterface="org.jetbrains.kotlin.idea.KotlinPluginUpdater"
-                        serviceImplementation="org.jetbrains.kotlin.idea.KotlinPluginUpdater"/>
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.KotlinPluginUpdater"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.KotlinDeclarationNavigationPolicy"
                         serviceImplementation="org.jetbrains.kotlin.idea.decompiler.navigation.KotlinDeclarationNavigationPolicyImpl"/>
 
     <!-- since 192 use light service @Service instead of this declaration -->
-    <applicationService serviceInterface="org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache"
-                        serviceImplementation="org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache"/>
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache"/>
 
     <!-- since 192 use light service @Service instead of this declaration -->
-    <applicationService serviceInterface="org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings$KotlinCodeStyleSettingsHolder"
-                        serviceImplementation="org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings$KotlinCodeStyleSettingsHolder"/>
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings$KotlinCodeStyleSettingsHolder"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.util.ImportInsertHelper"
                     serviceImplementation="org.jetbrains.kotlin.idea.util.ImportInsertHelperImpl"/>
@@ -315,40 +236,34 @@
     <projectService serviceInterface="org.jetbrains.kotlin.scripting.resolve.ScriptReportSink"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder"
-                    serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder"
-                    serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder"
-                    serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings"
-                    serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings"/>
+
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.parameterInfo.custom.KotlinCodeHintsModel"/>
 
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerWorkspaceSettings"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.asJava.classes.FacadeCache"
-                    serviceImplementation="org.jetbrains.kotlin.asJava.classes.FacadeCache"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.asJava.classes.FacadeCache"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService"
                     serviceImplementation="org.jetbrains.kotlin.idea.stubindex.resolve.PluginDeclarationProviderFactoryService"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.stubindex.SubpackagesIndexService"
-                    serviceImplementation="org.jetbrains.kotlin.idea.stubindex.SubpackagesIndexService"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.stubindex.SubpackagesIndexService"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker"
-                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"
-                    serviceImplementation="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.lightClasses.ClsJavaStubByVirtualFileCache"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.lightClasses.ClsJavaStubByVirtualFileCache"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"/>
+
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.caches.lightClasses.ClsJavaStubByVirtualFileCache"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.lightClasses.IdeLightClassInheritanceHelper"/>
@@ -370,11 +285,12 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.project.LibraryDependenciesCache"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.project.LibraryDependenciesCacheImpl"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.IdePackageOracleFactory"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.IdePackageOracleFactory"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.project.SdkInfoCache"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.project.SdkInfoCacheImpl"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.util.ProjectJob"
-                    serviceImplementation="org.jetbrains.kotlin.idea.core.util.ProjectJob"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.IdePackageOracleFactory"/>
+
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.core.util.ProjectJob"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.lazy.ProbablyNothingCallableNames"
                     serviceImplementation="org.jetbrains.kotlin.idea.project.ProbablyNothingCallableNamesImpl"/>
@@ -382,8 +298,13 @@
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.lazy.ProbablyContractedCallableNames"
                     serviceImplementation="org.jetbrains.kotlin.idea.project.ProbablyContractedCallableNamesImpl"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings"
-                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.debugger.StackFrameInterceptor"
+                    serviceImplementation="org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineStackFrameInterceptor"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.debugger.coroutine.DebuggerListener"
+                    serviceImplementation="org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineDebuggerListener"/>
 
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
@@ -467,6 +388,11 @@
     <refactoring.moveClassHandler
         implementation="org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinClassHandler"
         order="first"/>
+    <refactoring.moveClassHandler
+        implementation="org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinAliasClassHandler"
+        order="first"/>
+    <refactoring.moveMemberHandler language="kotlin"
+                                   implementationClass="org.jetbrains.kotlin.idea.refactoring.move.MoveKotlinMemberHandler"/>
     <refactoring.moveInnerClassUsagesHandler
         implementationClass="org.jetbrains.kotlin.idea.refactoring.move.MoveJavaInnerClassKotlinUsagesHandler"
         language="kotlin" />
@@ -776,7 +702,9 @@
 
     <attachSourcesProvider implementation="org.jetbrains.kotlin.idea.actions.DecompileKotlinToJavaActionProvider"/>
 
+    <gotoDeclarationHandler implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinImportAliasGotoDeclarationHandler"/>
     <referencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearcher"/>
+    <referencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinAliasedImportedElementSearcher"/>
     <directClassInheritorsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDirectInheritorsSearcher"/>
     <overridingMethodsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinOverridingMethodsWithGenericsSearcher"/>
     <definitionsScopedSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDefinitionsSearcher"/>
@@ -790,13 +718,11 @@
 
     <readWriteAccessDetector implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector" id="kotlin"/>
 
-    <applicationService serviceInterface="org.jetbrains.kotlin.idea.editor.KotlinEditorOptions"
-                        serviceImplementation="org.jetbrains.kotlin.idea.editor.KotlinEditorOptions"/>
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.editor.KotlinEditorOptions"/>
 
     <editorSmartKeysConfigurable instance="org.jetbrains.kotlin.idea.editor.KotlinEditorOptionsConfigurable"/>
 
-    <applicationService serviceInterface="org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings"
-                        serviceImplementation="org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings"/>
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings"/>
 
     <statementUpDownMover id="jetExpression"
                           implementation="org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinExpressionMover"
@@ -1722,170 +1648,152 @@
     <lang.inspectionSuppressor language="kotlin" implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinInspectionSuppressor"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
-                     displayName="Object literal can be converted to lambda"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.object.literal.to.lambda.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SimplifyAssertNotNullInspection"
-                     displayName="‘assert’ call can be replaced with ‘!!’ or ‘?:'"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.simplify.assert.not.null.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReformatInspection"
-                     displayName="File is not formatted according to project settings"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="false"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     runForWholeFile="true"
+                     key="inspection.reformat.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceCollectionCountWithSizeInspection"
-                     displayName="Collection count can be converted to size"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="false"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.replace.collection.count.with.size.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.DeprecatedCallableAddReplaceWithInspection"
-                     displayName="@Deprecated annotation without 'replaceWith' argument"
                      groupPath="Kotlin"
                      groupName="Other problems"
                      enabledByDefault="true"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.deprecated.callable.add.replace.with.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ConvertToStringTemplateInspection"
-                     displayName="String concatenation that can be converted to string template"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.convert.to.string.template.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.conventionNameCalls.ReplaceGetOrSetInspection"
-                     displayName="Explicit 'get' or 'set' call"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.replace.get.or.set.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceManualRangeWithIndicesCallsInspection"
-                     displayName="Convert manual ranges to indices or iteration over collection"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.replace.manual.range.with.indices.calls.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.branchedTransformations.IfThenToElvisInspection"
-                     displayName="If-Then foldable to '?:'"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.if.then.to.elvis.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.branchedTransformations.IfThenToSafeAccessInspection"
-                     displayName="If-Then foldable to '?.'"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.if.then.to.safe.access.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.FoldInitializerAndIfToElvisInspection"
-                     displayName="If-Null return/break/... foldable to '?:'"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.fold.initializer.and.if.to.elvis.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsInspection"
-                     displayName="Unnecessary type argument"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.remove.explicit.type.arguments.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveExplicitSuperQualifierInspection"
-                     displayName="Unnecessary supertype qualification"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.remove.explicit.super.qualifier.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SimplifyNegatedBinaryExpressionInspection"
-                     displayName="Negated boolean expression that can be simplified"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.simplify.negated.binary.expression.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceWithOperatorAssignmentInspection"
-                     displayName="Assignment that can be replaced with operator assignment"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.replace.with.operator.assignment.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.branchedTransformations.IntroduceWhenSubjectInspection"
-                     displayName="'when' that can be simplified by introducing an argument"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.introduce.when.subject.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RemoveCurlyBracesFromTemplateInspection"
-                     displayName="Redundant curly braces in string template"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.remove.curly.braces.from.template.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyBooleanWithConstantsInspection"
-                     displayName="Boolean expression that can be simplified"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.simplify.boolean.with.constants.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.UsePropertyAccessSyntaxInspection"
-                     displayName="Accessor call that can be replaced with property access syntax"
                      shortName="UsePropertyAccessSyntax"
                      groupPath="Kotlin"
                      groupName="Style issues"
@@ -1893,1704 +1801,1527 @@
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.use.property.access.syntax.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection"
-                     displayName="Unused symbol"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
                      runForWholeFile="true"
                      language="kotlin"
-    />
+                     suppressId="unused"
+                     key="inspection.unused.symbol.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedReceiverParameterInspection"
-                     displayName="Unused receiver parameter"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     suppressId="unused"
+                     key="inspection.unused.receiver.parameter.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinUnusedImportInspection"
-                     displayName="Unused import directive"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
                      runForWholeFile="true"
                      language="kotlin"
-    />
+                     suppressId="UnusedImport"
+                     key="inspection.kotlin.unused.import.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection"
-                     displayName="Redundant SAM constructor"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.redundant.sam.constructor.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnsafeCastFromDynamicInspection"
-                     displayName="Implicit (unsafe) cast from dynamic type"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.unsafe.cast.from.dynamic.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.OverridingDeprecatedMemberInspection"
                      shortName="OverridingDeprecatedMember"
-                     displayName="Overriding deprecated member"
                      groupPath="Kotlin"
                      groupName="Other problems"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.overriding.deprecated.member.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.kdoc.KDocUnresolvedReferenceInspection"
-                     displayName="Unresolved reference in KDoc"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.k.doc.unresolved.reference.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.kdoc.KDocMissingDocumentationInspection"
-                     displayName="Missing KDoc comments for public declarations"
                      groupPath="Kotlin"
                      groupName="Other problems"
                      enabledByDefault="false"
                      level="WARNING"
                      language="kotlin"
-    />
+                     runForWholeFile="true"
+                     key="inspection.k.doc.missing.documentation.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.refactoring.move.changePackage.PackageDirectoryMismatchInspection"
-                     displayName="Package name does not match containing directory"
                      groupPath="Kotlin"
                      groupName="Java interop issues"
                      enabledByDefault="true"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.package.directory.mismatch.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinCleanupInspection"
                      shortName="KotlinDeprecation"
-                     displayName="Usage of redundant or deprecated syntax or deprecated symbols"
                      groupPath="Kotlin"
                      groupName="Migration"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.kotlin.deprecation.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveForLoopIndicesInspection"
-                     displayName="Unused loop index"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.remove.for.loop.indices.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.loopToCallChain.LoopToCallChainInspection"
-                     displayName="Loop can be replaced with stdlib operations"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
-    />
+                     key="inspection.loop.to.call.chain.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.loopToCallChain.UseWithIndexInspection"
-                     displayName="Manually incremented index variable can be replaced with use of 'withIndex()'"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFO"
-    />
+                     key="inspection.use.with.index.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ConflictingExtensionPropertyInspection"
-                     displayName="Extension property conflicting with synthetic one"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.conflicting.extension.property.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.EqualsOrHashCodeInspection"
-                     displayName="equals() and hashCode() not paired"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.equals.or.hash.code.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantVisibilityModifierInspection"
-                     displayName="Redundant visibility modifier"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.redundant.visibility.modifier.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.DestructureInspection"
-                     displayName="Use destructuring declaration"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="false"
                      cleanupTool="false"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.destructure.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.CanBeValInspection"
-                     displayName="Local 'var' is never modified and can be declared as 'val'"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.can.be.val.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ArrayInDataClassInspection"
-                     displayName="Array property in data class"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.array.in.data.class.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ProtectedInFinalInspection"
-                     displayName="'protected' visibility is effectively 'private' in a final class"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.protected.in.final.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.AddVarianceModifierInspection"
-                     displayName="Type parameter can have 'in' or 'out' variance"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.add.variance.modifier.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.substring.ReplaceSubstringWithDropLastInspection"
-                     displayName="Replace 'substring' call with 'dropLast' call"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.replace.substring.with.drop.last.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.substring.ReplaceSubstringWithTakeInspection"
-                     displayName="Replace 'substring' call with 'take' call"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.replace.substring.with.take.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.substring.ReplaceSubstringWithIndexingOperationInspection"
-                     displayName="Replace 'substring' call with indexing operation call"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.replace.substring.with.indexing.operation.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.substring.ReplaceSubstringWithSubstringAfterInspection"
-                     displayName="Replace 'substring' call with 'substringAfter' call"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.replace.substring.with.substring.after.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.substring.ReplaceSubstringWithSubstringBeforeInspection"
-                     displayName="Replace 'substring' call with 'substringBefore' call"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.replace.substring.with.substring.before.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.CanBeParameterInspection"
-                     displayName="Constructor parameter is never used as a property"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.can.be.parameter.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantModalityModifierInspection"
-                     displayName="Redundant modality modifier"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.redundant.modality.modifier.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantSemicolonInspection"
-                     displayName="Redundant semicolon"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.redundant.semicolon.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantUnitReturnTypeInspection"
-                     displayName="Redundant 'Unit' return type"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.redundant.unit.return.type.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantIfInspection"
-                     displayName="Redundant 'if' statement"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.redundant.if.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.LeakingThisInspection"
-                     displayName="Leaking 'this' in constructor"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.leaking.this.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.HasPlatformTypeInspection"
-                     displayName="Function or property has platform type"
                      groupPath="Kotlin"
                      groupName="Java interop issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.has.platform.type.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.CanBePrimaryConstructorPropertyInspection"
-                     displayName="Property is explicitly assigned to constructor parameter"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.can.be.primary.constructor.property.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ConvertLambdaToReferenceInspection"
-                     displayName="Can be replaced with function reference"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.convert.lambda.to.reference.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ConvertReferenceToLambdaInspection"
-                     displayName="Can be replaced with lambda"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.convert.reference.to.lambda.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RemoveSetterParameterTypeInspection"
-                     displayName="Redundant setter parameter type"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.remove.setter.parameter.type.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.conventionNameCalls.ReplaceCallWithBinaryOperatorInspection"
-                     displayName="Can be replaced with binary operator"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.replace.call.with.binary.operator.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveSingleExpressionStringTemplateInspection"
-                     displayName="Remove redundant string template"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.remove.single.expression.string.template.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RemoveToStringInStringTemplateInspection"
-                     displayName="Remove redundant call to 'toString()' in string template"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.remove.to.string.in.string.template.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveEmptyParenthesesFromLambdaCallInspection"
-                     displayName="Remove unnecessary parentheses from function call with lambda"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.remove.empty.parentheses.from.lambda.call.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceArrayEqualityOpWithArraysEqualsInspection"
-                     displayName="Replace '==' with 'Arrays.equals'"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.replace.array.equality.op.with.arrays.equals.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SimpleRedundantLetInspection"
-                     displayName="Redundant receiver-based `let` call"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.simple.redundant.let.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ComplexRedundantLetInspection"
-                     displayName="Redundant argument-based `let` call"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.complex.redundant.let.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ConvertSecondaryConstructorToPrimaryInspection"
-                     displayName="Convert to primary constructor"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.convert.secondary.constructor.to.primary.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ReplaceSizeCheckWithIsNotEmptyInspection"
-                     displayName="Replace size check with 'isNotEmpty()'"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.replace.size.check.with.is.not.empty.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ReplaceSizeZeroCheckWithIsEmptyInspection"
-                     displayName="Replace size zero check with 'isEmpty()'"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.replace.size.zero.check.with.is.empty.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveEmptyClassBodyInspection"
-                     displayName="Replace empty class body"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.remove.empty.class.body.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveRedundantCallsOfConversionMethodsInspection"
-                     displayName="Remove redundant calls of conversion methods"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.remove.redundant.calls.of.conversion.methods.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveEmptyPrimaryConstructorInspection"
-                     displayName="Remove empty primary constructor"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.remove.empty.primary.constructor.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveEmptySecondaryConstructorBodyInspection"
-                     displayName="Remove empty constructor body"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.remove.empty.secondary.constructor.body.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.JoinDeclarationAndAssignmentInspection"
-                     displayName="Join declaration and assignment"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.join.declaration.and.assignment.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ConvertTryFinallyToUseCallInspection"
-                     displayName="Convert try / finally to use() call"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.convert.try.finally.to.use.call.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ConvertTwoComparisonsToRangeCheckInspection"
-                     displayName="Two comparisons should be converted to a range check"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.convert.two.comparisons.to.range.check.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ConvertNaNEqualityInspection"
-                     displayName="Convert equality check with 'NaN' to 'isNaN' call"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.convert.na.n.equality.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedEqualsInspection"
-                     displayName="Unused equals expression"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.unused.equals.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceWithEnumMapInspection"
-                     displayName="Replace with EnumMap"
                      groupPath="Kotlin"
                      groupName="Other problems"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.replace.with.enum.map.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.DataClassPrivateConstructorInspection"
-                     displayName="Private data class constructor is exposed via the 'copy' method"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.data.class.private.constructor.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.DestructuringWrongNameInspection"
-                     displayName="Variable in destructuring declaration uses name of a wrong data class property"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.destructuring.wrong.name.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedLambdaExpressionBodyInspection"
-                     displayName="Unused return value of a function with lambda expression body"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.unused.lambda.expression.body.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinInternalInJavaInspection"
-                     displayName="Usage of Kotlin internal declarations from Java"
                      groupPath="Kotlin"
                      groupName="Java interop issues"
                      enabledByDefault="true"
                      level="ERROR"
                      language="JAVA"
-    />
+                     key="inspection.kotlin.internal.in.java.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MoveSuspiciousCallableReferenceIntoParenthesesInspection"
-                     displayName="Suspicious callable reference used as lambda result"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.move.suspicious.callable.reference.into.parentheses.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.CopyWithoutNamedArgumentsInspection"
-                     displayName="'copy' method of data class is called without named arguments"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.copy.without.named.arguments.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceArrayOfWithLiteralInspection"
-                     displayName="'arrayOf' call can be replaced with array literal [...]"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.replace.array.of.with.literal.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RecursivePropertyAccessorInspection"
-                     displayName="Recursive property accessor"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.recursive.property.accessor.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceRangeToWithUntilInspection"
-                     displayName="'rangeTo' or the '..' call can be replaced with 'until'"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.replace.range.to.with.until.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MemberVisibilityCanBePrivateInspection"
-                     displayName="Class member can have 'private' visibility"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.member.visibility.can.be.private.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.NullableBooleanElvisInspection"
-                     displayName="Equality check can be used instead of elvis for nullable boolean check"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.nullable.boolean.elvis.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.WrapUnaryOperatorInspection"
-                     displayName="Ambiguous unary operator use with number constant"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.wrap.unary.operator.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.EmptyRangeInspection"
-                     displayName="Range with start greater than endInclusive is empty"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.empty.range.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RemoveRedundantSpreadOperatorInspection"
-                     displayName="Redundant spread operator"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.remove.redundant.spread.operator.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.collections.UselessCallOnNotNullInspection"
-                     displayName="Useless call on not-null type"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.useless.call.on.not.null.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantExplicitTypeInspection"
-                     displayName="Explicitly given type is redundant here"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.redundant.explicit.type.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.collections.UselessCallOnCollectionInspection"
-                     displayName="Useless call on collection type"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.useless.call.on.collection.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.collections.SimplifiableCallChainInspection"
-                     displayName="Call chain on collection type can be simplified"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.simplifiable.call.chain.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UseExpressionBodyInspection"
-                     displayName="Expression body syntax is preferable here"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.use.expression.body.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.LiftReturnOrAssignmentInspection"
-                     displayName="Return or assignment can be lifted out"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.lift.return.or.assignment.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.CascadeIfInspection"
-                     displayName="Cascade if can be replaced with when"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.cascade.if.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.NullChecksToSafeCallInspection"
-                     displayName="Null-checks replaceable with safe-calls"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.null.checks.to.safe.call.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ConstantConditionIfInspection"
-                     displayName="Condition of 'if' expression is constant"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.constant.condition.if.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnnecessaryVariableInspection"
-                     displayName="Unnecessary local variable"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.unnecessary.variable.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinDoubleNegationInspection"
-                     displayName="Redundant double negation"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     suppressId="DoubleNegation"
+                     key="inspection.kotlin.double.negation.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.WhenWithOnlyElseInspection"
-                     displayName="'when' has only 'else' branch and can be simplified"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="false"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.when.with.only.else.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantLambdaArrowInspection"
-                     displayName="Redundant lambda arrow"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.redundant.lambda.arrow.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ClassNameInspection"
                      language="kotlin"
                      groupPath="Kotlin"
                      groupName="Naming conventions"
                      enabledByDefault="true"
-                     displayName="Class naming convention"
-                     level="WEAK WARNING"/>
+                     level="WEAK WARNING" key="inspection.class.name.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.EnumEntryNameInspection"
                      language="kotlin"
                      groupPath="Kotlin"
                      groupName="Naming conventions"
                      enabledByDefault="true"
-                     displayName="Enum entry naming convention"
-                     level="WEAK WARNING"/>
+                     level="WEAK WARNING" key="inspection.enum.entry.name.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.FunctionNameInspection"
                      language="kotlin"
                      groupPath="Kotlin"
                      groupName="Naming conventions"
                      enabledByDefault="true"
-                     displayName="Function naming convention"
-                     level="WEAK WARNING"/>
+                     level="WEAK WARNING" key="inspection.function.name.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.TestFunctionNameInspection"
                      language="kotlin"
                      groupPath="Kotlin"
                      groupName="Naming conventions"
                      enabledByDefault="true"
-                     displayName="Test function naming convention"
-                     level="WEAK WARNING"/>
+                     level="WEAK WARNING" key="inspection.test.function.name.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.PropertyNameInspection"
                      language="kotlin"
                      groupPath="Kotlin"
                      groupName="Naming conventions"
                      enabledByDefault="true"
-                     displayName="Property naming convention"
-                     level="WEAK WARNING"/>
+                     level="WEAK WARNING" key="inspection.property.name.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ObjectPropertyNameInspection"
                      language="kotlin"
                      groupPath="Kotlin"
                      groupName="Naming conventions"
                      enabledByDefault="true"
-                     displayName="Object property naming convention"
-                     level="WEAK WARNING"/>
+                     level="WEAK WARNING" key="inspection.object.property.name.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.PrivatePropertyNameInspection"
                      language="kotlin"
                      groupPath="Kotlin"
                      groupName="Naming conventions"
                      enabledByDefault="true"
-                     displayName="Private property naming convention"
-                     level="WEAK WARNING"/>
+                     level="WEAK WARNING" key="inspection.private.property.name.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ConstPropertyNameInspection"
                      language="kotlin"
                      groupPath="Kotlin"
                      groupName="Naming conventions"
                      enabledByDefault="true"
-                     displayName="Const property naming convention"
-                     level="WEAK WARNING"/>
+                     level="WEAK WARNING" key="inspection.const.property.name.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.LocalVariableNameInspection"
                      language="kotlin"
                      groupPath="Kotlin"
                      groupName="Naming conventions"
                      enabledByDefault="true"
-                     displayName="Local variable naming convention"
-                     level="WEAK WARNING"/>
+                     level="WEAK WARNING" key="inspection.local.variable.name.display.name" bundle="messages.KotlinBundle"/>
 
     <globalInspection implementationClass="org.jetbrains.kotlin.idea.inspections.PackageNameInspection"
-                     language="kotlin"
-                     groupPath="Kotlin"
-                     groupName="Naming conventions"
-                     enabledByDefault="true"
-                     displayName="Package naming convention"
-                     level="WEAK WARNING"/>
+                      language="kotlin"
+                      groupPath="Kotlin"
+                      groupName="Naming conventions"
+                      enabledByDefault="true"
+                      level="WEAK WARNING" key="inspection.package.name.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinRedundantOverrideInspection"
-                     displayName="Redundant overriding method"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     suppressId="RedundantOverride"
+                     key="inspection.kotlin.redundant.override.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SuspiciousEqualsCombination"
-                     displayName="Suspicious combination of == and ==="
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.suspicious.equals.combination.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantGetterInspection"
-                     displayName="Redundant property getter"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WEAK WARNING"
-                     language="kotlin"/>
+                     language="kotlin" key="inspection.redundant.getter.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RemoveRedundantBackticksInspection"
-                     displayName="Remove redundant backticks"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
-                     language="kotlin"/>
+                     language="kotlin" key="inspection.remove.redundant.backticks.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RemoveRedundantQualifierNameInspection"
-                     displayName="Remove redundant qualifier name"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
-                     language="kotlin"/>
+                     language="kotlin" key="inspection.remove.redundant.qualifier.name.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantSetterInspection"
-                     displayName="Redundant property setter"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.redundant.setter.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MigrateDiagnosticSuppressionInspection"
-                     displayName="Diagnostic name should be replaced"
                      groupPath="Kotlin"
                      groupName="Other problems"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.migrate.diagnostic.suppression.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ExplicitThisInspection"
-                     displayName="Redundant explicit 'this'"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.explicit.this.display.name" bundle="messages.KotlinBundle"/>
 
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ImplicitThisInspection"
-                     displayName="Implicit 'this'"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.implicit.this.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantUnitExpressionInspection"
-                     displayName="Redundant 'Unit'"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.redundant.unit.expression.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SelfAssignmentInspection"
-                     displayName="Assignment of variable to itself"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.self.assignment.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ImplicitNullableNothingTypeInspection"
-                     displayName="Implicit `Nothing?` type"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.implicit.nullable.nothing.type.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SimplifyWhenWithBooleanConstantConditionInspection"
-                     displayName="Simplifiable 'when'"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.simplify.when.with.boolean.constant.condition.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.JavaCollectionsStaticMethodInspection"
-                     displayName="Java Collections static method call can be replaced with Kotlin stdlib"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.java.collections.static.method.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.JavaCollectionsStaticMethodOnImmutableListInspection"
-                     displayName="Call of Java mutator method on immutable Kotlin collection"
                      groupPath="Kotlin"
                      groupName="Java interop issues"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.java.collections.static.method.on.immutable.list.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RecursiveEqualsCallInspection"
-                     displayName="Recursive equals call"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.recursive.equals.call.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceToWithInfixFormInspection"
-                     displayName="Replace ’to’ with infix form"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.replace.to.with.infix.form.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplacePutWithAssignmentInspection"
-                     displayName="map.put() can be converted to assignment"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.replace.put.with.assignment.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantSuspendModifierInspection"
-                     displayName="Redundant 'suspend' modifier"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.redundant.suspend.modifier.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SortModifiersInspection"
-                     displayName="Non-canonical modifier order"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
                      cleanupTool="true"
-    />
+                     key="inspection.sort.modifiers.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MayBeConstantInspection"
-                     displayName="Might be 'const'"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.may.be.constant.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.TrailingCommaInspection"
-                     displayName="Trailing comma recommendations"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.trailing.comma.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.FakeJvmFieldConstantInspection"
-                     displayName="Kotlin non-const property used as Java constant"
                      groupPath="Kotlin"
                      groupName="Java interop issues"
                      enabledByDefault="true"
                      level="WARNING"
                      language="JAVA"
-    />
+                     key="inspection.fake.jvm.field.constant.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantObjectTypeCheckInspection"
-                     displayName="Redundant type checks for object"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.redundant.object.type.check.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ScopeFunctionConversionInspection"
-                     displayName="Scope function can be converted to another one"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.scope.function.conversion.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.PlatformExtensionReceiverOfInlineInspection"
-                     displayName="Unsafe call of inline function with nullable extension receiver"
                      groupPath="Kotlin"
                      groupName="Java interop issues"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.platform.extension.receiver.of.inline.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantNotNullExtensionReceiverOfInlineInspection"
-                     displayName="Not-null extension receiver of inline function can be made nullable"
                      groupPath="Kotlin"
                      groupName="Java interop issues"
                      enabledByDefault="false"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.redundant.not.null.extension.receiver.of.inline.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ConvertPairConstructorToToFunctionInspection"
-                     displayName="Convert Pair constructor to 'to' function"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.convert.pair.constructor.to.to.function.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantCompanionReferenceInspection"
-                     displayName="Redundant Companion reference"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.redundant.companion.reference.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.PublicApiImplicitTypeInspection"
-                     displayName="Public API declaration has implicit return type"
                      groupPath="Kotlin"
                      groupName="Other problems"
                      enabledByDefault="false"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.public.api.implicit.type.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.CanSealedSubClassBeObjectInspection"
-                     displayName="Sealed sub-class without state and overridden equals"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.can.sealed.sub.class.be.object.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MoveLambdaOutsideParenthesesInspection"
-                     displayName="Lambda argument inside parentheses"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.move.lambda.outside.parentheses.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MoveVariableDeclarationIntoWhenInspection"
-                     displayName="Variable declaration could be moved inside `when`"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.move.variable.declaration.into.when.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MainFunctionReturnUnitInspection"
-                     displayName="Entry point function should return Unit"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.main.function.return.unit.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.coroutines.RedundantAsyncInspection"
-                     displayName="Redundant 'async' call"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.redundant.async.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.coroutines.DeferredResultUnusedInspection"
-                     displayName="Deferred result is never used"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.deferred.result.unused.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceStringFormatWithLiteralInspection"
-                     displayName="Replace with string templates"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.replace.string.format.with.literal.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ForEachParameterNotUsedInspection"
-                     displayName="Iterated elements are not used in forEach"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.for.each.parameter.not.used.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.NestedLambdaShadowedImplicitParameterInspection"
-                     displayName="Nested lambda has shadowed implicit parameter"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.nested.lambda.shadowed.implicit.parameter.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceToStringWithStringTemplateInspection"
-                     displayName="Replace 'toString' with string template"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.replace.to.string.with.string.template.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.FromClosedRangeMigrationInspection"
-                     displayName="MIN_VALUE step in fromClosedRange() since 1.3"
                      groupPath="Kotlin"
                      groupName="Migration"
                      enabledByDefault="false"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.from.closed.range.migration.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.ProhibitTypeParametersForLocalVariablesMigrationInspection"
-                     displayName="Local variables are not allowed to have type parameters since 1.4"
                      groupPath="Kotlin"
                      groupName="Migration"
                      enabledByDefault="false"
                      cleanupTool="true"
                      level="ERROR"
                      language="kotlin"
-    />
+                     key="inspection.prohibit.type.parameters.for.local.variables.migration.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.ProhibitJvmOverloadsOnConstructorsOfAnnotationClassesMigrationInspection"
-                     displayName="'@JvmOverloads' annotation cannot be used on constructors of annotation classes since 1.4"
                      groupPath="Kotlin"
                      groupName="Migration"
                      enabledByDefault="false"
                      cleanupTool="true"
                      level="ERROR"
                      language="kotlin"
-    />
+                     key="inspection.prohibit.jvm.overloads.on.constructors.of.annotation.classes.migration.display.name"
+                     bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.RestrictReturnStatementTargetMigrationInspection"
-                     displayName="Target label does not denote a function since 1.4"
                      groupPath="Kotlin"
                      groupName="Migration"
                      enabledByDefault="false"
                      cleanupTool="true"
                      level="ERROR"
                      language="kotlin"
-    />
+                     key="inspection.restrict.return.statement.target.migration.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.RedundantLabelMigrationInspection"
-                     displayName="Redundant labels since 1.4"
                      groupPath="Kotlin"
                      groupName="Migration"
                      enabledByDefault="false"
                      cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.redundant.label.migration.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.ProhibitUseSiteTargetAnnotationsOnSuperTypesMigrationInspection"
-                     displayName="Annotations on superclass are meaningless since 1.4"
                      groupPath="Kotlin"
                      groupName="Migration"
                      enabledByDefault="false"
                      cleanupTool="true"
                      level="ERROR"
                      language="kotlin"
-    />
+                     key="inspection.prohibit.use.site.target.annotations.on.super.types.migration.display.name"
+                     bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.ProhibitRepeatedUseSiteTargetAnnotationsMigrationInspection"
-                     displayName="Repeatable annotation without `@Repeatable` are not allowed since 1.4"
                      groupPath="Kotlin"
                      groupName="Migration"
                      enabledByDefault="false"
                      cleanupTool="true"
                      level="ERROR"
                      language="kotlin"
-    />
+                     key="inspection.prohibit.repeated.use.site.target.annotations.migration.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.WarningOnMainUnusedParameterMigrationInspection"
-                     displayName="Unused `args` on `main` since 1.4"
                      groupPath="Kotlin"
                      groupName="Migration"
                      enabledByDefault="false"
                      cleanupTool="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.warning.on.main.unused.parameter.migration.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.ObsoleteExperimentalCoroutinesInspection"
-                     displayName="Experimental coroutines usages are deprecated since 1.3"
                      groupPath="Kotlin"
                      groupName="Migration"
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="ERROR"
                      language="kotlin"
-    />
+                     key="inspection.obsolete.experimental.coroutines.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantWithInspection"
-                     displayName="Redundant 'with' call"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.redundant.with.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.collections.ConvertCallChainIntoSequenceInspection"
-                     displayName="Call chain on collection could be converted into 'Sequence' to improve performance"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.convert.call.chain.into.sequence.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SuspiciousAsDynamicInspection"
-                     displayName="Suspicious 'asDynamic' member invocation"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.suspicious.as.dynamic.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceAssertBooleanWithAssertEqualityInspection"
-                     displayName="Replace assert boolean with assert equality"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.replace.assert.boolean.with.assert.equality.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantReturnLabelInspection"
-                     displayName="Redundant 'return' label"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.redundant.return.label.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.coroutines.DirectUseOfResultTypeInspection"
-                     displayName="Function returning Result directly"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="false"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.direct.use.of.result.type.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.coroutines.RedundantRunCatchingInspection"
-                     displayName="Redundant 'runCatching' call"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.redundant.run.catching.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.collections.SimplifiableCallInspection"
-                     displayName="Library function call could be simplified"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.simplifiable.call.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SafeCastWithReturnInspection"
-                     displayName="Safe cast with 'return' should be replaced with 'if' type check"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.safe.cast.with.return.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RemoveEmptyParenthesesFromAnnotationEntryInspection"
-                     displayName="Remove unnecessary parentheses"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.remove.empty.parentheses.from.annotation.entry.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.OptionalExpectationInspection"
-                     displayName="Optionally expected annotation has no actual annotation"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.optional.expectation.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnlabeledReturnInsideLambdaInspection"
-                     displayName="Unlabeled return inside lambda"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.unlabeled.return.inside.lambda.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SetterBackingFieldAssignmentInspection"
-                     displayName="Existing backing field is not assigned by the setter"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.setter.backing.field.assignment.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SuspiciousVarPropertyInspection"
-                     displayName="Suspicious 'var' property: its setter does not influence its getter result"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.suspicious.var.property.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedMainParameterInspection"
-                     displayName="Main parameter is not necessary"
-                     groupPath="Kotlin"
-                     groupName="Style issues"
-                     enabledByDefault="true"
-                     level="WEAK WARNING"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.DelegationToVarPropertyInspection"
-                     displayName="Delegating to 'var' property"
-                     groupPath="Kotlin"
-                     groupName="Probable bugs"
-                     enabledByDefault="true"
-                     level="WARNING"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MapGetWithNotNullAssertionOperatorInspection"
-                     displayName="map.get() with not-null assertion operator (!!)"
-                     groupPath="Kotlin"
-                     groupName="Style issues"
-                     enabledByDefault="true"
-                     level="INFO"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.coroutines.DeferredIsResultInspection"
-                     displayName="Function returning Deferred directly"
-                     groupPath="Kotlin"
-                     groupName="Style issues"
-                     enabledByDefault="true"
-                     level="WEAK WARNING"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantElseInIfInspection"
-                     displayName="Redundant 'else' in 'if'"
-                     groupPath="Kotlin"
-                     groupName="Style issues"
-                     enabledByDefault="true"
-                     level="INFORMATION"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SuspiciousCollectionReassignmentInspection"
-                     displayName="Augmented assignment creates a new collection under the hood"
-                     groupPath="Kotlin"
-                     groupName="Probable bugs"
-                     enabledByDefault="true"
-                     level="WARNING"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.BooleanLiteralArgumentInspection"
-                     displayName="Boolean literal argument without parameter name"
-                     groupPath="Kotlin"
-                     groupName="Style issues"
-                     enabledByDefault="true"
-                     level="INFO"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.coroutines.SuspendFunctionOnCoroutineScopeInspection"
-                     displayName="Ambiguous coroutineContext due to CoroutineScope receiver of suspend function"
-                     groupPath="Kotlin"
-                     groupName="Probable bugs"
-                     enabledByDefault="true"
-                     level="WARNING"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.FunctionWithLambdaExpressionBodyInspection"
-                     displayName="Function with `= { ... }` and inferred return type"
-                     groupPath="Kotlin"
-                     groupName="Style issues"
-                     enabledByDefault="true"
-                     level="WEAK WARNING"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceNegatedIsEmptyWithIsNotEmptyInspection"
-                     displayName="Replace negated 'isEmpty' with 'isNotEmpty'"
-                     groupPath="Kotlin"
-                     groupName="Style issues"
-                     enabledByDefault="true"
-                     level="WEAK WARNING"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantEnumConstructorInvocationInspection"
-                     displayName="Redundant enum constructor invocation"
-                     groupPath="Kotlin"
-                     groupName="Redundant constructs"
-                     enabledByDefault="true"
-                     level="WEAK WARNING"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceRangeStartEndInclusiveWithFirstLastInspection"
-                     displayName="Replace Range 'start' or 'endInclusive' with 'first' or 'last'"
-                     groupPath="Kotlin"
-                     groupName="Style issues"
-                     enabledByDefault="true"
-                     level="WEAK WARNING"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantRequireNotNullCallInspection"
-                     displayName="Redundant 'requireNotNull' or 'checkNotNull' call"
-                     groupPath="Kotlin"
-                     groupName="Redundant constructs"
-                     enabledByDefault="true"
-                     level="WEAK WARNING"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinThrowableNotThrownInspection"
-                     displayName="Throwable not thrown"
-                     groupPath="Kotlin"
-                     groupName="Probable bugs"
-                     enabledByDefault="true"
-                     level="WARNING"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.JavaMapForEachInspection"
-                     displayName="Java Map.forEach method call should be replaced with Kotlin's forEach"
-                     groupPath="Kotlin"
-                     groupName="Style issues"
-                     enabledByDefault="true"
-                     level="WEAK WARNING"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceAssociateFunctionInspection"
-                     displayName="Replace 'associate' with 'associateBy' or 'associateWith'"
-                     groupPath="Kotlin"
-                     groupName="Style issues"
-                     enabledByDefault="true"
-                     level="WEAK WARNING"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinCovariantEqualsInspection"
-                     displayName="Covariant 'equals()'"
-                     groupPath="Kotlin"
-                     groupName="Probable bugs"
-                     enabledByDefault="true"
-                     level="WARNING"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceNotNullAssertionWithElvisReturnInspection"
-                     displayName="Replace '!!' with '?: return'"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="false"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.unused.main.parameter.display.name" bundle="messages.KotlinBundle"/>
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SelfReferenceConstructorParameterInspection"
-                     displayName="Constructor has non-null self reference parameter"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.DelegationToVarPropertyInspection"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.delegation.to.var.property.display.name" bundle="messages.KotlinBundle"/>
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.jdk2k.ReplaceJavaStaticMethodWithKotlinAnalogInspection"
-                     displayName="Replace Java static method with Kotlin analog"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MapGetWithNotNullAssertionOperatorInspection"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFO"
+                     language="kotlin"
+                     key="inspection.map.get.with.not.null.assertion.operator.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.coroutines.DeferredIsResultInspection"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"
-    />
+                     key="inspection.deferred.is.result.display.name" bundle="messages.KotlinBundle"/>
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ControlFlowWithEmptyBodyInspection"
-                     displayName="Control flow with empty body"
-                     groupPath="Kotlin"
-                     groupName="Probable bugs"
-                     enabledByDefault="true"
-                     level="WARNING"
-                     language="kotlin"
-    />
-
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.AddOperatorModifierInspection"
-                     displayName="Function should have 'operator' modifier"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantElseInIfInspection"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.redundant.else.in.if.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SuspiciousCollectionReassignmentInspection"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+                     key="inspection.suspicious.collection.reassignment.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.BooleanLiteralArgumentInspection"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFO"
+                     language="kotlin"
+                     key="inspection.boolean.literal.argument.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.coroutines.SuspendFunctionOnCoroutineScopeInspection"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+                     key="inspection.suspend.function.on.coroutine.scope.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.FunctionWithLambdaExpressionBodyInspection"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+                     key="inspection.function.with.lambda.expression.body.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceNegatedIsEmptyWithIsNotEmptyInspection"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+                     key="inspection.replace.negated.is.empty.with.is.not.empty.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantEnumConstructorInvocationInspection"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+                     key="inspection.redundant.enum.constructor.invocation.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceRangeStartEndInclusiveWithFirstLastInspection"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+                     key="inspection.replace.range.start.end.inclusive.with.first.last.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantRequireNotNullCallInspection"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+                     key="inspection.redundant.require.not.null.call.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinThrowableNotThrownInspection"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+                     suppressId="ThrowableNotThrown"
+                     key="inspection.kotlin.throwable.not.thrown.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.JavaMapForEachInspection"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+                     key="inspection.java.map.for.each.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceAssociateFunctionInspection"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+                     key="inspection.replace.associate.function.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinCovariantEqualsInspection"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+                     suppressId="CovariantEquals"
+                     key="inspection.kotlin.covariant.equals.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceNotNullAssertionWithElvisReturnInspection"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="false"
+                     level="WEAK WARNING"
+                     language="kotlin"
+                     key="inspection.replace.not.null.assertion.with.elvis.return.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SelfReferenceConstructorParameterInspection"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+                     key="inspection.self.reference.constructor.parameter.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.jdk2k.ReplaceJavaStaticMethodWithKotlinAnalogInspection"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+                     key="inspection.replace.java.static.method.with.kotlin.analog.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ControlFlowWithEmptyBodyInspection"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+                     key="inspection.control.flow.with.empty.body.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.AddOperatorModifierInspection"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFORMATION"
+                     language="kotlin"
+                     key="inspection.add.operator.modifier.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantEmptyInitializerBlockInspection"
-                     displayName="Redundant empty initializer block"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="INFO"
                      language="kotlin"
-    />
+                     key="inspection.redundant.empty.initializer.block.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinEqualsBetweenInconvertibleTypesInspection"
-                     displayName="'equals()' between objects of inconvertible types"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     suppressId="EqualsBetweenInconvertibleTypes"
+                     key="inspection.kotlin.equals.between.inconvertible.types.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.LateinitVarOverridesLateinitVarInspection"
-                     displayName="lateinit var property overrides lateinit var property"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.lateinit.var.overrides.lateinit.var.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceGuardClauseWithFunctionCallInspection"
-                     displayName="Replace guard clause with kotlin's function call"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
                      language="kotlin"
-    />
+                     key="inspection.replace.guard.clause.with.function.call.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedUnaryOperatorInspection"
-                     displayName="Unused unary operator"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.unused.unary.operator.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantInnerClassModifierInspection"
-                     displayName="Redundant 'inner' modifier"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.redundant.inner.class.modifier.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantElvisReturnNullInspection"
-                     displayName="Redundant '?: return null'"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
-    />
+                     key="inspection.redundant.elvis.return.null.display.name" bundle="messages.KotlinBundle"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings"
-                    serviceImplementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings"/>
 
-    <applicationService serviceInterface="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightSettings"
-                    serviceImplementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightSettings"/>
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightSettings"/>
 
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
     <autoImportOptionsProvider instance="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettingsProvider"/>
@@ -3627,5 +3358,6 @@
     <idePlatformKindTooling implementation="org.jetbrains.kotlin.idea.core.platform.impl.JvmIdePlatformKindTooling"/>
     <idePlatformKindTooling implementation="org.jetbrains.kotlin.idea.core.platform.impl.JsIdePlatformKindTooling"/>
   </extensions>
+  <resource-bundle>messages.KotlinBundle</resource-bundle>
 
 </idea-plugin>

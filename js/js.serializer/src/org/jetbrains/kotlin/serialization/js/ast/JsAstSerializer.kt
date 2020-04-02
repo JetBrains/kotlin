@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.UnaryOperation.Ty
 import java.io.File
 import java.io.OutputStream
 import java.util.*
-import org.jetbrains.kotlin.resolve.inline.InlineStrategy as KotlinInlineStrategy
 
 class JsAstSerializer(private val jsAstValidator: ((JsProgramFragment, Set<JsName>) -> Unit)?,
                       private val pathResolver: (File) -> String) {
@@ -418,13 +417,15 @@ class JsAstSerializer(private val jsAstValidator: ((JsProgramFragment, Set<JsNam
                 val name = nameRef.name
                 val qualifier = nameRef.qualifier
                 if (name != null) {
-                    if (qualifier != null || nameRef.inlineStrategy?.isInline == true) {
+                    if (qualifier != null || nameRef.isInline == true) {
                         val nameRefBuilder = NameReference.newBuilder()
                         nameRefBuilder.nameId = serialize(name)
                         if (qualifier != null) {
                             nameRefBuilder.qualifier = serialize(qualifier)
                         }
-                        nameRef.inlineStrategy?.let { nameRefBuilder.inlineStrategy = map(it) }
+                        nameRef.isInline?.let {
+                            nameRefBuilder.inlineStrategy = if (it) InlineStrategy.IN_PLACE else InlineStrategy.NOT_INLINE
+                        }
                         builder.nameReference = nameRefBuilder.build()
                     }
                     else {
@@ -435,7 +436,9 @@ class JsAstSerializer(private val jsAstValidator: ((JsProgramFragment, Set<JsNam
                     val propertyRefBuilder = PropertyReference.newBuilder()
                     propertyRefBuilder.stringId = serialize(nameRef.ident)
                     qualifier?.let { propertyRefBuilder.qualifier = serialize(it) }
-                    nameRef.inlineStrategy?.let { propertyRefBuilder.inlineStrategy = map(it) }
+                    nameRef.isInline?.let {
+                        propertyRefBuilder.inlineStrategy = if (it) InlineStrategy.IN_PLACE else InlineStrategy.NOT_INLINE
+                    }
                     builder.propertyReference = propertyRefBuilder.build()
                 }
             }
@@ -444,10 +447,8 @@ class JsAstSerializer(private val jsAstValidator: ((JsProgramFragment, Set<JsNam
                 val invocationBuilder = Invocation.newBuilder()
                 invocationBuilder.qualifier = serialize(invocation.qualifier)
                 invocation.arguments.forEach { invocationBuilder.addArgument(serialize(it)) }
-                invocation.inlineStrategy?.let { inlineStrategy ->
-                    if (inlineStrategy != KotlinInlineStrategy.NOT_INLINE) {
-                        invocationBuilder.inlineStrategy = map(inlineStrategy)
-                    }
+                if (invocation.isInline == true) {
+                    invocationBuilder.inlineStrategy = InlineStrategy.IN_PLACE
                 }
                 builder.invocation = invocationBuilder.build()
             }
@@ -582,12 +583,6 @@ class JsAstSerializer(private val jsAstValidator: ((JsProgramFragment, Set<JsNam
         SideEffectKind.AFFECTS_STATE -> SideEffects.AFFECTS_STATE
         SideEffectKind.DEPENDS_ON_STATE -> SideEffects.DEPENDS_ON_STATE
         SideEffectKind.PURE -> SideEffects.PURE
-    }
-
-    private fun map(inlineStrategy: KotlinInlineStrategy) = when (inlineStrategy) {
-        KotlinInlineStrategy.AS_FUNCTION -> InlineStrategy.AS_FUNCTION
-        KotlinInlineStrategy.IN_PLACE -> InlineStrategy.IN_PLACE
-        KotlinInlineStrategy.NOT_INLINE -> InlineStrategy.NOT_INLINE
     }
 
     private fun map(specialFunction: SpecialFunction) = when (specialFunction) {

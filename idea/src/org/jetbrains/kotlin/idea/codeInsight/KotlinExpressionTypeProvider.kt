@@ -13,6 +13,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -44,7 +45,7 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
         classifierNamePolicy = object : ClassifierNamePolicy {
             override fun renderClassifier(classifier: ClassifierDescriptor, renderer: DescriptorRenderer): String {
                 if (DescriptorUtils.isAnonymousObject(classifier)) {
-                    return "&lt;anonymous object&gt;"
+                    return "&lt;" + KotlinBundle.message("type.provider.anonymous.object") + "&gt;"
                 }
                 return ClassifierNamePolicy.SHORT.renderClassifier(classifier, renderer)
             }
@@ -103,26 +104,29 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
         if (element is KtCallableDeclaration) {
             val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, element] as? CallableDescriptor
             if (descriptor != null) {
-                return descriptor.returnType?.let { typeRenderer.renderType(it) } ?: "Type is unknown"
+                return descriptor.returnType?.let { typeRenderer.renderType(it) } ?: KotlinBundle.message("type.provider.unknown.type")
             }
         }
 
         val expressionTypeInfo = bindingContext[BindingContext.EXPRESSION_TYPE_INFO, element] ?: noTypeInfo(DataFlowInfo.EMPTY)
         val expressionType = element.getType(bindingContext) ?: getTypeForArgumentName(element, bindingContext)
 
-        val result = expressionType?.let { typeRenderer.renderType(it) } ?: return "Type is unknown"
+        val result = expressionType?.let { typeRenderer.renderType(it) } ?: return KotlinBundle.message("type.provider.unknown.type")
 
         val dataFlowValueFactory = element.getResolutionFacade().frontendService<DataFlowValueFactory>()
         val dataFlowValue =
             dataFlowValueFactory.createDataFlowValue(element, expressionType, bindingContext, element.findModuleDescriptor())
         val types = expressionTypeInfo.dataFlowInfo.getStableTypes(dataFlowValue, element.languageVersionSettings)
-        if (types.isNotEmpty()) return types.joinToString(separator = " & ") { typeRenderer.renderType(it) } + " (smart cast from " + result + ")"
+        if (types.isNotEmpty()) {
+            return types.joinToString(separator = " & ") { typeRenderer.renderType(it) } +
+                    " " + KotlinBundle.message("type.provider.smart.cast.from", result)
+        }
 
         val smartCast = bindingContext[BindingContext.SMARTCAST, element]
         if (smartCast != null && element is KtReferenceExpression) {
             val declaredType = (bindingContext[BindingContext.REFERENCE_TARGET, element] as? CallableDescriptor)?.returnType
             if (declaredType != null) {
-                return result + " (smart cast from " + typeRenderer.renderType(declaredType) + ")"
+                return result + " " + KotlinBundle.message("type.provider.smart.cast.from", typeRenderer.renderType(declaredType))
             }
         }
         return result
@@ -137,5 +141,5 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
         return parameter.type
     }
 
-    override fun getErrorHint(): String = "No expression found"
+    override fun getErrorHint(): String = KotlinBundle.message("type.provider.no.expression.found")
 }

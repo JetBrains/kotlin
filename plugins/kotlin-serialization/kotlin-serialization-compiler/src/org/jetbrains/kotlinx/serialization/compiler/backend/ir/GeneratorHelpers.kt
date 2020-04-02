@@ -499,7 +499,8 @@ interface IrBuilderExtension {
                 null, compilerContext.symbolTable.referenceConstructor(nullableSerializerClass.descriptor.constructors.toList().first()),
                 typeArguments = listOf(type.makeNotNullable().toIrType()),
                 valueArguments = listOf(expression),
-                returnTypeHint = wrapIrTypeIntoKSerializerIrType(module, type.toIrType())
+                // Return type should not be different from declared class, otherwise, we will call wrong <init> method on runtime.
+                returnTypeHint = null
             )
         else
             expression
@@ -656,8 +657,8 @@ interface IrBuilderExtension {
             } else {
                 compilerContext.symbolTable.referenceConstructor(serializerClass.unsubstitutedPrimaryConstructor!!)
             }
-            val returnType = wrapIrTypeIntoKSerializerIrType(module, thisIrType)
-            return irInvoke(null, ctor, typeArguments = typeArgs, valueArguments = args, returnTypeHint = returnType)
+            // Return type should not be different from declared class, otherwise, we will call wrong <init> method on runtime.
+            return irInvoke(null, ctor, typeArguments = typeArgs, valueArguments = args, returnTypeHint = null)
         }
     }
 

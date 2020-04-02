@@ -28,17 +28,18 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.refactoring.rename.RenameProcessor
 import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.utils.SmartList
 
 sealed class ConvertTestFunctionToSpacedIntention(case: String) : SelfTargetingRangeIntention<KtNamedFunction>(
-    KtNamedFunction::class.java, "Replace $case name with spaces"
+    KtNamedFunction::class.java, KotlinBundle.message("replace.0.name.with.spaces", case)
 ) {
     companion object {
         private val SNAKE_CASE_REGEX = ".+_.+".toRegex()
@@ -65,7 +66,7 @@ sealed class ConvertTestFunctionToSpacedIntention(case: String) : SelfTargetingR
         val lightMethod = element.toLightMethods().firstOrNull() ?: return null
         if (!TestFrameworks.getInstance().isTestMethod(lightMethod)) return null
 
-        text = "Rename to $newName"
+        text = KotlinBundle.message("rename.to.01", newName)
 
         return range
     }

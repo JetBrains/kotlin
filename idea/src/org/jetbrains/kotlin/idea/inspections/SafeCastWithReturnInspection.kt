@@ -12,6 +12,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -41,7 +42,7 @@ class SafeCastWithReturnInspection : AbstractKotlinInspection() {
 
             holder.registerProblem(
                 parent,
-                "Should be replaced with 'if' type check",
+                KotlinBundle.message("should.be.replaced.with.if.type.check"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 ReplaceWithIfFix()
             )
@@ -49,7 +50,7 @@ class SafeCastWithReturnInspection : AbstractKotlinInspection() {
 }
 
 private class ReplaceWithIfFix : LocalQuickFix {
-    override fun getName() = "Replace with 'if' type check"
+    override fun getName() = KotlinBundle.message("replace.with.if.fix.text")
 
     override fun getFamilyName() = name
 

@@ -75,6 +75,8 @@ object FieldSets {
 
     val visibility = field(visibilityType)
 
+    val effectiveVisibility = field("effectiveVisibility", effectiveVisibilityType)
+
     val modality = field(modalityType, nullable = true)
 
     val scopeProvider = field("scopeProvider", firScopeProviderType)

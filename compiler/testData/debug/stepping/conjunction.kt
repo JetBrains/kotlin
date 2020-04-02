@@ -19,15 +19,15 @@ fun getC() = false
 fun getD() = true
 
 // LINENUMBERS
-// TestKt.box():3
-// TestKt.getA():13
-// TestKt.box():3
-// TestKt.box():4
-// TestKt.getB():15
-// TestKt.box():4
-// TestKt.box():5
-// TestKt.getC():17
-// TestKt.box():5
-// TestKt.box():9
-// TestKt.box():3
-// TestKt.box():11
+// test.kt:3
+// test.kt:13
+// test.kt:3
+// test.kt:4
+// test.kt:15
+// test.kt:4
+// test.kt:5
+// test.kt:17
+// test.kt:5
+// test.kt:9
+// test.kt:3
+// test.kt:11

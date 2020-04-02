@@ -13,7 +13,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
-  <idea-version since-build="201.5985.32" until-build="202.*"/>
+  <idea-version since-build="201.6487" until-build="202.*"/>
 
   <depends>com.intellij.modules.platform</depends>
 
@@ -29,8 +29,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <depends optional="true" config-file="decompiler.xml">org.jetbrains.java.decompiler</depends>
   <depends optional="true" config-file="git4idea.xml">Git4Idea</depends>
   <depends optional="true" config-file="stream-debugger.xml">org.jetbrains.debugger.streams</depends>
-
-  <depends>com.intellij.stats.completion</depends>
+  <depends optional="true" config-file="completion-stats.xml">com.intellij.stats.completion</depends>
 
   <!-- ULTIMATE-PLUGIN-PLACEHOLDER -->
 
@@ -44,6 +43,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <xi:include href="plugin-common.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <!-- CIDR-PLUGIN-EXCLUDE-START -->
+  <xi:include href="jvm-common.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="jvm.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <!-- CIDR-PLUGIN-EXCLUDE-END -->
 
@@ -70,13 +70,29 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceImplementation="org.jetbrains.kotlin.idea.PluginStartupService" />
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.PluginStartupActivity"/>
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.completion.LookupCancelWatcher"/>
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.caches.KotlinPackageContentModificationListener"/>
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent"/>
+
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.completion.LookupCancelService"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectService"/>
+
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinBeforeResolveHighlightingPass$Registrar"/>
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.ScriptExternalHighlightingPass$Registrar"/>
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.parameterInfo.custom.KotlinCodeHintsPass$Registrar"/>
+    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsPassFactory$Registrar"/>
+
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener"/>
+
     <statistics.counterUsagesCollector groupId="kotlin.gradle.target" version="2"/>
     <statistics.counterUsagesCollector groupId="kotlin.maven.target" version="3"/>
     <statistics.counterUsagesCollector groupId="kotlin.jps.target" version="3"/>
     <statistics.counterUsagesCollector groupId="kotlin.gradle.library" version="1"/>
     <statistics.counterUsagesCollector groupId="kotlin.ide.action.refactoring" version="1"/>
     <statistics.counterUsagesCollector groupId="kotlin.ide.newFileTempl" version="1"/>
-    <statistics.counterUsagesCollector groupId="kotlin.ide.npwizards" version="1"/>
+    <statistics.counterUsagesCollector groupId="kotlin.ide.npwizards" version="2"/>
     <statistics.counterUsagesCollector groupId="kotlin.ide.debugger" version="2"/>
     <statistics.counterUsagesCollector groupId="kotlin.ide.j2k" version="1"/>
     <statistics.counterUsagesCollector groupId="kotlin.ide.editor" version="1"/>
@@ -90,5 +106,8 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
     <completion.ml.model implementation="org.jetbrains.kotlin.idea.completion.ml.KotlinMLRankingProvider"/>
     <suggestedRefactoringSupport language="kotlin" implementationClass="org.jetbrains.kotlin.idea.refactoring.suggested.KotlinSuggestedRefactoringSupport"/>
+
+    <refactoring.moveInnerHandler language="kotlin"
+                                  implementationClass="org.jetbrains.kotlin.idea.refactoring.move.MoveKotlinInnerHandler"/>
   </extensions>
 </idea-plugin>

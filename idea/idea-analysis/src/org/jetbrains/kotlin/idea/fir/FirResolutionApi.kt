@@ -157,7 +157,7 @@ fun KtFile.getOrBuildFirWithDiagnostics(state: FirModuleResolveState): FirFile {
     ProgressIndicatorProvider.checkCanceled() // ???
     if (state.hasDiagnosticsForFile(this)) return firFile
 
-    FirIdeDiagnosticsCollector(state).collectDiagnostics(firFile)
+    FirIdeDiagnosticsCollector(firFile.session, state).collectDiagnostics(firFile)
     state.setDiagnosticsForFile(this, firFile)
     return firFile
 }
@@ -214,19 +214,13 @@ private class FirDesignatedBodyResolveTransformerForIDE(
     scopeSession = scopeSession,
     returnTypeCalculator = createReturnTypeCalculatorForIDE(session, scopeSession)
 ) {
-    override fun <E : FirElement> transformElement(element: E, data: ResolutionMode): CompositeTransformResult<E> {
+    override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
         if (designation.hasNext()) {
             designation.next().visitNoTransform(this, data)
-            return element.compose()
+            return declaration.compose()
         }
-        return super.transformElement(element, data)
-    }
 
-    override fun transformDeclaration(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
-        return components.withContainer(declaration) {
-            declaration.replaceResolvePhase(transformerPhase)
-            transformElement(declaration, data)
-        }
+        return super.transformDeclarationContent(declaration, data)
     }
 }
 

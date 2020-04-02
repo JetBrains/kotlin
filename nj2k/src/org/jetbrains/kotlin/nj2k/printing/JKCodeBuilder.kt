@@ -142,6 +142,10 @@ internal class JKCodeBuilder(context: NewJ2kConverterContext) {
             printer.renderSymbol(classAccessExpression.identifier, classAccessExpression)
         }
 
+        override fun visitMethodAccessExpression(methodAccessExpression: JKMethodAccessExpression) {
+            printer.renderSymbol(methodAccessExpression.identifier, methodAccessExpression)
+        }
+
         override fun visitFileRaw(file: JKFile) {
             if (file.packageDeclaration.name.value.isNotEmpty()) {
                 file.packageDeclaration.accept(this)

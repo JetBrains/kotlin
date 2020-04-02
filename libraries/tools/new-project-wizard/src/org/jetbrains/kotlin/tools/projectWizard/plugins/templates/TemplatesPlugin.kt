@@ -1,10 +1,11 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.templates
 
-import org.jetbrains.kotlin.tools.projectWizard.core.context.WritingContext
+
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.Defaults.KOTLIN_DIR
 import org.jetbrains.kotlin.tools.projectWizard.core.Defaults.RESOURCES_DIR
 import org.jetbrains.kotlin.tools.projectWizard.core.Defaults.SRC_DIR
+import org.jetbrains.kotlin.tools.projectWizard.core.service.TemplateEngineService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
@@ -44,7 +45,7 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
     val renderFileTemplates by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runAfter(KotlinPlugin::createModules)
         withAction {
-            val templateEngine = VelocityTemplateEngine()
+            val templateEngine = service<TemplateEngineService>()
             TemplatesPlugin::fileTemplatesToRender.propertyValue.mapSequenceIgnore { template ->
                 with(templateEngine) { writeTemplate(template) }
             }
@@ -56,7 +57,6 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
         runAfter(KotlinPlugin::createModules)
 
         withAction {
-            val templateEngine = VelocityTemplateEngine()
             updateBuildFiles { buildFile ->
                 buildFile.modules.modules.mapSequence { module ->
                     applyTemplateToModule(
@@ -90,11 +90,11 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
                 val modules = buildFile.modules.modules
 
                 val applicationState = modules.mapNotNull { module ->
-                    module.template?.createInterceptors(module)
-                }.flatten()
+                        module.template?.createInterceptors(module)
+                    }.flatten()
                     .applyAll(TemplateInterceptionApplicationState(buildFile, emptyMap()))
 
-                val templateEngine = VelocityTemplateEngine()
+                val templateEngine = service<TemplateEngineService>()
 
                 val templatesApplicationResult = modules.map { module ->
                     val settings = applicationState.moduleToSettings[module.originalModule.identificator].orEmpty()
@@ -106,9 +106,9 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
         }
     }
 
-    private fun WritingContext.applyFileTemplatesFromSourceset(
+    private fun Writer.applyFileTemplatesFromSourceset(
         module: ModuleIR,
-        templateEngine: TemplateEngine,
+        templateEngine: TemplateEngineService,
         interceptionPointSettings: Map<InterceptionPoint<Any>, Any>
     ): TaskResult<Unit> {
         val template = module.template ?: return UNIT_SUCCESS
@@ -129,7 +129,7 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
         }.sequenceIgnore()
     }
 
-    private fun WritingContext.defaultSettings(moduleIR: ModuleIR) = mapOf(
+    private fun Writer.defaultSettings(moduleIR: ModuleIR) = mapOf(
         "projectName" to projectName,
         "moduleName" to moduleIR.name
     )

@@ -212,7 +212,6 @@ enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
         PostponedVariablesInitializerResolutionPart
     ),
     FUNCTION(
-        CheckInstantiationOfAbstractClass,
         CheckVisibility,
         CheckInfixResolutionPart,
         CheckOperatorResolutionPart,

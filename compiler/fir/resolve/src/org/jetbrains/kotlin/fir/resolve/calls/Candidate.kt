@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
+import org.jetbrains.kotlin.fir.resolve.inference.PostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
-import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 
 data class CallInfo(
@@ -43,6 +43,8 @@ data class CallInfo(
     val containingFile: FirFile,
     val implicitReceiverStack: ImplicitReceiverStack,
 
+    val candidateForCommonInvokeReceiver: Candidate? = null,
+
     // Four properties for callable references only
     val expectedType: ConeKotlinType? = null,
     val outerCSBuilder: ConstraintSystemBuilder? = null,
@@ -54,14 +56,10 @@ data class CallInfo(
     val argumentCount get() = arguments.size
 
     fun noStubReceiver(): CallInfo =
-        if (stubReceiver == null) this else CallInfo(
-            callKind, name, explicitReceiver, argumentList,
-            isSafeCall, isPotentialQualifierPart, typeArguments, session,
-            containingFile, implicitReceiverStack, expectedType, outerCSBuilder, lhs, null
-        )
+        if (stubReceiver == null) this else copy(stubReceiver = null)
 
     fun replaceWithVariableAccess(): CallInfo =
-        copy(callKind = CallKind.VariableAccess, argumentList = FirEmptyArgumentList)
+        copy(callKind = CallKind.VariableAccess, typeArguments = emptyList(), argumentList = FirEmptyArgumentList)
 
     fun replaceExplicitReceiver(explicitReceiver: FirExpression?): CallInfo =
         copy(explicitReceiver = explicitReceiver)
@@ -112,7 +110,8 @@ class Candidate(
     var usesSAM: Boolean = false
 
     var argumentMapping: Map<FirExpression, FirValueParameter>? = null
-    val postponedAtoms = mutableListOf<PostponedResolvedAtomMarker>()
+    lateinit var typeArgumentMapping: TypeArgumentMapping
+    val postponedAtoms = mutableListOf<PostponedResolvedAtom>()
 
     val diagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
 

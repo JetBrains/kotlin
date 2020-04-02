@@ -21,6 +21,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
+import org.jetbrains.kotlin.checkers.utils.DiagnosticsRenderingConfiguration
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.psi.KtFile
 import java.awt.Toolkit
@@ -40,9 +41,7 @@ class CopyAsDiagnosticTestAction : AnAction() {
             psiFile,
             false,
             mutableListOf(),
-            null,
-            false,
-            null,
+            DiagnosticsRenderingConfiguration(null, false, null),
             null,
             null
         )

@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.name.FqName
@@ -59,7 +60,7 @@ object RestrictedRetentionForExpressionAnnotationFactory : KotlinIntentionAction
     }
 
     private class AddSourceRetentionFix(element: KtClass) : KotlinQuickFixAction<KtClass>(element) {
-        override fun getText() = "Add SOURCE retention"
+        override fun getText() = KotlinBundle.message("add.source.retention")
 
         override fun getFamilyName() = text
 
@@ -73,7 +74,7 @@ object RestrictedRetentionForExpressionAnnotationFactory : KotlinIntentionAction
     private class ChangeRetentionToSourceFix(retentionAnnotation: KtAnnotationEntry) :
         KotlinQuickFixAction<KtAnnotationEntry>(retentionAnnotation) {
 
-        override fun getText() = "Change existent retention to SOURCE"
+        override fun getText() = KotlinBundle.message("change.existent.retention.to.source")
 
         override fun getFamilyName() = text
 
@@ -97,7 +98,7 @@ object RestrictedRetentionForExpressionAnnotationFactory : KotlinIntentionAction
     private class RemoveExpressionTargetFix(expressionTargetArgument: KtValueArgument) :
         KotlinQuickFixAction<KtValueArgument>(expressionTargetArgument) {
 
-        override fun getText() = "Remove EXPRESSION target"
+        override fun getText() = KotlinBundle.message("remove.expression.target")
 
         override fun getFamilyName() = text
 

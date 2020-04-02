@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -274,9 +275,9 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 }
                 null
             } else {
-                val dialog = object : DialogWithEditor(project, "Create from usage", "") {
+                val dialog = object : DialogWithEditor(project, KotlinBundle.message("fix.create.from.usage.dialog.title"), "") {
                     override fun doOKAction() {
-                        project.executeWriteCommand("Premature end of template") {
+                        project.executeWriteCommand(KotlinBundle.message("premature.end.of.template")) {
                             TemplateManagerImpl.getTemplateState(editor)?.gotoEnd(false)
                         }
                         super.doOKAction()

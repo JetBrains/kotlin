@@ -13,6 +13,7 @@ import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -59,8 +60,8 @@ class ObjectLiteralToLambdaInspection : IntentionBasedInspection<KtObjectLiteral
 
 class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiteralExpression>(
     KtObjectLiteralExpression::class.java,
-    "Convert to lambda",
-    "Convert object literal to lambda"
+    KotlinBundle.message("convert.to.lambda"),
+    KotlinBundle.message("convert.object.literal.to.lambda")
 ) {
     override fun applicabilityRange(element: KtObjectLiteralExpression): TextRange? {
         val (baseTypeRef, baseType, singleFunction) = extractData(element) ?: return null

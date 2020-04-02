@@ -2838,9 +2838,19 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/convertToAnonymousObject/labeledReturn.kt");
         }
 
+        @TestMetadata("lambdaInParentheses.kt")
+        public void testLambdaInParentheses() throws Exception {
+            runTest("idea/testData/quickfix/convertToAnonymousObject/lambdaInParentheses.kt");
+        }
+
         @TestMetadata("multiMethod.kt")
         public void testMultiMethod() throws Exception {
             runTest("idea/testData/quickfix/convertToAnonymousObject/multiMethod.kt");
+        }
+
+        @TestMetadata("noLambda.kt")
+        public void testNoLambda() throws Exception {
+            runTest("idea/testData/quickfix/convertToAnonymousObject/noLambda.kt");
         }
 
         @TestMetadata("parameter.kt")
@@ -7704,6 +7714,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/implement/finalClass.kt");
         }
 
+        @TestMetadata("hasImplementedInPrimaryConstructor.kt")
+        public void testHasImplementedInPrimaryConstructor() throws Exception {
+            runTest("idea/testData/quickfix/implement/hasImplementedInPrimaryConstructor.kt");
+        }
+
+        @TestMetadata("hasImplementedInPrimaryConstructor2.kt")
+        public void testHasImplementedInPrimaryConstructor2() throws Exception {
+            runTest("idea/testData/quickfix/implement/hasImplementedInPrimaryConstructor2.kt");
+        }
+
+        @TestMetadata("hasImplementedInPrimaryConstructor3.kt")
+        public void testHasImplementedInPrimaryConstructor3() throws Exception {
+            runTest("idea/testData/quickfix/implement/hasImplementedInPrimaryConstructor3.kt");
+        }
+
         @TestMetadata("inCompanion.kt")
         public void testInCompanion() throws Exception {
             runTest("idea/testData/quickfix/implement/inCompanion.kt");
@@ -10171,6 +10196,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("protected2.kt")
         public void testProtected2() throws Exception {
             runTest("idea/testData/quickfix/protectedInFinal/protected2.kt");
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/redundantFun")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RedundantFun extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInRedundantFun() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/redundantFun"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("idea/testData/quickfix/redundantFun/simple.kt");
         }
     }
 
@@ -13539,6 +13582,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("paramTypeLambdaMatchSubclass.kt")
         public void testParamTypeLambdaMatchSubclass() throws Exception {
             runTest("idea/testData/quickfix/typeMismatch/paramTypeLambdaMatchSubclass.kt");
+        }
+
+        @TestMetadata("paramTypeLambdaMatchSuspend.kt")
+        public void testParamTypeLambdaMatchSuspend() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/paramTypeLambdaMatchSuspend.kt");
         }
 
         @TestMetadata("paramTypeLambdaMismatch.kt")

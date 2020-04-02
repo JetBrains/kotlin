@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.project.builtIns
@@ -53,8 +54,10 @@ class AddTypeAnnotationToValueParameterFix(element: KtParameter) : KotlinQuickFi
         return element.typeReference == null && typeNameShort != null
     }
 
-    override fun getFamilyName() = "Add type annotation"
-    override fun getText() = element?.let { "Add type '$typeNameShort' to parameter '${it.name}'" } ?: ""
+    override fun getFamilyName() = KotlinBundle.message("fix.add.type.annnotation.family")
+
+    override fun getText() =
+        element?.let { KotlinBundle.message("fix.add.type.annnotation.text", typeNameShort.toString(), it.name.toString()) } ?: ""
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

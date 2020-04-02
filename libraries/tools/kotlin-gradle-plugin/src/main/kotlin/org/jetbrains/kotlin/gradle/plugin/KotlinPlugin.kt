@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.gradle.plugin
 
 import com.android.build.gradle.*
@@ -37,9 +42,10 @@ import org.jetbrains.kotlin.gradle.logging.kotlinWarn
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType
+import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrType
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -101,18 +107,21 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
                 }
 
     private fun prepareKotlinCompileTask(): TaskProvider<out T> =
-        registerKotlinCompileTask().also { task ->
+        registerKotlinCompileTask(register = ::doRegisterTask).also { task ->
             kotlinCompilation.output.addClassesDir { project.files(task.map { it.destinationDir }) }
         }
 
-    protected fun registerKotlinCompileTask(name: String = kotlinCompilation.compileKotlinTaskName): TaskProvider<out T> {
+    protected fun registerKotlinCompileTask(
+        name: String = kotlinCompilation.compileKotlinTaskName,
+        register: (Project, String, (T) -> Unit) -> TaskProvider<out T>
+    ): TaskProvider<out T> {
         logger.kotlinDebug("Creating kotlin compile task $name")
 
         KotlinCompileTaskData.register(name, kotlinCompilation).apply {
             destinationDir.set(project.provider { defaultKotlinDestinationDir })
         }
 
-        return doRegisterTask(project, name) {
+        return register(project, name) {
             it.description = taskDescription
             it.mapClasspath { kotlinCompilation.compileDependencyFiles }
         }
@@ -263,7 +272,9 @@ internal class Kotlin2JsSourceSetProcessor(
     kotlinCompilation: AbstractKotlinCompilation<*>,
     private val kotlinPluginVersion: String
 ) : KotlinSourceSetProcessor<Kotlin2JsCompile>(
-    tasksProvider, taskDescription = "Compiles the Kotlin sources in $kotlinCompilation to JavaScript.", kotlinCompilation = kotlinCompilation
+    tasksProvider,
+    taskDescription = "Compiles the Kotlin sources in $kotlinCompilation to JavaScript.",
+    kotlinCompilation = kotlinCompilation
 ) {
     override fun doRegisterTask(
         project: Project,
@@ -321,34 +332,13 @@ internal class KotlinJsIrSourceSetProcessor(
         project: Project,
         taskName: String,
         configureAction: (Kotlin2JsCompile) -> (Unit)
-    ): TaskProvider<out Kotlin2JsCompile> {
-        val compilation = kotlinCompilation as KotlinJsIrCompilation
-
-        if (taskName == compilation.productionLinkTaskName) {
-            return registerJsLink(
-                project,
-                taskName,
-                KotlinJsIrType.PRODUCTION,
-                configureAction
-            )
-        }
-
-        if (taskName == compilation.developmentLinkTaskName) {
-            return registerJsLink(
-                project,
-                taskName,
-                KotlinJsIrType.DEVELOPMENT,
-                configureAction
-            )
-        }
-
-        return tasksProvider.registerKotlinJSTask(project, taskName, kotlinCompilation, configureAction)
-    }
+    ): TaskProvider<out Kotlin2JsCompile> =
+        tasksProvider.registerKotlinJSTask(project, taskName, kotlinCompilation, configureAction)
 
     private fun registerJsLink(
         project: Project,
         taskName: String,
-        type: KotlinJsIrType,
+        type: KotlinJsBinaryType,
         configureAction: (Kotlin2JsCompile) -> Unit
     ): TaskProvider<out KotlinJsIrLink> {
         return tasksProvider.registerKotlinJsIrTask(
@@ -368,18 +358,18 @@ internal class KotlinJsIrSourceSetProcessor(
 
         val compilation = kotlinCompilation as KotlinJsIrCompilation
 
-        listOf(
-            compilation.productionLinkTaskName,
-            compilation.developmentLinkTaskName
-        ).onEach { taskName ->
-            registerKotlinCompileTask(
-                taskName
-            )
-        }.forEach { taskName ->
-            project.tasks.named(taskName).configure {
-                it.dependsOn(kotlinTask)
+        compilation.binaries
+            .withType(JsIrBinary::class.java)
+            .all { binary ->
+                registerKotlinCompileTask(
+                    binary.linkTaskName
+                ) { project, name, action ->
+                    registerJsLink(project, name, binary.type) { compileTask ->
+                        action(compileTask)
+                        compileTask.dependsOn(kotlinTask)
+                    }
+                }
             }
-        }
 
         // outputFile can be set later during the configuration phase, get it only after the phase:
         project.runOnceAfterEvaluated("KotlinJsIrSourceSetProcessor.doTargetSpecificProcessing", kotlinTask) {
@@ -513,6 +503,7 @@ internal abstract class AbstractKotlinPlugin(
         fun configureProjectGlobalSettings(project: Project, kotlinPluginVersion: String) {
             configureDefaultVersionsResolutionStrategy(project, kotlinPluginVersion)
             configureClassInspectionForIC(project)
+            project.setupGeneralKotlinExtensionParameters()
         }
 
         fun configureTarget(

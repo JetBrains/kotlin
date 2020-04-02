@@ -11,7 +11,7 @@ import com.intellij.util.ui.DialogUtil
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.ui.XBreakpointCustomPropertiesPanel
 import com.intellij.xdebugger.impl.breakpoints.XBreakpointBase
-import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerCoreBundle
 import java.awt.BorderLayout
 import javax.swing.Box
 import javax.swing.JCheckBox
@@ -26,10 +26,10 @@ class KotlinFieldBreakpointPropertiesPanel : XBreakpointCustomPropertiesPanel<XL
 
     override fun getComponent(): JComponent {
         myWatchInitializationCheckBox =
-            JCheckBox(KotlinBundle.message("debugger.field.watchpoints.properties.panel.field.initialization.label"))
-        myWatchAccessCheckBox = JCheckBox(KotlinBundle.message("debugger.field.watchpoints.properties.panel.field.access.label"))
+            JCheckBox(KotlinDebuggerCoreBundle.message("field.watchpoint.properties.initialization"))
+        myWatchAccessCheckBox = JCheckBox(KotlinDebuggerCoreBundle.message("field.watchpoint.properties.access"))
         myWatchModificationCheckBox =
-            JCheckBox(KotlinBundle.message("debugger.field.watchpoints.properties.panel.field.modification.label"))
+            JCheckBox(KotlinDebuggerCoreBundle.message("field.watchpoint.properties.modification"))
 
         DialogUtil.registerMnemonic(myWatchInitializationCheckBox)
         DialogUtil.registerMnemonic(myWatchAccessCheckBox)

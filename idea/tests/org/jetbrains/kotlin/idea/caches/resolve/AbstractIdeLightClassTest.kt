@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassConstructionContext
 import org.jetbrains.kotlin.idea.caches.resolve.LightClassLazinessChecker.Tracker.Level.*
 import org.jetbrains.kotlin.idea.completion.test.withServiceRegistered
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.perf.forceUsingOldLightClassesForTest
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
@@ -56,6 +57,9 @@ abstract class AbstractIdeLightClassTest : KotlinLightCodeInsightFixtureTestCase
 
         val lazinessMode = lazinessModeByFileText()
         myFixture.configureByFiles(*testFiles.toTypedArray())
+        if ((myFixture.file as? KtFile)?.isScript() == true) {
+            ScriptConfigurationManager.updateScriptDependenciesSynchronously(myFixture.file)
+        }
 
         val ktFile = myFixture.file as KtFile
         val testData = testDataFile()

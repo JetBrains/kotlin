@@ -898,27 +898,39 @@ public class Float private constructor() : Number(), Comparable<Float> {
         /**
          * A constant holding the smallest *positive* nonzero value of Float.
          */
-        public val MIN_VALUE: Float
+        public const val MIN_VALUE: Float = 1.4E-45F
 
         /**
          * A constant holding the largest positive finite value of Float.
          */
-        public val MAX_VALUE: Float
+        public const val MAX_VALUE: Float = 3.4028235E38F
 
         /**
          * A constant holding the positive infinity value of Float.
          */
-        public val POSITIVE_INFINITY: Float
+        public const val POSITIVE_INFINITY: Float = 1.0F/0.0F
 
         /**
          * A constant holding the negative infinity value of Float.
          */
-        public val NEGATIVE_INFINITY: Float
+        public const val NEGATIVE_INFINITY: Float = -1.0F/0.0F
 
         /**
          * A constant holding the "not a number" value of Float.
          */
-        public val NaN: Float
+        public const val NaN: Float = -(0.0F/0.0F)
+
+        /**
+         * The number of bytes used to represent an instance of Float in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BYTES: Int = 4
+
+        /**
+         * The number of bits used to represent an instance of Float in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BITS: Int = 32
     }
 
     /**
@@ -1099,27 +1111,39 @@ public class Double private constructor() : Number(), Comparable<Double> {
         /**
          * A constant holding the smallest *positive* nonzero value of Double.
          */
-        public val MIN_VALUE: Double
+        public const val MIN_VALUE: Double = 4.9E-324
 
         /**
          * A constant holding the largest positive finite value of Double.
          */
-        public val MAX_VALUE: Double
+        public const val MAX_VALUE: Double = 1.7976931348623157E308
 
         /**
          * A constant holding the positive infinity value of Double.
          */
-        public val POSITIVE_INFINITY: Double
+        public const val POSITIVE_INFINITY: Double = 1.0/0.0
 
         /**
          * A constant holding the negative infinity value of Double.
          */
-        public val NEGATIVE_INFINITY: Double
+        public const val NEGATIVE_INFINITY: Double = -1.0/0.0
 
         /**
          * A constant holding the "not a number" value of Double.
          */
-        public val NaN: Double
+        public const val NaN: Double = -(0.0/0.0)
+
+        /**
+         * The number of bytes used to represent an instance of Double in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BYTES: Int = 8
+
+        /**
+         * The number of bits used to represent an instance of Double in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BITS: Int = 64
     }
 
     /**

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.util.getDataFlowAwareTypes
@@ -44,9 +45,17 @@ import java.util.*
 class AddFunctionParametersFix(
     callElement: KtCallElement,
     functionDescriptor: FunctionDescriptor,
-    private val hasTypeMismatches: Boolean,
-    private val argumentIndex: Int? = null
+    private val kind: Kind
 ) : ChangeFunctionSignatureFix(callElement, functionDescriptor) {
+    sealed class Kind {
+        object ChangeSignature : Kind()
+        object AddParameterGeneric : Kind()
+        class AddParameter(val argumentIndex: Int) : Kind()
+    }
+
+    private val argumentIndex: Int?
+        get() = (kind as? Kind.AddParameter)?.argumentIndex
+
     private val callElement: KtCallElement?
         get() = element as? KtCallElement
 
@@ -60,31 +69,40 @@ class AddFunctionParametersFix(
         val newParametersCnt = arguments.size - parameters.size
         assert(newParametersCnt > 0)
 
-        val subjectSuffix = if (newParametersCnt > 1) "s" else ""
-
-        val callableDescription = if (isConstructor()) {
-            val className = functionDescriptor.containingDeclaration.name.asString()
-            "constructor '$className'"
-        } else {
-            val functionName = functionDescriptor.name.asString()
-            "function '$functionName'"
+        val declarationName = when {
+            isConstructor() -> functionDescriptor.containingDeclaration.name.asString()
+            else -> functionDescriptor.name.asString()
         }
 
-        val parameterOrdinal = argumentIndex?.let {
-            val number = (it + 1).toString()
-            val suffix = when {
-                number.endsWith("1") -> "st"
-                number.endsWith("2") -> "nd"
-                number.endsWith("3") -> "rd"
-                else -> "th"
+        return when (kind) {
+            is Kind.ChangeSignature -> {
+                if (isConstructor()) {
+                    KotlinBundle.message("fix.add.function.parameters.change.signature.constructor", declarationName)
+                } else {
+                    KotlinBundle.message("fix.add.function.parameters.change.signature.function", declarationName)
+                }
             }
-            "$number$suffix "
-        } ?: ""
-
-        return if (hasTypeMismatches)
-            "Change the signature of $callableDescription"
-        else
-            "Add ${parameterOrdinal}parameter$subjectSuffix to $callableDescription"
+            is Kind.AddParameterGeneric -> {
+                if (isConstructor()) {
+                    KotlinBundle.message("fix.add.function.parameters.add.parameter.generic.constructor", newParametersCnt, declarationName)
+                } else {
+                    KotlinBundle.message("fix.add.function.parameters.add.parameter.generic.function", newParametersCnt, declarationName)
+                }
+            }
+            is Kind.AddParameter -> {
+                if (isConstructor()) {
+                    KotlinBundle.message(
+                        "fix.add.function.parameters.add.parameter.constructor",
+                        kind.argumentIndex + 1, newParametersCnt, declarationName
+                    )
+                } else {
+                    KotlinBundle.message(
+                        "fix.add.function.parameters.add.parameter.function",
+                        kind.argumentIndex + 1, newParametersCnt, declarationName
+                    )
+                }
+            }
+        }
     }
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
@@ -105,6 +123,8 @@ class AddFunctionParametersFix(
     private fun addParameterConfiguration(): KotlinChangeSignatureConfiguration {
         return object : KotlinChangeSignatureConfiguration {
             override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
+                val argumentIndex = this@AddFunctionParametersFix.argumentIndex
+
                 return originalDescriptor.modify(fun(descriptor: KotlinMutableMethodDescriptor) {
                     val callElement = callElement ?: return
                     val arguments = callElement.valueArguments
@@ -155,7 +175,7 @@ class AddFunctionParametersFix(
 
             override fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean {
                 val onlyFunction = affectedFunctions.singleOrNull() ?: return false
-                return !hasTypeMismatches && !isConstructor() && !hasOtherUsages(onlyFunction)
+                return kind != Kind.ChangeSignature && !isConstructor() && !hasOtherUsages(onlyFunction)
             }
         }
     }
@@ -211,7 +231,7 @@ class AddFunctionParametersFix(
             val parameters = functionDescriptor.valueParameters
             val arguments = originalElement.valueArguments
             return if (arguments.size > parameters.size) {
-                AddFunctionParametersFix(originalElement, functionDescriptor, false, argumentIndex)
+                AddFunctionParametersFix(originalElement, functionDescriptor, Kind.AddParameter(argumentIndex))
             } else {
                 null
             }

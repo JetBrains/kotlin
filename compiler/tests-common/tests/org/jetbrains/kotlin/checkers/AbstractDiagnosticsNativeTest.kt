@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.konan.KonanPlatforms
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
@@ -93,7 +93,7 @@ private fun createFakeTopDownAnalyzerForNative(
 ): LazyTopDownAnalyzer = createContainer("FakeTopDownAnalyzerForNative", NativePlatformAnalyzerServices) {
     configureModule(
         moduleContext,
-        KonanPlatforms.defaultKonanPlatform,
+        NativePlatforms.defaultNativePlatform,
         NativePlatformAnalyzerServices,
         bindingTrace,
         languageVersionSettings

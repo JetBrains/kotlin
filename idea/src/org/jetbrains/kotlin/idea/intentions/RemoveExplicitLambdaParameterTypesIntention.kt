@@ -6,12 +6,16 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
 class RemoveExplicitLambdaParameterTypesIntention :
-    SelfTargetingIntention<KtLambdaExpression>(KtLambdaExpression::class.java, "Remove explicit lambda parameter types (may break code)") {
+    SelfTargetingIntention<KtLambdaExpression>(
+        KtLambdaExpression::class.java,
+        KotlinBundle.message("remove.explicit.lambda.parameter.types.may.break.code")
+    ) {
     override fun isApplicableTo(element: KtLambdaExpression, caretOffset: Int): Boolean {
         if (element.valueParameters.none { it.typeReference != null }) return false
         val arrow = element.functionLiteral.arrow ?: return false

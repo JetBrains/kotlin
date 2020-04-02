@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.tools.projectWizard
 
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
+
 interface WizardRunConfiguration {
+    @get:Nls
     val configurationName: String
 }
 
 data class WizardGradleRunConfiguration(
-    override val configurationName: String,
-    val taskName: String,
+    @Nls override val configurationName: String,
+    @NonNls val taskName: String,
     val parameters: List<String>
 ) : WizardRunConfiguration

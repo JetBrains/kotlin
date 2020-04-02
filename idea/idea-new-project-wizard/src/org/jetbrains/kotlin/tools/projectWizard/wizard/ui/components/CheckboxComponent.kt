@@ -1,23 +1,25 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components
 
 import com.intellij.ui.components.JBCheckBox
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+import com.intellij.util.ui.UIUtil
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
-import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
+import java.awt.Font
 
 class CheckboxComponent(
-    ideContext: IdeContext,
+    context: Context,
     labelText: String? = null,
     initialValue: Boolean? = null,
     validator: SettingValidator<Boolean>? = null,
     onValueUpdate: (Boolean) -> Unit = {}
 ) : UIComponent<Boolean>(
-    ideContext,
-    labelText,
-    validator,
-    onValueUpdate
+    context,
+    labelText = null,
+    validator = validator,
+    onValueUpdate = onValueUpdate
 ) {
     override val uiComponent: JBCheckBox = JBCheckBox(labelText, initialValue ?: false).apply {
+        font = UIUtil.getButtonFont()
         addChangeListener {
             fireValueUpdated(this@apply.isSelected)
         }

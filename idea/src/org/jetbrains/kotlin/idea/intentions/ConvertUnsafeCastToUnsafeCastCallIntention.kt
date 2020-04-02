@@ -6,19 +6,20 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeUtils
 
 class ConvertUnsafeCastToUnsafeCastCallIntention : SelfTargetingIntention<KtBinaryExpressionWithTypeRHS>(
-    KtBinaryExpressionWithTypeRHS::class.java, "Convert to unsafeCast() call"
+    KtBinaryExpressionWithTypeRHS::class.java, KotlinBundle.message("convert.to.unsafecast.call")
 ) {
 
     override fun isApplicableTo(element: KtBinaryExpressionWithTypeRHS, caretOffset: Int): Boolean {
@@ -31,7 +32,7 @@ class ConvertUnsafeCastToUnsafeCastCallIntention : SelfTargetingIntention<KtBina
         val type = context[BindingContext.TYPE, right] ?: return false
         if (TypeUtils.isNullableType(type)) return false
 
-        text = "Convert to '${element.left.text}.unsafeCast<${right.text}>()'"
+        text = KotlinBundle.message("convert.to.0.unsafecast.1", element.left.text, right.text)
         return true
     }
 

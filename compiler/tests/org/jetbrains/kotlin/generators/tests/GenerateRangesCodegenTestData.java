@@ -71,6 +71,27 @@ public class GenerateRangesCodegenTestData {
     private static final Map<String, String> ELEMENT_TYPE_KNOWN_SUBSTRINGS = new HashMap<>();
     private static final Map<String, String> MIN_MAX_CONSTANTS = new LinkedHashMap<>();
 
+    private static final List<String> FIR_PASSING_LITERAL_TESTS =
+            Arrays.asList("emptyDownto", "emptyRange", "inexactSteppedDownTo", "inexactSteppedRange",
+                          "oneElementDownTo", "oneElementRange", "openRange",
+                          "reversedBackSequence", "reversedEmptyBackSequence", "reversedEmptyRange",
+                          "reversedInexactSteppedDownTo", "reversedRange", "reversedSimpleSteppedRange",
+                          "simpleDownTo", "simpleRange", "simpleRangeWithNonConstantEnds",
+                          "simpleSteppedDownTo", "simpleSteppedRange");
+    private static final List<String> FIR_PASSING_EXPRESSION_TESTS =
+            Arrays.asList("emptyDownto", "emptyRange", "inexactSteppedDownTo", "inexactSteppedRange",
+                          "oneElementDownTo", "oneElementRange", "openRange",
+                          "reversedBackSequence", "reversedEmptyBackSequence", "reversedEmptyRange",
+                          "reversedInexactSteppedDownTo", "reversedRange", "reversedSimpleSteppedRange",
+                          "simpleDownTo", "simpleRange", "simpleRangeWithNonConstantEnds",
+                          "simpleSteppedDownTo", "simpleSteppedRange");
+
+    private static final List<String> FIR_PASSING_UNSIGNED_LITERAL_TESTS =
+            Arrays.asList("emptyDownto", "emptyRange", "reversedEmptyBackSequence", "reversedEmptyRange");
+
+    private static final List<String> FIR_PASSING_UNSIGNED_EXPRESSION_TESTS =
+            Arrays.asList("emptyDownto", "emptyRange", "reversedEmptyBackSequence", "reversedEmptyRange");
+
     static {
         for (String integerType : INTEGER_PRIMITIVES) {
             String suffix = integerType.substring(0, integerType.startsWith("U") ? 2 : 1);
@@ -227,13 +248,10 @@ public class GenerateRangesCodegenTestData {
                     }
 
                     String fileName = testFunName + ".kt";
-                    boolean useFrontendIR =
-                            testFunName.equals("emptyDownto") || testFunName.equals("emptyRange") ||
-                            testFunName.equals("reversedEmptyRange") || testFunName.equals("reversedEmptyBackSequence");
-                    writeToFile(new File(AS_LITERAL_DIR, fileName), asLiteralBody.toString(), false, !useFrontendIR);
-                    writeToFile(new File(AS_EXPRESSION_DIR, fileName), asExpressionBody.toString(), false, !useFrontendIR);
-                    writeToFile(new File(UNSIGNED_AS_LITERAL_DIR, fileName), unsignedAsLiteralBody.toString(), true, true);
-                    writeToFile(new File(UNSIGNED_AS_EXPRESSION_DIR, fileName), unsignedAsExpressionBody.toString(), true, true);
+                    writeToFile(new File(AS_LITERAL_DIR, fileName), asLiteralBody.toString(), false, !FIR_PASSING_LITERAL_TESTS.contains(testFunName));
+                    writeToFile(new File(AS_EXPRESSION_DIR, fileName), asExpressionBody.toString(), false, !FIR_PASSING_EXPRESSION_TESTS.contains(testFunName));
+                    writeToFile(new File(UNSIGNED_AS_LITERAL_DIR, fileName), unsignedAsLiteralBody.toString(), true, !FIR_PASSING_UNSIGNED_LITERAL_TESTS.contains(testFunName));
+                    writeToFile(new File(UNSIGNED_AS_EXPRESSION_DIR, fileName), unsignedAsExpressionBody.toString(), true, !FIR_PASSING_UNSIGNED_EXPRESSION_TESTS.contains(testFunName));
                 }
             }
         }

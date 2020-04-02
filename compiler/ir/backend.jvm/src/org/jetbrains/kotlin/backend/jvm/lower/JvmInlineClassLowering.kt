@@ -14,10 +14,8 @@ import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.*
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.inlineClassFieldName
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.isInlineClassFieldGetter
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.isPrimaryInlineClassConstructor
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -136,18 +134,25 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         if (function.overriddenSymbols.isEmpty() || replacement.dispatchReceiverParameter != null)
             return listOf(replacement)
 
-        // Update the overridden symbols to point to their inline class replacements
-        function.overriddenSymbols = replacement.overriddenSymbols
-
-        // Replace the function body with a wrapper
-        if (!function.isFakeOverride || !function.parentAsClass.isInline) {
-            createBridgeBody(function, replacement)
+        // If the original function has value parameters which need mangling we still need to replace
+        // it with a mangled version.
+        val bridgeFunction = if (!function.isFakeOverride && function.fullValueParameterList.any { it.type.requiresMangling }) {
+            context.inlineClassReplacements.createMethodReplacement(function)
         } else {
-            // Fake overrides redirect from the replacement to the original function, which is in turn replaced during interfacePhase.
-            createBridgeBody(replacement, function)
+            // Update the overridden symbols to point to their inline class replacements
+            function.overriddenSymbols = replacement.overriddenSymbols
+            function
         }
 
-        return listOf(replacement, function)
+        // Replace the function body with a wrapper
+        if (!bridgeFunction.isFakeOverride || !bridgeFunction.parentAsClass.isInline) {
+            createBridgeBody(bridgeFunction, replacement)
+        } else {
+            // Fake overrides redirect from the replacement to the original function, which is in turn replaced during interfacePhase.
+            createBridgeBody(replacement, bridgeFunction)
+        }
+
+        return listOf(replacement, bridgeFunction)
     }
 
     // Secondary constructors for boxed types get translated to static functions returning

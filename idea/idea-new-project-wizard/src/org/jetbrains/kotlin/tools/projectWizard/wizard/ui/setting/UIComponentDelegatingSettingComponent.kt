@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting
 
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingType
-import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
+import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.UIComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.valueForSetting
 import javax.swing.JComponent
 
 abstract class UIComponentDelegatingSettingComponent<V : Any, T : SettingType<V>>(
     reference: SettingReference<V, T>,
-    ideContext: IdeContext
-) : SettingComponent<V, T>(reference, ideContext) {
+    context: Context
+) : SettingComponent<V, T>(reference, context) {
     abstract val uiComponent: UIComponent<V>
 
     // As there is one in UIComponent
@@ -24,13 +25,24 @@ abstract class UIComponentDelegatingSettingComponent<V : Any, T : SettingType<V>
     override fun onInit() {
         super.onInit()
         if (value == null) {
-            read { valueForSetting(uiComponent, setting) }?.let { value = it }
+            read { valueForSetting(uiComponent, reference) }?.let { value = it }
         }
         value?.let(uiComponent::updateUiValue)
     }
 
     override fun focusOn() {
         uiComponent.focusOn()
+    }
+
+    override fun onValueUpdated(reference: SettingReference<*, *>?) {
+        super.onValueUpdated(reference)
+        if (reference == this.reference) {
+            ApplicationManager.getApplication().invokeLater {
+                if (uiComponent.getUiValue() != value) {
+                    value?.let(uiComponent::updateUiValue)
+                }
+            }
+        }
     }
 
     override val component: JComponent by lazy(LazyThreadSafetyMode.NONE) { uiComponent.component }

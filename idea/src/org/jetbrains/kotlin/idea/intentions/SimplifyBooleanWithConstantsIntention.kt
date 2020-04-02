@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
@@ -38,7 +39,10 @@ import org.jetbrains.kotlin.types.isFlexible
 class SimplifyBooleanWithConstantsInspection : IntentionBasedInspection<KtBinaryExpression>(SimplifyBooleanWithConstantsIntention::class)
 
 class SimplifyBooleanWithConstantsIntention :
-    SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Simplify boolean expression") {
+    SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(
+        KtBinaryExpression::class.java,
+        KotlinBundle.message("simplify.boolean.expression")
+    ) {
 
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {
         return areThereExpressionsToBeSimplified(element.topBinary())

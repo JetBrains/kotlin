@@ -9,6 +9,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.editor.fixers.range
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
@@ -21,13 +22,13 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 @Suppress("DEPRECATION")
 class RemoveForLoopIndicesInspection : IntentionBasedInspection<KtForExpression>(
     RemoveForLoopIndicesIntention::class,
-    "Index is not used in the loop body"
+    KotlinBundle.message("index.is.not.used.in.the.loop.body")
 ) {
     override fun problemHighlightType(element: KtForExpression): ProblemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
 class RemoveForLoopIndicesIntention :
-    SelfTargetingRangeIntention<KtForExpression>(KtForExpression::class.java, "Remove indices in 'for' loop") {
+    SelfTargetingRangeIntention<KtForExpression>(KtForExpression::class.java, KotlinBundle.message("remove.indices.in.for.loop")) {
     private val WITH_INDEX_NAME = "withIndex"
     private val WITH_INDEX_FQ_NAMES: Set<String> by lazy {
         sequenceOf("collections", "sequences", "text", "ranges").map { "kotlin.$it.$WITH_INDEX_NAME" }.toSet()

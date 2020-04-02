@@ -48,6 +48,8 @@ class DefaultArgumentsConversion(context: NewJ2kConverterContext) : RecursiveApp
                 || callee.name != method.name.value
                 || calledMethod.returnType.type != method.returnType.type
                 || call.arguments.arguments.size <= method.parameters.size
+                || call.arguments.arguments.size < calledMethod.parameters.size //calledMethod has varargs param or call expr has errors
+                || calledMethod.parameters.any(JKParameter::isVarArgs)
             ) {
                 continue
             }
@@ -141,7 +143,6 @@ class DefaultArgumentsConversion(context: NewJ2kConverterContext) : RecursiveApp
         }
 
         return recurse(element)
-
     }
 
     private fun areTheSameExpressions(first: JKElement, second: JKElement): Boolean {

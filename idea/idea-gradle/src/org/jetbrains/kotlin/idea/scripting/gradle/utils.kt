@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
@@ -34,33 +35,10 @@ fun isInAffectedGradleProjectFiles(project: Project, filePath: String): Boolean 
             return true
         }
 
-        return filePath.substringBeforeLast("/") in getGradleProjectsRoots(project)
+        return filePath.substringBeforeLast("/") in project.service<GradleScriptInputsWatcher>().getGradleProjectsRoots()
     }
 
     return false
-}
-
-private var cachedGradleProjectsRoots: Set<String>? = null
-
-private fun getGradleProjectsRoots(project: Project): Set<String> {
-    if (cachedGradleProjectsRoots == null) {
-        cachedGradleProjectsRoots = computeGradleProjectRoots(project)
-    }
-    return cachedGradleProjectsRoots ?: emptySet()
-}
-
-fun saveGradleProjectRootsAfterImport(roots: Set<String>) {
-    cachedGradleProjectsRoots = roots
-}
-
-private fun computeGradleProjectRoots(project: Project): Set<String> {
-    val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
-    if (gradleSettings.getLinkedProjectsSettings().isEmpty()) return setOf()
-
-    val projectSettings = gradleSettings.getLinkedProjectsSettings().filterIsInstance<GradleProjectSettings>().firstOrNull()
-        ?: return setOf()
-
-    return projectSettings.modules.takeIf { it.isNotEmpty() } ?: setOf(projectSettings.externalProjectPath)
 }
 
 fun getGradleScriptInputsStamp(

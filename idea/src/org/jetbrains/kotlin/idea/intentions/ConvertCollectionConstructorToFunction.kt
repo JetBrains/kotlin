@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -13,7 +14,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 class ConvertCollectionConstructorToFunction : SelfTargetingIntention<KtCallExpression>(
-    KtCallExpression::class.java, "Convert Collection constructor to function"
+    KtCallExpression::class.java, KotlinBundle.message("convert.collection.constructor.to.function")
 ) {
 
     private val functionMap = hashMapOf(

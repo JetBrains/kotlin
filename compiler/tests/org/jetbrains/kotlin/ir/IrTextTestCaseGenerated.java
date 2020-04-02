@@ -996,6 +996,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/interfaceThisRef.kt");
         }
 
+        @TestMetadata("javaSyntheticGenericPropretyAccess.kt")
+        public void testJavaSyntheticGenericPropretyAccess() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/javaSyntheticGenericPropretyAccess.kt");
+        }
+
         @TestMetadata("javaSyntheticPropertyAccess.kt")
         public void testJavaSyntheticPropertyAccess() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/javaSyntheticPropertyAccess.kt");
@@ -1074,6 +1079,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("kt36963.kt")
         public void testKt36963() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/kt36963.kt");
+        }
+
+        @TestMetadata("kt37570.kt")
+        public void testKt37570() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/kt37570.kt");
         }
 
         @TestMetadata("lambdaInCAO.kt")
@@ -1871,14 +1881,14 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/types/coercionToUnitInLambdaReturnValue.kt");
         }
 
-        @TestMetadata("genericFunWithStar.kt")
-        public void testGenericFunWithStar() throws Exception {
-            runTest("compiler/testData/ir/irText/types/genericFunWithStar.kt");
-        }
-
         @TestMetadata("genericDelegatedDeepProperty.kt")
         public void testGenericDelegatedDeepProperty() throws Exception {
             runTest("compiler/testData/ir/irText/types/genericDelegatedDeepProperty.kt");
+        }
+
+        @TestMetadata("genericFunWithStar.kt")
+        public void testGenericFunWithStar() throws Exception {
+            runTest("compiler/testData/ir/irText/types/genericFunWithStar.kt");
         }
 
         @TestMetadata("genericPropertyReferenceType.kt")

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.inspections.collections.isCalling
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -14,7 +15,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 
 class ConvertOrdinaryPropertyToLazyIntention : SelfTargetingIntention<KtProperty>(
-    KtProperty::class.java, "Convert to lazy property"
+    KtProperty::class.java, KotlinBundle.message("convert.to.lazy.property")
 ) {
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
         return !element.isVar && element.initializer != null && element.getter == null && !element.isLocal

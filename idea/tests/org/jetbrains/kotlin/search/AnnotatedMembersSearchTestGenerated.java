@@ -58,6 +58,11 @@ public class AnnotatedMembersSearchTestGenerated extends AbstractAnnotatedMember
         runTest("idea/testData/search/annotations/testAnnotationsOnPropertiesAndParameters.kt");
     }
 
+    @TestMetadata("testAnnotationsOnPropertyAccessor.kt")
+    public void testTestAnnotationsOnPropertyAccessor() throws Exception {
+        runTest("idea/testData/search/annotations/testAnnotationsOnPropertyAccessor.kt");
+    }
+
     @TestMetadata("testAnnotationsWithParameters.kt")
     public void testTestAnnotationsWithParameters() throws Exception {
         runTest("idea/testData/search/annotations/testAnnotationsWithParameters.kt");

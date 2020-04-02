@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 class ConvertLateinitPropertyToNullableIntention : SelfTargetingIntention<KtProperty>(
-    KtProperty::class.java, "Convert to nullable var"
+    KtProperty::class.java, KotlinBundle.message("convert.to.nullable.var")
 ) {
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
         return element.hasModifier(KtTokens.LATEINIT_KEYWORD)

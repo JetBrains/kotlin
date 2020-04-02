@@ -6,27 +6,33 @@
 package org.jetbrains.kotlin.idea.debugger.coroutine.proxy
 
 import com.intellij.debugger.engine.DebugProcessImpl
+import com.intellij.debugger.engine.JavaDebugProcess
 import com.intellij.debugger.engine.SuspendContextImpl
-import com.intellij.debugger.engine.events.DebuggerCommandImpl
 import com.intellij.debugger.engine.events.SuspendContextCommandImpl
 import com.intellij.debugger.impl.PrioritizedTask
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.util.Computable
+import com.intellij.xdebugger.XDebugProcess
+import com.intellij.xdebugger.XDebugSession
 import com.intellij.xdebugger.frame.XSuspendContext
 import java.awt.Component
 
 class ManagerThreadExecutor(val debugProcess: DebugProcessImpl) {
-    fun on(suspendContext: SuspendContextImpl, priority: PrioritizedTask.Priority = PrioritizedTask.Priority.NORMAL) =
-        ManagerThreadExecutorInstance(suspendContext, priority)
+
+    constructor(session: XDebugSession) : this(session.debugProcess)
+
+    constructor(debugProcess: XDebugProcess) : this((debugProcess as JavaDebugProcess).debuggerSession.process)
 
     fun on(suspendContext: XSuspendContext, priority: PrioritizedTask.Priority = PrioritizedTask.Priority.NORMAL) =
-        ManagerThreadExecutorInstance(suspendContext as SuspendContextImpl, priority)
+        ManagerThreadExecutorInstance(suspendContext, priority)
 
     inner class ManagerThreadExecutorInstance(
         val suspendContext: SuspendContextImpl,
         val priority: PrioritizedTask.Priority = PrioritizedTask.Priority.NORMAL
     ) {
+
+        constructor(sc: XSuspendContext, priority: PrioritizedTask.Priority) : this(sc as SuspendContextImpl, priority)
 
         fun schedule(f: (SuspendContextImpl) -> Unit) {
             val suspendContextCommand = object : SuspendContextCommandImpl(suspendContext) {

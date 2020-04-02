@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle
 
 import kotlinx.collections.immutable.PersistentList
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 
 data class SettingsGradleFileIR(
-    val projectName: String,
+    @NonNls val projectName: String,
     val subProjects: List<String>,
     override val irs: PersistentList<BuildSystemIR>
 ) : FileIR, GradleIR {
@@ -21,11 +22,11 @@ data class SettingsGradleFileIR(
             sectionCall("pluginManagement", needIndent = true) {
                 pluginManagementIrs.irsOfTypeOrNull<PluginManagementRepositoryIR>()?.let { repositories ->
                     sectionCall("repositories") {
-                        repositories.listNl()
+                        repositories.distinctAndSorted().listNl()
                     }
                 }
                 nl()
-                freeIrs().listNl()
+                freeIrs().removeSingleIRDuplicates().listNl()
             }
         }
         nl()

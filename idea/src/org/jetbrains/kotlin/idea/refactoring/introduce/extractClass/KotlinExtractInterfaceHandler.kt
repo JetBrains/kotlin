@@ -17,17 +17,18 @@
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractClass
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ui.KotlinExtractInterfaceDialog
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 object KotlinExtractInterfaceHandler : KotlinExtractSuperHandlerBase(true) {
-    const val REFACTORING_NAME = "Extract Interface"
+    val REFACTORING_NAME = KotlinBundle.message("name.extract.interface")
 
     override fun getErrorMessage(klass: KtClassOrObject): String? {
         val superMessage = super.getErrorMessage(klass)
         if (superMessage != null) return superMessage
-        if (klass is KtClass && klass.isAnnotation()) return "Interface cannot be extracted from an annotation class"
+        if (klass is KtClass && klass.isAnnotation()) return KotlinBundle.message("error.text.interface.cannot.be.extracted.from.an.annotation.class")
         return null
     }
 

@@ -10,7 +10,9 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetOutput
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.kotlin.dsl.*
+import proguard.gradle.ProGuardTask
 import java.io.File
 import java.util.concurrent.Callable
 
@@ -71,3 +73,9 @@ fun Project.javaPluginConvention(): JavaPluginConvention = the()
 fun Project.findJavaPluginConvention(): JavaPluginConvention? = convention.findByType() ?: convention.findPlugin()
 
 fun JavaExec.pathRelativeToWorkingDir(file: File): String = file.relativeTo(workingDir).invariantSeparatorsPath
+
+fun Task.singleOutputFile(): File = when (this) {
+    is AbstractArchiveTask -> archiveFile.get().asFile
+    is ProGuardTask -> project.file(outJarFiles.single()!!)
+    else -> outputs.files.singleFile
+}

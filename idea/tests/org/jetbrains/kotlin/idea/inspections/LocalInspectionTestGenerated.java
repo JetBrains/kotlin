@@ -7712,6 +7712,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/typeParameter3_ni.kt");
         }
 
+        @TestMetadata("typeParameter4.kt")
+        public void testTypeParameter4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/typeParameter4.kt");
+        }
+
         @TestMetadata("underscore.kt")
         public void testUnderscore() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/underscore.kt");
@@ -8812,6 +8817,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("underscore.kt")
         public void testUnderscore() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeRedundantBackticks/underscore.kt");
+        }
+
+        @TestMetadata("underscores.kt")
+        public void testUnderscores() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantBackticks/underscores.kt");
+        }
+
+        @TestMetadata("underscores2.kt")
+        public void testUnderscores2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantBackticks/underscores2.kt");
         }
 
         @TestMetadata("yield.kt")

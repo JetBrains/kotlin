@@ -1,8 +1,8 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle
 
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
+
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.reference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.core.service.FileSystemWizardService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.PluginManagementRepositoryIR
@@ -24,20 +24,16 @@ import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
 
 
 abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
-    val createGradleWrapper by booleanSetting("Create Gradle Wrapper", GenerationPhase.FIRST_STEP) {
-        defaultValue = true
-        isAvailable = isGradle
-    }
-
-
     val version by versionSetting("Gradle Version", GenerationPhase.FIRST_STEP) {
-        defaultValue = defaultVersions.first()
+        defaultValue = value(defaultVersions.first())
         isAvailable = isGradle
     }
 
     val gradleVersions by property<List<Version>>(emptyList())
 
-    val gradleProperties by listProperty<Pair<String, String>>()
+    val gradleProperties by listProperty(
+        "kotlin.code.style" to "official"
+    )
 
     val settingsGradleFileIRs by listProperty<BuildSystemIR>()
 
@@ -61,9 +57,7 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
         }
     }
 
-    val localProperties by listProperty(
-        "kotlin.code.style" to "official"
-    )
+    val localProperties by listProperty<Pair<String, String>>()
 
     val createLocalPropertiesFile by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
         runAfter(KotlinPlugin::createModules)
@@ -92,7 +86,6 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
         runBefore(TemplatesPlugin::renderFileTemplates)
         isAvailable = isGradle
         withAction {
-            if (!GradlePlugin::createGradleWrapper.reference.settingValue) return@withAction UNIT_SUCCESS
             TemplatesPlugin::addFileTemplate.execute(
                 FileTemplate(
                     FileTemplateDescriptor(
@@ -145,7 +138,7 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
     }
 }
 
-val ReadingContext.settingsGradleBuildFileData
+val Reader.settingsGradleBuildFileData
     get() = when (buildSystemType) {
         BuildSystemType.GradleKotlinDsl ->
             BuildFileData(

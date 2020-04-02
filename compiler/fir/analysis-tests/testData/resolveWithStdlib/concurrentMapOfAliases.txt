@@ -1,0 +1,18 @@
+FILE: concurrentMapOfAliases.kt
+    private final typealias MyAlias = R|kotlin/CharSequence|
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val foo: R|java/util/concurrent/ConcurrentHashMap<ft<kotlin/String, kotlin/String?>!, ft<kotlin/CharSequence, kotlin/CharSequence?>!>| = Q|java/util/concurrent|.R|java/util/concurrent/ConcurrentHashMap.ConcurrentHashMap|<R|ft<kotlin/String, kotlin/String?>!|, R|ft<kotlin/CharSequence, kotlin/CharSequence?>!|>()
+            private get(): R|java/util/concurrent/ConcurrentHashMap<ft<kotlin/String, kotlin/String?>!, ft<kotlin/CharSequence, kotlin/CharSequence?>!>|
+
+        private final fun bar(): R|kotlin/Unit| {
+            (this@R|/A|, this@R|/A|.R|/A.foo|.R|FakeOverride<java/util/concurrent/ConcurrentHashMap.get: R|kotlin/CharSequence?|>|(String(dd)))?.R|/A.baz|()
+        }
+
+        private final fun R|MyAlias|.baz(): R|kotlin/Unit| {
+        }
+
+    }

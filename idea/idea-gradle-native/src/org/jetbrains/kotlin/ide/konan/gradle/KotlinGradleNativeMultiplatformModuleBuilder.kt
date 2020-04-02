@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ide.konan.gradle
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.ide.konan.KotlinGradleNativeBundle
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.configuration.KotlinGradleAbstractMultiplatformModuleBuilder
 import org.jetbrains.kotlin.konan.target.presetName
@@ -26,9 +27,9 @@ class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.native"
 
-    override fun getPresentableName() = "Native | Gradle"
+    override fun getPresentableName() = KotlinGradleNativeBundle.message("native.gradle.name")
 
-    override fun getDescription() = "Gradle-based Kotlin project for native binaries"
+    override fun getDescription() = KotlinGradleNativeBundle.message("native.gradle.description")
 
     override val notImportedCommonSourceSets = true
 
@@ -83,7 +84,7 @@ class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
                             // Change to specify fully qualified name of your application's entry point:
                             entryPoint = 'sample.main'
                             // Specify command-line arguments, if necessary:
-                            runTask?.args('')
+                            //runTask?.args('arg1', 'arg2', 'arg3')
                         }
                     }
                 }

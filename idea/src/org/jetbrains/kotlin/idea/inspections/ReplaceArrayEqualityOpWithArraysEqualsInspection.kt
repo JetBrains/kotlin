@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.resolvedToArrayType
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -55,14 +56,13 @@ class ReplaceArrayEqualityOpWithArraysEqualsInspection : AbstractApplicabilityBa
         return rightResolvedCall?.resolvedToArrayType() == true && leftResolvedCall?.resolvedToArrayType() == true
     }
 
-    override fun inspectionText(element: KtBinaryExpression) = "Dangerous array comparison"
+    override fun inspectionText(element: KtBinaryExpression) = KotlinBundle.message("dangerous.array.comparison")
 
-    override val defaultFixText: String
-        get() = "Replace with 'contentEquals'"
+    override val defaultFixText: String get() = KotlinBundle.message("replace.with.contentequals3")
 
     override fun fixText(element: KtBinaryExpression): String = when (element.operationToken) {
-        KtTokens.EQEQ -> "Replace '==' with 'contentEquals'"
-        KtTokens.EXCLEQ -> "Replace '!=' with 'contentEquals'"
+        KtTokens.EQEQ -> KotlinBundle.message("replace.with.contentequals2")
+        KtTokens.EXCLEQ -> KotlinBundle.message("replace.with.contentequals")
         else -> ""
     }
 }

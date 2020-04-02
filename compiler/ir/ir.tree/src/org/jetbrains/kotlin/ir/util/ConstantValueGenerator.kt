@@ -117,7 +117,7 @@ class ConstantValueGenerator(
                     IrClassReferenceImpl(
                         startOffset, endOffset,
                         constantValue.getType(moduleDescriptor).toIrType(),
-                        classifierDescriptor.defaultType.toIrType().classifierOrFail,
+                        symbolTable.referenceClassifier(classifierDescriptor),
                         classifierKtType.toIrType()
                     )
                 }

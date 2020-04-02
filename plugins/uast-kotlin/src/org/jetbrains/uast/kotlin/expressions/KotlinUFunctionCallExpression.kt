@@ -82,7 +82,10 @@ class KotlinUFunctionCallExpression(
                 )
             is KtLambdaExpression ->
                 KotlinUIdentifier(calleeExpression.functionLiteral.lBrace, this)
-            else -> KotlinUIdentifier(calleeExpression, this)
+            else -> KotlinUIdentifier(
+                sourcePsi.valueArgumentList?.leftParenthesis
+                    ?: sourcePsi.lambdaArguments.singleOrNull()?.getLambdaExpression()?.functionLiteral?.lBrace
+                    ?: calleeExpression, this)
         }
     }
 
@@ -192,6 +195,7 @@ class KotlinUFunctionCallExpression(
 
     override fun accept(visitor: UastVisitor) {
         if (visitor.visitCallExpression(this)) return
+        annotations.acceptList(visitor)
         methodIdentifier?.accept(visitor)
         classReference.accept(visitor)
         valueArguments.acceptList(visitor)

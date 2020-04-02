@@ -27,6 +27,7 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -50,7 +51,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntention<KtTypeReference>(
     KtTypeReference::class.java,
-    "Convert function type receiver to parameter"
+    KotlinBundle.message("convert.function.type.receiver.to.parameter")
 ) {
     class ConversionData(
         val functionParameterIndex: Int,
@@ -121,7 +122,7 @@ class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntent
 
             val usages = ArrayList<AbstractProcessableUsageInfo<*, ConversionData>>()
 
-            project.runSynchronouslyWithProgress("Looking for usages and conflicts...", true) {
+            project.runSynchronouslyWithProgress(KotlinBundle.message("looking.for.usages.and.conflicts"), true) {
                 runReadAction {
                     val progressStep = 1.0 / callables.size
                     for ((i, callable) in callables.withIndex()) {
@@ -131,7 +132,7 @@ class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntent
 
                         if (!checkModifiable(callable)) {
                             val renderedCallable = RefactoringUIUtil.getDescription(callable, true).capitalize()
-                            conflicts.putValue(callable, "Can't modify $renderedCallable")
+                            conflicts.putValue(callable, KotlinBundle.message("can.t.modify.0", renderedCallable))
                         }
 
                         for (ref in callable.searchReferencesOrMethodReferences()) {
@@ -177,7 +178,7 @@ class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntent
             usages: java.util.ArrayList<AbstractProcessableUsageInfo<*, ConversionData>>
         ) {
             val body = when (callable) {
-                is KtConstructor<*> -> callable.containingClassOrObject?.getBody()
+                is KtConstructor<*> -> callable.containingClassOrObject?.body
                 else -> callable.bodyExpression
             }
             if (body != null) {
@@ -217,7 +218,7 @@ class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntent
             )
             setReceiverTypeReference(null)
         }
-        text = "Convert '${elementBefore.text}' to '${elementAfter.text}'"
+        text = KotlinBundle.message("convert.0.to.1", elementBefore.text, elementAfter.text)
 
         return element.textRange
     }

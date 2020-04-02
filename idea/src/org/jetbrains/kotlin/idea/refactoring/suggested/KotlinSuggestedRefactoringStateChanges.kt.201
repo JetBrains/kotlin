@@ -9,10 +9,7 @@ import com.intellij.refactoring.suggested.SuggestedRefactoringSupport.Parameter
 import com.intellij.refactoring.suggested.SuggestedRefactoringSupport.Signature
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.children
 
 class KotlinSuggestedRefactoringStateChanges(refactoringSupport: SuggestedRefactoringSupport) :
@@ -22,7 +19,41 @@ class KotlinSuggestedRefactoringStateChanges(refactoringSupport: SuggestedRefact
         declaration as KtDeclaration
         if (declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return null // currently not supported
         if (declaration.hasModifier(KtTokens.ACTUAL_KEYWORD)) return null // currently not supported
-        return super.createInitialState(declaration)
+        val state = super.createInitialState(declaration) ?: return null
+        if (isDuplicate(declaration, state.oldSignature)) return null
+        return state
+    }
+
+    private fun isDuplicate(declaration: KtDeclaration, signature: Signature): Boolean {
+        val container = declaration.parent as? KtDeclarationContainer ?: return false
+        if (container !is KtFile && container !is KtClassBody) return false
+        val name = declaration.name ?: return false
+        return when (declaration) {
+            is KtFunction -> {
+                container.declarations
+                    .filter { it != declaration && it.name == name }
+                    .any {
+                        val otherSignature = signature(it, null) ?: return@any false
+                        areDuplicateSignatures(otherSignature, signature)
+                    }
+            }
+
+            is KtProperty -> {
+                container.declarations.any { it != declaration && it is KtProperty && it.name == name }
+            }
+
+            else -> false
+        }
+    }
+
+    // we can't compare signatures by equals here because it takes into account parameter id's and they will be different in our case
+    private fun areDuplicateSignatures(signature1: Signature, signature2: Signature): Boolean {
+        if (signature1.name != signature2.name) return false
+        if (signature1.type != signature2.type) return false
+        if (signature1.parameters.size != signature2.parameters.size) return false
+        return signature1.parameters.zip(signature2.parameters).all { (p1, p2) ->
+            p1.type == p2.type && p1.name == p2.name
+        }
     }
 
     override fun signature(declaration: PsiElement, prevState: SuggestedRefactoringState?): Signature? {

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newTable
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newText
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.*
@@ -738,6 +739,12 @@ object Renderers {
 
         return typesAsString.sorted().joinToString(separator = " & ")
     }
+
+    fun renderCallInfo(fqName: FqNameUnsafe?, typeCall: String) =
+        buildString {
+            append("fqName: ${fqName?.asString() ?: "fqName is unknown"}; ")
+            append("typeCall: $typeCall")
+        }
 }
 
 fun DescriptorRenderer.asRenderer() = SmartDescriptorRenderer(this)

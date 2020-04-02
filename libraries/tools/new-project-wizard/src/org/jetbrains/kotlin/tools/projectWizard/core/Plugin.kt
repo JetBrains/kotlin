@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.tools.projectWizard.core
 
 import org.jetbrains.kotlin.tools.projectWizard.SettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
 import org.jetbrains.kotlin.tools.projectWizard.enumSettingImpl
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
@@ -9,8 +10,6 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import java.nio.file.Path
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty
-import kotlin.reflect.KProperty1
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.memberProperties
 
@@ -28,16 +27,7 @@ abstract class Plugin(override val context: Context) : EntityBase(),
 
     override fun <V : Any, T : SettingType<V>> settingDelegate(
         create: (path: String) -> SettingBuilder<V, T>
-    ): ReadOnlyProperty<Any, PluginSetting<V, T>> = object : ReadOnlyProperty<Any, PluginSetting<V, T>> {
-        override fun getValue(thisRef: Any, property: KProperty<*>): PluginSetting<V, T> {
-            @Suppress("UNCHECKED_CAST")
-            val reference = property as PluginSettingPropertyReference<V, T>
-            context.settingContext.getPluginSetting(reference)?.let { return it }
-            val setting = PluginSetting(create(reference.path).buildInternal())
-            context.settingContext.setPluginSetting(reference, setting)
-            return setting
-        }
-    }
+    ): ReadOnlyProperty<Any, PluginSetting<V, T>> = context.pluginSettingDelegate(create)
 
     val reference = this::class
     override val path = reference.path
@@ -45,7 +35,6 @@ abstract class Plugin(override val context: Context) : EntityBase(),
 
     val declaredSettings get() = entitiesOfType<PluginSetting<*, *>>().toSet()
     val declaredTasks get() = entitiesOfType<Task>()
-
 
     private inline fun <reified E : Entity> entitiesOfType() =
         reference.memberProperties.filter { kProperty ->
@@ -55,13 +44,13 @@ abstract class Plugin(override val context: Context) : EntityBase(),
         }
 
     fun pipelineTask(phase: GenerationPhase, init: PipelineTask.Builder.() -> Unit) =
-        PipelineTask.delegate(context.taskContext, phase, init)
+        context.pipelineTaskDelegate(phase, init)
 
     fun <A, B : Any> task1(init: Task1.Builder<A, B>.() -> Unit) =
-        Task1.delegate(context.taskContext, init)
+        context.task1Delegate(init)
 
     fun <T : Any> property(defaultValue: T, init: Property.Builder<T>.() -> Unit = {}) =
-        propertyDelegate(context.propertyContext, init, defaultValue)
+        context.propertyDelegate(init, defaultValue)
 
     fun <T : Any> listProperty(vararg defaultValues: T, init: Property.Builder<List<T>>.() -> Unit = {}) =
         property(defaultValues.toList(), init)
@@ -167,9 +156,9 @@ abstract class Plugin(override val context: Context) : EntityBase(),
 val PluginReference.withParentPlugins
     get() = generateSequence(this) { klass ->
         klass.supertypes.firstOrNull { supertype ->
-            supertype.classifier?.safeAs<KClass<Plugin>>()
-                ?.isSubclassOf(Plugin::class) == true
-        }?.classifier
+                supertype.classifier?.safeAs<KClass<Plugin>>()
+                    ?.isSubclassOf(Plugin::class) == true
+            }?.classifier
             ?.safeAs<KClass<Plugin>>()
             ?.takeIf { superClass ->
                 superClass.simpleName != null
@@ -184,8 +173,8 @@ val PluginReference.name
 
 val PluginReference.path
     get() = withParentPlugins.mapNotNull { klass ->
-        klass.name.takeIf { it.isNotEmpty() }
-    }.toList()
+            klass.name.takeIf { it.isNotEmpty() }
+        }.toList()
         .reversed()
         .joinToString(".")
 

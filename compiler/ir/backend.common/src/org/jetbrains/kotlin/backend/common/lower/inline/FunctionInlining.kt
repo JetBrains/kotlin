@@ -9,10 +9,8 @@ package org.jetbrains.kotlin.backend.common.lower.inline
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.createTemporaryVariableWithWrappedDescriptor
-import org.jetbrains.kotlin.backend.common.lower.CoroutineIntrinsicLambdaOrigin
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -30,6 +28,9 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
+
+fun IrValueParameter.isInlineParameter(type: IrType = this.type) =
+    index >= 0 && !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunction())
 
 class FunctionInlining(val context: CommonBackendContext) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
 
@@ -158,7 +159,7 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
                 endOffset = callSite.endOffset,
                 type = callSite.type,
                 symbol = irReturnableBlockSymbol,
-                origin = if (isCoroutineIntrinsicCall) CoroutineIntrinsicLambdaOrigin else null,
+                origin = null,
                 statements = statements,
                 inlineFunctionSymbol = callee.symbol
             ).apply {
@@ -319,9 +320,6 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
         }
 
         //-------------------------------------------------------------------------//
-
-        private fun IrValueParameter.isInlineParameter() =
-            !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunction())
 
         private inner class ParameterToArgument(
             val parameter: IrValueParameter,

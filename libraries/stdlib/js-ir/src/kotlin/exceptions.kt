@@ -80,6 +80,8 @@ public actual open class AssertionError : Error {
     public actual constructor() : super()
     public constructor(message: String?) : super(message)
     public actual constructor(message: Any?) : super(message?.toString(), message as? Throwable)
+    @SinceKotlin("1.4")
+    public constructor(message: String?, cause: Throwable?) : super(message, cause)
 }
 
 public actual open class NoSuchElementException : RuntimeException {

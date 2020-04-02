@@ -18,6 +18,7 @@ import com.intellij.refactoring.move.moveClassesOrPackages.AutocreatingSingleSou
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesUtil
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import com.intellij.refactoring.util.RefactoringMessageUtil
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.getFqNameByDirectory
 import org.jetbrains.kotlin.idea.core.getFqNameWithImplicitPrefix
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectoryOrImplicit
@@ -59,15 +60,15 @@ class PackageDirectoryMismatchInspection : AbstractKotlinInspection() {
         holder.registerProblem(
             file,
             textRange,
-            "Package directive doesn't match file location",
+            KotlinBundle.message("text.package.directive.dont.match.file.location"),
             *fixes.toTypedArray()
         )
     })
 
     private class MoveFileToPackageFix(val dirName: String) : LocalQuickFix {
-        override fun getFamilyName() = "Move file to package-matching directory"
+        override fun getFamilyName() = KotlinBundle.message("fix.move.file.to.package.family")
 
-        override fun getName() = "Move file to $dirName"
+        override fun getName() = KotlinBundle.message("fix.move.file.to.package.text", dirName)
 
         override fun startInWriteAction() = false
 
@@ -103,9 +104,9 @@ class PackageDirectoryMismatchInspection : AbstractKotlinInspection() {
     }
 
     private class ChangePackageFix(val packageName: String, val packageFqName: FqName) : LocalQuickFix {
-        override fun getFamilyName() = "Change file's package to match directory"
+        override fun getFamilyName() = KotlinBundle.message("fix.change.package.family")
 
-        override fun getName() = "Change file's package to $packageName"
+        override fun getName() = KotlinBundle.message("fix.change.package.text", packageName)
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val file = descriptor.psiElement as? KtFile ?: return

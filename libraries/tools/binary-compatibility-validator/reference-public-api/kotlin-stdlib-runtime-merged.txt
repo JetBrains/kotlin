@@ -3226,7 +3226,7 @@ public abstract class kotlin/jvm/internal/CallableReference : java/io/Serializab
 	protected final field receiver Ljava/lang/Object;
 	public fun <init> ()V
 	protected fun <init> (Ljava/lang/Object;)V
-	protected fun <init> (Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
+	protected fun <init> (Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;Z)V
 	public fun call ([Ljava/lang/Object;)Ljava/lang/Object;
 	public fun callBy (Ljava/util/Map;)Ljava/lang/Object;
 	public fun compute ()Lkotlin/reflect/KCallable;
@@ -3313,6 +3313,13 @@ public final class kotlin/jvm/internal/CollectionToArray {
 
 public final class kotlin/jvm/internal/DoubleCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/DoubleCompanionObject;
+	public static final field MAX_VALUE D
+	public static final field MIN_VALUE D
+	public static final field NEGATIVE_INFINITY D
+	public static final field NaN D
+	public static final field POSITIVE_INFINITY D
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 	public final fun getMAX_VALUE ()D
 	public final fun getMIN_VALUE ()D
 	public final fun getNEGATIVE_INFINITY ()D
@@ -3333,6 +3340,13 @@ public final class kotlin/jvm/internal/EnumCompanionObject {
 
 public final class kotlin/jvm/internal/FloatCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/FloatCompanionObject;
+	public static final field MAX_VALUE F
+	public static final field MIN_VALUE F
+	public static final field NEGATIVE_INFINITY F
+	public static final field NaN F
+	public static final field POSITIVE_INFINITY F
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 	public final fun getMAX_VALUE ()F
 	public final fun getMIN_VALUE ()F
 	public final fun getNEGATIVE_INFINITY ()F

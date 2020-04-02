@@ -97,9 +97,9 @@ class AnonymousObjectTransformationInfo internal constructor(
         nameGenerator: NameGenerator
     ) : this(ownerInternalName, needReification, hashMapOf(), false, alreadyRegenerated, null, isStaticOrigin, nameGenerator)
 
-    override fun shouldRegenerate(sameModule: Boolean): Boolean =
-        !alreadyRegenerated &&
-                (!functionalArguments.isEmpty() || !sameModule || capturedOuterRegenerated || needReification || capturesAnonymousObjectThatMustBeRegenerated)
+    override fun shouldRegenerate(sameModule: Boolean): Boolean = !alreadyRegenerated &&
+            (!sameModule || capturedOuterRegenerated || needReification || capturesAnonymousObjectThatMustBeRegenerated ||
+                    functionalArguments.values.any { it != NonInlineableArgumentForInlineableParameterCalledInSuspend })
 
     override fun canRemoveAfterTransformation(): Boolean {
         // Note: It is unsafe to remove anonymous class that is referenced by GETSTATIC within lambda

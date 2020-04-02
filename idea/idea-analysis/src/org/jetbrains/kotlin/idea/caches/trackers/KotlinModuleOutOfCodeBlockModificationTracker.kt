@@ -95,7 +95,7 @@ class KotlinModuleOutOfCodeBlockModificationTracker private constructor(private 
             }
         }
 
-        internal fun onPsiModificationTrackerUpdate(customIncrement: Int) {
+        internal fun onPsiModificationTrackerUpdate(customIncrement: Int = 0) {
             val newModCount = kotlinOfOfCodeBlockTracker.modificationCount
             val affectedModule = lastAffectedModule
             if (affectedModule != null && newModCount == lastAffectedModuleModCount + customIncrement) {

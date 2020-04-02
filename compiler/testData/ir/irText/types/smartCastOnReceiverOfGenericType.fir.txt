@@ -20,7 +20,11 @@ FILE fqName:<root> fileName:/smartCastOnReceiverOfGenericType.kt
         GET_VAR 'a: kotlin.Any declared in <root>.testProperty' type=kotlin.Any origin=null
       TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
         GET_VAR 'b: kotlin.Any declared in <root>.testProperty' type=kotlin.Any origin=null
-      ERROR_CALL 'Unresolved reference: R|FakeOverride</Cell.value: R|kotlin/String|>|' type=IrErrorType
+      CALL 'public final fun <set-value> (<set-?>: T of <root>.Cell): kotlin.Unit declared in <root>.Cell' type=kotlin.Unit origin=EQ
+        $this: TYPE_OP type=<root>.Cell<kotlin.String> origin=IMPLICIT_CAST typeOperand=<root>.Cell<kotlin.String>
+          GET_VAR 'a: kotlin.Any declared in <root>.testProperty' type=kotlin.Any origin=null
+        <set-?>: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+          GET_VAR 'b: kotlin.Any declared in <root>.testProperty' type=kotlin.Any origin=null
   FUN name:testInnerClass visibility:public modality:FINAL <> (a:kotlin.Any, b:kotlin.Any, c:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     VALUE_PARAMETER name:b index:1 type:kotlin.Any
@@ -101,7 +105,8 @@ FILE fqName:<root> fileName:/smartCastOnReceiverOfGenericType.kt
     CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner<T2 of <root>.Outer.Inner>
       TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?]
-      CONSTRUCTOR visibility:public <> () returnType:<root>.Outer.Inner<T2 of <root>.Outer.Inner> [primary]
+      CONSTRUCTOR visibility:public <> ($this:<root>.Outer.Inner<T2 of <root>.Outer.Inner>) returnType:<root>.Outer.Inner<T2 of <root>.Outer.Inner> [primary]
+        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner<T2 of <root>.Outer.Inner>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'

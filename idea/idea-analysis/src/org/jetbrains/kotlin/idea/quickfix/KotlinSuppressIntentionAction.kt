@@ -22,7 +22,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.psi.*
@@ -50,8 +50,8 @@ class KotlinSuppressIntentionAction private constructor(
         kind: AnnotationHostKind
     ) : this(suppressAt as PsiElement, suppressKey, kind)
 
-    override fun getFamilyName() = KotlinBundle.message("suppress.warnings.family")
-    override fun getText() = KotlinBundle.message("suppress.warning.for", suppressKey, kind.kind, kind.name)
+    override fun getFamilyName() = KotlinIdeaAnalysisBundle.message("intention.suppress.family")
+    override fun getText() = KotlinIdeaAnalysisBundle.message("intention.suppress.text", suppressKey, kind.kind, kind.name)
 
     override fun isAvailable(project: Project, editor: Editor?, element: PsiElement) = element.isValid
 

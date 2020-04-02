@@ -585,8 +585,8 @@ open class IrFileSerializer(
             IrConstKind.Int -> proto.int = value.value as Int
             IrConstKind.Long -> proto.long = value.value as Long
             IrConstKind.String -> proto.string = serializeString(value.value as String)
-            IrConstKind.Float -> proto.float = value.value as Float
-            IrConstKind.Double -> proto.double = value.value as Double
+            IrConstKind.Float -> proto.floatBits = (value.value as Float).toBits()
+            IrConstKind.Double -> proto.doubleBits = (value.value as Double).toBits()
         }
         return proto.build()
     }

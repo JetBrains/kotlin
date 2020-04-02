@@ -1,4 +1,4 @@
-// "Make 'My' final" "true"
+// "Make 'My' 'final'" "true"
 
 open class My {
 

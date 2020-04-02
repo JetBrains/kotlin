@@ -16,9 +16,8 @@ import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
-import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
@@ -156,7 +155,7 @@ class DefaultKotlinSourceSet(
     internal fun getDependenciesTransformation(scope: KotlinDependencyScope): Iterable<MetadataDependencyTransformation> {
         val metadataDependencyResolutionByModule =
             dependencyTransformations[scope]?.metadataDependencyResolutions
-                ?.associateBy { it.dependency.moduleGroup to it.dependency.moduleName }
+                ?.associateBy { ModuleIds.fromComponent(project, it.dependency) }
                 ?: emptyMap()
 
         val baseDir = project.buildDir.resolve("tmp/kotlinMetadata/$name/${scope.scopeName}")
@@ -169,7 +168,7 @@ class DefaultKotlinSourceSet(
 
         return metadataDependencyResolutionByModule.mapNotNull { (groupAndName, resolution) ->
             val (group, name) = groupAndName
-            val projectPath = resolution.projectDependency?.dependencyProject?.path
+            val projectPath = resolution.projectDependency?.path
             when (resolution) {
                 is MetadataDependencyResolution.KeepOriginalDependency -> null
 

@@ -66,26 +66,26 @@ object ExperimentalFixesFactory : KotlinIntentionActionsFactory() {
 
         val result = mutableListOf<IntentionAction>()
         run {
-            val suffix = " to '${containingDeclaration.name}'"
+            val kind = AddAnnotationFix.Kind.Declaration(containingDeclaration.name)
             if (isApplicableTo(containingDeclaration, applicableTargets)) {
-                result.add(AddAnnotationFix(containingDeclaration, annotationFqName, suffix))
+                result.add(AddAnnotationFix(containingDeclaration, annotationFqName, kind))
             }
             result.add(
                 AddAnnotationFix(
-                    containingDeclaration, moduleDescriptor.OPT_IN_FQ_NAME, suffix, annotationFqName
+                    containingDeclaration, moduleDescriptor.OPT_IN_FQ_NAME, kind, annotationFqName
                 )
             )
         }
         if (containingDeclaration is KtCallableDeclaration) {
             val containingClassOrObject = containingDeclaration.containingClassOrObject
             if (containingClassOrObject != null) {
-                val suffix = " to containing class '${containingClassOrObject.name}'"
+                val kind = AddAnnotationFix.Kind.ContainingClass(containingClassOrObject.name)
                 if (isApplicableTo(containingClassOrObject, applicableTargets)) {
-                    result.add(AddAnnotationFix(containingClassOrObject, annotationFqName, suffix))
+                    result.add(AddAnnotationFix(containingClassOrObject, annotationFqName, kind))
                 } else {
                     result.add(
                         AddAnnotationFix(
-                            containingClassOrObject, moduleDescriptor.OPT_IN_FQ_NAME, suffix, annotationFqName
+                            containingClassOrObject, moduleDescriptor.OPT_IN_FQ_NAME, kind, annotationFqName
                         )
                     )
                 }

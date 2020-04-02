@@ -5,19 +5,16 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
-import com.intellij.codeHighlighting.Pass
-import com.intellij.codeHighlighting.TextEditorHighlightingPass
-import com.intellij.codeHighlighting.TextEditorHighlightingPassFactory
-import com.intellij.codeHighlighting.TextEditorHighlightingPassRegistrar
+import com.intellij.codeHighlighting.*
 import com.intellij.codeInsight.daemon.impl.AnnotationHolderImpl
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.daemon.impl.UpdateHighlightersUtil
 import com.intellij.lang.annotation.AnnotationSession
-import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiRecursiveElementVisitor
@@ -52,20 +49,22 @@ class KotlinBeforeResolveHighlightingPass(
         annotationHolder = null
     }
 
-    class Factory(registrar: TextEditorHighlightingPassRegistrar) : ProjectComponent, TextEditorHighlightingPassFactory {
-        init {
+    class Factory : TextEditorHighlightingPassFactory {
+        override fun createHighlightingPass(file: PsiFile, editor: Editor): TextEditorHighlightingPass? {
+            if (file !is KtFile) return null
+            return KotlinBeforeResolveHighlightingPass(file, editor.document)
+        }
+    }
+
+    class Registrar : TextEditorHighlightingPassFactoryRegistrar {
+        override fun registerHighlightingPassFactory(registrar: TextEditorHighlightingPassRegistrar, project: Project) {
             registrar.registerTextEditorHighlightingPass(
-                this,
+                Factory(),
                 TextEditorHighlightingPassRegistrar.Anchor.BEFORE,
                 Pass.UPDATE_FOLDING,
                 false,
                 false
             )
-        }
-
-        override fun createHighlightingPass(file: PsiFile, editor: Editor): TextEditorHighlightingPass? {
-            if (file !is KtFile) return null
-            return KotlinBeforeResolveHighlightingPass(file, editor.document)
         }
     }
 }

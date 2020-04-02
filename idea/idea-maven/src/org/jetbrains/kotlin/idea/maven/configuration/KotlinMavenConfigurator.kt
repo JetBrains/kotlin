@@ -114,7 +114,7 @@ protected constructor(
                     configureModule(module, file, dialog.kotlinVersion, collector)
                     OpenFileAction.openFile(file.virtualFile, project)
                 } else {
-                    showErrorMessage(project, "Cannot find pom.xml for module " + module.name)
+                    showErrorMessage(project, KotlinMavenBundle.message("error.cant.find.pom.for.module", module.name))
                 }
             }
             collector.showNotification()
@@ -176,7 +176,7 @@ protected constructor(
 
         CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement<PsiFile>(file)
 
-        collector.addMessage(virtualFile.path + " was modified")
+        collector.addMessage(KotlinMavenBundle.message("file.was.modified", virtualFile.path))
         return true
     }
 
@@ -221,9 +221,8 @@ protected constructor(
         if (runtimeUpdateRequired) {
             Messages.showErrorDialog(
                 module.project,
-                "This language feature requires version $requiredStdlibVersion or later of the Kotlin runtime library. " +
-                        "Please update the version in your build script.",
-                "Update Language Version"
+                KotlinMavenBundle.message("update.language.version.feature", requiredStdlibVersion),
+                KotlinMavenBundle.message("update.language.version.title")
             )
             return
         }
@@ -232,8 +231,8 @@ protected constructor(
         if (element == null) {
             Messages.showErrorDialog(
                 module.project,
-                "Failed to update.pom.xml. Please update the file manually.",
-                "Update Language Version"
+                KotlinMavenBundle.message("error.failed.update.pom"),
+                KotlinMavenBundle.message("update.language.version.title")
             )
         } else {
             OpenFileDescriptor(module.project, element.containingFile.virtualFile, element.textRange.startOffset).navigate(true)
@@ -258,8 +257,7 @@ protected constructor(
         if (runtimeUpdateRequired) {
             Messages.showErrorDialog(
                 module.project,
-                "Coroutines support requires version 1.1 or later of the Kotlin runtime library. " +
-                        "Please update the version in your build script.",
+                KotlinMavenBundle.message("update.language.version.coroutines"),
                 messageTitle
             )
             return
@@ -285,8 +283,7 @@ protected constructor(
         if (state != LanguageFeature.State.DISABLED && getRuntimeLibraryVersion(module).toApiVersion() < sinceVersion) {
             Messages.showErrorDialog(
                 module.project,
-                "${feature.presentableName} support requires version $sinceVersion or later of the Kotlin runtime library. " +
-                        "Please update the version in your build script.",
+                KotlinMavenBundle.message("update.language.version.feature.support", feature.presentableName, sinceVersion),
                 messageTitle
             )
             return
@@ -317,7 +314,7 @@ protected constructor(
         if (element == null) {
             Messages.showErrorDialog(
                 module.project,
-                "Failed to update.pom.xml. Please update the file manually.",
+                KotlinMavenBundle.message("error.failed.update.pom"),
                 messageTitle
             )
         }
@@ -336,7 +333,7 @@ protected constructor(
         if (element == null) {
             Messages.showErrorDialog(
                 module.project,
-                "Failed to update.pom.xml. Please update the file manually.",
+                KotlinMavenBundle.message("error.failed.update.pom"),
                 messageTitle
             )
         }
@@ -369,12 +366,13 @@ protected constructor(
         }
 
         private fun showErrorMessage(project: Project, message: String?) {
+            val cantConfigureAutomatically = KotlinMavenBundle.message("error.cant.configure.maven.automatically")
+            val seeInstructions = KotlinMavenBundle.message("error.see.installation.instructions")
+
             Messages.showErrorDialog(
                 project,
-                "<html>Couldn't configure kotlin-maven plugin automatically.<br/>" +
-                        (if (message != null) "$message</br>" else "") +
-                        "See manual installation instructions <a href=\"https://confluence.jetbrains.com/display/Kotlin/Kotlin+Build+Tools#KotlinBuildTools-Maven\">here</a>.</html>",
-                "Configure Kotlin-Maven Plugin"
+                "<html>$cantConfigureAutomatically<br/>${if (message != null) "$message</br>" else ""}$seeInstructions</html>",
+                KotlinMavenBundle.message("configure.title")
             )
         }
     }

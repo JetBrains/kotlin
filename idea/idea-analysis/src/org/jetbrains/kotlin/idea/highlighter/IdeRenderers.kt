@@ -1,12 +1,14 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.highlighter
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.diagnostics.rendering.*
+import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
 import org.jetbrains.kotlin.idea.highlighter.renderersUtil.renderResolvedCall
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
@@ -19,11 +21,18 @@ object IdeRenderers {
 
     @JvmField
     val HTML_AMBIGUOUS_CALLS = Renderer { calls: Collection<ResolvedCall<*>> ->
-        val descriptors = calls
-            .map { it.resultingDescriptor }
-            .sortedWith(MemberComparator.INSTANCE)
-        val context = RenderingContext.Impl(descriptors)
-        descriptors.joinToString("") { "<li>${HTML.render(it, context)}</li>" }
+        renderAmbiguousDescriptors(calls.map { it.resultingDescriptor })
+    }
+
+    @JvmField
+    val HTML_AMBIGUOUS_REFERENCES = Renderer { descriptors: Collection<CallableDescriptor> ->
+        renderAmbiguousDescriptors(descriptors)
+    }
+
+    private fun renderAmbiguousDescriptors(descriptors: Collection<CallableDescriptor>): String {
+        val sortedDescriptors = descriptors.sortedWith(MemberComparator.INSTANCE)
+        val context = RenderingContext.Impl(sortedDescriptors)
+        return sortedDescriptors.joinToString("") { "<li>${HTML.render(it, context)}</li>" }
     }
 
     @JvmField
@@ -75,8 +84,12 @@ object IdeRenderers {
         val context = RenderingContext.of(descriptors)
         val conflicts = descriptors.joinToString("") { "<li>" + HTML.render(it, context) + "</li>\n" }
 
-        "The following declarations have the same JVM signature (<code>${data.signature.name}${data.signature
-            .desc}</code>):<br/>\n<ul>\n$conflicts</ul>"
+        KotlinIdeaAnalysisBundle.message(
+            "the.following.declarations.have.the.same.jvm.signature.code.0.1.code.br.ul.2.ul",
+            data.signature.name,
+            data.signature.desc,
+            conflicts
+        )
     }
 
     @JvmField

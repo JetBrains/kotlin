@@ -73,8 +73,12 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
         // Always copy `lastExpression` is it may be used in multiple conditions.
         get() = field.deepCopyWithSymbols()
 
+    private val elementType: IrType
+
     init {
         with(builder) {
+            elementType = headerInfo.progressionType.elementType(context.irBuiltIns)
+
             // For this loop:
             //
             //   for (i in first()..last() step step())
@@ -86,7 +90,7 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
             // LongProgression so last() should be cast to a Long.
             inductionVariable = scope.createTemporaryVariable(
                 headerInfo.first.castIfNecessary(
-                    headerInfo.progressionType.elementType(context.irBuiltIns),
+                    elementType,
                     headerInfo.progressionType.elementCastFunctionName
                 ),
                 nameHint = "inductionVariable",
@@ -99,7 +103,7 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
             // TODO: Confirm if casting to non-nullable is still necessary
             val last = ensureNotNullable(
                 headerInfo.last.castIfNecessary(
-                    headerInfo.progressionType.elementType(context.irBuiltIns),
+                    elementType,
                     headerInfo.progressionType.elementCastFunctionName
                 )
             )
@@ -138,7 +142,7 @@ internal abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
     /** Statement used to increment the induction variable. */
     protected fun incrementInductionVariable(builder: DeclarationIrBuilder): IrStatement = with(builder) {
         // inductionVariable = inductionVariable + step
-        val plusFun = inductionVariable.type.getClass()!!.functions.single {
+        val plusFun = elementType.getClass()!!.functions.single {
             it.name == OperatorNameConventions.PLUS &&
                     it.valueParameters.size == 1 &&
                     it.valueParameters[0].type == stepVariable.type

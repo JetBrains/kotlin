@@ -23,14 +23,15 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.psi.*
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesImpl
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.getPackage
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.move.MoveHandlerDelegateCompat
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesDialog
@@ -67,9 +68,6 @@ private val defaultHandlerActions = object : MoveKotlinDeclarationsHandlerAction
         targetDirectory: PsiDirectory?,
         targetFile: KtFile?,
         moveToPackage: Boolean,
-        searchInComments: Boolean,
-        searchForTextOccurrences: Boolean,
-        deleteEmptySourceFiles: Boolean,
         moveCallback: MoveCallback?
     ) = MoveKotlinTopLevelDeclarationsDialog(
         project,
@@ -78,9 +76,6 @@ private val defaultHandlerActions = object : MoveKotlinDeclarationsHandlerAction
         targetDirectory,
         targetFile,
         moveToPackage,
-        searchInComments,
-        searchForTextOccurrences,
-        deleteEmptySourceFiles,
         moveCallback
     ).show()
 
@@ -126,23 +121,14 @@ class MoveKotlinDeclarationsHandler internal constructor(private val handlerActi
     ): Boolean {
         if (!CommonRefactoringUtil.checkReadOnlyStatusRecursively(project, elements.toList(), true)) return false
 
-        if (!ApplicationManager.getApplication().isUnitTestMode &&
-            elements.any { it is KtDeclaration && (it.isExpectDeclaration() || it.isEffectivelyActual()) }
-        ) {
-            val proceedWithIncompleteRefactoring = Messages.showYesNoDialog(
-                project,
-                "This refactoring will move selected declaration without it's expect/actual counterparts that may lead to compilation errors.\n" +
-                        "Do you wish to proceed?",
-                "MPP declarations does not supported by this refactoring.",
-                Messages.getWarningIcon()
-            )
-            if (proceedWithIncompleteRefactoring != Messages.YES) return true
-        }
-
         val container = getUniqueContainer(elements)
         if (container == null) {
             handlerActions.showErrorHint(
-                project, editor, "All declarations must belong to the same directory or class", MOVE_DECLARATIONS, null
+                project,
+                editor,
+                KotlinBundle.message("text.all.declarations.must.belong.to.the.same.directory.or.class"),
+                MOVE_DECLARATIONS,
+                null
             )
             return false
         }
@@ -157,21 +143,22 @@ class MoveKotlinDeclarationsHandler internal constructor(private val handlerActi
 
         // todo: allow moving companion object
         if (elementsToSearch.any { it is KtObjectDeclaration && it.isCompanion() }) {
-            val message = RefactoringBundle.getCannotRefactorMessage("Move declaration is not supported for companion objects")
+            val message = RefactoringBundle.getCannotRefactorMessage(
+                KotlinBundle.message("text.move.declaration.no.support.for.companion.objects")
+            )
             handlerActions.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
             return true
         }
 
         if (elementsToSearch.any { !it.canMove() }) {
             val message =
-                RefactoringBundle
-                    .getCannotRefactorMessage("Move declaration is only supported for top-level declarations and nested classes")
+                RefactoringBundle.getCannotRefactorMessage(KotlinBundle.message("text.move.declaration.supports.only.top.levels.and.nested.classes"))
             handlerActions.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
             return true
         }
 
         if (elementsToSearch.any { it is KtEnumEntry }) {
-            val message = RefactoringBundle.getCannotRefactorMessage("Move declaration is not supported for enum entries")
+            val message = RefactoringBundle.getCannotRefactorMessage(KotlinBundle.message("text.move.declaration.no.support.for.enums"))
             handlerActions.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
             return true
         }
@@ -184,6 +171,15 @@ class MoveKotlinDeclarationsHandler internal constructor(private val handlerActi
                 else -> null
             }
             val initialTargetDirectory = MoveFilesOrDirectoriesUtil.resolveToDirectory(project, initialTargetElement)
+
+            if (!ApplicationManager.getApplication().isUnitTestMode &&
+                elementsToSearch.any { it.isExpectDeclaration() || it.isEffectivelyActual() }
+            ) {
+                val message = RefactoringBundle.getCannotRefactorMessage(KotlinBundle.message("text.move.declaration.proceed.move.without.mpp.counterparts.text"))
+                val title = RefactoringBundle.getCannotRefactorMessage(KotlinBundle.message("text.move.declaration.proceed.move.without.mpp.counterparts.title"))
+                val proceedWithIncompleteRefactoring = Messages.showYesNoDialog(project, message, title, Messages.getWarningIcon())
+                if (proceedWithIncompleteRefactoring != Messages.YES) return true
+            }
 
             handlerActions.invokeKotlinAwareMoveFilesOrDirectoriesRefactoring(
                 project, initialTargetDirectory, ktFileElements, callback
@@ -198,9 +194,6 @@ class MoveKotlinDeclarationsHandler internal constructor(private val handlerActi
                 val targetDirectory = if (targetContainer != null) {
                     MoveClassesOrPackagesImpl.getInitialTargetDirectory(targetContainer, elements)
                 } else null
-                val searchInComments = KotlinRefactoringSettings.instance.MOVE_SEARCH_IN_COMMENTS
-                val searchInText = KotlinRefactoringSettings.instance.MOVE_SEARCH_FOR_TEXT
-                val deleteEmptySourceFiles = KotlinRefactoringSettings.instance.MOVE_DELETE_EMPTY_SOURCE_FILES
                 val targetFile = targetContainer as? KtFile
                 val moveToPackage = targetContainer !is KtFile
 
@@ -211,9 +204,6 @@ class MoveKotlinDeclarationsHandler internal constructor(private val handlerActi
                     targetDirectory,
                     targetFile,
                     moveToPackage,
-                    searchInComments,
-                    searchInText,
-                    deleteEmptySourceFiles,
                     callback
                 )
             }
@@ -223,7 +213,9 @@ class MoveKotlinDeclarationsHandler internal constructor(private val handlerActi
                     // todo: allow moving multiple classes to upper level
                     if (targetContainer !is KtClassOrObject) {
                         val message =
-                            RefactoringBundle.getCannotRefactorMessage("Moving multiple nested classes to top-level is not supported")
+                            RefactoringBundle.getCannotRefactorMessage(
+                                KotlinBundle.message("text.moving.multiple.nested.classes.to.top.level.not.supported")
+                            )
                         handlerActions.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
                         return true
                     }
@@ -315,4 +307,4 @@ class MoveKotlinDeclarationsHandler internal constructor(private val handlerActi
     }
 }
 
-private val MOVE_DECLARATIONS = "Move Declarations"
+private val MOVE_DECLARATIONS: String get() = KotlinBundle.message("text.move.declarations")

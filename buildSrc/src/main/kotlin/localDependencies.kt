@@ -24,7 +24,9 @@ import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.DependencyHandlerScope
+import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.register
 import java.io.File
 
 private fun Project.kotlinBuildLocalDependenciesDir(): File =
@@ -180,6 +182,10 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
             "-Dsun.io.useCanonCaches=false",
             "-Dplugin.path=${ideaPluginDir.absolutePath}"
         )
+
+        if (Platform[201].orHigher()) {
+            jvmArgs("-Didea.platform.prefix=Idea")
+        }
 
         if (rootProject.findProperty("versions.androidStudioRelease") != null) {
             jvmArgs("-Didea.platform.prefix=AndroidStudio")

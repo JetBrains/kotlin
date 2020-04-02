@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedReferenceError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -81,7 +81,7 @@ class PostponedArgumentsAnalyzer(
             candidate == null || applicability < CandidateApplicability.SYNTHETIC_RESOLVED ->
                 buildErrorNamedReference {
                     source = callableReferenceAccess.source
-                    diagnostic = FirUnresolvedReferenceError(callableReferenceAccess.calleeReference.name)
+                    diagnostic = ConeUnresolvedReferenceError(callableReferenceAccess.calleeReference.name)
                 }
             else -> FirNamedReferenceWithCandidate(callableReferenceAccess.source, callableReferenceAccess.calleeReference.name, candidate)
         }
@@ -152,16 +152,8 @@ class PostponedArgumentsAnalyzer(
 
         if (!hasExpressionInReturnArguments) {
             val lambdaReturnType = lambda.returnType.let(::substitute)
-            c.getBuilder().addSubtypeConstraint(
-                lambdaReturnType,
-                unitType, /*LambdaArgumentConstraintPosition(lambda)*/
-                SimpleConstraintSystemConstraintPosition
-            )
-            c.getBuilder().addSubtypeConstraint(
-                unitType,
-                lambdaReturnType, /*LambdaArgumentConstraintPosition(lambda)*/
-                SimpleConstraintSystemConstraintPosition
-            )
+            /*LambdaArgumentConstraintPosition(lambda)*/
+            c.getBuilder().addEqualityConstraint(lambdaReturnType, unitType, SimpleConstraintSystemConstraintPosition)
         }
 
         lambda.analyzed = true

@@ -29,6 +29,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.refactoring.RefactoringHelper
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.inspections.KotlinUnusedImportInspection
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -80,7 +81,7 @@ class KotlinOptimizeImportsRefactoringHelper : RefactoringHelper<Set<KtFile>> {
                     val presentableUrl = runReadAction { directive.containingFile }.virtualFile.presentableUrl
                     indicator.text2 = presentableUrl
                     ApplicationManager.getApplication().invokeAndWait {
-                        project.executeWriteCommand("delete $presentableUrl") {
+                        project.executeWriteCommand(KotlinBundle.message("delete.0", presentableUrl)) {
                             try {
                                 directive.delete()
                             } catch (e: IncorrectOperationException) {
@@ -98,8 +99,8 @@ class KotlinOptimizeImportsRefactoringHelper : RefactoringHelper<Set<KtFile>> {
     }
 
     companion object {
-        private const val COLLECT_UNUSED_IMPORTS_TITLE = "Collect unused imports"
-        private const val REMOVING_REDUNDANT_IMPORTS_TITLE = "Removing redundant imports"
+        private val COLLECT_UNUSED_IMPORTS_TITLE = KotlinBundle.message("optimize.imports.collect.unused.imports")
+        private val REMOVING_REDUNDANT_IMPORTS_TITLE = KotlinBundle.message("optimize.imports.task.removing.redundant.imports")
     }
 
     override fun prepareOperation(usages: Array<UsageInfo>): Set<KtFile> {

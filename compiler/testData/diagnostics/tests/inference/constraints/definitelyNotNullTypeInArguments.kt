@@ -52,9 +52,8 @@ fun <L> main(x: L?, y: L) {
     foo3(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L!!>>")!>Foo(Bar())<!>)
     foo3(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L!!>>")!>Foo(Bar())<!>)
 
-    // Change after fix KT-37380
-    foo4(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L!!>>"), TYPE_MISMATCH!>Foo(Bar())<!>)
-    foo4(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L!!>>"), TYPE_MISMATCH!>Foo(Bar())<!>)
+    foo4(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<out L!!>>")!>Foo(Bar())<!>)
+    foo4(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<out L!!>>")!>Foo(Bar())<!>)
 
     foo5(x, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L!!>")!>Bar()<!>)
     foo5(y, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L!!>")!>Bar()<!>)
@@ -124,11 +123,9 @@ fun <L> main(x: L?, y: L) {
     foo22(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<InBar<L!!>>>")!>Foo(Foo(InBar()))<!>)
     foo22(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<InBar<L!!>>>")!>Foo(Foo(InBar()))<!>)
 
-    // Change after fix KT-37380
-    foo23(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<Bar<L!!>>>"), TYPE_MISMATCH!>Foo(Foo(Bar()))<!>)
-    foo23(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<Bar<L!!>>>"), TYPE_MISMATCH!>Foo(Foo(Bar()))<!>)
+    foo23(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<Bar<out L!!>>>")!>Foo(Foo(Bar()))<!>)
+    foo23(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<Bar<out L!!>>>")!>Foo(Foo(Bar()))<!>)
 
-    // Change after fix KT-37380
-    foo24(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<Bar<L!!>>>"), TYPE_MISMATCH!>Foo(Foo(Bar()))<!>)
-    foo24(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<Bar<L!!>>>"), TYPE_MISMATCH!>Foo(Foo(Bar()))<!>)
+    foo24(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<Bar<in L!!>>>")!>Foo(Foo(Bar()))<!>)
+    foo24(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<Bar<in L!!>>>")!>Foo(Foo(Bar()))<!>)
 }

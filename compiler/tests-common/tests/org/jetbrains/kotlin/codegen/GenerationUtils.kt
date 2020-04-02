@@ -38,7 +38,10 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.createSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
@@ -50,7 +53,9 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
+import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.util.DummyLogger
 import java.io.File
 
@@ -86,7 +91,7 @@ object GenerationUtils {
     ): GenerationState {
         val project = files.first().project
         val state = if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            compileFilesUsingFrontendIR(project, files, configuration, classBuilderFactory, packagePartProvider)
+            compileFilesUsingFrontendIR(project, files, configuration, classBuilderFactory, packagePartProvider, trace)
         } else {
             compileFilesUsingStandardMode(project, files, configuration, classBuilderFactory, packagePartProvider, trace)
         }
@@ -106,7 +111,8 @@ object GenerationUtils {
         files: List<KtFile>,
         configuration: CompilerConfiguration,
         classBuilderFactory: ClassBuilderFactory,
-        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
+        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
+        trace: BindingTrace
     ): GenerationState {
         Extensions.getArea(project)
             .getExtensionPoint(PsiElementFinder.EP_NAME)
@@ -131,18 +137,26 @@ object GenerationUtils {
                 throw e
             }
         }
-        val (moduleFragment, symbolTable, sourceManager) =
+        val (moduleFragment, symbolTable, sourceManager, components) =
             Fir2IrConverter.createModuleFragment(session, firFiles, configuration.languageVersionSettings, signaturer = IdSignatureDescriptor(
                 JvmManglerDesc()))
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
         val codegenFactory = JvmIrCodegenFactory(configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))
+
+        // Create and initialize the test module and its dependencies
+        val container = TopDownAnalyzerFacadeForJVM.createContainer(
+            project, files, trace, configuration, packagePartProvider, ::FileBasedDeclarationProviderFactory, CompilerEnvironment,
+            TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, files), emptyList()
+        )
         val generationState = GenerationState.Builder(
-            project, classBuilderFactory, moduleFragment.descriptor, dummyBindingContext, files, configuration
+            project, classBuilderFactory, container.get<ModuleDescriptor>(), dummyBindingContext, files, configuration
         ).codegenFactory(
             codegenFactory
         ).isIrBackend(
             true
+        ).jvmBackendClassResolver(
+            FirJvmBackendClassResolver(components)
         ).build()
 
         generationState.beforeCompile()

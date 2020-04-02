@@ -5,12 +5,12 @@ fun myFun(i : String) {}
 fun myFun(i : Int) {}
 
 fun test1() {
-    myFun<Int>(3)
+    <!INAPPLICABLE_CANDIDATE!>myFun<!><Int>(3)
     <!INAPPLICABLE_CANDIDATE!>myFun<!><String>('a')
 }
 
 fun test2() {
     val m0 = java.util.HashMap()
-    val m1 = java.util.HashMap<String, String, String>()
-    val m2 = java.util.HashMap<String>()
+    val m1 = java.util.<!INAPPLICABLE_CANDIDATE!>HashMap<!><String, String, String>()
+    val m2 = java.util.<!INAPPLICABLE_CANDIDATE!>HashMap<!><String>()
 }

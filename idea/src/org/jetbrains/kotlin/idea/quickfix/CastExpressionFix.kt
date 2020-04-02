@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
@@ -31,8 +32,8 @@ class CastExpressionFix(element: KtExpression, type: KotlinType) : KotlinQuickFi
                 && expressionType != type.makeNullable() //covered by AddExclExclCallFix
     }
 
-    override fun getFamilyName() = "Cast expression"
-    override fun getText() = element?.let { "Cast expression '${it.text}' to '$typePresentation'" } ?: ""
+    override fun getFamilyName() = KotlinBundle.message("fix.cast.expression.family")
+    override fun getText() = element?.let { KotlinBundle.message("fix.cast.expression.text", it.text, typePresentation) } ?: ""
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile) = upOrDownCast
 

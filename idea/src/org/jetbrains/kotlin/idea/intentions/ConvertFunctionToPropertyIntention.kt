@@ -31,6 +31,7 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -57,7 +58,8 @@ import org.jetbrains.kotlin.types.typeUtil.supertypes
 import java.util.*
 
 class ConvertFunctionToPropertyIntention :
-    SelfTargetingIntention<KtNamedFunction>(KtNamedFunction::class.java, "Convert function to property"), LowPriorityAction {
+    SelfTargetingIntention<KtNamedFunction>(KtNamedFunction::class.java, KotlinBundle.message("convert.function.to.property")),
+    LowPriorityAction {
     private var KtNamedFunction.typeFqNameToAdd: String? by UserDataProperty(Key.create("TYPE_FQ_NAME_TO_ADD"))
 
     private inner class Converter(
@@ -111,7 +113,7 @@ class ConvertFunctionToPropertyIntention :
                 if (callable !is PsiNamedElement) continue
 
                 if (!checkModifiable(callable)) {
-                    reportDeclarationConflict(conflicts, callable) { "Can't modify $it" }
+                    reportDeclarationConflict(conflicts, callable) { KotlinBundle.message("can.t.modify.0", it) }
                 }
 
                 if (callable is KtNamedFunction) {
@@ -129,7 +131,7 @@ class ConvertFunctionToPropertyIntention :
                     callableDescriptor.getContainingScope()
                         ?.findVariable(callableDescriptor.name, NoLookupLocation.FROM_IDE)
                         ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
-                        ?.let { reportDeclarationConflict(conflicts, it) { s -> "$s already exists" } }
+                        ?.let { reportDeclarationConflict(conflicts, it) { s -> KotlinBundle.message("0.already.exists", s) } }
                 }
 
                 if (callable is PsiMethod) callable.checkDeclarationConflict(getterName, conflicts, callables)
@@ -143,14 +145,20 @@ class ConvertFunctionToPropertyIntention :
                             if (callElement.typeArguments.isNotEmpty()) {
                                 conflicts.putValue(
                                     callElement,
-                                    "Type arguments will be lost after conversion: ${StringUtil.htmlEmphasize(callElement.text)}"
+                                    KotlinBundle.message(
+                                        "type.arguments.will.be.lost.after.conversion.0",
+                                        StringUtil.htmlEmphasize(callElement.text)
+                                    )
                                 )
                             }
 
                             if (callElement.valueArguments.isNotEmpty()) {
                                 conflicts.putValue(
                                     callElement,
-                                    "Call with arguments will be skipped: ${StringUtil.htmlEmphasize(callElement.text)}"
+                                    KotlinBundle.message(
+                                        "call.with.arguments.will.be.skipped.0",
+                                        StringUtil.htmlEmphasize(callElement.text)
+                                    )
                                 )
                                 continue
                             }

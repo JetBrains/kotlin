@@ -21,15 +21,15 @@ fun bar(x: Int) =
     }
 
 // LINENUMBERS
-// TestKt.box():4
-// FooKt.foo(int):4
-// FooKt.foo(int):7
-// TestKt.bar(int):8
-// TestKt.bar(int):9
-// FooKt.foo(int):4
-// FooKt.foo(int):5
-// TestKt.bar(int):9
-// TestKt.bar(int):12
-// FooKt.foo(int):7
-// TestKt.box():4
-// TestKt.box():5
+// test.kt:4
+// foo.kt:4
+// foo.kt:7
+// test.kt:8
+// test.kt:9
+// foo.kt:4
+// foo.kt:5
+// test.kt:9
+// test.kt:12
+// foo.kt:7
+// test.kt:4
+// test.kt:5

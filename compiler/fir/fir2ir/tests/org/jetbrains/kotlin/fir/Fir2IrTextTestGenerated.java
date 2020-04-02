@@ -997,6 +997,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/expressions/interfaceThisRef.kt");
         }
 
+        @TestMetadata("javaSyntheticGenericPropretyAccess.kt")
+        public void testJavaSyntheticGenericPropretyAccess() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/javaSyntheticGenericPropretyAccess.kt");
+        }
+
         @TestMetadata("javaSyntheticPropertyAccess.kt")
         public void testJavaSyntheticPropertyAccess() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/javaSyntheticPropertyAccess.kt");
@@ -1075,6 +1080,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @TestMetadata("kt36963.kt")
         public void testKt36963() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/kt36963.kt");
+        }
+
+        @TestMetadata("kt37570.kt")
+        public void testKt37570() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/kt37570.kt");
         }
 
         @TestMetadata("lambdaInCAO.kt")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,8 +24,9 @@ import com.intellij.psi.PsiManager
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComponent
+import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerService
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.SuppressNotificationState
@@ -59,9 +60,9 @@ class KotlinSetupEnvironmentNotificationProvider(private val myProject: Project)
             return createSetupSdkPanel(myProject, psiFile)
         }
 
-        val configurationCheckerComponent = KotlinConfigurationCheckerComponent.getInstanceIfNotDisposed(module.project) ?: return null
+        val configurationChecker = KotlinConfigurationCheckerService.getInstance(module.project)
 
-        if (!configurationCheckerComponent.isSyncing &&
+        if (!configurationChecker.isSyncing &&
             isNotConfiguredNotificationRequired(module.toModuleGroup()) &&
             !hasAnyKotlinRuntimeInScope(module) &&
             UnsupportedAbiVersionNotificationPanelProvider.collectBadRoots(module).isEmpty()
@@ -93,10 +94,10 @@ class KotlinSetupEnvironmentNotificationProvider(private val myProject: Project)
 
         private fun createKotlinNotConfiguredPanel(module: Module): EditorNotificationPanel {
             return EditorNotificationPanel().apply {
-                setText("Kotlin not configured")
+                setText(KotlinJvmBundle.message("kotlin.not.configured"))
                 val configurators = getAbleToRunConfigurators(module).toList()
                 if (configurators.isNotEmpty()) {
-                    createComponentActionLabel("Configure") { label ->
+                    createComponentActionLabel(KotlinJvmBundle.message("action.text.configure")) { label ->
                         val singleConfigurator = configurators.singleOrNull()
                         if (singleConfigurator != null) {
                             singleConfigurator.apply(module.project)
@@ -106,7 +107,7 @@ class KotlinSetupEnvironmentNotificationProvider(private val myProject: Project)
                         }
                     }
 
-                    createComponentActionLabel("Ignore") {
+                    createComponentActionLabel(KotlinJvmBundle.message("action.text.ignore")) {
                         SuppressNotificationState.suppressKotlinNotConfigured(module)
                         EditorNotifications.getInstance(module.project).updateAllNotifications()
                     }
@@ -121,7 +122,10 @@ class KotlinSetupEnvironmentNotificationProvider(private val myProject: Project)
         }
 
         fun createConfiguratorsPopup(project: Project, configurators: List<KotlinProjectConfigurator>): ListPopup {
-            val step = object : BaseListPopupStep<KotlinProjectConfigurator>("Choose Configurator", configurators) {
+            val step = object : BaseListPopupStep<KotlinProjectConfigurator>(
+                KotlinJvmBundle.message("title.choose.configurator"),
+                configurators
+            ) {
                 override fun getTextFor(value: KotlinProjectConfigurator?) = value?.presentableText ?: "<none>"
 
                 override fun onChosen(selectedValue: KotlinProjectConfigurator?, finalChoice: Boolean): PopupStep<*>? {

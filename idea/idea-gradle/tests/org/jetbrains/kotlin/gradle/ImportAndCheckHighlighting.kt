@@ -34,7 +34,8 @@ class ImportAndCheckHighlighting : MultiplePluginVersionGradleImportingTestCase(
             object : GradleDaemonAnalyzerTestCase(
                 testLineMarkers = testLineMarkers,
                 checkWarnings = checkWarnings,
-                checkInfos = false
+                checkInfos = false,
+                rootDisposable = testRootDisposable
             ) {}
         )
     }

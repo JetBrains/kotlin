@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.getNestedClassifierScope
+import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
@@ -36,7 +39,7 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
             // ? Is it Ok to use original file session here ?
             val superTypes = lookupSuperTypes(regularClass, lookupInterfaces = false, deep = true, useSiteSession = session).asReversed()
             for (superType in superTypes) {
-                session.firSymbolProvider.getNestedClassifierScope(superType.lookupTag.classId)?.let {
+                session.getNestedClassifierScope(superType.lookupTag)?.let {
                     towerScope.addScope(it)
                 }
             }

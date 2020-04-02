@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.nj2k.JKSymbolProvider
 import org.jetbrains.kotlin.nj2k.tree.JKClass
 import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtTypeAlias
 
 
 sealed class JKClassSymbol : JKSymbol
@@ -32,6 +33,11 @@ class JKMultiverseKtClassSymbol(
     override val target: KtClassOrObject,
     override val typeFactory: JKTypeFactory
 ) : JKClassSymbol(), JKMultiverseKtSymbol<KtClassOrObject>
+
+class JKTypeAliasKtClassSymbol(
+    override val target: KtTypeAlias,
+    override val typeFactory: JKTypeFactory
+) : JKClassSymbol(), JKMultiverseKtSymbol<KtTypeAlias>
 
 class JKUnresolvedClassSymbol(
     override val target: String,

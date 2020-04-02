@@ -1,0 +1,12 @@
+FILE: invokeInWhenSubjectVariableInitializer.kt
+    public final fun test(func: R|() -> kotlin/String?|): R|kotlin/Unit| {
+        lval x: R|kotlin/String| = when (lval <elvis>: R|kotlin/String?| = R|<local>/func|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/String?|>|()) {
+            ==($subj$, Null(null)) ->  {
+                String()
+            }
+            else ->  {
+                R|<local>/<elvis>|
+            }
+        }
+
+    }

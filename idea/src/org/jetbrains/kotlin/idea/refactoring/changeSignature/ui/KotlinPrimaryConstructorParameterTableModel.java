@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
 import com.intellij.util.ui.ColumnInfo;
 import org.jetbrains.kotlin.idea.KotlinFileType;
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar;
@@ -47,7 +47,7 @@ public class KotlinPrimaryConstructorParameterTableModel extends KotlinCallableP
 
     protected static class ValVarColumn extends ColumnInfoBase<KotlinParameterInfo, ParameterTableModelItemBase<KotlinParameterInfo>, KotlinValVar> {
         public ValVarColumn() {
-            super(KotlinRefactoringBundle.message("column.name.val.var"));
+            super(KotlinBundle.message("column.name.val.var"));
         }
 
         @Override

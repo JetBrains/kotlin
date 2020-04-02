@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.idea.debugger.coroutine.util
 
-import com.intellij.debugger.jdi.StackFrameProxyImpl
-import com.intellij.debugger.ui.impl.watch.MethodsTracker
-import com.intellij.debugger.ui.impl.watch.StackFrameDescriptorImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.psi.JavaPsiFacade
@@ -24,7 +21,8 @@ fun getPosition(stackTraceElement: StackTraceElement, project: Project): XSource
         @Suppress("DEPRECATION")
         psiFacade.findClass(
             stackTraceElement.className.substringBefore("$"), // find outer class, for which psi exists TODO
-            GlobalSearchScope.everythingScope(project))
+            GlobalSearchScope.everythingScope(project)
+        )
     }
 
     val classFile = psiClass?.containingFile?.virtualFile
@@ -32,9 +30,6 @@ fun getPosition(stackTraceElement: StackTraceElement, project: Project): XSource
     val lineNumber = if (stackTraceElement.lineNumber > 0) stackTraceElement.lineNumber - 1 else return null
     return XDebuggerUtil.getInstance().createPosition(classFile, lineNumber)
 }
-
-class EmptyStackFrameDescriptor(val frame: StackTraceElement, proxy: StackFrameProxyImpl) :
-    StackFrameDescriptorImpl(proxy, MethodsTracker())
 
 class ProjectNotification(val project: Project) {
     fun error(message: String) =

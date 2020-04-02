@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 
 class KDocElementFactory(val project: Project) {
     fun createKDocFromText(text: String): KDoc {
-        val fileText = text + " fun foo { }"
+        val fileText = "$text fun foo { }"
         val function = KtPsiFactory(project).createDeclaration<KtFunction>(fileText)
         return PsiTreeUtil.findChildOfType(function, KDoc::class.java)!!
     }

@@ -84,8 +84,8 @@ internal class ExpressionReceiverValue(
 sealed class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
     val boundSymbol: S,
     type: ConeKotlinType,
-    private val useSiteSession: FirSession,
-    private val scopeSession: ScopeSession
+    protected val useSiteSession: FirSession,
+    protected val scopeSession: ScopeSession
 ) : ReceiverValue {
     final override var type: ConeKotlinType = type
         private set
@@ -120,6 +120,7 @@ sealed class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
 
 internal enum class ImplicitDispatchReceiverKind {
     REGULAR,
+    REGULAR_IN_DELEGATED,
     COMPANION,
     COMPANION_FROM_SUPERTYPE
 }
@@ -137,6 +138,11 @@ class ImplicitDispatchReceiverValue internal constructor(
         boundSymbol, boundSymbol.constructType(typeArguments = emptyArray(), isNullable = false),
         useSiteSession, scopeSession, kind
     )
+
+    fun copyForDelegated(): ImplicitDispatchReceiverValue =
+        ImplicitDispatchReceiverValue(boundSymbol, type, useSiteSession, scopeSession, ImplicitDispatchReceiverKind.REGULAR_IN_DELEGATED)
+
+    val inDelegated: Boolean get() = kind == ImplicitDispatchReceiverKind.REGULAR_IN_DELEGATED
 
     val implicitCompanion: Boolean get() = kind != ImplicitDispatchReceiverKind.REGULAR
 

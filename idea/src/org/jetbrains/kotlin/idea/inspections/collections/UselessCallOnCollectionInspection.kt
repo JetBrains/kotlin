@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.inspections.collections
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -60,7 +61,7 @@ class UselessCallOnCollectionInspection : AbstractUselessCallInspection() {
                     expression.operationTokenNode.startOffset - expression.startOffset,
                     calleeExpression.endOffset - expression.startOffset
                 ),
-                "Call on collection type may be reduced",
+                KotlinBundle.message("call.on.collection.type.may.be.reduced"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 isOnTheFly,
                 RenameUselessCallFix(newName)
@@ -73,7 +74,7 @@ class UselessCallOnCollectionInspection : AbstractUselessCallInspection() {
                     expression.operationTokenNode.startOffset - expression.startOffset,
                     calleeExpression.endOffset - expression.startOffset
                 ),
-                "Useless call on collection type",
+                KotlinBundle.message("useless.call.on.collection.type"),
                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                 isOnTheFly,
                 RemoveUselessCallFix()

@@ -526,7 +526,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                 it.invoke(konanTarget) as? String
             }
         }
-        val nativeExtensions = KotlinNativeCompilationExtensionsImpl(konanTarget)
+        val nativeExtensions = konanTarget?.let(::KotlinNativeCompilationExtensionsImpl)
 
         return KotlinCompilationImpl(
             gradleCompilation.name,

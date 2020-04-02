@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -37,13 +38,13 @@ import java.util.*
 class DeprecatedCallableAddReplaceWithInspection : AbstractApplicabilityBasedInspection<KtCallableDeclaration>(
     KtCallableDeclaration::class.java
 ) {
-    override fun inspectionText(element: KtCallableDeclaration) = "@Deprecated annotation without 'replaceWith' argument"
+    override fun inspectionText(element: KtCallableDeclaration) = KotlinBundle.message("deprecated.annotation.without.replacewith.argument")
 
     override fun inspectionHighlightRangeInElement(element: KtCallableDeclaration) = element.annotationEntries.first {
         it.shortName == DEPRECATED_NAME
     }.textRangeIn(element)
 
-    override val defaultFixText = "Add 'replaceWith' argument to specify replacement pattern"
+    override val defaultFixText get() = KotlinBundle.message("add.replacewith.argument.to.specify.replacement.pattern")
 
     private class ReplaceWith(val expression: String, vararg val imports: String)
 

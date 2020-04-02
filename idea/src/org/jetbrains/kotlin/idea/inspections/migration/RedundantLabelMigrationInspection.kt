@@ -9,6 +9,7 @@ import com.intellij.codeInspection.CleanupLocalInspectionTool
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactoryWithPsiElement
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.configuration.MigrationInfo
 import org.jetbrains.kotlin.idea.configuration.isLanguageVersionUpdate
 import org.jetbrains.kotlin.idea.quickfix.migration.MigrationFix
@@ -23,7 +24,7 @@ class RedundantLabelMigrationInspection :
         return migrationInfo.isLanguageVersionUpdate(LanguageVersion.KOTLIN_1_3, LanguageVersion.KOTLIN_1_4)
     }
 
-    override fun descriptionMessage(): String = "Redundant label"
+    override fun descriptionMessage(): String = KotlinBundle.message("inspection.redundant.label.text")
 
     override val diagnosticFactory: DiagnosticFactoryWithPsiElement<KtElement, *>
         get() = Errors.REDUNDANT_LABEL_WARNING

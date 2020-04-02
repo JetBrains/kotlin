@@ -15,13 +15,13 @@ fun throwIfLess(a: Int, b: Int) {
         throw java.lang.IllegalStateException()
 }
 // LINENUMBERS
-// TestKt.box():3
-// TestKt.box():4
-// TestKt.box():5
-// TestKt.box():6
-// TestKt.throwIfLess(int, int):14
-// TestKt.throwIfLess(int, int):15
-// TestKt.box():7
-// TestKt.box():8
-// TestKt.throwIfLess(int, int):14
-// TestKt.throwIfLess(int, int):15
+// test.kt:3
+// test.kt:4
+// test.kt:5
+// test.kt:6
+// test.kt:14
+// test.kt:15
+// test.kt:7
+// test.kt:8
+// test.kt:14
+// test.kt:15

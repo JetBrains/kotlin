@@ -1,7 +1,44 @@
 {
+  "1": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 4,
+          "description": "Both left-hand and right-hand sides of an assignment must be expressions",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "2": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 3,
+          "description": "Check the expression is not assignable if a navigation expression referring to an unmutable property",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 2,
+          "description": "Check the expression is not assignable if an identifier referring to an unmutable property",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
   "3": {
     "neg": {
       "2": [
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 3,
+          "description": "Check the expression is not assignable if a navigation expression referring to an unmutable property",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-2/neg/1.2.kt",
+          "unexpectedBehaviour": false
+        },
         {
           "specVersion": "0.1-213",
           "casesNumber": 2,
@@ -14,6 +51,15 @@
           "casesNumber": 2,
           "description": "check unsafe prefix decrement expression call for an assignable expression",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/neg/1.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 2,
+          "description": "Check the expression is not assignable if an identifier referring to an unmutable property",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/statements/assignments/p-2/neg/1.1.kt",
           "unexpectedBehaviour": false
         }
       ]

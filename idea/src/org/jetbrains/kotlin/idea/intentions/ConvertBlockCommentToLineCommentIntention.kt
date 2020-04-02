@@ -9,11 +9,12 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 class ConvertBlockCommentToLineCommentIntention : SelfTargetingIntention<PsiComment>(
-    PsiComment::class.java, "Replace with end of line comment"
+    PsiComment::class.java, KotlinBundle.message("replace.with.end.of.line.comment")
 ) {
     override fun isApplicableTo(element: PsiComment, caretOffset: Int): Boolean {
         return element.isBlockComment()

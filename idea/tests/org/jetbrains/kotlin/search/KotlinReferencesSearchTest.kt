@@ -17,9 +17,12 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.Assert
+import org.junit.runner.RunWith
 import java.io.File
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class KotlinReferencesSearchTest() : AbstractSearcherTest() {
     override fun getTestDataPath(): String {
         return File(PluginTestCaseBase.getTestDataPathBase(), "/search/references").path + File.separator

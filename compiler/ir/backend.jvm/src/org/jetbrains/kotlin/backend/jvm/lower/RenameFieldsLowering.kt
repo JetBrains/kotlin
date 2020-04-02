@@ -113,7 +113,7 @@ private class FieldRenamer(private val newNames: Map<IrField, Name>) : IrElement
         return IrFieldImpl(
             declaration.startOffset, declaration.endOffset, declaration.origin, symbol, newName,
             declaration.type, declaration.visibility, declaration.isFinal, declaration.isExternal, declaration.isStatic,
-            isFakeOverride = declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE
+            isFakeOverride = declaration.isFakeOverride
         ).also {
             descriptor.bind(it)
             it.parent = declaration.parent

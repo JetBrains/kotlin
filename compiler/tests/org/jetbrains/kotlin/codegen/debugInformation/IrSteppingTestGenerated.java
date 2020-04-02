@@ -68,6 +68,12 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     }
 
     @Test
+    @TestMetadata("iincStepping.kt")
+    public void testIincStepping() throws Exception {
+        runTest("compiler/testData/debug/stepping/iincStepping.kt");
+    }
+
+    @Test
     @TestMetadata("inlineCallableReference.kt")
     public void testInlineCallableReference() throws Exception {
         runTest("compiler/testData/debug/stepping/inlineCallableReference.kt");
@@ -83,6 +89,12 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     @TestMetadata("namedCallableReference.kt")
     public void testNamedCallableReference() throws Exception {
         runTest("compiler/testData/debug/stepping/namedCallableReference.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedInline.kt")
+    public void testNestedInline() throws Exception {
+        runTest("compiler/testData/debug/stepping/nestedInline.kt");
     }
 
     @Test

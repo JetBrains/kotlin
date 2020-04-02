@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.scopes.addImportingScopes
@@ -26,24 +27,30 @@ open class FirBodyResolveTransformer(
     phase: FirResolvePhase,
     override var implicitTypeOnly: Boolean,
     scopeSession: ScopeSession,
-    val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve()
+    val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve(),
+    outerBodyResolveContext: BodyResolveContext? = null
 ) : FirAbstractBodyResolveTransformer(phase) {
     private var packageFqName = FqName.ROOT
 
-    override val components: BodyResolveTransformerComponents = BodyResolveTransformerComponents(session, scopeSession, this)
+    final override val context: BodyResolveContext =
+        outerBodyResolveContext ?: BodyResolveContext(returnTypeCalculator, DataFlowAnalyzerContext.empty(session))
+    final override val components: BodyResolveTransformerComponents =
+        BodyResolveTransformerComponents(session, scopeSession, this, context)
 
     private val expressionsTransformer = FirExpressionsResolveTransformer(this)
     private val declarationsTransformer = FirDeclarationsResolveTransformer(this)
     private val controlFlowStatementsTransformer = FirControlFlowStatementsResolveTransformer(this)
 
     override fun transformFile(file: FirFile, data: ResolutionMode): CompositeTransformResult<FirFile> {
-        components.cleanContextForAnonymousFunction()
+        context.cleanContextForAnonymousFunction()
         @OptIn(PrivateForInline::class)
-        components.file = file
+        context.file = file
         packageFqName = file.packageFqName
-        return withScopeCleanup(components.topLevelScopes) {
-            components.topLevelScopes.addImportingScopes(file, session, components.scopeSession)
-            super.transformFile(file, data)
+        return withScopeCleanup(context.fileImportsScope) {
+            context.fileImportsScope.addImportingScopes(file, session, components.scopeSession)
+            file.replaceResolvePhase(transformerPhase)
+            @Suppress("UNCHECKED_CAST")
+            transformDeclarationContent(file, data) as CompositeTransformResult<FirFile>
         }
     }
 
@@ -169,10 +176,20 @@ open class FirBodyResolveTransformer(
         return expressionsTransformer.transformDelegatedConstructorCall(delegatedConstructorCall, data)
     }
 
+    override fun transformAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+        return expressionsTransformer.transformAugmentedArraySetCall(augmentedArraySetCall, data)
+    }
+
     // ------------------------------------- Declarations -------------------------------------
 
     override fun transformDeclaration(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
         return declarationsTransformer.transformDeclaration(declaration, data)
+    }
+
+    open fun transformDeclarationContent(
+        declaration: FirDeclaration, data: ResolutionMode
+    ): CompositeTransformResult<FirDeclaration> {
+        return transformElement(declaration, data)
     }
 
     override fun transformDeclarationStatus(

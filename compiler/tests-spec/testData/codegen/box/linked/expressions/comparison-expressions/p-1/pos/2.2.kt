@@ -9,6 +9,7 @@
  * expressions, comparison-expressions -> paragraph 2 -> sentence 2
  * expressions, comparison-expressions -> paragraph 3 -> sentence 1
  * expressions, comparison-expressions -> paragraph 4 -> sentence 1
+ * overloadable-operators -> paragraph 4 -> sentence 1
  * NUMBER: 2
  * DESCRIPTION: These operators are overloadable (A > B)
  */

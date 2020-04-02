@@ -46,8 +46,13 @@ fun <T> Project.executeCommand(name: String, groupId: Any? = null, command: () -
 
 fun <T> runWithCancellationCheck(block: () -> T): T = CancellationCheck.runWithCancellationCheck(block)
 
-inline fun invokeLater(crossinline action: () -> Unit) {
+inline fun executeOnPooledThread(crossinline action: () -> Unit) =
+    ApplicationManager.getApplication().executeOnPooledThread { action() }
+
+inline fun invokeLater(crossinline action: () -> Unit) =
     ApplicationManager.getApplication().invokeLater { action() }
-}
 
 inline fun isUnitTestMode(): Boolean = ApplicationManager.getApplication().isUnitTestMode
+
+inline fun <reified T : Any> Project.getServiceSafe(): T =
+    this.getService(T::class.java) ?: error("Unable to locate service ${T::class.java.name}")

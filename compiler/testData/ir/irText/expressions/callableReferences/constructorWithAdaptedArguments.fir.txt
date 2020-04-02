@@ -34,7 +34,8 @@ FILE fqName:<root> fileName:/constructorWithAdaptedArguments.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]'
     CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner
-      CONSTRUCTOR visibility:public <> (xs:kotlin.IntArray) returnType:<root>.Outer.Inner [primary]
+      CONSTRUCTOR visibility:public <> ($this:<root>.Outer.Inner, xs:kotlin.IntArray) returnType:<root>.Outer.Inner [primary]
+        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner
         VALUE_PARAMETER name:xs index:0 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
@@ -76,8 +77,10 @@ FILE fqName:<root> fileName:/constructorWithAdaptedArguments.kt
       RETURN type=kotlin.Nothing from='public final fun testInnerClassConstructor (outer: <root>.Outer): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
           FUNCTION_REFERENCE 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.Outer.Inner' type=kotlin.reflect.KFunction1<kotlin.IntArray, <root>.Outer.Inner> origin=null reflectionTarget=<same>
+            $this: GET_VAR 'outer: <root>.Outer declared in <root>.testInnerClassConstructor' type=<root>.Outer origin=null
   FUN name:testInnerClassConstructorCapturingOuter visibility:public modality:FINAL <> () returnType:IrErrorType
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testInnerClassConstructorCapturingOuter (): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
           FUNCTION_REFERENCE 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.Outer.Inner' type=kotlin.reflect.KFunction1<kotlin.IntArray, <root>.Outer.Inner> origin=null reflectionTarget=<same>
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer' type=<root>.Outer origin=null

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.psi.*
@@ -35,12 +36,12 @@ class WrapWithCollectionLiteralCallFix private constructor(
         editor?.caretModel?.moveToOffset(replaced.endOffset)
     }
 
-    override fun getFamilyName(): String = "Wrap with collection literal call"
+    override fun getFamilyName(): String = KotlinBundle.message("wrap.with.collection.literal.call")
     override fun getText() =
         if (wrapInitialElement)
-            "Wrap element with '$functionName()' call"
+            KotlinBundle.message("wrap.element.with.0.call", functionName)
         else
-            "Replace with '$functionName()' call"
+            KotlinBundle.message("replace.with.0.call", functionName)
 
     companion object {
         fun create(expectedType: KotlinType, expressionType: KotlinType, element: KtExpression): List<WrapWithCollectionLiteralCallFix> {

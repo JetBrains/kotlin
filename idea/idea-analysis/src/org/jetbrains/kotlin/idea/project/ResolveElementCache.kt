@@ -9,8 +9,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.cfg.ControlFlowInformationProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.SimpleGlobalContext
@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.frontend.di.createContainerForBodyResolve
 import org.jetbrains.kotlin.idea.caches.resolve.CodeFragmentAnalyzer
 import org.jetbrains.kotlin.idea.caches.resolve.util.analyzeControlFlow
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener
+import org.jetbrains.kotlin.idea.caches.trackers.inBlockModificationCount
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.*
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import java.util.*
+import java.util.concurrent.ConcurrentMap
 
 class ResolveElementCache(
     private val resolveSession: ResolveSession,
@@ -42,6 +44,7 @@ class ResolveElementCache(
     private val targetPlatform: TargetPlatform,
     private val codeFragmentAnalyzer: CodeFragmentAnalyzer
 ) : BodyResolveCache {
+
     private class CachedFullResolve(val bindingContext: BindingContext, resolveElement: KtElement) {
         private val modificationStamp: Long? = modificationStamp(resolveElement)
 
@@ -75,25 +78,38 @@ class ResolveElementCache(
         )
 
     private class CachedPartialResolve(val bindingContext: BindingContext, file: KtFile, val mode: BodyResolveMode) {
-        private val modificationStamp: Long? = modificationStamp(file)
+        private val modificationStamp: Long = modificationStamp(file)
 
-        fun isUpToDate(file: KtFile, newMode: BodyResolveMode) =
-            modificationStamp == modificationStamp(file) && mode.doesNotLessThan(newMode)
+        fun isUpToDate(file: KtFile, newMode: BodyResolveMode): Boolean {
+            return modificationStamp == modificationStamp(file) && mode.doesNotLessThan(newMode)
+        }
 
-        private fun modificationStamp(file: KtFile): Long? {
-            return if (!file.isPhysical) // for non-physical file we don't get MODIFICATION_COUNT increased and must reset data on any modification of the file
+        private fun modificationStamp(file: KtFile): Long {
+            // for non-physical file we don't get MODIFICATION_COUNT increased and must reset data on any modification of the file
+            return if (!file.isPhysical)
                 file.modificationStamp
             else
-                null
+                file.inBlockModificationCount
+        }
+
+        override fun toString(): String {
+            return "{CachedPartialResolve: $mode $modificationStamp}"
         }
     }
 
-    private val partialBodyResolveCache: CachedValue<MutableMap<KtExpression, CachedPartialResolve>> =
+    private val partialBodyResolveCache: CachedValue<SLRUCache<KtFile, ConcurrentMap<KtExpression, CachedPartialResolve>>> =
         CachedValuesManager.getManager(project).createCachedValue(
-            CachedValueProvider<MutableMap<KtExpression, CachedPartialResolve>> {
+            CachedValueProvider {
+                val slruCache: SLRUCache<KtFile, ConcurrentMap<KtExpression, CachedPartialResolve>> =
+                    object : SLRUCache<KtFile, ConcurrentMap<KtExpression, CachedPartialResolve>>(20, 20) {
+                        override fun createValue(file: KtFile): ConcurrentMap<KtExpression, CachedPartialResolve> {
+                            return ContainerUtil.createConcurrentWeakKeySoftValueMap()
+                        }
+                    }
+
                 CachedValueProvider.Result.create(
-                    ContainerUtil.createConcurrentWeakKeySoftValueMap<KtExpression, CachedPartialResolve>(),
-                    PsiModificationTracker.MODIFICATION_COUNT,
+                    slruCache,
+                    KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker,
                     resolveSession.exceptionTracker
                 )
             },
@@ -155,14 +171,21 @@ class ResolveElementCache(
                 val file = resolveElement.getContainingKtFile()
                 val statementsToResolve =
                     contextElements!!.map { PartialBodyResolveFilter.findStatementToResolve(it, resolveElement) }.distinct()
-                val partialResolveMap = partialBodyResolveCache.value
-                val cachedResults = statementsToResolve.map { partialResolveMap[it ?: resolveElement] }
-                if (cachedResults.all {
-                        it != null && it.isUpToDate(
-                            file,
-                            bodyResolveMode
-                        )
-                    }) { // partial resolve is already cached for these statements
+                val statementsToResolveByKtFile =
+                    statementsToResolve.groupBy { (it ?: resolveElement).containingKtFile }
+                val cachedResults =
+                    statementsToResolveByKtFile.flatMap { (file, expressions) ->
+                        val partialBodyResolveCacheValue = partialBodyResolveCache.value
+                        val expressionsMap = synchronized(partialBodyResolveCacheValue) {
+                            partialBodyResolveCacheValue[file]
+                        }
+                        expressions.map { expressionsMap[it ?: resolveElement] }
+                    }
+
+                // a bit of problem here that several threads come to analyze same resolveElement
+
+                if (cachedResults.all { it != null && it.isUpToDate(file, bodyResolveMode) }) {
+                    // partial resolve is already cached for these statements
                     return CompositeBindingContext.create(cachedResults.map { it!!.bindingContext }.distinct())
                 }
 
@@ -178,18 +201,30 @@ class ResolveElementCache(
                     return bindingContext
                 }
 
+                val partialBodyResolveCacheValue = partialBodyResolveCache.value
+                val expressionsMap = synchronized(partialBodyResolveCacheValue) {
+                    partialBodyResolveCacheValue[file]
+                }
+
                 val resolveToCache = CachedPartialResolve(bindingContext, file, bodyResolveMode)
 
                 if (statementFilter is PartialBodyResolveFilter) {
                     for (statement in statementFilter.allStatementsToResolve) {
                         if (bindingContext[BindingContext.PROCESSED, statement] == true) {
-                            partialResolveMap.putIfAbsent(statement, resolveToCache)
+                            expressionsMap.putIfAbsent(statement, resolveToCache)?.let { oldResolveToCache ->
+                                if (!oldResolveToCache.isUpToDate(file, bodyResolveMode)) {
+                                    expressionsMap[statement] = resolveToCache
+                                } else if (!oldResolveToCache.mode.doesNotLessThan(bodyResolveMode)) {
+                                    expressionsMap.replace(statement, oldResolveToCache, resolveToCache)
+                                }
+                                return@let
+                            }
                         }
                     }
                 }
 
                 // we use the whole declaration key in the map to obtain resolve not inside any block (e.g. default parameter values)
-                partialResolveMap[resolveElement] = resolveToCache
+                expressionsMap[resolveElement] = resolveToCache
 
                 return bindingContext
             }

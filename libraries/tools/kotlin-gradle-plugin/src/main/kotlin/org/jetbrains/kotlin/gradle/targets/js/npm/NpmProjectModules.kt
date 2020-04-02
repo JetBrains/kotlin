@@ -14,9 +14,8 @@ import java.io.File
 /**
  * Search modules in node_modules according to https://nodejs.org/api/modules.html.
  */
-internal open class NpmProjectModules(
+open class NpmProjectModules(
     val dir: File,
-    val nodeModulesDir: File = dir.resolve(NODE_MODULES),
     val packageJsonEntries: Collection<String> = listOf("main", "module", "browser"),
     val indexFileNames: Collection<String> = listOf(INDEX_FILE_NAME),
     val indexFileSuffixes: Collection<String> = listOf(JS_SUFFIX)
@@ -28,29 +27,22 @@ internal open class NpmProjectModules(
         return resolve(request)?.canonicalPath ?: error("Cannot find node module \"$request\" in \"$this\"")
     }
 
-    open val parent: NpmProjectModules?
-        get() = null
-
     fun copy(
         packageJsonEntries: Collection<String> = this.packageJsonEntries,
         indexFileNames: Collection<String> = this.indexFileNames,
         indexFileSuffixes: Collection<String> = this.indexFileSuffixes
-    ): NpmProjectModules = object : NpmProjectModules(dir, nodeModulesDir, packageJsonEntries, indexFileNames, indexFileSuffixes) {
-        override val parent: NpmProjectModules?
-            get() = this@NpmProjectModules.parent?.copy(packageJsonEntries, indexFileNames, indexFileSuffixes)
-    }
+    ): NpmProjectModules = NpmProjectModules(dir, packageJsonEntries, indexFileNames, indexFileSuffixes)
 
     /**
-     * Find node module according to https://nodejs.org/api/modules.html#modules_all_together,
-     * with exception that instead of traversing parent folders, we are traversing parent projects
+     * Find node module according to https://nodejs.org/api/modules.html#modules_all_together
      */
     internal fun resolve(name: String, context: File = dir): File? =
         if (name.startsWith("/")) resolve(name.removePrefix("/"), File("/"))
         else resolveAsRelative("./", name, context)
             ?: resolveAsRelative("/", name, context)
             ?: resolveAsRelative("../", name, context)
-            ?: resolveInNodeModulesDir(name, nodeModulesDir)
-            ?: parent?.resolve(name)
+            ?: resolveInNodeModulesDir(name, context.resolve(NODE_MODULES))
+            ?: context.parentFile?.let { resolve(name, it) }
 
     private fun resolveAsRelative(prefix: String, name: String, context: File): File? {
         if (!name.startsWith(prefix)) return null

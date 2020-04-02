@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class S(val a: Any, val b: Any, val c: Any) {}
 
 object A : S(<!UNRESOLVED_REFERENCE!>prop1<!>, <!UNRESOLVED_REFERENCE!>prop2<!>, <!UNRESOLVED_REFERENCE!>func<!>()) {

@@ -17,9 +17,10 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.*
 
-class MergeIfsIntention : SelfTargetingIntention<KtIfExpression>(KtIfExpression::class.java, "Merge 'if's") {
+class MergeIfsIntention : SelfTargetingIntention<KtIfExpression>(KtIfExpression::class.java, KotlinBundle.message("merge.if.s")) {
 
     override fun isApplicableTo(element: KtIfExpression, caretOffset: Int): Boolean {
         if (element.`else` != null) return false

@@ -35,8 +35,7 @@ dependencies {
 
     testCompile(project(":idea:idea-native")) { isTransitive = false }
     testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
-    testRuntime(project(":native:frontend.native")) { isTransitive = false }
-    testRuntime(project(":native:kotlin-native-utils")) { isTransitive = false }
+    testRuntime(project(":native:frontend.native"))
 
     testCompile(intellijDep())
     testCompile(intellijPluginDep("properties"))
@@ -59,11 +58,7 @@ dependencies {
     testRuntime(intellijPluginDep("coverage"))
     testRuntime(intellijPluginDep("gradle"))
     testRuntime(intellijPluginDep("Groovy"))
-    if (Platform[201].orHigher()) {
-        testRuntime(intellijPluginDep("platform-langInjection"))
-    } else {
-        testRuntime(intellijPluginDep("IntelliLang"))
-    }
+    testRuntime(intellijPluginDep("IntelliLang"))
     testRuntime(intellijPluginDep("java-decompiler"))
     testRuntime(intellijPluginDep("java-i18n"))
     testRuntime(intellijPluginDep("junit"))

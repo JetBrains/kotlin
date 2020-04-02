@@ -287,7 +287,12 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     @Override
     @NotNull
     public List<TypeParameterDescriptor> getTypeParameters() {
-        return typeParameters;
+        List<TypeParameterDescriptor> parameters = typeParameters;
+        // Diagnostics for EA-141456
+        if (parameters == null) {
+            throw new IllegalStateException("typeParameters == null for " + this);
+        }
+        return parameters;
     }
 
     @Override

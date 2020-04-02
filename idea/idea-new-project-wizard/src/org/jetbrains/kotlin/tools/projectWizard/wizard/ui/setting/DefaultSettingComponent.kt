@@ -1,14 +1,17 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting
 
 import com.intellij.openapi.ui.ComboBox
-import org.jetbrains.kotlin.tools.projectWizard.core.context.ReadingContext
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settingValidator
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
-import org.jetbrains.kotlin.tools.projectWizard.wizard.IdeContext
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.*
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.CheckboxComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.DropDownComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.PathFieldComponent
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.TextFieldComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.label
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.panel
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.customPanel
 import java.awt.BorderLayout
 import java.awt.event.ItemEvent
 import java.nio.file.Path
@@ -20,41 +23,49 @@ object DefaultSettingComponent {
     @Suppress("UNCHECKED_CAST")
     fun <V : Any, T : SettingType<V>> create(
         setting: SettingReference<V, T>,
-        ideContext: IdeContext
+        context: Context,
+        needLabel: Boolean = true
     ): SettingComponent<V, T> = when (setting.type) {
         VersionSettingType::class ->
             VersionSettingComponent(
                 setting as SettingReference<Version, VersionSettingType>,
-                ideContext
+                context
             ) as SettingComponent<V, T>
         BooleanSettingType::class ->
             BooleanSettingComponent(
                 setting as SettingReference<Boolean, BooleanSettingType>,
-                ideContext
+                context,
+                needLabel
             ) as SettingComponent<V, T>
         DropDownSettingType::class ->
             DropdownSettingComponent(
                 setting as SettingReference<DisplayableSettingItem, DropDownSettingType<DisplayableSettingItem>>,
-                ideContext
+                context,
+                needLabel
             ) as SettingComponent<V, T>
         StringSettingType::class ->
             StringSettingComponent(
                 setting as SettingReference<String, StringSettingType>,
-                ideContext
+                context,
+                needLabel
             ) as SettingComponent<V, T>
         PathSettingType::class ->
             PathSettingComponent(
                 setting as SettingReference<Path, PathSettingType>,
-                ideContext
+                context,
+                needLabel
             ) as SettingComponent<V, T>
         else -> TODO(setting.type.qualifiedName!!)
     }
 }
 
+fun <V : Any, T : SettingType<V>> SettingReference<V, T>.createSettingComponent(context: Context) =
+    DefaultSettingComponent.create(this, context, needLabel = false)
+
 class VersionSettingComponent(
     reference: SettingReference<Version, VersionSettingType>,
-    ideContext: IdeContext
-) : SettingComponent<Version, VersionSettingType>(reference, ideContext) {
+    context: Context
+) : SettingComponent<Version, VersionSettingType>(reference, context) {
     private val settingLabel = label(setting.title)
     private val comboBox = ComboBox<Version>().apply {
         addItemListener { e ->
@@ -66,7 +77,7 @@ class VersionSettingComponent(
 
     override fun onInit() {
         super.onInit()
-        val values = read { setting.savedOrDefaultValue }?.let(::listOf).orEmpty()
+        val values = read { reference.savedOrDefaultValue }?.let(::listOf).orEmpty()
         comboBox.model = DefaultComboBoxModel<Version>(values.toTypedArray())
 
         if (values.isNotEmpty()) {
@@ -76,9 +87,9 @@ class VersionSettingComponent(
 
     override val validationIndicator = null
     override val component: JComponent by lazy(LazyThreadSafetyMode.NONE) {
-        panel {
+        customPanel {
             add(
-                panel {
+                customPanel {
                     add(settingLabel, BorderLayout.CENTER)
                 },
                 BorderLayout.WEST
@@ -91,32 +102,38 @@ class VersionSettingComponent(
 
 class DropdownSettingComponent(
     reference: SettingReference<DisplayableSettingItem, DropDownSettingType<DisplayableSettingItem>>,
-    ideContext: IdeContext
+    context: Context,
+    needLabel: Boolean = true
 ) : UIComponentDelegatingSettingComponent<DisplayableSettingItem, DropDownSettingType<DisplayableSettingItem>>(
     reference,
-    ideContext
+    context
 ) {
     override val uiComponent = DropDownComponent(
-        ideContext = ideContext,
+        context = context,
         initialValues = setting.type.values,
         validator = setting.validator,
         filter = { value ->
-            setting.type.filter(ideContext, reference, value)
+            context.read { setting.type.filter(this, reference, value) }
         },
-        labelText = setting.title,
+        labelText = setting.title.takeIf { needLabel },
         onValueUpdate = { newValue -> value = newValue }
     ).asSubComponent()
+
+    override fun shouldBeShow(): Boolean =
+        uiComponent.valuesCount > 1
 }
 
 class BooleanSettingComponent(
     reference: SettingReference<Boolean, BooleanSettingType>,
-    ideContext: IdeContext
+    context: Context,
+    needLabel: Boolean = true
 ) : UIComponentDelegatingSettingComponent<Boolean, BooleanSettingType>(
     reference,
-    ideContext
+    context
 ) {
+    override val title: String? = null
     override val uiComponent = CheckboxComponent(
-        ideContext = ideContext,
+        context = context,
         labelText = setting.title,
         initialValue = null,
         validator = setting.validator,
@@ -126,16 +143,16 @@ class BooleanSettingComponent(
 
 class StringSettingComponent(
     reference: SettingReference<String, StringSettingType>,
-    ideContext: IdeContext,
-    showLabel: Boolean = true
+    context: Context,
+    needLabel: Boolean = true
 ) : UIComponentDelegatingSettingComponent<String, StringSettingType>(
     reference,
-    ideContext
+    context
 ) {
     override val uiComponent = TextFieldComponent(
-        ideContext = ideContext,
+        context = context,
         initialValue = null,
-        labelText = if (showLabel) setting.title else null,
+        labelText = setting.title.takeIf { needLabel },
         validator = setting.validator,
         onValueUpdate = { newValue -> value = newValue }
     ).asSubComponent()
@@ -143,14 +160,15 @@ class StringSettingComponent(
 
 class PathSettingComponent(
     reference: SettingReference<Path, PathSettingType>,
-    ideContext: IdeContext
+    context: Context,
+    needLabel: Boolean = true
 ) : UIComponentDelegatingSettingComponent<Path, PathSettingType>(
     reference,
-    ideContext
+    context
 ) {
     override val uiComponent = PathFieldComponent(
-        ideContext = ideContext,
-        labelText = setting.title,
+        context = context,
+        labelText = setting.title.takeIf { needLabel },
         validator = settingValidator { path -> setting.validator.validate(this, path) },
         onValueUpdate = { newValue -> value = newValue }
     ).asSubComponent()

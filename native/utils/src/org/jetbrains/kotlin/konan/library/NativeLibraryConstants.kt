@@ -22,3 +22,6 @@ fun konanCommonLibraryPath(libraryName: String) =
 
 fun konanPlatformLibraryPath(libraryName: String, platform: String) =
     File(KONAN_DISTRIBUTION_KLIB_DIR, KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR).resolve(platform).resolve(libraryName)
+
+// Used to provide unique names for platform libraries according to KT-36720.
+const val KONAN_PLATFORM_LIBS_NAME_PREFIX = "org.jetbrains.kotlin.native.platform."

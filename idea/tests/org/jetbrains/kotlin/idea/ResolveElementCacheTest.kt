@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.SpecialNames
@@ -516,6 +517,8 @@ class ResolveElementCacheTest : AbstractResolveElementCacheTest() {
         ) as KtFile
 
         val script = file.script ?: error("File should be a script")
+
+        ScriptConfigurationManager.updateScriptDependenciesSynchronously(file)
 
         val statement1 = (script.blockExpression.statements.first() as? KtScriptInitializer)?.body
             ?: error("Cannot find first expression in script")

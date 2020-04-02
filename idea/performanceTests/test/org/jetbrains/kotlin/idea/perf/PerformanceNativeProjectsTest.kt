@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.idea.caches.project.isMPPModule
 import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.parseIDELibraryName
 import org.jetbrains.kotlin.idea.configuration.readGradleProperty
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
-import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.detectLibraryKind
 import org.jetbrains.kotlin.idea.perf.PerformanceNativeProjectsTest.TestProject.*
 import org.jetbrains.kotlin.idea.perf.PerformanceNativeProjectsTest.TestTarget.*
@@ -315,14 +314,7 @@ class PerformanceNativeProjectsTest : AbstractPerformanceProjectsTest() {
                     .asSequence()
                     .filterIsInstance<LibraryOrderEntry>()
                     .mapNotNull { it.library }
-                    .filter { library ->
-                        val libraryKind = detectLibraryKind(library.getFiles(OrderRootType.CLASSES))
-                        libraryKind == NativeLibraryKind
-                                // TODO: remove this check for CommonLibraryKind when detection of K/N KLIBs in
-                                //  org.jetbrains.kotlin.ide.konan.KotlinNativePluginUtilKt.isKonanLibraryRoot
-                                //  is correctly implemented
-                                || libraryKind == CommonLibraryKind
-                    }
+                    .filter { detectLibraryKind(it.getFiles(OrderRootType.CLASSES)) == NativeLibraryKind }
                     .mapNotNull inner@{ library ->
                         val libraryNameParts = parseIDELibraryName(library.name.orEmpty()) ?: return@inner null
                         val (_, pureLibraryName, platformPart) = libraryNameParts

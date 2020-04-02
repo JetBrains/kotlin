@@ -1,0 +1,126 @@
+{
+  "4": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "smart case for property `plus` available through the operator invoke",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/neg/1.1.kt",
+          "unexpectedBehaviour": true
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 8,
+          "description": "properties available through the invoke convention are non-eligible for operator calls",
+          "unexpectedBehaviour": true
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "properties available through the invoke convention are non-eligible for operator calls",
+          "unexpectedBehaviour": true
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 4,
+          "description": "Extension callables declared in the package scope",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.4.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "Star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.5.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 10,
+          "description": "Non-extension member callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.1.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "Star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.6.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 5,
+          "description": "Non-extension member callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.2.kt",
+          "unexpectedBehaviour": true
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 4,
+          "description": "Explicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.3.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "2": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "smart case for property `plus` available through the operator invoke",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/neg/1.1.kt",
+          "unexpectedBehaviour": true
+        }
+      ]
+    },
+    "pos": {
+      "3": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 4,
+          "description": "Extension callables declared in the package scope",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "Star-imported extension callables",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 10,
+          "description": "Non-extension member callables",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "Star-imported extension callables",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 5,
+          "description": "Non-extension member callables",
+          "unexpectedBehaviour": true
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 4,
+          "description": "Explicitly imported extension callables",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

@@ -21,15 +21,15 @@ public final class PrimitiveTypes {
     public static final long longMinValue = -9223372036854775808L;
     public static final long longHex = 4294967295L;
     public static final float float54 = 5.4F;
-    private static final float floatMaxValue = 0.0F;
-    private static final float floatNan = 0.0F;
-    private static final float floatPositiveInfinity = 0.0F;
-    private static final float floatNegativeInfinity = 0.0F;
+    private static final float floatMaxValue = 3.4028235E38F;
+    private static final float floatNan = 0.0F / 0.0F;
+    private static final float floatPositiveInfinity = 1.0F / 0.0F;
+    private static final float floatNegativeInfinity = -1.0F / 0.0F;
     public static final double double54 = 5.4;
-    private static final double doubleMaxValue = 0.0;
-    private static final double doubleNan = 0.0;
-    private static final double doublePositiveInfinity = 0.0;
-    private static final double doubleNegativeInfinity = 0.0;
+    private static final double doubleMaxValue = 1.7976931348623157E308;
+    private static final double doubleNan = 0.0 / 0.0;
+    private static final double doublePositiveInfinity = 1.0 / 0.0;
+    private static final double doubleNegativeInfinity = -1.0 / 0.0;
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String stringHelloWorld = "Hello, world!";
     @org.jetbrains.annotations.NotNull()

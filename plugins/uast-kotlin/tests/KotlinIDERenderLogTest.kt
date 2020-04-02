@@ -17,7 +17,6 @@ class KotlinIDERenderLogTest : AbstractKotlinUastLightCodeInsightFixtureTest(), 
 
     override fun check(testName: String, file: UFile) = super.check(testName, file)
 
-
     @Test
     fun testLocalDeclarations() = doTest("LocalDeclarations")
 
@@ -154,8 +153,17 @@ class KotlinIDERenderLogTest : AbstractKotlinUastLightCodeInsightFixtureTest(), 
     fun testReified() = doTest("Reified")
 
     @Test
+    fun testReifiedReturnType() = doTest("ReifiedReturnType")
+
+    @Test
+    fun testReifiedParameters() = doTest("ReifiedParameters")
+
+    @Test
     fun testSuspend() = doTest("Suspend")
 
     @Test
     fun testDeprecatedHidden() = doTest("DeprecatedHidden")
+
+    @Test
+    fun testTryCatch() = doTest("TryCatch")
 }

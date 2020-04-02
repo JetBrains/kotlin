@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.core.overrideImplement
 import com.intellij.openapi.project.Project
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.core.util.KotlinIdeaCoreBundle
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import java.util.*
@@ -88,7 +89,7 @@ class OverrideMembersHandler(private val preferConstructorParameters: Boolean = 
         return overridden.flatMap { toRealSupers(it) }.distinctBy { it.original }
     }
 
-    override fun getChooserTitle() = "Override Members"
+    override fun getChooserTitle() = KotlinIdeaCoreBundle.message("override.members.handler.title")
 
-    override fun getNoMembersFoundHint() = "No members to override have been found"
+    override fun getNoMembersFoundHint() = KotlinIdeaCoreBundle.message("override.members.handler.no.members.hint")
 }

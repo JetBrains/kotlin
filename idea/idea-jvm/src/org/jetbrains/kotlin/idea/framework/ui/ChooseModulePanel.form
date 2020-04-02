@@ -13,7 +13,7 @@
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Single module:"/>
+          <text resource-bundle="messages/KotlinJvmBundle" key="single.module"/>
         </properties>
       </component>
       <component id="8acf5" class="javax.swing.JComboBox" binding="singleModuleComboBox">
@@ -45,7 +45,7 @@
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="All modules containing Kotlin files: "/>
+          <text resource-bundle="messages/KotlinJvmBundle" key="all.modules.containing.kotlin.files"/>
         </properties>
       </component>
       <component id="5e532" class="javax.swing.JRadioButton" binding="allModulesRadioButton">
@@ -53,7 +53,7 @@
           <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="All modules"/>
+          <text resource-bundle="messages/KotlinJvmBundle" key="all.modules"/>
         </properties>
       </component>
     </children>

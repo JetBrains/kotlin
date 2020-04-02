@@ -15,6 +15,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.SmartPsiElementPointer
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isOneLiner
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.countUsages
@@ -55,14 +56,14 @@ private enum class Action {
 
     val description: String
         get() = when (this) {
-            MOVE -> "Variable declaration could be moved into `when`"
-            INLINE -> "Variable declaration could be inlined"
-            NOTHING -> "Nothing to do"
+            MOVE -> KotlinBundle.message("variable.declaration.could.be.moved.into.when")
+            INLINE -> KotlinBundle.message("variable.declaration.could.be.inlined")
+            NOTHING -> KotlinBundle.message("nothing.to.do")
         }
 
     fun createFix(subjectExpressionPointer: SmartPsiElementPointer<KtExpression>): VariableDeclarationIntoWhenFix = when (this) {
-        MOVE -> VariableDeclarationIntoWhenFix("Move variable declaration into `when`", subjectExpressionPointer) { it }
-        INLINE -> VariableDeclarationIntoWhenFix("Inline variable", subjectExpressionPointer) { it.initializer }
+        MOVE -> VariableDeclarationIntoWhenFix(KotlinBundle.message("move.variable.declaration.into.when"), subjectExpressionPointer) { it }
+        INLINE -> VariableDeclarationIntoWhenFix(KotlinBundle.message("inline.variable"), subjectExpressionPointer) { it.initializer }
         else -> error("Illegal action")
     }
 }

@@ -6,23 +6,25 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.diagnostics.FirStubDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.FirResolvedReifiedParameterReferenceBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionWithSmartcast
+import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.isSuperReferenceExpression
-import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedNameError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
@@ -34,6 +36,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -219,11 +222,17 @@ fun createFunctionalType(
     receiverType: ConeKotlinType?,
     rawReturnType: ConeKotlinType,
     isKFunctionType: Boolean = false,
+    isSuspend: Boolean = false
 ): ConeLookupTagBasedType {
     val receiverAndParameterTypes = listOfNotNull(receiverType) + parameters + listOf(rawReturnType)
 
-    val postfix = "Function${receiverAndParameterTypes.size - 1}"
-    val functionalTypeId = if (isKFunctionType) StandardClassIds.reflectByName("K$postfix") else StandardClassIds.byName(postfix)
+    val kind = if (isSuspend) {
+        if (isKFunctionType) FunctionClassDescriptor.Kind.KSuspendFunction else FunctionClassDescriptor.Kind.SuspendFunction
+    } else {
+        if (isKFunctionType) FunctionClassDescriptor.Kind.KFunction else FunctionClassDescriptor.Kind.Function
+    }
+
+    val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(receiverAndParameterTypes.size - 1))
     return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(functionalTypeId), receiverAndParameterTypes.toTypedArray(), isNullable = false)
 }
 
@@ -235,6 +244,30 @@ fun createKPropertyType(
     val arguments = if (receiverType != null) listOf(receiverType, rawReturnType) else listOf(rawReturnType)
     val classId = StandardClassIds.reflectByName("K${if (isMutable) "Mutable" else ""}Property${arguments.size - 1}")
     return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(classId), arguments.toTypedArray(), isNullable = false)
+}
+
+fun BodyResolveComponents.buildResolvedQualifierForClass(
+    regularClass: FirClassLikeSymbol<*>,
+    sourceElement: FirSourceElement? = null,
+    // TODO: Clarify if we actually need type arguments for qualifier?
+    typeArgumentsForQualifier: List<FirTypeProjection> = emptyList()
+): FirResolvedQualifier {
+    val classId = regularClass.classId
+    return buildResolvedQualifier {
+        source = sourceElement
+        packageFqName = classId.packageFqName
+        relativeClassFqName = classId.relativeClassName
+        safe = false
+        typeArguments.addAll(typeArgumentsForQualifier)
+        symbol = regularClass
+    }.apply {
+        resultType = if (classId.isLocal) {
+            typeForQualifierByDeclaration(regularClass.fir, resultType, session)
+                ?: session.builtinTypes.unitType
+        } else {
+            typeForQualifier(this)
+        }
+    }
 }
 
 fun BodyResolveComponents.typeForQualifier(resolvedQualifier: FirResolvedQualifier): FirTypeRef {
@@ -300,7 +333,7 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
         is FirErrorNamedReference ->
             buildErrorTypeRef {
                 source = access.source
-                diagnostic = FirStubDiagnostic(newCallee.diagnostic)
+                diagnostic = ConeStubDiagnostic(newCallee.diagnostic)
             }
         is FirNamedReferenceWithCandidate -> {
             typeFromSymbol(newCallee.candidateSymbol, makeNullable)
@@ -319,7 +352,7 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
         is FirSuperReference -> {
             newCallee.superTypeRef as? FirResolvedTypeRef ?: buildErrorTypeRef {
                 source = newCallee.source
-                diagnostic = FirUnresolvedNameError(Name.identifier("super"))
+                diagnostic = ConeUnresolvedNameError(Name.identifier("super"))
             }
         }
         else -> error("Failed to extract type from: $newCallee")

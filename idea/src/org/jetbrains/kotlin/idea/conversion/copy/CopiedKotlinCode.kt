@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.conversion.copy
 
 import com.intellij.codeInsight.editorActions.TextBlockTransferableData
+import org.jetbrains.kotlin.idea.KotlinBundle
 
 import java.awt.datatransfer.DataFlavor
 
@@ -29,6 +30,6 @@ class CopiedKotlinCode(val fileText: String, val startOffsets: IntArray, val end
     override fun setOffsets(offsets: IntArray?, index: Int) = index
 
     companion object {
-        val DATA_FLAVOR: DataFlavor = DataFlavor(CopiedKotlinCode::class.java, "Copied kotlin code")
+        val DATA_FLAVOR: DataFlavor = DataFlavor(CopiedKotlinCode::class.java, KotlinBundle.message("copy.text.copied.kotlin.code"))
     }
 }

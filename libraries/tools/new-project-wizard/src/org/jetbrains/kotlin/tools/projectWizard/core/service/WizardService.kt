@@ -12,7 +12,8 @@ object Services {
         DummyFileFormattingService(),
         KotlinVersionProviderServiceImpl(),
         RunConfigurationsServiceImpl(),
-        SettingSavingWizardServiceImpl()
+        SettingSavingWizardServiceImpl(),
+        VelocityTemplateEngineServiceImpl()
     )
 }
 

@@ -30,4 +30,4 @@ open inline class D1(val x: Int)
 abstract inline class D2(val x: Int)
 sealed inline class D3(val x: Int)
 
-inline data class D4(val x: String)
+<!INCOMPATIBLE_MODIFIERS!>inline<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class D4(val x: String)

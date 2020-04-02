@@ -52,7 +52,6 @@ fun <L> main(x: L?, y: L) {
     foo3(x, Foo(Bar()))
     foo3(y, Foo(Bar()))
 
-    // Change after fix KT-37380
     foo4(x, Foo(Bar()))
     foo4(y, Foo(Bar()))
 
@@ -124,11 +123,9 @@ fun <L> main(x: L?, y: L) {
     foo22(x, Foo(Foo(InBar())))
     foo22(y, Foo(Foo(InBar())))
 
-    // Change after fix KT-37380
     foo23(x, Foo(Foo(Bar())))
     foo23(y, Foo(Foo(Bar())))
 
-    // Change after fix KT-37380
     foo24(x, Foo(Foo(Bar())))
     foo24(y, Foo(Foo(Bar())))
 }

@@ -180,7 +180,10 @@ internal expect fun mapCapacity(expectedSize: Int): Int
 @PublishedApi
 internal expect fun checkBuilderCapacity(capacity: Int)
 
-/** Returns `true` if this map is not empty. */
+/**
+ * Returns `true` if this map is not empty.
+ * @sample samples.collections.Maps.Usage.mapIsNotEmpty
+ */
 @kotlin.internal.InlineOnly
 public inline fun <K, V> Map<out K, V>.isNotEmpty(): Boolean = !isEmpty()
 
@@ -221,6 +224,8 @@ public inline fun <M, R> M.ifEmpty(defaultValue: () -> R): R where M : Map<*, *>
  * Checks if the map contains the given key.
  *
  * This method allows to use the `x in map` syntax for checking whether an object is contained in the map.
+ *
+ * @sample samples.collections.Maps.Usage.containsKey
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.contains(key: K): Boolean = containsKey(key)

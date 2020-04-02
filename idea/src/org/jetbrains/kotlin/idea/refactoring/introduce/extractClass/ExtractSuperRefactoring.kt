@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.util.runSynchronouslyWithProgress
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.insertDeclaration
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.getChildrenToAnalyze
@@ -133,7 +134,14 @@ class ExtractSuperRefactoring(
                 targetSibling.getResolutionScope()
                     .findClassifier(Name.identifier(newClassName), NoLookupLocation.FROM_IDE)
                     ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
-                    ?.let { conflicts.putValue(it, "Class $newClassName already exists in the target scope") }
+                    ?.let {
+                        conflicts.putValue(
+                            it,
+                            KotlinBundle.message("text.class.0.already.exists.in.the.target.scope",
+                                newClassName
+                            )
+                        )
+                    }
             }
 
             val elementsToMove = getElementsToMove(memberInfos, originalClass, isExtractInterface).keys

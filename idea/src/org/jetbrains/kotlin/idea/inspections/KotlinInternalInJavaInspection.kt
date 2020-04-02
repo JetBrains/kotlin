@@ -9,6 +9,7 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.lexer.KtTokens.INTERNAL_KEYWORD
 import org.jetbrains.kotlin.psi.KtModifierListOwner
@@ -35,7 +36,7 @@ class KotlinInternalInJavaInspection : LocalInspectionTool() {
         }
 
         if (modifierListOwner.hasModifier(INTERNAL_KEYWORD)) {
-            holder.registerProblem(this, "Usage of Kotlin internal declaration from different module")
+            holder.registerProblem(this, KotlinBundle.message("usage.of.kotlin.internal.declaration.from.different.module"))
         }
     }
 

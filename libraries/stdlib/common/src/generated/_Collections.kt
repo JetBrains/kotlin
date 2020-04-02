@@ -699,6 +699,8 @@ public inline fun <T> Iterable<T>.dropWhile(predicate: (T) -> Boolean): List<T> 
 
 /**
  * Returns a list containing only elements matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun <T> Iterable<T>.filter(predicate: (T) -> Boolean): List<T> {
     return filterTo(ArrayList<T>(), predicate)
@@ -742,6 +744,8 @@ public inline fun <reified R, C : MutableCollection<in R>> Iterable<*>.filterIsI
 
 /**
  * Returns a list containing all elements not matching the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Filtering.filter
  */
 public inline fun <T> Iterable<T>.filterNot(predicate: (T) -> Boolean): List<T> {
     return filterNotTo(ArrayList<T>(), predicate)
@@ -749,6 +753,8 @@ public inline fun <T> Iterable<T>.filterNot(predicate: (T) -> Boolean): List<T> 
 
 /**
  * Returns a list containing all elements that are not `null`.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterNotNull
  */
 public fun <T : Any> Iterable<T?>.filterNotNull(): List<T> {
     return filterNotNullTo(ArrayList<T>())
@@ -2251,6 +2257,8 @@ public inline fun <T> Iterable<T>.minusElement(element: T): List<T> {
  * Splits the original collection into pair of lists,
  * where *first* list contains elements for which [predicate] yielded `true`,
  * while *second* list contains elements for which [predicate] yielded `false`.
+ * 
+ * @sample samples.collections.Iterables.Operations.partition
  */
 public inline fun <T> Iterable<T>.partition(predicate: (T) -> Boolean): Pair<List<T>, List<T>> {
     val first = ArrayList<T>()

@@ -13,6 +13,7 @@ import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
@@ -36,7 +37,7 @@ class MigrateDiagnosticSuppressionInspection : AbstractKotlinInspection(), Clean
 
                 holder.registerProblem(
                     expression,
-                    "Diagnostic name should be replaced by the new one",
+                    KotlinBundle.message("diagnostic.name.should.be.replaced.by.the.new.one"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     ReplaceDiagnosticNameFix(newDiagnosticFactory)
                 )
@@ -45,9 +46,9 @@ class MigrateDiagnosticSuppressionInspection : AbstractKotlinInspection(), Clean
     }
 
     class ReplaceDiagnosticNameFix(private val diagnosticFactory: DiagnosticFactory<*>) : LocalQuickFix {
-        override fun getName() = "$familyName with ${diagnosticFactory.name}"
+        override fun getName() = KotlinBundle.message("replace.diagnostic.name.fix.text", familyName, diagnosticFactory.name)
 
-        override fun getFamilyName() = "Replace diagnostic name"
+        override fun getFamilyName() = KotlinBundle.message("replace.diagnostic.name.fix.family.name")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val expression = descriptor.psiElement as? KtStringTemplateExpression ?: return

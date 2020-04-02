@@ -131,7 +131,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(kind, jdkKind, classpath, javaSource);
         configuration.put(JVMConfigurationKeys.IR, getBackend().isIR());
 
-        updateConfigurationByDirectivesInTestFiles(testFilesWithConfigurationDirectives, configuration, coroutinesPackage);
+        updateConfigurationByDirectivesInTestFiles(testFilesWithConfigurationDirectives, configuration, coroutinesPackage, parseDirectivesPerFiles());
         updateConfiguration(configuration);
         setCustomDefaultJvmTarget(configuration);
 
@@ -144,13 +144,14 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             @NotNull List<TestFile> testFilesWithConfigurationDirectives,
             @NotNull CompilerConfiguration configuration
     ) {
-        updateConfigurationByDirectivesInTestFiles(testFilesWithConfigurationDirectives, configuration, "");
+        updateConfigurationByDirectivesInTestFiles(testFilesWithConfigurationDirectives, configuration, "", false);
     }
 
     private static void updateConfigurationByDirectivesInTestFiles(
             @NotNull List<TestFile> testFilesWithConfigurationDirectives,
             @NotNull CompilerConfiguration configuration,
-            @NotNull String coroutinesPackage
+            @NotNull String coroutinesPackage,
+            boolean usePreparsedDirectives
     ) {
         LanguageVersionSettings explicitLanguageVersionSettings = null;
         boolean disableReleaseCoroutines = false;
@@ -158,17 +159,21 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
         List<String> kotlinConfigurationFlags = new ArrayList<>(0);
         for (TestFile testFile : testFilesWithConfigurationDirectives) {
-            kotlinConfigurationFlags.addAll(InTextDirectivesUtils.findListWithPrefixes(testFile.content, "// KOTLIN_CONFIGURATION_FLAGS:"));
+            String content = testFile.content;
+            Directives directives = usePreparsedDirectives ? testFile.directives : KotlinTestUtils.parseDirectives(content);
+            List<String> flags = directives.listValues("KOTLIN_CONFIGURATION_FLAGS");
+            if (flags != null) {
+                kotlinConfigurationFlags.addAll(flags);
+            }
 
-            List<String> lines = InTextDirectivesUtils.findLinesWithPrefixesRemoved(testFile.content, "// JVM_TARGET:");
-            if (!lines.isEmpty()) {
-                String targetString = CollectionsKt.single(lines);
+            String targetString = directives.get("JVM_TARGET");
+            if (targetString != null) {
                 JvmTarget jvmTarget = JvmTarget.Companion.fromString(targetString);
                 assert jvmTarget != null : "Unknown target: " + targetString;
                 configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget);
             }
 
-            String version = InTextDirectivesUtils.findStringWithPrefixes(testFile.content, "// LANGUAGE_VERSION:");
+            String version = directives.get("LANGUAGE_VERSION");
             if (version != null) {
                 throw new AssertionError(
                         "Do not use LANGUAGE_VERSION directive in compiler tests because it's prone to limiting the test\n" +
@@ -178,19 +183,17 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
                 );
             }
 
-            if (!InTextDirectivesUtils.findLinesWithPrefixesRemoved(testFile.content, "// COMMON_COROUTINES_TEST").isEmpty()) {
-                assert !testFile.content.contains("COROUTINES_PACKAGE") : "Must replace COROUTINES_PACKAGE prior to tests compilation";
+            if (directives.contains("COMMON_COROUTINES_TEST")) {
+                assert !directives.contains("COROUTINES_PACKAGE") : "Must replace COROUTINES_PACKAGE prior to tests compilation";
                 if (DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString().equals(coroutinesPackage)) {
                     disableReleaseCoroutines = true;
                     includeCompatExperimentalCoroutines = true;
                 }
             }
 
-            if (testFile.content.contains(DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString())) {
+            if (content.contains(DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString())) {
                 includeCompatExperimentalCoroutines = true;
             }
-
-            Map<String, String> directives = KotlinTestUtils.parseDirectives(testFile.content);
 
             LanguageVersionSettings fileLanguageVersionSettings = parseLanguageVersionSettings(directives);
             if (fileLanguageVersionSettings != null) {
@@ -770,18 +773,22 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
     @Override
     @NotNull
-    protected List<TestFile> createTestFilesFromFile(File file, String expectedText) {
+    protected List<TestFile> createTestFilesFromFile(File file, @NotNull String expectedText) {
         List testFiles = TestFiles.createTestFiles(file.getName(), expectedText, new TestFiles.TestFileFactoryNoModules<TestFile>() {
             @NotNull
             @Override
-            public TestFile create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
-                return new TestFile(fileName, text);
+            public TestFile create(@NotNull String fileName, @NotNull String text, @NotNull Directives directives) {
+                return new TestFile(fileName, text, directives);
             }
-        }, coroutinesPackage);
+        }, false, coroutinesPackage, parseDirectivesPerFiles());
         if (InTextDirectivesUtils.isDirectiveDefined(expectedText, "WITH_HELPERS")) {
             testFiles.add(new TestFile("CodegenTestHelpers.kt", TestHelperGeneratorKt.createTextForCodegenTestHelpers(getBackend())));
         }
         return testFiles;
+    }
+
+    protected boolean parseDirectivesPerFiles() {
+        return false;
     }
 
     @NotNull

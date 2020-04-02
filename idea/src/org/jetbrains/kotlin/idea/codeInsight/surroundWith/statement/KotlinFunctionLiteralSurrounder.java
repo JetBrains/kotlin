@@ -34,7 +34,7 @@ public class KotlinFunctionLiteralSurrounder extends KotlinStatementsSurrounder 
         statements = MoveDeclarationsOutHelperKt.move(container, statements, true);
 
         if (statements.length == 0) {
-            KotlinSurrounderUtils.showErrorHint(project, editor, KotlinSurrounderUtils.SURROUND_WITH_ERROR);
+            KotlinSurrounderUtils.showErrorHint(project, editor, KotlinSurrounderUtils.SURROUND_WITH_ERROR());
             return null;
         }
 
@@ -62,6 +62,6 @@ public class KotlinFunctionLiteralSurrounder extends KotlinStatementsSurrounder 
 
     @Override
     public String getTemplateDescription() {
-        return KotlinBundle.message("surround.with.function.template");
+        return "{ }";
     }
 }

@@ -16,6 +16,7 @@ import com.intellij.refactoring.move.MoveHandler
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.idea.refactoring.move.MoveFilesOrDirectoriesHandlerCompat
+import org.jetbrains.kotlin.idea.refactoring.move.logFusForMoveRefactoring
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesDialog
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesModel
 import org.jetbrains.kotlin.idea.util.application.executeCommand
@@ -60,7 +61,8 @@ class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandlerCompat(
 
         val initialTargetDirectory = MoveFilesOrDirectoriesUtil.getInitialTargetDirectory(targetDirectory, elements)
 
-        if (ApplicationManager.getApplication().isUnitTestMode && initialTargetDirectory !== null) {
+        val isTestUnitMode = ApplicationManager.getApplication().isUnitTestMode
+        if (isTestUnitMode && initialTargetDirectory !== null) {
             KotlinAwareMoveFilesOrDirectoriesModel(
                 project,
                 adjustedElementsToMove,
@@ -70,7 +72,19 @@ class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandlerCompat(
                 moveCallback = callback
             ).run {
                 project.executeCommand(MoveHandler.REFACTORING_NAME) {
-                    computeModelResult().run()
+                    with(computeModelResult()) {
+                        if (!isTestUnitMode) {
+                            logFusForMoveRefactoring(
+                                elementsCount,
+                                entityToMove,
+                                destination,
+                                true,
+                                processor
+                            )
+                        } else {
+                            processor.run()
+                        }
+                    }
                 }
             }
             return

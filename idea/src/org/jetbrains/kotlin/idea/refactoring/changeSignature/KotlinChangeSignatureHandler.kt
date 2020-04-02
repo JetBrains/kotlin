@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZE
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.util.expectedDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.psi.*
@@ -60,7 +60,7 @@ class KotlinChangeSignatureHandler : ChangeSignatureHandler {
         invokeChangeSignature(element, element, project, editor)
     }
 
-    override fun getTargetNotFoundMessage() = KotlinRefactoringBundle.message("error.wrong.caret.position.function.or.constructor.name")
+    override fun getTargetNotFoundMessage() = KotlinBundle.message("error.wrong.caret.position.function.or.constructor.name")
 
     companion object {
         fun findTargetForRefactoring(element: PsiElement): PsiElement? {
@@ -141,8 +141,8 @@ class KotlinChangeSignatureHandler : ChangeSignatureHandler {
                     CodeInsightUtils.showErrorHint(
                         project,
                         editor,
-                        "Change signature is not applicable to dynamically invoked functions",
-                        "Change Signature",
+                        KotlinBundle.message("message.change.signature.is.not.applicable.to.dynamically.invoked.functions"),
+                        RefactoringBundle.message("changeSignature.refactoring.name"),
                         null
                     )
                 }
@@ -171,7 +171,7 @@ class KotlinChangeSignatureHandler : ChangeSignatureHandler {
             return when (descriptor) {
                 is FunctionDescriptor -> {
                     if (descriptor.valueParameters.any { it.varargElementType != null }) {
-                        val message = KotlinRefactoringBundle.message("error.cant.refactor.vararg.functions")
+                        val message = KotlinBundle.message("error.cant.refactor.vararg.functions")
                         CommonRefactoringUtil.showErrorHint(
                             project,
                             editor,
@@ -183,7 +183,7 @@ class KotlinChangeSignatureHandler : ChangeSignatureHandler {
                     }
 
                     if (descriptor.kind === SYNTHESIZED) {
-                        val message = KotlinRefactoringBundle.message("cannot.refactor.synthesized.function", descriptor.name)
+                        val message = KotlinBundle.message("cannot.refactor.synthesized.function", descriptor.name)
                         CommonRefactoringUtil.showErrorHint(
                             project,
                             editor,
@@ -201,7 +201,8 @@ class KotlinChangeSignatureHandler : ChangeSignatureHandler {
 
                 else -> {
                     val message =
-                        RefactoringBundle.getCannotRefactorMessage(KotlinRefactoringBundle.message("error.wrong.caret.position.function.or.constructor.name"))
+                        RefactoringBundle.getCannotRefactorMessage(
+                            KotlinBundle.message("error.wrong.caret.position.function.or.constructor.name"))
                     CommonRefactoringUtil.showErrorHint(
                         project,
                         editor,

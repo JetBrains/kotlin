@@ -141,9 +141,9 @@ internal class ProjectResolutionFacade(
             analysisResults.upToDateOrNull?.get() ?: return null
         }
         val perFileCache = synchronized(slruCache) {
-            slruCache[element.containingKtFile]
+            slruCache.getIfCached(element.containingKtFile)
         }
-        return perFileCache.fetchAnalysisResults(element)
+        return perFileCache?.fetchAnalysisResults(element)
     }
 
     override fun toString(): String {

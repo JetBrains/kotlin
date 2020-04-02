@@ -5,7 +5,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SPEC VERSION: 0.1-218
+ * SPEC VERSION: 0.1-296
  * PLACE: expressions, try-expression -> paragraph 8 -> sentence 1
  * RELEVANT PLACES: expressions, try-expression -> paragraph 9 -> sentence 1
  * NUMBER: 1
@@ -52,7 +52,7 @@ fun case2() {
  */
 fun case3() {
     val tryVal: A<Int> =
-    <!TYPE_MISMATCH, TYPE_MISMATCH!>try {
+    <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>try {
         throwExceptionA(false)
         A(2)
     } catch (e: ExcA) {

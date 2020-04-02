@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:Suppress("Duplicates")
@@ -11,7 +11,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.analyzer.common.CommonAnalysisParameters
 import org.jetbrains.kotlin.analyzer.common.configureCommonSpecificComponents
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.ModuleContext
@@ -24,22 +23,17 @@ import org.jetbrains.kotlin.frontend.di.configureStandardResolveComponents
 import org.jetbrains.kotlin.frontend.java.di.configureJavaSpecificComponents
 import org.jetbrains.kotlin.frontend.java.di.initializeJavaSpecificComponents
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
-import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
-import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.*
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.has
-import org.jetbrains.kotlin.platform.idePlatformKind
-import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
-import org.jetbrains.kotlin.platform.konan.KonanPlatform
-import org.jetbrains.kotlin.platform.konan.KonanPlatforms
+import org.jetbrains.kotlin.platform.konan.NativePlatform
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalMarkerDeclarationAnnotationChecker
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
@@ -49,12 +43,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmentProvider
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
-import org.jetbrains.kotlin.serialization.js.createKotlinJavascriptPackageFragmentProvider
-import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
-import org.jetbrains.kotlin.serialization.konan.impl.KlibMetadataModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 
 class CompositeResolverForModuleFactory(
     private val commonAnalysisParameters: CommonAnalysisParameters,
@@ -127,55 +116,33 @@ class CompositeResolverForModuleFactory(
         container: StorageComponentContainer
     ): List<PackageFragmentProvider> {
         if (!targetPlatform.isCommon()) return emptyList()
-        val metadataProvder = container.get<MetadataPackageFragmentProvider>()
-        var klibMetadataProvider: PackageFragmentProvider? = null
 
-        if (moduleInfo is CommonKlibLibraryInfo && moduleInfo.compatibilityInfo.isCompatible) {
-            val library = moduleInfo.commonLibrary
-            val languageVersionSettings = container.get<LanguageVersionSettings>()
+        val metadataProvider = container.get<MetadataPackageFragmentProvider>()
 
-            val packageFragmentNames = parseModuleHeader(library.moduleHeaderData).packageFragmentNameList
+        val klibMetadataProvider = CommonPlatforms.defaultCommonPlatform.idePlatformKind.resolution.createKlibPackageFragmentProvider(
+            moduleInfo,
+            moduleContext.storageManager,
+            container.get<LanguageVersionSettings>(),
+            moduleDescriptor
+        )
 
-            val metadataFactories = KlibMetadataFactories(
-                { DefaultBuiltIns.Instance },
-                NullFlexibleTypeDeserializer
-            )
-
-            val klibMetadataModuleDescriptorFactory = KlibMetadataModuleDescriptorFactoryImpl(
-                metadataFactories.DefaultDescriptorFactory,
-                metadataFactories.DefaultPackageFragmentsFactory,
-                metadataFactories.flexibleTypeDeserializer,
-                metadataFactories.platformDependentTypeTransformer
-            )
-
-            klibMetadataProvider = klibMetadataModuleDescriptorFactory.createPackageFragmentProvider(
-                library,
-                packageAccessHandler = null,
-                packageFragmentNames = packageFragmentNames,
-                storageManager = moduleContext.storageManager,
-                moduleDescriptor = moduleDescriptor,
-                configuration = CompilerDeserializationConfiguration(languageVersionSettings),
-                compositePackageFragmentAddend = null
-            )
-        }
-        return listOfNotNull(metadataProvder, klibMetadataProvider)
+        return listOfNotNull(metadataProvider, klibMetadataProvider)
     }
 
     private fun getJvmProvidersIfAny(container: StorageComponentContainer): List<PackageFragmentProvider> =
         if (targetPlatform.has<JvmPlatform>()) listOf(container.get<JavaDescriptorResolver>().packageFragmentProvider) else emptyList()
 
     private fun getKonanProvidersIfAny(moduleInfo: ModuleInfo, container: StorageComponentContainer): List<PackageFragmentProvider> {
-        if (!targetPlatform.has<KonanPlatform>()) return emptyList()
-        val resolution = KonanPlatforms.defaultKonanPlatform.idePlatformKind.resolution
+        if (!targetPlatform.has<NativePlatform>()) return emptyList()
 
-        val konanProvider = resolution.createPlatformSpecificPackageFragmentProvider(
-            moduleInfo,
-            container.get<StorageManager>(),
-            container.get<LanguageVersionSettings>(),
-            container.get<ModuleDescriptor>()
-        ) ?: return emptyList()
-
-        return listOf(konanProvider)
+        return listOfNotNull(
+            NativePlatforms.defaultNativePlatform.idePlatformKind.resolution.createKlibPackageFragmentProvider(
+                moduleInfo,
+                container.get<StorageManager>(),
+                container.get<LanguageVersionSettings>(),
+                container.get<ModuleDescriptor>()
+            )
+        )
     }
 
     private fun getJsProvidersIfAny(
@@ -186,17 +153,7 @@ class CompositeResolverForModuleFactory(
     ): List<PackageFragmentProvider> {
         if (moduleInfo !is LibraryModuleInfo || !moduleInfo.platform.isJs()) return emptyList()
 
-        return moduleInfo.getLibraryRoots()
-            .flatMap { KotlinJavascriptMetadataUtils.loadMetadata(it) }
-            .filter { it.version.isCompatible() }
-            .map { metadata ->
-                val (header, packageFragmentProtos) =
-                    KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body, metadata.version)
-                createKotlinJavascriptPackageFragmentProvider(
-                    moduleContext.storageManager, moduleDescriptor, header, packageFragmentProtos, metadata.version,
-                    container.get(), LookupTracker.DO_NOTHING
-                )
-            }
+        return createPackageFragmentProvider(moduleInfo, container, moduleContext, moduleDescriptor)
     }
 
     fun createContainerForCompositePlatform(

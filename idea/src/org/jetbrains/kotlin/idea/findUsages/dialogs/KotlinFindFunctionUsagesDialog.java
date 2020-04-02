@@ -72,12 +72,12 @@ public class KotlinFindFunctionUsagesDialog extends FindMethodUsagesDialog {
             Utils.renameCheckbox(
                     findWhatPanel,
                     FindBundle.message("find.what.implementing.methods.checkbox"),
-                    KotlinBundle.message("find.what.implementing.methods.checkbox")
+                    KotlinBundle.message("find.declaration.implementing.methods.checkbox")
             );
             Utils.renameCheckbox(
                     findWhatPanel,
                     FindBundle.message("find.what.overriding.methods.checkbox"),
-                    KotlinBundle.message("find.what.overriding.methods.checkbox")
+                    KotlinBundle.message("find.declaration.overriding.methods.checkbox")
             );
         }
 
@@ -91,10 +91,10 @@ public class KotlinFindFunctionUsagesDialog extends FindMethodUsagesDialog {
         if (!Utils.renameCheckbox(
                 optionsPanel,
                 FindBundle.message("find.options.include.overloaded.methods.checkbox"),
-                KotlinBundle.message("find.options.include.overloaded.methods.checkbox")
+                KotlinBundle.message("find.declaration.include.overloaded.methods.checkbox")
         )) {
             addCheckboxToPanel(
-                    KotlinBundle.message("find.options.include.overloaded.methods.checkbox"),
+                    KotlinBundle.message("find.declaration.include.overloaded.methods.checkbox"),
                     FindSettings.getInstance().isSearchOverloadedMethods(),
                     optionsPanel,
                     false
@@ -110,7 +110,7 @@ public class KotlinFindFunctionUsagesDialog extends FindMethodUsagesDialog {
         KotlinFunctionFindUsagesOptions options = getFindUsagesOptions();
         if (isActual) {
             expectedUsages = addCheckboxToPanel(
-                    "Expected functions",
+                    KotlinBundle.message("find.usages.checkbox.name.expected.functions"),
                     options.getSearchExpected(),
                     optionsPanel,
                     false

@@ -63,14 +63,22 @@ class TestExceptionsComparator(wholeFile: File) {
                     Pattern.compile("""Exception while analyzing expression at \((?<lineNumber>\d+),(?<symbolNumber>\d+)\) in /(?<filename>.*?)$""")
         )
         private val ls = System.lineSeparator()
+
+        private const val BYTECODE_ADDRESS = """\d{7}"""
+        private val bytecodeAddressRegex = Regex(BYTECODE_ADDRESS)
+        private val bytecodeAddressListRegex = Regex("""Bytecode:\s+($BYTECODE_ADDRESS:\s*([0-9a-f]{4}\s+)+\s+)+""")
+
+        private fun unifyPlatformDependentOfException(exceptionText: String) =
+            exceptionText.replace(bytecodeAddressListRegex) { bytecodeAddresses ->
+                bytecodeAddresses.value.replace(bytecodeAddressRegex) { "0x${it.value}" }
+            }
     }
 
     private val filePathPrefix = "${wholeFile.parent}/${wholeFile.nameWithoutExtension}.$EXCEPTIONS_FILE_PREFIX"
 
     private fun analyze(e: Throwable): Matcher? {
         for ((_, pattern) in exceptionMessagePatterns) {
-            if (e.message == null) continue
-            val matches = pattern.matcher(e.message)
+            val matches = pattern.matcher(e.message ?: continue)
             if (matches.find()) return matches
         }
 
@@ -83,7 +91,8 @@ class TestExceptionsComparator(wholeFile: File) {
         return when (e) {
             is TestsRuntimeError ->
                 (e.original.cause ?: e.original).run {
-                    casesAsString + toString() + stackTrace[0]?.let { ls + it }
+                    val exceptionText = casesAsString + toString() + stackTrace[0]?.let { ls + it }
+                    unifyPlatformDependentOfException(exceptionText)
                 }
             is TestsCompilerError, is TestsCompiletimeError, is TestsInfrastructureError -> casesAsString + (e.original.cause ?: e.original).toString()
         }

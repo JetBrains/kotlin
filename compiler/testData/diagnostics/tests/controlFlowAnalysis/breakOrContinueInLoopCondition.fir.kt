@@ -1,17 +1,17 @@
 fun test() {
 
-    l@ for (i in if (true) 1..10 else continue@l) {}
-    for (i in if (true) 1..10 else continue) {}
+    l@ for (i in if (true) 1..10 else <!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>continue@l<!>) {}
+    for (i in if (true) 1..10 else <!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>continue<!>) {}
 
-    while (break) {}
-    l@ while (break@l) {}
+    while (<!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>break<!>) {}
+    l@ while (<!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>break@l<!>) {}
 
-    do {} while (continue)
-    l@ do {} while (continue@l)
+    do {} while (<!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>continue<!>)
+    l@ do {} while (<!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>continue@l<!>)
 
     //KT-5704
     var i = 0
-    while (if(i++ == 10) break else continue) {}
+    while (if(i++ == 10) <!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>break<!> else <!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>continue<!>) {}
 }
 
 fun test2(b: Boolean) {

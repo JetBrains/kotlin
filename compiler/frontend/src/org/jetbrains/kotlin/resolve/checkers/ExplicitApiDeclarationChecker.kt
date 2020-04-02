@@ -77,6 +77,7 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
      * 2. Properties of data classes in public API
      * 3. Overrides of public API. Effectively, this means 'no report on overrides at all'
      * 4. Getters and setters (because getters can't change visibility and setter-only explicit visibility looks ugly)
+     * 5. Properties of annotations in public API
      *
      * Do we need something like @PublicApiFile to disable (or invert) this inspection per-file?
      */
@@ -85,6 +86,7 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
         /* 2. */ if (descriptor is PropertyDescriptor && (descriptor.containingDeclaration as? ClassDescriptor)?.isData == true) return true
         /* 3. */ if ((descriptor as? CallableDescriptor)?.overriddenDescriptors?.isNotEmpty() == true) return true
         /* 4. */ if (descriptor is PropertyAccessorDescriptor) return true
+        /* 5. */ if (descriptor is PropertyDescriptor && (descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.ANNOTATION_CLASS) return true
         return false
     }
 

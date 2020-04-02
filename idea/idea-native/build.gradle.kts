@@ -9,7 +9,6 @@ dependencies {
     compile(project(":idea:idea-jvm"))
     compile(project(":compiler:frontend"))
     compile(project(":native:frontend.native"))
-    compile(project(":native:kotlin-native-utils"))
 
     compileOnly(intellijDep())
     Platform[192].orHigher {

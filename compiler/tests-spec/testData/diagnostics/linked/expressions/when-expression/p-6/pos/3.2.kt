@@ -3,7 +3,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-100
+ * SPEC VERSION: 0.1-296
  * PLACE: expressions, when-expression -> paragraph 6 -> sentence 3
  * NUMBER: 2
  * DESCRIPTION: 'When' with bound value and enumeration of the containment operators.

@@ -1,0 +1,26 @@
+digraph initBlock_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function <init>" style="filled" fillcolor=red];
+        1 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        2 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+
+    0 -> {1};
+    1 -> {2};
+
+    subgraph cluster_1 {
+        color=red
+        3 [label="Enter function <init>" style="filled" fillcolor=red];
+        4 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        5 [label="Exit function <init>" style="filled" fillcolor=red];
+    }
+
+    3 -> {4};
+    4 -> {5};
+
+}

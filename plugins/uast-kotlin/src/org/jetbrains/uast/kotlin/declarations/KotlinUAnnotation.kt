@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
@@ -94,6 +95,10 @@ abstract class KotlinUAnnotationBase<T : KtCallElement>(
     }
 
     override fun convertParent(): UElement? {
+        sourcePsi.parent.safeAs<KtAnnotatedExpression>()?.let {
+            return it.baseExpression?.let { KotlinConverter.convertExpression(it, null, DEFAULT_EXPRESSION_TYPES_LIST) }
+        }
+
         val superParent = super.convertParent() ?: return null
         if (annotationUseSiteTarget() == AnnotationUseSiteTarget.RECEIVER) {
             (superParent.uastParent as? KotlinUMethod)?.uastParameters?.firstIsInstance<KotlinReceiverUParameter>()?.let {

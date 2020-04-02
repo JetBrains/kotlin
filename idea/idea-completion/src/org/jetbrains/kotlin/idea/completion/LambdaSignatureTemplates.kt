@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -43,7 +43,7 @@ object LambdaSignatureTemplates {
     ) {
         // we start template later to not interfere with insertion of tail type
         val commandProcessor = CommandProcessor.getInstance()
-        val commandName = commandProcessor.currentCommandName ?: "Insert lambda template"
+        val commandName = commandProcessor.currentCommandName ?: KotlinIdeaCompletionBundle.message("insert.lambda.template")
         val commandGroupId = commandProcessor.currentCommandGroupId
 
         val rangeMarker = context.document.createRangeMarker(placeholderRange)

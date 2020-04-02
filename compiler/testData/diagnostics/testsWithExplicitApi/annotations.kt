@@ -10,6 +10,8 @@
 )
 public annotation class B
 
+<!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>annotation class C<!>(val a: String)
+
 /**
  * Foo1 KDoc
  */

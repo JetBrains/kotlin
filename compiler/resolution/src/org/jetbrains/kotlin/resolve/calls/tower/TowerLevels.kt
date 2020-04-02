@@ -17,9 +17,6 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
@@ -144,11 +141,11 @@ internal class MemberScopeTowerLevel(
                 Variance.INVARIANT -> null
                 Variance.OUT_VARIANCE -> approximator.approximateToSuperType(
                     topLevelType.unwrap(),
-                    TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation
+                    TypeApproximatorConfiguration.InternalTypesApproximation
                 )
                 Variance.IN_VARIANCE -> approximator.approximateToSubType(
                     topLevelType.unwrap(),
-                    TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation
+                    TypeApproximatorConfiguration.InternalTypesApproximation
                 )
             } ?: topLevelType
         }

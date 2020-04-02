@@ -1,0 +1,40 @@
+UFile (package = )
+    UClass (name = AnnotatedExpressionsKt)
+        UMethod (name = foo)
+            UBlockExpression
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                    UAnnotation (fqName = kotlin.Suppress)
+                    UIdentifier (Identifier (foo))
+                    USimpleNameReferenceExpression (identifier = foo, resolvesTo = null)
+                UDeclarationsExpression
+                    ULocalVariable (name = a)
+                        UAnnotation (fqName = kotlin.Suppress)
+                        ULiteralExpression (value = 1)
+                UDeclarationsExpression
+                    ULocalVariable (name = b)
+                        UAnnotation (fqName = kotlin.Suppress)
+                        ULiteralExpression (value = 2)
+                UBinaryExpression (operator = =)
+                    UAnnotation (fqName = kotlin.Suppress)
+                    USimpleNameReferenceExpression (identifier = b)
+                    USimpleNameReferenceExpression (identifier = a)
+                UIfExpression
+                    UAnnotation (fqName = kotlin.Suppress)
+                    UBinaryExpression (operator = >)
+                        USimpleNameReferenceExpression (identifier = a)
+                        ULiteralExpression (value = 2)
+                    USimpleNameReferenceExpression (identifier = a)
+                    USimpleNameReferenceExpression (identifier = b)
+                UDeclarationsExpression
+                    ULocalVariable (name = c)
+                        UExpressionList (elvis)
+                            UDeclarationsExpression
+                                ULocalVariable (name = varae507364)
+                                    USimpleNameReferenceExpression (identifier = a)
+                                        UAnnotation (fqName = kotlin.Suppress)
+                            UIfExpression
+                                UBinaryExpression (operator = !=)
+                                    USimpleNameReferenceExpression (identifier = varae507364)
+                                    ULiteralExpression (value = null)
+                                USimpleNameReferenceExpression (identifier = varae507364)
+                                USimpleNameReferenceExpression (identifier = b)

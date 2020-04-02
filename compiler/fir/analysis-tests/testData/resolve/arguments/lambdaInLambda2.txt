@@ -1,0 +1,14 @@
+FILE: main.kt
+    public abstract interface PsiMethod : R|kotlin/Any| {
+        public abstract val containingClass: R|PsiClass?|
+            public get(): R|PsiClass?|
+
+    }
+    public abstract interface PsiClass : R|kotlin/Any| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval processor: R|AdapterProcessor<ft<PsiMethod, PsiMethod?>!, ft<PsiClass, PsiClass?>!>| = R|/AdapterProcessor.AdapterProcessor|<R|ft<PsiMethod, PsiMethod?>!|, R|ft<PsiClass, PsiClass?>!|>(R|/Function|<R|ft<PsiMethod, PsiMethod?>!|, R|PsiClass?|>(<L> = Function@fun <anonymous>(method: R|PsiMethod?|): R|PsiClass?| {
+            ^ R|<local>/method|?.R|/PsiMethod.containingClass|
+        }
+        ))
+    }

@@ -24,7 +24,7 @@ public class Test<T> extends Base<T> {
 
 open class Base<out T>(val prop: T)
 
-class Inheritor <T : Any> {
+class Inheritor<T : Any> {
     companion object {
         fun <T> default(): Base<T> = Test(null)
     }

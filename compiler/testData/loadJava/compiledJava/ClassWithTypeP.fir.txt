@@ -1,4 +1,4 @@
-public final class ClassWithTypeP<P> : R|kotlin/Any| {
-    public constructor<P>(): R|test/ClassWithTypeP<P>|
+public final class ClassWithTypeP<P : R|ft<kotlin/Any, kotlin/Any?>!|> : R|kotlin/Any| {
+    public constructor<P : R|ft<kotlin/Any, kotlin/Any?>!|>(): R|test/ClassWithTypeP<P>|
 
 }
