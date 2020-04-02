@@ -370,7 +370,10 @@ class DocRenderer implements EditorCustomElementRenderer {
         "ul { padding: 0 16px 0 0; }" +
         "li { padding: 1px 0 2px 0; }" +
         "table p { padding-bottom: 0}" +
-        "th { text-align: left; }"
+        "th { text-align: left; }" +
+        "td {padding: 4px 0 0 0}" +
+        "td p {padding-top: 0}" +
+        ".sections {border-spacing: 0}"
       );
       ourCachedStyleSheetLinkColor = linkColorHex;
       ourCachedStyleSheetMonoFont = editorFontName;
