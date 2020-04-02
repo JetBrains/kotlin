@@ -302,12 +302,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
       DumbAwareAction.create(e -> closeImmediately())
         .registerCustomShortcutSet(escape == null ? CommonShortcuts.ESCAPE : escape.getShortcutSet(), root, myDisposable);
       root.setWindowDecorationStyle(JRootPane.NONE);
-      if (SystemInfo.isMac && StartupUiUtil.isUnderDarcula()) {
-        root.setBorder(PopupBorder.Factory.createColored(OnePixelDivider.BACKGROUND));
-      }
-      else {
-        root.setBorder(PopupBorder.Factory.create(true, true));
-      }
+      root.setBorder(PopupBorder.Factory.create(true, true));
       UIUtil.markAsPossibleOwner((Dialog)w);
       w.setBackground(UIUtil.getPanelBackground());
       w.setMinimumSize(panelSize);
