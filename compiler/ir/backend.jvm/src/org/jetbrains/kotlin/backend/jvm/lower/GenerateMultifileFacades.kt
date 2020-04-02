@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 internal val generateMultifileFacadesPhase = namedIrModulePhase(
@@ -217,7 +218,14 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
     val function = buildFun {
         updateFrom(target)
         isFakeOverride = shouldGeneratePartHierarchy
-        name = target.name
+        name = if (shouldGeneratePartHierarchy) {
+            target.name
+        } else {
+            // Generating a bridge. If the bridge is targeting a property getter
+            // we need to take care to get the name right. The bridge is not a
+            // property getter itself.
+            Name.identifier(context.methodSignatureMapper.mapFunctionName(target))
+        }
     }
 
     function.copyParameterDeclarationsFrom(target)

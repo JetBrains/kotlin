@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 
 internal val jvmStaticAnnotationPhase = makeIrFilePhase(
@@ -92,7 +93,10 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
         addFunction {
             returnType = target.returnType
             origin = JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
-            name = target.name
+            // The proxy needs to have the same name as what it is targeting. If that is a property accessor,
+            // we need to make sure that the name is mapped correctly. The static method is not a property accessor,
+            // so we do not have a property to link it up to. Therefore, we compute the right name now.
+            name = Name.identifier(context.methodSignatureMapper.mapFunctionName(target))
             modality = if (isInterface) Modality.OPEN else target.modality
             visibility = target.visibility
             isSuspend = target.isSuspend

@@ -341,6 +341,14 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
             returnType = irFunction.returnType
             isFakeOverride = false
         }.apply {
+            // If the function is a property accessor, link in the new function as the new accessor for the property.
+            correspondingPropertySymbol = irFunction.correspondingPropertySymbol?.also {
+                if (irFunction.isGetter) {
+                    it.owner.getter = this
+                } else {
+                    it.owner.setter = this
+                }
+            }
             copyParametersWithErasure(this@addAbstractMethodStub, irFunction, needsArgumentBoxing)
         }
 

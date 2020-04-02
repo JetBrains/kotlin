@@ -53,10 +53,6 @@ fun box(
     c2.size
 }
 
-/*
-
-*/
-
 // 8 public final bridge size\(\)I
 // 8 INVOKEVIRTUAL A[0-9]+\.size \(\)I
 // 1 INVOKEINTERFACE A9+\.size \(\)I

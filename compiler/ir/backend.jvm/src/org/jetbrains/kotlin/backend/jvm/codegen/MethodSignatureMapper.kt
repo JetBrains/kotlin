@@ -92,22 +92,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             return mangleMemberNameIfRequired(accessorName, function)
         }
 
-        val functionName = workaroundPropertyAccessorName(function) ?: function.name.asString()
-        return mangleMemberNameIfRequired(functionName, function)
-    }
-
-    // This is a dirty hack which is needed to correctly map names of property accessors whose correspondingPropertySymbol was lost.
-    // The reason it's needed is that it sometimes gets lost during DeepCopyIrTreeWithSymbols because that algorithm doesn't copy
-    // the link to the property when transforming a simple function. This can be fixed but might require a lot of changes in backends,
-    // and will likely be unneeded as soon as we have proper properties in the IR (IrProperty which is a declaration parent).
-    // TODO: remove this hack as soon as IrProperty is a declaration parent
-    private fun workaroundPropertyAccessorName(function: IrFunction): String? {
-        val name = function.name.asString()
-        val ifGetter = name.removeSurrounding("<get-", ">")
-        if (ifGetter != name) return JvmAbi.getterName(ifGetter)
-        val ifSetter = name.removeSurrounding("<set-", ">")
-        if (ifSetter != name) return JvmAbi.setterName(ifSetter)
-        return null
+        return mangleMemberNameIfRequired(function.name.asString(), function)
     }
 
     private fun mangleMemberNameIfRequired(name: String, function: IrFunction): String {
