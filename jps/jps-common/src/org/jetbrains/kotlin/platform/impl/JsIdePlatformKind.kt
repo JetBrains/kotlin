@@ -15,9 +15,10 @@ import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.js.isJs
 
 object JsIdePlatformKind : IdePlatformKind<JsIdePlatformKind>() {
-    override fun supportsTargetPlatform(platform: TargetPlatform): Boolean = platforms.contains(platform)
+    override fun supportsTargetPlatform(platform: TargetPlatform): Boolean = platform.isJs()
 
     override fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform? {
         return if (arguments is K2JSCompilerArguments)
