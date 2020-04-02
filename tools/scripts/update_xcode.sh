@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 # "brew install coreutils" for grealpath.
 KONAN_TOOLCHAIN_VERSION=10
