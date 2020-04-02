@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding.CAPTURES_CROSSINLINE_
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE
 import org.jetbrains.kotlin.codegen.context.ClosureContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
-import org.jetbrains.kotlin.codegen.inline.coroutines.SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -501,17 +500,11 @@ class CoroutineCodegenForLambda private constructor(
                         languageVersionSettings = languageVersionSettings,
                         disableTailCallOptimizationForFunctionReturningUnit = false
                     )
-                    return if (forInline) AddEndLabelMethodVisitor(
-                        MethodNodeCopyingMethodVisitor(
-                            SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor(
-                                stateMachineBuilder, access, name, desc, v.thisName,
-                                isCapturedSuspendLambda = { isCapturedSuspendLambda(closure, it.name, state.bindingContext) }
-                            ), access, name, desc,
-                            newMethod = { origin, newAccess, newName, newDesc ->
-                                functionCodegen.newMethod(origin, newAccess, newName, newDesc, null, null)
-                            }
-                        ), access, name, desc, endLabel
-                    ) else AddEndLabelMethodVisitor(stateMachineBuilder, access, name, desc, endLabel)
+                    val maybeWithForInline = if (forInline)
+                        SuspendForInlineCopyingMethodVisitor(stateMachineBuilder, access, name, desc, functionCodegen::newMethod)
+                    else
+                        stateMachineBuilder
+                    return AddEndLabelMethodVisitor(maybeWithForInline, access, name, desc, endLabel)
                 }
 
                 override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {

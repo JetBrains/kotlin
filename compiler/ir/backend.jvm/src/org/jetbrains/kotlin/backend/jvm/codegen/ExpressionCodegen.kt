@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
 import org.jetbrains.kotlin.codegen.CallGenerator
 import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.coroutines.SuspensionPointKind
 import org.jetbrains.kotlin.codegen.extractReificationArgument
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.putNeedClassReificationMarker
@@ -429,7 +430,7 @@ class ExpressionCodegen(
         expression.markLineNumber(true)
 
         if (isSuspensionPoint != SuspensionPointKind.NEVER) {
-            addSuspendMarker(mv, isStartNotEnd = true, isInline = isSuspensionPoint == SuspensionPointKind.NOT_INLINE)
+            addSuspendMarker(mv, isSuspensionPoint, isStartNotEnd = true)
         }
 
         if (irFunction.isInvokeSuspendOfContinuation()) {
@@ -442,7 +443,7 @@ class ExpressionCodegen(
         }
 
         if (isSuspensionPoint != SuspensionPointKind.NEVER) {
-            addSuspendMarker(mv, isStartNotEnd = false, isInline = isSuspensionPoint == SuspensionPointKind.NOT_INLINE)
+            addSuspendMarker(mv, isSuspensionPoint, isStartNotEnd = false)
             addInlineMarker(mv, isStartNotEnd = false)
         }
 
@@ -477,8 +478,6 @@ class ExpressionCodegen(
                 MaterialValue(this, callable.asmMethod.returnType, callee.returnType)
         }
     }
-
-    private enum class SuspensionPointKind { NEVER, NOT_INLINE, ALWAYS }
 
     private fun IrFunctionAccessExpression.isSuspensionPoint(): SuspensionPointKind = when {
         !symbol.owner.isSuspend || !irFunction.shouldContainSuspendMarkers() -> SuspensionPointKind.NEVER

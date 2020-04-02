@@ -534,7 +534,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
             val directMember = getDirectMemberAndCallableFromObject(functionDescriptor)
             if (!isBuiltInArrayIntrinsic(functionDescriptor) && directMember !is DescriptorWithContainerSource) {
-                return sourceCompilerForInline.doCreateMethodNodeFromSource(functionDescriptor, jvmSignature, callDefault, asmMethod)
+                val node = sourceCompilerForInline.doCreateMethodNodeFromSource(functionDescriptor, jvmSignature, callDefault, asmMethod)
+                node.node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
+                return node
             }
 
             return getCompiledMethodNodeInner(functionDescriptor, directMember, asmMethod, methodOwner, state, jvmSignature)

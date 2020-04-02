@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_IMPL_NAME_SUFFIX
 import org.jetbrains.kotlin.codegen.coroutines.reportSuspensionPointInsideMonitor
-import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
-import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
-import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -35,8 +32,6 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.MethodVisitor
-import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.tree.InsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 internal fun MethodNode.acceptWithStateMachine(
@@ -159,30 +154,3 @@ internal fun createFakeContinuation(context: JvmBackendContext): IrExpression = 
     context.ir.symbols.continuationClass.createType(true, listOf(makeTypeProjection(context.irBuiltIns.anyNType, Variance.INVARIANT))),
     "FAKE_CONTINUATION"
 )
-
-fun MethodNode.preprocessSuspendMarkers(method: IrFunction? = null) {
-    if (instructions.first == null) return
-    if (method?.origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE) {
-        // Remove the fake continuation constructor, since this method either has a real state machine or is inline.
-        // Include one instruction before the start marker (that's the id) and one after the end marker (that's a pop).
-        val sequence = instructions.asSequence()
-        val start = sequence.firstOrNull { it.next != null && isBeforeFakeContinuationConstructorCallMarker(it.next) }
-        if (start != null) {
-            val end = sequence.first { it.previous != null && isAfterFakeContinuationConstructorCallMarker(it.previous) }
-            InsnSequence(start, end.next).forEach(instructions::remove)
-        }
-    }
-    // Method is null if this node is going to be inlined into another node rather than written into a class file.
-    val keepMarkers = method != null &&
-            method.origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE &&
-            method.origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
-    for (insn in instructions.asSequence().filter { isBeforeInlineSuspendMarker(it) || isAfterInlineSuspendMarker(it) }) {
-        if (keepMarkers) {
-            val newId = if (isBeforeInlineSuspendMarker(insn)) INLINE_MARKER_BEFORE_SUSPEND_ID else INLINE_MARKER_AFTER_SUSPEND_ID
-            instructions.set(insn.previous, InsnNode(Opcodes.ICONST_0 + newId))
-        } else {
-            instructions.remove(insn.previous)
-            instructions.remove(insn)
-        }
-    }
-}

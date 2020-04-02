@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.lower.buildAssertionsDisabledField
 import org.jetbrains.kotlin.backend.jvm.lower.hasAssertionsDisabledField
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
-import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper
-import org.jetbrains.kotlin.codegen.inline.NameGenerator
-import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
-import org.jetbrains.kotlin.codegen.inline.SourceMapper
+import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -355,7 +352,10 @@ open class ClassCodegen protected constructor(
         }
 
         val node = FunctionCodegen(method, this).generate()
-        node.preprocessSuspendMarkers(method)
+        node.preprocessSuspendMarkers(
+            method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE,
+            method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
+        )
         val mv = with(node) { visitor.newMethod(method.OtherOrigin, access, name, desc, signature, exceptions.toTypedArray()) }
         if (method.hasContinuation() || method.isInvokeSuspendOfLambda()) {
             // Generate a state machine within this method. The continuation class for it should be generated

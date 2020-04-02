@@ -95,7 +95,6 @@ class IrSourceCompilerForInline(
     override fun generateLambdaBody(lambdaInfo: ExpressionLambda): SMAPAndMethodNode {
         val smap = codegen.context.getSourceMapper(codegen.classCodegen.irClass)
         val node = FunctionCodegen((lambdaInfo as IrExpressionLambdaImpl).function, codegen.classCodegen, codegen).generate(smap)
-        node.preprocessSuspendMarkers()
         return SMAPAndMethodNode(node, SMAP(smap.resultMappings))
     }
 
@@ -108,7 +107,6 @@ class IrSourceCompilerForInline(
         assert(callableDescriptor == callee.symbol.descriptor.original) { "Expected $callableDescriptor got ${callee.descriptor.original}" }
         val classCodegen = FakeClassCodegen(callee, codegen.classCodegen)
         val node = FunctionCodegen(callee, classCodegen).generate()
-        node.preprocessSuspendMarkers()
         return SMAPAndMethodNode(node, SMAP(classCodegen.getOrCreateSourceMapper().resultMappings))
     }
 

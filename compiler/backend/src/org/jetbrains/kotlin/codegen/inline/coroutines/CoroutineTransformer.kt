@@ -107,15 +107,7 @@ class CoroutineTransformer(
             )
 
             if (generateForInline)
-                MethodNodeCopyingMethodVisitor(
-                    delegate = stateMachineBuilder,
-                    access = node.access,
-                    name = name,
-                    desc = node.desc,
-                    newMethod = { origin, newAccess, newName, newDesc ->
-                        classBuilder.newMethod(origin, newAccess, newName, newDesc, null, null)
-                    }
-                )
+                SuspendForInlineCopyingMethodVisitor(stateMachineBuilder, node.access, name, node.desc, classBuilder::newMethod)
             else
                 stateMachineBuilder
         }
@@ -154,12 +146,7 @@ class CoroutineTransformer(
             )
 
             if (generateForInline)
-                MethodNodeCopyingMethodVisitor(
-                    stateMachineBuilder, node.access, name, node.desc,
-                    newMethod = { origin, newAccess, newName, newDesc ->
-                        classBuilder.newMethod(origin, newAccess, newName, newDesc, null, null)
-                    }
-                )
+                SuspendForInlineCopyingMethodVisitor(stateMachineBuilder, node.access, name, node.desc, classBuilder::newMethod)
             else
                 stateMachineBuilder
         }
