@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildVariableAssignment
-import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.FirSuperReference
-import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
@@ -599,6 +596,9 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         data: ResolutionMode,
     ): CompositeTransformResult<FirStatement> {
         if (transformer.implicitTypeOnly) return delegatedConstructorCall.compose()
+        when (delegatedConstructorCall.calleeReference) {
+            is FirResolvedNamedReference, is FirErrorNamedReference -> return delegatedConstructorCall.compose()
+        }
         dataFlowAnalyzer.enterCall(delegatedConstructorCall)
         var callCompleted = true
         var result = delegatedConstructorCall
