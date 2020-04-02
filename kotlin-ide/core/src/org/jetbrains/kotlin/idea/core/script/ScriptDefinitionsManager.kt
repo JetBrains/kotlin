@@ -16,10 +16,12 @@ import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ex.PathUtilEx
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -28,7 +30,9 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.project.getScriptRelatedModuleInfo
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
+import org.jetbrains.kotlin.idea.util.application.executeOnPooledThread
 import org.jetbrains.kotlin.idea.util.application.getServiceSafe
+import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.script.ScriptTemplatesProvider
 import org.jetbrains.kotlin.scripting.definitions.*
@@ -54,6 +58,20 @@ import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrStdlib
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+class LoadScriptDefinitionsStartupActivity : StartupActivity {
+    override fun runActivity(project: Project) {
+        if (isUnitTestMode()) {
+            // In tests definitions are loaded synchronously because they are needed to analyze script
+            // In IDE script won't be highlighted before all definitions are loaded, then the highlighting will be restarted
+            ScriptDefinitionsManager.getInstance(project).reloadScriptDefinitionsIfNeeded()
+        } else {
+            executeOnPooledThread {
+                ScriptDefinitionsManager.getInstance(project).reloadScriptDefinitionsIfNeeded()
+            }
+        }
+    }
+}
 
 class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinitionProvider() {
     private var definitionsBySource = mutableMapOf<ScriptDefinitionsSource, List<ScriptDefinition>>()
@@ -124,7 +142,17 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         return fromNewEp.dropLast(1) + fromDeprecatedEP + fromNewEp.last()
     }
 
+    fun reloadScriptDefinitionsIfNeeded() = lock.write {
+        if (definitions == null) {
+            loadScriptDefinitions()
+        }
+    }
+
     fun reloadScriptDefinitions() = lock.write {
+        loadScriptDefinitions()
+    }
+
+    private fun loadScriptDefinitions() {
         for (source in getSources()) {
             val definitions = source.safeGetDefinitions()
             definitionsBySource[source] = definitions
@@ -147,9 +175,6 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
     }
 
     fun isReady(): Boolean {
-        if (definitions == null) {
-            reloadScriptDefinitions()
-        }
         return definitions != null && definitionsBySource.keys.all { source ->
             // TODO: implement another API for readiness checking
             (source as? ScriptDefinitionContributor)?.isReady() != false
@@ -319,7 +344,7 @@ fun ScriptDefinitionContributor.asSource(): ScriptDefinitionsSource =
     if (this is ScriptDefinitionsSource) this
     else ScriptDefinitionSourceFromContributor(this)
 
-class StandardScriptDefinitionContributor(project: Project) : ScriptDefinitionContributor {
+class StandardScriptDefinitionContributor(val project: Project) : ScriptDefinitionContributor {
     private val standardIdeScriptDefinition = StandardIdeScriptDefinition(project)
 
     override fun getDefinitions() = listOf(standardIdeScriptDefinition)

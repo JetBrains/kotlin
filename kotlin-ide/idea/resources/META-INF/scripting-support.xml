@@ -10,5 +10,6 @@
 
     <trafficLightRendererContributor implementation="org.jetbrains.kotlin.idea.core.script.ScriptTrafficLightRendererContributor"/>
     <fileBasedIndex implementation="org.jetbrains.kotlin.idea.script.ScriptTemplatesClassRootsIndex"/>
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.core.script.LoadScriptDefinitionsStartupActivity"/>
   </extensions>
 </idea-plugin>
