@@ -87,9 +87,9 @@ class ModulesEditorComponent(
     }
 
     private fun createEditorComponent() =
-        if (editable) toolbarDecorator!!.createToolPanel()
-        else tree.apply {
-            preferredSize = Dimension(TREE_WIDTH, tree.height)
+        (if (editable) toolbarDecorator!!.createToolPanel() else tree).apply {
+            preferredSize = Dimension(TREE_WIDTH, preferredSize.height)
+            minimumSize = Dimension(TREE_WIDTH, minimumSize.height)
         }
 
     override val validationIndicator: ValidationIndicator? = null
