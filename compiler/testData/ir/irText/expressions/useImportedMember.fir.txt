@@ -242,7 +242,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'public open fun fromInterface <T> (): T of <root>.C.fromInterface declared in <root>.C' type=kotlin.Int origin=null
+              arg0: CALL 'public open fun fromInterface <T> (): T of <root>.C.fromInterface [fake_override] declared in <root>.C' type=kotlin.Int origin=null
                 <T>: kotlin.Int
                 $this: CONST Int type=kotlin.Int value=9
                 $receiver: CONST Int type=kotlin.Int value=9
@@ -264,7 +264,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'public open fun genericFromSuper (g: kotlin.String): kotlin.String declared in <root>.C' type=kotlin.String origin=null
+              arg0: CALL 'public open fun genericFromSuper (g: kotlin.String): kotlin.String [fake_override] declared in <root>.C' type=kotlin.String origin=null
                 $this: GET_OBJECT 'CLASS OBJECT name:C modality:FINAL visibility:public superTypes:[<root>.BaseClass; <root>.I<kotlin.String>]' type=<root>.C
                 g: CONST String type=kotlin.String value="11"
               arg1: CONST String type=kotlin.String value="11"

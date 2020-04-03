@@ -138,8 +138,11 @@ object GenerationUtils {
             }
         }
         val (moduleFragment, symbolTable, sourceManager, components) =
-            Fir2IrConverter.createModuleFragment(session, firFiles, configuration.languageVersionSettings, signaturer = IdSignatureDescriptor(
-                JvmManglerDesc()))
+            Fir2IrConverter.createModuleFragment(
+                session, resolveTransformer.scopeSession, firFiles,
+                configuration.languageVersionSettings,
+                signaturer = IdSignatureDescriptor(JvmManglerDesc())
+            )
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
         val codegenFactory = JvmIrCodegenFactory(configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))

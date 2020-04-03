@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 // TODO: rework, see rr/FIR/semoro-dev FirStagesTransformerFactory
 class FirTotalResolveTransformer {
 
-    private val scopeSession = ScopeSession()
+    val scopeSession = ScopeSession()
 
     val transformers: List<FirTransformer<Nothing?>> =
         FirResolvePhase.values()

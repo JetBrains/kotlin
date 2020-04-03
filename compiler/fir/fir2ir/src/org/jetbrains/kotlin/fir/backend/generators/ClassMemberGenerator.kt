@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.Name
 
 internal class ClassMemberGenerator(
     private val components: Fir2IrComponents,
@@ -32,7 +31,9 @@ internal class ClassMemberGenerator(
     fakeOverrideMode: FakeOverrideMode
 ) : Fir2IrComponents by components {
 
-    private val fakeOverrideGenerator = FakeOverrideGenerator(session, declarationStorage, conversionScope, fakeOverrideMode)
+    private val fakeOverrideGenerator = FakeOverrideGenerator(
+        session, components.scopeSession, declarationStorage, conversionScope, fakeOverrideMode
+    )
 
     private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }
 
@@ -53,17 +54,19 @@ internal class ClassMemberGenerator(
                     convertFunctionContent(irPrimaryConstructor, primaryConstructor)
                 }
             }
-            val processedCallableNames = mutableListOf<Name>()
-            klass.declarations.forEach {
-                if (it !is FirTypeAlias && (it !is FirConstructor || !it.isPrimary)) {
-                    it.accept(visitor, null)
-                    when (it) {
-                        is FirSimpleFunction -> processedCallableNames += it.name
-                        is FirProperty -> processedCallableNames += it.name
-                    }
+            val processedCallableNames = klass.declarations.mapNotNullTo(mutableListOf()) {
+                when (it) {
+                    is FirSimpleFunction -> it.name
+                    is FirProperty -> it.name
+                    else -> null
                 }
             }
             with(fakeOverrideGenerator) { irClass.addFakeOverrides(klass, processedCallableNames) }
+            klass.declarations.forEach {
+                if (it !is FirTypeAlias && (it !is FirConstructor || !it.isPrimary)) {
+                    it.accept(visitor, null)
+                }
+            }
             annotations = klass.annotations.mapNotNull {
                 it.accept(visitor, null) as? IrConstructorCall
             }

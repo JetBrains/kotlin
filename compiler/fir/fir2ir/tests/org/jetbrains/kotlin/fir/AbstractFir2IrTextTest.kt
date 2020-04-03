@@ -83,7 +83,9 @@ abstract class AbstractFir2IrTextTest : AbstractIrTextTestCase() {
         val signaturer = IdSignatureDescriptor(JvmManglerDesc())
 
         return Fir2IrConverter.createModuleFragment(
-            session, firFiles, myEnvironment.configuration.languageVersionSettings, signaturer = signaturer
+            session, resolveTransformer.scopeSession, firFiles,
+            myEnvironment.configuration.languageVersionSettings,
+            signaturer = signaturer
         ).irModuleFragment
     }
 }

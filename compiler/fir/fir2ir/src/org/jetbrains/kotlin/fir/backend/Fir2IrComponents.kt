@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
 interface Fir2IrComponents {
     val session: FirSession
+    val scopeSession: ScopeSession
     val symbolTable: SymbolTable
     val irBuiltIns: IrBuiltIns
     val classifierStorage: Fir2IrClassifierStorage

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
@@ -156,6 +157,7 @@ class Fir2IrConverter(
     companion object {
         fun createModuleFragment(
             session: FirSession,
+            scopeSession: ScopeSession,
             firFiles: List<FirFile>,
             languageVersionSettings: LanguageVersionSettings,
             fakeOverrideMode: FakeOverrideMode = FakeOverrideMode.NORMAL,
@@ -169,7 +171,7 @@ class Fir2IrConverter(
             typeTranslator.constantValueGenerator = constantValueGenerator
             val builtIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, signaturer, symbolTable)
             val sourceManager = PsiSourceManager()
-            val components = Fir2IrComponentsStorage(session, symbolTable, builtIns)
+            val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, builtIns)
             val declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor)
             val classifierStorage = Fir2IrClassifierStorage(components)
             val typeConverter = Fir2IrTypeConverter(components)

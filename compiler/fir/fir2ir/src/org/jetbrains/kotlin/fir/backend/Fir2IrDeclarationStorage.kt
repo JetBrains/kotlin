@@ -208,7 +208,7 @@ class Fir2IrDeclarationStorage(
                 }
             }
             val allNames = regularClass.collectCallableNamesFromSupertypes(session)
-            val scope = regularClass.buildUseSiteMemberScope(session, ScopeSession())
+            val scope = regularClass.buildUseSiteMemberScope(session, scopeSession)
             if (scope != null) {
                 for (name in allNames) {
                     if (name in processedNames) continue

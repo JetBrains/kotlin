@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.collectCallableNamesFromSupertypes
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.allowsToHaveFakeOverride
+import org.jetbrains.kotlin.fir.declarations.isStatic
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.buildUseSiteMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class FakeOverrideGenerator(
     private val session: FirSession,
+    private val scopeSession: ScopeSession,
     private val declarationStorage: Fir2IrDeclarationStorage,
     private val conversionScope: Fir2IrConversionScope,
     private val fakeOverrideMode: FakeOverrideMode
@@ -59,13 +60,16 @@ internal class FakeOverrideGenerator(
     fun IrClass.addFakeOverrides(klass: FirClass<*>, processedCallableNames: MutableList<Name>) {
         if (fakeOverrideMode == FakeOverrideMode.NONE) return
         val superTypesCallableNames = klass.collectCallableNamesFromSupertypes(session)
-        val useSiteMemberScope = (klass as? FirRegularClass)?.buildUseSiteMemberScope(session, ScopeSession()) ?: return
+        val useSiteMemberScope = klass.buildUseSiteMemberScope(session, scopeSession) ?: return
         for (name in superTypesCallableNames) {
             if (name in processedCallableNames) continue
             processedCallableNames += name
             useSiteMemberScope.processFunctionsByName(name) { functionSymbol ->
                 if (functionSymbol is FirNamedFunctionSymbol) {
                     val originalFunction = functionSymbol.fir
+                    if (originalFunction.isStatic && originalFunction.name in Fir2IrDeclarationStorage.ENUM_SYNTHETIC_NAMES) {
+                        return@processFunctionsByName
+                    }
                     val origin = IrDeclarationOrigin.FAKE_OVERRIDE
                     if (functionSymbol.isFakeOverride) {
                         // Substitution case

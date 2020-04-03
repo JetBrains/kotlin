@@ -346,7 +346,10 @@ object KotlinToJVMBytecodeCompiler {
             val signaturer = IdSignatureDescriptor(JvmManglerDesc())
 
             val (moduleFragment, symbolTable, sourceManager) =
-                Fir2IrConverter.createModuleFragment(session, firFiles, moduleConfiguration.languageVersionSettings, signaturer = signaturer)
+                Fir2IrConverter.createModuleFragment(
+                    session, resolveTransformer.scopeSession, firFiles,
+                    moduleConfiguration.languageVersionSettings, signaturer = signaturer
+                )
             val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
             val codegenFactory = JvmIrCodegenFactory(moduleConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))

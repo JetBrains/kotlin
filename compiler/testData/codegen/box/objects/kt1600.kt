@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 abstract class Foo<T> {
     fun hello(id: T) = "O$id"
 }

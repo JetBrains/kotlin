@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
 class Fir2IrComponentsStorage(
     override val session: FirSession,
+    override val scopeSession: ScopeSession,
     override val symbolTable: SymbolTable,
     override val irBuiltIns: IrBuiltIns
 ) : Fir2IrComponents {
