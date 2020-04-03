@@ -29,8 +29,6 @@ import java.util.*;
 
 /**
  * Serves as a container for all existing template manager types and loads corresponding templates upon creation (at construction time).
- *
- * @author Rustam Vishnyakov
  */
 class FileTemplatesLoader {
   private static final Logger LOG = Logger.getInstance(FileTemplatesLoader.class);
@@ -132,8 +130,7 @@ class FileTemplatesLoader {
     return myDefaultIncludeDescription;
   }
 
-  @NotNull
-  private static FileTemplateLoadResult loadDefaultTemplates(@NotNull List<String> prefixes) {
+  private static @NotNull FileTemplateLoadResult loadDefaultTemplates(@NotNull List<String> prefixes) {
     FileTemplateLoadResult result = new FileTemplateLoadResult(MultiMap.createSmart());
     Set<URL> processedUrls = new THashSet<>();
     Set<ClassLoader> processedLoaders = new HashSet<>();
@@ -217,8 +214,7 @@ class FileTemplatesLoader {
   }
 
   //Example: templateName="NewClass"   templateExtension="java"
-  @Nullable
-  private static String getDescriptionPath(@NotNull String pathPrefix,
+  private static @Nullable String getDescriptionPath(@NotNull String pathPrefix,
                                            @NotNull String templateName,
                                            @NotNull String templateExtension,
                                            @NotNull Set<String> descriptionPaths) {
