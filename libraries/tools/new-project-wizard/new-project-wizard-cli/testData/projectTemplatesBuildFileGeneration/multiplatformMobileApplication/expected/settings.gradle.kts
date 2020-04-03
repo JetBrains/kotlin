@@ -13,9 +13,8 @@ pluginManagement {
         }
     }
 }
-rootProject.name = "MPPMobileApplication"
+rootProject.name = "MultiplatformMobileApplication"
 
 
 include(":shared")
 include(":androidApp")
-
