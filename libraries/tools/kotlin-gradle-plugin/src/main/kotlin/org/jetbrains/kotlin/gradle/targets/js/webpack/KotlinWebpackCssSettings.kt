@@ -6,11 +6,18 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import org.gradle.api.tasks.Input
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.INLINE
 
 data class KotlinWebpackCssSettings(
     @Input
     var enabled: Boolean = true,
 
     @Input
-    var inline: Boolean = true
+    var mode: String = INLINE
 )
+
+object KotlinWebpackCssMode {
+    const val EXTRACT = "extract"
+    const val INLINE = "inline"
+    const val IMPORT = "import"
+}

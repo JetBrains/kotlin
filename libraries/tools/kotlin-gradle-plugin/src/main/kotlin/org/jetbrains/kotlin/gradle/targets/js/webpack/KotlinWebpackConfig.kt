@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
 import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.EXTRACT
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.IMPORT
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.INLINE
 import java.io.File
 import java.io.Serializable
 import java.io.StringWriter
@@ -57,10 +60,12 @@ data class KotlinWebpackConfig(
             if (!cssSettings.enabled) return@also
 
             it.add(versions.cssLoader)
-            if (cssSettings.inline) {
-                it.add(versions.styleLoader)
-            } else {
-                it.add(versions.miniCssExtractPlugin)
+            when (cssSettings.mode) {
+                EXTRACT -> it.add(versions.miniCssExtractPlugin)
+                INLINE -> it.add(versions.styleLoader)
+                IMPORT -> {
+                }
+                else -> cssError()
             }
         }
 
@@ -288,10 +293,12 @@ data class KotlinWebpackConfig(
             |    
             """.trimMargin()
 
-        if (cssSettings.inline) {
-            appendln(inlinedCss)
-        } else {
-            appendln(extractedCss)
+        when (cssSettings.mode) {
+            EXTRACT -> appendln(extractedCss)
+            INLINE -> appendln(inlinedCss)
+            IMPORT -> {
+            }
+            else -> cssError()
         }
 
         appendln(
@@ -348,6 +355,17 @@ data class KotlinWebpackConfig(
                 })(config);
                 
             """.trimIndent()
+        )
+    }
+
+    private fun cssError() {
+        throw IllegalStateException(
+            """
+                    Possible values for cssSettings.mode:
+                    - EXTRACT
+                    - INLINE
+                    - IMPORT
+                """.trimIndent()
         )
     }
 
