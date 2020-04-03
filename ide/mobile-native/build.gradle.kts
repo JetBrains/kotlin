@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin("jvm")
 }
@@ -32,4 +34,8 @@ dependencies {
 the<JavaPluginConvention>().sourceSets["main"].apply {
     java.setSrcDirs(listOf("src"))
     resources.setSrcDirs(listOf("resources"))
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.freeCompilerArgs += "-Xno-optimized-callable-references"
 }
