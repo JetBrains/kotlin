@@ -412,7 +412,6 @@ task listDist(type: Exec) {
 
 task distRuntime(type: Copy) {
     dependsOn "${hostName}CrossDistRuntime"
-    dependsOn('commonDistRuntime')
 }
 
 task distEndorsedLibraries {
@@ -436,19 +435,8 @@ def stdlibDefaultComponent = "$stdlib/default"
 def endorsedLibs = 'klib/common/endorsedLibraries'
 def endorsedLibsBase = 'klib/common'
 
-task commonDistRuntime(type: Copy) {
-    destinationDir distDir
-
-    // Target independant common part.
-    from(project(':runtime').file("build/${hostName}Stdlib")) {
-        include('**')
-        into(stdlib)
-    }
-}
-
 task crossDistRuntime(type: Copy) {
     dependsOn.addAll(targetList.collect { "${it}CrossDistRuntime" })
-    dependsOn('commonDistRuntime')
 }
 
 task crossDistEndorsedLibraries(type: Copy) {
@@ -514,7 +502,7 @@ targetList.each { target ->
     }
 
     task("${target}CrossDist") {
-        dependsOn "${target}CrossDistRuntime", "distCompiler", "commonDistRuntime", "${target}CrossDistEndorsedLibraries"
+        dependsOn "${target}CrossDistRuntime", "distCompiler", "${target}CrossDistEndorsedLibraries"
         if (target in cacheableTargetNames) {
             dependsOn "${target}StdlibCache", "${target}EndorsedCache"
         }

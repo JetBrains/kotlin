@@ -59,7 +59,7 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
 
         // set crossdist build dependency if custom konan.home wasn't set
         if (!(project.property("useCustomDist") as Boolean)) {
-            setRootDependency("${target}CrossDist", "${target}CrossDistRuntime", "commonDistRuntime", "distCompiler")
+            setRootDependency("${target}CrossDist", "${target}CrossDistRuntime", "distCompiler")
         }
         check(::testName.isInitialized) { "Test name should be set" }
         check(::frameworkNames.isInitialized) { "Framework names should be set" }

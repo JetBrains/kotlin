@@ -39,7 +39,6 @@ fun configureCacheTesting(project: Project): CacheTesting? {
             val tasks = listOf(
                     "${target}CrossDist",
                     "${target}CrossDistRuntime",
-                    "commonDistRuntime",
                     "distCompiler"
             ).map { task -> project.rootProject.tasks.getByName(task) }
 

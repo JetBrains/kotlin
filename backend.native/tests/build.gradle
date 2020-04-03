@@ -3899,7 +3899,7 @@ if (isAppleTarget(project)) {
                 baseDir dir
 
                 if (!useCustomDist) {
-                    dependsOn ":${target.name}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
+                    dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
                 }
 
                 extraOpts "-Xembed-bitcode-marker"
@@ -3929,7 +3929,7 @@ if (isAppleTarget(project)) {
                 baseDir dir
 
                 if (!useCustomDist) {
-                    dependsOn ":${target.name}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
+                    dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
                 }
 
                 extraOpts "-Xembed-bitcode-marker"
@@ -3955,7 +3955,7 @@ if (isAppleTarget(project)) {
                 baseDir "$testOutputFramework/$testName"
 
                 if (!useCustomDist) {
-                    dependsOn ":${target}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
+                    dependsOn ":${target}CrossDistRuntime", ':distCompiler'
                 }
 
                 extraOpts "-Xembed-bitcode-marker"
@@ -3976,7 +3976,7 @@ if (isAppleTarget(project)) {
                 baseDir "$testOutputFramework/$testName"
 
                 if (!useCustomDist) {
-                    dependsOn ":${target.name}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
+                    dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
                 }
 
                 extraOpts "-Xembed-bitcode"
@@ -4003,7 +4003,7 @@ if (isAppleTarget(project)) {
                 baseDir dir
 
                 if (!useCustomDist) {
-                    dependsOn ":${target.name}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
+                    dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
                 }
 
                 extraOpts "-Xembed-bitcode"
@@ -4016,7 +4016,7 @@ if (isAppleTarget(project)) {
                 baseDir dir
 
                 if (!useCustomDist) {
-                    dependsOn ":${target.name}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
+                    dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
                 }
 
                 extraOpts "-Xembed-bitcode"
@@ -4045,7 +4045,7 @@ if (isAppleTarget(project)) {
                 baseDir "$testOutputFramework/$testName"
 
                 if (!useCustomDist) {
-                    dependsOn ":${target}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
+                    dependsOn ":${target}CrossDistRuntime", ':distCompiler'
                 }
 
                 linkerOpts "-L$buildDir"
