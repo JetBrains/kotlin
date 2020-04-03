@@ -43,9 +43,10 @@ class JvmRuntimeTypes(
     private fun propertyClasses(prefix: String, suffix: String): Lazy<List<ClassDescriptor>> =
         lazy { (0..2).map { i -> createClass(kotlinJvmInternalPackage, prefix + i + suffix) } }
 
-    val lambda: ClassDescriptor by internal("Lambda")
+    private val lambda: ClassDescriptor by internal("Lambda")
     val functionReference: ClassDescriptor by internal("FunctionReference")
     val functionReferenceImpl: ClassDescriptor by internal("FunctionReferenceImpl")
+    val adaptedFunctionReference: ClassDescriptor by internal("AdaptedFunctionReference")
 
     private val localVariableReference: ClassDescriptor by internal("LocalVariableReference")
     private val mutableLocalVariableReference: ClassDescriptor by internal("MutableLocalVariableReference")
@@ -152,7 +153,7 @@ class JvmRuntimeTypes(
 
         val suspendFunctionType = if (referencedFunction.isSuspend) suspendFunctionInterface?.defaultType else null
         val superClass = when {
-            isAdaptedCallableReference -> lambda
+            isAdaptedCallableReference -> adaptedFunctionReference
             generateOptimizedCallableReferenceSuperClasses -> functionReferenceImpl
             else -> functionReference
         }

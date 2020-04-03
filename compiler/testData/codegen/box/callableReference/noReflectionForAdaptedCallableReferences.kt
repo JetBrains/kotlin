@@ -30,9 +30,8 @@ fun box(): String {
     checkAny("::CWithDefaults", ::CWithDefaults)
     checkAny("::CWithVarargs", ::CWithVarargs)
 
-    // TODO KT-37604
-    // checkUnit("::CWithDefaults", ::CWithDefaults)
-    // checkUnit("::CWithVarargs", ::CWithVarargs)
+    checkUnit("::CWithDefaults", ::CWithDefaults)
+    checkUnit("::CWithVarargs", ::CWithVarargs)
 
     return "OK"
 }

@@ -3180,6 +3180,15 @@ public abstract interface class kotlin/jvm/functions/FunctionN : kotlin/Function
 	public abstract fun invoke ([Ljava/lang/Object;)Ljava/lang/Object;
 }
 
+public class kotlin/jvm/internal/AdaptedFunctionReference {
+	protected final field receiver Ljava/lang/Object;
+	public fun <init> (ILjava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
+	public fun <init> (ILjava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getOwner ()Lkotlin/reflect/KDeclarationContainer;
+	public fun hashCode ()I
+}
+
 public final class kotlin/jvm/internal/ArrayIteratorKt {
 	public static final fun iterator ([Ljava/lang/Object;)Ljava/util/Iterator;
 }

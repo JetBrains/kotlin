@@ -74,7 +74,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     protected final Type asmType;
     protected final int visibilityFlag;
     private final boolean shouldHaveBoundReferenceReceiver;
-    private final boolean isRegularFunctionReference;
+    private final boolean isLegacyFunctionReference;
     private final boolean isOptimizedFunctionReference;
     private final boolean isAdaptedFunctionReference;
 
@@ -129,7 +129,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         this.shouldHaveBoundReferenceReceiver = CallableReferenceUtilKt.isForBoundCallableReference(closure);
 
         ClassifierDescriptor superClassDescriptor = superClassType.getConstructor().getDeclarationDescriptor();
-        this.isRegularFunctionReference =
+        this.isLegacyFunctionReference =
                 functionReferenceTarget != null &&
                 superClassDescriptor == state.getJvmRuntimeTypes().getFunctionReference();
         this.isOptimizedFunctionReference =
@@ -137,7 +137,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                 superClassDescriptor == state.getJvmRuntimeTypes().getFunctionReferenceImpl();
         this.isAdaptedFunctionReference =
                 functionReferenceTarget != null &&
-                superClassDescriptor == state.getJvmRuntimeTypes().getLambda();
+                superClassDescriptor == state.getJvmRuntimeTypes().getAdaptedFunctionReference();
 
         this.asmType = typeMapper.mapClass(classDescriptor);
 
@@ -199,26 +199,12 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     protected void generateClosureBody() {
         functionCodegen.generateMethod(JvmDeclarationOriginKt.OtherOrigin(element, funDescriptor), funDescriptor, strategy);
 
-        if (isRegularFunctionReference) {
+        if (isLegacyFunctionReference) {
             generateFunctionReferenceMethods(functionReferenceTarget);
-        }
-
-        if (shouldHaveBoundReferenceReceiver && isAdaptedFunctionReference) {
-            generateBoundAdaptedCallableReferenceReceiverField();
         }
 
         functionCodegen.generateDefaultIfNeeded(
                 context.intoFunction(funDescriptor), funDescriptor, context.getContextKind(), DefaultParameterValueLoader.DEFAULT, null
-        );
-    }
-
-    private void generateBoundAdaptedCallableReferenceReceiverField() {
-        v.newField(
-                JvmDeclarationOriginKt.OtherOrigin(element, funDescriptor),
-                ACC_PRIVATE,
-                BOUND_REFERENCE_RECEIVER,
-                OBJECT_TYPE.getDescriptor(),
-                null, null
         );
     }
 
@@ -522,20 +508,19 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             iv.load(0, superClassAsmType);
 
             List<Type> superCtorArgTypes = new ArrayList<>();
-            if (superClassAsmType.equals(LAMBDA) || superClassAsmType.equals(FUNCTION_REFERENCE) ||
-                superClassAsmType.equals(FUNCTION_REFERENCE_IMPL) ||
+            if (superClassAsmType.equals(LAMBDA) || functionReferenceTarget != null ||
                 CoroutineCodegenUtilKt.isCoroutineSuperClass(state.getLanguageVersionSettings(), superClassAsmType.getInternalName())
             ) {
                 int arity = calculateArity();
                 iv.iconst(arity);
                 superCtorArgTypes.add(Type.INT_TYPE);
-                if (shouldHaveBoundReferenceReceiver && !isAdaptedFunctionReference) {
+                if (shouldHaveBoundReferenceReceiver) {
                     CallableReferenceUtilKt.loadBoundReferenceReceiverParameter(
                             iv, boundReceiverParameterIndex, boundReceiverType, boundReceiverKotlinType
                     );
                     superCtorArgTypes.add(OBJECT_TYPE);
                 }
-                if (isOptimizedFunctionReference) {
+                if (isOptimizedFunctionReference || isAdaptedFunctionReference) {
                     assert functionReferenceTarget != null : "No function reference target: " + funDescriptor;
                     generateCallableReferenceDeclarationContainerClass(iv, functionReferenceTarget, state);
                     iv.aconst(functionReferenceTarget.getName().asString());
@@ -557,19 +542,6 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                     superClassAsmType.getInternalName(), "<init>",
                     Type.getMethodDescriptor(Type.VOID_TYPE, superCtorArgTypes.toArray(new Type[0])), false
             );
-
-            // Bound adapted function references store receiver in a separate field.
-            if (shouldHaveBoundReferenceReceiver && isAdaptedFunctionReference) {
-                iv.load(0, superClassAsmType);
-                CallableReferenceUtilKt.loadBoundReferenceReceiverParameter(
-                        iv, boundReceiverParameterIndex, boundReceiverType, boundReceiverKotlinType
-                );
-                iv.putfield(
-                        asmType.getInternalName(),
-                        BOUND_REFERENCE_RECEIVER,
-                        OBJECT_TYPE.getDescriptor()
-                );
-            }
 
             iv.visitInsn(RETURN);
 
