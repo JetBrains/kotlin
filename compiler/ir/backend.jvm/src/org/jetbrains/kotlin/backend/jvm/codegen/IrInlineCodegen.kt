@@ -250,7 +250,7 @@ class IrExpressionLambdaImpl(
 
     override fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor = function.descriptor
 
-    override fun isCapturedSuspend(desc: CapturedParamDesc, inliningContext: InliningContext): Boolean =
+    override fun isCapturedSuspend(desc: CapturedParamDesc): Boolean =
         capturedParameters[desc]?.let { it.isInlineParameter() && it.type.isSuspendFunctionTypeOrSubtype() } == true
 }
 
