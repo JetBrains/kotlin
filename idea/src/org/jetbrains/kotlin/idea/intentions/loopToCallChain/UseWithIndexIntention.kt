@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,11 +20,10 @@ class UseWithIndexInspection : IntentionBasedInspection<KtForExpression>(UseWith
 
 class UseWithIndexIntention : SelfTargetingRangeIntention<KtForExpression>(
     KtForExpression::class.java,
-    KotlinBundle.message("use.withindex.instead.of.manual.index.increment")
+    KotlinBundle.lazyMessage("use.withindex.instead.of.manual.index.increment")
 ) {
-    override fun applicabilityRange(element: KtForExpression): TextRange? {
-        return if (matchIndexToIntroduce(element, reformat = false) != null) element.forKeyword.textRange else null
-    }
+    override fun applicabilityRange(element: KtForExpression): TextRange? =
+        if (matchIndexToIntroduce(element, reformat = false) != null) element.forKeyword.textRange else null
 
     override fun applyTo(element: KtForExpression, editor: Editor?) {
         val (indexVariable, initializationStatement, incrementExpression) = matchIndexToIntroduce(element, reformat = true)!!

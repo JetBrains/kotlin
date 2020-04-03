@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,9 +16,8 @@ import org.jetbrains.kotlin.psi.*
 
 class WhenToIfIntention : SelfTargetingRangeIntention<KtWhenExpression>(
     KtWhenExpression::class.java,
-    KotlinBundle.message("replace.when.with.if")
-),
-    LowPriorityAction {
+    KotlinBundle.lazyMessage("replace.when.with.if")
+), LowPriorityAction {
     override fun applicabilityRange(element: KtWhenExpression): TextRange? {
         val entries = element.entries
         if (entries.isEmpty()) return null
@@ -50,11 +49,13 @@ class WhenToIfIntention : SelfTargetingRangeIntention<KtWhenExpression>(
                     if (branch is KtIfExpression) {
                         appendFixedText("{ ")
                     }
+
                     appendExpression(branch)
                     if (branch is KtIfExpression) {
                         appendFixedText(" }")
                     }
                 }
+
                 if (i != entries.lastIndex) {
                     appendFixedText("\n")
                 }

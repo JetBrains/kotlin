@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,18 +27,15 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
-class DoubleBangToIfThenIntention :
-    SelfTargetingRangeIntention<KtPostfixExpression>(
-        KtPostfixExpression::class.java,
-        KotlinBundle.message("replace.expression.with.if.expression")
-    ),
-    LowPriorityAction {
-    override fun applicabilityRange(element: KtPostfixExpression): TextRange? {
-        return if (element.operationToken == KtTokens.EXCLEXCL && element.baseExpression != null)
+class DoubleBangToIfThenIntention : SelfTargetingRangeIntention<KtPostfixExpression>(
+    KtPostfixExpression::class.java,
+    KotlinBundle.lazyMessage("replace.expression.with.if.expression")
+), LowPriorityAction {
+    override fun applicabilityRange(element: KtPostfixExpression): TextRange? =
+        if (element.operationToken == KtTokens.EXCLEXCL && element.baseExpression != null)
             element.operationReference.textRange
         else
             null
-    }
 
     override fun applyTo(element: KtPostfixExpression, editor: Editor?) {
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
@@ -62,8 +59,7 @@ class DoubleBangToIfThenIntention :
             (qualifiedExpressionForReceiver ?: element).convertToIfNotNullExpression(base, thenClause, defaultException)
         }
 
-        val thrownExpression =
-            ((if (isStatement) ifStatement.then else ifStatement.`else`) as KtThrowExpression).thrownExpression!!
+        val thrownExpression = ((if (isStatement) ifStatement.then else ifStatement.`else`) as KtThrowExpression).thrownExpression ?: return
         val message = StringUtil.escapeStringCharacters("Expression '$expressionText' must not be null")
         val nullPtrExceptionText = "NullPointerException(\"$message\")"
         val kotlinNullPtrExceptionText = "KotlinNullPointerException()"

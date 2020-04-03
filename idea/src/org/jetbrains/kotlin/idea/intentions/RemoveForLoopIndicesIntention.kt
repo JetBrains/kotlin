@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,8 +27,10 @@ class RemoveForLoopIndicesInspection : IntentionBasedInspection<KtForExpression>
     override fun problemHighlightType(element: KtForExpression): ProblemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
-class RemoveForLoopIndicesIntention :
-    SelfTargetingRangeIntention<KtForExpression>(KtForExpression::class.java, KotlinBundle.message("remove.indices.in.for.loop")) {
+class RemoveForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(
+    KtForExpression::class.java,
+    KotlinBundle.lazyMessage("remove.indices.in.for.loop")
+) {
     private val WITH_INDEX_NAME = "withIndex"
     private val WITH_INDEX_FQ_NAMES: Set<String> by lazy {
         sequenceOf("collections", "sequences", "text", "ranges").map { "kotlin.$it.$WITH_INDEX_NAME" }.toSet()

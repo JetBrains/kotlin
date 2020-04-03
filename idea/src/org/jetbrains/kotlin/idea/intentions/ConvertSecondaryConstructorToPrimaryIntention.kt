@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -32,7 +32,7 @@ class ConvertSecondaryConstructorToPrimaryInspection : IntentionBasedInspection<
 
 class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntention<KtSecondaryConstructor>(
     KtSecondaryConstructor::class.java,
-    KotlinBundle.message("convert.to.primary.constructor")
+    KotlinBundle.lazyMessage("convert.to.primary.constructor")
 ) {
     private tailrec fun ConstructorDescriptor.isReachableByDelegationFrom(
         constructor: ConstructorDescriptor, context: BindingContext, visited: Set<ConstructorDescriptor> = emptySet()
@@ -69,8 +69,7 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
         val rightReference = right as? KtReferenceExpression ?: return null
         val rightDescriptor = context[BindingContext.REFERENCE_TARGET, rightReference] as? ValueParameterDescriptor ?: return null
         if (rightDescriptor.containingDeclaration != constructorDescriptor) return null
-        val left = left
-        val leftReference = when (left) {
+        val leftReference = when (val left = left) {
             is KtReferenceExpression ->
                 left
             is KtDotQualifiedExpression ->
@@ -78,6 +77,7 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
             else ->
                 null
         }
+
         val leftDescriptor = context[BindingContext.REFERENCE_TARGET, leftReference] as? PropertyDescriptor ?: return null
         return rightDescriptor to leftDescriptor
     }
@@ -98,6 +98,7 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
                     }
                     null to null
                 }
+
             if (rightDescriptor == null || leftDescriptor == null) continue
             parameterToPropertyMap[rightDescriptor] = leftDescriptor
         }
